@@ -1,3 +1,11 @@
+# QuantStudio 0.1.32
+
+2026-09-14 · 会话模式身份修复
+
+- 标准、PTC 和 Cordis 模式的内置身份统一为 QuantSkills。
+- 保留自建专家职责、技能内容和真实模型配置。
+- 延续 0.1.31 的 Ubuntu PandaData 授权与短暂断连恢复修复。
+
 # QuantStudio 0.1.31
 
 2026-09-14 · Ubuntu 服务与产品身份修复

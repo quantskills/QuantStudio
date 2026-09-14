@@ -45,6 +45,7 @@ import { installModelSelection, } from '@deepseek-ai/dsh-agent';
 import { ReasoningEffortId } from '@deepseek-ai/dsh-llm';
 import { SessionId, } from '@deepseek-ai/dsh-session';
 import { renderSkillContent, } from '@deepseek-ai/dsh-skill';
+import { installQuantSkillsIdentity } from "./product-identity.js";
 import { renderArtifactTheme } from "./artifact-theme.js";
 import { defineTool } from '@deepseek-ai/dsh-tools';
 import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
@@ -805,6 +806,7 @@ let QuantSkillsSessionService = (() => {
          */
         constructor(ctx, config) {
             super(ctx, 'quantSkillsSessions', { namespace: 'quantSkillsSessions' });
+            installQuantSkillsIdentity(ctx);
             this.libraryStore = new QuantSkillsLibraryStore(config.dshHome);
             ctx.inject(['connection'], (connectionCtx) => {
                 connectionOf(connectionCtx).fetch.register({

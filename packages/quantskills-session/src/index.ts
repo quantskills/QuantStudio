@@ -35,6 +35,7 @@ import {
   renderSkillContent, type SkillCandidate, type SkillDefinition, type SkillLookupOptions, type SkillProvider,
 } from '@deepseek-ai/dsh-skill'
 import type { SystemPrompt } from '@deepseek-ai/dsh-system-prompt'
+import { installQuantSkillsIdentity } from './product-identity.ts'
 import { renderArtifactTheme } from './artifact-theme.ts'
 import type {} from '@deepseek-ai/dsh-subagent'
 import { defineTool, type ToolCallView } from '@deepseek-ai/dsh-tools'
@@ -932,6 +933,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
    */
   constructor(ctx: Context, config: Config) {
     super(ctx, 'quantSkillsSessions', { namespace: 'quantSkillsSessions' })
+    installQuantSkillsIdentity(ctx)
     this.libraryStore = new QuantSkillsLibraryStore(config.dshHome)
     ctx.inject(['connection' as never], (connectionCtx) => {
       connectionOf(connectionCtx).fetch.register({
