@@ -195,7 +195,7 @@ describe('dsh-quantskills-plugin bundle', () => {
       dshmarket: '1.45.1',
       'dsh-file-upload': 'github:GLFzr/dsh-file-upload#baa569938c03404b4eac6c6740c27afb49b60ba8',
     })
-    expect(patches(resolve(root, manifest.dsh!.bundle!.patch!))).toHaveLength(1)
+    expect(patches(resolve(root, manifest.dsh!.bundle!.patch!))).toHaveLength(2)
   })
 
   it('keeps the native DSH shell owners enabled and appends QuantSkills once', () => {
@@ -207,6 +207,7 @@ describe('dsh-quantskills-plugin bundle', () => {
       { id: 'workspace', name: '@deepseek-ai/dsh-workspace' },
       { id: 'ui-workspace', name: '@deepseek-ai/dsh-client-ui-workspace' },
       { id: 'ui-settings', name: '@deepseek-ai/dsh-client-ui-settings' },
+      { id: 'ui-settings-models', name: '@deepseek-ai/dsh-client-ui-settings-models' },
       { id: 'ui-conversation', name: '@deepseek-ai/dsh-client-ui-conversation' },
       { id: 'ui-tool', name: '@deepseek-ai/dsh-client-ui-tool' },
     ], overlay, (message, ...args) => {
@@ -235,7 +236,11 @@ describe('dsh-quantskills-plugin bundle', () => {
       expect(entries.find(row => row.id === id)).toMatchObject({ id, name })
       expect(entries.find(row => row.id === id)).not.toMatchObject({ disabled: true })
     }
-    expect(overlay.every(patch => 'insert' in patch)).toBe(true)
+    expect(overlay.filter(patch => 'insert' in patch)).toHaveLength(1)
+    expect(entries.find(row => row.id === 'ui-settings-models')).toMatchObject({
+      id: 'ui-settings-models',
+      disabled: true,
+    })
     expect(entries.filter(row => row.id === 'ui-quantskills')).toEqual([{
       id: 'ui-quantskills',
       name: '@deepseek-ai/dsh-client-ui-quantskills',

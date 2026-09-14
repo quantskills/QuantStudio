@@ -1,7 +1,12 @@
-# QuantSkills native-plugin composition. The stock ui-layout, ui-sidebar,
+# QuantStudio application composition. The stock ui-layout, ui-sidebar,
 # conversation, details, settings, and workspace rows remain active. The
 # QuantSkills client detects the stock shell's `shell.overlay` declaration and
 # contributes an application launcher plus an additive full-screen workbench.
+
+# QuantStudio provides its own model setup. Do not mount the upstream
+# product's welcome notice and competing model onboarding.
+- id: ui-settings-models
+  disabled: true
 
 - insert:
     - id: agent-team

@@ -1,13 +1,7 @@
 {
-  "version": "0.1.29",
+  "version": "0.1.30",
   "changes": [
-    "使用 Windows 原生真实路径解析处理 8.3 短路径，并记录托管安装跳过原因。",
-    "兼容 Windows Git 换行配置，避免把干净目录误判为开发修改而跳过托管安装。",
-    "修复 Windows 用户目录短路径导致托管安装被跳过的问题。",
-    "统一 Windows/macOS 更新依赖安装方式，直接调用启动器固定的 Node 与 pnpm CLI。",
-    "修复仅安装 PowerShell 7 时默认工作区读取失败的问题。",
-    "Windows 文档目录检测兼容系统 PowerShell 路径与 pwsh.exe，保留重定向文档目录。",
-    "桌面启动器使用实际可用的 PowerShell，不再固定依赖 powershell.exe。",
-    "macOS、Windows、Linux 均运行启动冒烟测试，补充跨平台工作区测试与使用说明。"
+    "移除上游 DSH 内测声明和重复的模型引导，首次进入时使用 QuantStudio 自己的模型配置界面。",
+    "保留模型服务、工作区、会话、技能、专家和专家团，更新不会覆盖个人数据。"
   ]
 }
