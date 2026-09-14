@@ -698,8 +698,15 @@ body[data-qs-plugin-theme='dark'] .brandAsset,
 .catalogSync[data-state='error'] i { background: var(--dsw-static-red-500, #d92d20); }
 .sessionDrawer header b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sessionDrawer header button { display: flex; align-items: center; gap: 6px; padding: 9px 12px; border: 1px solid var(--qs-border); border-radius: 8px; }
-.sessionHeaderActions { display: flex; align-items: center; gap: 7px; }
-.sessionHeaderActions .authoringButton { display: inline-flex; flex: 0 0 auto; justify-content: center; white-space: nowrap; padding: 8px 10px; border: 0; border-radius: 8px; }
+.sessionHeaderActions { display: flex; flex: 0 0 auto; align-items: center; gap: 7px; }
+.sessionHeaderActions > button,
+.sessionHeaderActions :is(.notificationButton, .authoringButton) { box-sizing: border-box; display: inline-flex; flex: 0 0 auto; align-items: center; justify-content: center; gap: 6px; height: 38px; min-height: 38px; padding: 0 12px; border: 1px solid var(--qs-border); border-radius: 8px; color: inherit; background: transparent; font: inherit; line-height: 1; white-space: nowrap; cursor: pointer; }
+.sessionHeaderActions > button:is(:hover, [aria-expanded='true']),
+.sessionHeaderActions :is(.notificationButton, .authoringButton):is(:hover, [aria-expanded='true']) { color: var(--qs-blue); border-color: var(--qs-blue); background: var(--dsw-alias-button-ghost-active-fill); }
+.sessionHeaderActions > button:focus-visible,
+.sessionHeaderActions :is(.notificationButton, .authoringButton):focus-visible { outline: 2px solid var(--qs-blue); outline-offset: 2px; }
+.sessionHeaderActions > button > svg,
+.sessionHeaderActions :is(.notificationButton, .authoringButton) > svg { flex: 0 0 auto; }
 .sessionSearch { min-height: 42px; display: flex; align-items: center; gap: 9px; margin-top: 18px; padding: 0 12px; color: var(--qs-muted); border: 1px solid var(--qs-border); border-radius: 9px; background: var(--dsw-alias-bg-base); }
 .sessionSearch:focus-within { color: var(--qs-blue); border-color: var(--qs-blue); box-shadow: 0 0 0 2px color-mix(in srgb, var(--qs-blue) 13%, transparent); }
 .sessionSearch input { min-width: 0; flex: 1; border: 0; outline: 0; color: inherit; background: transparent; font: inherit; }
@@ -782,9 +789,11 @@ body[data-qs-plugin-theme='dark'] .brandAsset,
 .removeDialog footer button, .renameDialog footer button { min-width: 84px; padding: 9px 14px; border: 1px solid var(--qs-border); border-radius: 8px; color: inherit; background: var(--dsw-alias-bg-base); font: inherit; cursor: pointer; }
 .removeConfirmButton { color: var(--dsw-alias-label-inverted-primary) !important; border-color: var(--dsw-static-red-500, #d92d20) !important; background: var(--dsw-static-red-500, #d92d20) !important; }
 .renameConfirmButton { color: var(--dsw-alias-label-inverted-primary) !important; border-color: var(--qs-blue) !important; background: var(--qs-blue) !important; }
-@container (max-width: 300px) {
+@container (max-width: 360px) {
   .sessionHeader { align-items: stretch; flex-direction: column; gap: 9px; }
   .sessionHeaderActions { justify-content: flex-end; }
+}
+@container (max-width: 300px) {
   .sessionBulkBar { grid-template-columns: auto minmax(0, 1fr) auto; }
   .sessionBulkBar small { display: none; }
   .sessionBulkBar button { min-width: 48px; }

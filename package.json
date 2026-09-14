@@ -1,7 +1,7 @@
 {
   "name": "@quantskills/dsh-plugin",
   "description": "QuantStudio local AI workspace for quantitative research and everyday work, with an integrated pinned DSH runtime",
-  "version": "0.1.35",
+  "version": "0.1.36",
   "license": "GPL-3.0-or-later OR LicenseRef-PandaAI-Commercial",
   "type": "module",
   "packageManager": "pnpm@11.7.0",
