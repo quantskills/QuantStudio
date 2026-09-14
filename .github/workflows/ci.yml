@@ -44,6 +44,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Test installation entry point
+        run: pnpm exec vitest run tests/application-bootstrap.spec.ts
+
       - name: Check source and types
         run: pnpm run check
 

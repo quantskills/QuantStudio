@@ -65,6 +65,8 @@ describe('stable application bootstrap', () => {
       encoding: 'utf8', windowsHide: true,
     })
     expect(result.status, result.stderr).toBe(0)
+    expect(result.stderr).not.toContain('Managed install skipped')
+    expect(result.stderr).not.toContain('Managed install inspection failed')
     const application = join(home, 'quantskills', 'application')
     const target = join(application, 'versions', commit)
     expect(JSON.parse(await readFile(join(application, 'state.json'), 'utf8')).active).toBe(commit)
