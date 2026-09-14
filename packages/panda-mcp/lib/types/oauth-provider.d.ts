@@ -11,10 +11,12 @@ export declare class PandaMcpOAuthProvider implements OAuthClientProvider {
     private readonly store;
     private readonly redirect;
     private readonly openAuthorization;
-    constructor(store: PandaMcpOAuthStore, redirect: string, openAuthorization: OpenAuthorization);
+    private readonly oauthState;
+    constructor(store: PandaMcpOAuthStore, redirect: string, openAuthorization: OpenAuthorization, oauthState?: string);
     get redirectUrl(): string;
     get clientMetadata(): OAuthClientMetadata;
     clientInformation(): OAuthClientInformationMixed | undefined;
+    state(): string;
     saveClientInformation(clientInformation: OAuthClientInformationMixed): Promise<void>;
     tokens(): OAuthTokens | undefined;
     saveTokens(tokens: OAuthTokens): Promise<void>;

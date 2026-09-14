@@ -72,6 +72,18 @@ window.__ModuleLoader__.load({
 			link.remove();
 		}
 		//#endregion
+		//#region lib/types/client/remote-read.js
+		/** Briefly tolerate a restarting host for read-only projections. Mutations never retry. */
+		async function retryHostRead(read) {
+			for (let attempt = 0;; attempt++) try {
+				return await read();
+			} catch (error) {
+				const message = error instanceof Error ? error.message : String(error);
+				if (attempt >= 2 || !/HTTP\s+(?:404|502|503|504)\b|Failed to fetch|NetworkError|connection (?:closed|reset)/i.test(message)) throw error;
+				await new Promise((resolve) => setTimeout(resolve, attempt === 0 ? 300 : 900));
+			}
+		}
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowClockwise.es.js
 		const a$33 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M244,56v48a12,12,0,0,1-12,12H184a12,12,0,1,1,0-24H201.1l-19-17.38c-.13-.12-.26-.24-.38-.37A76,76,0,1,0,127,204h1a75.53,75.53,0,0,0,52.15-20.72,12,12,0,0,1,16.49,17.45A99.45,99.45,0,0,1,128,228h-1.37A100,100,0,1,1,198.51,57.06L220,76.72V56a12,12,0,0,1,24,0Z" }))],
@@ -26676,11 +26688,11 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 				});
 				try {
 					const [definitions, archives, teams, teamArchives, sources] = await Promise.allSettled([
-						Promise.resolve().then(() => this.host.list()),
-						Promise.resolve().then(() => this.host.sessions()),
-						Promise.resolve().then(() => this.host.teamList()),
-						Promise.resolve().then(() => this.host.teamSessions()),
-						Promise.resolve().then(() => this.host.sources?.() ?? [])
+						retryHostRead(() => this.host.list()),
+						retryHostRead(() => this.host.sessions()),
+						retryHostRead(() => this.host.teamList()),
+						retryHostRead(() => this.host.teamSessions()),
+						retryHostRead(async () => this.host.sources?.() ?? [])
 					]);
 					if (revision !== this.revision) return;
 					const definitionsReady = definitions.status === "fulfilled" && teams.status === "fulfilled";
@@ -39859,11 +39871,11 @@ void main() {
 							(0, react_jsx_runtime.jsx)("button", {
 								type: "button",
 								className: QuantSkillsApp_module_css_default.primaryButton,
-								disabled: !idle,
+								disabled: !idle && !snapshot?.authorizationUrl,
 								onClick: () => {
 									run(authenticate);
 								},
-								children: connected || phase === "needs_auth" ? "重新登录" : "登录"
+								children: snapshot?.authorizationUrl ? "继续授权" : connected || phase === "needs_auth" ? "重新登录" : "登录"
 							}),
 							(0, react_jsx_runtime.jsxs)("button", {
 								type: "button",
@@ -42145,11 +42157,11 @@ void main() {
 						(0, react_jsx_runtime.jsx)("button", {
 							type: "button",
 							className: QuantSkillsApp_module_css_default.pandaMcpAction,
-							disabled: busy || phase === "authenticating",
+							disabled: busy || phase === "authenticating" && !snapshot?.authorizationUrl,
 							onClick: () => {
 								run(connected ? refresh : authenticate);
 							},
-							children: busy || phase === "authenticating" ? "连接中…" : connected ? "刷新连接" : "连接 PandaData"
+							children: snapshot?.authorizationUrl ? "继续 PandaData 授权" : busy || phase === "authenticating" ? "连接中…" : connected ? "刷新连接" : "连接 PandaData"
 						})
 					]
 				})]
@@ -44132,8 +44144,16 @@ void main() {
 				return response.value;
 			};
 			const pandaMcp = Object.freeze({
-				status: () => unwrapRemote(ctx.remote.pandaMcp.status()),
-				authenticate: () => unwrapRemote(ctx.remote.pandaMcp.authenticate()),
+				status: () => retryHostRead(() => unwrapRemote(ctx.remote.pandaMcp.status())),
+				authenticate: async () => {
+					const status = await unwrapRemote(ctx.remote.pandaMcp.authenticate());
+					if (status.authorizationUrl) {
+						const target = new URL(status.authorizationUrl);
+						if (target.protocol !== "https:" || target.origin !== new URL(status.url).origin) throw new Error("PandaData 授权地址不可信。");
+						window.location.assign(target.href);
+					}
+					return status;
+				},
 				refresh: () => unwrapRemote(ctx.remote.pandaMcp.refresh()),
 				logout: () => unwrapRemote(ctx.remote.pandaMcp.logout())
 			});

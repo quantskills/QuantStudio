@@ -1,5 +1,6 @@
 import { createElement } from 'react';
 import { artifactDownload } from "./artifact-resource.js";
+import { retryHostRead } from "./remote-read.js";
 import { FinalDeliverables } from "./FinalDeliverables.js";
 import { resolveWorkspacePath } from '@deepseek-ai/dsh-util-workspace-path';
 import { QuantSkillsCatalogAutoChecker, QuantSkillsCatalogController } from "./catalog.js";
@@ -298,8 +299,17 @@ export function mountQuantSkillsApplication(ctx, options) {
         return response.value;
     };
     const pandaMcp = Object.freeze({
-        status: () => unwrapRemote(ctx.remote.pandaMcp.status()),
-        authenticate: () => unwrapRemote(ctx.remote.pandaMcp.authenticate()),
+        status: () => retryHostRead(() => unwrapRemote(ctx.remote.pandaMcp.status())),
+        authenticate: async () => {
+            const status = await unwrapRemote(ctx.remote.pandaMcp.authenticate());
+            if (status.authorizationUrl) {
+                const target = new URL(status.authorizationUrl);
+                if (target.protocol !== 'https:' || target.origin !== new URL(status.url).origin)
+                    throw new Error('PandaData 授权地址不可信。');
+                window.location.assign(target.href);
+            }
+            return status;
+        },
         refresh: () => unwrapRemote(ctx.remote.pandaMcp.refresh()),
         logout: () => unwrapRemote(ctx.remote.pandaMcp.logout()),
     });

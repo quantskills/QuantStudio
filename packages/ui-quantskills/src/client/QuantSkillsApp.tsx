@@ -4655,9 +4655,9 @@ function PandaDataSettings({ status, authenticate, refresh, logout }: {
       <button
         type="button"
         className={css.primaryButton}
-        disabled={!idle}
+        disabled={!idle && !snapshot?.authorizationUrl}
         onClick={() => { void run(authenticate) }}
-      >{connected || phase === 'needs_auth' ? '重新登录' : '登录'}</button>
+      >{snapshot?.authorizationUrl ? '继续授权' : connected || phase === 'needs_auth' ? '重新登录' : '登录'}</button>
       <button
         type="button"
         className={css.outlineButton}

@@ -63,6 +63,7 @@ function fakeClient(options: {
 }
 
 async function setup(options: {
+  publicOrigin?: string
   connector?: PandaMcpSessionConnector
   openAuthorization?: (url: URL) => void | Promise<void>
 } = {}) {
@@ -81,7 +82,7 @@ async function setup(options: {
   } as never)
   ctx.provide('agents', { list: () => [] } as never)
   ctx.provide('systemPrompt', { section: () => () => {} } as never)
-  await ctx.plugin(PandaMcpGateway, { dshHome, authTimeoutMs: 5_000 })
+  await ctx.plugin(PandaMcpGateway, { dshHome, authTimeoutMs: 5_000, publicOrigin: options.publicOrigin ?? '', callbackPort: 0 })
   if (options.connector !== undefined) ctx.pandaMcp.useConnector(options.connector)
   if (options.openAuthorization !== undefined) ctx.pandaMcp.useOpenAuthorization(options.openAuthorization)
   await ctx.pandaMcp.status()
@@ -293,6 +294,29 @@ describe('panda-mcp', () => {
     expect(opened).toHaveLength(1)
     await ctx.pandaMcp.logout()
     expect((await ctx.pandaMcp.status()).phase).toBe('disconnected')
+  })
+
+  it('returns browser authorization immediately on a server without launching a desktop browser', async () => {
+    let finish!: () => void
+    let desktopOpened = false
+    const gate = new Promise<void>(resolve => { finish = resolve })
+    const { ctx } = await setup({
+      publicOrigin: 'https://workspace.example',
+      openAuthorization: () => { desktopOpened = true },
+      connector: { connect: async ({ redirectUrl, openAuthorization }) => {
+        expect(redirectUrl).toBe('https://workspace.example/api/quantskills/panda-oauth/callback')
+        await openAuthorization(new URL('https://pandadatamcp.pandaaiquant.com/authorize?state=test'))
+        await gate
+        return { client: fakeClient({}), close: async () => {} }
+      } },
+    })
+    const first = await ctx.pandaMcp.authenticate()
+    expect(first).toMatchObject({ phase: 'authenticating', authorizationUrl: expect.stringContaining('/authorize') })
+    expect(desktopOpened).toBe(false)
+    finish()
+    await ctx.pandaMcp.ensureAuthenticated()
+    expect(await ctx.pandaMcp.status()).toMatchObject({ phase: 'connected' })
+    expect((await ctx.pandaMcp.status()).authorizationUrl).toBeUndefined()
   })
 
   it('re-registers the OAuth client for each loopback callback port', async () => {

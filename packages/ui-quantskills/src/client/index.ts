@@ -1,5 +1,6 @@
 import { createElement, type ComponentType } from 'react'
 import { artifactDownload } from './artifact-resource.ts'
+import { retryHostRead } from './remote-read.ts'
 import { FinalDeliverables } from './FinalDeliverables.tsx'
 /** QuantSkills browser application assembled over the existing DSH layout, sessions, and conversation services. */
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
@@ -446,8 +447,16 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
     return response.value
   }
   const pandaMcp = Object.freeze({
-    status: () => unwrapRemote<PandaMcpStatus>(ctx.remote.pandaMcp.status()),
-    authenticate: () => unwrapRemote<PandaMcpStatus>(ctx.remote.pandaMcp.authenticate()),
+    status: () => retryHostRead(() => unwrapRemote<PandaMcpStatus>(ctx.remote.pandaMcp.status())),
+    authenticate: async () => {
+      const status = await unwrapRemote<PandaMcpStatus>(ctx.remote.pandaMcp.authenticate())
+      if (status.authorizationUrl) {
+        const target = new URL(status.authorizationUrl)
+        if (target.protocol !== 'https:' || target.origin !== new URL(status.url).origin) throw new Error('PandaData 授权地址不可信。')
+        window.location.assign(target.href)
+      }
+      return status
+    },
     refresh: () => unwrapRemote<PandaMcpStatus>(ctx.remote.pandaMcp.refresh()),
     logout: () => unwrapRemote<PandaMcpStatus>(ctx.remote.pandaMcp.logout()),
   })

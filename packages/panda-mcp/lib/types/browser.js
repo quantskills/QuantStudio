@@ -19,6 +19,11 @@ export function systemBrowserLaunch(href, platform = process.platform) {
  */
 export function openSystemBrowser(href) {
     const launch = systemBrowserLaunch(href);
-    spawn(launch.command, launch.args, { detached: true, stdio: 'ignore', windowsHide: true }).unref();
+    return new Promise((resolve, reject) => {
+        const child = spawn(launch.command, launch.args, { detached: true, stdio: 'ignore', windowsHide: true });
+        child.once('error', () => reject(new Error('无法打开本机浏览器，请使用 QuantSkills 网页授权。')));
+        child.once('exit', code => code === 0 ? resolve() : reject(new Error('本机浏览器启动失败，请使用 QuantSkills 网页授权。')));
+        child.unref();
+    });
 }
 //# sourceMappingURL=browser.js.map

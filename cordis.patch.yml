@@ -8,6 +8,26 @@
 - id: ui-settings-models
   disabled: true
 
+- id: system-prompt
+  config:
+    includeHarnessIdentity: false
+    persona: >-
+      You are QuantSkills, an AI assistant for research and everyday work.
+      Your working directory is {{cwd}}. The user interacts with you through the QuantSkills workbench.
+      References to this app mean QuantSkills unless the user names another product.
+      Browser DOM, routes and screenshots are not implicit context; inspect them with available tools when needed.
+
+- id: web-runtime
+  inject: [webStartup]
+  config:
+    openBrowser: !!js ctx.webStartup.openBrowser
+    printUrl: true
+    surfaceContext: false
+    trustedHosts: !!js ctx.webStartup.trustedHosts
+
+- id: skill-badge
+  disabled: true
+
 - insert:
     - id: agent-team
       name: '@deepseek-ai/dsh-agent-team'

@@ -9,6 +9,7 @@ import type {
   QuantSkillsAgentTeamSessionCreateResult, QuantSkillsAgentTeamUpdateRequest,
 } from './plugin-types.ts'
 import type { QuantSkillsAgentsSnapshot } from './types.ts'
+import { retryHostRead } from './remote-read.ts'
 
 /** Typed user Agent methods contributed by the QuantSkills Host Remote. */
 export interface QuantSkillsAgentsPort {
@@ -59,11 +60,11 @@ export class QuantSkillsAgentsController {
     this.publish({ ...current, phase: hadProjection ? this.snapshot.phase : 'loading' })
     try {
       const [definitions, archives, teams, teamArchives, sources] = await Promise.allSettled([
-        Promise.resolve().then(() => this.host.list()),
-        Promise.resolve().then(() => this.host.sessions()),
-        Promise.resolve().then(() => this.host.teamList()),
-        Promise.resolve().then(() => this.host.teamSessions()),
-        Promise.resolve().then(() => this.host.sources?.() ?? []),
+        retryHostRead(() => this.host.list()),
+        retryHostRead(() => this.host.sessions()),
+        retryHostRead(() => this.host.teamList()),
+        retryHostRead(() => this.host.teamSessions()),
+        retryHostRead(async () => this.host.sources?.() ?? []),
       ])
       if (revision !== this.revision) return
       const definitionsReady = definitions.status === 'fulfilled' && teams.status === 'fulfilled'

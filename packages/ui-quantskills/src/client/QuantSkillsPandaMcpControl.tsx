@@ -132,9 +132,9 @@ function QuantSkillsPandaMcpSurface({
       <button
         type="button"
         className={css.pandaMcpAction}
-        disabled={busy || phase === 'authenticating'}
+        disabled={busy || (phase === 'authenticating' && !snapshot?.authorizationUrl)}
         onClick={() => { void run(connected ? refresh : authenticate) }}
-      >{busy || phase === 'authenticating' ? '连接中…' : connected ? '刷新连接' : '连接 PandaData'}</button>
+      >{snapshot?.authorizationUrl ? '继续 PandaData 授权' : busy || phase === 'authenticating' ? '连接中…' : connected ? '刷新连接' : '连接 PandaData'}</button>
     </section>}
   </div>
 }

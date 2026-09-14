@@ -16,6 +16,7 @@ const _deepseek_ai_dsh_panda_mcp_pandaMcp_authenticate_result$schema = z.object(
   'toolCount': z.number().readonly(),
   'toolNames': z.array(z.string()).readonly(),
   'message': z.string().readonly(),
+  'authorizationUrl': z.string().readonly().optional(),
 })
 const _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseCategorize_parameter_0$schema = z.object({
   'id': z.string(),
@@ -238,6 +239,7 @@ const _deepseek_ai_dsh_panda_mcp_pandaMcp_logout_result$schema = z.object({
   'toolCount': z.number().readonly(),
   'toolNames': z.array(z.string()).readonly(),
   'message': z.string().readonly(),
+  'authorizationUrl': z.string().readonly().optional(),
 })
 const _deepseek_ai_dsh_panda_mcp_pandaMcp_refresh_result$schema = z.object({
   'ok': z.literal(true).readonly(),
@@ -246,6 +248,7 @@ const _deepseek_ai_dsh_panda_mcp_pandaMcp_refresh_result$schema = z.object({
   'toolCount': z.number().readonly(),
   'toolNames': z.array(z.string()).readonly(),
   'message': z.string().readonly(),
+  'authorizationUrl': z.string().readonly().optional(),
 })
 const _deepseek_ai_dsh_panda_mcp_pandaMcp_status_result$schema = z.object({
   'ok': z.literal(true).readonly(),
@@ -254,6 +257,7 @@ const _deepseek_ai_dsh_panda_mcp_pandaMcp_status_result$schema = z.object({
   'toolCount': z.number().readonly(),
   'toolNames': z.array(z.string()).readonly(),
   'message': z.string().readonly(),
+  'authorizationUrl': z.string().readonly().optional(),
 })
 
 export const TYPERT = {
@@ -276,7 +280,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#PandaMcpStatus',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_authenticate_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":254,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":275,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/databaseCategorize',
@@ -302,7 +306,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#DataSummary',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseCategorize_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":227,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":248,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/databaseFetch',
@@ -328,7 +332,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#DataSummary',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseFetch_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":217,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":238,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/databaseImport',
@@ -354,7 +358,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#DataSummary',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseImport_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":215,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":236,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/databaseList',
@@ -370,7 +374,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp#pandaMcp/databaseList:result',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseList_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":213,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":234,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/databasePreview',
@@ -396,7 +400,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#DataResult',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_databasePreview_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":221,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":242,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/databaseQuery',
@@ -422,7 +426,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#DataResult',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseQuery_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":219,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":240,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/databaseRefresh',
@@ -448,7 +452,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#DataSummary',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRefresh_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":223,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":244,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/databaseRemove',
@@ -474,7 +478,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp#pandaMcp/databaseRemove:result',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":225,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":246,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/logout',
@@ -490,7 +494,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#PandaMcpStatus',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_logout_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":278,"column":9},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":302,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/refresh',
@@ -506,7 +510,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#PandaMcpStatus',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_refresh_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":260,"column":9},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":284,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-panda-mcp#pandaMcp/status',
@@ -522,7 +526,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#PandaMcpStatus',
         schema: _deepseek_ai_dsh_panda_mcp_pandaMcp_status_result$schema,
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":248,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":269,"column":3},
     },
   ],
   model: {
@@ -668,7 +672,7 @@ export const TYPERT = {
           },
           {
             "name": "PandaMcpStatus",
-            "declaration": "export interface PandaMcpStatus {\n    readonly ok: true;\n    readonly phase: PandaMcpPhase;\n    readonly url: string;\n    readonly toolCount: number;\n    readonly toolNames: readonly string[];\n    readonly message: string;\n}"
+            "declaration": "export interface PandaMcpStatus {\n    readonly ok: true;\n    readonly phase: PandaMcpPhase;\n    readonly url: string;\n    readonly toolCount: number;\n    readonly toolNames: readonly string[];\n    readonly message: string;\n    readonly authorizationUrl?: string;\n}"
           }
         ]
       }

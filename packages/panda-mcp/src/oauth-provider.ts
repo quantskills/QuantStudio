@@ -7,6 +7,7 @@ import type {
   OAuthTokens,
 } from '@modelcontextprotocol/sdk/shared/auth.js'
 import type { PandaMcpOAuthStore } from './oauth-store.ts'
+import { randomUUID } from 'node:crypto'
 
 /** 打开授权页的回调。 */
 export type OpenAuthorization = (url: URL) => void | Promise<void>
@@ -19,6 +20,7 @@ export class PandaMcpOAuthProvider implements OAuthClientProvider {
     private readonly store: PandaMcpOAuthStore,
     private readonly redirect: string,
     private readonly openAuthorization: OpenAuthorization,
+    private readonly oauthState: string = randomUUID(),
   ) {}
 
   get redirectUrl(): string {
@@ -27,7 +29,7 @@ export class PandaMcpOAuthProvider implements OAuthClientProvider {
 
   get clientMetadata(): OAuthClientMetadata {
     return {
-      client_name: 'QuantSkills DSH',
+      client_name: 'QuantSkills',
       redirect_uris: [this.redirect],
       grant_types: ['authorization_code', 'refresh_token'],
       response_types: ['code'],
@@ -38,6 +40,8 @@ export class PandaMcpOAuthProvider implements OAuthClientProvider {
   clientInformation(): OAuthClientInformationMixed | undefined {
     return this.store.current().client
   }
+
+  state(): string { return this.oauthState }
 
   async saveClientInformation(clientInformation: OAuthClientInformationMixed): Promise<void> {
     await this.store.saveClient(clientInformation)

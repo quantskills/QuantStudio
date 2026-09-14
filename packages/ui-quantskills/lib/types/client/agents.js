@@ -1,4 +1,5 @@
 import { capabilityDisplayName } from '@deepseek-ai/dsh-quantskills-session/display';
+import { retryHostRead } from "./remote-read.js";
 /** Observable controller over durable user Agents and their authoritative Session archives. */
 export class QuantSkillsAgentsController {
     host;
@@ -31,11 +32,11 @@ export class QuantSkillsAgentsController {
         this.publish({ ...current, phase: hadProjection ? this.snapshot.phase : 'loading' });
         try {
             const [definitions, archives, teams, teamArchives, sources] = await Promise.allSettled([
-                Promise.resolve().then(() => this.host.list()),
-                Promise.resolve().then(() => this.host.sessions()),
-                Promise.resolve().then(() => this.host.teamList()),
-                Promise.resolve().then(() => this.host.teamSessions()),
-                Promise.resolve().then(() => this.host.sources?.() ?? []),
+                retryHostRead(() => this.host.list()),
+                retryHostRead(() => this.host.sessions()),
+                retryHostRead(() => this.host.teamList()),
+                retryHostRead(() => this.host.teamSessions()),
+                retryHostRead(async () => this.host.sources?.() ?? []),
             ]);
             if (revision !== this.revision)
                 return;

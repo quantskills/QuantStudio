@@ -14,7 +14,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { UnauthorizedError } from '@modelcontextprotocol/sdk/client/auth.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { openSystemBrowser } from './browser.ts'
-import { startOauthLoopback } from './callback-server.ts'
+import { startOauthLoopback, type PandaMcpLoopback } from './callback-server.ts'
 import { PandaMcpOAuthProvider } from './oauth-provider.ts'
 import { PandaMcpOAuthStore, pandaMcpOAuthPath } from './oauth-store.ts'
 import { publicToolName } from './public-name.ts'
@@ -72,6 +72,8 @@ export interface Config {
   readonly dshHome?: string
   readonly toolCallTimeoutMs?: number
   readonly authTimeoutMs?: number
+  readonly publicOrigin?: string
+  readonly callbackPort?: number
 }
 
 /** Loader schema。 */
@@ -81,6 +83,8 @@ export const Config: z<Config> = z.object({
   dshHome: z.string().default(''),
   toolCallTimeoutMs: z.number().default(60_000),
   authTimeoutMs: z.number().default(300_000),
+  publicOrigin: z.string().default(''),
+  callbackPort: z.number().default(3197),
 })
 
 declare module '@deepseek-ai/cordis' {
@@ -113,7 +117,7 @@ function createPandaMcpTransport(url: string, provider: PandaMcpOAuthProvider): 
 }
 
 function createPandaMcpClient(): Client {
-  return new Client({ name: 'quantskills-dsh', version: '0.1.17' })
+  return new Client({ name: 'quantskills', version: '0.1.31' })
 }
 
 /** 默认：MCP SDK Streamable HTTP + OAuth。 */
@@ -124,8 +128,9 @@ export async function connectPublicPandaMcp(args: {
   openAuthorization: (url: URL) => void | Promise<void>
   waitForCode: (signal?: AbortSignal) => Promise<string>
   signal?: AbortSignal
+  state?: string
 }): Promise<{ client: Client; close: () => Promise<void> }> {
-  const provider = new PandaMcpOAuthProvider(args.store, args.redirectUrl, args.openAuthorization)
+  const provider = new PandaMcpOAuthProvider(args.store, args.redirectUrl, args.openAuthorization, args.state)
   const firstTransport = createPandaMcpTransport(args.url, provider)
   const firstClient = createPandaMcpClient()
   try {
@@ -177,12 +182,26 @@ export class PandaMcpGateway extends TypertRemoteService {
   private live: ConnectedMcpSession | undefined
   private closeLive: (() => Promise<void>) | undefined
   private authTail: Promise<PandaMcpStatus> | undefined
+  private readonly publicOrigin: string | undefined
+  private readonly callbackPort: number
+  private authorizationUrl: string | undefined
+  private authorizationReady: Promise<void> | undefined
+  private resolveAuthorization: (() => void) | undefined
+  private authController: AbortController | undefined
   private connector: PandaMcpSessionConnector | undefined
-  private openAuthorization: (url: URL) => void | Promise<void> = (url) => { openSystemBrowser(url.href) }
+  private openAuthorization: (url: URL) => void | Promise<void> = (url) => openSystemBrowser(url.href)
 
   constructor(ctx: Context, config: Config) {
     super(ctx, 'pandaMcp')
     this.url = validateHttpUrl(config.url ?? DEFAULT_PANDA_MCP_URL)
+    const origin = config.publicOrigin?.trim() || process.env.QUANTSKILLS_PUBLIC_URL?.trim()
+    if (origin) {
+      const parsed = new URL(validateHttpUrl(origin))
+      if (parsed.pathname !== '/' || parsed.search) throw new Error('PandaData publicOrigin 必须是 HTTPS 站点来源。')
+      this.publicOrigin = parsed.origin
+    }
+    this.callbackPort = config.callbackPort ?? 3197
+    if (!Number.isInteger(this.callbackPort) || this.callbackPort < 0 || this.callbackPort > 65535) throw new Error('PandaData callbackPort 无效。')
     this.serverName = config.serverName ?? 'pandadata'
     if (!/^[A-Za-z0-9_-]{1,32}$/.test(this.serverName)) {
       throw new Error('panda-mcp: serverName 必须匹配 [A-Za-z0-9_-]{1,32}')
@@ -202,6 +221,8 @@ export class PandaMcpGateway extends TypertRemoteService {
     this.installPrompts()
     this.tools = this.mountStubs()
     ctx.effect(() => async () => {
+      this.authController?.abort()
+      await this.authTail
       this.disposePrompts()
       disposeTools(this.tools)
       await this.closeLive?.()
@@ -252,7 +273,10 @@ export class PandaMcpGateway extends TypertRemoteService {
 
   @Remote
   authenticate(signal?: AbortSignal): Promise<PandaMcpStatus> {
-    return this.ensureAuthenticated(signal)
+    const completion = this.ensureAuthenticated(this.publicOrigin ? undefined : signal)
+    return this.publicOrigin && this.authorizationReady
+      ? Promise.race([completion, this.authorizationReady.then(() => this.snapshot())])
+      : completion
   }
 
   /** 用已保存 token 静默重连；没有 token 时只返回当前状态，不打开浏览器。 */
@@ -277,6 +301,8 @@ export class PandaMcpGateway extends TypertRemoteService {
   @Remote
   async logout(signal?: AbortSignal): Promise<PandaMcpStatus> {
     void signal
+    this.authController?.abort()
+    await this.authTail
     await this.dropLive()
     await this.store.clear('all')
     this.phase = 'disconnected'
@@ -293,6 +319,7 @@ export class PandaMcpGateway extends TypertRemoteService {
       toolCount: this.tools.size,
       toolNames: [...this.tools.keys()],
       message: this.message,
+      ...(this.phase === 'authenticating' && this.authorizationUrl ? { authorizationUrl: this.authorizationUrl } : {}),
     }
   }
 
@@ -318,6 +345,8 @@ export class PandaMcpGateway extends TypertRemoteService {
   }
 
   private async runAuthentication(signal?: AbortSignal): Promise<PandaMcpStatus> {
+    this.authorizationUrl = undefined
+    this.authorizationReady = new Promise(resolve => { this.resolveAuthorization = resolve })
     if (this.store.hasAccessToken()) {
       try {
         await this.connectLive({
@@ -332,17 +361,20 @@ export class PandaMcpGateway extends TypertRemoteService {
     this.phase = 'authenticating'
     this.message = '正在打开 PandaData 登录页。'
     const controller = new AbortController()
+    this.authController = controller
     const timeout = setTimeout(() => { controller.abort() }, this.authTimeoutMs)
     const onAbort = (): void => { controller.abort() }
     signal?.addEventListener('abort', onAbort, { once: true })
-    const loopback = await startOauthLoopback()
+    let loopback: PandaMcpLoopback | undefined
     try {
+      loopback = await startOauthLoopback(this.publicOrigin ? { publicOrigin: this.publicOrigin, port: this.callbackPort } : {})
       // Dynamic registration binds the client to this loopback port.
       await this.store.clear('client')
       await this.connectLive({
         interactive: true,
         redirectUrl: loopback.redirectUrl,
-        waitForCode: () => loopback.waitForCode(controller.signal),
+        waitForCode: () => loopback!.waitForCode(controller.signal),
+        state: loopback.state,
         signal: controller.signal,
       })
       return this.snapshot()
@@ -356,7 +388,9 @@ export class PandaMcpGateway extends TypertRemoteService {
     } finally {
       clearTimeout(timeout)
       signal?.removeEventListener('abort', onAbort)
-      await loopback.close()
+      this.authorizationUrl = undefined
+      this.authController = undefined
+      await loopback?.close()
     }
   }
 
@@ -365,6 +399,7 @@ export class PandaMcpGateway extends TypertRemoteService {
     redirectUrl?: string
     waitForCode?: (signal?: AbortSignal) => Promise<string>
     signal?: AbortSignal
+    state?: string
   }): Promise<void> {
     await this.dropLive()
     const interactive = options?.interactive === true
@@ -373,7 +408,12 @@ export class PandaMcpGateway extends TypertRemoteService {
       throw new UnauthorizedError('PandaData 登录需要浏览器授权。')
     })
     const openAuthorization = interactive
-      ? this.openAuthorization
+      ? (url: URL) => {
+        if (!this.publicOrigin) return this.openAuthorization(url)
+        this.authorizationUrl = url.href
+        this.message = '请在浏览器中完成 PandaData 授权。'
+        this.resolveAuthorization?.()
+      }
       : () => { throw new UnauthorizedError('PandaData 需要重新登录。') }
     const session = this.connector === undefined
       ? await connectPublicPandaMcp({
@@ -382,6 +422,7 @@ export class PandaMcpGateway extends TypertRemoteService {
         redirectUrl,
         openAuthorization,
         waitForCode,
+        ...(options?.state === undefined ? {} : { state: options.state }),
         ...options?.signal === undefined ? {} : { signal: options.signal },
       })
       : await this.connector.connect({

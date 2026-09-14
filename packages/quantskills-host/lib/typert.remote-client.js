@@ -66,6 +66,7 @@ const _deepseek_ai_dsh_quantskills_host_quantSkills_applicationUpdateCheck_resul
   'currentCommit': z.string().readonly().optional(),
   'candidateVersion': z.string().readonly().optional(),
   'candidateCommit': z.string().readonly().optional(),
+  'releaseNotes': z.array(z.string()).readonly().optional(),
   'phase': z.union([z.literal("fetching"), z.literal("installing"), z.literal("verifying")]).readonly().optional(),
   'checkedAt': z.number().readonly().optional(),
   'errorCode': z.union([z.literal("CATALOG_FETCH_FAILED"), z.literal("CATALOG_INVALID"), z.literal("CATALOG_STALE"), z.literal("ASSET_NOT_FOUND"), z.literal("ASSET_README_FETCH_FAILED"), z.literal("ASSET_README_NOT_FOUND"), z.literal("ASSET_README_INVALID"), z.literal("INSTALL_INVALID_TREE"), z.literal("INSTALL_LIMIT_EXCEEDED"), z.literal("INSTALL_GIT_FAILED"), z.literal("INSTALL_EXPOSURE_FAILED"), z.literal("INSTALL_RECORD_CORRUPT"), z.literal("INSTALL_WRITE_FAILED"), z.literal("INSTALLED_VERSION_NOT_FOUND"), z.literal("INSTALLED_VERSION_NOT_SKILL"), z.literal("INSTALLED_VERSION_NOT_AGENT"), z.literal("APPLICATION_UPDATE_CHECK_FAILED"), z.literal("APPLICATION_UPDATE_NOT_AVAILABLE"), z.literal("APPLICATION_UPDATE_DOWNLOAD_FAILED"), z.literal("APPLICATION_UPDATE_INSTALL_FAILED"), z.literal("APPLICATION_UPDATE_VERIFY_FAILED"), z.literal("APPLICATION_UPDATE_STATE_CORRUPT"), z.literal("APPLICATION_UPDATE_PATH_INVALID"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_DIRTY"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_REMOTE"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_BRANCH"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_AHEAD"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_DIVERGED")]).readonly().optional(),
@@ -80,6 +81,7 @@ const _deepseek_ai_dsh_quantskills_host_quantSkills_applicationUpdateStart_resul
   'currentCommit': z.string().readonly().optional(),
   'candidateVersion': z.string().readonly().optional(),
   'candidateCommit': z.string().readonly().optional(),
+  'releaseNotes': z.array(z.string()).readonly().optional(),
   'phase': z.union([z.literal("fetching"), z.literal("installing"), z.literal("verifying")]).readonly().optional(),
   'checkedAt': z.number().readonly().optional(),
   'errorCode': z.union([z.literal("CATALOG_FETCH_FAILED"), z.literal("CATALOG_INVALID"), z.literal("CATALOG_STALE"), z.literal("ASSET_NOT_FOUND"), z.literal("ASSET_README_FETCH_FAILED"), z.literal("ASSET_README_NOT_FOUND"), z.literal("ASSET_README_INVALID"), z.literal("INSTALL_INVALID_TREE"), z.literal("INSTALL_LIMIT_EXCEEDED"), z.literal("INSTALL_GIT_FAILED"), z.literal("INSTALL_EXPOSURE_FAILED"), z.literal("INSTALL_RECORD_CORRUPT"), z.literal("INSTALL_WRITE_FAILED"), z.literal("INSTALLED_VERSION_NOT_FOUND"), z.literal("INSTALLED_VERSION_NOT_SKILL"), z.literal("INSTALLED_VERSION_NOT_AGENT"), z.literal("APPLICATION_UPDATE_CHECK_FAILED"), z.literal("APPLICATION_UPDATE_NOT_AVAILABLE"), z.literal("APPLICATION_UPDATE_DOWNLOAD_FAILED"), z.literal("APPLICATION_UPDATE_INSTALL_FAILED"), z.literal("APPLICATION_UPDATE_VERIFY_FAILED"), z.literal("APPLICATION_UPDATE_STATE_CORRUPT"), z.literal("APPLICATION_UPDATE_PATH_INVALID"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_DIRTY"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_REMOTE"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_BRANCH"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_AHEAD"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_DIVERGED")]).readonly().optional(),
@@ -92,6 +94,7 @@ const _deepseek_ai_dsh_quantskills_host_quantSkills_applicationUpdateStatus_resu
   'currentCommit': z.string().readonly().optional(),
   'candidateVersion': z.string().readonly().optional(),
   'candidateCommit': z.string().readonly().optional(),
+  'releaseNotes': z.array(z.string()).readonly().optional(),
   'phase': z.union([z.literal("fetching"), z.literal("installing"), z.literal("verifying")]).readonly().optional(),
   'checkedAt': z.number().readonly().optional(),
   'errorCode': z.union([z.literal("CATALOG_FETCH_FAILED"), z.literal("CATALOG_INVALID"), z.literal("CATALOG_STALE"), z.literal("ASSET_NOT_FOUND"), z.literal("ASSET_README_FETCH_FAILED"), z.literal("ASSET_README_NOT_FOUND"), z.literal("ASSET_README_INVALID"), z.literal("INSTALL_INVALID_TREE"), z.literal("INSTALL_LIMIT_EXCEEDED"), z.literal("INSTALL_GIT_FAILED"), z.literal("INSTALL_EXPOSURE_FAILED"), z.literal("INSTALL_RECORD_CORRUPT"), z.literal("INSTALL_WRITE_FAILED"), z.literal("INSTALLED_VERSION_NOT_FOUND"), z.literal("INSTALLED_VERSION_NOT_SKILL"), z.literal("INSTALLED_VERSION_NOT_AGENT"), z.literal("APPLICATION_UPDATE_CHECK_FAILED"), z.literal("APPLICATION_UPDATE_NOT_AVAILABLE"), z.literal("APPLICATION_UPDATE_DOWNLOAD_FAILED"), z.literal("APPLICATION_UPDATE_INSTALL_FAILED"), z.literal("APPLICATION_UPDATE_VERIFY_FAILED"), z.literal("APPLICATION_UPDATE_STATE_CORRUPT"), z.literal("APPLICATION_UPDATE_PATH_INVALID"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_DIRTY"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_REMOTE"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_BRANCH"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_AHEAD"), z.literal("APPLICATION_UPDATE_DEVELOPMENT_DIVERGED")]).readonly().optional(),
@@ -249,7 +252,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host/types#QuantSkillsInstalledAgentTemplate',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_agentTemplate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":671,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":680,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/applicationUpdateCheck',
@@ -274,7 +277,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host/types#QuantSkillsApplicationUpdateStartResult',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_applicationUpdateCheck_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":540,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":549,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/applicationUpdateStart',
@@ -289,7 +292,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host/types#QuantSkillsApplicationUpdateStartResult',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_applicationUpdateStart_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":549,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":558,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/applicationUpdateStatus',
@@ -304,7 +307,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host/types#QuantSkillsApplicationUpdateStatus',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_applicationUpdateStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":530,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":539,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/assetReadme',
@@ -330,7 +333,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host/types#QuantSkillsAssetReadme',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_assetReadme_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":560,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":569,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/catalog',
@@ -346,7 +349,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host/types#QuantSkillsCatalogSnapshot',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_catalog_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":478,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":487,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/catalogSyncStatus',
@@ -361,7 +364,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host/types#QuantSkillsCatalogSyncStatus',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_catalogSyncStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":494,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":503,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/installAsset',
@@ -388,7 +391,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host/types#QuantSkillsInstalledVersion',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_installAsset_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":575,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":584,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/list',
@@ -404,7 +407,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host/types#QuantSkillsInstalledSnapshot',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_list_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":504,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":513,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/manualSkillRead',
@@ -430,7 +433,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host#quantSkills/manualSkillRead:result',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_manualSkillRead_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":778,"column":9},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":787,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/manualSkillSave',
@@ -456,7 +459,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host/types#QuantSkillsInstalledVersion',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_manualSkillSave_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":789,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":798,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-host#quantSkills/uninstallAsset',
@@ -482,7 +485,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-host#quantSkills/uninstallAsset:result',
         schema: _deepseek_ai_dsh_quantskills_host_quantSkills_uninstallAsset_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":510,"column":3},
+      sourceLocation: {"file":"packages/quantskills-host/src/index.ts","line":519,"column":3},
     },
   ],
 }

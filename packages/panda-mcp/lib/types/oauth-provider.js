@@ -1,4 +1,5 @@
 /** MCP SDK 所需的 OAuthClientProvider：token 只进 OAuthStore。 */
+import { randomUUID } from 'node:crypto';
 /**
  * 文件持久化的 MCP OAuth 客户端。
  */
@@ -6,17 +7,19 @@ export class PandaMcpOAuthProvider {
     store;
     redirect;
     openAuthorization;
-    constructor(store, redirect, openAuthorization) {
+    oauthState;
+    constructor(store, redirect, openAuthorization, oauthState = randomUUID()) {
         this.store = store;
         this.redirect = redirect;
         this.openAuthorization = openAuthorization;
+        this.oauthState = oauthState;
     }
     get redirectUrl() {
         return this.redirect;
     }
     get clientMetadata() {
         return {
-            client_name: 'QuantSkills DSH',
+            client_name: 'QuantSkills',
             redirect_uris: [this.redirect],
             grant_types: ['authorization_code', 'refresh_token'],
             response_types: ['code'],
@@ -26,6 +29,7 @@ export class PandaMcpOAuthProvider {
     clientInformation() {
         return this.store.current().client;
     }
+    state() { return this.oauthState; }
     async saveClientInformation(clientInformation) {
         await this.store.saveClient(clientInformation);
     }

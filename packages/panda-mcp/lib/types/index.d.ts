@@ -37,6 +37,8 @@ export interface Config {
     readonly dshHome?: string;
     readonly toolCallTimeoutMs?: number;
     readonly authTimeoutMs?: number;
+    readonly publicOrigin?: string;
+    readonly callbackPort?: number;
 }
 /** Loader schema。 */
 export declare const Config: z<Config>;
@@ -54,6 +56,7 @@ export declare function connectPublicPandaMcp(args: {
     openAuthorization: (url: URL) => void | Promise<void>;
     waitForCode: (signal?: AbortSignal) => Promise<string>;
     signal?: AbortSignal;
+    state?: string;
 }): Promise<{
     client: Client;
     close: () => Promise<void>;
@@ -75,6 +78,12 @@ export declare class PandaMcpGateway extends TypertRemoteService {
     private live;
     private closeLive;
     private authTail;
+    private readonly publicOrigin;
+    private readonly callbackPort;
+    private authorizationUrl;
+    private authorizationReady;
+    private resolveAuthorization;
+    private authController;
     private connector;
     private openAuthorization;
     constructor(ctx: Context, config: Config);

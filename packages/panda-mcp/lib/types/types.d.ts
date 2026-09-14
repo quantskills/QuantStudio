@@ -9,6 +9,8 @@ export interface PandaMcpStatus {
     readonly toolCount: number;
     readonly toolNames: readonly string[];
     readonly message: string;
+    /** Browser handoff during interactive authorization; never contains access tokens. */
+    readonly authorizationUrl?: string;
 }
 /** 未登录或网关要求重新授权时返回给模型的固定错误。 */
 export interface PandaMcpReauthRequired {

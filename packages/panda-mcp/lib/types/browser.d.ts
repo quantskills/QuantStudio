@@ -14,6 +14,6 @@ export declare function systemBrowserLaunch(href: string, platform?: NodeJS.Plat
  * 打开系统默认浏览器。失败时抛出不含 URL 查询串的错误。
  * @param href - 完整授权 URL。
  */
-export declare function openSystemBrowser(href: string): void;
+export declare function openSystemBrowser(href: string): Promise<void>;
 export {};
 //# sourceMappingURL=browser.d.ts.map

@@ -1,5 +1,5 @@
 import { dirname, join } from "node:path";
-import { createHash, randomUUID } from "node:crypto";
+import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
 import { chmod, mkdir, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
 import z from "@deepseek-ai/schemastery";
 import { resolveDshHome } from "@deepseek-ai/dsh-home-paths";
@@ -428,11 +428,16 @@ function systemBrowserLaunch(href, platform = process.platform) {
 */
 function openSystemBrowser(href) {
 	const launch = systemBrowserLaunch(href);
-	spawn(launch.command, launch.args, {
-		detached: true,
-		stdio: "ignore",
-		windowsHide: true
-	}).unref();
+	return new Promise((resolve, reject) => {
+		const child = spawn(launch.command, launch.args, {
+			detached: true,
+			stdio: "ignore",
+			windowsHide: true
+		});
+		child.once("error", () => reject(/* @__PURE__ */ new Error("无法打开本机浏览器，请使用 QuantSkills 网页授权。")));
+		child.once("exit", (code) => code === 0 ? resolve() : reject(/* @__PURE__ */ new Error("本机浏览器启动失败，请使用 QuantSkills 网页授权。")));
+		child.unref();
+	});
 }
 //#endregion
 //#region lib/types/callback-server.js
@@ -448,25 +453,28 @@ const FAILURE_HTML = `<!doctype html><meta charset="utf-8"><title>PandaData</tit
 /**
 * 在 127.0.0.1 随机端口监听 `/callback`。
 */
-async function startOauthLoopback() {
+async function startOauthLoopback(options = {}) {
+	const state = randomUUID();
 	let settle;
 	const pending = new Promise((resolve) => {
 		settle = resolve;
 	});
 	const server = createServer((request, response) => {
-		handleCallback(request, response, (result) => {
+		handleCallback(request, response, state, options.publicOrigin, (result) => {
 			settle?.(result);
 			settle = void 0;
 		});
 	});
-	await listenLoopback(server);
+	await listenLoopback(server, options.port ?? 0);
 	const address = server.address();
 	if (address === null || typeof address === "string") {
 		server.close();
 		throw new Error("PandaData MCP 无法绑定本机回环端口。");
 	}
 	return {
-		redirectUrl: `http://127.0.0.1:${address.port}/callback`,
+		redirectUrl: options.publicOrigin === void 0 ? `http://127.0.0.1:${address.port}/callback` : `${options.publicOrigin}/api/quantskills/panda-oauth/callback`,
+		state,
+		localCallbackUrl: `http://127.0.0.1:${address.port}/callback`,
 		waitForCode: async (signal) => {
 			const abort = () => {
 				settle?.({ error: /* @__PURE__ */ new Error("PandaData 登录已取消。") });
@@ -486,10 +494,10 @@ async function startOauthLoopback() {
 		close: () => closeServer(server)
 	};
 }
-function listenLoopback(server) {
+function listenLoopback(server, port) {
 	return new Promise((resolve, reject) => {
 		server.once("error", reject);
-		server.listen(0, "127.0.0.1", () => {
+		server.listen(port, "127.0.0.1", () => {
 			server.off("error", reject);
 			resolve();
 		});
@@ -503,11 +511,16 @@ function closeServer(server) {
 		});
 	});
 }
-function handleCallback(request, response, done) {
-	const host = request.headers.host ?? "127.0.0.1";
-	const url = new URL(request.url ?? "/", `http://${host}`);
-	if (url.pathname !== "/callback") {
+function handleCallback(request, response, state, returnOrigin, done) {
+	const url = new URL(request.url ?? "/", "http://127.0.0.1");
+	if (request.method !== "GET" || url.pathname !== "/callback") {
 		response.writeHead(404).end();
+		return;
+	}
+	const receivedState = Buffer.from(url.searchParams.get("state") ?? "");
+	const expectedState = Buffer.from(state);
+	if (receivedState.length !== expectedState.length || !timingSafeEqual(receivedState, expectedState)) {
+		response.writeHead(403).end("Invalid OAuth state");
 		return;
 	}
 	const error = url.searchParams.get("error");
@@ -517,7 +530,12 @@ function handleCallback(request, response, done) {
 		done({ error: /* @__PURE__ */ new Error("PandaData 登录未完成。") });
 		return;
 	}
-	response.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(SUCCESS_HTML);
+	if (returnOrigin !== void 0) response.writeHead(303, {
+		location: returnOrigin + "/",
+		"cache-control": "no-store",
+		"referrer-policy": "no-referrer"
+	}).end();
+	else response.writeHead(200, { "content-type": "text/html; charset=utf-8" }).end(SUCCESS_HTML);
 	done({ code });
 }
 //#endregion
@@ -530,17 +548,19 @@ var PandaMcpOAuthProvider = class {
 	store;
 	redirect;
 	openAuthorization;
-	constructor(store, redirect, openAuthorization) {
+	oauthState;
+	constructor(store, redirect, openAuthorization, oauthState = randomUUID()) {
 		this.store = store;
 		this.redirect = redirect;
 		this.openAuthorization = openAuthorization;
+		this.oauthState = oauthState;
 	}
 	get redirectUrl() {
 		return this.redirect;
 	}
 	get clientMetadata() {
 		return {
-			client_name: "QuantSkills DSH",
+			client_name: "QuantSkills",
 			redirect_uris: [this.redirect],
 			grant_types: ["authorization_code", "refresh_token"],
 			response_types: ["code"],
@@ -549,6 +569,9 @@ var PandaMcpOAuthProvider = class {
 	}
 	clientInformation() {
 		return this.store.current().client;
+	}
+	state() {
+		return this.oauthState;
 	}
 	async saveClientInformation(clientInformation) {
 		await this.store.saveClient(clientInformation);
@@ -981,7 +1004,9 @@ const Config = z.object({
 	serverName: z.string().default("pandadata"),
 	dshHome: z.string().default(""),
 	toolCallTimeoutMs: z.number().default(6e4),
-	authTimeoutMs: z.number().default(3e5)
+	authTimeoutMs: z.number().default(3e5),
+	publicOrigin: z.string().default(""),
+	callbackPort: z.number().default(3197)
 });
 function authErrorHint(error) {
 	if (!(error instanceof Error) || error.message.trim().length === 0) return "";
@@ -1002,13 +1027,13 @@ function createPandaMcpTransport(url, provider) {
 }
 function createPandaMcpClient() {
 	return new Client({
-		name: "quantskills-dsh",
-		version: "0.1.17"
+		name: "quantskills",
+		version: "0.1.31"
 	});
 }
 /** 默认：MCP SDK Streamable HTTP + OAuth。 */
 async function connectPublicPandaMcp(args) {
-	const provider = new PandaMcpOAuthProvider(args.store, args.redirectUrl, args.openAuthorization);
+	const provider = new PandaMcpOAuthProvider(args.store, args.redirectUrl, args.openAuthorization, args.state);
 	const firstTransport = createPandaMcpTransport(args.url, provider);
 	const firstClient = createPandaMcpClient();
 	try {
@@ -1222,13 +1247,25 @@ let PandaMcpGateway = (() => {
 		live;
 		closeLive;
 		authTail;
+		publicOrigin;
+		callbackPort;
+		authorizationUrl;
+		authorizationReady;
+		resolveAuthorization;
+		authController;
 		connector;
-		openAuthorization = (url) => {
-			openSystemBrowser(url.href);
-		};
+		openAuthorization = (url) => openSystemBrowser(url.href);
 		constructor(ctx, config) {
 			super(ctx, "pandaMcp");
 			this.url = validateHttpUrl(config.url ?? "https://pandadatamcp.pandaaiquant.com/mcp");
+			const origin = config.publicOrigin?.trim() || process.env.QUANTSKILLS_PUBLIC_URL?.trim();
+			if (origin) {
+				const parsed = new URL(validateHttpUrl(origin));
+				if (parsed.pathname !== "/" || parsed.search) throw new Error("PandaData publicOrigin 必须是 HTTPS 站点来源。");
+				this.publicOrigin = parsed.origin;
+			}
+			this.callbackPort = config.callbackPort ?? 3197;
+			if (!Number.isInteger(this.callbackPort) || this.callbackPort < 0 || this.callbackPort > 65535) throw new Error("PandaData callbackPort 无效。");
 			this.serverName = config.serverName ?? "pandadata";
 			if (!/^[A-Za-z0-9_-]{1,32}$/.test(this.serverName)) throw new Error("panda-mcp: serverName 必须匹配 [A-Za-z0-9_-]{1,32}");
 			this.authTimeoutMs = config.authTimeoutMs ?? 3e5;
@@ -1251,6 +1288,8 @@ let PandaMcpGateway = (() => {
 			this.installPrompts();
 			this.tools = this.mountStubs();
 			ctx.effect(() => async () => {
+				this.authController?.abort();
+				await this.authTail;
 				this.disposePrompts();
 				disposeTools(this.tools);
 				await this.closeLive?.();
@@ -1338,7 +1377,8 @@ let PandaMcpGateway = (() => {
 			return Promise.resolve(this.snapshot());
 		}
 		authenticate(signal) {
-			return this.ensureAuthenticated(signal);
+			const completion = this.ensureAuthenticated(this.publicOrigin ? void 0 : signal);
+			return this.publicOrigin && this.authorizationReady ? Promise.race([completion, this.authorizationReady.then(() => this.snapshot())]) : completion;
 		}
 		/** 用已保存 token 静默重连；没有 token 时只返回当前状态，不打开浏览器。 */
 		async refresh(signal) {
@@ -1358,6 +1398,8 @@ let PandaMcpGateway = (() => {
 			return this.snapshot();
 		}
 		async logout(signal) {
+			this.authController?.abort();
+			await this.authTail;
 			await this.dropLive();
 			await this.store.clear("all");
 			this.phase = "disconnected";
@@ -1372,7 +1414,8 @@ let PandaMcpGateway = (() => {
 				url: this.url,
 				toolCount: this.tools.size,
 				toolNames: [...this.tools.keys()],
-				message: this.message
+				message: this.message,
+				...this.phase === "authenticating" && this.authorizationUrl ? { authorizationUrl: this.authorizationUrl } : {}
 			};
 		}
 		async restoreExistingTokens() {
@@ -1395,6 +1438,10 @@ let PandaMcpGateway = (() => {
 			return this.authTail;
 		}
 		async runAuthentication(signal) {
+			this.authorizationUrl = void 0;
+			this.authorizationReady = new Promise((resolve) => {
+				this.resolveAuthorization = resolve;
+			});
 			if (this.store.hasAccessToken()) try {
 				await this.connectLive({
 					interactive: false,
@@ -1407,6 +1454,7 @@ let PandaMcpGateway = (() => {
 			this.phase = "authenticating";
 			this.message = "正在打开 PandaData 登录页。";
 			const controller = new AbortController();
+			this.authController = controller;
 			const timeout = setTimeout(() => {
 				controller.abort();
 			}, this.authTimeoutMs);
@@ -1414,13 +1462,18 @@ let PandaMcpGateway = (() => {
 				controller.abort();
 			};
 			signal?.addEventListener("abort", onAbort, { once: true });
-			const loopback = await startOauthLoopback();
+			let loopback;
 			try {
+				loopback = await startOauthLoopback(this.publicOrigin ? {
+					publicOrigin: this.publicOrigin,
+					port: this.callbackPort
+				} : {});
 				await this.store.clear("client");
 				await this.connectLive({
 					interactive: true,
 					redirectUrl: loopback.redirectUrl,
 					waitForCode: () => loopback.waitForCode(controller.signal),
+					state: loopback.state,
 					signal: controller.signal
 				});
 				return this.snapshot();
@@ -1432,7 +1485,9 @@ let PandaMcpGateway = (() => {
 			} finally {
 				clearTimeout(timeout);
 				signal?.removeEventListener("abort", onAbort);
-				await loopback.close();
+				this.authorizationUrl = void 0;
+				this.authController = void 0;
+				await loopback?.close();
 			}
 		}
 		async connectLive(options) {
@@ -1442,7 +1497,12 @@ let PandaMcpGateway = (() => {
 			const waitForCode = options?.waitForCode ?? (async () => {
 				throw new UnauthorizedError("PandaData 登录需要浏览器授权。");
 			});
-			const openAuthorization = interactive ? this.openAuthorization : () => {
+			const openAuthorization = interactive ? (url) => {
+				if (!this.publicOrigin) return this.openAuthorization(url);
+				this.authorizationUrl = url.href;
+				this.message = "请在浏览器中完成 PandaData 授权。";
+				this.resolveAuthorization?.();
+			} : () => {
 				throw new UnauthorizedError("PandaData 需要重新登录。");
 			};
 			const session = this.connector === void 0 ? await connectPublicPandaMcp({
@@ -1451,6 +1511,7 @@ let PandaMcpGateway = (() => {
 				redirectUrl,
 				openAuthorization,
 				waitForCode,
+				...options?.state === void 0 ? {} : { state: options.state },
 				...options?.signal === void 0 ? {} : { signal: options.signal }
 			}) : await this.connector.connect({
 				url: this.url,
