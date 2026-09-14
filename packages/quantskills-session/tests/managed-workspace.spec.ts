@@ -29,6 +29,21 @@ describe('QuantSkills managed Workspace path', () => {
     expect(calls[0]?.[0]).toBe('powershell.exe')
   })
 
+  it('uses PowerShell 7 when Windows PowerShell is absent, preserving redirected Documents', async () => {
+    const calls: string[] = []
+    await expect(resolveQuantSkillsManagedPath({platform: 'win32', env: {}, runCommand: async command => {
+      calls.push(command)
+      if (command === 'powershell.exe') throw Object.assign(new Error('missing'), {code: 'ENOENT'})
+      return {stdout: 'D:\\Redirected Documents', stderr: ''}
+    }})).resolves.toBe('D:\\Redirected Documents\\QuantSkills')
+    expect(calls).toEqual(['powershell.exe', 'pwsh.exe'])
+  })
+
+  it('does not mask shell execution failures with a different workspace', async () => {
+    const error = Object.assign(new Error('permission denied'), {code: 'EACCES'})
+    await expect(resolveQuantSkillsManagedPath({platform: 'win32', runCommand: async () => {throw error}})).rejects.toBe(error)
+  })
+
   it('uses macOS Documents without touching the filesystem', async () => {
     await expect(resolveQuantSkillsManagedPath({ platform: 'darwin', home: '/Users/ada' }))
       .resolves.toBe('/Users/ada/Documents/QuantSkills')

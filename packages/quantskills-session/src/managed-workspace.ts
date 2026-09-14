@@ -54,14 +54,24 @@ export async function resolveQuantSkillsManagedPath(
   const home = paths.resolve(options.home ?? homedir())
   if (platform === 'win32') {
     const signal = options.signal ?? new AbortController().signal
-    const result = await (options.runCommand ?? runNativeCommand)(
-      'powershell.exe',
-      WINDOWS_DOCUMENTS_COMMAND,
-      signal,
-    )
-    const documents = result.stdout.trim()
-    if (documents === '') throw new Error('Windows did not resolve the Documents known folder')
-    return paths.join(paths.resolve(documents), MANAGED_DIRECTORY_NAME)
+    const windowsRoot = env.SystemRoot ?? env.WINDIR
+    const commands = ['powershell.exe',
+      ...(windowsRoot ? [paths.join(windowsRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe')] : []),
+      'pwsh.exe']
+    for (const command of commands) {
+      let result
+      try {
+        result = await (options.runCommand ?? runNativeCommand)(command, WINDOWS_DOCUMENTS_COMMAND, signal)
+      } catch (error) {
+        // Only a missing executable should trigger another shell; preserve cancellation and command errors.
+        if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue
+        throw error
+      }
+      const documents = result.stdout.trim()
+      if (!paths.isAbsolute(documents)) throw new Error('Windows did not resolve an absolute Documents known folder')
+      return paths.join(paths.normalize(documents), MANAGED_DIRECTORY_NAME)
+    }
+    throw new Error('无法读取 Windows 文档目录：未找到 Windows PowerShell 或 PowerShell 7（pwsh.exe）。请安装 PowerShell 后重试。')
   }
   if (platform === 'darwin') return paths.join(home, 'Documents', MANAGED_DIRECTORY_NAME)
 

@@ -1,3 +1,11 @@
+# QuantStudio 0.1.25
+
+2026-09-14 · PowerShell 7 兼容
+
+- 修复默认工作区读取时出现 spawn powershell.exe ENOENT。
+- 支持系统 PowerShell 绝对路径和 PowerShell 7，保留 Windows 文档目录重定向。
+- 桌面快捷方式使用检测到的 PowerShell 可执行文件。
+
 # QuantStudio 0.1.24
 
 2026-09-14 · 预览清晰度与产品文档

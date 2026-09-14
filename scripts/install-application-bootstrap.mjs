@@ -1,10 +1,11 @@
 /** Install the stable launcher and seed a managed application version when safe. */
 
 import { spawnSync } from 'node:child_process'
+import { existsSync } from 'node:fs'
 import { copyFile, mkdir, readFile, realpath, rename, stat, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { homedir } from 'node:os'
-import { dirname, join, resolve } from 'node:path'
+import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { managedVersionPath, parseApplicationState, windowsLauncherSource } from './application-bootstrap.mjs'
 
@@ -145,12 +146,19 @@ async function readExistingPort(home) {
 }
 
 async function installWindowsLauncher(home, bootstrap, launcherConfig) {
+  const searchPaths = (process.env.PATH ?? '').split(delimiter)
+  const candidates = [
+    join(process.env.SystemRoot ?? 'C:\\Windows', 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe'),
+    ...['powershell.exe', 'pwsh.exe'].flatMap(name => searchPaths.map(directory => join(directory, name))),
+  ]
+  const shellExecutable = candidates.find(candidate => existsSync(candidate))
+  if (!shellExecutable) throw new Error('PowerShell is required to create the desktop shortcut; install Windows PowerShell or PowerShell 7.')
   const powerShell = windowsLauncherSource(bootstrap, launcherConfig)
   await writeFile(join(home, 'launch-quantskills.ps1'), powerShell, 'utf8')
   const shortcutScript = `$shell = New-Object -ComObject WScript.Shell
 $desktop = [Environment]::GetFolderPath('Desktop')
 $shortcut = $shell.CreateShortcut((Join-Path $desktop 'QuantSkills.lnk'))
-$shortcut.TargetPath = "$env:SystemRoot\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+$shortcut.TargetPath = '${shellExecutable.replaceAll("'", "''")}'
 $shortcut.Arguments = '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "${escapePowerShell(join(home, 'launch-quantskills.ps1'))}"'
 $shortcut.WorkingDirectory = '${escapePowerShell(bootstrap)}'
 $icon = '${escapePowerShell(join(bootstrap, 'quantskills.ico'))}'
@@ -158,7 +166,7 @@ $shortcut.IconLocation = "$icon,0"
 $shortcut.Save()
 `
   const encoded = Buffer.from(shortcutScript, 'utf16le').toString('base64')
-  run('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-EncodedCommand', encoded], bootstrap)
+  run(shellExecutable, ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-EncodedCommand', encoded], bootstrap)
 }
 
 function normalizeRepository(value) {
