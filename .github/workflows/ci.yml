@@ -53,9 +53,11 @@ jobs:
       - name: Test managed updates and rollback
         run: pnpm run test:update
 
+      - name: Test workspace platform compatibility
+        run: pnpm exec vitest run packages/quantskills-session/tests/managed-workspace.spec.ts
+
       - name: Build publishable output
         run: pnpm run build
 
       - name: Smoke-test clean DSH installation
-        if: runner.os == 'Windows'
         run: pnpm run ci:smoke

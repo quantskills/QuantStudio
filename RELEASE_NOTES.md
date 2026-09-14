@@ -1,3 +1,11 @@
+# QuantStudio 0.1.26
+
+2026-09-14 · 跨平台启动与更新
+
+- Windows/macOS 自动更新使用启动器固定的 Node 和 pnpm CLI，避免直接执行 Windows 命令包装脚本。
+- 将真实启动冒烟测试扩展到 macOS 与 Linux，并补充工作区跨平台测试。
+- 补充两个平台的启动、目录与权限说明。
+
 # QuantStudio 0.1.25
 
 2026-09-14 · PowerShell 7 兼容

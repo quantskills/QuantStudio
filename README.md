@@ -79,6 +79,10 @@ QuantStudio 是 QuantSkills / PandaAI 的本地 AI 工作台。你可以验证�
 
 ## 开始使用
 
+Windows 与 macOS 使用相同的 `pnpm run web` 启动命令。Windows 支持 Windows PowerShell / PowerShell 7；macOS 无需 PowerShell。默认工作区分别使用 Windows 的系统文档目录和 macOS 的 `~/Documents/QuantSkills`，应用配置默认位于 `~/.dsh`，也可用 `DSH_HOME` 指定。
+
+macOS 首次访问“文稿”目录时，如系统弹出权限提示，请允许启动应用的终端访问该目录。关闭终端中的应用可按 Ctrl+C；再次在项目目录运行启动命令即可继续使用。
+
 需要 Git，以及 Node.js **22.19 或以上的 22.x 版本，或 24 及以上版本**。项目固定 pnpm 11.7.0 与 DSH 0.1.2-alpha.2；已提交可运行的构建产物。
 
 ~~~sh

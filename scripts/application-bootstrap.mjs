@@ -221,7 +221,7 @@ async function startSelected(root, config, hostArgs, dshHome) {
   await runPnpm(config, ['run', 'install:plugin'], root, dshHome)
   return spawn(config.nodeExecutable, [config.pnpmCli, 'exec', 'dsh', '--profile', 'web', ...hostArgs], {
     cwd: root,
-    env: { ...process.env, DSH_HOME: dshHome },
+    env: { ...process.env, DSH_HOME: dshHome, QUANTSKILLS_PNPM_CLI: config.pnpmCli },
     stdio: 'inherit',
     windowsHide: true,
   })
@@ -231,7 +231,7 @@ async function runPnpm(config, args, cwd, dshHome) {
   await new Promise((resolvePromise, rejectPromise) => {
     const child = spawn(config.nodeExecutable, [config.pnpmCli, ...args], {
       cwd,
-      env: { ...process.env, DSH_HOME: dshHome },
+      env: { ...process.env, DSH_HOME: dshHome, QUANTSKILLS_PNPM_CLI: config.pnpmCli },
       stdio: 'inherit',
       windowsHide: true,
     })

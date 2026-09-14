@@ -1493,8 +1493,14 @@ export class QuantSkillsHostGateway extends TypertRemoteService {
     signal: AbortSignal,
     environment?: Readonly<Record<string, string>>,
   ): Promise<void> {
+    // Use the launcher's pinned JavaScript CLI on Windows and macOS alike.
+    // Windows .cmd shims are not native executables and cannot be spawned directly.
+    const cli = process.env.QUANTSKILLS_PNPM_CLI
+    const argv = cli && /\.[cm]?js$/u.test(cli)
+      ? [process.execPath, cli, ...args]
+      : [this.requirePnpmPath(), ...args]
     const handle = this.ctx.subprocess.spawn({
-      argv: [this.requirePnpmPath(), ...args],
+      argv,
       cwd,
       stdio: {
         stdin: 'ignore',
