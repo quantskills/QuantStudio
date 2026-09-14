@@ -1,7 +1,7 @@
 /** Install the stable launcher and seed a managed application version when safe. */
 
 import { spawnSync } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { existsSync, realpathSync } from 'node:fs'
 import { copyFile, mkdir, readFile, realpath, rename, stat, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 import { homedir } from 'node:os'
@@ -72,8 +72,8 @@ if (process.platform === 'win32' && process.env.QUANTSKILLS_SKIP_DESKTOP_SHORTCU
 function inspectCleanOfficialSource(root) {
   try {
     const repositoryRoot = run('git', ['rev-parse', '--show-toplevel'], root).trim()
-    const canonicalRoot = resolve(run('git', ['rev-parse', '--show-toplevel'], repositoryRoot).trim())
-    if (canonicalRoot.toLowerCase() !== resolve(root).toLowerCase()) return undefined
+    const canonicalRoot = realpathSync(repositoryRoot)
+    if (canonicalRoot.toLowerCase() !== realpathSync(root).toLowerCase()) return undefined
     const origin = normalizeRepository(run('git', ['config', '--get', 'remote.origin.url'], root).trim())
     const branch = run('git', ['branch', '--show-current'], root).trim()
     const dirty = run('git', ['status', '--porcelain=v1', '--untracked-files=normal'], root).trim()
