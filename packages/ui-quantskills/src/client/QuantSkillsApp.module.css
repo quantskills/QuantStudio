@@ -2850,6 +2850,7 @@ body[data-qs-plugin-theme] *::-webkit-scrollbar-corner { background:transparent;
   .app .agentTabs button { flex-shrink:0;white-space:nowrap;min-height:42px; }
   body[data-qs-mobile] .residentCapabilities { position:static; }
   body[data-qs-mobile] .pandaMcpControl { position:static; }
+  body[data-qs-mobile] [data-hero-workspace-row] { position:relative; }
   body[data-qs-mobile] .pandaMcpPopover {
     left:8px;right:8px;width:auto;box-sizing:border-box;
     max-height:calc(var(--qs-mobile-height,100dvh) - 220px);overflow-y:auto;
@@ -2862,6 +2863,12 @@ body[data-qs-plugin-theme] *::-webkit-scrollbar-corner { background:transparent;
   body[data-qs-mobile] .residentCapabilityMenu > div { min-height:0; }
   body[data-qs-mobile] .residentCapabilityMenu > :is(header,footer) { flex-shrink:0; }
   body[data-qs-mobile] .residentCapabilityMenu button { min-height:40px; }
+}
+
+@media(max-width:840px) and (max-height:540px) {
+  body[data-qs-mobile] [data-hero-workspace-row] .pandaMcpPopover {
+    top:calc(100% + 8px);bottom:auto;
+  }
 }
 
 .applicationUpdateAvailable { color:var(--qs-text) !important;background:color-mix(in srgb,var(--qs-accent) 25%,var(--qs-surface)) !important;border-color:var(--qs-accent) !important;box-shadow:0 0 0 2px color-mix(in srgb,var(--qs-accent) 16%,transparent); }

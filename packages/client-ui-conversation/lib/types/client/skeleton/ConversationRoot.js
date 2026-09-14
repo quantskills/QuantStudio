@@ -254,7 +254,7 @@ export function ConversationRoot({ sessionId, useSession, useSessions, useSessio
                 ?? (workspaces.phase === 'ready' || cwd === undefined || cwd === ''
                     ? undefined
                     : workspaceLabel(cwd)));
-    const heroWorkspaceRow = (_jsxs("div", { className: css.heroWorkspaceRow, children: [_jsx(WorkspaceChip, { buttonRef: pickerAnchor, label: chipTitle, menuOpen: pickerOpen, onClick: () => { setPickerOpen(open => !open); }, t: t }), renderSlot('conversation.hero.workspace', {
+    const heroWorkspaceRow = (_jsxs("div", { className: css.heroWorkspaceRow, "data-hero-workspace-row": "", children: [_jsx(WorkspaceChip, { buttonRef: pickerAnchor, label: chipTitle, menuOpen: pickerOpen, onClick: () => { setPickerOpen(open => !open); }, t: t }), renderSlot('conversation.hero.workspace', {
                 open: pickerOpen,
                 anchorRef: pickerAnchor,
                 selectedId: pendingWorkspaceId ?? sessionWorkspace?.workspaceId,

@@ -291,7 +291,7 @@ export function ConversationRoot({
           : workspaceLabel(cwd)))
 
   const heroWorkspaceRow = (
-    <div className={css.heroWorkspaceRow}>
+    <div className={css.heroWorkspaceRow} data-hero-workspace-row="">
       <WorkspaceChip
         buttonRef={pickerAnchor}
         label={chipTitle}
