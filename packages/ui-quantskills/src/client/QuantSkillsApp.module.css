@@ -327,9 +327,15 @@ body[data-qs-plugin-theme='dark'] .brandAsset,
 .productLinks::before { content: ''; position: absolute; top: 0; left: 16px; right: 16px; height: 1px; border-radius: 1px; background: var(--qs-border); }
 .productLinks button:focus-visible { outline: 2px solid var(--qs-accent); outline-offset: -2px; color: var(--qs-accent); background: var(--qs-tint); }
 .pluginPage { min-width: 0; min-height: 0; overflow: hidden; }
-/* Keep focus from scrolling the unscaled layout box behind the database's independent panes. */
+/* Keep focus inside the database's independently scrolling panes. */
 .pluginPage:has(.app[data-page='database']) { overflow: clip; }
-.pluginScaleViewport { width: calc(100% * var(--qs-interface-inverse-scale, 1)); height: calc(100% * var(--qs-interface-inverse-scale, 1)); transform: scale(var(--qs-interface-scale, 1)); transform-origin: top left; }
+/* Layout zoom lets text, SVGs and embedded documents paint at the target size.
+   A transform scales the composited iframe surface and blurs small glyphs. */
+.pluginScaleViewport {
+  width: 100%;
+  height: 100%;
+  zoom: var(--qs-interface-scale, 1);
+}
 .pluginResults { position: absolute; z-index: 3; top: 58px; right: 0; bottom: 0; width: var(--quantskills-shell-details-width, var(--qs-result-workbench-width, 560px)); display: grid; grid-template-columns: 9px minmax(0, 1fr); pointer-events: none; }
 .pluginResults[data-open] { pointer-events: auto; }
 .pluginResults[data-maximized] { z-index: 24; left: 0; width: 100%; grid-template-columns: minmax(0, 1fr); background: var(--dsw-alias-bg-base); }

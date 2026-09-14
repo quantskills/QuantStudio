@@ -1,4 +1,4 @@
-<p align="center"><img src="docs/images/quantstudio-banner.svg" alt="QuantStudio · A local AI workspace for research and everyday work" width="100%"></p>
+<p align="center"><img src="docs/images/quantstudio-cover.png" alt="QuantStudio · A local AI workspace for research and everyday work" width="100%"></p>
 
 <p align="center"><b>Skills, experts, data and deliverables. One workspace.</b></p>
 <p align="center"><a href="README.md">简体中文</a> · <a href="#get-started">Get started</a> · <a href="RELEASE_NOTES.md">Release notes</a></p>
@@ -10,7 +10,7 @@ QuantStudio is a local AI workspace from QuantSkills / PandaAI for quantitative 
 
 The application integrates a pinned DSH runtime, its own interface and a launcher. Installing the project dependencies provides the runtime; no separate DSH setup is needed. Sessions, your capability library and working files stay on your computer. Model calls and external data requests use the services you configure.
 
-<p align="center"><img src="docs/images/05-artifact-workbench.png" alt="The workspace with session navigation, a research conversation and an artifact preview" width="100%"></p>
+<p align="center"><img src="docs/images/backtest-workbench.png" alt="The workspace with session navigation, a research conversation and an artifact preview" width="100%"></p>
 
 ## Work from a question to a deliverable
 
