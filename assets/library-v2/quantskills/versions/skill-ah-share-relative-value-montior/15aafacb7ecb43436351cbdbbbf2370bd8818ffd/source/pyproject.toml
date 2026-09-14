@@ -1,0 +1,18 @@
+[build-system]
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"
+
+[project]
+name = "skill-ah-share-relative-value-monitor"
+version = "0.1.0"
+description = "A/H share relative value monitor"
+readme = "README.md"
+license = "GPL-3.0-only"
+requires-python = ">=3.10"
+dependencies = [
+  "pandas>=2.0",
+  "panda-data==0.0.12",
+]
+
+[tool.uv]
+package = false

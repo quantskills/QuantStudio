@@ -1,0 +1,23 @@
+---
+description: Use the Smart Money Profiler skill for A-share capital-actor identity and behavior profiling.
+alwaysApply: false
+---
+
+# Smart Money Profiler Skill
+
+When the user asks for smart-money profiling, capital-actor profiles, LHB seat identity, active seat tracking, institution-seat behavior, northbound cross-period behavior, capital consensus or divergence, or who is buying and selling an A-share name, use the local skill package.
+
+Preferred local project path:
+
+```text
+.cursor/skills/smart-money-profiler
+```
+
+Workflow:
+
+1. Read `.cursor/skills/smart-money-profiler/SKILL.md`.
+2. For seat-label dictionaries, profile schema, win-rate or holding-period formulas, consensus or divergence rules, report format, empty-data handling, or QA, also read `.cursor/skills/smart-money-profiler/references/profiling-playbook.md`.
+3. Treat `.cursor/skills/smart-money-profiler/profiles/seats.json` as a persistent profile archive that may be read or updated when the user asks for saved seat profiles.
+4. Use the local `pandadata-api` skill for exact method contracts before any real API call.
+5. Preserve source method names, query parameters, data dates, seat-label evidence, inference labels, formulas, and missing-data notes.
+6. Do not invent data interfaces, credentials, fields, official identity labels, predictive claims, or investment advice.

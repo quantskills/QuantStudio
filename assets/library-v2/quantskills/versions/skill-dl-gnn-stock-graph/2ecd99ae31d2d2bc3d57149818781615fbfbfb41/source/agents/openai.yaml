@@ -1,0 +1,114 @@
+openapi: 3.1.0
+info:
+  title: skill-dl-gnn-stock-graph
+  description: Deep Graph Neural Network for A-Share Quantitative Stock Selection. Multi-layer heterogeneous graphs (industry/concept/DTW/correlation) with GATs_ts and MF-IAMGCN dual-model architecture, 5-D feature engineering, TopK selection, and full backtest engine.
+  version: 0.1.0
+
+x-skill-info:
+  name: skill-dl-gnn-stock-graph
+  type: build
+  category: deep-learning
+  entry: scripts/scan.py
+  models: [gats_ts, mf_iamgcn]
+  universe: ["000300.SH", "000905.SH", "000852.SH"]
+  tags: [quant, gnn, deep-learning, stock-selection, a-stock, graph-attention, backtest]
+
+x-steps:
+  - id: train
+    script: scripts/scan.py
+    description: Train GNN model and predict TopK stocks
+    args:
+      date: "20260731"
+      model: "gats_ts"
+      train_days: 120
+      epochs: 10
+      top_k: 10
+    auth_required: true
+    output: "output/{model}_{date}_model.pt, output/{symbol}_prediction_report_{date}.md"
+
+  - id: backtest
+    script: scripts/scan.py
+    description: Multi-day backtest with T+1 constraints
+    args:
+      start_date: "20260101"
+      end_date: "20260731"
+      model: "gats_ts"
+      top_k: 10
+      backtest: true
+    auth_required: true
+
+  - id: self_check
+    script: scripts/data/loader.py
+    description: Validate panda_data API field alignment
+    args: "--self-check --date 20260729"
+    auth_required: true
+
+x-data-sources:
+  - get_last_trade_date
+  - get_prev_trade_date
+  - get_trade_cal
+  - get_index_weights
+  - get_factor
+  - get_stock_daily_post
+  - get_index_daily
+  - get_industry_constituents
+  - get_concept_constituents
+  - get_stock_industry
+  - get_fina_reports
+  - get_share_float
+  - get_lhb_list
+  - get_block_trade
+  - get_top_holders
+  - get_stock_status_change
+  - get_macro_*
+
+x-outputs:
+  - format: markdown
+    path: output/{symbol}_prediction_report_{date}.md
+    description: Single-stock prediction analysis report
+  - format: pytorch
+    path: output/{model}_{date}_model.pt
+    description: Trained model checkpoint
+
+x-graph-types:
+  explicit:
+    - industry_l1   # 申万一级行业
+    - industry_l2   # 申万二级行业
+    - industry_l3   # 申万三级行业
+    - concept       # 概念板块
+    - institutional # 机构共同持仓
+  implicit:
+    - dtw_topk       # DTW 收益率相似度 Top-K
+    - pearson_threshold  # Pearson 相关性阈值
+    - granger_significant # 格兰杰因果显著
+
+x-features:
+  price: [ret, log_vol, amplitude, turnover, gap, dist_limit_up, dist_limit_down, excess_ret, mom_5d, mom_20d, volatility_20d, macd, rsi]
+  fundamental: [pe, pb, roe, revenue_growth, profit_growth, debt_ratio, market_cap]
+  sentiment: [lhb_flag, block_trade_flag, external_llm_score]
+  macro: [gdp, cpi, pmi, m2]
+  graph: [degree_centrality, pagerank, dtw_avg, industry_excess]
+
+x-backtest-rules:
+  t_plus_1: true
+  limit_constraints: true
+  costs:
+    commission: 0.0003        # 0.03%
+    stamp_duty: 0.001         # 0.1% (sell only)
+    slippage: 0.001           # 0.1%
+  allocation: equal_weight
+  rebalance: daily
+  metrics: [sharpe, sortino, calmar, information_ratio, max_drawdown, annual_turnover]
+
+x-requirements:
+  runtime: python >= 3.10
+  packages:
+    - torch >= 2.0
+    - pandas
+    - numpy
+    - scikit-learn
+    - pyyaml
+    - pytest
+  env:
+    - PANDA_DATA_USERNAME
+    - PANDA_DATA_PASSWORD

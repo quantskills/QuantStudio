@@ -1,0 +1,11 @@
+{
+  "definitions": {
+    "avoid_weaker_than_keep_rate": "signal∈{retire_candidate,deweight,rebuild_candidate} 且后续 fwd_ic < keep 组均值 的占比",
+    "retire_negative_fwd_ic_rate": "retire_candidate 信号后 fwd_ic < 0 的占比"
+  },
+  "avoid_weaker_than_keep_rate": 1.0,
+  "retire_negative_fwd_ic_rate": 1.0,
+  "keep_mean_fwd_ic": 0.02666808510638298,
+  "avoid_mean_fwd_ic": -0.011538695652173914,
+  "keep_minus_avoid_fwd_ic": 0.038206780758556894
+}

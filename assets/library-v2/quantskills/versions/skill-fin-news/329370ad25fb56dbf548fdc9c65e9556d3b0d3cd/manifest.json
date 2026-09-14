@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-fin-news@329370ad25fb56dbf548fdc9c65e9556d3b0d3cd",
+  "assetId": "skill-fin-news",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-fin-news",
+  "commit": "329370ad25fb56dbf548fdc9c65e9556d3b0d3cd",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:f6092f0ea1c3cae28986dfbce5193c7c8b2765afc1c137f661c4acf806a15dda",
+  "fileCount": 10,
+  "totalBytes": 63510,
+  "installedAt": 1789218589514,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

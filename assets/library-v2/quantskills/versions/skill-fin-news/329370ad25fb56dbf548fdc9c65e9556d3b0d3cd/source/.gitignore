@@ -1,0 +1,14 @@
+# output files
+output/
+scripts/output/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Environment
+.env
+
+# IDE
+.idea/

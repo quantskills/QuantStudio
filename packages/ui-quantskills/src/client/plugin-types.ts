@@ -1,0 +1,69 @@
+/** Browser-facing domain types owned by the installable QuantSkills packages. */
+export type {
+  PandaConnectionState,
+  PandaConnectorFailureCode,
+  PandaConnectorResult,
+  PandaLoginRequest,
+} from '@deepseek-ai/dsh-panda-connector/types'
+
+export type { PandaMcpStatus } from '@deepseek-ai/dsh-panda-mcp/types'
+
+export type {
+  QuantSkillsAssetReadme,
+  QuantSkillsCatalogAsset,
+  QuantSkillsCatalogSnapshot,
+  QuantSkillsInstallRequest,
+  QuantSkillsInstalledAgentTemplate,
+  QuantSkillsInstalledSnapshot,
+  QuantSkillsInstalledVersion,
+  QuantSkillsInstalledVersionId,
+  QuantSkillsApplicationUpdateCheckRequest,
+  QuantSkillsApplicationUpdateSource,
+  QuantSkillsApplicationUpdateStartResult,
+  QuantSkillsApplicationUpdateStatus,
+} from '@deepseek-ai/dsh-quantskills-host/types'
+
+export type {
+  QuantSkillsAgentCreateRequest,
+  QuantSkillsAgentDefinition,
+  QuantSkillsAgentDeleteRequest,
+  QuantSkillsAgentSessionArchiveItem,
+  QuantSkillsAgentSessionBinding,
+  QuantSkillsAgentSessionCreateRequest,
+  QuantSkillsAgentSessionCreateResult,
+  QuantSkillsAgentTeamCreateRequest,
+  QuantSkillsAgentTeamDefinition,
+  QuantSkillsAgentTeamDeleteRequest,
+  QuantSkillsAgentTeamModelChoice,
+  QuantSkillsAgentTeamSessionArchiveItem,
+  QuantSkillsAgentTeamSessionBinding,
+  QuantSkillsAgentTeamSessionCreateRequest,
+  QuantSkillsAgentTeamSessionCreateResult,
+  QuantSkillsAgentTeamUpdateRequest,
+  QuantSkillsAgentUpdateRequest,
+  QuantSkillsAuthoringCommitResult,
+  QuantSkillsAuthoringInstalledVersion,
+  QuantSkillsFrequentSkill,
+  QuantSkillsPlainSessionArchiveItem,
+  QuantSkillsPlainSessionCreateResult,
+  QuantSkillsPromptFormCapability,
+  QuantSkillsPromptFormListResult,
+  QuantSkillsPromptFormRenderRequest,
+  QuantSkillsPromptFormRenderResult,
+  QuantSkillsResidentSkillResult,
+  QuantSkillsResultPrepareResult,
+  QuantSkillsResultPreview,
+  QuantSkillsSessionArchiveItem,
+  QuantSkillsSessionBinding,
+  QuantSkillsSessionCreateRequest,
+  QuantSkillsSessionCreateResult,
+  QuantSkillsSessionFileAttachment,
+  QuantSkillsTreeDigest,
+  QuantSkillsWorkspaceResolveResult,
+  QuantSkillsWorkspaceStatusResult,
+} from '@deepseek-ai/dsh-quantskills-session/types'
+
+export type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types'
+export type { SessionId } from '@deepseek-ai/dsh-session/types'
+
+export type { QuantSkillsLibrarySourceRecord } from '@deepseek-ai/dsh-quantskills-session/types'

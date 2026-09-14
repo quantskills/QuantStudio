@@ -1,0 +1,1 @@
+{"version":3,"file":"office-presets.d.ts","sourceRoot":"","sources":["../../../src/client/office-presets.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,qBAAqB,CAAA;AACvD,OAAO,KAAK,EAAE,UAAU,EAAE,MAAM,mBAAmB,CAAA;AAEnD,eAAO,MAAM,qBAAqB,EAAE,SAAS,YAAY,EAuJxD,CAAA;AAED,eAAO,MAAM,mBAAmB,EAAE,SAAS,UAAU,EA0IpD,CAAA;AAED,eAAO,MAAM,qBAAqB,ojGAKmD,CAAA"}

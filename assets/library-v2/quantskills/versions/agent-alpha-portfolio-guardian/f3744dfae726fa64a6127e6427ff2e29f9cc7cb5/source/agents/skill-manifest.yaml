@@ -1,0 +1,63 @@
+# QuantSkills / 发布用元数据（给人看的正文在 AGENTS.md；勿把本文件当使用说明）
+name: agent-alpha-portfolio-guardian
+title: Alpha 多因子组合健康度守卫 Agent
+license: GPL-3.0-only
+requires:
+  - skill-factor-evaluate
+  - skill-factor-decay
+  - agent-crowding-risk-monitor
+  - skill-smart-money-profiler
+tags:
+  - quant
+  - factor
+  - portfolio
+  - guardian
+  - crowding
+  - smart-money
+  - pandadata
+  - agent
+metadata:
+  organization: QuantSkills
+  organization_url: https://github.com/quantskills
+  repository: quantskills/agent-alpha-portfolio-guardian
+  repository_url: https://github.com/quantskills/agent-alpha-portfolio-guardian
+  project_type: agent
+  collection: factor-portfolio-guardian
+  license: GPL-3.0-only
+  maintainer: frocir
+quantSkills:
+  organization: QuantSkills
+  organization_url: https://github.com/quantskills
+  repository: quantskills/agent-alpha-portfolio-guardian
+  repository_url: https://github.com/quantskills/agent-alpha-portfolio-guardian
+  project_type: agent
+  collection: factor-portfolio-guardian
+  license: GPL-3.0-only
+  category: guardian
+  tags:
+    - quant
+    - factor
+    - portfolio
+    - guardian
+    - crowding
+    - smart-money
+    - pandadata
+    - agent
+  platforms:
+    - claude-code
+    - codex
+    - hermes
+    - openclaw
+    - cursor
+  language: zh-en
+  status: draft
+  validation_level: runnable
+  maintainer_type: community
+  maintainer: frocir
+  summary_zh: 多因子组合健康度守卫：健康度矩阵 + 拥挤警示 + 退休/重构候选 + IC 衰减曲线，含守卫规则有效性回测 L4。
+  summary_en: Multi-factor portfolio health guardian with health matrix, crowding alerts, retire/rebuild candidates, IC decay curves, and research-only effectiveness backtest L4.
+  requires:
+    - skill-factor-evaluate
+    - skill-factor-decay
+    - agent-crowding-risk-monitor
+    - skill-smart-money-profiler

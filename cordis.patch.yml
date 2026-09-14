@@ -1,0 +1,22 @@
+# QuantSkills native-plugin composition. The stock ui-layout, ui-sidebar,
+# conversation, details, settings, and workspace rows remain active. The
+# QuantSkills client detects the stock shell's `shell.overlay` declaration and
+# contributes an application launcher plus an additive full-screen workbench.
+
+- insert:
+    - id: agent-team
+      name: '@deepseek-ai/dsh-agent-team'
+    - id: tool-agent-team
+      name: '@deepseek-ai/dsh-tool-agent-team'
+      config:
+        spawnToolEnabled: false
+    - id: quantskills-host
+      name: '@deepseek-ai/dsh-quantskills-host'
+    - id: quantskills-session
+      name: '@deepseek-ai/dsh-quantskills-session'
+    - id: panda-mcp
+      name: '@deepseek-ai/dsh-panda-mcp'
+    - id: client-remotes-quantskills
+      name: '@deepseek-ai/dsh-client-remotes-quantskills'
+    - id: ui-quantskills
+      name: '@deepseek-ai/dsh-client-ui-quantskills'

@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "rewriteRelativeImportExtensions": false
+  },
+  "files": [],
+  "references": [
+    { "path": "./packages/agent-team" },
+    { "path": "./packages/panda-connector" },
+    { "path": "./packages/panda-mcp" },
+    { "path": "./packages/quantskills-host" },
+    { "path": "./packages/quantskills-session" },
+    { "path": "./packages/tool-agent-team" }
+  ]
+}

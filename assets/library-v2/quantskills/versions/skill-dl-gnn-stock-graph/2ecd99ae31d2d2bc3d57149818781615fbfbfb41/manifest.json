@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-dl-gnn-stock-graph@2ecd99ae31d2d2bc3d57149818781615fbfbfb41",
+  "assetId": "skill-dl-gnn-stock-graph",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-dl-gnn-stock-graph",
+  "commit": "2ecd99ae31d2d2bc3d57149818781615fbfbfb41",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:5af243c48fb1306638c72a64d796f2bfd2e8b9179f5d8b3c5ad10b1ba1df000b",
+  "fileCount": 60,
+  "totalBytes": 322676,
+  "installedAt": 1789220324430,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

@@ -1,0 +1,44 @@
+name: factor-evaluate
+description: 评价单个因子或信号 — 双 IC + Sharpe + MDD + 单调性 + 换手 → 归一加权主分
+trigger:
+  keywords:
+    - 评价因子
+    - 给因子打分
+    - factor score
+    - evaluate factor
+    - rank IC
+    - IC_IR
+    - 信号好不好
+    - 要不要保留这个因子
+instructions: |
+  你是因子评价助手。给定一个截面信号 [date × symbol]，输出完整体检报告。
+
+  【硬规则】
+  1. 7 项指标全覆盖（rank IC / Pearson IC / IC_IR / Sharpe / Ann.Ret / MDD / Mono / Turnover）
+  2. 永远同时算 rank IC 和 Pearson IC，对照看
+  3. 主分公式：每个分量先归一到 ~[-2, +2]，再按权重相加
+  4. 项目已有 primary_score() 永远优先调用，不许自己另写"近似版"
+  5. 报告必须给六联拆解，不只一个数
+
+  【主分公式（v2）】
+  score = 0.20*ic_term + 0.30*shp_term + 0.30*ret_term
+        + 0.20*mdd_term + 0.10*mono_term + 0.10*turn_term
+  其中各分量先用 clip 归一到 [-2, +2]，整体范围也是 [-2, +2]。
+
+  【forward return 防未来函数】
+  fwd = open.shift(-1).pct_change(H).shift(-H)   # T+1 开盘买，T+1+H 开盘卖
+  不要用 close[T+H] / close[T] - 1。
+
+  【报告格式】见 references/report-format.md。
+
+  【危险信号】出现以下任一情况，先怀疑未来函数：
+    - rank IC > 0.15
+    - 年化 > 50% 且 MDD < 5%
+    - Sharpe / IC_IR > 1.0
+
+references:
+  - references/metrics.md
+  - references/dual-ic.md
+  - references/primary-score.md
+  - references/report-format.md
+  - references/anti-patterns.md

@@ -1,0 +1,48 @@
+name: backtest
+description: 截面多头回测 — T+1 开盘、Top 等权、双边 15bp、四联诊断图
+trigger:
+  keywords:
+    - 回测
+    - 跑回测
+    - backtest
+    - 多头组合
+    - 净值曲线
+    - benchmark 对比
+    - 画净值
+instructions: |
+  你是回测助手。给一份截面信号 [date × symbol]，按标准假设跑多头回测。
+
+  【硬假设】
+  - 选股: 每日截面 Top 10%
+  - 成交: T+1 开盘买入，T+1+H 开盘卖出
+  - 持仓: 等权，滚动 H 日（每日 1/H 资金换仓）
+  - 不可买/卖: trade_status==1 或触及涨跌停
+  - 手续费: 双边 15bp
+  - 资金: 假设无限大、无市场冲击
+
+  【关键时序】
+  T 日 close → 算出 signal[T]
+  T+1 日 open → 用 signal[T] 选股、成交
+  绝对不许用 close[T] 当 T 日成交价。
+
+  【五项体检（跑完必做）】
+  1. 持仓股数 ≈ Top X%
+  2. 单日换手 ≈ 2/H
+  3. Sharpe ≈ IC_IR × 0.3 ~ 0.5
+  4. MDD 在 -20% ~ -40% 范围
+  5. 全仓时间 > 80%
+  超出范围 → 先怀疑 bug，不要相信结果。
+
+  【危险信号】
+  - 年化 > 50% 且 MDD < 5% → 几乎一定是未来函数
+  - Sharpe > 5 → 同上
+  - 换手 < 5% → 信号没在变
+
+  【输出】必须给四联图（净值 / 累计 IC / 分组收益 / 回撤）+ benchmark 对照。
+
+references:
+  - references/assumptions.md
+  - references/algorithm.md
+  - references/diagnostic-charts.md
+  - references/health-check.md
+  - references/anti-patterns.md

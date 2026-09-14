@@ -1,0 +1,53 @@
+{
+  "ok": true,
+  "by_symbol": {
+    "600519.SH": {
+      "consensus": "aligned",
+      "sources": {
+        "northbound": "buy",
+        "lhb_institution": "buy",
+        "margin": "buy",
+        "block": "no_data"
+      },
+      "label_note": "规则匹配/推断，非官方认定"
+    },
+    "000001.SZ": {
+      "consensus": "divergent",
+      "sources": {
+        "northbound": "sell",
+        "lhb_institution": "buy",
+        "margin": "sell",
+        "block": "no_data"
+      },
+      "label_note": "规则匹配/推断，非官方认定"
+    },
+    "600036.SH": {
+      "consensus": "aligned",
+      "sources": {
+        "northbound": "buy",
+        "lhb_institution": "buy",
+        "margin": "buy",
+        "block": "no_data"
+      },
+      "label_note": "规则匹配/推断，非官方认定"
+    },
+    "300750.SZ": {
+      "consensus": "divergent",
+      "sources": {
+        "northbound": "sell",
+        "lhb_institution": "buy",
+        "margin": "sell",
+        "block": "no_data"
+      },
+      "label_note": "规则匹配/推断，非官方认定"
+    }
+  },
+  "factor_consensus": {
+    "F001": "divergent",
+    "F002": "aligned",
+    "F003": "divergent"
+  },
+  "gap": null,
+  "source": "mock",
+  "note": "席位身份标签来自规则匹配，不等于官方认定；胜率为事后回看。"
+}

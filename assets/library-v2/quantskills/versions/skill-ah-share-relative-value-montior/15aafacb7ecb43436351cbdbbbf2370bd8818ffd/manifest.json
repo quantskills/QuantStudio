@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-ah-share-relative-value-montior@15aafacb7ecb43436351cbdbbbf2370bd8818ffd",
+  "assetId": "skill-ah-share-relative-value-montior",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-ah-share-relative-value-montior",
+  "commit": "15aafacb7ecb43436351cbdbbbf2370bd8818ffd",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:83863349c3bb8c051bf30ea5cc6e1aa30037715640dced79634c4217349c8da1",
+  "fileCount": 32,
+  "totalBytes": 372587,
+  "installedAt": 1789218770813,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

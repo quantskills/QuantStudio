@@ -1,0 +1,1 @@
+{"version":3,"file":"ModelStartup.d.ts","sourceRoot":"","sources":["../../../src/client/ModelStartup.tsx"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,mBAAmB,EAAE,MAAM,4CAA4C,CAAA;AAErF,OAAO,EAA4B,KAAK,WAAW,EAAE,MAAM,gCAAgC,CAAA;AAG3F,eAAO,MAAM,kBAAkB,GAAI,MAAM,mBAAmB,YACoB,CAAA;AAEhF,6FAA6F;AAC7F,wBAAgB,YAAY,CAAC,EAAE,MAAM,EAAE,EAAE;IAAE,MAAM,EAAE,WAAW,CAAA;CAAE,sCAsC/D"}

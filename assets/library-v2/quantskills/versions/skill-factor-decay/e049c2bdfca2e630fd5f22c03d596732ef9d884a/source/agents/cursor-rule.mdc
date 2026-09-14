@@ -1,0 +1,19 @@
+---
+description: Factor Decay Analysis — IC decay curves, half-life, turnover decay
+globs: .cursor/skills/skill-factor-decay/**
+alwaysApply: false
+---
+
+# Factor Decay Analysis
+
+分析因子信号预测能力随持有期的衰减特征。
+
+## Workflow
+1. 校验 signal [date × symbol] + multi-horizon forward returns
+2. 计算各期限 Rank IC
+3. 拟合衰减曲线（指数/幂律/双指数）
+4. Bootstrap 半衰期置信区间
+5. 换手衰减 + 分组收益衰减
+6. 输出 DecayReport + 推荐再平衡频率
+
+Full instructions: SKILL.md

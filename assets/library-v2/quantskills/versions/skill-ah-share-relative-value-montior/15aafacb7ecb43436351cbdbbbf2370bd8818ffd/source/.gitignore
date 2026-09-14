@@ -1,0 +1,67 @@
+# Local credentials and machine-specific configuration
+.env
+.env.*
+!.env.example
+
+# Python bytecode and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+
+# uv and local package-manager caches
+.uv-cache/
+.uv/
+
+# Test, type-checker, linter, and coverage caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Build and packaging artifacts
+build/
+dist/
+*.egg-info/
+
+# Local logs and runtime output
+logs/
+*.log
+/out/
+/output/
+/tmp/
+/tmp_*/
+*.tmp
+*.bak
+*.swp
+
+# Generated research files written at the repository root.
+# Keep example and reference CSV/JSON files under their own directories.
+/*.csv
+/*_report.json
+/*_report.md
+/*.meta.json
+/*.json.tmp
+
+# Local debug and packaging artifacts
+/debug_*.py
+/check_*.py
+*.whl
+*.tar.gz
+*.sqlite
+*.sqlite3
+*.db
+
+# Archived legacy documentation and data
+/oldreadme/
+.history/
+
+# OS/editor metadata
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,15 @@
+---
+description: Use the A/H Share Relative Value Monitor for same-issuer A-share and H-share research.
+alwaysApply: false
+---
+
+# A/H Relative Value Monitor
+
+When a request concerns A/H premiums, discounts, FX-adjusted price gaps, historical dislocations, or A/H lead-lag research:
+
+1. Read the repository `SKILL.md` and follow it as the canonical instruction set.
+2. Prefer the bundled scripts and normalized CSV contracts.
+3. Use company names for lookup when the user does not provide stock codes.
+4. Use PandaData and HKMA through the bundled workflow; do not browse unrelated market pages or manually scrape replacement data.
+5. If approved live data is unavailable, report the failure and stop rather than using stale snapshots.
+6. Treat every result as research only, not as an execution or arbitrage guarantee.

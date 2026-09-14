@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-macro-monitor@cf1f76aaf7be751988343c73363199a0b422bf15",
+  "assetId": "skill-macro-monitor",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-macro-monitor",
+  "commit": "cf1f76aaf7be751988343c73363199a0b422bf15",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:c92873e2ebce6a7870cfdc7c45b5c30327d1db06c806e18343bf8b7f99864a4f",
+  "fileCount": 9,
+  "totalBytes": 69521,
+  "installedAt": 1789218540296,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

@@ -1,0 +1,55 @@
+# Alpha Portfolio Guardian — 组合配置样例
+# 复制为 portfolio.yaml 后按需修改；mock 自测可用 config/portfolio.mock.yaml
+
+as_of: null                    # null = 使用运行日（研究态）；正式请填交易日 YYYY-MM-DD
+universe: "000300.SH"
+horizon_eval: 5
+horizon_decay: [1, 3, 5, 10, 20]
+source_mode: live              # live | mock | degraded
+data_source: Pandadata
+allow_pandadata_cache: true
+
+# 时点门禁：mode = off | soft | hard（旧键 require=true/false 仍兼容 → hard/soft）
+as_of_calendar:
+  mode: soft                   # soft=告警不阻断；hard=硬失败；off=关闭
+  exchange: SH
+  snap_to_prev: true           # 非交易日自动回退上一交易日
+
+factors:
+  - factor_id: F001
+    name: momentum_20
+    signal_path: data/factors/F001.parquet
+    # 可选：预计算报告（优先于现场重算）
+    # score_report_path: deps/F001_score.json
+    # decay_report_path: deps/F001_decay.json
+    # 可选：暴露主题/标的，用于挂载拥挤与聪明钱
+    exposure_symbols: []
+  - factor_id: F002
+    name: lowvol_20
+    signal_path: data/factors/F002.parquet
+    exposure_symbols: []
+
+crowding:
+  enabled: true
+  # 显式主题；为空时用各因子 exposure_symbols / Top 暴露并集
+  themes: []
+  # 若本地已有 crowding 产物，可直接桥接
+  snapshot_path: null          # 例如 ../agent-crowding-risk-monitor/outputs/live/agent_snapshot.json
+  scorecard_path: null
+
+smart_money:
+  enabled: true
+  mode: consensus              # full | seat | northbound | consensus
+  top_n_symbols: 10
+  win_rate_horizon: [5, 10, 20]
+  # 预置抽样结果（mock / 离线）
+  sample_path: null
+
+rules_version: "guardian-rules-v0.1"
+
+thresholds:
+  half_life_healthy: 5.0
+  half_life_fragile: 2.0
+  primary_score_retire: -0.5
+  ic_noise_abs: 0.005
+  high_turnover: 0.6

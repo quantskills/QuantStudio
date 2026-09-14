@@ -1,0 +1,7 @@
+{
+  "data_source": "Pandadata",
+  "delivery": "via_skill",
+  "via_skill": "skill-factor-evaluate",
+  "data_asof": "2026-07-31",
+  "method": "get_stock_daily"
+}

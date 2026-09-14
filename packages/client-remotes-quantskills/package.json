@@ -1,0 +1,62 @@
+{
+  "name": "@deepseek-ai/dsh-client-remotes-quantskills",
+  "description": "Client Remote contribution assembly for QuantSkills Host services",
+  "version": "0.1.19",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quantskills/QuantStudio.git",
+    "directory": "packages/client-remotes-quantskills"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./client": {
+      "types": "./lib/types/client/index.d.ts",
+      "default": "./lib/client.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-api-remotes"
+      ],
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "license": "GPL-3.0-or-later OR LicenseRef-PandaAI-Commercial",
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "lib/types/**/*.d.ts"
+  ],
+  "dependencies": {
+    "@deepseek-ai/dsh-panda-mcp": "workspace:^",
+    "@deepseek-ai/dsh-quantskills-host": "workspace:^",
+    "@deepseek-ai/dsh-quantskills-session": "workspace:^"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-api-remotes": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.1.2-alpha.2"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-api-remotes": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.1.2-alpha.2"
+  },
+  "scripts": {
+    "bundle": "tsdown",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

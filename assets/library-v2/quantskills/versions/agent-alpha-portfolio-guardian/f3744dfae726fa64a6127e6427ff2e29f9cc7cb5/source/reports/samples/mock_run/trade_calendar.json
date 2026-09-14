@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "skipped": true,
+  "mode": "soft",
+  "source_mode": "mock",
+  "as_of": "2026-07-31",
+  "exchange": "SH",
+  "checked": false,
+  "is_trade": null,
+  "errors": [],
+  "warnings": [
+    "mock: trade calendar check skipped"
+  ],
+  "suggested_as_of": null,
+  "snapped": false
+}

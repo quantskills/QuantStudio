@@ -1,0 +1,1 @@
+{"version":3,"file":"ProductIntro.d.ts","sourceRoot":"","sources":["../../../src/client/ProductIntro.tsx"],"names":[],"mappings":"AAQA,KAAK,OAAO,GAAG,MAAM,GAAG,KAAK,CAAA;AAC7B,eAAO,MAAM,YAAY;;;CAA2G,CAAA;AAwCpI,wBAAgB,YAAY,CAAC,EAAE,OAAO,EAAE,QAAQ,EAAE,EAAE;IAAE,OAAO,EAAE,OAAO,CAAC;IAAC,QAAQ,EAAE,CAAC,OAAO,EAAE,OAAO,KAAK,IAAI,CAAA;CAAE,+BA2B7G"}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Smart Money Profiler"
+  short_description: "基于Pandadata的聪明钱资金主体身份识别与跨期行为画像（龙虎榜席位·北向·合力分歧）"
+  default_prompt: "Use $smart-money-profiler 为 000001.SZ 生成资金主体画像：识别买卖席位身份、北向跨期行为，并叠加北向×机构席位×融资×大宗判断资金合力还是分歧，结论可溯源。"

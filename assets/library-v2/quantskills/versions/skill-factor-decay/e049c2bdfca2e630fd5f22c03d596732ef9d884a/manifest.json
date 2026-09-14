@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-factor-decay@e049c2bdfca2e630fd5f22c03d596732ef9d884a",
+  "assetId": "skill-factor-decay",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-factor-decay",
+  "commit": "e049c2bdfca2e630fd5f22c03d596732ef9d884a",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:909de4553ca903d802adabeaceb40549a2071afd2942491b65e7892c8a1c65f4",
+  "fileCount": 13,
+  "totalBytes": 74176,
+  "installedAt": 1789206487380,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

@@ -1,0 +1,22 @@
+---
+description: Use the Macro Monitor skill for Pandadata macro data, industry prosperity, economic calendar, and recurring macro report requests.
+alwaysApply: false
+---
+
+# Macro Monitor Skill
+
+When the user asks for macro data, GDP/CPI/PPI/PMI/social financing/M2/rates/FX, industry prosperity, high-frequency macro signals, economic calendars, macro weekly/monthly reports, or macro monitoring, use the local skill package.
+
+Preferred local project path:
+
+```text
+.cursor/skills/macro-monitor
+```
+
+Workflow:
+
+1. Read `.cursor/skills/macro-monitor/SKILL.md`.
+2. For reports, industry work, calendar tracking, or monitoring specs, also read `.cursor/skills/macro-monitor/references/macro-monitor-guide.md`.
+3. Use the Pandadata API skill for exact method contracts. If available in the same project, read `.cursor/skills/pandadata-api/SKILL.md` and inspect method docs before calling APIs.
+4. Start with `get_macro_detail` to confirm indicator codes; do not invent codes, fields, units, or release dates.
+5. Include method, parameters, latest period, unit, and stale-data notes for every material macro claim.

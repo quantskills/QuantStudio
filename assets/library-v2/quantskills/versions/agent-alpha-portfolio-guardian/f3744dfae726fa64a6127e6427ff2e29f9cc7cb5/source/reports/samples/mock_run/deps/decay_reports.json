@@ -1,0 +1,257 @@
+[
+  {
+    "factor_id": "F001",
+    "factor_name": "momentum_20",
+    "ok": true,
+    "half_life": 6.0,
+    "half_life_ci_low": 4.199999999999999,
+    "half_life_ci_high": 8.399999999999999,
+    "recommended_rebalance": "5",
+    "quality": "good",
+    "model": "exponential",
+    "points": [
+      {
+        "horizon": 1,
+        "ic_mean": 0.02495,
+        "ic_sign": 1
+      },
+      {
+        "horizon": 3,
+        "ic_mean": 0.0198,
+        "ic_sign": 1
+      },
+      {
+        "horizon": 5,
+        "ic_mean": 0.01571,
+        "ic_sign": 1
+      },
+      {
+        "horizon": 10,
+        "ic_mean": 0.00882,
+        "ic_sign": 1
+      },
+      {
+        "horizon": 20,
+        "ic_mean": 0.00278,
+        "ic_sign": 1
+      }
+    ],
+    "ic_by_horizon": {
+      "1": 0.02495,
+      "3": 0.0198,
+      "5": 0.01571,
+      "10": 0.00882,
+      "20": 0.00278
+    },
+    "sign_reversal": false,
+    "platform_ic": 0.00278,
+    "source": "mock",
+    "raw": {
+      "factor_id": "F001",
+      "factor_name": "momentum_20",
+      "ic_decay": {
+        "horizons": [
+          1,
+          3,
+          5,
+          10,
+          20
+        ],
+        "ic_means": [
+          0.02495,
+          0.0198,
+          0.01571,
+          0.00882,
+          0.00278
+        ],
+        "model": "exponential"
+      },
+      "half_life": {
+        "days": 6.0,
+        "ci_95": [
+          4.199999999999999,
+          8.399999999999999
+        ],
+        "method": "mock"
+      },
+      "recommendation": {
+        "rebalance_frequency_days": 5,
+        "quality": "good"
+      },
+      "sign_reversal": false,
+      "platform_ic": 0.00278,
+      "source": "mock"
+    },
+    "report_path": null
+  },
+  {
+    "factor_id": "F002",
+    "factor_name": "lowvol_20",
+    "ok": true,
+    "half_life": 12.0,
+    "half_life_ci_low": 8.399999999999999,
+    "half_life_ci_high": 16.799999999999997,
+    "recommended_rebalance": "10",
+    "quality": "good",
+    "model": "exponential",
+    "points": [
+      {
+        "horizon": 1,
+        "ic_mean": 0.03304,
+        "ic_sign": 1
+      },
+      {
+        "horizon": 3,
+        "ic_mean": 0.02943,
+        "ic_sign": 1
+      },
+      {
+        "horizon": 5,
+        "ic_mean": 0.02622,
+        "ic_sign": 1
+      },
+      {
+        "horizon": 10,
+        "ic_mean": 0.01964,
+        "ic_sign": 1
+      },
+      {
+        "horizon": 20,
+        "ic_mean": 0.01102,
+        "ic_sign": 1
+      }
+    ],
+    "ic_by_horizon": {
+      "1": 0.03304,
+      "3": 0.02943,
+      "5": 0.02622,
+      "10": 0.01964,
+      "20": 0.01102
+    },
+    "sign_reversal": false,
+    "platform_ic": 0.01102,
+    "source": "mock",
+    "raw": {
+      "factor_id": "F002",
+      "factor_name": "lowvol_20",
+      "ic_decay": {
+        "horizons": [
+          1,
+          3,
+          5,
+          10,
+          20
+        ],
+        "ic_means": [
+          0.03304,
+          0.02943,
+          0.02622,
+          0.01964,
+          0.01102
+        ],
+        "model": "exponential"
+      },
+      "half_life": {
+        "days": 12.0,
+        "ci_95": [
+          8.399999999999999,
+          16.799999999999997
+        ],
+        "method": "mock"
+      },
+      "recommendation": {
+        "rebalance_frequency_days": 10,
+        "quality": "good"
+      },
+      "sign_reversal": false,
+      "platform_ic": 0.01102,
+      "source": "mock"
+    },
+    "report_path": null
+  },
+  {
+    "factor_id": "F003",
+    "factor_name": "reversal_5",
+    "ok": true,
+    "half_life": 1.5,
+    "half_life_ci_low": 1.0499999999999998,
+    "half_life_ci_high": 2.0999999999999996,
+    "recommended_rebalance": "1",
+    "quality": "poor",
+    "model": "nonparametric",
+    "points": [
+      {
+        "horizon": 1,
+        "ic_mean": -0.01336,
+        "ic_sign": -1
+      },
+      {
+        "horizon": 3,
+        "ic_mean": -0.00464,
+        "ic_sign": -1
+      },
+      {
+        "horizon": 5,
+        "ic_mean": 0.00047,
+        "ic_sign": 1
+      },
+      {
+        "horizon": 10,
+        "ic_mean": 0.00659,
+        "ic_sign": 1
+      },
+      {
+        "horizon": 20,
+        "ic_mean": 0.01102,
+        "ic_sign": 1
+      }
+    ],
+    "ic_by_horizon": {
+      "1": -0.01336,
+      "3": -0.00464,
+      "5": 0.00047,
+      "10": 0.00659,
+      "20": 0.01102
+    },
+    "sign_reversal": true,
+    "platform_ic": 0.01102,
+    "source": "mock",
+    "raw": {
+      "factor_id": "F003",
+      "factor_name": "reversal_5",
+      "ic_decay": {
+        "horizons": [
+          1,
+          3,
+          5,
+          10,
+          20
+        ],
+        "ic_means": [
+          -0.01336,
+          -0.00464,
+          0.00047,
+          0.00659,
+          0.01102
+        ],
+        "model": "nonparametric"
+      },
+      "half_life": {
+        "days": 1.5,
+        "ci_95": [
+          1.0499999999999998,
+          2.0999999999999996
+        ],
+        "method": "mock"
+      },
+      "recommendation": {
+        "rebalance_frequency_days": 1,
+        "quality": "poor"
+      },
+      "sign_reversal": true,
+      "platform_ic": 0.01102,
+      "source": "mock"
+    },
+    "report_path": null
+  }
+]

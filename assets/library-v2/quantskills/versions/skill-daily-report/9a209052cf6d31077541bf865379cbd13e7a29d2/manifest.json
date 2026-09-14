@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-daily-report@9a209052cf6d31077541bf865379cbd13e7a29d2",
+  "assetId": "skill-daily-report",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-daily-report",
+  "commit": "9a209052cf6d31077541bf865379cbd13e7a29d2",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:a65c6d090c39bc00ddcd343076a3863153ac717c53d6a094efbb70884335cc63",
+  "fileCount": 10,
+  "totalBytes": 38228,
+  "installedAt": 1789292886609,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

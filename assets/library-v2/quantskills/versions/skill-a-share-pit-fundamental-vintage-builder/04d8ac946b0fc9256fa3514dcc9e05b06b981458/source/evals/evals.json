@@ -1,0 +1,23 @@
+{
+  "skill_name": "skill-a-share-pit-fundamental-vintage-builder",
+  "evals": [
+    {
+      "id": "monthly-factor-backtest",
+      "prompt": "为 000021.SZ 和 600519.SH 构建 2021-2025 年按月调仓的财务因子回测数据。",
+      "expected_output": "识别这是构建可信回测数据的主路径；生成月末调仓日、PIT 财务长表、单季和 TTM 因子；先说明最后调仓日实际可用的报告期和数据是否通过 PIT 校验，再附文件链接。",
+      "files": []
+    },
+    {
+      "id": "audit-existing-backtest",
+      "prompt": "审计我的财务因子回测是否偷看未来。",
+      "expected_output": "先索取财务面板、调仓日和因子/回测代码；说明缺少代码时只能审计数据时点，不能确认完整策略。",
+      "files": []
+    },
+    {
+      "id": "near-miss-current-financials",
+      "prompt": "帮我快速解释 600519.SH 最新年报的收入和净利润。",
+      "expected_output": "识别这是当前财报解读，不应触发本 Skill；简要说明该 Skill 专注于历史回测防未来函数。",
+      "files": []
+    }
+  ]
+}

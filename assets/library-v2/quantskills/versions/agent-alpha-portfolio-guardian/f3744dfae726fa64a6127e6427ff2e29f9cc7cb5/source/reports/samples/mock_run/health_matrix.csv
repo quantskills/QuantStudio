@@ -1,0 +1,4 @@
+﻿as_of_date,factor_id,factor_name,primary_score,rank_ic,pearson_ic,ic_ir,half_life,half_life_ci_low,half_life_ci_high,recommended_rebalance,crowding_level,capital_consensus,health_status,signal,signal_coarse,confidence,gap_notes,reasons,data_version,update_time,source_mode
+2026-07-31,F001,momentum_20,0.25,0.018,0.0144,0.8,6.0,4.199999999999999,8.399999999999999,5,info,divergent,watch,watch,watch,0.55,,CAPITAL_DIVERGENT,guardian-mock-v0.1+guardian-rules-v0.1,2026-08-09T13:47:27Z,mock
+2026-07-31,F002,lowvol_20,0.55,0.032,0.0256,1.4,12.0,8.399999999999999,16.799999999999997,10,info,aligned,healthy,keep,neutral,0.72,,OK,guardian-mock-v0.1+guardian-rules-v0.1,2026-08-09T13:47:27Z,mock
+2026-07-31,F003,reversal_5,0.05,0.008,0.0064,0.4,1.5,1.0499999999999998,2.0999999999999996,1,info,divergent,rebuild_candidate,rebuild_candidate,avoid,0.7,,SIGN_REVERSAL,guardian-mock-v0.1+guardian-rules-v0.1,2026-08-09T13:47:27Z,mock

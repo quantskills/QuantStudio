@@ -1,0 +1,40 @@
+{
+  "strategy_group": "趋势跟踪",
+  "strategy_name": "MA5_MA20_Cross_000001",
+  "strategy_description": "5日均线上穿20日均线买入，下穿卖出。标的:平安银行(000001.XSHE)",
+  "strategy_status": 1,
+  "run_type": "backtest",
+  "strategy_type": "stock",
+  "start_date": "2023-01-01",
+  "end_date": "2023-12-31",
+  "init_cash": 10000000,
+  "trade_freq": "daily",
+  "freq_type": "every_bar",
+  "freq_value": null,
+  "stockpool_type": "custom",
+  "stockpool_stock": ["000001.XSHE"],
+  "trade_template": [
+    {
+      "type": "buy",
+      "name": "金叉买入 (MA5上穿MA20)",
+      "condition": "keep.get('signal_buy', False) == True",
+      "amount": 0.95,
+      "price": 0,
+      "sort_index": 1,
+      "pro_code": "000001.XSHE"
+    },
+    {
+      "type": "close",
+      "name": "死叉卖出 (MA5下穿MA20)",
+      "condition": "keep.get('signal_sell', False) == True",
+      "amount": 0,
+      "price": 0,
+      "sort_index": 2,
+      "pro_code": "000001.XSHE"
+    }
+  ],
+  "strategy_content": "import pandas as pd\n\n# 获取20个交易日的日K线数据\nk_data = get_price(pro_code, '1d', count=20)\n\nif len(k_data) < 20:\n    keep['signal_buy'] = False\n    keep['signal_sell'] = False\nelse:\n    closes = k_data['close'].values\n    MA5 = closes[-5:].mean()\n    MA20 = closes.mean()\n    current_price = closes[-1]\n    \n    # 买入信号：当前价 > MA5 > MA20（均线多头排列）\n    keep['signal_buy'] = bool(current_price > MA5 and MA5 > MA20)\n    \n    # 卖出信号：当前价 < MA5 或 MA5 < MA20（均线空头排列）\n    keep['signal_sell'] = bool(current_price < MA5 or MA5 < MA20)\n    \n    # 记录数值供分析\n    keep['MA5'] = float(f'{MA5:.2f}')\n    keep['MA20'] = float(f'{MA20:.2f}')\n    keep['price'] = float(f'{current_price:.2f}')\n    \n    print(f'[{date}] Price={current_price:.2f} MA5={MA5:.2f} MA20={MA20:.2f} Buy={keep[\"signal_buy\"]} Sell={keep[\"signal_sell\"]}')\n",
+  "strategy_extra_content": "",
+  "strategy_describe": "本策略是经典的均线交叉趋势跟踪策略。当价格站在MA5之上且MA5在MA20之上时买入（金叉形态）；当价格跌破MA5或MA5跌破MA20时清仓卖出（死叉形态）。标的为平安银行(000001.XSHE)，每次买入使用95%可用资金，回测周期为2023年度。",
+  "keep": "{}"
+}

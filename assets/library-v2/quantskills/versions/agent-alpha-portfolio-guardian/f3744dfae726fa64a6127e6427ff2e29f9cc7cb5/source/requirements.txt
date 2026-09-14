@@ -1,0 +1,10 @@
+# 推荐 Python 3.12
+# 安装：pip install -r requirements.txt
+
+pandas>=2.0,<3
+numpy>=1.22,<2
+PyYAML>=6.0
+matplotlib>=3.7
+
+# live 模式经依赖 Skill 取数时可选
+# panda-data>=0.0.9

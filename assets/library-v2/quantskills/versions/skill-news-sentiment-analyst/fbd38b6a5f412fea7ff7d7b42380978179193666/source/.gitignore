@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+
+# Parquet output data
+*.parquet
+scripts/output/
+scripts/test_output/
+
+# IDE
+.vscode/
+.idea/
+
+# Credentials (DO NOT COMMIT)
+.env
+
+# Playwright temp files
+.playwright-mcp/
+*-api-docs*.md
+*-login.png
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "agent-industry-news@a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d",
+  "assetId": "agent-industry-news",
+  "kind": "agent",
+  "repository": "local-authoring:agent-industry-news",
+  "commit": "a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d",
+  "declaration": "AGENTS.md",
+  "treeDigest": "sha256:1e5dbcafb2a6e0ab622b8e3d2d865a48704bbab6250589daf31c72ad4d7db74d",
+  "fileCount": 6,
+  "totalBytes": 39746,
+  "installedAt": 1789220563900,
+  "exposure": "agent-template",
+  "origin": "local-authoring"
+}

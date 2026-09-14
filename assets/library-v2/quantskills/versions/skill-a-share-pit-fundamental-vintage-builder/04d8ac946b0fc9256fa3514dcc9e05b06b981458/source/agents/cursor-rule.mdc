@@ -1,0 +1,16 @@
+---
+description: "Build or audit A-share financial-factor research inputs with point-in-time financial-report availability rules."
+globs:
+  - "**/*"
+alwaysApply: false
+---
+
+# A-Share PIT Financial Data Auditor
+
+For a request involving A-share financial factors, historical rebalance inputs, financial-report revisions, or financial-data look-ahead bias, read the repository-root `SKILL.md` before acting. Treat it as the canonical workflow.
+
+Before the first live Panda Data request, use the platform-appropriate interactive login flow in `SKILL.md`. Never request credentials in chat or write them to repository files or outputs.
+
+Build only formal-report PIT inputs with `get_fina_reports(is_latest=False)`. Preserve `quarter`, `disclosure_date`, `available_date`, `as_of_date`, and `vintage_type` alongside factor values. Use the conservative T+1 availability convention and fail closed when same-day report versions cannot be distinguished.
+
+This Skill prepares and audits research inputs. Do not present it as investment advice, a return guarantee, or a generic performance-backtest engine.

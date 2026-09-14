@@ -1,0 +1,1 @@
+{"version":3,"file":"markdown-labels.js","sourceRoot":"","sources":["../../../src/client/markdown-labels.ts"],"names":[],"mappings":"AAAA,mEAAmE;AAKnE;;;;GAIG;AACH,MAAM,UAAU,cAAc,CAAC,CAAyB;IACtD,OAAO;QACL,IAAI,EAAE,EAAE,SAAS,EAAE,CAAC,CAAC,MAAM,CAAC,EAAE,WAAW,EAAE,CAAC,CAAC,QAAQ,CAAC,EAAE;QACxD,SAAS,EAAE,CAAC,CAAC,oBAAoB,CAAC;KACnC,CAAA;AACH,CAAC"}

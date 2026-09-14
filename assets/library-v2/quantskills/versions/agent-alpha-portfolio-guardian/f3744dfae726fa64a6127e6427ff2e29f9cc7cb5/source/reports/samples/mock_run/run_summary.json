@@ -1,0 +1,44 @@
+{
+  "run_id": "_self_test",
+  "portfolio": "config/portfolio.mock.yaml",
+  "as_of": "2026-07-31",
+  "source_mode": "mock",
+  "data_source": "synthetic-mock",
+  "pandadata_redline": {
+    "ok": true,
+    "mode": "mock",
+    "errors": [],
+    "warnings": [
+      "mock run"
+    ],
+    "credentials": false,
+    "pandadata_cache_hits": 0
+  },
+  "trade_calendar": {
+    "ok": true,
+    "skipped": true,
+    "mode": "soft",
+    "source_mode": "mock",
+    "as_of": "2026-07-31",
+    "exchange": "SH",
+    "checked": false,
+    "is_trade": null,
+    "errors": [],
+    "warnings": [
+      "mock: trade calendar check skipped"
+    ],
+    "suggested_as_of": null,
+    "snapped": false
+  },
+  "data_version": "guardian-mock-v0.1+guardian-rules-v0.1",
+  "update_time": "2026-08-09T13:47:27Z",
+  "rules_version": "guardian-rules-v0.1",
+  "universe": "000300.SH",
+  "horizon_eval": 5,
+  "n_factors": 3,
+  "gaps": [
+    "mock run",
+    "mock: trade calendar check skipped"
+  ],
+  "l1": "截至 2026-07-31（source_mode=mock），组合 3 个因子健康度守卫完成：keep=1，rebuild_candidate=1，watch=1。结论仅供研究参考。"
+}

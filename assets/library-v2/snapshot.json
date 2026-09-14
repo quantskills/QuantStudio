@@ -1,0 +1,2549 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-14T05:54:52.500Z",
+  "assets": [
+    {
+      "schemaVersion": 1,
+      "versionId": "agent-alpha-portfolio-guardian@f3744dfae726fa64a6127e6427ff2e29f9cc7cb5",
+      "assetId": "agent-alpha-portfolio-guardian",
+      "kind": "agent",
+      "repository": "https://github.com/quantskills/agent-alpha-portfolio-guardian",
+      "commit": "f3744dfae726fa64a6127e6427ff2e29f9cc7cb5",
+      "declaration": "AGENTS.md",
+      "treeDigest": "sha256:e77ac3a62d84a09b3bfb01cbe6bf9e3a446dd11135c5771aaebc361f664cd23b",
+      "fileCount": 77,
+      "totalBytes": 387865,
+      "installedAt": 1789206488649,
+      "exposure": "agent-template",
+      "origin": "catalog",
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-a-share-pit-fundamental-vintage-builder@04d8ac946b0fc9256fa3514dcc9e05b06b981458",
+      "assetId": "skill-a-share-pit-fundamental-vintage-builder",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-a-share-pit-fundamental-vintage-builder",
+      "commit": "04d8ac946b0fc9256fa3514dcc9e05b06b981458",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:28fc0b103ed9106c8fdc77707ada78ca21c579afe68a00abdea59ab47b1d1cc5",
+      "fileCount": 31,
+      "totalBytes": 144163,
+      "installedAt": 1789225122633,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-ah-share-relative-value-montior@15aafacb7ecb43436351cbdbbbf2370bd8818ffd",
+      "assetId": "skill-ah-share-relative-value-montior",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-ah-share-relative-value-montior",
+      "commit": "15aafacb7ecb43436351cbdbbbf2370bd8818ffd",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:83863349c3bb8c051bf30ea5cc6e1aa30037715640dced79634c4217349c8da1",
+      "fileCount": 32,
+      "totalBytes": 372587,
+      "installedAt": 1789218770813,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-backtest@cf9154603263e2a4e2151f39e2708923d8d776a7",
+      "assetId": "skill-backtest",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-backtest",
+      "commit": "cf9154603263e2a4e2151f39e2708923d8d776a7",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:7171b7dede6c5d380215d161638a6d3f18e337bdc0ba3fb5253879a06de7b642",
+      "fileCount": 12,
+      "totalBytes": 74976,
+      "installedAt": 1789219112127,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-daily-report@9a209052cf6d31077541bf865379cbd13e7a29d2",
+      "assetId": "skill-daily-report",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-daily-report",
+      "commit": "9a209052cf6d31077541bf865379cbd13e7a29d2",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:a65c6d090c39bc00ddcd343076a3863153ac717c53d6a094efbb70884335cc63",
+      "fileCount": 10,
+      "totalBytes": 38228,
+      "installedAt": 1789292886609,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-dalio-all-weather@66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd",
+      "assetId": "skill-dalio-all-weather",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-dalio-all-weather",
+      "commit": "66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:9a94e7894240178308d8bafff7649551feaa3b89c75101a8385effb08b71b0f6",
+      "fileCount": 31,
+      "totalBytes": 287231,
+      "installedAt": 1789219087133,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-dl-gnn-stock-graph@2ecd99ae31d2d2bc3d57149818781615fbfbfb41",
+      "assetId": "skill-dl-gnn-stock-graph",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-dl-gnn-stock-graph",
+      "commit": "2ecd99ae31d2d2bc3d57149818781615fbfbfb41",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:5af243c48fb1306638c72a64d796f2bfd2e8b9179f5d8b3c5ad10b1ba1df000b",
+      "fileCount": 60,
+      "totalBytes": 322676,
+      "installedAt": 1789220324430,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-factor-decay@e049c2bdfca2e630fd5f22c03d596732ef9d884a",
+      "assetId": "skill-factor-decay",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-factor-decay",
+      "commit": "e049c2bdfca2e630fd5f22c03d596732ef9d884a",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:909de4553ca903d802adabeaceb40549a2071afd2942491b65e7892c8a1c65f4",
+      "fileCount": 13,
+      "totalBytes": 74176,
+      "installedAt": 1789206487380,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-factor-evaluate@3b335ec4814dcea49ba6005524157b09c555a225",
+      "assetId": "skill-factor-evaluate",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-factor-evaluate",
+      "commit": "3b335ec4814dcea49ba6005524157b09c555a225",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:2c66d774eacae76b426ce9716f4e4e1b883d0d185b17223ba712bd9e9ce2c049",
+      "fileCount": 12,
+      "totalBytes": 70282,
+      "installedAt": 1789206486089,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-fin-news@329370ad25fb56dbf548fdc9c65e9556d3b0d3cd",
+      "assetId": "skill-fin-news",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-fin-news",
+      "commit": "329370ad25fb56dbf548fdc9c65e9556d3b0d3cd",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:f6092f0ea1c3cae28986dfbce5193c7c8b2765afc1c137f661c4acf806a15dda",
+      "fileCount": 10,
+      "totalBytes": 63510,
+      "installedAt": 1789218589514,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-jq-to-panda-converter@c6e23481f05246828b5d944623c35afb08fb3987",
+      "assetId": "skill-jq-to-panda-converter",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-jq-to-panda-converter",
+      "commit": "c6e23481f05246828b5d944623c35afb08fb3987",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:b35b327d340ae6283d3f5cc773f31da6111597cde5b8ecb096a5d127177b1d07",
+      "fileCount": 17,
+      "totalBytes": 152070,
+      "installedAt": 1789292922102,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-macro-monitor@cf1f76aaf7be751988343c73363199a0b422bf15",
+      "assetId": "skill-macro-monitor",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-macro-monitor",
+      "commit": "cf1f76aaf7be751988343c73363199a0b422bf15",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:c92873e2ebce6a7870cfdc7c45b5c30327d1db06c806e18343bf8b7f99864a4f",
+      "fileCount": 9,
+      "totalBytes": 69521,
+      "installedAt": 1789218540296,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-news-sentiment-analyst@fbd38b6a5f412fea7ff7d7b42380978179193666",
+      "assetId": "skill-news-sentiment-analyst",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-news-sentiment-analyst",
+      "commit": "fbd38b6a5f412fea7ff7d7b42380978179193666",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:982532930597931831cffce070f499afa733583802eb7acc634ac9980580f8d2",
+      "fileCount": 12,
+      "totalBytes": 68426,
+      "installedAt": 1789218648664,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "snapshotLocalModification": {
+        "upstreamTreeDigest": "sha256:679237f5ff13a818ba169e660dcb0a7e92ddb2788ecbd409ad486c9430905fcf",
+        "reason": "Preserve local UTF-8 reading fixes in collector.py and verifier.py"
+      },
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-report-replication@caed18abbeffb4b08e0f26950f79b9900f9f32dc",
+      "assetId": "skill-report-replication",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-report-replication",
+      "commit": "caed18abbeffb4b08e0f26950f79b9900f9f32dc",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:5a142ccd9f446e19404ea3e80c6e62b09e8e95e96c3f16ae330a24476ec068c5",
+      "fileCount": 23,
+      "totalBytes": 219230,
+      "installedAt": 1789218793931,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-smart-money-profiler@d606d88e726f11dbd00fe705ba7f6a2d17d19d01",
+      "assetId": "skill-smart-money-profiler",
+      "kind": "skill",
+      "repository": "https://github.com/quantskills/skill-smart-money-profiler",
+      "commit": "d606d88e726f11dbd00fe705ba7f6a2d17d19d01",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:e6e4398c0463dd3a3dd2e30fb0b0663a6bf51645e9fb86a5b70bb9af8575638b",
+      "fileCount": 9,
+      "totalBytes": 86578,
+      "installedAt": 1789206488642,
+      "exposure": "skill-registry",
+      "origin": "catalog",
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "agent-factor-evaluator@5a3669f3d9b770cddb595c80265f5c96f7a3f30d",
+      "assetId": "agent-factor-evaluator",
+      "kind": "agent",
+      "repository": "local-authoring:agent-factor-evaluator",
+      "commit": "5a3669f3d9b770cddb595c80265f5c96f7a3f30d",
+      "declaration": "AGENTS.md",
+      "treeDigest": "sha256:a75f1846abe875bfe56db03267fca4a7c1c79db3a75d99a22a3b94eacda94863",
+      "fileCount": 4,
+      "totalBytes": 50947,
+      "installedAt": 1789217235966,
+      "exposure": "agent-template",
+      "origin": "local-authoring",
+      "path": "authored/agent-factor-evaluator/5a3669f3d9b770cddb595c80265f5c96f7a3f30d"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "agent-industry-news@a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d",
+      "assetId": "agent-industry-news",
+      "kind": "agent",
+      "repository": "local-authoring:agent-industry-news",
+      "commit": "a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d",
+      "declaration": "AGENTS.md",
+      "treeDigest": "sha256:1e5dbcafb2a6e0ab622b8e3d2d865a48704bbab6250589daf31c72ad4d7db74d",
+      "fileCount": 6,
+      "totalBytes": 39746,
+      "installedAt": 1789220563900,
+      "exposure": "agent-template",
+      "origin": "local-authoring",
+      "path": "authored/agent-industry-news/a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d"
+    },
+    {
+      "schemaVersion": 1,
+      "versionId": "skill-csi300-market-report@437c9cffa1e1347be77b04765aed2abc52d6a712",
+      "assetId": "skill-csi300-market-report",
+      "kind": "skill",
+      "repository": "local-authoring:skill-csi300-market-report",
+      "commit": "437c9cffa1e1347be77b04765aed2abc52d6a712",
+      "declaration": "SKILL.md",
+      "treeDigest": "sha256:b7d4e9bca6168da2ac92e0367c7740945f8006781d37d3216cc1e43e3cd26535",
+      "fileCount": 2,
+      "totalBytes": 39336,
+      "installedAt": 1789222236460,
+      "exposure": "skill-registry",
+      "origin": "local-authoring",
+      "path": "authored/skill-csi300-market-report/437c9cffa1e1347be77b04765aed2abc52d6a712"
+    }
+  ],
+  "experts": [
+    {
+      "agentId": "agent-e1adc9a2-5cce-40fa-b5e5-124b74e29ed6",
+      "revision": 1,
+      "name": "多因子组合健康度守卫智能体"
+    },
+    {
+      "agentId": "agent-d8ab9fb7-4185-4059-8bb5-b78c8f287b86",
+      "revision": 2,
+      "name": "Agent Team 创作"
+    },
+    {
+      "agentId": "agent-f99b5d55-6fda-4e13-a73a-950c9f6cdf6b",
+      "revision": 1,
+      "name": "Agent 创作"
+    },
+    {
+      "agentId": "agent-20be258f-a56e-46b5-8a4a-7f0fc147ec3c",
+      "revision": 1,
+      "name": "agent-factor-evaluator"
+    },
+    {
+      "agentId": "agent-6e3061f9-c618-4917-8db4-ff29a3123d57",
+      "revision": 1,
+      "name": "Skill 创作"
+    },
+    {
+      "agentId": "agent-e5f1e8d7-93d5-4517-8e89-451e0c270809",
+      "revision": 1,
+      "name": "agent-news-analyst"
+    },
+    {
+      "agentId": "agent-2d25f099-5850-4882-9daf-fc561b3c352f",
+      "revision": 1,
+      "name": "agent-smart-money-profiler"
+    },
+    {
+      "agentId": "agent-30122c24-8e31-4c10-8e43-9ac2a0b5937b",
+      "revision": 1,
+      "name": "agent-team-lead-news-smartmoney"
+    },
+    {
+      "agentId": "agent-adbf87e7-2dcc-4a9d-a7c2-61493401ee65",
+      "revision": 1,
+      "name": "agent-industry-news"
+    },
+    {
+      "agentId": "agent-a1853506-d55b-483e-a3b8-67a9230560f6",
+      "revision": 1,
+      "name": "多因子组合健康度守卫智能体"
+    },
+    {
+      "agentId": "agent-2491edb6-c550-42ad-a90a-32665661b18d",
+      "revision": 1,
+      "name": "专家团 创作"
+    },
+    {
+      "agentId": "agent-d9c4e5d8-a001-4e2c-9bb3-2299ba328813",
+      "revision": 1,
+      "name": "沪深300多因子策略团长"
+    },
+    {
+      "agentId": "agent-d0f380c3-11a1-46c7-a21f-e42fcdba2c6a",
+      "revision": 1,
+      "name": "数据与因子分析师"
+    },
+    {
+      "agentId": "agent-ee7e0e57-e9e3-4cf1-82c6-2a7fc4dbc44f",
+      "revision": 1,
+      "name": "策略回测与报告师"
+    },
+    {
+      "agentId": "agent-d6594987-a04d-41f2-bd93-de140c0d5aec",
+      "revision": 1,
+      "name": "A股投研全流程团长"
+    },
+    {
+      "agentId": "agent-7878fccc-405a-46ed-b815-64b9d8430664",
+      "revision": 1,
+      "name": "A股行情与财务数据工程师"
+    },
+    {
+      "agentId": "agent-237aa7f3-aaea-4d72-895c-c07f9fe258cf",
+      "revision": 1,
+      "name": "A股策略回测工程师"
+    },
+    {
+      "agentId": "agent-21a9aae9-5601-4ef7-84ab-713b7453ac58",
+      "revision": 1,
+      "name": "A股消息面与情绪分析师"
+    },
+    {
+      "agentId": "agent-bf5e6b20-dc6b-4e7a-b6b7-ae3410f07a78",
+      "revision": 1,
+      "name": "A股资金主体画像师"
+    },
+    {
+      "agentId": "agent-3c2d2706-7ead-4bab-9663-a47cf345fcf8",
+      "revision": 1,
+      "name": "个股研究专家"
+    },
+    {
+      "agentId": "agent-33f85a35-ce14-4dad-a1f0-29ef6fa7695c",
+      "revision": 1,
+      "name": "行业研究专家"
+    },
+    {
+      "agentId": "agent-1f4445f8-df82-441a-b11a-2c98dae9a8fa",
+      "revision": 1,
+      "name": "财报解读专家"
+    },
+    {
+      "agentId": "agent-1dc1c4e1-86e1-46f9-ac73-93ff40927ee3",
+      "revision": 1,
+      "name": "新闻事件分析专家"
+    },
+    {
+      "agentId": "agent-d0a43fae-31cc-4834-adbd-c8f7939253e5",
+      "revision": 1,
+      "name": "持仓诊断专家"
+    },
+    {
+      "agentId": "agent-5beebdb9-230e-496d-95ef-a5396f81ce59",
+      "revision": 1,
+      "name": "量化研究专家"
+    },
+    {
+      "agentId": "agent-9226f354-9648-46fd-903d-a43d9b8a7dff",
+      "revision": 1,
+      "name": "多因子选股专家"
+    },
+    {
+      "agentId": "agent-c4477180-de08-48db-a4e1-e38bd28d324c",
+      "revision": 1,
+      "name": "因子挖掘专家"
+    },
+    {
+      "agentId": "agent-85badd4c-3037-4a2f-91b1-0ad9a92bad74",
+      "revision": 1,
+      "name": "策略回测专家"
+    },
+    {
+      "agentId": "agent-d2da3b42-87cf-49bb-920f-dcf6c4177e04",
+      "revision": 1,
+      "name": "策略审查专家"
+    },
+    {
+      "agentId": "agent-1219755e-b1a3-4eef-a612-cc16298e129d",
+      "revision": 1,
+      "name": "多因子组合健康度守卫智能体"
+    },
+    {
+      "agentId": "agent-fa84037f-955a-46af-89ff-8058d756dd30",
+      "revision": 1,
+      "name": "行情数据研究员"
+    },
+    {
+      "agentId": "agent-23905459-c268-4b15-8a40-8ccd1916d1c2",
+      "revision": 1,
+      "name": "行业板块分析师"
+    },
+    {
+      "agentId": "agent-8db27cd9-f2c5-4945-8a5e-916228d591ee",
+      "revision": 1,
+      "name": "资金流向研究员"
+    },
+    {
+      "agentId": "agent-93a46356-7379-4278-9554-70894a895312",
+      "revision": 1,
+      "name": "报告可视化工程师"
+    },
+    {
+      "agentId": "agent-83d5e316-c0b6-4946-99f1-f1ed45900273",
+      "revision": 1,
+      "name": "办公文稿专家"
+    },
+    {
+      "agentId": "agent-ebe42044-81ae-43a3-a489-5de75e672123",
+      "revision": 1,
+      "name": "会议纪要专家"
+    },
+    {
+      "agentId": "agent-10b2347c-9ef4-489d-93da-abcb004177da",
+      "revision": 1,
+      "name": "Excel 数据专家"
+    },
+    {
+      "agentId": "agent-abca8d75-4696-4c6c-a33d-4a0683852b0c",
+      "revision": 1,
+      "name": "PPT 汇报专家"
+    },
+    {
+      "agentId": "agent-d3a96c06-6e4e-48ed-9f09-9fdf45796ba7",
+      "revision": 1,
+      "name": "资料整理专家"
+    },
+    {
+      "agentId": "agent-2cbcbd2c-a2d7-42d9-a468-ea5a0d70a13a",
+      "revision": 1,
+      "name": "项目推进专家"
+    },
+    {
+      "agentId": "agent-6307c75a-7a44-4734-a8e4-fd0824e3e571",
+      "revision": 1,
+      "name": "经营分析专家"
+    },
+    {
+      "agentId": "agent-9c34b061-66cf-4db6-ab00-b24f3a42b9bc",
+      "revision": 1,
+      "name": "客户方案专家"
+    },
+    {
+      "agentId": "agent-979b9fa5-34b6-428d-9f4c-4c305bacc932",
+      "revision": 1,
+      "name": "招聘面试专家"
+    },
+    {
+      "agentId": "agent-0610a4c6-1e37-4ab8-8224-4ed28fb9a635",
+      "revision": 1,
+      "name": "商务翻译专家"
+    }
+  ],
+  "teams": [
+    {
+      "teamId": "agent-team-19fc500c-064b-432a-8d44-2f7fa65f02d6",
+      "revision": 1,
+      "name": "沪深300多因子选股研究团"
+    },
+    {
+      "teamId": "agent-team-34f652b4-34a3-407e-9622-bfc9ead13e8b",
+      "revision": 1,
+      "name": "每日热点新闻与聪明钱画像 Team"
+    },
+    {
+      "teamId": "agent-team-6769427d-37a8-421a-b07b-9723642f6ee6",
+      "revision": 1,
+      "name": "沪深300多因子月度选股专家团"
+    },
+    {
+      "teamId": "agent-team-f5a7ec36-7484-48cf-a74a-76d05c24d1ff",
+      "revision": 1,
+      "name": "A股投研全流程专家团"
+    },
+    {
+      "teamId": "agent-team-181b9fe9-717c-4daa-b18a-ebd7a4fa5a41",
+      "revision": 1,
+      "name": "公司深度研究团"
+    },
+    {
+      "teamId": "agent-team-8558b148-b2bb-41c0-ba65-d417f8c7ba8c",
+      "revision": 1,
+      "name": "每日市场研究团"
+    },
+    {
+      "teamId": "agent-team-9c5d5051-5510-4c9f-a9f2-d46917992499",
+      "revision": 1,
+      "name": "多因子选股团"
+    },
+    {
+      "teamId": "agent-team-8b9775b4-6ea0-4484-ad75-51a56a494c20",
+      "revision": 1,
+      "name": "量化策略研发团"
+    },
+    {
+      "teamId": "agent-team-b4abc1b7-028f-4943-b72e-42cdf334c03e",
+      "revision": 1,
+      "name": "A股市场数据分析专家团"
+    },
+    {
+      "teamId": "agent-team-4b776ffa-5c1f-4dda-910c-97e8df1b7d3a",
+      "revision": 1,
+      "name": "周报月报专家团"
+    },
+    {
+      "teamId": "agent-team-329c513e-19bb-453e-bb6e-7a846b84295e",
+      "revision": 1,
+      "name": "汇报材料专家团"
+    },
+    {
+      "teamId": "agent-team-c20ad238-bd7b-4fda-b7b7-75ba075a2ed5",
+      "revision": 1,
+      "name": "会议跟进专家团"
+    },
+    {
+      "teamId": "agent-team-12efea5c-f067-4a6e-8492-0643ef533081",
+      "revision": 1,
+      "name": "客户提案专家团"
+    },
+    {
+      "teamId": "agent-team-8d07cf57-8cbd-40d4-bf20-0358e45e6750",
+      "revision": 1,
+      "name": "项目交付专家团"
+    }
+  ],
+  "files": [
+    {
+      "path": "agent-teams.json",
+      "bytes": 217155,
+      "sha256": "497eee5fa550f0aec827e25a3d26d6ad8e60dae821525a381960b86b33cbffa6"
+    },
+    {
+      "path": "agents.json",
+      "bytes": 151944,
+      "sha256": "752bfd0d774bf4fa7904cd0c81596fd5d67591bdfe839d624c959260ccc9d14e"
+    },
+    {
+      "path": "authored/agent-factor-evaluator/5a3669f3d9b770cddb595c80265f5c96f7a3f30d/manifest.json",
+      "bytes": 536,
+      "sha256": "88739be1d4fe8c10fc52db0cddc20619912fdec603aeebe2a696fb11f7734b25"
+    },
+    {
+      "path": "authored/agent-factor-evaluator/5a3669f3d9b770cddb595c80265f5c96f7a3f30d/source/AGENTS.md",
+      "bytes": 9862,
+      "sha256": "348abf5f0cc02785a4d98df88bf9bfd197f71dc23e108d95a9ef7ab784a1e4cc"
+    },
+    {
+      "path": "authored/agent-factor-evaluator/5a3669f3d9b770cddb595c80265f5c96f7a3f30d/source/examples/input.example.json",
+      "bytes": 505,
+      "sha256": "77ead709a7120601679877add85f11bc834e3749b75c18817be7ac4c8d008c97"
+    },
+    {
+      "path": "authored/agent-factor-evaluator/5a3669f3d9b770cddb595c80265f5c96f7a3f30d/source/scripts/evaluate_single_factor.py",
+      "bytes": 26074,
+      "sha256": "3b8bb00a6342576537f2ea539d29c2a9601ee30baa6fe1c3b88dda21c47a8f85"
+    },
+    {
+      "path": "authored/agent-factor-evaluator/5a3669f3d9b770cddb595c80265f5c96f7a3f30d/source/scripts/generate_html_report.py",
+      "bytes": 14506,
+      "sha256": "b0932cf38dd0339166d2fc46feb9ebf5379e69bbeebdf2e4ff1034d13e946383"
+    },
+    {
+      "path": "authored/agent-industry-news/a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d/manifest.json",
+      "bytes": 527,
+      "sha256": "fc72c098ffadaea5d0d225235a67af7a9aa71da5a669225cd6a06e09b8ebc296"
+    },
+    {
+      "path": "authored/agent-industry-news/a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d/source/AGENTS.md",
+      "bytes": 7188,
+      "sha256": "2b0b5675ff76d67d26ba1caf7ff32e6810cebe887134a166e81a483771e79f0b"
+    },
+    {
+      "path": "authored/agent-industry-news/a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d/source/README.md",
+      "bytes": 1216,
+      "sha256": "140747f9a068d000e0269fd508e19406e55f677a4f5a2b26b5e75311b3e4fed7"
+    },
+    {
+      "path": "authored/agent-industry-news/a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d/source/references/industry-macro-mapping.md",
+      "bytes": 2826,
+      "sha256": "8b479d3e59924103fa8b2e4cee704e1836b96e85bc2ae17a20cc25a37427d0d8"
+    },
+    {
+      "path": "authored/agent-industry-news/a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d/source/requirements.txt",
+      "bytes": 285,
+      "sha256": "031cae9b9c6da1889d65eac548830cf3c4e1632db1852b5e307a9d2bf5b3a87d"
+    },
+    {
+      "path": "authored/agent-industry-news/a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d/source/scripts/industry_analyzer.py",
+      "bytes": 7981,
+      "sha256": "e76daff9136ad96170d84805a2d33537e6f30cb168c583996f2f01924302a173"
+    },
+    {
+      "path": "authored/agent-industry-news/a0e085bcf6312973dd3ec87f1ae571f0b1ff5b9d/source/scripts/reporter.py",
+      "bytes": 20250,
+      "sha256": "ae1cfb51e6574d2842b0710b73dfb72e717d3bc91c6463192e33a38cd6fb96ad"
+    },
+    {
+      "path": "authored/skill-csi300-market-report/437c9cffa1e1347be77b04765aed2abc52d6a712/manifest.json",
+      "bytes": 547,
+      "sha256": "4cafb0b05f187cfaefb3cbb32a5566ed796453dd0289e7eb8a37cd5e544d92e9"
+    },
+    {
+      "path": "authored/skill-csi300-market-report/437c9cffa1e1347be77b04765aed2abc52d6a712/source/SKILL.md",
+      "bytes": 7809,
+      "sha256": "5b2bd8aec9e09a3252a05119374f8c00b6dd8db5c9ce4a3f475b903e7194d51d"
+    },
+    {
+      "path": "authored/skill-csi300-market-report/437c9cffa1e1347be77b04765aed2abc52d6a712/source/scripts/market_report.py",
+      "bytes": 31527,
+      "sha256": "a08f2bceea61bcb9fa2d8bfe7e272439ae186eb4f1d24509688e5fe48f43666b"
+    },
+    {
+      "path": "library-sources.json",
+      "bytes": 6415,
+      "sha256": "4675e8e2ab05dbccd511b827db2e375a2aa3e4a8fe29c3ee0193206769ac9b60"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/manifest.json",
+      "bytes": 569,
+      "sha256": "72c1b90bfd84c10abeaac91e8e65f99577e3821b6b32291f935d73e9391415a4"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/.env.example",
+      "bytes": 557,
+      "sha256": "a9b28d8f3bebaa47ef34cbb523ddbb2a2f46738aaa2e071a8eef03999fa4606d"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/.gitignore",
+      "bytes": 406,
+      "sha256": "61e714e8d03d01797ae3ac527b3b1a28cceaf3270a5b38b11748951ccd8b6636"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/AGENTS.md",
+      "bytes": 10003,
+      "sha256": "8a57dcb8df6ebde7cace589a203cd7efcd4d496aa86a68f62333b9cbcb18be81"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/LICENSE",
+      "bytes": 35129,
+      "sha256": "605e9047a563c5c8396ffb18232aa4304ec56586aee537c45064c6fb425e44ad"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/README.en.md",
+      "bytes": 6147,
+      "sha256": "f3719e21837c9cb075afef8f3fead5e3f6c4f23f54aecd40089f2dcf4b21a5a8"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/README.md",
+      "bytes": 9845,
+      "sha256": "c1a4e108dad2d604f0f9aa252701d6e52cfbbfc3b34be745b27a0a9631440cf7"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/agents/cursor-rule.mdc",
+      "bytes": 987,
+      "sha256": "000861a5da34901565297e2d4954e42cb46a37aa79de2cf7481d4e9ca1fbfc18"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/agents/openai.yaml",
+      "bytes": 642,
+      "sha256": "07656aa0493e4eea44b707b3df756b42be9480df6554ba632a3a88b122fc09ce"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/agents/portable-loader.md",
+      "bytes": 1211,
+      "sha256": "5c0d3f7cfc14ec217313bbf4af842bc7b6c168a8224edeb14da369c79ac8dcee"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/agents/skill-manifest.yaml",
+      "bytes": 1902,
+      "sha256": "00b5ae98b8b57af91778ef7a1565e9ae14b00c7cc9ae91baeccda835d7f40c05"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/config/portfolio.example.yaml",
+      "bytes": 1842,
+      "sha256": "0fc3a5141af4b7ce7b0c57eb81e933b9c1b75a87c2f4bfb869249d9a2bd85230"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/config/portfolio.mock.yaml",
+      "bytes": 859,
+      "sha256": "574702be7358352d96131fbb28a88156b12b453b95a15b7089954a4802516beb"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/data/factors/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/data/panels/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/data/panels/README.md",
+      "bytes": 660,
+      "sha256": "a044d6755ad57def63dce4a18b12aea5caa7095e288b8c3b46e9eb4369386ff3"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/references/agent-boundary.md",
+      "bytes": 454,
+      "sha256": "4b73a53a0e45487aefac1b2154a8add9dc77511940cb2f57da58240605751730"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/references/data_guide.md",
+      "bytes": 1497,
+      "sha256": "24f6fc3ea18cdbe0b26c38ad252505d833b6a40255ed849c2a8a9c49cc6c00a1"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/references/decision-rules.md",
+      "bytes": 1662,
+      "sha256": "db71c76ffa020162f608f6132d0346cfcbb2be4b2dacb83b41b76bfd7c7db32e"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/references/dependency-contracts.md",
+      "bytes": 1313,
+      "sha256": "8906109e91cd33d58472262028325885fe2e6991e69490d19452c5856d4fa340"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/references/provenance.example.json",
+      "bytes": 160,
+      "sha256": "0637700856459bc3380a8da3c7f54180d2882955d1e3d3a25dc049515f5ad745"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/backtest/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/publish/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/runtime_out/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/README.md",
+      "bytes": 530,
+      "sha256": "deab6c05c9fbe5edd4fc5aa97c6f8bb01858169d05eebe7d7bd071969a3641bf"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/backtest_mock/accuracy.json",
+      "bytes": 464,
+      "sha256": "1f60a33bee13c59871ffaef614643041383e1fdff1ddeff2d2508877c06fdf22"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/backtest_mock/backtest_report.md",
+      "bytes": 2044,
+      "sha256": "f100c746acebaffeb94479af680f143bef3be15aa03586a5222c7c81319db25c"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/backtest_mock/bucket_stats.csv",
+      "bytes": 470,
+      "sha256": "d865870c11ee15cde50d713ccd433079ac3f2eaa89b78b09ac3d87cf19f95ee7"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/backtest_mock/keep_equity.csv",
+      "bytes": 1216,
+      "sha256": "1a886f741d2336156baf849120b3f8c347d81dbc8ce201f529b745ca66d63541"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/backtest_mock/l4.data.json",
+      "bytes": 6145,
+      "sha256": "486af9ffd32a395fa0d9ed9780def43a68e344614014552ce5823e23ab5a2248"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/backtest_mock/l4.html",
+      "bytes": 27440,
+      "sha256": "c9378b8eb0c2988ea5890c3f63015f1d6ae840da7f7dfa5bd0a6420c21167b06"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/backtest_mock/rolling_oos.csv",
+      "bytes": 322,
+      "sha256": "b4a7f7f1fd862eb8b3cd690695ea76fe1b797bccaf70c5840ea55aaf2121ca9a"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/backtest_mock/signal_forward_panel.csv",
+      "bytes": 7471,
+      "sha256": "069ec6356d882608357f5ef4d97bac128fc45dec6963e6368580cae1d3f61f8a"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/backtest_mock/summary.json",
+      "bytes": 1013,
+      "sha256": "c9a8f17726a191add6b24ba44bf2a09a6aeb25f0a9d87a889eea7db63453a2cf"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/agent_snapshot.json",
+      "bytes": 956,
+      "sha256": "31dd7e6740652f59f55bfbea3825b7d2265df66d4ccc4ad87f897b39288ff699"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/charts/ic_decay_family.png",
+      "bytes": 53203,
+      "sha256": "1b179302e4bdbc62b8ab382d2b90f20deb267e43b9d88dcae7f8685e4151f21b"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/crowding_alerts.json",
+      "bytes": 310,
+      "sha256": "4b98a8d1762b5b5c5726a1126340bc9dc4b0afeb146c44137e0a11c6a63644e7"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/deps/crowding.json",
+      "bytes": 428,
+      "sha256": "228648a49d9069ba51b534b8ab0a09a30d459093805ff538cc62045f7ec47309"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/deps/decay_reports.json",
+      "bytes": 5083,
+      "sha256": "bcd57e8372575e5931ceacc61cdd56785f3bc7d62339146e46aac84f89712f21"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/deps/index.json",
+      "bytes": 355,
+      "sha256": "5446bf1f32097975abe9c1f22fbca16c9ff1b46b5b72532d8e4b8c31d4a77d91"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/deps/score_reports.json",
+      "bytes": 2389,
+      "sha256": "6489a26d5b9e268c09d0ce5f67d3e832287f09f07f8c4cb0d468da2066a78adf"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/deps/smart_money.json",
+      "bytes": 1318,
+      "sha256": "ae90433dcf2c815c34c28b32285ad315f7975a8d1b742822027edb7d4dc1770b"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/handoff_card.md",
+      "bytes": 584,
+      "sha256": "c827b195ec318d0550cca6409866ca7957990697c7679e7bf81157ebdf168ec5"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/health_matrix.csv",
+      "bytes": 925,
+      "sha256": "4d335cf4809925b6631f8a478ea874e83d49688a7cfeb26d2eba6395cf9e4020"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/health_matrix.parquet",
+      "bytes": 15287,
+      "sha256": "4e6159d5432baa41b17a0873ed5decd91efcc64b2045e84ec7720741795cf291"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/ic_decay_curves.json",
+      "bytes": 2213,
+      "sha256": "dd657b84de746f1c92482ef81f75bdb38d22addf249f7aa16daf61a216855448"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/pandadata_redline.json",
+      "bytes": 139,
+      "sha256": "10fdb94c7cc11a09b08db398e9c71772e13e97d3226cf40bec819a3189a16a5a"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/panel_store.json",
+      "bytes": 108,
+      "sha256": "a9e8a56f686245306074735601fd2471d24029a10f9d50736f1652cefb614ac0"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/retire_rebuild_candidates.csv",
+      "bytes": 349,
+      "sha256": "d1d8ab15d48eef50d58a3bb206fe78f059d5ecf5f6aa38cf1e9c1d0178089aa4"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/run_summary.json",
+      "bytes": 1127,
+      "sha256": "a5d9c5c4adcb9b483d8bec5c82c3ef9ee8e6dbf0417a531d556196607410d4be"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/runtime_report.md",
+      "bytes": 2392,
+      "sha256": "ac3d205ef7a5f25b758dcb3b61738d58db7fee78a6b73b45ddabb732cf6d0e19"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/trade_calendar.json",
+      "bytes": 288,
+      "sha256": "c27143122231a03c3a5642ef67f2792d0aa0b3b9b28be59bb79b9232c73d8ce7"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/reports/samples/mock_run/validation.json",
+      "bytes": 68,
+      "sha256": "3059f097f7d6cab21d02b40ef16350b8f2836968e83832c74645c66c3068612e"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/requirements.txt",
+      "bytes": 189,
+      "sha256": "a883f8bf95de7e3f4c92f4595ddc469f8a80d9e7b9475b99539b61b571a6f100"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/__init__.py",
+      "bytes": 260,
+      "sha256": "ae0c405a8189b851f526791b5e6ce8ba24ce10e62dae57035f501e09f8baeeb5"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/__main__.py",
+      "bytes": 152,
+      "sha256": "afb66299948982a2d942247cdacac6d8c3d91dce84756c4b23e28d692a87cbbe"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/cli.py",
+      "bytes": 11157,
+      "sha256": "644b13ae6344b3027abfe05b3ac05e8e0f55a8c9bef566e6fea64cfcdcc83db1"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/config_loader.py",
+      "bytes": 3790,
+      "sha256": "20ad56cc65f52cfbe133e911c4d5d400df9490e94a4441d1ac6997eed7988f9a"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/graph.py",
+      "bytes": 7612,
+      "sha256": "f0cb051309e6184400e55ce2f05f45092aa3f811a7787b3232e821c7ae7d483f"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/pandadata_gate.py",
+      "bytes": 6857,
+      "sha256": "5b653a7152e86289e9876b16c4ba1b1ab655c4f0fa134d61fc7964d0d1350a34"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/panel_store.py",
+      "bytes": 10252,
+      "sha256": "ea97d7a976ab6ba4195a05432dccb86c51c16df2d10576bdbc75a330b552bc30"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/paths.py",
+      "bytes": 853,
+      "sha256": "f15cac1f9df4c4a2d6b1840d720732e7c0f0d8ef2b3f415b62ccc84c0e849b85"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/rules.py",
+      "bytes": 12648,
+      "sha256": "5b6d791fe72113d7d52b61e250a7a321f4510343119b2a7934a67308c9ec3331"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/trade_calendar.py",
+      "bytes": 7872,
+      "sha256": "a3f6ee5f445d7701f29a3bff9b85afb5c2361bad2f9fe9b62af1492493fefb86"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/runtime/writers.py",
+      "bytes": 9254,
+      "sha256": "4002d03b39505f8aaab330f3696cc83bae650d301abe2a2f6269007097f20b18"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/aggregate_health.py",
+      "bytes": 7055,
+      "sha256": "21d60afc93529c6a1e34fb09c2f8d70def149d10f37077a21f05e914ab29e4ed"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/backtest.py",
+      "bytes": 21894,
+      "sha256": "c9c3ceedffb4cf0076122a7f63a58c5e057f519556714e39a2ee1b10acb6103a"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/export_l4_backtest.py",
+      "bytes": 4819,
+      "sha256": "693f78e39a7eda1b6a9896a79a3499c9b81a98f10400dc61b7109c8940871470"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/full_audit.py",
+      "bytes": 16320,
+      "sha256": "34da4d5452ee1acc6b50471906dfcd66a1a04c92cb8cdac7f2a6e1f5d626f9f0"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/publish_snapshot.py",
+      "bytes": 3061,
+      "sha256": "7768278456b3a1a7d3689cb0284c6988fff938f910840f8f0dac935cc11aed25"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/run_crowding_bridge.py",
+      "bytes": 5494,
+      "sha256": "6f02bc5bcda9b03d5f1f8ad627dc4aeeadaeaf2f2f21d594f67464b42846130f"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/run_decay_batch.py",
+      "bytes": 6389,
+      "sha256": "d31fa12b2fb085f0d75ceb777139f753c93ef20788234779beca5a62276f3cee"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/run_evaluate_batch.py",
+      "bytes": 5258,
+      "sha256": "e8b8269c884d4c19d3a7e4e55ddb9012d708f3db6b3e3a411b7a8c61caab372d"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/run_smart_money_sample.py",
+      "bytes": 4405,
+      "sha256": "45b21551d8dfd8ff2e490b14bc5fcc5d3afb91608ed795ba5090add77a6ad117"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/test_rules.py",
+      "bytes": 1846,
+      "sha256": "54f23e6a2e7de20234c736b95f43886c328f85704d2282644b44b8c5791f7fb4"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/scripts/validate_report.py",
+      "bytes": 6779,
+      "sha256": "dbaa9eab00274d2b25ab6199bb2cf7f914ca5ffa3a0d9fb6811ec02ea5e9b293"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/templates/l4_backtest.html",
+      "bytes": 23143,
+      "sha256": "0e8c408dd5378248c9036728db3c0a427c6e53ab8248ee7a4ca1e29e54063e0f"
+    },
+    {
+      "path": "versions/agent-alpha-portfolio-guardian/f3744dfae726fa64a6127e6427ff2e29f9cc7cb5/source/templates/runtime_report.md.j2",
+      "bytes": 593,
+      "sha256": "dc8f2fb35d22f1cd990e4cdcea5c016769b21a9c9f1b930c0837e9a11a5a6efe"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/manifest.json",
+      "bytes": 613,
+      "sha256": "201922f217ef9bd8490b3edb52a4997c7ad4c215b6d77795aac27858d99e8b54"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/.gitignore",
+      "bytes": 173,
+      "sha256": "e337ff0d51aeb08ae357b45a2b010a3cc0f1190a945ff8ed9dfdb5506a5e5fde"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/README.en.md",
+      "bytes": 6780,
+      "sha256": "fab453d583929961fd75e2d12d93e06618cf018153f7b9e903a171d6e7c97a2b"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/README.md",
+      "bytes": 6006,
+      "sha256": "3a93f8d77a2a63d443c1e0119f214ff8ffc0043b19b27a17fcda54de79106de5"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/SKILL.md",
+      "bytes": 10948,
+      "sha256": "6471c456e04759d8739090b9efae67daa76d872c498e1a32ff9fc34fff25de2d"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/agents/cursor-rule.mdc",
+      "bytes": 1095,
+      "sha256": "0df734add1b114c7e0511a2d2d91ae02723b26266a70d77c8018a54123f31be3"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/agents/openai.yaml",
+      "bytes": 365,
+      "sha256": "f823d834442abd6b67dde6e04b33b7502800ee4099b88df7a9d98c769a894c0c"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/agents/portable-loader.md",
+      "bytes": 1206,
+      "sha256": "30f04f248a66afc38bc8cd1df6bd86a30b1d9141067201c4befb3a85956efa5a"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/evals/evals.json",
+      "bytes": 1125,
+      "sha256": "f9a083776fdc15a46ffb7045d08cefda7306299ed1f3c3ad94e614f7f4533d4d"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/references/data-contract.md",
+      "bytes": 2250,
+      "sha256": "f0302979ee58432fe93c41c4c7e8dc8a67657f3513b75d391f26b0ccf4509fdf"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/references/factor-definitions.md",
+      "bytes": 1799,
+      "sha256": "6f7ed8ce0bdd2515e12703b88d67be19a668580992ea4776491730579e968dc3"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/references/research-boundaries.md",
+      "bytes": 3039,
+      "sha256": "44a8f53544970d37f8562d4716d6277feaff4804e19e789c16fe2d0bc848ef0c"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/__init__.py",
+      "bytes": 65,
+      "sha256": "a10fde780ecc718c2f8ad4de19c03049237fa5546114d4dcbaa39cb0922cf209"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/audit_backtest_input.py",
+      "bytes": 12155,
+      "sha256": "218e14b7e05b41663c4f330d71a0351c6a2c8c8c68bfb67d7e2182c15d1d90f7"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/build_pit_panel.py",
+      "bytes": 17604,
+      "sha256": "b1e48413592904adf8aa2d1c9ec41205dc395902702f0573911b32b0e8d5aeaf"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/derive_fundamental_factors.py",
+      "bytes": 6602,
+      "sha256": "43d457da862a794a9a794dc612bc78a0397b50a27438f92699a482c872eed8ec"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/generate_rebalance_schedule.py",
+      "bytes": 2366,
+      "sha256": "ce132805ce45f80f75c198620f8c291268bc88a06e6757a93561aa3b56cda830"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/generate_research_summary.py",
+      "bytes": 7216,
+      "sha256": "c532f59a54bf2236db9ab983b15703343914f774e831e6de5124f751df46013a"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/login_panda_data.py",
+      "bytes": 6011,
+      "sha256": "d28a195f688bdf293bfb0bececa21438794053a0c60351cf040184992d5f7711"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/open_panda_data_login.ps1",
+      "bytes": 413,
+      "sha256": "8762e8b3fe915055a2e7f3ccb8a3f9b71a2eb678471eb8e17995200a33bbe9ec"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/open_panda_data_login_macos.sh",
+      "bytes": 444,
+      "sha256": "b664dbe8920e210c40df6778305ddfb1db86a879cbc7347d84240bda6694b071"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/run_panda_data_login_macos.sh",
+      "bytes": 584,
+      "sha256": "ccc234e05dc2d16cc5d1130489d3bac15af7f8e04d20b1dd41bcb2ee5249fa49"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/scripts/validate_pit_panel.py",
+      "bytes": 1996,
+      "sha256": "7a4aae832bac90c87cb064cf649a6d5820cd1a0869be79fefd13940539158af6"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/skill.yml",
+      "bytes": 506,
+      "sha256": "f0743921687b00485f8ff6e4d5c3bf02a81b761218033a0087f740d70788b166"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/tests/test_audit_backtest_input.py",
+      "bytes": 2861,
+      "sha256": "af1396611599b5978d4f79d09a4d0ea8c0ba4354b8d85ad548dea44413b6bef4"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/tests/test_build_pit_panel.py",
+      "bytes": 6788,
+      "sha256": "864f7be7d6de545c13ee40ab8ff0aeec9a7013dc2fe14121bbf789f432348251"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/tests/test_community_compliance.py",
+      "bytes": 2890,
+      "sha256": "16220f71d6c709438ca8f81cede968af4638f846fe2553a488ccc8795437053d"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/tests/test_derive_fundamental_factors.py",
+      "bytes": 1544,
+      "sha256": "e2d42b771c4dba7163952ee394e0702e1ddaf4663ccb9ff680463bd7beae4fed"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/tests/test_generate_rebalance_schedule.py",
+      "bytes": 626,
+      "sha256": "7b9f64196dd46a3976cbcb02073a431834972e488226073a8375a813cd7a32d8"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/tests/test_generate_research_summary.py",
+      "bytes": 1667,
+      "sha256": "92e4ea71068fdd4824b9e20849a9b87dd5f4c6e16e132dc37cca3ffefc0c9dd3"
+    },
+    {
+      "path": "versions/skill-a-share-pit-fundamental-vintage-builder/04d8ac946b0fc9256fa3514dcc9e05b06b981458/source/tests/test_login_panda_data.py",
+      "bytes": 1890,
+      "sha256": "00d1dbebedefb5d05e1a956f052939f3f51b4d9ad8b83a82c8c2b03df84fbe1e"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/manifest.json",
+      "bytes": 589,
+      "sha256": "f9497cfce4f8c5201c10ae0bfd463509a727adb957384837979088d40ea576ec"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/.env.example",
+      "bytes": 84,
+      "sha256": "b09680165602455626d70f7b144c3f36399b12619389a995ebf4ade045741c49"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/.gitignore",
+      "bytes": 922,
+      "sha256": "e3e83a26d2ee3cc0ee6936940c39ce15fe764bfebe2e42b9214404c60f9e563c"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/LICENSE",
+      "bytes": 297,
+      "sha256": "e01aea5a81d3b9e3e53276f65c387470da32ecfb56a13e6390be53c8097a5f67"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/README.en.md",
+      "bytes": 3136,
+      "sha256": "e04ecc131d590323da1006a63b075b3ebf2debb1d72e39707abc684696bea4dd"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/README.md",
+      "bytes": 12782,
+      "sha256": "57b30752a4fad9ec04e538b943d77ce2c2221703564304f7d635210961a1dfa4"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/SKILL.md",
+      "bytes": 11547,
+      "sha256": "15f77fbe786885d6109186c7b42c3094aaa5f72aab5b26242ae1b3208faf82b6"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/agents/claude-code.md",
+      "bytes": 477,
+      "sha256": "9226a1ce9ab0182df5c8246ef53d311e854b40e0ce06b8a31ab16f71ea39f910"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/agents/cursor-rule.mdc",
+      "bytes": 819,
+      "sha256": "bb0e6eb10e34ff1ce9699c912da4a0ea9bee091d0e6e91837daadb7ba192913c"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/agents/openai.yaml",
+      "bytes": 193,
+      "sha256": "9b3d8bcd365f01237d8e68693e7e71051eb369434040efd7e552d35bc7787d76"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/agents/openclaw.md",
+      "bytes": 449,
+      "sha256": "c13fbcdd2ff66f32e211f6a618b56d1078768dfcdb69f0afbe79ae6710fcb585"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/agents/portable-loader.md",
+      "bytes": 502,
+      "sha256": "ea787d33b505d79c3d4c27d626badb0e19d10281bb03e805b10d0116458bd031"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/examples/sample_pair_history.csv",
+      "bytes": 19587,
+      "sha256": "cc11decd55cf6e14404df8ff8d980864b6aa9263e212484de563765a84cdd61d"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/examples/sample_snapshot.csv",
+      "bytes": 365,
+      "sha256": "53c0ed4fd4bf264c837df9faa6720de109bc6af721313b6e8e9d80fa03476216"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/pyproject.toml",
+      "bytes": 367,
+      "sha256": "c88bbe2892bb6f59bb9247e3ddc1ca8a797d60ffc817b4079b733b61129a6694"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/references/data-contract.md",
+      "bytes": 1303,
+      "sha256": "0c1075829436ec67ee0991ec95ce51932f8478994828629f89ed6a6fb2b5390b"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/references/data-sources.md",
+      "bytes": 1492,
+      "sha256": "66cd6ba327a500ea9b5022a2bfe2b6886732132d47959142bfe5c2769d6410da"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/references/methodology.md",
+      "bytes": 2836,
+      "sha256": "cc26d378d7e49d1e49c405c9d84c14c73feffeb8ad5cf19af5ced8baa5625451"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/references/pair_universe.csv",
+      "bytes": 6446,
+      "sha256": "a18a0fe243cb2012577e8bc21716313efd167f0a597c2a7f4ec0d9c01195ee39"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/requirements.txt",
+      "bytes": 31,
+      "sha256": "bfa565214401ea8fa5eb83d79fc7bf5a61f22f1f90473244bcec3947a8180ead"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/scripts/ah_lookup.py",
+      "bytes": 2824,
+      "sha256": "4e689bcf017b50d70b76d7d545a00eb6c44933bc3fa1b4f33b297663d7ab57a2"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/scripts/ah_sources.py",
+      "bytes": 18234,
+      "sha256": "79753f99a68fa7bcbb10b5711671dfba1cabcb9f9d35f09836b10fee1fbcb3be"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/scripts/analyze_pair.py",
+      "bytes": 12163,
+      "sha256": "403e0963dafd85f7dd6ca64a76e35dd21ac68028a9e548e7eda82212ebc8cf3f"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/scripts/check_pandadata_login.py",
+      "bytes": 1886,
+      "sha256": "80ab61f338d5ef82f78bba65e3b713931641ebf7374a8035c31cc8c050a9d5f4"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/scripts/fetch_history.py",
+      "bytes": 2600,
+      "sha256": "d17988850d07dc61bea9b2daf4a8c1de7a4bacebbc7523257285c8c1ef3edaf3"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/scripts/fetch_live.py",
+      "bytes": 2962,
+      "sha256": "386982aac2d2961eaa90951dc0c9456946641df4a2e942c5b9cddd9354dd9169"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/scripts/lookup_pair.py",
+      "bytes": 1136,
+      "sha256": "27b744f1e3f83ca8615be702ca9c380d44b1d0fc1b391e190dce5bc5264f1f68"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/scripts/scan_snapshot.py",
+      "bytes": 4698,
+      "sha256": "6fc6a3dcd8cdecc04d8a91ba573d2d4ad3637946c47b5bb6acabd458d0e0b9e9"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/scripts/today_market_scan.py",
+      "bytes": 2216,
+      "sha256": "ac908958d5f6dbaa76389aa24df3ede905860415ee6f8d07e49cf4d003b51109"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/tests/test_ah_sources.py",
+      "bytes": 3076,
+      "sha256": "410e6211fbf2725b0c0edaa8cafd47a7700c906a0053d07c5ca4f0924b0ec6b3"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/tests/test_analysis.py",
+      "bytes": 2711,
+      "sha256": "bd4ffd637e9e8fe9384b3ec2ce3e41b333289956ecd0cf859e5041ac59440142"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/tests/test_lookup.py",
+      "bytes": 1353,
+      "sha256": "0b300faba30515303387c65cd463229bb81e7c6cc866e62ed7ceee1c62b1d626"
+    },
+    {
+      "path": "versions/skill-ah-share-relative-value-montior/15aafacb7ecb43436351cbdbbbf2370bd8818ffd/source/uv.lock",
+      "bytes": 253093,
+      "sha256": "8deaae61634572419b8c32ab43902b70ff361fb7038a1e02860ad0fbad61b097"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/manifest.json",
+      "bytes": 519,
+      "sha256": "3b292c5f84111a9ba8faad4d399810243f9e8ee3c865192eb077050aba0951c7"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/README.en.md",
+      "bytes": 6019,
+      "sha256": "f900c7f6b0fd9585f6fe09401c82f9a6f22ecfa1d5e4602e5fec4ca3ab7f4944"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/README.md",
+      "bytes": 5784,
+      "sha256": "7f353772e78e87953c47fa8524e7904e458b235e8937c2c615f4d894aefb83d1"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/SKILL.md",
+      "bytes": 6765,
+      "sha256": "a53d7c398745d6d4f8d5b8808f7e12c63feb6882d9393d927e5db80ba8bd4824"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/agents/cursor-rule.mdc",
+      "bytes": 1255,
+      "sha256": "dba973fd1f2d71c4422efec2d0aaa800397f5a8628dde55b1e19947ceba40573"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/agents/openai.yaml",
+      "bytes": 1472,
+      "sha256": "c892d75aec100f4b8c495ab6d84e648de3aefb21f32eb35af6791799a1b13589"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/agents/portable-loader.md",
+      "bytes": 2070,
+      "sha256": "4f6352b543d1668a791391b98cfc2a13cdd5ce63935d62b8f2e2a099f35d9c08"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/references/algorithm.md",
+      "bytes": 4718,
+      "sha256": "82c033f313dab68fb32886a87aa9dd77c54ed9db49e01bff494cec4cc5826022"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/references/anti-patterns.md",
+      "bytes": 2120,
+      "sha256": "721457ad6a6d4ec1c0c9a73c4788307177809bf31bbb65f7aa0e97684ab3e783"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/references/assumptions.md",
+      "bytes": 2274,
+      "sha256": "b894fe5cc41da4a7a51ea17248a65c2e218c4bef73b61b5520ded8fc571c075b"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/references/diagnostic-charts.md",
+      "bytes": 3977,
+      "sha256": "3a48ee7bce89fe90446bdafafe77db958a1fe5ac11b1d2046423a051e83f2750"
+    },
+    {
+      "path": "versions/skill-backtest/cf9154603263e2a4e2151f39e2708923d8d776a7/source/references/health-check.md",
+      "bytes": 3373,
+      "sha256": "eee6104bd414e4e7cb7785bfb503adc6c444d7bd16b92e8740a61225d2617cd4"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/manifest.json",
+      "bytes": 531,
+      "sha256": "579886ecc686eb407bd49873865861486d683e942989ded2704d2e04b35c5060"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/source/LICENSE",
+      "bytes": 724,
+      "sha256": "ce6b10ff87f5c99839eabedc3485702cc499db866c9edddd57146b742b7be647"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/source/README.en.md",
+      "bytes": 1112,
+      "sha256": "4290da47af3efb8de8f3dfa07a368cfe9ffde115ba8ec7bad44ac28c1c1ed13d"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/source/README.md",
+      "bytes": 1228,
+      "sha256": "42a742c1035267efd4ba61497e40cba4576da681ad8021fb2ebaac110c44fe3d"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/source/SKILL.md",
+      "bytes": 12890,
+      "sha256": "08351f9a69957ef6d94e1ad33026c5535e7c42f143438fa06b6639032c2aa91c"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/source/agents/cursor-rule.mdc",
+      "bytes": 319,
+      "sha256": "b8eee9cf27a026a70093244b98d2471fe2959133dde55fab88c8bd21c68486b1"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/source/agents/openai.yaml",
+      "bytes": 124,
+      "sha256": "1e29f93a894f98cd6efb9d71d185b9d55a1ea19c330e51177b8a5f70513d3494"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/source/agents/portable-loader.md",
+      "bytes": 281,
+      "sha256": "5e6158000a800a1205285c2dddc131416c5539e536f17e342d8e6d9cd25d591a"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/source/examples/sample-report.md",
+      "bytes": 182,
+      "sha256": "47646e687000d188cc4e2adb45e5ec7804a8651089ab307c9ed14d6097b25f03"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/source/scripts/__pycache__/fetch_market_data.cpython-314.pyc",
+      "bytes": 12277,
+      "sha256": "3f9e4b7bfbedb4955410d1de9ea5bb87477b48eaa766a4c449afb7a9acf885af"
+    },
+    {
+      "path": "versions/skill-daily-report/9a209052cf6d31077541bf865379cbd13e7a29d2/source/scripts/fetch_market_data.py",
+      "bytes": 9091,
+      "sha256": "3aa5c8db1ddfa00c3058ed5f4cd92678abe418a5776b6b4c279033ec044ab2dc"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/manifest.json",
+      "bytes": 547,
+      "sha256": "12d7ce20327afec1f77ef0de75af02a92f3d636f90b21dceeafdeca880638c72"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/.env.example",
+      "bytes": 741,
+      "sha256": "c4dc0cbc47540bdf1e6169daaa506093f1007232b34013d2471c9d751c3fde55"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/.gitattributes",
+      "bytes": 102,
+      "sha256": "4b1cae56a51e50de42f22772a9767a7c56948cdefab7100cac1365e2f9d04a0f"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/.github/dependabot.yml",
+      "bytes": 193,
+      "sha256": "efe35b04741cc513b7fecc935d603508aff876b23c82979b0a3300f299c3ea37"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/.github/workflows/ci.yml",
+      "bytes": 1485,
+      "sha256": "1a35bb0b39053fa12da116e38b52da9302f5b3ca65fd23bf98239e566edf6adb"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/.gitignore",
+      "bytes": 272,
+      "sha256": "8f9f31db77b1674f60700366e93a3bca7e1c701b1166cec81f8ef02f1845b843"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/.python-version",
+      "bytes": 5,
+      "sha256": "49a506dd32096b010d75205acf3430c9ae6c40351888129499e5a5e487126c93"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/CHANGELOG.md",
+      "bytes": 4039,
+      "sha256": "f9163a774ffd977a617324fb4aa60c499a60cc51bdae3b338468c687d7596eb0"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/LICENSE",
+      "bytes": 1062,
+      "sha256": "50739f9456651f1e6ed824064b91e90efdf730264af0a8ef8f207601ebb33885"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/README.md",
+      "bytes": 10451,
+      "sha256": "585d18c8f8cd43371ca65156c790d295e5c9d910a8952a09347bc2589658c3fa"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/SECURITY.md",
+      "bytes": 1068,
+      "sha256": "4d364acd178ba6d831a25a201233a905be06311c059d57467e7cedf06f17e592"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/SKILL.md",
+      "bytes": 6440,
+      "sha256": "e7a761bd3ee8631c958381f60f3b03fab18e5da91e167bce555ed7e65834fcb3"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/THIRD_PARTY_NOTICES.md",
+      "bytes": 524,
+      "sha256": "389a3c5e99e5a35694864377ec6da984afe48aba3ae151222569efaac4e6600e"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/agents/openai.yaml",
+      "bytes": 298,
+      "sha256": "cfc84a01c932d26e765a24e5067cfbde0993f5cde919d98dc0eddb1bcb219178"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/pyproject.toml",
+      "bytes": 852,
+      "sha256": "17a51cfde34cf93b1840b6b0994933e978a6a86fdf4a3ce9ba3855cc1f2a4cc0"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/references/data-mapping.md",
+      "bytes": 3762,
+      "sha256": "f109da7b8b6248b1b7337c3defe95cdb4f5b0177d7440b633d8b56c3340c69d9"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/references/methodology.md",
+      "bytes": 5233,
+      "sha256": "9dff554f8eae5f301c9cb4df7a7bc64a3e9c9e52d88f487e3182f0a90fcb7d1a"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/requirements-lock.txt",
+      "bytes": 101256,
+      "sha256": "face553398a9247b77d79a7844cf2e1aaa4be1f8b33177c0b178771f37e6b885"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/requirements.txt",
+      "bytes": 140,
+      "sha256": "8821541a5bd2730351d0c18593c1b87cdabfa464e96c91c54cb78e327ceb2d4e"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/scripts/__init__.py",
+      "bytes": 91,
+      "sha256": "2bed13fe3e42a22e92f58b648e32e1e3f035bf2c75f7332d2506443fc449660c"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/scripts/backtest.py",
+      "bytes": 5756,
+      "sha256": "3e67f2485cd50b7b19db54f0b96b797e5eb3168086a38f03e7ac93b259546058"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/scripts/cli.py",
+      "bytes": 33907,
+      "sha256": "e6ee6a22bb8497dd9b53bd3e15e5e61796233c32a4bbf75b5c9aa66b3621dbc2"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/scripts/data_layer.py",
+      "bytes": 20872,
+      "sha256": "c66bc2757e40443235eec8f8b8352088c670affe92bb402ca4c328ae488b2668"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/scripts/pandadata_security.py",
+      "bytes": 12127,
+      "sha256": "2af3bef7cd841025e02776a954db55e7115e5fb50c5c9276c76dd3a2bb336cf1"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/scripts/portfolio.py",
+      "bytes": 12135,
+      "sha256": "dfa7a679a1be3c2022eb8785e575a8f149d4596b1ab247cba1215f517ec8146c"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/scripts/regime.py",
+      "bytes": 6023,
+      "sha256": "f409ca725c7135c51f42d36e7042f2b4963fe363257c80ede2334b3c833e8b9e"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/skill.yml",
+      "bytes": 1380,
+      "sha256": "692d51ab7878eb087400c85e2de7d1e1c349f61fdc434132d92dc28cb2752d1f"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/tests/test_backtest_holdings.py",
+      "bytes": 4363,
+      "sha256": "10d4b00b6c99862e0c4fd79f45b833f0ddb42b96a6cc00ed822b0022d1412bc1"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/tests/test_cli.py",
+      "bytes": 24365,
+      "sha256": "493186451052a672b58b57e7824d29087d11d2c56535fb329f2bc4d0ca67cdeb"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/tests/test_healthcheck.py",
+      "bytes": 3932,
+      "sha256": "c25cb1ac26a99e301ab6bb7544de469acd21f0bf117f22c4490bd3628803fb26"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/tests/test_release_metadata.py",
+      "bytes": 1689,
+      "sha256": "73b17969f8440ecf49c0bbf6dc88b6437ea4064d540d5cd8cbc6a036c656b1e2"
+    },
+    {
+      "path": "versions/skill-dalio-all-weather/66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd/source/tests/test_synthetic.py",
+      "bytes": 22668,
+      "sha256": "651cdf4a9e36e423e1802729427ff911c3bce55c9c0f4329f9310b82398b8d7a"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/manifest.json",
+      "bytes": 550,
+      "sha256": "fef66edd7c27f5aff2d9ba674a55b7a527f8d840f10ba25e4d795ef420394edb"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/.github/workflows/validate.yml",
+      "bytes": 538,
+      "sha256": "c195c7da5c117d5aff2c9494824067b26026d91f21410c7c8d3e53a39f4092f0"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/.gitignore",
+      "bytes": 280,
+      "sha256": "23c2a9c62fe9ef1938f6cea214a9577f432e1914a33ff598983a043137dbfeec"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/CHANGELOG.md",
+      "bytes": 5008,
+      "sha256": "c28e69b4c61b6bb21d488d24366fc3fc5ec2e1006ffe8bca3a998562c2c726ad"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/INSTALL.md",
+      "bytes": 7917,
+      "sha256": "ec4f70edb96ba52786e34ba7c11e6078acce2a6e0d0b6875b1f5980c674d9dcc"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/LICENSE",
+      "bytes": 35134,
+      "sha256": "9ab468196ddc28ec63c0e12f645a20ecec033f7b33b70dd4e810bc49379cfaf6"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/README.en.md",
+      "bytes": 6906,
+      "sha256": "855413880ef4209d84939e79d13adc50ca1fc35496d80530c44d3140409ca518"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/README.md",
+      "bytes": 8061,
+      "sha256": "ec219f08f5bbf204d244cbd4fa9f7de2af0dcf6c999f974caaa03411c8ee533e"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/SKILL.md",
+      "bytes": 10864,
+      "sha256": "1268d1538fb96c554fb6e34d226d062c407f0c11bfb45453048bb079c4fbbd7c"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/agents/cursor-rule.mdc",
+      "bytes": 3943,
+      "sha256": "75b1a7dcdf0926859286d45aa0aa91f47a5de56e497cb8dcf9517a64153e2afd"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/agents/openai.yaml",
+      "bytes": 3340,
+      "sha256": "b1323b95e19e619b61b485c926b8c1775da3504f0efca417cb983f105386caa9"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/agents/portable-loader.md",
+      "bytes": 3631,
+      "sha256": "8173fc37ef3d3933d9a556b1d22bf8aeff237a6a4b2ebb91113787c58de852ce"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/config/model_config.yaml",
+      "bytes": 3214,
+      "sha256": "814a9bfc1250aeab0b2e3cd02f6388574cbb841fdc4b05cd522210df42e9902e"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/references/data_guide.md",
+      "bytes": 5611,
+      "sha256": "187bd8caef6dafed28b67b2c5c354ae39932079e55446a329679a8603dfc475b"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/references/methodology.md",
+      "bytes": 6053,
+      "sha256": "09a5bcb95567b23d76a689767ca0a6a6cce4af4f6520dfd639cdbaf7ac3a13e6"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/references/need_used_api.md",
+      "bytes": 5638,
+      "sha256": "836974c8956e4bf80710258e36ab0bd87cda2fa82f978951589e8e9bae3029ed"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/references/source_boundary.md",
+      "bytes": 2978,
+      "sha256": "03951acafadd948bf09803aa9537973648dac5461785878e689d9070b5b36606"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/requirements-dev.txt",
+      "bytes": 35,
+      "sha256": "10408bbc0f3fa282427cb879c6f94a5b9d943d054fb79243065c57ed06b0af14"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/requirements.txt",
+      "bytes": 109,
+      "sha256": "ac98d1d7a87f39c41f7571b764117a9fb34f82e94bae03dd0d38f11474e5675a"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/__init__.py",
+      "bytes": 47,
+      "sha256": "0d3f77aa849e764efcf18893d906d8497658201c9668fa58847badae6f36454f"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/backtest/__init__.py",
+      "bytes": 71,
+      "sha256": "111494e3e1725bdf3cd97d85dcba6466d32a0db15be0d0ccdaec5d5f52bd1096"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/backtest/engine.py",
+      "bytes": 7125,
+      "sha256": "61225c0cfc2d01b336bf15ba6bdb1da8056832f7bde91965f7e171c676f21031"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/backtest/metrics.py",
+      "bytes": 5178,
+      "sha256": "f852ef197af490ce2b799f9e6de22654efe560d5289a01ed0fc94b1d7cabd4bd"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/backtest/rules.py",
+      "bytes": 4136,
+      "sha256": "517dd0e62f5ce1811159bdc3e32c323e14d7534b8e2f639ad7bd3fb3c5edad6c"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/data/__init__.py",
+      "bytes": 18,
+      "sha256": "dcb882c3482e6cee979087931d4d51a42438ffced5f56dbcfa9b30b9c1acca73"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/data/cache.py",
+      "bytes": 4893,
+      "sha256": "687d9423640f0142f1e6158ae65ead07979fe4922679da35063c0df68c845b71"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/data/calendar.py",
+      "bytes": 2015,
+      "sha256": "a8c9f2e84a385d7810f00b8caa2ba340aba6662e7edd24ee2bd4701f0e619c48"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/data/cleaner.py",
+      "bytes": 5720,
+      "sha256": "51e492001d5a77f46c97e53e9d80d641b08b444e385b90bb74900d835e268781"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/data/loader.py",
+      "bytes": 23020,
+      "sha256": "96b9b3cc4a883cd32a55aff463843b858e9005a3e0d14cfcba19218e56a155ae"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/features/__init__.py",
+      "bytes": 90,
+      "sha256": "27b47e1a86d41d63de44b9b0f6272b537521c1d1782c6b86576142f388256306"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/features/fundamental.py",
+      "bytes": 6728,
+      "sha256": "baa1254a6ec0bbd7646300261e8538fe0cd7fd0afe266e590985b520f4c5c312"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/features/pipeline.py",
+      "bytes": 12579,
+      "sha256": "62121782a7f4ce5e4d261f5108a2121253864b30e4ead23dece260fb18ad97c1"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/features/price.py",
+      "bytes": 5533,
+      "sha256": "7f633bb9b4a520d1e26aef43d9bac035486c9ca3323219ea74d3f76d93dcccb9"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/features/relation.py",
+      "bytes": 3994,
+      "sha256": "ceae4826d4e535dae74e5c1a33b3fb457ee2b73e08d62e45dbb1cbb35dcdbdba"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/features/sentiment.py",
+      "bytes": 4680,
+      "sha256": "2e131cbfad8b26d9477ea30d6d950665f38e9aad6a9172251c1a3d6ae610373c"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/graph/__init__.py",
+      "bytes": 99,
+      "sha256": "588af9480ae68eb311d0c5ea7a8f15a3c41d0ca43be0819cd0af76d53cb554f2"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/graph/builder.py",
+      "bytes": 6291,
+      "sha256": "559c7727f856121aa7decf7dd8f884754d7dca2d35d751fdfdbe7d32cc37cf0d"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/graph/explicit.py",
+      "bytes": 7088,
+      "sha256": "122b2f71179809481b1332787b3889737378e100d0916bf65eb0a47751233822"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/graph/implicit.py",
+      "bytes": 9105,
+      "sha256": "48a5c0290e2a7fbf5e2b2ecdfa3834d4096db6dc237ea0a21795a0ff57b3deb7"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/model/__init__.py",
+      "bytes": 71,
+      "sha256": "2ad2b328f9b285f4a4a6262bef517497301127242230a8d1c529a029a4a2c36c"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/model/gats_ts.py",
+      "bytes": 5608,
+      "sha256": "9529bfbcf61f926a97f652706891b79dcb5bcbce56bc260667edd6cb93c5fde2"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/model/layers.py",
+      "bytes": 6957,
+      "sha256": "acdfa0159900f701267372096fc9eb5af08e2ce94450974a556fbef7b172cc51"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/model/mf_iamgcn.py",
+      "bytes": 9814,
+      "sha256": "cab6fc6cb172c94005a6465457a3a0290d9dc1b916cd986d11fee4d234eff217"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/model/train.py",
+      "bytes": 14527,
+      "sha256": "7e1d4c74d07c4bad6e4ca554c1ba25e26b92cac524a680699a9c7705d74aa647"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/report.py",
+      "bytes": 5510,
+      "sha256": "3356dfbd573ec31d41f3aac179df4ecb8776993737064b955b519d6d7e44554e"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/risk/__init__.py",
+      "bytes": 70,
+      "sha256": "9bb0dd676bd52581335c9dce7fe4aa4a95844cf05070e1014b12ec569b3fa880"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/risk/monitor.py",
+      "bytes": 5794,
+      "sha256": "325bcf419295e4a082a0df2b77c2c25565ebfcbe4d84c79b149c03190cc29b31"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/scan.py",
+      "bytes": 21253,
+      "sha256": "3482058e26dc9327a6704cb694cac6fa851704c1cdfbcf9ad309041b4f6f0691"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/strategy/__init__.py",
+      "bytes": 70,
+      "sha256": "17d856f9b002ca58c3c5cc964f0cc9d7c35cc5f89a309f761f4c550b09e37850"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/strategy/ranker.py",
+      "bytes": 1736,
+      "sha256": "09314edb3d2d88d98957a8cac9bdb76f425da7060d9b3a20013b46c867bd6abe"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/strategy/selector.py",
+      "bytes": 1370,
+      "sha256": "9622524dd5ed919e42b0cd9196b91a8ef7d04013816340e7f6139667a3fd2e73"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/validate-qsh-form.mjs",
+      "bytes": 4587,
+      "sha256": "458e9f1e6e5137d7b1ef8bbb50c930389edc658c26e56c99f4ba0b0f2cea4474"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/scripts/validate.py",
+      "bytes": 6629,
+      "sha256": "e48b59d40fd48f2d9be62e7c429c8eaf2db6cd00fe62960e8480a73241523b37"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/skill.json",
+      "bytes": 267,
+      "sha256": "5d139c80eb658e7cd461ad3e68783d60765fc818e46bf4a13ae01f30914265f7"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/tests/conftest.py",
+      "bytes": 163,
+      "sha256": "2a101cecea9759e5be7821753d3a0b02bd1bff82a568325fafb30c00b728999b"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/tests/test_calendar.py",
+      "bytes": 1297,
+      "sha256": "881e5257823f7d1516f4b9cdbd2a018e4f43462fde0b545991d4e113e07bad3d"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/tests/test_cleaner.py",
+      "bytes": 2898,
+      "sha256": "39f649641746728d95c251679a5c2c7e8a288fd5839e8fc0a3979dc3b6470651"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/tests/test_features.py",
+      "bytes": 3359,
+      "sha256": "bc87ee0e7bdb72c4654c95d26517d23f76fb04c8220463239ebd9d0e89635443"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/tests/test_graph.py",
+      "bytes": 2525,
+      "sha256": "4bceff83a1ea30c6f2620a34479eae875c47c100da3592d97d6d1a1a9aacf549"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/tests/test_model.py",
+      "bytes": 4715,
+      "sha256": "081cbe5fa7347b77e0f8055fc0a868ec70e6c9c1c72f671d1bc542784daab65f"
+    },
+    {
+      "path": "versions/skill-dl-gnn-stock-graph/2ecd99ae31d2d2bc3d57149818781615fbfbfb41/source/tests/test_strategy_backtest.py",
+      "bytes": 5786,
+      "sha256": "9de8d4eb62d7dda4f27fe4984311d440ee7c57b56eb7ed6ae8661e0e61513b81"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/manifest.json",
+      "bytes": 531,
+      "sha256": "bc3f28c6111c0a0820802f2756ca250e96de1fe8ae3d0052d2045d4e8dc62c08"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/.gitignore",
+      "bytes": 48,
+      "sha256": "1599ed3fb2b608216d691931c423c844924d37d6957bc74af5a99e1d5a7e7504"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/README.en.md",
+      "bytes": 2861,
+      "sha256": "0bec9eeb3ba8cf04ccaf0b292b48638651cf83d85fbc99d8e7c5cc4ac307a2bd"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/README.md",
+      "bytes": 2724,
+      "sha256": "6768828c4af5f957a4ee2f3459cb80f04c2b03006cb1b65fa83ab1aa1b17303b"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/SKILL.md",
+      "bytes": 10564,
+      "sha256": "c9eb5ab0603f3a99f49ee49c0af5650600c66a369a0d36a4d9d996ded4561975"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/agents/cursor-rule.mdc",
+      "bytes": 544,
+      "sha256": "19255713cf1cf210e60acbd664d464b62c7c6f5ace9866d15710bc939b89c147"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/agents/openai.yaml",
+      "bytes": 2369,
+      "sha256": "543dc09b28b88774a9a4ab2ee02f71786b8d480ef8bfc01501368b8a4f8fcd1c"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/agents/portable-loader.md",
+      "bytes": 342,
+      "sha256": "499302e71988f63496afbc2ed13cbef136a641b98426b3f951de9ac8e5ab8ac5"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/references/bootstrap.md",
+      "bytes": 2590,
+      "sha256": "9ad3293c9f24563f22f6a91f58e822dc16310256261204b96931ea5ee7b1b534"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/references/decay-models.md",
+      "bytes": 2448,
+      "sha256": "63dee0c614192531b6738229fcc942d48ebd8ab66db147efe90ed5075467520b"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/references/report-format.md",
+      "bytes": 2039,
+      "sha256": "0b15e7e5d356f233b9d9990e6a8b9a021e4775add284e6719513d882b7ac7ecf"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/requirements.txt",
+      "bytes": 68,
+      "sha256": "6a74badf0dc6f5232caad566db7d49ed91465870b49bf4d4ae1156acc89a83eb"
+    },
+    {
+      "path": "versions/skill-factor-decay/e049c2bdfca2e630fd5f22c03d596732ef9d884a/source/scripts/decay_analysis.py",
+      "bytes": 12430,
+      "sha256": "d01a0f9035b9f9b62a8439af7e27b730110485b798ec536789dda544b4c15b16"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/manifest.json",
+      "bytes": 540,
+      "sha256": "b9eaf18a2eb63fc0ff1133b71f570995f1f15ff516107f93bd85d54fea6087c4"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/README.en.md",
+      "bytes": 5924,
+      "sha256": "ea3d8f5e473ad56468fec0b294260a287ed8c18266462fa5096276a4d5590d67"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/README.md",
+      "bytes": 5544,
+      "sha256": "6457ae8ceabe9b17d9200dd03fb51f0024071006cabbf25971e9df646f4e5cbc"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/SKILL.md",
+      "bytes": 6631,
+      "sha256": "48ef7722ec0431b0aaff7564a8aff159fcdd159f433f7edee34bd32fc129c80b"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/agents/cursor-rule.mdc",
+      "bytes": 1256,
+      "sha256": "59d861de4c15b2d64208b076cf6dd27ed8dfe1cd782197d8b99d6f9e320c138c"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/agents/openai.yaml",
+      "bytes": 1583,
+      "sha256": "6746da6f44cb0e862747062b33feae73202470bef78de76f9c1bec5cf002e9be"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/agents/portable-loader.md",
+      "bytes": 2528,
+      "sha256": "5f882ad1eea3192b4a534a2933fae4570ea2a5fa6ef6000a39b2a4a26f01ce89"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/references/anti-patterns.md",
+      "bytes": 1424,
+      "sha256": "e70ddb439cf860eb3a80394b4970bf44da52a8a1a8fa0350611936aad658a0fc"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/references/dual-ic.md",
+      "bytes": 1790,
+      "sha256": "d28e559a6c6a00971c4c44e3bed523f0aca7f569b79b87a57520896bd3e9f2de"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/references/metrics.md",
+      "bytes": 3576,
+      "sha256": "88e359c1728ce455dec2724aa178fd054a9868110f645b11e1500abd9fc8d951"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/references/primary-score.md",
+      "bytes": 2979,
+      "sha256": "a81dbe6d373b069d9fc33824fe23e787c3f79f0a0139c9a56ecb0fe6f9422de7"
+    },
+    {
+      "path": "versions/skill-factor-evaluate/3b335ec4814dcea49ba6005524157b09c555a225/source/references/report-format.md",
+      "bytes": 1898,
+      "sha256": "66f51263b0db36cc9959dac2a60c44a5bfda6c2439e4715236a886384d2b716d"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/manifest.json",
+      "bytes": 519,
+      "sha256": "d63b488c386790d2ce62d4b5ea6a3496e0c398a7f80d03da21115efc17cbcece"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/source/.gitignore",
+      "bytes": 109,
+      "sha256": "eca3cbe5428fe15049c1761d6ce4c54ee76d1df1ac043020b76b64aa65d017a8"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/source/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/source/README.md",
+      "bytes": 3637,
+      "sha256": "97c3e90e775f158d48e1b4cb4ada4cd14b1a952393db37bbfa4ff06830686307"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/source/SKILL.md",
+      "bytes": 4295,
+      "sha256": "99b40fd2e86156bab45043a706f752e62cdd5d83f4ec3bc4bd0805fd7e3051a4"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/source/agents/cursor-rule.mdc",
+      "bytes": 708,
+      "sha256": "c5ae0317f81d523c5dc522cdf7d5c918413b8e5ef9cb9859dcb8b4707bcc6913"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/source/agents/openai.yaml",
+      "bytes": 284,
+      "sha256": "c9bdc134df3403cef75e12f5e327c307265de21f5d21ab8cfda88bf9b2ada121"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/source/agents/portable-loader.md",
+      "bytes": 866,
+      "sha256": "ef36c7cf30657a53d2bd75c198120ab5e92ef790e0bd1ffb6cc890ee310f7196"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/source/references/sources.md",
+      "bytes": 133,
+      "sha256": "cde809a6a4a37d03ae7904b350b8a4b9c2415685133eee819517716f27223d1f"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/source/requirements.txt",
+      "bytes": 75,
+      "sha256": "43bd2ea1b54080ab16ca6e8664dae5fd2c72bdcc2ab81b797d66b568b76adefb"
+    },
+    {
+      "path": "versions/skill-fin-news/329370ad25fb56dbf548fdc9c65e9556d3b0d3cd/source/scripts/run.py",
+      "bytes": 18254,
+      "sha256": "2dc52287c011ccd939d700a64e0fd32f413c84055d90e8d33941d79eaeab0a93"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/manifest.json",
+      "bytes": 559,
+      "sha256": "04380918a1361ccdfdd8b833e25210726b59b6dc9f123550e2239fb31caf78c7"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/.gitignore",
+      "bytes": 114,
+      "sha256": "90557d77292e0341bbc844265751e0fbe83b1ff8e9f0a7aab4a5f6dd8586c7aa"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/README.en.md",
+      "bytes": 1472,
+      "sha256": "f078f589dbd004495e6e6b261823370ae3e75305a31abcead4113ce31a7736af"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/README.md",
+      "bytes": 3806,
+      "sha256": "ff292d0c22cc14df7e641dd1953bc3f643c8c7f83fc1adcb4682b8753c006705"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/SKILL.md",
+      "bytes": 18415,
+      "sha256": "b976a344f5814b5382326bafa667eaf5f10fe4cf13ed6ea0109f5c81feb99db6"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/agents/openai.yaml",
+      "bytes": 49,
+      "sha256": "05e12ac9b8734cd10b4fc266079d8894f3e58055d2a76e89a51327bc2640fb4a"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/examples/conversion_report.md",
+      "bytes": 4442,
+      "sha256": "0c163f3512d0718489dc8d9e9b5065394bba06b30a597d4baa17a73b5a595dc5"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/examples/etf_timing_conversion_report.md",
+      "bytes": 17621,
+      "sha256": "7ec07d0203d4ed6aece5da45c402faa787ff041513a0b727bcd462dc8cb092aa"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/examples/etf_timing_panda.json",
+      "bytes": 11391,
+      "sha256": "3ffaca53f8a7bce95573e59bcf6331b765c54aef9a03ff88cb059dd1270ef886"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/examples/ma_crossover_jq.py",
+      "bytes": 1456,
+      "sha256": "7dbbbcf11baa5ee9b460e10463a428cfe04319ec339d65d392ce3eefaa54d5a4"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/examples/ma_crossover_panda.json",
+      "bytes": 2325,
+      "sha256": "1045528d73dd584f58a23baded8e1f72c4da63bae9749659a989d76a3c589845"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/references/batch_conversion.md",
+      "bytes": 7833,
+      "sha256": "1a2088ee53c5b34366eef29a70195e02faaf171fdf64c54476695bbacc75c5a3"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/references/jq_patterns.md",
+      "bytes": 15279,
+      "sha256": "369b424a5f2b0d0c13de97d6061c9c391bddb279b544c6bc588f512ff4661c18"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/references/panda_format.md",
+      "bytes": 7230,
+      "sha256": "129a4d544622704cf6eed76b5613de12653b76acbf9b60a9a595139bb454236c"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/references/panda_framework.md",
+      "bytes": 17572,
+      "sha256": "ac928669f8ed1ec0219ab0fce762d4e5e369884a75034d25c13dd4cc9665fd45"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/references/source_boundary.md",
+      "bytes": 1052,
+      "sha256": "152eeb78ea6804270de1e64f79e9105be993e1e8dadcf96522b53c82fdef5a89"
+    },
+    {
+      "path": "versions/skill-jq-to-panda-converter/c6e23481f05246828b5d944623c35afb08fb3987/source/references/step_by_step_guide.md",
+      "bytes": 6864,
+      "sha256": "b766233b4c8e28df1bf068cc914c7dbe8c92ae0f43422223c0b2637646c95f05"
+    },
+    {
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15/manifest.json",
+      "bytes": 533,
+      "sha256": "5b97114162096ca9b019c896ed5a88203662da96de571a18a43b1c597bb2f003"
+    },
+    {
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15/source/.gitattributes",
+      "bytes": 19,
+      "sha256": "d60f352d0db1404c70afb4bb8b2ca3fd1c610572aa40720e8a0b7baa7885418c"
+    },
+    {
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15/source/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15/source/README.en.md",
+      "bytes": 7583,
+      "sha256": "38f776cb72352cc5f25c10ecd88e879de2375d14e08d2487f46fd23996023d5e"
+    },
+    {
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15/source/README.md",
+      "bytes": 6852,
+      "sha256": "82b9dd830ae5d157ac46984a2c8a45a034386f71ebe584edf3759e0e75fa75b4"
+    },
+    {
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15/source/SKILL.md",
+      "bytes": 8482,
+      "sha256": "3c0b15a517f0c547012d4bb380c98159aaf30967ab250cc98c9804b748420ef4"
+    },
+    {
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15/source/agents/cursor-rule.mdc",
+      "bytes": 1111,
+      "sha256": "1bccbaad5ed9bb00695681dfdd5beb84d6dbdfc7b915f1102ba04e85f694dd85"
+    },
+    {
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15/source/agents/openai.yaml",
+      "bytes": 221,
+      "sha256": "fe427b9e034bc7369318c481eff8a7942fb84039e92db6783eac7b61f3af4985"
+    },
+    {
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15/source/agents/portable-loader.md",
+      "bytes": 991,
+      "sha256": "507dd4dd3909bf4aa819eec3025c17459f151841b77bbc987151dc0386078150"
+    },
+    {
+      "path": "versions/skill-macro-monitor/cf1f76aaf7be751988343c73363199a0b422bf15/source/references/macro-monitor-guide.md",
+      "bytes": 9113,
+      "sha256": "3036b61140f8090de29798f57fe292934b130ee2445226a94c684db57b4c0a1d"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/manifest.json",
+      "bytes": 783,
+      "sha256": "92cb991684df578de4a6c04ab7d7a565844310f2745e922ef2f3d18b3d318a77"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/.env.example",
+      "bytes": 371,
+      "sha256": "e7600e95dbb24f108a6da5c53f98c754b9f6f300374c2b531501d4b085bd7750"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/.gitignore",
+      "bytes": 289,
+      "sha256": "e6ce540dca575717fb8f57273c242f875d971de43319d94f9b6369308be2db37"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/.openskills.json",
+      "bytes": 350,
+      "sha256": "d41f51d52e07cf210a728b2bec1abf8a71947ff330c8209bdef260bd4d465855"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/LICENSE.txt",
+      "bytes": 10758,
+      "sha256": "0db25a4aeae8e67761fb4c820160404f638ed6efc3d81ba6275eee2df792c57d"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/README.md",
+      "bytes": 11984,
+      "sha256": "3a8edf36f3771193cdfe05a950992c3611623b5971ec600abfa37d92beff86cb"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/SKILL.md",
+      "bytes": 6836,
+      "sha256": "fdc5d04d241a4c6071cceacd473c34c584f14c873c27a8aa4ff37327364948d2"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/references/data_sources.md",
+      "bytes": 1799,
+      "sha256": "a42839699731285b5e94cbc33872b164375c30bc6ce5c6b2ed4363c769aa3ea9"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/references/pandaai_api_list.md",
+      "bytes": 5770,
+      "sha256": "0fdb489cb40054ff8c69ad6095a16f02b513076d0fecae128fa4d26680adcfd0"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/requirements.txt",
+      "bytes": 70,
+      "sha256": "8bc55bd802385de9c57016181d37dff0ba7740c283f99d33aba92c8f5c7241ef"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/scripts/collector.py",
+      "bytes": 10671,
+      "sha256": "b1d043fcbaff622906ba121c96aac6f67f8853a2f5266e892c47ff69047fe9b8"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/scripts/reporter.py",
+      "bytes": 13921,
+      "sha256": "fc9f6e48acfd588df8a84485b6e42604be763450709c9522ca1e978211981050"
+    },
+    {
+      "path": "versions/skill-news-sentiment-analyst/fbd38b6a5f412fea7ff7d7b42380978179193666/source/scripts/verifier.py",
+      "bytes": 5607,
+      "sha256": "a69131b853e27da79eafeb2241a85304bd5f0d43691678b522517d1d7f9a4735"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/manifest.json",
+      "bytes": 550,
+      "sha256": "795c197fedf071f9dc397349a90bb2c32c3c3cb0e38967fb4cd4d5dea545d9a5"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/README.en.md",
+      "bytes": 8666,
+      "sha256": "6248251694ab3970c76eedb38750d16ca1473fc4a9dc679c154ffcea1b25cb5d"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/README.md",
+      "bytes": 8188,
+      "sha256": "86dd0603feaf019a6271bff6a7c2497d83f8103ca290756c3f73e7d1b9e2f9d5"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/SKILL.md",
+      "bytes": 25415,
+      "sha256": "1a35e8be5b6b01128c490d8161c307c18c7772f0a661e6b2e56ebfd0df885a29"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/agents/cursor-rule.mdc",
+      "bytes": 959,
+      "sha256": "c06f7d222c1a8767e08641345f61b4d53e1772db8a9bc1c91097553960a54cd4"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/agents/openai.yaml",
+      "bytes": 421,
+      "sha256": "29c8f02e526260f58829bf2401643574be84286a0ad029f9952ec640bef7eb70"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/agents/portable-loader.md",
+      "bytes": 962,
+      "sha256": "d332ae6e30dada2656a530abbaa71af0137cd34895061d0f7a772a572a9b6437"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/references/backtest_engine.md",
+      "bytes": 3599,
+      "sha256": "c8b76505aaf992a6d41600737b9e716e1d5af13ffceefe9b91b574374e260139"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/references/data_sources.md",
+      "bytes": 2411,
+      "sha256": "c191f53d7b59570d4a5e9a84fbf3a833dddf3c5865418fa37186ab23882687e8"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/references/factor_audit_and_robustness.md",
+      "bytes": 1736,
+      "sha256": "c8d7809ae7f1b1be08f23ddfb0b540abf572d412c285251d044643c1618f9a1d"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/references/factor_validation_checklist.md",
+      "bytes": 4105,
+      "sha256": "9d2f9b12f24faea8adf3e4ab2fc1c72fd4ac3fa6bef0d21f3309c0c1ac82f500"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/references/output_contract.md",
+      "bytes": 18268,
+      "sha256": "03485898bb7cac828195cda2a02b2eb66689d128521ebdf2e5ce12e95827b178"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/references/replication_lessons_learned.md",
+      "bytes": 1135,
+      "sha256": "d565913648a94439f9e22014e2fd1311b32829a422699ddc5fa9bc911099c931"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/requirements.txt",
+      "bytes": 123,
+      "sha256": "1464b6d1764743724c4831cdd121467e9fd7d848b6644d8dceb35738a3925680"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/scripts/build_factor_report.py",
+      "bytes": 16830,
+      "sha256": "7aaaa0747df65e21dbad1e502510db8ac65fcd96c410ea262c5a93104cc09711"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/scripts/check_dependencies.py",
+      "bytes": 5067,
+      "sha256": "20b2bd46a9cb70146c029256f485826d900b5ba224687a53033c11048475dc61"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/scripts/check_step2_translation.py",
+      "bytes": 5086,
+      "sha256": "eacba0fa0a0dc43695ea600750004874672e6994502cfb3396f934795b5956a2"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/scripts/check_step3_factor_reconstruction.py",
+      "bytes": 5281,
+      "sha256": "fd669caac3c382c4046bea7776f5074342d0a9d5acad7171876ce132fcea940e"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/scripts/check_step5_strategy.py",
+      "bytes": 5976,
+      "sha256": "740212078a7be0ff6de03d32d8bd8588e726d39c37a2d13ccc3313592a7b5f40"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/scripts/create_project.py",
+      "bytes": 6919,
+      "sha256": "036709ad5e39876d5789b4d49b3cb9d207c3e99966301717f112c7b881fd6823"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/scripts/local_backtest.py",
+      "bytes": 19062,
+      "sha256": "af55a574cc1cbf7f8acd7605da18f649eeb08b8f0e657ea4182d3785a85a4fcf"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/scripts/pandadata_market_data.py",
+      "bytes": 15797,
+      "sha256": "8f2ebd4c7ff3440d103bd66641c19355b04805c5c6a3dd8bf05d62f5d7f9fa6e"
+    },
+    {
+      "path": "versions/skill-report-replication/caed18abbeffb4b08e0f26950f79b9900f9f32dc/source/scripts/quality_gate_check.py",
+      "bytes": 28075,
+      "sha256": "fc1b74d18e26f4aa2169152d3770a955f1a1b37cd379020ea309bb2fe14c9741"
+    },
+    {
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01/manifest.json",
+      "bytes": 554,
+      "sha256": "68580020656ffd0418bba46b21f844bd01c52f58e151fe7116ad1da82d7aabae"
+    },
+    {
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01/source/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01/source/README.en.md",
+      "bytes": 11801,
+      "sha256": "2922266cc27da4ce109c57a12b858d8ebd44030b6a08ecc9dd1fb28d99c49371"
+    },
+    {
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01/source/README.md",
+      "bytes": 10751,
+      "sha256": "c9082ecf3d54a25b7c28a33b65dfa7bf1e2f5c58525a0bddf8c32ecb95bc894c"
+    },
+    {
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01/source/SKILL.md",
+      "bytes": 13106,
+      "sha256": "ae48bdd0c35dcd9e9d8c68d55602e0b6d5b20aa080ca20e3cb61403b5882e0b9"
+    },
+    {
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01/source/agents/cursor-rule.mdc",
+      "bytes": 1355,
+      "sha256": "ad2f3ac85200fa1d95d75dc93322912082eca27212a0fcec512ded8485921051"
+    },
+    {
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01/source/agents/openai.yaml",
+      "bytes": 421,
+      "sha256": "4b1c09ae13b2458d420236b5b3874495ac89f9b708b75e5aa2cb701cd50b4542"
+    },
+    {
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01/source/agents/portable-loader.md",
+      "bytes": 1383,
+      "sha256": "8f5a8ca05311954a83818de30443a22be13c26c3bdce14935591ad73e0570490"
+    },
+    {
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01/source/profiles/seats.json",
+      "bytes": 429,
+      "sha256": "7b6bb62edfd84bd4a37447f67aba5c560e9595a60b7b8a892892cc809ec95fbb"
+    },
+    {
+      "path": "versions/skill-smart-money-profiler/d606d88e726f11dbd00fe705ba7f6a2d17d19d01/source/references/profiling-playbook.md",
+      "bytes": 12183,
+      "sha256": "c8138b865accb83c72251c6a8e017fa38063b4d6e9cc2746a145441da2521040"
+    }
+  ]
+}

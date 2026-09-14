@@ -1,0 +1,84 @@
+{
+  "name": "@deepseek-ai/dsh-panda-connector",
+  "description": "Host-side PandaData authentication connector with isolated Python runtimes, verified SDK updates, and write-only stdin credentials",
+  "version": "0.1.19",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quantskills/QuantStudio.git",
+    "directory": "packages/panda-connector"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./invariant": {
+      "types": "./lib/types/invariant.d.ts",
+      "default": "./lib/invariant.js"
+    },
+    "./types": {
+      "types": "./lib/types/types.d.ts",
+      "default": "./lib/types/types.js"
+    },
+    "./typert": {
+      "types": "./lib/typert.host.d.ts",
+      "default": "./lib/typert.host.js"
+    },
+    "./remote": {
+      "types": "./lib/typert.remote-client.d.ts",
+      "default": "./lib/typert.remote-client.js"
+    },
+    "./src/*": "./src/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/invariant.js",
+    "worker/panda_worker.py",
+    "worker/panda_runner.py",
+    "worker/panda_execution_probe.py",
+    "lib/types/**/*.js",
+    "lib/types/**/*.d.ts",
+    "lib/typert.host.js",
+    "lib/typert.host.d.ts",
+    "lib/typert.remote-client.js",
+    "lib/typert.remote-client.d.ts"
+  ],
+  "license": "GPL-3.0-or-later OR LicenseRef-PandaAI-Commercial",
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1",
+    "@napi-rs/keyring": "1.3.0",
+    "fflate": "0.8.3",
+    "tar": "7.5.22",
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-home-paths": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-invariants": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-sandbox": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-session": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-subprocess": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-timeout": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.1.2-alpha.2"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-home-paths": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-invariants": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-sandbox": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-session": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-subprocess": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-timeout": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.1.2-alpha.2"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

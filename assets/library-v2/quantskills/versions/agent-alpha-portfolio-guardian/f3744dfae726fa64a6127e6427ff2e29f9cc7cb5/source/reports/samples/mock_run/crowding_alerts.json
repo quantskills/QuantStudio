@@ -1,0 +1,15 @@
+[
+  {
+    "theme_or_symbol": "600519.SH",
+    "level": "info",
+    "scenario": "延续（mock）",
+    "linked_factor_ids": [
+      "F001",
+      "F002",
+      "F003"
+    ],
+    "source_snapshot": null,
+    "counter_evidence_note": "mock 旁证：未绑定真实 crowding 快照",
+    "risk_level": "低"
+  }
+]

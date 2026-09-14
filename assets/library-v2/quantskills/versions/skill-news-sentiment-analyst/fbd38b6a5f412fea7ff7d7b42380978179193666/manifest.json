@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-news-sentiment-analyst@fbd38b6a5f412fea7ff7d7b42380978179193666",
+  "assetId": "skill-news-sentiment-analyst",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-news-sentiment-analyst",
+  "commit": "fbd38b6a5f412fea7ff7d7b42380978179193666",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:982532930597931831cffce070f499afa733583802eb7acc634ac9980580f8d2",
+  "fileCount": 12,
+  "totalBytes": 68426,
+  "installedAt": 1789218648664,
+  "exposure": "skill-registry",
+  "origin": "catalog",
+  "snapshotLocalModification": {
+    "upstreamTreeDigest": "sha256:679237f5ff13a818ba169e660dcb0a7e92ddb2788ecbd409ad486c9430905fcf",
+    "reason": "Preserve local UTF-8 reading fixes in collector.py and verifier.py"
+  }
+}

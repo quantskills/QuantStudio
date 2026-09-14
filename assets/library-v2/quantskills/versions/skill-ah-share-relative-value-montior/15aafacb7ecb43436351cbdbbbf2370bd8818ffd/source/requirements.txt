@@ -1,0 +1,2 @@
+pandas>=2.0
+panda-data==0.0.12

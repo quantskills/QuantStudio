@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-smart-money-profiler@d606d88e726f11dbd00fe705ba7f6a2d17d19d01",
+  "assetId": "skill-smart-money-profiler",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-smart-money-profiler",
+  "commit": "d606d88e726f11dbd00fe705ba7f6a2d17d19d01",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:e6e4398c0463dd3a3dd2e30fb0b0663a6bf51645e9fb86a5b70bb9af8575638b",
+  "fileCount": 9,
+  "totalBytes": 86578,
+  "installedAt": 1789206488642,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

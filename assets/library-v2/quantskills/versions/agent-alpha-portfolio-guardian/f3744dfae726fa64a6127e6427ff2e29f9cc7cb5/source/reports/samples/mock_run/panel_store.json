@@ -1,0 +1,6 @@
+{
+  "ok": true,
+  "skipped": true,
+  "reason": "panel store only accepts live/degraded",
+  "n_appended": 0
+}

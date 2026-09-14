@@ -1,0 +1,12 @@
+{
+  "_说明": "agent-factor-evaluator 示例输入。pool 与 universe 二选一：pool 为自定义股票代码列表，留空则使用 universe 指数成分。factor 与 expr 二选一：expr 非空时覆盖内置因子。",
+  "pool": ["600519.SH", "000858.SZ", "601318.SH", "600036.SH", "000333.SZ", "002594.SZ"],
+  "universe": "000300.SH",
+  "factor": "momentum_20",
+  "expr": "",
+  "horizon": 5,
+  "period": "20220101-20241231",
+  "n_groups": 5,
+  "cost_bps": 15,
+  "label_kind": "market_neutral"
+}

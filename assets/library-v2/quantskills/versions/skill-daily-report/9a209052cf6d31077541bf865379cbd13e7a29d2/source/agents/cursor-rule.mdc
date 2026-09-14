@@ -1,0 +1,7 @@
+---
+description: Load skill-daily-report for cross-market daily review requests.
+globs: []
+alwaysApply: false
+---
+
+When the user asks for a daily market review, load the repository root `SKILL.md`. Run `scripts/fetch_market_data.py` first, then follow its data-validation, disclosure, and report-template requirements.

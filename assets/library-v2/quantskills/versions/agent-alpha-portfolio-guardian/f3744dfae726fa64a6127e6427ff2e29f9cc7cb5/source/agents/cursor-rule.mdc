@@ -1,0 +1,32 @@
+---
+description: 使用 Alpha 多因子组合健康度守卫 Agent 做组合级因子健康监控与退休/重构候选分析。
+globs:
+  - "**/*.py"
+  - "**/*.md"
+  - "**/*.yaml"
+alwaysApply: false
+---
+
+# Alpha Portfolio Guardian（Cursor 适配）
+
+当用户询问以下问题时使用本 Agent：
+- 多因子组合健康度 / 因子守卫
+- 因子退休、降权、重构候选
+- 组合 IC 衰减对比
+- 因子拥挤风险挂载
+- 聪明钱旁证解释失效
+
+## 步骤
+
+1. 读取本目录 `AGENTS.md` 与 `README.md`
+2. 读取依赖：
+   - `skill-factor-evaluate/SKILL.md`
+   - `skill-factor-decay/SKILL.md`
+   - `agent-crowding-risk-monitor/AGENTS.md` 或 `README.md`
+   - `skill-smart-money-profiler/SKILL.md`
+3. 优先 `python -m runtime --mock` 或 `--portfolio config/portfolio.yaml`
+4. 依赖失败必须标注缺口，禁止编造；禁止买卖指令
+
+## 产出
+
+四件套：健康度矩阵、拥挤警示、退休/重构候选、IC 衰减曲线 → `reports/runtime_out/`

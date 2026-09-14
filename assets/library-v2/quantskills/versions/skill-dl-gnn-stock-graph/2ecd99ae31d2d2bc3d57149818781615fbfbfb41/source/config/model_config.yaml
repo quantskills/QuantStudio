@@ -1,0 +1,102 @@
+# GNN Stock Graph — Model Hyperparameters
+#
+# 所有超参集中管理，scan.py 通过 --config 或默认加载此文件。
+# 命令行参数优先级 > 此文件。
+
+# ============================================================
+# GATs_ts: RNN + Dynamic Graph Attention Network
+# ============================================================
+gats_ts:
+  # Encoder
+  rnn_type: "GRU"                # GRU | LSTM
+  rnn_hidden: 64                 # RNN hidden dim per layer
+  rnn_layers: 2                  # stacked RNN layers
+  rnn_dropout: 0.2
+
+  # Graph Attention
+  gat_heads: 4                   # multi-head attention
+  gat_hidden: 32                 # per-head hidden dim → output = heads*hidden
+  gat_dropout: 0.1
+
+  # Prediction head
+  mlp_hidden: [64, 32]           # after GNN, before scalar output
+
+  # Training
+  lr: 0.001
+  weight_decay: 0.0001
+  batch_size: 64
+  epochs: 100
+  early_stop_patience: 10
+  val_frac: 0.2
+  grad_clip: 1.0
+
+# ============================================================
+# MF-IAMGCN: Mixed-Frequency Inter-temporal Attention Multi-GCN
+# ============================================================
+mf_iamgcn:
+  # Multi-frequency sampling (MIDAS)
+  freq_high: "daily"             # 日频
+  freq_low: "quarterly"          # 季频（基本面）
+
+  # Graph convolution layers
+  gcn_layers: 3                  # number of GCNConv layers
+  gcn_hidden: 64                 # hidden dim per layer
+  gcn_dropout: 0.1
+
+  # Inter-temporal attention
+  attn_heads: 4                  # cross-time attention heads
+  attn_hidden: 32
+
+  # Fusion
+  fusion_dim: 64                 # high-freq + low-freq fusion dim
+
+  # Training
+  lr: 0.001
+  weight_decay: 0.0005
+  batch_size: 64
+  epochs: 100
+  early_stop_patience: 10
+  val_frac: 0.2
+  grad_clip: 1.0
+
+# ============================================================
+# Shared settings
+# ============================================================
+shared:
+  # Universe
+  default_index: "000300.SH"     # CSI300
+  exclude_st: true               # 剔除 ST/*ST
+  exclude_new_listed_days: 60    # 剔除上市不满 60 天次新股
+
+  # Graph
+  graph_type: "heterogeneous"    # heterogeneous | homogeneous
+  rebuild_graph_daily: true      # 每次运行重建隐性关系图
+  explicit_relations:            # 显性关系开关
+    industry: true
+    concept: true
+    supply_chain: false          # 供应链无直接数据源，默认关闭
+  implicit_relations:            # 隐性关系开关
+    dtw_similarity: true
+    pearson_correlation: true
+    granger_causality: false     # 计算量大，默认关闭
+
+  # Feature
+  lookback: 20                   # 日频窗口（交易日）
+  fundamental_lookback_quarters: 8  # 基本面回看季度数
+
+  # Strategy
+  top_k: 30                      # 选股数量
+  rebalance_freq: "daily"        # daily | weekly
+
+  # Backtest
+  commission: 0.0003             # 佣金 0.03%
+  stamp_tax: 0.001               # 印花税 0.1%（仅卖出）
+  slippage: 0.001                # 滑点 0.1%
+  t_plus_1: true                 # T+1 制度
+
+  # Risk
+  max_single_position: 0.05      # 单票仓位上限 5%
+  max_drawdown_hard: 0.20        # 硬止损线 -20%
+
+  # Reproducibility
+  seed: 42

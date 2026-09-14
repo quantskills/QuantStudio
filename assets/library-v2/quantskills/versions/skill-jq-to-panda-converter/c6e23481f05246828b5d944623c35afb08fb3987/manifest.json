@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-jq-to-panda-converter@c6e23481f05246828b5d944623c35afb08fb3987",
+  "assetId": "skill-jq-to-panda-converter",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-jq-to-panda-converter",
+  "commit": "c6e23481f05246828b5d944623c35afb08fb3987",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:b35b327d340ae6283d3f5cc773f31da6111597cde5b8ecb096a5d127177b1d07",
+  "fileCount": 17,
+  "totalBytes": 152070,
+  "installedAt": 1789292922102,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

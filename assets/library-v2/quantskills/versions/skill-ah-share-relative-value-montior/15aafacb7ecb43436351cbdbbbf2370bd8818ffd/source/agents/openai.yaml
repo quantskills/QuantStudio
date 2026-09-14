@@ -1,0 +1,3 @@
+interface:
+  display_name: "A/H Relative Value Monitor"
+  short_description: "Scan, compare, and research FX-adjusted A/H premiums with company-name lookup and historical dislocation analysis"

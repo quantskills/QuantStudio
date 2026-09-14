@@ -1,0 +1,42 @@
+metadata:
+  organization: QuantSkills
+  organization_url: https://github.com/quantskills
+  repository: skill-dalio-all-weather
+  repository_url: https://github.com/quantskills/skill-dalio-all-weather
+  project_type: skill
+  collection: asset-allocation
+  license: MIT
+  category: trader-research
+  tags:
+    - all-weather
+    - asset-allocation
+    - risk-budgeting
+    - macro-regime
+    - panda-data
+  platforms:
+    - codex
+  language: zh-en
+  status: beta
+  validation_level: conditional
+  maintainer_type: community
+  requires: []
+  external_requirements:
+    - Python 3.11 or 3.12
+    - PandaData 0.0.12 access entitlement
+    - Provider-supplied PandaData HTTPS endpoint with a trusted certificate
+    - PandaData account credentials or a short-lived token
+  permissions:
+    network:
+      - Provider-supplied PandaData HTTPS endpoint configured by the user
+    read:
+      - Process environment or user-level ~/.pandadata.env
+    write:
+      - User-selected output directory
+      - User-selected market-data cache directory
+  validated_environment:
+    - Windows
+    - PowerShell
+    - Python 3.11
+    - Python 3.12
+  summary_zh: 基于 PandaData 的 A 股全天候配置、宏观象限、季度回测与风险贡献研究。
+  summary_en: Reproducible China All Weather allocation research with macro regimes, quarterly rebalancing, and risk-contribution diagnostics.

@@ -1,0 +1,32 @@
+---
+description: 因子评价 — 双 IC + 主分 + 六联报告
+globs: ["evaluate*.py", "score*.py", "metrics*.py", "**/eval/*.py"]
+alwaysApply: false
+---
+
+# Factor Evaluate（Cursor 项目规则）
+
+当用户要求"评价 / 打分 / score 一个因子"时，遵循以下规则：
+
+## 核心规则
+
+1. **7 项指标全算**：rank IC / Pearson IC / IC_IR / Sharpe / annual return / max drawdown / monotonicity / annual turnover
+2. **双 IC 对照**：rank IC 和 Pearson IC 同时算，对照解读
+3. **归一加权主分**：每个分量先归一到 ~[-2, +2]，再按权重相加（IC 0.20 / Sharpe 0.30 / Ret 0.30 / MDD 0.20 / Mono 0.10 / Turn 0.10）
+4. **项目内 `primary_score()` 优先**：不要自己另写"近似版"
+5. **报告必须六联**：不能只给一个数字
+
+## 触发条件
+
+- 用户问"这个因子好不好 / 要不要保留 / 给打个分"
+- 编辑 `evaluate*.py` / `score*.py` / `metrics*.py` 时
+
+## 详细参考
+
+打开 `skills/factor-evaluate/references/`：
+
+- `metrics.md` — 7 项指标算法 + 通用实现
+- `dual-ic.md` — rank vs Pearson 对照诊断表
+- `primary-score.md` — 主分公式 + 调权指南
+- `report-format.md` — 标准报告格式
+- `anti-patterns.md` — 10 种反模式 + 危险信号清单

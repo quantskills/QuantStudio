@@ -1,0 +1,7 @@
+.viewer { overflow: auto; min-width: 0; background: #e8eaed; color: #29313d; }
+.toolbar { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px; background: #f5f6f8; font-size: 12px; }
+.viewer button { border: 1px solid #c8cdd5; border-radius: 6px; background: white; color: inherit; padding: 5px 9px; cursor: pointer; }
+.viewer button:disabled { opacity: .4; cursor: default; }
+.viewer p { padding: 12px; font-size: 13px; }
+.viewer canvas { display: block; width: 100%; height: auto; background: white; }
+.viewer canvas[hidden] { display: none; }

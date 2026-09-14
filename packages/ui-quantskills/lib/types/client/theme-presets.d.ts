@@ -1,0 +1,215 @@
+export declare const THEME_PRESETS: readonly [{
+    readonly id: "minimal-blue";
+    readonly background: "motion-minimal-blue";
+    readonly label: "极简 · 雾蓝";
+    readonly description: "冷蓝流光，清晰有序";
+    readonly scheme: "dark";
+    readonly scene: "flow";
+    readonly family: "geometry";
+    readonly iconLabel: "晶体 · 立方 · 模组";
+    readonly accent: "#9bbff1";
+    readonly tokens: {
+        readonly accent: "#9bbff1";
+        readonly tint: "#25364e";
+        readonly chrome: "#0e1827";
+        readonly surface: "#1b293c";
+        readonly ink: "#ecf2fa";
+        readonly secondary: "#acbcd0";
+        readonly line: "#38485e";
+        readonly deep: "#091321";
+        readonly buttonInk: "#091321";
+        readonly skill: "#c9b1ff";
+        readonly agent: "#79ded4";
+        readonly team: "#f3ce8e";
+        readonly success: "#88d9b2";
+        readonly warning: "#f3ce8e";
+        readonly danger: "#ff9f9c";
+    };
+    readonly glow: "90, 141, 212";
+}, {
+    readonly id: "minimal-jade";
+    readonly background: "motion-minimal-jade";
+    readonly label: "极简 · 青玉";
+    readonly description: "青绿呼吸，温润宁静";
+    readonly scheme: "dark";
+    readonly scene: "flow";
+    readonly family: "botanical";
+    readonly iconLabel: "叶片 · 树木 · 枝系";
+    readonly accent: "#9cd4bc";
+    readonly tokens: {
+        readonly accent: "#9cd4bc";
+        readonly tint: "#254239";
+        readonly chrome: "#101e1b";
+        readonly surface: "#1d3029";
+        readonly ink: "#edf5ef";
+        readonly secondary: "#afc3ba";
+        readonly line: "#3c5349";
+        readonly deep: "#0a1612";
+        readonly buttonInk: "#0a1612";
+        readonly skill: "#e1cd8e";
+        readonly agent: "#8dcdf0";
+        readonly team: "#d1b4f3";
+        readonly success: "#96d9b0";
+        readonly warning: "#efc591";
+        readonly danger: "#f7a3a3";
+    };
+    readonly glow: "89, 160, 130";
+}, {
+    readonly id: "minimal-copper";
+    readonly background: "motion-minimal-copper";
+    readonly label: "极简 · 暖铜";
+    readonly description: "琥珀余光，沉静细腻";
+    readonly scheme: "dark";
+    readonly scene: "flow";
+    readonly family: "atelier";
+    readonly iconLabel: "羽笔 · 笔尖 · 叠页";
+    readonly accent: "#e6ba91";
+    readonly tokens: {
+        readonly accent: "#e6ba91";
+        readonly tint: "#49372c";
+        readonly chrome: "#211a16";
+        readonly surface: "#332920";
+        readonly ink: "#f7f0e8";
+        readonly secondary: "#ccbbaa";
+        readonly line: "#58483c";
+        readonly deep: "#17110e";
+        readonly buttonInk: "#17110e";
+        readonly skill: "#f0b1a8";
+        readonly agent: "#b5bffc";
+        readonly team: "#8fd6c3";
+        readonly success: "#9cd8ad";
+        readonly warning: "#edd187";
+        readonly danger: "#ffabab";
+    };
+    readonly glow: "181, 125, 76";
+}, {
+    readonly id: "glass-blue";
+    readonly background: "motion-glass-blue";
+    readonly label: "琉璃 · 浅蓝";
+    readonly description: "浅蓝水光，琉璃映照";
+    readonly scheme: "light";
+    readonly scene: "lagoon";
+    readonly family: "lagoon";
+    readonly iconLabel: "水滴 · 气泡 · 涟漪";
+    readonly accent: "#1266a2";
+    readonly tokens: {
+        readonly accent: "#1266a2";
+        readonly tint: "#d8eaf8";
+        readonly chrome: "#e5f2fc";
+        readonly surface: "#f3faff";
+        readonly ink: "#16334d";
+        readonly secondary: "#405e76";
+        readonly line: "#aac8dc";
+        readonly deep: "#dceefb";
+        readonly buttonInk: "#ffffff";
+        readonly skill: "#6c51a3";
+        readonly agent: "#0c706e";
+        readonly team: "#98572a";
+        readonly success: "#24704a";
+        readonly warning: "#89561c";
+        readonly danger: "#ac454c";
+    };
+    readonly glow: "68, 148, 207";
+}, {
+    readonly id: "glass-rain";
+    readonly background: "motion-glass-rain";
+    readonly label: "雨季 · 听雨";
+    readonly description: "雨落玻璃，青黛微光";
+    readonly scheme: "dark";
+    readonly scene: "rain";
+    readonly family: "rain";
+    readonly iconLabel: "雨滴 · 雨云 · 雨伞";
+    readonly accent: "#a1d3dd";
+    readonly tokens: {
+        readonly accent: "#a1d3dd";
+        readonly tint: "#354957";
+        readonly chrome: "#142631";
+        readonly surface: "#25333e";
+        readonly ink: "#eff7fa";
+        readonly secondary: "#b8ccd3";
+        readonly line: "#495f6c";
+        readonly deep: "#0e1d28";
+        readonly buttonInk: "#0e1d28";
+        readonly skill: "#adc4f3";
+        readonly agent: "#92d7c3";
+        readonly team: "#dec49d";
+        readonly success: "#97d8b4";
+        readonly warning: "#e5c791";
+        readonly danger: "#f1a5ad";
+    };
+    readonly glow: "92, 144, 158";
+}, {
+    readonly id: "glass-ink";
+    readonly background: "motion-glass-ink";
+    readonly label: "水墨 · 山岚";
+    readonly description: "墨色游走，山岚留白";
+    readonly scheme: "light";
+    readonly scene: "ink";
+    readonly family: "ink";
+    readonly iconLabel: "笔触 · 山峦 · 山水";
+    readonly accent: "#315953";
+    readonly tokens: {
+        readonly accent: "#315953";
+        readonly tint: "#e3e8e0";
+        readonly chrome: "#efefe7";
+        readonly surface: "#faf9f3";
+        readonly ink: "#242f30";
+        readonly secondary: "#505f5b";
+        readonly line: "#b9c3b8";
+        readonly deep: "#e9ece4";
+        readonly buttonInk: "#ffffff";
+        readonly skill: "#a64435";
+        readonly agent: "#365f73";
+        readonly team: "#686040";
+        readonly success: "#3f6748";
+        readonly warning: "#885e21";
+        readonly danger: "#a53d42";
+    };
+    readonly glow: "98, 126, 116";
+}, {
+    readonly id: "silver";
+    readonly label: "云白";
+    readonly description: "通透留白，专注当下";
+    readonly scheme: "light";
+    readonly accent: "#0067d9";
+}, {
+    readonly id: "graphite";
+    readonly label: "石墨";
+    readonly description: "柔和暗色，沉浸创作";
+    readonly scheme: "dark";
+    readonly accent: "#75b5ff";
+}, {
+    readonly id: "ocean";
+    readonly label: "海蓝";
+    readonly description: "清凉蓝调，轻盈有序";
+    readonly scheme: "light";
+    readonly accent: "#007e91";
+}, {
+    readonly id: "violet";
+    readonly label: "暮紫";
+    readonly description: "细腻紫调，多一点灵感";
+    readonly scheme: "light";
+    readonly accent: "#7952c7";
+}, {
+    readonly id: "midnight";
+    readonly label: "午夜蓝";
+    readonly description: "深海底色，冷静专注";
+    readonly scheme: "dark";
+    readonly accent: "#89baff";
+}, {
+    readonly id: "plum";
+    readonly label: "夜紫";
+    readonly description: "柔紫微光，安静创作";
+    readonly scheme: "dark";
+    readonly accent: "#c6adff";
+}, {
+    readonly id: "forest";
+    readonly label: "墨绿";
+    readonly description: "森林深处，舒缓护眼";
+    readonly scheme: "dark";
+    readonly accent: "#8fd6b8";
+}];
+export type ThemePreset = typeof THEME_PRESETS[number]['id'];
+export declare function useThemePreset(): "ocean" | "forest" | "silver" | "graphite" | "violet" | "glass-blue" | "glass-rain" | "glass-ink" | "minimal-blue" | "minimal-jade" | "minimal-copper" | "midnight" | "plum";
+export declare function setThemePreset(value: ThemePreset): void;
+//# sourceMappingURL=theme-presets.d.ts.map

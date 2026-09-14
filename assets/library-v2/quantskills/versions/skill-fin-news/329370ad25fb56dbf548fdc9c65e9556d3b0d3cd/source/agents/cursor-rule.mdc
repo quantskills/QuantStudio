@@ -1,0 +1,22 @@
+---
+description: Use the skill-fin-news skill to generate real-time China financial news headlines with AI-written deep analysis.
+alwaysApply: false
+---
+
+# skill-fin-news
+
+实时财经头条生成器。采集东方财富要闻 + 华尔街见闻快讯 + Pandadata 市场数据，AI 精选 5 条并撰写深度分析。
+
+Preferred local project path:
+
+```text
+.cursor/skills/skill-fin-news
+```
+
+Workflow:
+
+1. Run `cd .cursor/skills/skill-fin-news/scripts && python run.py` to collect data.
+2. Review the 15 titles, deduplicate, select 5.
+3. Use WebSearch for context on each.
+4. Write articles with 📋事实描述 + 📊数据解读 + 💬大V点评.
+5. Save to `output/实时财经头条_YYYYMMDD_HHMM.md`.

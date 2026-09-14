@@ -1,0 +1,37 @@
+.dialog {
+  box-sizing: border-box; width: min(480px, calc(100vw - 32px)); max-width: none;
+  max-height: calc(100dvh - 32px); margin: auto; padding: 0; overflow: auto;
+  border: 1px solid var(--qs-line, #8883); border-radius: 18px; box-shadow: 0 20px 80px #0003;
+  background: var(--dsw-alias-bg-base, #fff); color: var(--dsw-alias-label-primary, #111);
+  font: 14px/1.6 system-ui, sans-serif; overflow-wrap: anywhere;
+}
+.dialog::backdrop { background: var(--dsw-alias-bg-mask-1, #0005); backdrop-filter: blur(2px); }
+.dialog[data-wide] { width: min(900px, calc(100vw - 32px)); background: var(--qs-surface, var(--dsw-alias-bg-base)); color: var(--qs-ink, var(--dsw-alias-label-primary)); }
+.header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 24px 12px; }
+.dialog .header h2 { font-size: 18px; line-height: 1.4; margin: 0; }
+.dialog .header button { border: 0; font-size: 22px; padding: 0; width: 32px; height: 32px; }
+.body { padding: 0 24px 24px; }
+.body > form { display: grid; gap: 16px; padding: 0; border: 0; margin: 0; }
+.body p { line-height: 1.65; margin: 0 0 16px; opacity: 1; }
+.body h3 { font-size: 14px; margin: 0; }
+.body ul { max-height: 180px; overflow: auto; padding-left: 20px; }
+.body label { display: grid; gap: 8px; }
+.dialog button, .dialog input, .dialog select, .dialog textarea { box-sizing: border-box; font: inherit; color: inherit; border: 1px solid var(--qs-line, #8884); border-radius: 9px; background: transparent; padding: 9px 12px; min-width: 0; }
+.dialog input, .dialog select, .dialog textarea { width: 100%; }
+.dialog input::file-selector-button { border:1px solid var(--qs-line);border-radius:6px;background:var(--qs-tint);color:var(--qs-ink);padding:5px 9px;margin-right:10px;font:inherit;cursor:pointer; }
+.dialog textarea { min-height: 100px; resize: vertical; }
+.dialog button { cursor: pointer; min-height: 36px; white-space: normal; }
+.dialog button:disabled { opacity: .5; cursor: default; }
+.dialog :is(button, input, select, textarea):focus-visible { outline: 2px solid var(--qs-accent, #4285d4); outline-offset: 2px; }
+.dialog button[data-primary], .dialog button[type=submit] { background: var(--qs-accent, #0067d9); color: #fff; border-color: transparent; }
+body[data-qs-plugin-theme='dark'] .dialog button[data-primary],
+body[data-qs-plugin-theme='dark'] .dialog button[type=submit] { color: var(--qs-deep, #152033); }
+.dialog button[data-danger] { background: #b42318; color: #fff; border-color: #b42318; }
+.dialog footer { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.dialog .error { color: #b42318; border: 1px solid #b4231833; border-radius: 8px; padding: 10px; margin: 16px 0 0; }
+@media (max-width: 480px) { .header { padding: 16px 18px 12px; } .body { padding: 0 18px 18px; } }
+@media (max-width:840px) {
+  .dialog { max-height:calc(var(--qs-mobile-height,100dvh) - 24px); }
+  .dialog :is(input,select,textarea) { font-size:16px; }
+  .dialog button { min-height:40px; }
+}

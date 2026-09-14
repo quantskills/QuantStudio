@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "agent-alpha-portfolio-guardian@f3744dfae726fa64a6127e6427ff2e29f9cc7cb5",
+  "assetId": "agent-alpha-portfolio-guardian",
+  "kind": "agent",
+  "repository": "https://github.com/quantskills/agent-alpha-portfolio-guardian",
+  "commit": "f3744dfae726fa64a6127e6427ff2e29f9cc7cb5",
+  "declaration": "AGENTS.md",
+  "treeDigest": "sha256:e77ac3a62d84a09b3bfb01cbe6bf9e3a446dd11135c5771aaebc361f664cd23b",
+  "fileCount": 77,
+  "totalBytes": 387865,
+  "installedAt": 1789206488649,
+  "exposure": "agent-template",
+  "origin": "catalog"
+}

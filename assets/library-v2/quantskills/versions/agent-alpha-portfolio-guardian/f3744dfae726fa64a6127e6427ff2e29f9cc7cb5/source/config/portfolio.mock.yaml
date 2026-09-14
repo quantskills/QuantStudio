@@ -1,0 +1,42 @@
+as_of: "2026-07-31"
+universe: "000300.SH"
+horizon_eval: 5
+horizon_decay: [1, 3, 5, 10, 20]
+source_mode: mock
+data_source: synthetic-mock
+
+factors:
+  - factor_id: F001
+    name: momentum_20
+    signal_path: null
+    exposure_symbols: ["600519.SH", "000001.SZ"]
+  - factor_id: F002
+    name: lowvol_20
+    signal_path: null
+    exposure_symbols: ["600036.SH"]
+  - factor_id: F003
+    name: reversal_5
+    signal_path: null
+    exposure_symbols: ["300750.SZ", "000001.SZ"]
+
+crowding:
+  enabled: true
+  themes: ["market_hot"]
+  snapshot_path: null
+  scorecard_path: null
+
+smart_money:
+  enabled: true
+  mode: consensus
+  top_n_symbols: 5
+  win_rate_horizon: [5, 10, 20]
+  sample_path: null
+
+rules_version: "guardian-rules-v0.1"
+
+thresholds:
+  half_life_healthy: 5.0
+  half_life_fragile: 2.0
+  primary_score_retire: -0.5
+  ic_noise_abs: 0.005
+  high_turnover: 0.6

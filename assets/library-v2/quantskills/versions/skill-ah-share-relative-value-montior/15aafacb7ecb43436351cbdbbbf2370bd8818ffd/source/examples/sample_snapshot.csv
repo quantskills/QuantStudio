@@ -1,0 +1,7 @@
+company,h_code,h_price_hkd,a_code,a_price_cny,fx_hkd_cny,source_premium_pct
+Demo Alpha,00001,40.0,600001,47.20,0.9200,28.20
+Demo Beta,00002,31.0,600002,32.80,0.9200,15.00
+Demo Gamma,00003,55.0,600003,47.50,0.9200,-6.10
+Demo Delta,00004,24.0,600004,27.00,0.9200,22.10
+Demo Epsilon,00005,70.0,600005,75.00,0.9200,16.40
+Demo Zeta,00006,18.0,600006,14.50,0.9200,-12.40

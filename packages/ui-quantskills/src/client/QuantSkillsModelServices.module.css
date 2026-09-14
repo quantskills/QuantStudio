@@ -1,0 +1,46 @@
+.root { color: var(--dsw-alias-label-primary); max-width: 920px; --dsw-alias-border-standard: var(--dsw-alias-border-l2); }
+.root header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.root h2 { margin: 6px 0; } .root h3 { margin: 0; }
+.root p, .root small { color: var(--dsw-alias-label-secondary); }
+.root p { font-size: 13px; line-height: 1.6; }
+.root button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; border: 1px solid var(--dsw-alias-border-standard); border-radius: 8px; background: var(--dsw-alias-bg-layer-1); color: inherit; cursor: pointer; }
+.root button:hover { background: var(--dsw-alias-button-floating-hover); }
+.root button:disabled { opacity: .5; cursor: not-allowed; }
+.root button:focus-visible, .root input:focus-visible, .root select:focus-visible, .root textarea:focus-visible, .root summary:focus-visible { outline: 2px solid var(--dsw-alias-brand-primary); outline-offset: 2px; }
+.root input:not([type=checkbox]), .root select, .root textarea { width: 100%; min-width: 0; padding: 9px 10px; border: 1px solid var(--dsw-alias-border-standard); border-radius: 6px; background: var(--dsw-alias-bg-layer-1); color: inherit; font: inherit; box-sizing: border-box; }
+.root label { display: grid; gap: 7px; margin: 16px 0; font-size: 13px; }
+.fieldBlock { display: grid; gap: 7px; margin: 16px 0; }
+.fieldBlock > small { line-height: 1.55; }
+.fieldHeader { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.fieldHeader label { margin: 0; }
+.fieldHeader button { padding: 5px 9px; color: var(--dsw-alias-brand-primary); font-size: 12px; }
+.capabilityTable { display: grid; gap: 8px; margin-top: 8px; }
+.capabilityRow { display: grid; grid-template-columns: minmax(180px, 1fr) 150px 120px; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--dsw-alias-border-standard); border-radius: 8px; }
+.capabilityRow strong { overflow-wrap: anywhere; font-size: 13px; }
+.capabilityRow label { display: grid; gap: 4px; margin: 0; font-size: 12px; }
+.templateHelp { display: grid; gap: 5px; margin-top: 3px; padding: 12px; border: 1px solid var(--dsw-alias-border-standard); border-radius: 8px; background: var(--dsw-alias-bg-layer-2); }
+.templateHelp strong { font-size: 13px; }
+.templateHelp p { margin: 0; }
+.templateHelp code { padding: 1px 4px; border-radius: 4px; background: var(--dsw-alias-bg-layer-1); }
+.root label.check { display: flex; align-items: center; }
+.root textarea { resize: vertical; }
+.root fieldset { border: 0; padding: 0; min-width: 0; }
+.root details { margin: 16px 0; } .root summary { cursor: pointer; }
+.root .error { color: var(--dsw-alias-status-danger, #bd2525); }
+.editor, .connections > section { padding: 20px; border: 1px solid var(--dsw-alias-border-standard); border-radius: 12px; margin: 16px 0; }
+.editor > header { margin-bottom: 18px; }
+.catalog { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 16px; }
+.catalog button { align-items: flex-start; flex-direction: column; min-height: 72px; text-align: left; }
+.catalog small { font-size: 11px; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+.recommendations { margin: 16px 0; padding: 13px; border: 1px solid var(--dsw-alias-border-standard); border-radius: 10px; background: var(--dsw-alias-bg-layer-2); }
+.recommendations > header { align-items: flex-start; }
+.recommendations > header div { display: grid; gap: 3px; }
+.recommendations > div { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; margin-top: 10px; }
+.recommendations article { padding: 10px; border-radius: 8px; background: var(--dsw-alias-bg-layer-1); }
+.recommendations article > div { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.recommendations article p { margin: 6px 0 4px; }
+.recommendations article small { font-size: 11px; }
+.recommendations article > div small { padding: 1px 5px; border-radius: 999px; background: var(--dsw-alias-button-floating-hover); }
+.recommendations > p { margin-bottom: 0; }
+@media (max-width: 700px) { .root > header { align-items: flex-start; flex-direction: column; } .editor, .connections > section { padding: 14px; } .fieldHeader { align-items: flex-start; flex-direction: column; } .capabilityRow { grid-template-columns: 1fr 1fr; } .capabilityRow strong { grid-column: 1 / -1; } }

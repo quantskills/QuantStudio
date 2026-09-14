@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "agent-factor-evaluator@5a3669f3d9b770cddb595c80265f5c96f7a3f30d",
+  "assetId": "agent-factor-evaluator",
+  "kind": "agent",
+  "repository": "local-authoring:agent-factor-evaluator",
+  "commit": "5a3669f3d9b770cddb595c80265f5c96f7a3f30d",
+  "declaration": "AGENTS.md",
+  "treeDigest": "sha256:a75f1846abe875bfe56db03267fca4a7c1c79db3a75d99a22a3b94eacda94863",
+  "fileCount": 4,
+  "totalBytes": 50947,
+  "installedAt": 1789217235966,
+  "exposure": "agent-template",
+  "origin": "local-authoring"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "news-sentiment-analyst",
+  "version": "2.0.0",
+  "description": "A-share financial news analyst. Collects news from 3 sources, AI analyzes each news to identify affected stocks/sectors using knowledge, cross-validates with PandaAI real-time data. Outputs terminal report + Parquet.",
+  "author": "Erkan9527",
+  "license": "Apache-2.0"
+}

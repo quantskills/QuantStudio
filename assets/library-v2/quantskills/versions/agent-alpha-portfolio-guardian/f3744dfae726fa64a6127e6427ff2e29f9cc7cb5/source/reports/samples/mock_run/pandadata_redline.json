@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "mode": "mock",
+  "errors": [],
+  "warnings": [
+    "mock run"
+  ],
+  "credentials": false,
+  "pandadata_cache_hits": 0
+}

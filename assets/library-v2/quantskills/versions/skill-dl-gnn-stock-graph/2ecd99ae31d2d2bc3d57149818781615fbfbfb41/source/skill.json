@@ -1,0 +1,10 @@
+{
+  "name": "skill-dl-gnn-stock-graph",
+  "version": "0.1.0",
+  "entrypoint": "SKILL.md",
+  "runtime": "python>=3.10",
+  "license": "GPL-3.0",
+  "data_source": "PandaData",
+  "models": ["gats_ts", "mf_iamgcn"],
+  "universe": ["000300.SH", "000905.SH", "000852.SH"]
+}

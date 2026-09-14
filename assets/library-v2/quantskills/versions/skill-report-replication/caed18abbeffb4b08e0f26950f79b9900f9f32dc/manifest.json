@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-report-replication@caed18abbeffb4b08e0f26950f79b9900f9f32dc",
+  "assetId": "skill-report-replication",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-report-replication",
+  "commit": "caed18abbeffb4b08e0f26950f79b9900f9f32dc",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:5a142ccd9f446e19404ea3e80c6e62b09e8e95e96c3f16ae330a24476ec068c5",
+  "fileCount": 23,
+  "totalBytes": 219230,
+  "installedAt": 1789218793931,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

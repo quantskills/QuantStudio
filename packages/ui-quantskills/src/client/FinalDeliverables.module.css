@@ -1,0 +1,40 @@
+.deliveries { container-type: inline-size; display: grid; align-items: start; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; margin: 20px 0 12px; min-width: 0; color: var(--dsw-alias-label-primary); }
+.card, .interactive { min-width: 0; border-radius: 16px; background: var(--dsw-alias-bg-layer-2); overflow: hidden; }
+.fileButton { display: flex; width: 100%; gap: 14px; padding: 18px; align-items: center; background: none; border: 0; color: inherit; text-align: left; cursor: pointer; font: inherit; }
+.fileButton:hover, .open:hover, .toggle:hover { background: var(--dsw-alias-interactive-bg-hover); }
+.fileButton:focus-visible, .open:focus-visible, .toggle:focus-visible, .feedback button:focus-visible { outline: 2px solid var(--dsw-alias-brand-primary-new-colorprimary-new-color); outline-offset: -3px; }
+.fileButton:disabled, .open:disabled { cursor: default; opacity: .65; }
+.icon { flex: 0 0 auto; color: var(--dsw-alias-label-secondary); }
+.thumbnail { width: 44px; height: 44px; object-fit: cover; border-radius: 7px; }
+.fileCopy { min-width: 0; flex: 1; display: grid; gap: 5px; }
+.fileCopy strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; font-weight: 600; }
+.fileCopy small, .caption { color: var(--dsw-alias-label-secondary); font-size: 12px; }
+.arrow { flex: 0 0 auto; }
+.interactive { grid-column: 1 / -1; border: 1px solid var(--dsw-alias-border-l2); background: var(--dsw-alias-bg-base); }
+.header { display: flex; align-items: center; justify-content: space-between; background: var(--dsw-alias-bg-layer-2); gap: 8px; padding: 6px; }
+.toggle, .open { display: flex; align-items: center; gap: 8px; color: inherit; background: none; border: 0; border-radius: 8px; padding: 10px; cursor: pointer; font: inherit; }
+.toggle { min-width: 0; flex: 1; text-align: left; font-size: 14px; font-weight: 600; }
+.toggle span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.open { flex-shrink: 0; font-size: 12px; }
+.frame { display: block; width: 100%; height: 380px; border: 0; background: white; }
+.body { min-width: 0; }
+.body > p, .feedback { padding: 12px 18px; font-size: 13px; }
+.feedback button { margin-left: 8px; color: inherit; background: transparent; border: 0; text-decoration: underline; cursor: pointer; }
+.caption { padding: 8px 14px; margin: 0; border-top: 1px solid var(--dsw-alias-border-l1); }
+.compactHint { display: none; padding: 12px; margin: 0; font-size: 12px; color: var(--dsw-alias-label-secondary); }
+@container (max-width: 340px) {
+  .body, .caption { display: none; }
+  .compactHint { display: block; }
+  .open span { display: none; }
+  .fileButton { padding: 12px; gap: 8px; }
+  .fileCopy strong { white-space: normal; overflow-wrap: anywhere; }
+  .toggle svg { flex-shrink: 0; }
+}
+@media (max-width: 600px) { .frame { height: 320px; } .open span { display: none; } }
+
+.card { border: 1px solid var(--dsw-alias-border-l2); }
+.image { display: block; width: 100%; max-height: 300px; object-fit: contain; background: var(--dsw-alias-bg-base); }
+.audio { display: block; width: calc(100% - 24px); margin: 16px 12px; }
+.video { display: block; width: 100%; max-height: 320px; background: #111; }
+.more { grid-column: 1 / -1; padding: 12px; border: 1px solid var(--dsw-alias-border-l2); border-radius: 10px; color: inherit; background: transparent; cursor: pointer; }
+@container (max-width: 340px) { .body, .caption { display: block; } .frame { height: 240px; } .toggle { padding: 8px 4px; } .open { padding: 8px 5px; } }

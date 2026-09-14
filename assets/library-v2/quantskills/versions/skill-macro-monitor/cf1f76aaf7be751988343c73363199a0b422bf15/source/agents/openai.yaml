@@ -1,0 +1,4 @@
+interface:
+  display_name: "Macro Monitor"
+  short_description: "宏观数据、行业景气与经济日历监控"
+  default_prompt: "Use $macro-monitor 生成本周中国宏观经济日历和重点数据跟踪清单。"

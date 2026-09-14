@@ -1,0 +1,12 @@
+{
+  "score_reports": "deps/score_reports.json",
+  "decay_reports": "deps/decay_reports.json",
+  "crowding": "deps/crowding.json",
+  "smart_money": "deps/smart_money.json",
+  "skill_docs": [
+    "skill-factor-evaluate/SKILL.md",
+    "skill-factor-decay/SKILL.md",
+    "agent-crowding-risk-monitor/AGENTS.md",
+    "skill-smart-money-profiler/SKILL.md"
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "skill-fin-news"
+  short_description: "实时财经头条生成器 - 采集财经新闻+市场数据，AI精选5条深度分析"
+  default_prompt: "Use $skill-fin-news to generate today's China financial headlines with market data and AI-written analysis."

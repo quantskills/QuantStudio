@@ -1,0 +1,2 @@
+# Asset snapshots are byte-exact: changing line endings breaks pinned tree hashes.
+assets/library-v2/quantskills/** -text -whitespace

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-backtest@cf9154603263e2a4e2151f39e2708923d8d776a7",
+  "assetId": "skill-backtest",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-backtest",
+  "commit": "cf9154603263e2a4e2151f39e2708923d8d776a7",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:7171b7dede6c5d380215d161638a6d3f18e337bdc0ba3fb5253879a06de7b642",
+  "fileCount": 12,
+  "totalBytes": 74976,
+  "installedAt": 1789219112127,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

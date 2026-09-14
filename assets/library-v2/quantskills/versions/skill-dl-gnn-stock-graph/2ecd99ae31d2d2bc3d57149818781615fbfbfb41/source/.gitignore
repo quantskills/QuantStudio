@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Skill runtime output
+output/
+
+# Torch model checkpoints
+models/
+
+# Logs
+*.log
+
+# Graph cache
+graph_cache/
+
+# Data cache
+scripts/data/cache/

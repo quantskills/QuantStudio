@@ -1,0 +1,4 @@
+interface:
+  display_name: "A股全天候资产配置"
+  short_description: "用宏观象限、反波动率与季度调仓开展可复现的全天候配置研究"
+  default_prompt: "使用 $dalio-all-weather 完成A股全天候配置、季度回测、风险贡献诊断与可复现研究报告。"

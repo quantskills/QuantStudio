@@ -1,0 +1,123 @@
+{
+  "name": "@quantskills/dsh-plugin",
+  "description": "QuantStudio local AI workspace for quantitative research and everyday work, with an integrated pinned DSH runtime",
+  "version": "0.1.21",
+  "license": "GPL-3.0-or-later OR LicenseRef-PandaAI-Commercial",
+  "type": "module",
+  "packageManager": "pnpm@11.7.0",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./invariant": {
+      "types": "./lib/types/invariant.d.ts",
+      "default": "./lib/invariant.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/invariant.js",
+    "cordis.patch.yml",
+    "lib/types/**/*.d.ts",
+    "LICENSE",
+    "COMMERCIAL-LICENSE.md",
+    "THIRD_PARTY_NOTICES.md",
+    "LICENSES/DeepSeek-Harness-MIT.txt",
+    "LICENSES/dsh-context-Apache-2.0.txt",
+    "scripts/adapt-context.mjs"
+  ],
+  "scripts": {
+    "install:plugin": "dsh plugin --profile web add . ./packages/agent-team ./packages/tool-agent-team ./packages/quantskills-host ./packages/quantskills-session ./packages/panda-mcp ./packages/client-ui-layout ./packages/client-ui-input-trigger ./packages/client-ui-conversation ./packages/client-ui-chat ./packages/client-remotes-quantskills ./node_modules/dsh-file-upload ./packages/ui-quantskills ./node_modules/dshmarket ./node_modules/dsh-context",
+    "uninstall:plugin": "dsh plugin --profile web remove @quantskills/dsh-plugin @deepseek-ai/dsh-agent-team @deepseek-ai/dsh-tool-agent-team @deepseek-ai/dsh-quantskills-host @deepseek-ai/dsh-quantskills-session @deepseek-ai/dsh-panda-mcp @deepseek-ai/dsh-client-ui-layout @deepseek-ai/dsh-client-ui-input-trigger @deepseek-ai/dsh-client-ui-conversation @deepseek-ai/dsh-client-ui-chat @deepseek-ai/dsh-client-remotes-quantskills dsh-file-upload @deepseek-ai/dsh-client-ui-quantskills dshmarket dsh-context",
+    "preweb": "node ./scripts/adapt-context.mjs && node ./scripts/install-application-bootstrap.mjs",
+    "web": "node ./scripts/launch-quantskills.mjs",
+    "typecheck:portable": "tsc -p tsconfig.json --noEmit && pnpm --dir packages/agent-team run typecheck && pnpm --dir packages/client-ui-layout run typecheck && pnpm --dir packages/client-ui-input-trigger run typecheck && pnpm --dir packages/client-ui-conversation run typecheck && pnpm --dir packages/client-ui-chat run typecheck && pnpm --dir packages/client-remotes-quantskills run typecheck && pnpm --dir packages/panda-connector run typecheck && pnpm --dir packages/panda-mcp run typecheck && pnpm --dir packages/quantskills-host run typecheck && pnpm --dir packages/quantskills-session run typecheck && pnpm --dir packages/tool-agent-team run typecheck && pnpm --dir packages/ui-quantskills run typecheck",
+    "check": "pnpm run verify:source && pnpm run typecheck:portable",
+    "test": "vitest run tests/quantskills-plugin.spec.ts packages/panda-mcp/tests/panda-mcp.spec.ts",
+    "test:update": "vitest run packages/quantskills-host/tests/application-update.spec.ts packages/quantskills-host/tests/host.spec.ts tests/application-bootstrap.spec.ts tests/application-release-mirrors.spec.ts",
+    "verify:update-mirrors": "node ./scripts/verify-application-release-mirrors.mjs",
+    "ci:smoke": "node ./scripts/ci-plugin-smoke.mjs",
+    "build:types:host": "tsc -p tsconfig.json && pnpm --dir packages/agent-team exec tsc -p tsconfig.json && pnpm --dir packages/client-remotes-quantskills exec tsc -p tsconfig.json && pnpm --dir packages/panda-connector exec tsc -p tsconfig.json && pnpm --dir packages/panda-mcp exec tsc -p tsconfig.json && pnpm --dir packages/quantskills-host exec tsc -p tsconfig.json && pnpm --dir packages/quantskills-session exec tsc -p tsconfig.json && pnpm --dir packages/tool-agent-team exec tsc -p tsconfig.json",
+    "build:host": "pnpm run build:types:host && node scripts/generate-session-remotes.mjs && pnpm exec tsdown --config tsdown.config.ts",
+    "build:client": "pnpm --dir packages/client-ui-layout exec tsc -p tsconfig.json && pnpm --dir packages/client-ui-layout exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && pnpm --dir packages/client-ui-conversation exec tsc -p tsconfig.json && pnpm --dir packages/client-ui-conversation exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && pnpm --dir packages/client-ui-input-trigger exec tsc -p tsconfig.json && pnpm --dir packages/client-ui-input-trigger exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && pnpm --dir packages/client-ui-chat exec tsc -p tsconfig.json && pnpm --dir packages/client-ui-chat exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && pnpm --dir packages/client-remotes-quantskills exec tsc -p tsconfig.json && pnpm --dir packages/client-remotes-quantskills exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && pnpm --dir packages/ui-quantskills exec tsc -p tsconfig.json && pnpm --dir packages/ui-quantskills exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && node ./scripts/normalize-client-bundle.mjs",
+    "build": "pnpm run build:host && pnpm run build:client",
+    "verify:source": "node ./scripts/verify-source.mjs",
+    "pack:plugin": "pnpm run check && pnpm run test && pnpm run build && pnpm pack --pack-destination ./release",
+    "verify:update-live": "node scripts/verify-application-update.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quantskills/QuantStudio.git"
+  },
+  "homepage": "https://www.quantskills.ai/",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh-agent-team": "workspace:^",
+    "@deepseek-ai/dsh-client-remotes-quantskills": "workspace:^",
+    "@deepseek-ai/dsh-client-ui-chat": "workspace:^",
+    "@deepseek-ai/dsh-client-ui-conversation": "workspace:^",
+    "@deepseek-ai/dsh-client-ui-input-trigger": "workspace:^",
+    "@deepseek-ai/dsh-client-ui-layout": "workspace:^",
+    "@deepseek-ai/dsh-client-ui-quantskills": "workspace:^",
+    "@deepseek-ai/dsh-panda-connector": "workspace:^",
+    "@deepseek-ai/dsh-panda-mcp": "workspace:^",
+    "@deepseek-ai/dsh-quantskills-host": "workspace:^",
+    "@deepseek-ai/dsh-quantskills-session": "workspace:^",
+    "@deepseek-ai/dsh-tool-agent-team": "workspace:^",
+    "dsh-context": "0.41.3",
+    "dsh-file-upload": "github:GLFzr/dsh-file-upload#baa569938c03404b4eac6c6740c27afb49b60ba8",
+    "dshmarket": "1.45.1"
+  },
+  "bundledDependencies": [
+    "@deepseek-ai/dsh-agent-team",
+    "@deepseek-ai/dsh-client-remotes-quantskills",
+    "@deepseek-ai/dsh-client-ui-chat",
+    "@deepseek-ai/dsh-client-ui-conversation",
+    "@deepseek-ai/dsh-client-ui-input-trigger",
+    "@deepseek-ai/dsh-client-ui-layout",
+    "@deepseek-ai/dsh-client-ui-quantskills",
+    "@deepseek-ai/dsh-panda-connector",
+    "@deepseek-ai/dsh-panda-mcp",
+    "@deepseek-ai/dsh-quantskills-host",
+    "@deepseek-ai/dsh-quantskills-session",
+    "@deepseek-ai/dsh-tool-agent-team",
+    "dsh-file-upload",
+    "dshmarket",
+    "dsh-context"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-invariants": "0.1.2-alpha.2"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-invariants": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-typert-generator": "0.1.2-alpha.2",
+    "@testing-library/react": "16.3.2",
+    "@types/node": "^24.0.0",
+    "jsdom": "29.1.1",
+    "lightningcss": "1.32.0",
+    "tsdown": "0.22.2",
+    "typescript": "^5.9.2",
+    "vitest": "4.1.11"
+  }
+}

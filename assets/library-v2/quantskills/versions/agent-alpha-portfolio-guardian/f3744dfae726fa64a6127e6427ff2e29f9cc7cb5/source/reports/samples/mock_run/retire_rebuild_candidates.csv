@@ -1,0 +1,2 @@
+﻿as_of_date,factor_id,factor_name,action,reasons,reason_text,evidence_refs,suggested_next_step,alpha_research_ticket
+2026-07-31,F003,reversal_5,rebuild_candidate,SIGN_REVERSAL,IC 方向反转，期限口径可能错配,,IC 方向反转，建议研究调整持有期或再平衡频率后重评。,建议调研是否重建/晋升 alpha 定义: F003

@@ -1,0 +1,106 @@
+---
+description: GNN 深度图神经网络 A 股量化选股 — 多层异构图（GATs_ts + MF-IAMGCN）· 五维特征工程 · TopK 选股 · 完整回测引擎
+globs: []
+alwaysApply: false
+---
+
+# skill-dl-gnn-stock-graph
+
+A股市场 GNN 量化选股系统。支持多层异构图构建、GATs_ts 与 MF-IAMGCN 双模型架构、五维特征工程、TopK 选股策略、完整 A 股回测引擎。
+
+## 适用场景
+
+- 每日盘后想基于 GNN 预测得分选出沪深 300/中证 500/中证 1000 中最有上涨潜力的 K 只股票
+- 想利用多层异构图捕捉行业联动、概念轮动、价格形态相似性等隐性市场结构
+- 想融合混频数据（日频量价 + 季频基本面 + 情绪文本）做统一建模
+- 想对选股策略做严格回测（含 T+1、涨跌停、手续费、滑点的真实 A 股约束）
+
+## 快速开始
+
+```bash
+# 1. 安装依赖
+pip install -r requirements.txt
+
+# 2. 设置环境变量
+export PANDA_DATA_USERNAME=<your_username>
+export PANDA_DATA_PASSWORD=<your_password>
+
+# 3. 字段自检（首次使用）
+python3 -m scripts.data.loader --self-check --date 20260729
+
+# 4. 运行单元测试
+python3 -m pytest tests/ -v
+
+# 5. 端到端选股（约 6-10 秒）
+python3 scripts/scan.py --date 20260731 --model gats_ts --train_days 120 --epochs 10 --top_k 10
+
+# 6. 多日回测
+python3 scripts/scan.py --start_date 20260101 --end_date 20260731 --model gats_ts --top_k 10 --backtest
+```
+
+## 核心架构
+
+### 股票池
+沪深 300 / 中证 500 / 中证 1000（默认 `000300.SH`），自动过滤 ST/*ST、上市不满 60 天次新股、停牌日。
+
+### 多层异构图
+- **显性边**：申万 L1/L2/L3 行业 + 概念板块 + 机构共同持仓
+- **隐性边**：DTW 收益率序列相似度 Top-K + Pearson 相关性阈值 + 格兰杰因果显著对
+
+### 双模型架构
+| 模型 | 说明 |
+|------|------|
+| GATs_ts | RNN + 动态图注意力网络 |
+| MF-IAMGCN | 混频跨期注意力多层图卷积（日频量价 + 季频基本面 MIDAS 对齐） |
+
+### 五维特征工程
+| 维度 | 特征数 | 说明 |
+|------|--------|------|
+| 量价 | 14 维 | 收益/波动/MACD/RSI/动量/距涨跌停 |
+| 基本面 | 7 维 | PE/PB/ROE/增长/负债率 |
+| 情绪 | 3 维 | 龙虎榜/大宗交易/外部 LLM 情感 |
+| 宏观 | 4 维 | GDP/CPI/PMI/M2 |
+| 关系 | 4 维 | 中心性/Pagerank/DTW 均值/行业超额 |
+
+### 回测引擎
+T+1 制度，涨跌停买卖限制，佣金 0.03% + 印花税 0.1%（卖出）+ 滑点 0.1%，等权分配，每日调仓。输出夏普/索提诺/卡玛/信息比率/最大回撤。
+
+## 数据接口（panda_data）
+
+| 接口 | 用途 |
+|------|------|
+| `get_last_trade_date` | 解析最近交易日 |
+| `get_prev_trade_date` | 计算训练窗口起点 |
+| `get_trade_cal` | A 股交易日历对齐 |
+| `get_index_weights` | 锁定指数成分股 |
+| `get_factor` | 日频 OHLCV + turnover + market_cap |
+| `get_stock_daily_post` | 后复权 OHLCV + 涨跌停价 + 停牌标记 |
+| `get_index_daily` | 基准指数日线 |
+| `get_industry_constituents` | 申万行业成分 |
+| `get_concept_constituents` | 概念板块成分 |
+| `get_stock_industry` | 个股→行业映射 |
+| `get_fina_reports` | 三大报表 |
+| `get_share_float` | 总市值/流通市值/上市天数 |
+| `get_lhb_list` | 龙虎榜 |
+| `get_block_trade` | 大宗交易 |
+| `get_top_holders` | 前十大股东 |
+| `get_stock_status_change` | ST/*ST 状态过滤 |
+| `get_macro_*` | 宏观指标 |
+
+## 验收状态
+
+- scan.py 独立可运行 ✅
+- 52 单元测试全通过 ✅
+- panda_data 字段自检通过（8/8 接口字段对齐）✅
+- 端到端选股跑通（GATs_ts, 沪深300, 300 只股票, 10 epochs, 6-10 秒）✅
+- 训练可复现（相同 seed → 相同 TopK）✅
+- 回测 T+1/涨跌停/成本模拟 ✅
+- 无未来函数（训练集严格 `date < T`）✅
+
+## 依赖
+
+- Python 3.10+
+- PyTorch 2.0+
+- panda_data（需账号）
+- pandas, numpy, scikit-learn, pyyaml
+- pytest

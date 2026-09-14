@@ -1,0 +1,7 @@
+interface:
+  display_name: "A-Share PIT Financial Data Auditor"
+  short_description: "Build and audit PIT financial inputs for A-share factor research."
+  default_prompt: "Use $skill-a-share-pit-fundamental-vintage-builder to build or audit A-share financial-factor backtest inputs without report-version look-ahead bias."
+
+policy:
+  allow_implicit_invocation: true

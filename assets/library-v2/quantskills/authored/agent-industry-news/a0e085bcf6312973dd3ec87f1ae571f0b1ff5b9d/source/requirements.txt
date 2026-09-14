@@ -1,0 +1,4 @@
+# 行业新闻分析助手依赖说明
+# 本项目的 Python 脚本仅使用标准库（argparse, csv, json, re, os, sys, html, datetime），
+# 无需任何第三方包即可运行。
+# 如需调用 skill-macro-monitor 获取行业数据，请参考该 Skill 自身的依赖要求。

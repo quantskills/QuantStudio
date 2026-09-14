@@ -1,0 +1,8 @@
+torch>=2.0
+torch_geometric>=2.5
+pandas>=2.0
+numpy>=1.24
+scikit-learn>=1.3
+panda_data
+pytest>=7.0
+pyyaml>=6.0

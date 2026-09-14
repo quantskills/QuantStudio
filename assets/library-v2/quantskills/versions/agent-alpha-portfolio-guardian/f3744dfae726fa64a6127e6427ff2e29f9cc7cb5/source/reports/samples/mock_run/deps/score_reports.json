@@ -1,0 +1,110 @@
+[
+  {
+    "factor_id": "F001",
+    "factor_name": "momentum_20",
+    "primary_score": 0.25,
+    "rank_ic": 0.018,
+    "pearson_ic": 0.0144,
+    "ic_ir": 0.8,
+    "sharpe": 0.5,
+    "ann_return": 0.05,
+    "mdd": -0.15,
+    "monotonicity": 0.7,
+    "turnover": 0.45,
+    "horizon": 5,
+    "period": "mock",
+    "ok": true,
+    "source": "mock",
+    "raw": {
+      "primary_score": 0.25,
+      "rank_ic": 0.018,
+      "pearson_ic": 0.0144,
+      "ic_ir": 0.8,
+      "sharpe": 0.5,
+      "ann_return": 0.05,
+      "mdd": -0.15,
+      "monotonicity": 0.7,
+      "turnover": 0.45,
+      "horizon": 5,
+      "period": "mock",
+      "source": "mock",
+      "components": {
+        "ic_term": 0.05,
+        "note": "synthetic ScoreReport for guardian self-test"
+      }
+    },
+    "report_path": null
+  },
+  {
+    "factor_id": "F002",
+    "factor_name": "lowvol_20",
+    "primary_score": 0.55,
+    "rank_ic": 0.032,
+    "pearson_ic": 0.0256,
+    "ic_ir": 1.4,
+    "sharpe": 0.9,
+    "ann_return": 0.11,
+    "mdd": -0.15,
+    "monotonicity": 0.7,
+    "turnover": 0.28,
+    "horizon": 5,
+    "period": "mock",
+    "ok": true,
+    "source": "mock",
+    "raw": {
+      "primary_score": 0.55,
+      "rank_ic": 0.032,
+      "pearson_ic": 0.0256,
+      "ic_ir": 1.4,
+      "sharpe": 0.9,
+      "ann_return": 0.11,
+      "mdd": -0.15,
+      "monotonicity": 0.7,
+      "turnover": 0.28,
+      "horizon": 5,
+      "period": "mock",
+      "source": "mock",
+      "components": {
+        "ic_term": 0.11,
+        "note": "synthetic ScoreReport for guardian self-test"
+      }
+    },
+    "report_path": null
+  },
+  {
+    "factor_id": "F003",
+    "factor_name": "reversal_5",
+    "primary_score": 0.05,
+    "rank_ic": 0.008,
+    "pearson_ic": 0.0064,
+    "ic_ir": 0.4,
+    "sharpe": 0.2,
+    "ann_return": 0.01,
+    "mdd": -0.15,
+    "monotonicity": 0.35,
+    "turnover": 0.72,
+    "horizon": 5,
+    "period": "mock",
+    "ok": true,
+    "source": "mock",
+    "raw": {
+      "primary_score": 0.05,
+      "rank_ic": 0.008,
+      "pearson_ic": 0.0064,
+      "ic_ir": 0.4,
+      "sharpe": 0.2,
+      "ann_return": 0.01,
+      "mdd": -0.15,
+      "monotonicity": 0.35,
+      "turnover": 0.72,
+      "horizon": 5,
+      "period": "mock",
+      "source": "mock",
+      "components": {
+        "ic_term": 0.01,
+        "note": "synthetic ScoreReport for guardian self-test"
+      }
+    },
+    "report_path": null
+  }
+]

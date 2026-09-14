@@ -1,0 +1,18 @@
+.editor { flex: 1; min-height: 0; overflow: auto; padding: clamp(20px, 4vw, 48px) max(20px, calc((100% - 880px) / 2)) 40px; box-sizing: border-box; color: var(--qs-text, #111); }
+.editor * { box-sizing: border-box; }
+.editor header { margin: 28px 0; }
+.editor h1 { font-size: 28px; margin: 8px 0 12px; }
+.editor p { line-height: 1.65; color: var(--qs-muted, #666); }
+.editor small { color: var(--qs-muted, #666); }
+.editor form { display: grid; gap: 12px; }
+.editor label { font-weight: 600; }
+.editor .hint { font-size: 13px; margin: 0; }
+.editor textarea { width: 100%; min-height: 360px; height: 48dvh; resize: vertical; border: 1px solid var(--qs-border, #ddd); border-radius: 12px; padding: 18px; font: 14px/1.7 ui-monospace, monospace; background: var(--dsw-alias-bg-base, #fff); color: inherit; }
+.editor button { border: 1px solid var(--qs-border, #ddd); border-radius: 9px; background: transparent; color: inherit; font: inherit; padding: 10px 16px; cursor: pointer; min-height: 40px; }
+.editor .back { border: 0; padding-left: 0; color: var(--qs-muted, #666); }
+.editor button:disabled { opacity: .5; cursor: default; }
+.editor button[data-primary] { background: var(--qs-text, #111); color: var(--dsw-alias-bg-base, #fff); }
+.editor :is(button, textarea):focus-visible { outline: 2px solid #4285d4; outline-offset: 2px; }
+.editor footer { display: flex; justify-content: flex-end; gap: 12px; padding-top: 12px; }
+.editor .error { color: #b42318; border: 1px solid #b4231833; padding: 12px; border-radius: 8px; }
+@media (max-width: 480px) { .editor textarea { min-height: 280px; padding: 12px; font-size: 13px; } }

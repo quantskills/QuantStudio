@@ -1,0 +1,4 @@
+name: skill-daily-report
+description: Cross-market daily review report skill.
+entrypoint: ../SKILL.md
+license: GPL-3.0-only

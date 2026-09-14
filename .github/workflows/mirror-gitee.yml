@@ -1,0 +1,72 @@
+name: Mirror application releases to Gitee
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mirror-gitee
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    if: github.repository == 'quantskills/QuantStudio' && vars.GITEE_MIRROR_ENABLED == 'true'
+    name: Mirror main, v2 and stable tags
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GITEE_USERNAME: ${{ secrets.GITEE_USERNAME }}
+      GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+
+    steps:
+      - name: Check out complete GitHub history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Require Gitee credentials
+        shell: bash
+        run: |
+          if [[ -z "$GITEE_USERNAME" || -z "$GITEE_TOKEN" ]]; then
+            echo "::error::Configure repository secrets GITEE_USERNAME and GITEE_TOKEN."
+            exit 1
+          fi
+
+      - name: Mirror main and stable release tags
+        shell: bash
+        run: |
+          askpass="$RUNNER_TEMP/gitee-askpass.sh"
+          printf '%s\n' \
+            '#!/usr/bin/env bash' \
+            'case "$1" in' \
+            '  *Username*) printf "%s\n" "$GITEE_USERNAME" ;;' \
+            '  *) printf "%s\n" "$GITEE_TOKEN" ;;' \
+            'esac' > "$askpass"
+          chmod 700 "$askpass"
+          export GIT_ASKPASS="$askpass"
+          export GIT_TERMINAL_PROMPT=0
+
+          git remote add gitee https://gitee.com/quantskills/QuantStudio.git
+          git fetch origin main v2 --tags
+          git fetch gitee main:refs/remotes/gitee/main
+          if ! git merge-base --is-ancestor refs/remotes/gitee/main refs/remotes/origin/main; then
+            echo "::error::Gitee main is not an ancestor of GitHub main; refusing to rewrite it."
+            exit 1
+          fi
+          git push --atomic gitee refs/remotes/origin/main:refs/heads/main refs/remotes/origin/v2:refs/heads/v2
+
+          while IFS= read -r ref; do
+            if [[ "$ref" =~ ^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              git push gitee "$ref:$ref"
+            fi
+          done < <(git for-each-ref --format='%(refname)' refs/tags)
+
+      - name: Verify GitHub and Gitee refs match
+        run: node ./scripts/verify-application-release-mirrors.mjs

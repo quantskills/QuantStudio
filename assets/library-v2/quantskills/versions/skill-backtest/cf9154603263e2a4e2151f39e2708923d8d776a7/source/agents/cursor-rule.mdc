@@ -1,0 +1,34 @@
+---
+description: 截面多头回测 — T+1 开盘、Top 等权、双边 15bp、四联诊断图
+globs: ["backtest*.py", "**/backtest/*.py", "evaluate*.py"]
+alwaysApply: false
+---
+
+# Backtest（Cursor 项目规则）
+
+当用户要求"跑回测 / backtest / 画净值"时，遵循以下规则：
+
+## 核心规则
+
+1. **T+1 开盘成交**：T 日 close 算的信号，**只能 T+1 开盘买卖**
+2. **Top 分位等权**：每日截面 Top 10%，等权
+3. **滚动持仓**：H 日重叠，每日 1/H 换仓
+4. **涨跌停 / 停牌剔除**：A 股 `trade_status==1` / `close >= limit_up*0.99`
+5. **双边 15bp 手续费**：A 股 baseline；美股可降到 5bp
+6. **必出四联图**：净值 / 累计 IC / 分组收益 / 回撤
+7. **跑完必做五项体检**：见 references/health-check.md
+
+## 触发条件
+
+- 用户说"跑回测 / 画净值 / 看 benchmark 对比"
+- 编辑 `backtest*.py` / `evaluate*.py` 文件时
+
+## 详细参考
+
+打开 `skills/backtest/references/`：
+
+- `assumptions.md` — 标准假设（A股 / 美股 / 期货）
+- `algorithm.md` — 滚动持仓回测核心算法
+- `diagnostic-charts.md` — 四联 / 六联图绘图骨架
+- `health-check.md` — 5 项体检 + 诊断流
+- `anti-patterns.md` — 10 种反模式 + 危险信号

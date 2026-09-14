@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-dalio-all-weather@66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd",
+  "assetId": "skill-dalio-all-weather",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-dalio-all-weather",
+  "commit": "66767ac5e4dda46d88fe9be9e5ae1dc62c705ecd",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:9a94e7894240178308d8bafff7649551feaa3b89c75101a8385effb08b71b0f6",
+  "fileCount": 31,
+  "totalBytes": 287231,
+  "installedAt": 1789219087133,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

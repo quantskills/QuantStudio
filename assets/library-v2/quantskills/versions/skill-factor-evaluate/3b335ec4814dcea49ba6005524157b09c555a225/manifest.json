@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-factor-evaluate@3b335ec4814dcea49ba6005524157b09c555a225",
+  "assetId": "skill-factor-evaluate",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-factor-evaluate",
+  "commit": "3b335ec4814dcea49ba6005524157b09c555a225",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:2c66d774eacae76b426ce9716f4e4e1b883d0d185b17223ba712bd9e9ce2c049",
+  "fileCount": 12,
+  "totalBytes": 70282,
+  "installedAt": 1789206486089,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

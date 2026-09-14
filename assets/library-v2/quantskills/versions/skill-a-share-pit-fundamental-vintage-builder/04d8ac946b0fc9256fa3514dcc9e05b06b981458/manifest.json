@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-a-share-pit-fundamental-vintage-builder@04d8ac946b0fc9256fa3514dcc9e05b06b981458",
+  "assetId": "skill-a-share-pit-fundamental-vintage-builder",
+  "kind": "skill",
+  "repository": "https://github.com/quantskills/skill-a-share-pit-fundamental-vintage-builder",
+  "commit": "04d8ac946b0fc9256fa3514dcc9e05b06b981458",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:28fc0b103ed9106c8fdc77707ada78ca21c579afe68a00abdea59ab47b1d1cc5",
+  "fileCount": 31,
+  "totalBytes": 144163,
+  "installedAt": 1789225122633,
+  "exposure": "skill-registry",
+  "origin": "catalog"
+}

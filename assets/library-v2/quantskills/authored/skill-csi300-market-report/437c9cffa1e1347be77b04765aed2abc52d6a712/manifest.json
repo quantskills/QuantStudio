@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "versionId": "skill-csi300-market-report@437c9cffa1e1347be77b04765aed2abc52d6a712",
+  "assetId": "skill-csi300-market-report",
+  "kind": "skill",
+  "repository": "local-authoring:skill-csi300-market-report",
+  "commit": "437c9cffa1e1347be77b04765aed2abc52d6a712",
+  "declaration": "SKILL.md",
+  "treeDigest": "sha256:b7d4e9bca6168da2ac92e0367c7740945f8006781d37d3216cc1e43e3cd26535",
+  "fileCount": 2,
+  "totalBytes": 39336,
+  "installedAt": 1789222236460,
+  "exposure": "skill-registry",
+  "origin": "local-authoring"
+}
