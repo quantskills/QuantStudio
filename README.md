@@ -62,7 +62,7 @@ pnpm run web
 git clone -c core.longpaths=true https://gitee.com/quantskills/QuantStudio.git
 ~~~
 
-启动后访问 [http://127.0.0.1:3198/](http://127.0.0.1:3198/)。本机浏览器无需复制 Token；远程或代理请求仍受来源与认证检查。首次打开后配置模型，再选择专家或新建会话。
+启动后打开终端显示的本机地址，例如 [http://127.0.0.1:3198/](http://127.0.0.1:3198/)。本机浏览器无需复制 Token；远程或代理请求仍受来源与认证检查。首次打开后配置模型，再选择专家或新建会话。
 
 Python 和数据服务按任务需要单独配置。应用不会因尚未安装 Python 或尚未登录 PandaData 而阻止普通对话。所有命令都在项目根目录执行。
 

@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -25,6 +25,54 @@ afterEach(async () => {
 })
 
 describe('stable application bootstrap', () => {
+  it.each([
+    ['https://github.com/quantskills/QuantStudio.git', 'main'],
+    ['https://github.com/songshuquant/QuantStudio.git', 'v2'],
+    ['https://gitee.com/quantskills/QuantStudio.git', 'main'],
+  ])('preserves official origin when seeding from %s (%s)', async (repository, branch) => {
+    const root = await mkdtemp(join(tmpdir(), 'qs-seed-'))
+    roots.push(root)
+    const source = join(root, 'source')
+    const home = join(root, 'home')
+    await mkdir(join(source, 'scripts'), { recursive: true })
+    await mkdir(join(source, 'assets'), { recursive: true })
+    for (const file of ['application-bootstrap.mjs', 'install-application-bootstrap.mjs']) {
+      await copyFile(resolve('scripts', file), join(source, 'scripts', file))
+    }
+    await writeFile(join(source, 'assets', 'quantskills.ico'), 'test icon')
+    await writeFile(join(source, 'package.json'), '{"version":"0.1.0"}')
+    const fakePnpm = join(root, 'pnpm.mjs')
+    await writeFile(fakePnpm, '// No dependencies needed by this isolated seed fixture.\n')
+    const git = (args: string[], cwd = source) => {
+      const result = spawnSync('git', args, { cwd, encoding: 'utf8', windowsHide: true })
+      expect(result.status, result.stderr).toBe(0)
+      return result.stdout.trim()
+    }
+    git(['init', '-b', branch])
+    git(['config', 'user.name', 'Test'])
+    git(['config', 'user.email', 'test@example.invalid'])
+    git(['add', '.'])
+    git(['commit', '-qm', 'Fixture'])
+    git(['remote', 'add', 'origin', repository])
+    const commit = git(['rev-parse', 'HEAD'])
+    // Windows environment names are case-insensitive; remove inherited npm_execpath aliases.
+    const environment = Object.fromEntries(Object.entries(process.env)
+      .filter(([key]) => key.toLowerCase() !== 'npm_execpath'))
+    const result = spawnSync(process.execPath, ['scripts/install-application-bootstrap.mjs'], {
+      cwd: source,
+      env: { ...environment, DSH_HOME: home, npm_execpath: fakePnpm,
+        QUANTSKILLS_SKIP_DESKTOP_SHORTCUT: '1', QUANTSKILLS_SKIP_MANAGED_SEED: '0' },
+      encoding: 'utf8', windowsHide: true,
+    })
+    expect(result.status, result.stderr).toBe(0)
+    const application = join(home, 'quantskills', 'application')
+    const target = join(application, 'versions', commit)
+    expect(JSON.parse(await readFile(join(application, 'state.json'), 'utf8')).active).toBe(commit)
+    expect(git(['config', '--get', 'remote.origin.url'], target)).toBe(repository)
+    expect(git(['rev-parse', 'HEAD'], target)).toBe(commit)
+    expect(git(['status', '--porcelain'], target)).toBe('')
+  })
+
   it('installs a source-independent entry and configuration under DSH_HOME', async () => {
     const home = await mkdtemp(join(tmpdir(), 'quantskills-bootstrap-'))
     roots.push(home)

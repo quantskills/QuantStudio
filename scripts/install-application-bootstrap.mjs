@@ -8,7 +8,11 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { managedVersionPath, parseApplicationState, windowsLauncherSource } from './application-bootstrap.mjs'
 
-const OFFICIAL_REPOSITORY = 'https://github.com/quantskills/QuantStudio.git'
+const OFFICIAL_REPOSITORIES = [
+  'https://github.com/quantskills/QuantStudio.git',
+  'https://github.com/songshuquant/QuantStudio.git',
+  'https://gitee.com/quantskills/QuantStudio.git',
+]
 const SHA_PATTERN = /^[a-f0-9]{40}$/
 const scriptRoot = dirname(fileURLToPath(import.meta.url))
 const sourceRoot = resolve(scriptRoot, '..')
@@ -50,6 +54,8 @@ if (state.active === undefined && process.env.QUANTSKILLS_SKIP_MANAGED_SEED !== 
     const target = managedVersionPath(versionsRoot, source.commit)
     if (!await isDirectory(target)) {
       run('git', ['clone', '-c', 'core.longpaths=true', '-c', 'core.autocrlf=false', '--quiet', '--no-hardlinks', '--no-checkout', sourceRoot, target], applicationRoot)
+      // A local seed clone must retain the official update source, not the checkout path.
+      run('git', ['remote', 'set-url', 'origin', source.repository], target)
       run('git', ['checkout', '--quiet', '--detach', source.commit], target)
       run(process.execPath, [resolve(pnpmCli), 'install', '--frozen-lockfile'], target)
     }
@@ -71,10 +77,11 @@ function inspectCleanOfficialSource(root) {
     const branch = run('git', ['branch', '--show-current'], root).trim()
     const dirty = run('git', ['status', '--porcelain=v1', '--untracked-files=normal'], root).trim()
     const commit = run('git', ['rev-parse', 'HEAD^{commit}'], root).trim()
-    if (origin !== normalizeRepository(OFFICIAL_REPOSITORY) || branch !== 'main' || dirty !== '' || !SHA_PATTERN.test(commit)) {
+    const repository = OFFICIAL_REPOSITORIES.find(value => normalizeRepository(value) === origin)
+    if (!repository || !['main', 'v2'].includes(branch) || dirty !== '' || !SHA_PATTERN.test(commit)) {
       return undefined
     }
-    return { commit }
+    return { commit, repository }
   } catch (_nonGitOrBrokenSource) {
     return undefined
   }
