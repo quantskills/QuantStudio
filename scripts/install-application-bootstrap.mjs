@@ -72,8 +72,8 @@ if (process.platform === 'win32' && process.env.QUANTSKILLS_SKIP_DESKTOP_SHORTCU
 function inspectCleanOfficialSource(root) {
   try {
     const repositoryRoot = run('git', ['rev-parse', '--show-toplevel'], root, true).trim()
-    const canonicalRoot = realpathSync(repositoryRoot)
-    if (canonicalRoot.toLowerCase() !== realpathSync(root).toLowerCase()) { console.warn('Managed install skipped: source is not the repository root'); return undefined }
+    const canonicalRoot = realpathSync.native(repositoryRoot)
+    if (canonicalRoot.toLowerCase() !== realpathSync.native(root).toLowerCase()) { console.warn('Managed install skipped: source is not the repository root'); return undefined }
     const origin = normalizeRepository(run('git', ['config', '--get', 'remote.origin.url'], root, true).trim())
     const branch = run('git', ['branch', '--show-current'], root, true).trim()
     const dirty = run('git', ['status', '--porcelain=v1', '--untracked-files=normal'], root, true).trim()
