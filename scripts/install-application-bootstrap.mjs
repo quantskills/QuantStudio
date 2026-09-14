@@ -71,13 +71,13 @@ if (process.platform === 'win32' && process.env.QUANTSKILLS_SKIP_DESKTOP_SHORTCU
 
 function inspectCleanOfficialSource(root) {
   try {
-    const repositoryRoot = run('git', ['rev-parse', '--show-toplevel'], root).trim()
+    const repositoryRoot = run('git', ['rev-parse', '--show-toplevel'], root, true).trim()
     const canonicalRoot = realpathSync(repositoryRoot)
     if (canonicalRoot.toLowerCase() !== realpathSync(root).toLowerCase()) return undefined
-    const origin = normalizeRepository(run('git', ['config', '--get', 'remote.origin.url'], root).trim())
-    const branch = run('git', ['branch', '--show-current'], root).trim()
-    const dirty = run('git', ['status', '--porcelain=v1', '--untracked-files=normal'], root).trim()
-    const commit = run('git', ['rev-parse', 'HEAD^{commit}'], root).trim()
+    const origin = normalizeRepository(run('git', ['config', '--get', 'remote.origin.url'], root, true).trim())
+    const branch = run('git', ['branch', '--show-current'], root, true).trim()
+    const dirty = run('git', ['status', '--porcelain=v1', '--untracked-files=normal'], root, true).trim()
+    const commit = run('git', ['rev-parse', 'HEAD^{commit}'], root, true).trim()
     const repository = OFFICIAL_REPOSITORIES.find(value => normalizeRepository(value) === origin)
     if (!repository || !['main', 'v2'].includes(branch) || dirty !== '' || !SHA_PATTERN.test(commit)) {
       return undefined
@@ -88,12 +88,13 @@ function inspectCleanOfficialSource(root) {
   }
 }
 
-function run(command, args, cwd) {
+function run(command, args, cwd, inspectCheckout = false) {
   const environment = {
     ...process.env,
     GIT_TERMINAL_PROMPT: '0',
-    GIT_CONFIG_NOSYSTEM: '1',
-    GIT_CONFIG_GLOBAL: process.platform === 'win32' ? 'NUL' : '/dev/null',
+    // Inspect an existing checkout with its original line-ending configuration.
+    // Isolate config only when creating or installing the managed copy.
+    ...(inspectCheckout ? {} : { GIT_CONFIG_NOSYSTEM: '1', GIT_CONFIG_GLOBAL: process.platform === 'win32' ? 'NUL' : '/dev/null' }),
     ...(command === 'git' ? { GIT_ALLOW_PROTOCOL: 'file:https' } : {}),
   }
   const result = spawnSync(command, args, {
