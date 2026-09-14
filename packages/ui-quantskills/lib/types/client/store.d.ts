@@ -38,6 +38,7 @@ export interface QuantSkillsViewState {
     defaultAgentPermission: QuantSkillsDefaultAgentPermission;
     defaultWorkspaceId: string | undefined;
     workspaceRecoveryNotice: string | undefined;
+    settingsError?: string | undefined;
     settingsStatus: 'loading' | 'ready' | 'unavailable';
     settingsWritable: boolean;
     pendingPandaTaskLabel: string | undefined;
@@ -95,7 +96,7 @@ type QuantSkillsViewActions = {
     setDefaultAgentPermission: (draft: QuantSkillsViewState, permission: QuantSkillsDefaultAgentPermission) => void;
     setDefaultWorkspaceId: (draft: QuantSkillsViewState, workspaceId?: string) => void;
     setWorkspaceRecoveryNotice: (draft: QuantSkillsViewState, notice?: string) => void;
-    syncSettings: (draft: QuantSkillsViewState, value: QuantSkillsSettings | undefined, status: QuantSkillsViewState['settingsStatus'], writable: boolean) => void;
+    syncSettings: (draft: QuantSkillsViewState, value: QuantSkillsSettings | undefined, status: QuantSkillsViewState['settingsStatus'], writable: boolean, error?: string) => void;
     setPendingPandaTask: (draft: QuantSkillsViewState, label?: string) => void;
     requestResultPreview: (draft: QuantSkillsViewState, sessionId: SessionId, path: string) => void;
     acknowledgeResultPreviewFocus: (draft: QuantSkillsViewState, sessionId: SessionId, sequence: number) => void;

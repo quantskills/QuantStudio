@@ -127,7 +127,8 @@ export function createQuantSkillsViewStore() {
             setDefaultAgentPermission: (draft, permission) => { draft.defaultAgentPermission = permission; },
             setDefaultWorkspaceId: (draft, workspaceId) => { draft.defaultWorkspaceId = workspaceId; },
             setWorkspaceRecoveryNotice: (draft, notice) => { draft.workspaceRecoveryNotice = notice; },
-            syncSettings: (draft, value, status, writable) => {
+            syncSettings: (draft, value, status, writable, error) => {
+                draft.settingsError = error;
                 draft.settingsStatus = status;
                 draft.settingsWritable = writable;
                 if (value === undefined)

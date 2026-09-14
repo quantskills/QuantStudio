@@ -4466,6 +4466,7 @@ function SettingsPage(props: PageProps) {
   const lightBackground = props.useStore(state => state.lightBackground)
   const darkBackground = props.useStore(state => state.darkBackground)
   const autoCheckCatalog = props.useStore(state => state.autoCheckCatalog)
+  const settingsError = props.useStore(state => state.settingsError)
   const settingsStatus = props.useStore(state => state.settingsStatus)
   const settingsWritable = props.useStore(state => state.settingsWritable)
   const defaultAgentProvider = props.useStore(state => state.defaultAgentProvider)
@@ -4574,7 +4575,7 @@ function SettingsPage(props: PageProps) {
               <b>{Math.round(conversationOverlayOpacity * 100)}%</b>
             </label>
             <small className={css.scaleHint}>首页与会话共用此设置。数值越低，背景越清晰；数值越高，内容越易读。</small>
-            <div className={css.settingsActions}><button type="button" className={css.outlineButton} disabled={!preferencesReady || (interfaceScale === 1 && conversationScale === 1 && conversationBrightness === DEFAULT_QUANTSKILLS_CONVERSATION_BRIGHTNESS && conversationOverlayOpacity === DEFAULT_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY)} onClick={() => { props.actions.setInterfaceScale(1); props.actions.setConversationScale(1); props.actions.setConversationBrightness(DEFAULT_QUANTSKILLS_CONVERSATION_BRIGHTNESS); props.actions.setConversationOverlayOpacity(DEFAULT_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY) }}>恢复默认</button><PreferenceSaveState status={settingsStatus} writable={settingsWritable}/></div>
+            <div className={css.settingsActions}><button type="button" className={css.outlineButton} disabled={!preferencesReady || (interfaceScale === 1 && conversationScale === 1 && conversationBrightness === DEFAULT_QUANTSKILLS_CONVERSATION_BRIGHTNESS && conversationOverlayOpacity === DEFAULT_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY)} onClick={() => { props.actions.setInterfaceScale(1); props.actions.setConversationScale(1); props.actions.setConversationBrightness(DEFAULT_QUANTSKILLS_CONVERSATION_BRIGHTNESS); props.actions.setConversationOverlayOpacity(DEFAULT_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY) }}>恢复默认</button><PreferenceSaveState status={settingsStatus} writable={settingsWritable} error={settingsError}/></div>
           </> : section === 'brand-support' ? <QuantSkillsBrandSupportSettings/>
             : section === 'updates' ? <UpdateSettings
               catalog={props.catalog}
@@ -4674,17 +4675,18 @@ function PandaDataSettings({ status, authenticate, refresh, logout }: {
   </div>
 }
 
-function PreferenceSaveState({ status, writable }: {
+function PreferenceSaveState({ status, writable, error }: {
+  error?: string | undefined
   status: 'loading' | 'ready' | 'unavailable'
   writable: boolean
 }) {
-  const label = status === 'loading'
-    ? '正在读取 Host 设置'
+  const label = error ?? (status === 'loading'
+    ? '正在读取设置'
     : status === 'ready' && writable
       ? '外观更改会自动保存'
-      : '当前连接不允许持久化设置'
-  return <p className={status === 'ready' && writable ? css.success : css.warning} role="status">
-    {status === 'ready' && writable ? <CheckCircle/> : <Clock/>}{label}
+      : status === 'ready' ? '服务器设置为只读' : '设置读取失败，请刷新页面重试。')
+  return <p className={!error && status === 'ready' && writable ? css.success : css.warning} role="status">
+    {!error && status === 'ready' && writable ? <CheckCircle/> : <Clock/>}{label}
   </p>
 }
 

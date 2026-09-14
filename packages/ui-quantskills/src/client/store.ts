@@ -48,6 +48,7 @@ export interface QuantSkillsViewState {
   defaultAgentPermission: QuantSkillsDefaultAgentPermission
   defaultWorkspaceId: string | undefined
   workspaceRecoveryNotice: string | undefined
+  settingsError?: string | undefined
   settingsStatus: 'loading' | 'ready' | 'unavailable'
   settingsWritable: boolean
   pendingPandaTaskLabel: string | undefined
@@ -123,6 +124,7 @@ type QuantSkillsViewActions = {
     value: QuantSkillsSettings | undefined,
     status: QuantSkillsViewState['settingsStatus'],
     writable: boolean,
+    error?: string,
   ) => void
   setPendingPandaTask: (draft: QuantSkillsViewState, label?: string) => void
   requestResultPreview: (draft: QuantSkillsViewState, sessionId: SessionId, path: string) => void
@@ -250,7 +252,8 @@ export function createQuantSkillsViewStore(): EngineStoreHandle<QuantSkillsViewS
       setDefaultAgentPermission: (draft, permission) => { draft.defaultAgentPermission = permission },
       setDefaultWorkspaceId: (draft, workspaceId) => { draft.defaultWorkspaceId = workspaceId },
       setWorkspaceRecoveryNotice: (draft, notice) => { draft.workspaceRecoveryNotice = notice },
-      syncSettings: (draft, value, status, writable) => {
+      syncSettings: (draft, value, status, writable, error) => {
+        draft.settingsError = error
         draft.settingsStatus = status
         draft.settingsWritable = writable
         if (value === undefined) return

@@ -26037,6 +26037,148 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 			});
 		}
 		//#endregion
+		//#region lib/types/client/preferences.js
+		/** QuantSkills preferences use authenticated Host capabilities, never the browser's hostname. */
+		var QuantSkillsPreferences = class {
+			namespace;
+			transport;
+			decode;
+			snapshot = {
+				status: "loading",
+				value: void 0,
+				base: void 0,
+				user: void 0,
+				revision: void 0,
+				writable: false,
+				mode: "host"
+			};
+			listeners = /* @__PURE__ */ new Set();
+			tail = Promise.resolve();
+			refresh;
+			generation = 0;
+			disposed = false;
+			constructor(namespace, transport, decode) {
+				this.namespace = namespace;
+				this.transport = transport;
+				this.decode = decode;
+			}
+			getSnapshot() {
+				return this.snapshot;
+			}
+			subscribe(listener) {
+				this.listeners.add(listener);
+				return () => {
+					this.listeners.delete(listener);
+				};
+			}
+			/** Coalesce invalidations; reads and writes share a queue so old reads cannot undo new choices. */
+			reload() {
+				if (this.refresh) return this.refresh;
+				const refresh = this.enqueue(async () => {
+					try {
+						await this.read();
+					} catch {
+						this.snapshot = {
+							...this.snapshot,
+							status: "unavailable",
+							writable: false,
+							error: "设置读取失败，请刷新页面重试。"
+						};
+					}
+					this.publish();
+				});
+				this.refresh = refresh;
+				refresh.finally(() => {
+					if (this.refresh === refresh) this.refresh = void 0;
+				});
+				return refresh;
+			}
+			set(field, value) {
+				return this.write([{
+					op: "set",
+					path: [field],
+					value
+				}]);
+			}
+			unset(field) {
+				return this.write([{
+					op: "unset",
+					path: [field]
+				}]);
+			}
+			write(ops) {
+				const generation = ++this.generation;
+				const copied = structuredClone(ops);
+				return this.enqueue(async () => {
+					try {
+						for (let attempt = 0;; attempt++) {
+							if (!this.snapshot.writable || this.snapshot.revision === void 0) throw new Error("Settings are read-only");
+							try {
+								const view = await this.transport.mutate(this.namespace, copied, this.snapshot.revision);
+								this.accept(view, true);
+								break;
+							} catch (error) {
+								if (attempt >= 2 || error?.code !== "settings/conflict") throw error;
+								await this.read();
+							}
+						}
+					} catch (error) {
+						try {
+							await this.read();
+							this.snapshot = {
+								...this.snapshot,
+								error: "设置未保存，已恢复服务器设置。请重试。"
+							};
+						} catch {
+							this.snapshot = {
+								...this.snapshot,
+								status: "unavailable",
+								writable: false,
+								error: "设置同步失败，请刷新页面重试。"
+							};
+						}
+						throw error;
+					} finally {
+						if (generation === this.generation) this.publish();
+					}
+				});
+			}
+			async read() {
+				const result = await retryHostRead(() => this.transport.describe());
+				const view = result.namespaces.find((item) => item.ns === this.namespace);
+				if (!view) throw new Error("QuantSkills settings namespace is unavailable");
+				this.accept(view, result.writable);
+			}
+			accept(view, writable) {
+				const value = view.ns === this.namespace ? this.decode(view) : void 0;
+				if (value === void 0) throw new Error("Invalid QuantSkills settings");
+				this.snapshot = {
+					status: "ready",
+					value,
+					base: view.base,
+					user: view.user,
+					revision: view.revision,
+					writable,
+					mode: "host"
+				};
+			}
+			enqueue(operation) {
+				const result = this.tail.then(async () => {
+					if (!this.disposed) await operation();
+				});
+				this.tail = result.catch(() => {});
+				return result;
+			}
+			publish() {
+				if (!this.disposed) for (const listener of this.listeners) listener();
+			}
+			async dispose() {
+				this.disposed = true;
+				this.listeners.clear();
+				await this.tail;
+			}
+		};
+		//#endregion
 		//#region ../../node_modules/@deepseek-ai/dsh-util-workspace-path/lib/index.js
 		/**
 		* Browser-safe Workspace path and display helpers.
@@ -39573,6 +39715,7 @@ void main() {
 			const lightBackground = props.useStore((state) => state.lightBackground);
 			const darkBackground = props.useStore((state) => state.darkBackground);
 			const autoCheckCatalog = props.useStore((state) => state.autoCheckCatalog);
+			const settingsError = props.useStore((state) => state.settingsError);
 			const settingsStatus = props.useStore((state) => state.settingsStatus);
 			const settingsWritable = props.useStore((state) => state.settingsWritable);
 			const defaultAgentProvider = props.useStore((state) => state.defaultAgentProvider);
@@ -39773,7 +39916,8 @@ void main() {
 										children: "恢复默认"
 									}), (0, react_jsx_runtime.jsx)(PreferenceSaveState, {
 										status: settingsStatus,
-										writable: settingsWritable
+										writable: settingsWritable,
+										error: settingsError
 									})]
 								})
 							] }) : section === "brand-support" ? (0, react_jsx_runtime.jsx)(QuantSkillsBrandSupportSettings, {}) : section === "updates" ? (0, react_jsx_runtime.jsx)(UpdateSettings, {
@@ -39900,12 +40044,12 @@ void main() {
 				]
 			});
 		}
-		function PreferenceSaveState({ status, writable }) {
-			const label = status === "loading" ? "正在读取 Host 设置" : status === "ready" && writable ? "外观更改会自动保存" : "当前连接不允许持久化设置";
+		function PreferenceSaveState({ status, writable, error }) {
+			const label = error ?? (status === "loading" ? "正在读取设置" : status === "ready" && writable ? "外观更改会自动保存" : status === "ready" ? "服务器设置为只读" : "设置读取失败，请刷新页面重试。");
 			return (0, react_jsx_runtime.jsxs)("p", {
-				className: status === "ready" && writable ? QuantSkillsApp_module_css_default.success : QuantSkillsApp_module_css_default.warning,
+				className: !error && status === "ready" && writable ? QuantSkillsApp_module_css_default.success : QuantSkillsApp_module_css_default.warning,
 				role: "status",
-				children: [status === "ready" && writable ? (0, react_jsx_runtime.jsx)(c$2, {}) : (0, react_jsx_runtime.jsx)(c$1, {}), label]
+				children: [!error && status === "ready" && writable ? (0, react_jsx_runtime.jsx)(c$2, {}) : (0, react_jsx_runtime.jsx)(c$1, {}), label]
 			});
 		}
 		function UpdateSettings({ catalog, catalogEnabled, catalogWritable, onCatalogChange, onRefresh }) {
@@ -41665,7 +41809,8 @@ void main() {
 					setWorkspaceRecoveryNotice: (draft, notice) => {
 						draft.workspaceRecoveryNotice = notice;
 					},
-					syncSettings: (draft, value, status, writable) => {
+					syncSettings: (draft, value, status, writable, error) => {
+						draft.settingsError = error;
 						draft.settingsStatus = status;
 						draft.settingsWritable = writable;
 						if (value === void 0) return;
@@ -43922,7 +44067,8 @@ void main() {
 			"connection",
 			"inputTriggers",
 			"modelDirectories",
-			"settingsScope",
+			"settingsSchema",
+			"remote.settings",
 			"remote",
 			"remote.commands",
 			"remote.session",
@@ -44236,9 +44382,33 @@ void main() {
 			if (options.mode === "native-plugin") view.actions.openPlugin();
 			const notifications = createQuantSkillsNotificationStore().create();
 			const nativeLayout = options.mode === "native-plugin" ? createQuantSkillsLayoutStore().create() : void 0;
-			const preferences = ctx.settingsScope.bind({ namespace: QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE });
+			const preferences = new QuantSkillsPreferences(QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE, {
+				describe: () => unwrapRemote(ctx.remote.settings.describe()),
+				mutate: (ns, ops, revision) => unwrapRemote(ctx.remote.settings.mutate(ns, ops, revision))
+			}, (section) => {
+				return ctx.settingsSchema.validate(ctx.settingsSchema.rehydrate(section.schema), section.value) === void 0 ? section.value : void 0;
+			});
+			ctx.effect(() => {
+				preferences.reload();
+				const stopDocument = ctx.remote.$on("settings/document-updated", () => {
+					preferences.reload();
+				});
+				const stopReset = ctx.on("connection/reset", () => {
+					preferences.reload();
+				});
+				const refresh = () => {
+					preferences.reload();
+				};
+				window.addEventListener("focus", refresh);
+				return () => {
+					stopDocument();
+					stopReset();
+					window.removeEventListener("focus", refresh);
+					preferences.dispose();
+				};
+			}, "ui-quantskills: authenticated preferences lifecycle");
 			const syncPreferences = (snapshot) => {
-				view.actions.syncSettings(snapshot.value, snapshot.status, snapshot.writable);
+				view.actions.syncSettings(snapshot.value, snapshot.status, snapshot.writable, snapshot.error);
 				catalogAutoChecker.setEnabled(snapshot.value?.autoCheckCatalog ?? true);
 			};
 			ctx.effect(() => {
@@ -44265,7 +44435,20 @@ void main() {
 					}, 100);
 				};
 				const stopTheme = subscribeArtifactTheme(sync);
-				const stopSettings = preferences.subscribe(sync);
+				let appearance = "";
+				const stopSettings = preferences.subscribe(() => {
+					const { value, writable } = preferences.getSnapshot();
+					const next = JSON.stringify([
+						writable,
+						value?.colorScheme,
+						value?.lightBackground,
+						value?.darkBackground
+					]);
+					if (next !== appearance) {
+						appearance = next;
+						sync();
+					}
+				});
 				sync();
 				return () => {
 					clearTimeout(timer);
@@ -44297,49 +44480,49 @@ void main() {
 				},
 				setInterfaceScale: (scale) => {
 					view.actions.setInterfaceScale(scale);
-					preferences.set(QUANTSKILLS_INTERFACE_SCALE_FIELD, scale);
+					preferences.set(QUANTSKILLS_INTERFACE_SCALE_FIELD, scale).catch(() => {});
 				},
 				setConversationScale: (scale) => {
 					view.actions.setConversationScale(scale);
-					preferences.set(QUANTSKILLS_CONVERSATION_SCALE_FIELD, scale);
+					preferences.set(QUANTSKILLS_CONVERSATION_SCALE_FIELD, scale).catch(() => {});
 				},
 				setConversationOverlayOpacity: (opacity) => {
 					view.actions.setConversationOverlayOpacity(opacity);
-					preferences.set(QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY_FIELD, opacity);
+					preferences.set(QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY_FIELD, opacity).catch(() => {});
 				},
 				setConversationBrightness: (brightness) => {
 					view.actions.setConversationBrightness(brightness);
-					preferences.set(QUANTSKILLS_CONVERSATION_BRIGHTNESS_FIELD, brightness);
+					preferences.set(QUANTSKILLS_CONVERSATION_BRIGHTNESS_FIELD, brightness).catch(() => {});
 				},
 				setColorScheme: (scheme) => {
 					view.actions.setColorScheme(scheme);
-					preferences.set(QUANTSKILLS_COLOR_SCHEME_FIELD, scheme);
+					preferences.set(QUANTSKILLS_COLOR_SCHEME_FIELD, scheme).catch(() => {});
 				},
 				setLightBackground: (background) => {
 					view.actions.setLightBackground(background);
-					preferences.set(QUANTSKILLS_LIGHT_BACKGROUND_FIELD, background);
+					preferences.set(QUANTSKILLS_LIGHT_BACKGROUND_FIELD, background).catch(() => {});
 				},
 				setDarkBackground: (background) => {
 					view.actions.setDarkBackground(background);
-					preferences.set(QUANTSKILLS_DARK_BACKGROUND_FIELD, background);
+					preferences.set(QUANTSKILLS_DARK_BACKGROUND_FIELD, background).catch(() => {});
 				},
 				setAutoCheckCatalog: (enabled) => {
 					view.actions.setAutoCheckCatalog(enabled);
 					catalogAutoChecker.setEnabled(enabled);
-					preferences.set(QUANTSKILLS_AUTO_CHECK_CATALOG_FIELD, enabled);
+					preferences.set(QUANTSKILLS_AUTO_CHECK_CATALOG_FIELD, enabled).catch(() => {});
 				},
 				setAutoCheckPanda: (enabled) => {
 					view.actions.setAutoCheckPanda(enabled);
-					preferences.set(QUANTSKILLS_AUTO_CHECK_PANDA_FIELD, enabled);
+					preferences.set(QUANTSKILLS_AUTO_CHECK_PANDA_FIELD, enabled).catch(() => {});
 				},
 				setResumeAfterPandaLogin: (enabled) => {
 					view.actions.setResumeAfterPandaLogin(enabled);
-					preferences.set(QUANTSKILLS_RESUME_AFTER_PANDA_LOGIN_FIELD, enabled);
+					preferences.set(QUANTSKILLS_RESUME_AFTER_PANDA_LOGIN_FIELD, enabled).catch(() => {});
 				},
 				setFavoriteAssetIds: (assetIds) => {
 					const unique = [...new Set(assetIds)];
 					view.actions.setFavoriteAssetIds(unique);
-					preferences.set(QUANTSKILLS_FAVORITE_ASSET_IDS_FIELD, unique);
+					preferences.set(QUANTSKILLS_FAVORITE_ASSET_IDS_FIELD, unique).catch(() => {});
 				},
 				setAssetDisplayNameOverrides: (overrides) => {
 					const unique = [...new Map(overrides.map((entry) => [entry.assetId, {
@@ -44347,17 +44530,17 @@ void main() {
 						displayName: entry.displayName.trim()
 					}])).values()].filter((entry) => entry.displayName !== "");
 					view.actions.setAssetDisplayNameOverrides(unique);
-					preferences.set(QUANTSKILLS_ASSET_DISPLAY_NAME_OVERRIDES_FIELD, unique);
+					preferences.set(QUANTSKILLS_ASSET_DISPLAY_NAME_OVERRIDES_FIELD, unique).catch(() => {});
 				},
 				setDefaultAgentModel: (provider, model, reasoningEffort) => {
 					view.actions.setDefaultAgentModel(provider, model, reasoningEffort);
-					preferences.set(QUANTSKILLS_DEFAULT_AGENT_PROVIDER_FIELD, provider);
-					preferences.set(QUANTSKILLS_DEFAULT_AGENT_MODEL_FIELD, model);
-					preferences.set(QUANTSKILLS_DEFAULT_AGENT_REASONING_EFFORT_FIELD, reasoningEffort);
+					preferences.set(QUANTSKILLS_DEFAULT_AGENT_PROVIDER_FIELD, provider).catch(() => {});
+					preferences.set(QUANTSKILLS_DEFAULT_AGENT_MODEL_FIELD, model).catch(() => {});
+					preferences.set(QUANTSKILLS_DEFAULT_AGENT_REASONING_EFFORT_FIELD, reasoningEffort).catch(() => {});
 				},
 				setDefaultAgentPermission: (permission) => {
 					view.actions.setDefaultAgentPermission(permission);
-					preferences.set(QUANTSKILLS_DEFAULT_AGENT_PERMISSION_FIELD, permission);
+					preferences.set(QUANTSKILLS_DEFAULT_AGENT_PERMISSION_FIELD, permission).catch(() => {});
 				},
 				setDefaultWorkspaceId: (workspaceId) => {
 					view.actions.setDefaultWorkspaceId(workspaceId);

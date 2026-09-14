@@ -5,7 +5,7 @@ import { FinalDeliverables } from './FinalDeliverables.tsx'
 /** QuantSkills browser application assembled over the existing DSH layout, sessions, and conversation services. */
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import type { SessionSummary } from '@deepseek-ai/dsh-api-session-controller/client'
-import type { SettingsScopeSnapshot } from '@deepseek-ai/dsh-client-ui-settings/client'
+import { QuantSkillsPreferences, type PreferencesSnapshot } from './preferences.ts'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import { resolveWorkspacePath } from '@deepseek-ai/dsh-util-workspace-path'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
@@ -129,7 +129,7 @@ export type {
 export const inject = [
   'slots', 'sessions', 'workspaces', 'connection',
   'inputTriggers', 'modelDirectories',
-  'settingsScope',
+  'settingsSchema', 'remote.settings',
   'remote', 'remote.commands', 'remote.session',
   'remote.quantSkills', 'remote.quantSkillsSessions', 'remote.pandaMcp',
 ]
@@ -570,11 +570,27 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
   if (options.mode === 'native-plugin') view.actions.openPlugin()
   const notifications = createQuantSkillsNotificationStore().create()
   const nativeLayout = options.mode === 'native-plugin' ? createQuantSkillsLayoutStore().create() : undefined
-  const preferences = ctx.settingsScope.bind<QuantSkillsSettings>({
-    namespace: QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE,
-  })
-  const syncPreferences = (snapshot: SettingsScopeSnapshot<QuantSkillsSettings>): void => {
-    view.actions.syncSettings(snapshot.value, snapshot.status, snapshot.writable)
+  const preferences = new QuantSkillsPreferences<QuantSkillsSettings>(
+    QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE,
+    {
+      describe: () => unwrapRemote(ctx.remote.settings.describe()),
+      mutate: (ns, ops, revision) => unwrapRemote(ctx.remote.settings.mutate(ns, ops, revision)),
+    },
+    section => {
+      const failure = ctx.settingsSchema.validate(ctx.settingsSchema.rehydrate(section.schema), section.value)
+      return failure === undefined ? section.value as QuantSkillsSettings : undefined
+    },
+  )
+  ctx.effect(() => {
+    void preferences.reload()
+    const stopDocument = ctx.remote.$on('settings/document-updated', () => { void preferences.reload() })
+    const stopReset = ctx.on('connection/reset', () => { void preferences.reload() })
+    const refresh = () => { void preferences.reload() }
+    window.addEventListener('focus', refresh)
+    return () => { stopDocument(); stopReset(); window.removeEventListener('focus', refresh); void preferences.dispose() }
+  }, 'ui-quantskills: authenticated preferences lifecycle')
+  const syncPreferences = (snapshot: PreferencesSnapshot<QuantSkillsSettings>): void => {
+    view.actions.syncSettings(snapshot.value, snapshot.status, snapshot.writable, snapshot.error)
     catalogAutoChecker.setEnabled(snapshot.value?.autoCheckCatalog ?? true)
   }
   ctx.effect(() => {
@@ -597,7 +613,12 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       }, 100)
     }
     const stopTheme = subscribeArtifactTheme(sync)
-    const stopSettings = preferences.subscribe(sync)
+    let appearance = ''
+    const stopSettings = preferences.subscribe(() => {
+      const { value, writable } = preferences.getSnapshot()
+      const next = JSON.stringify([writable, value?.colorScheme, value?.lightBackground, value?.darkBackground])
+      if (next !== appearance) { appearance = next; sync() }
+    })
     sync()
     return () => { clearTimeout(timer); stopTheme(); stopSettings() }
   }, 'ui-quantskills: share semantic artifact palette with generation')
@@ -625,49 +646,49 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
     },
     setInterfaceScale: (scale) => {
       view.actions.setInterfaceScale(scale)
-      void preferences.set(QUANTSKILLS_INTERFACE_SCALE_FIELD, scale)
+      void preferences.set(QUANTSKILLS_INTERFACE_SCALE_FIELD, scale).catch(() => {})
     },
     setConversationScale: (scale) => {
       view.actions.setConversationScale(scale)
-      void preferences.set(QUANTSKILLS_CONVERSATION_SCALE_FIELD, scale)
+      void preferences.set(QUANTSKILLS_CONVERSATION_SCALE_FIELD, scale).catch(() => {})
     },
     setConversationOverlayOpacity: (opacity) => {
       view.actions.setConversationOverlayOpacity(opacity)
-      void preferences.set(QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY_FIELD, opacity)
+      void preferences.set(QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY_FIELD, opacity).catch(() => {})
     },
     setConversationBrightness: (brightness) => {
       view.actions.setConversationBrightness(brightness)
-      void preferences.set(QUANTSKILLS_CONVERSATION_BRIGHTNESS_FIELD, brightness)
+      void preferences.set(QUANTSKILLS_CONVERSATION_BRIGHTNESS_FIELD, brightness).catch(() => {})
     },
     setColorScheme: (scheme) => {
       view.actions.setColorScheme(scheme)
-      void preferences.set(QUANTSKILLS_COLOR_SCHEME_FIELD, scheme)
+      void preferences.set(QUANTSKILLS_COLOR_SCHEME_FIELD, scheme).catch(() => {})
     },
     setLightBackground: (background) => {
       view.actions.setLightBackground(background)
-      void preferences.set(QUANTSKILLS_LIGHT_BACKGROUND_FIELD, background)
+      void preferences.set(QUANTSKILLS_LIGHT_BACKGROUND_FIELD, background).catch(() => {})
     },
     setDarkBackground: (background) => {
       view.actions.setDarkBackground(background)
-      void preferences.set(QUANTSKILLS_DARK_BACKGROUND_FIELD, background)
+      void preferences.set(QUANTSKILLS_DARK_BACKGROUND_FIELD, background).catch(() => {})
     },
     setAutoCheckCatalog: (enabled) => {
       view.actions.setAutoCheckCatalog(enabled)
       catalogAutoChecker.setEnabled(enabled)
-      void preferences.set(QUANTSKILLS_AUTO_CHECK_CATALOG_FIELD, enabled)
+      void preferences.set(QUANTSKILLS_AUTO_CHECK_CATALOG_FIELD, enabled).catch(() => {})
     },
     setAutoCheckPanda: (enabled) => {
       view.actions.setAutoCheckPanda(enabled)
-      void preferences.set(QUANTSKILLS_AUTO_CHECK_PANDA_FIELD, enabled)
+      void preferences.set(QUANTSKILLS_AUTO_CHECK_PANDA_FIELD, enabled).catch(() => {})
     },
     setResumeAfterPandaLogin: (enabled) => {
       view.actions.setResumeAfterPandaLogin(enabled)
-      void preferences.set(QUANTSKILLS_RESUME_AFTER_PANDA_LOGIN_FIELD, enabled)
+      void preferences.set(QUANTSKILLS_RESUME_AFTER_PANDA_LOGIN_FIELD, enabled).catch(() => {})
     },
     setFavoriteAssetIds: (assetIds) => {
       const unique = [...new Set(assetIds)]
       view.actions.setFavoriteAssetIds(unique)
-      void preferences.set(QUANTSKILLS_FAVORITE_ASSET_IDS_FIELD, unique)
+      void preferences.set(QUANTSKILLS_FAVORITE_ASSET_IDS_FIELD, unique).catch(() => {})
     },
     setAssetDisplayNameOverrides: (overrides) => {
       const unique = [...new Map(overrides.map(entry => [entry.assetId, {
@@ -675,17 +696,17 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
         displayName: entry.displayName.trim(),
       }])).values()].filter(entry => entry.displayName !== '')
       view.actions.setAssetDisplayNameOverrides(unique)
-      void preferences.set(QUANTSKILLS_ASSET_DISPLAY_NAME_OVERRIDES_FIELD, unique)
+      void preferences.set(QUANTSKILLS_ASSET_DISPLAY_NAME_OVERRIDES_FIELD, unique).catch(() => {})
     },
     setDefaultAgentModel: (provider, model, reasoningEffort) => {
       view.actions.setDefaultAgentModel(provider, model, reasoningEffort)
-      void preferences.set(QUANTSKILLS_DEFAULT_AGENT_PROVIDER_FIELD, provider)
-      void preferences.set(QUANTSKILLS_DEFAULT_AGENT_MODEL_FIELD, model)
-      void preferences.set(QUANTSKILLS_DEFAULT_AGENT_REASONING_EFFORT_FIELD, reasoningEffort)
+      void preferences.set(QUANTSKILLS_DEFAULT_AGENT_PROVIDER_FIELD, provider).catch(() => {})
+      void preferences.set(QUANTSKILLS_DEFAULT_AGENT_MODEL_FIELD, model).catch(() => {})
+      void preferences.set(QUANTSKILLS_DEFAULT_AGENT_REASONING_EFFORT_FIELD, reasoningEffort).catch(() => {})
     },
     setDefaultAgentPermission: (permission) => {
       view.actions.setDefaultAgentPermission(permission)
-      void preferences.set(QUANTSKILLS_DEFAULT_AGENT_PERMISSION_FIELD, permission)
+      void preferences.set(QUANTSKILLS_DEFAULT_AGENT_PERMISSION_FIELD, permission).catch(() => {})
     },
     setDefaultWorkspaceId: (workspaceId) => {
       view.actions.setDefaultWorkspaceId(workspaceId)
