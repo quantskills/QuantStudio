@@ -1,3 +1,10 @@
+# QuantStudio 0.1.28
+
+2026-09-14 · Windows/macOS 兼容修订
+
+- 检查已有工作目录时保留用户 Git 换行配置，修复 Windows CI 与部分首次安装环境的误判。
+- 包含 PowerShell 7、Windows 长短路径、固定 pnpm CLI 和跨平台启动验证修复。
+
 # QuantStudio 0.1.27
 
 2026-09-14 · Windows 路径兼容

@@ -1,6 +1,7 @@
 {
-  "version": "0.1.27",
+  "version": "0.1.28",
   "changes": [
+    "兼容 Windows Git 换行配置，避免把干净目录误判为开发修改而跳过托管安装。",
     "修复 Windows 用户目录短路径导致托管安装被跳过的问题。",
     "统一 Windows/macOS 更新依赖安装方式，直接调用启动器固定的 Node 与 pnpm CLI。",
     "修复仅安装 PowerShell 7 时默认工作区读取失败的问题。",
