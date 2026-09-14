@@ -58,7 +58,7 @@ For the China mirror, replace the clone command with:
 git clone -c core.longpaths=true https://gitee.com/quantskills/QuantStudio.git
 ~~~
 
-Open **http://127.0.0.1:3198/** after launch. Local browsers do not require copying a token; remote and proxied requests retain origin and authentication checks. Configure a model, then choose an expert or start a conversation.
+Open [http://127.0.0.1:3198/](http://127.0.0.1:3198/) after launch. Local browsers do not require copying a token; remote and proxied requests retain origin and authentication checks. Configure a model, then choose an expert or start a conversation.
 
 Configure Python and data services when a task needs them. Ordinary conversations do not require Python or a PandaData login. Run all commands from the repository root.
 
