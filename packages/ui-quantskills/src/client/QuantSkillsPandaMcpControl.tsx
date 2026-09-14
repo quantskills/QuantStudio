@@ -39,15 +39,16 @@ function QuantSkillsPandaMcpSurface({
   const rootRef = useRef<HTMLDivElement>(null)
   const [open, setOpen] = useState(false)
   const [snapshot, setSnapshot] = useState<PandaMcpStatus>()
-  const [error, setError] = useState<string>()
+  const [statusError, setStatusError] = useState<string>()
+  const [actionError, setActionError] = useState<string>()
   const [busy, setBusy] = useState(false)
 
   const poll = useCallback(async (): Promise<void> => {
     try {
       setSnapshot(await status())
-      setError(undefined)
+      setStatusError(undefined)
     } catch (cause: unknown) {
-      setError(cause instanceof Error ? cause.message : '无法读取 PandaData 连接状态。')
+      setStatusError(cause instanceof Error ? cause.message : '无法读取 PandaData 连接状态。')
     }
   }, [status])
 
@@ -80,13 +81,15 @@ function QuantSkillsPandaMcpSurface({
   const enabled = phase !== 'disconnected'
   const signal = pandaMcpSignal(phase)
   const label = pandaMcpPhaseLabel(phase)
+  const error = actionError ?? statusError
   const run = async (action: () => Promise<PandaMcpStatus>): Promise<void> => {
     setBusy(true)
+    setActionError(undefined)
     try {
       setSnapshot(await action())
-      setError(undefined)
+      setStatusError(undefined)
     } catch (cause: unknown) {
-      setError(cause instanceof Error ? cause.message : 'PandaData 操作失败。')
+      setActionError(cause instanceof Error ? cause.message : 'PandaData 操作失败。')
       await poll()
     } finally {
       setBusy(false)

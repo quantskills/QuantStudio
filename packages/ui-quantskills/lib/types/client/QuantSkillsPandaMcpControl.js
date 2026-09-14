@@ -8,15 +8,16 @@ function QuantSkillsPandaMcpSurface({ visible, status, authenticate, refresh, lo
     const rootRef = useRef(null);
     const [open, setOpen] = useState(false);
     const [snapshot, setSnapshot] = useState();
-    const [error, setError] = useState();
+    const [statusError, setStatusError] = useState();
+    const [actionError, setActionError] = useState();
     const [busy, setBusy] = useState(false);
     const poll = useCallback(async () => {
         try {
             setSnapshot(await status());
-            setError(undefined);
+            setStatusError(undefined);
         }
         catch (cause) {
-            setError(cause instanceof Error ? cause.message : '无法读取 PandaData 连接状态。');
+            setStatusError(cause instanceof Error ? cause.message : '无法读取 PandaData 连接状态。');
         }
     }, [status]);
     useEffect(() => {
@@ -51,14 +52,16 @@ function QuantSkillsPandaMcpSurface({ visible, status, authenticate, refresh, lo
     const enabled = phase !== 'disconnected';
     const signal = pandaMcpSignal(phase);
     const label = pandaMcpPhaseLabel(phase);
+    const error = actionError ?? statusError;
     const run = async (action) => {
         setBusy(true);
+        setActionError(undefined);
         try {
             setSnapshot(await action());
-            setError(undefined);
+            setStatusError(undefined);
         }
         catch (cause) {
-            setError(cause instanceof Error ? cause.message : 'PandaData 操作失败。');
+            setActionError(cause instanceof Error ? cause.message : 'PandaData 操作失败。');
             await poll();
         }
         finally {

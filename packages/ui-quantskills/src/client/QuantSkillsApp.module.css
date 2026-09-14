@@ -699,7 +699,7 @@ body[data-qs-plugin-theme='dark'] .brandAsset,
 .sessionDrawer header b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sessionDrawer header button { display: flex; align-items: center; gap: 6px; padding: 9px 12px; border: 1px solid var(--qs-border); border-radius: 8px; }
 .sessionHeaderActions { display: flex; align-items: center; gap: 7px; }
-.sessionHeaderActions .authoringButton { display: grid; padding: 8px 10px; border: 0; border-radius: 8px; }
+.sessionHeaderActions .authoringButton { display: inline-flex; flex: 0 0 auto; justify-content: center; white-space: nowrap; padding: 8px 10px; border: 0; border-radius: 8px; }
 .sessionSearch { min-height: 42px; display: flex; align-items: center; gap: 9px; margin-top: 18px; padding: 0 12px; color: var(--qs-muted); border: 1px solid var(--qs-border); border-radius: 9px; background: var(--dsw-alias-bg-base); }
 .sessionSearch:focus-within { color: var(--qs-blue); border-color: var(--qs-blue); box-shadow: 0 0 0 2px color-mix(in srgb, var(--qs-blue) 13%, transparent); }
 .sessionSearch input { min-width: 0; flex: 1; border: 0; outline: 0; color: inherit; background: transparent; font: inherit; }
@@ -2289,7 +2289,7 @@ body[data-qs-plugin-theme] [data-composer-card] { background:var(--qs-surface); 
 body[data-qs-plugin-theme] [data-composer-card]:focus-within { border-color:color-mix(in srgb,var(--qs-accent) 65%,var(--qs-line)); box-shadow:0 0 0 3px color-mix(in srgb,var(--qs-accent) 10%,transparent),0 8px 32px #0000000c; }
 body[data-qs-plugin-theme] [data-composer-card] [role='textbox'] { min-height:52px; padding-inline:20px; line-height:1.7; }
 body[data-qs-plugin-theme] [data-composer-card] [data-composer-placeholder] { color:var(--qs-secondary); opacity:.85; }
-body[data-qs-plugin-theme] [data-composer-card] button { border-radius:12px; min-height:34px; }
+body[data-qs-plugin-theme] [data-composer-card] button:not([role='switch']) { border-radius:12px; min-height:34px; }
 body[data-qs-plugin-theme] [data-composer-card] button[aria-label^='选择模型'] { padding:6px 10px; background:var(--qs-chrome); border:1px solid var(--qs-line); }
 body[data-qs-plugin-theme] [data-composer-card] button[aria-label^='选择模型'] > span:has(img) { display:none; }
 body[data-qs-plugin-theme] [data-composer-card] button[aria-label^='访问模式'] { padding:5px 8px; color:var(--qs-secondary); }
@@ -2849,6 +2849,11 @@ body[data-qs-plugin-theme] *::-webkit-scrollbar-corner { background:transparent;
   .app .agentTabs { gap:22px;overflow-x:auto;scrollbar-width:none; }
   .app .agentTabs button { flex-shrink:0;white-space:nowrap;min-height:42px; }
   body[data-qs-mobile] .residentCapabilities { position:static; }
+  body[data-qs-mobile] .pandaMcpControl { position:static; }
+  body[data-qs-mobile] .pandaMcpPopover {
+    left:8px;right:8px;width:auto;box-sizing:border-box;
+    max-height:calc(var(--qs-mobile-height,100dvh) - 220px);overflow-y:auto;
+  }
   body[data-qs-mobile] .residentCapabilityMenu {
     left:8px;right:8px;width:auto;box-sizing:border-box;
     display:flex;flex-direction:column;
