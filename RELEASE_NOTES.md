@@ -1,3 +1,11 @@
+# QuantStudio 0.1.29
+
+2026-09-14 · 平台兼容验证收尾
+
+- 使用原生路径解析统一 Windows 8.3 短路径与长路径。
+- 为托管安装增加跳过原因诊断，并将安装入口测试前置到 CI。
+- 集成 Windows PowerShell / PowerShell 7、macOS 工作区路径与跨平台 pnpm 启动改进。
+
 # QuantStudio 0.1.28
 
 2026-09-14 · Windows/macOS 兼容修订
