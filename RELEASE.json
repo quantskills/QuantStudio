@@ -1,6 +1,7 @@
 {
-  "version": "0.1.26",
+  "version": "0.1.27",
   "changes": [
+    "修复 Windows 用户目录短路径导致托管安装被跳过的问题。",
     "统一 Windows/macOS 更新依赖安装方式，直接调用启动器固定的 Node 与 pnpm CLI。",
     "修复仅安装 PowerShell 7 时默认工作区读取失败的问题。",
     "Windows 文档目录检测兼容系统 PowerShell 路径与 pwsh.exe，保留重定向文档目录。",

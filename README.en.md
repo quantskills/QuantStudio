@@ -109,3 +109,7 @@ The live verification uses temporary directories to exercise anonymous discovery
 QuantStudio is offered under [GPL-3.0-or-later](LICENSE) or a separate [PandaAI commercial license](COMMERCIAL-LICENSE.md). DSH and other third-party components retain their own licenses and copyright notices; see [Third-Party Notices](THIRD_PARTY_NOTICES.md) and LICENSES/.
 
 This repository is maintained by QuantSkills with an independent release history. Reinitializing Git history does not change third-party provenance or licensing.
+
+## Windows and macOS
+
+Both platforms use `pnpm run web`. macOS does not require PowerShell; Windows supports Windows PowerShell and PowerShell 7. The default workspace is the Windows Documents known folder or `~/Documents/QuantSkills` on macOS. Configuration is stored under `~/.dsh` unless `DSH_HOME` is set. On macOS, allow the terminal to access Documents if prompted by the operating system.
