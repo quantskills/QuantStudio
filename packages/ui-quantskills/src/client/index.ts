@@ -89,6 +89,8 @@ import {
 } from './QuantSkillsPandaMcpControl.tsx'
 import { ContestReview, type ContestReviewInjected } from './ContestReview.tsx'
 import type { ContestAccess } from './contest.ts'
+import type { FactorContestAccess } from './factor-contest.ts'
+import { FactorContestReview, type FactorReviewInjected } from './FactorContestReview.tsx'
 import { AuthoringReview, type AuthoringReviewInjected } from './AuthoringReview.tsx'
 import { SessionFavorite, type SessionFavoriteInjected } from './SessionFavorite.tsx'
 import {
@@ -1148,6 +1150,41 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       await boundSessions.refresh(lifetime.signal)
     },
   }
+  const factorContestAccess: FactorContestAccess = {
+    status: sessionId => unwrapRemote(ctx.remote.quantSkillsSessions.factorStatus(sessionId ? { sessionId } : {})),
+    mode: enabled => unwrapRemote(ctx.remote.quantSkillsSessions.factorMode({ enabled })),
+    connect: credentials => unwrapRemote(ctx.remote.quantSkillsSessions.factorConnect(credentials ? { credentials } : {})),
+    disconnect: () => unwrapRemote(ctx.remote.quantSkillsSessions.factorDisconnect()),
+    checkUpdate: () => unwrapRemote(ctx.remote.quantSkillsSessions.factorCheckUpdate()),
+    update: () => unwrapRemote(ctx.remote.quantSkillsSessions.factorUpdate()),
+    inspect: sessionId => unwrapRemote(ctx.remote.quantSkillsSessions.factorInspect(sessionId ? { sessionId: sessionId as SessionId } : {})),
+    query: request => unwrapRemote(ctx.remote.quantSkillsSessions.factorQuery(request)),
+    prepare: (action, sessionId) => unwrapRemote(ctx.remote.quantSkillsSessions.factorPrepare({ action, ...(sessionId ? { sessionId: sessionId as SessionId } : {}) })),
+    confirm: plan => unwrapRemote(ctx.remote.quantSkillsSessions.factorConfirm({ planId: plan.id, sessionId: plan.sessionId })),
+    dismiss: plan => unwrapRemote(ctx.remote.quantSkillsSessions.factorDismiss({ planId: plan.id, sessionId: plan.sessionId })),
+    stopBudget: budgetId => unwrapRemote(ctx.remote.quantSkillsSessions.factorStopBudget({ budgetId })),
+    reconcileRun: runId => unwrapRemote(ctx.remote.quantSkillsSessions.factorReconcileRun({ runId })),
+    reconcilePlan: planId => unwrapRemote(ctx.remote.quantSkillsSessions.factorReconcilePlan({ planId })),
+    requestResearch: async (sessionId, text) => {
+      const current = ctx.sessions.list.getSnapshot()
+      if (current.current !== sessionId || current.byId[sessionId as SessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'factor-contest') throw new Error('请在对应因子比赛会话中发起研究。')
+      const session = ctx.sessions.binding(sessionId as SessionId)?.session
+      if (!session) throw new Error('因子会话尚未就绪。')
+      const result = await session.prompt([{ type: 'text', text }], 'queue')
+      if (!result.ok) throw new Error(result.error.message)
+    },
+    startResearch: async topic => {
+      const workspace = await resolveSessionWorkspace()
+      const created = await unwrapRemote(ctx.remote.quantSkillsSessions.factorSessionOpen({ ...workspace, sessionId: `session-${crypto.randomUUID()}` as SessionId,
+        ...(topic ? { topic: true } : {}) }, lifetime.signal))
+      const adopted = await adoptSession(created.sessionId, lifetime.signal, summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'factor-contest')
+      if (created.created) {
+        const renamed = await adopted.session.rename(topic ? '因子赛 · 专题研究' : '因子赛 · 账户主对话')
+        if (!renamed.ok) throw new Error(renamed.error.message)
+      }
+      openSession(created.sessionId, false); await boundSessions.refresh(lifetime.signal)
+    },
+  }
   const removeSessions = async (ids: readonly SessionId[]): Promise<void> => {
     const uniqueIds = [...new Set(ids)]
     if (uniqueIds.length === 0) return
@@ -1789,6 +1826,12 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       openContest: () => viewActions.navigate('contest'),
     }),
   }, ContestReview))
+  ctx.slots.inject('conversation.input.dock', () => ctx.slots.register({
+    name: 'conversation.input.dock', id: 'quantskills-factor-contest-review', order: 16,
+    inject: (): FactorReviewInjected => ({ hooks: { sessions: ctx.sessions.list }, access: factorContestAccess,
+      openContest: () => { sessionStorage.setItem('quantstudio-competition', 'factor'); viewActions.navigate('contest') },
+    }),
+  }, FactorContestReview))
 
   const resultTrigger: { current: HTMLElement | null } = { current: null }
   ctx.effect(() => bindQuantSkillsResultMentionClicks(document, (path, trigger) => {
@@ -2003,6 +2046,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
           categorize: (id, category) => unwrapRemote(ctx.remote.pandaMcp.databaseCategorize({ id, category })),
         },
         contestAccess,
+        factorContestAccess,
         modelAccess: request => unwrapRemote(ctx.remote.quantSkillsSessions.modelsAccess(request)),
         readAssetReadme,
         installAsset: asset => catalog.install(asset).then(() => {}),

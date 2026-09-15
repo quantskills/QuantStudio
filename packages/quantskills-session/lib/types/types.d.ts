@@ -4,6 +4,7 @@ import type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types';
 import type { Branded } from '@deepseek-ai/dsh-brand';
 import type { AttachmentId } from '@deepseek-ai/dsh-attachment/types';
 export type { ContestIdentity, ContestStatus, ContestQuery, ContestData, ContestPlan, ContestOrder, ContestPrepareRequest, ContestInspection } from './contest-types.ts';
+export type { FactorCredentials, FactorBatchRequest, FactorCandidate, FactorPoolAction, FactorPlanAction, FactorPlan, FactorBudget, FactorRun, FactorInspection, FactorContestStatus, FactorQuery } from './factor-contest-types.ts';
 /** QuantSkills catalog asset identity. */
 export type QuantSkillsAssetId = Branded<'QuantSkillsAssetId'>;
 /** Exact approved Git commit. */
@@ -133,11 +134,12 @@ export interface QuantSkillsSessionEnsureResult {
     readonly sessionId: SessionId;
 }
 /** Product-owned purpose of a QuantSkills Session without a frozen asset composition. */
-export type QuantSkillsPlainSessionPurpose = 'ordinary' | 'role-helper' | 'contest';
+export type QuantSkillsPlainSessionPurpose = 'ordinary' | 'role-helper' | 'contest' | 'factor-contest';
 /** Durable ownership marker for a QuantSkills Session without a frozen asset composition. */
 export interface QuantSkillsPlainSessionBinding {
     readonly purpose: QuantSkillsPlainSessionPurpose;
     readonly contest?: import('./contest-types.ts').ContestIdentity | undefined;
+    readonly factorContest?: import('./contest-types.ts').ContestIdentity | undefined;
     readonly contestConversation?: 'main' | 'topic' | undefined;
 }
 /** Request for atomically creating or idempotently adopting one plain QuantSkills Session. */

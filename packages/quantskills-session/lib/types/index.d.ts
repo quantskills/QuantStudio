@@ -1,4 +1,5 @@
 /** Exact-version QuantSkills session composition and log-backed archive remotes. */
+import type { FactorContestStatus, FactorCredentials, FactorInspection, FactorPlan, FactorPlanAction, FactorQuery, FactorRun } from './factor-contest-types.ts';
 import type { ContestStatus, ContestData, ContestQuery, ContestPlan, ContestInspection } from './contest-types.ts';
 import type { ContestSessionOpenRequest, ContestSessionOpenResult } from './types.ts';
 import type { QuantSkillsLibrarySourceRecord } from './types.ts';
@@ -6,6 +7,7 @@ import type { Context } from '@deepseek-ai/cordis';
 import s from '@deepseek-ai/schemastery';
 import { SessionId, type SessionEvent } from '@deepseek-ai/dsh-session';
 import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
+import { type JsonValue } from '@deepseek-ai/dsh-util-values';
 import { z } from 'zod';
 import type { QuantSkillsFrequentRequest, QuantSkillsFrequentSkill, QuantSkillsAgentCreateRequest, QuantSkillsAgentDefinition, QuantSkillsAgentDeleteRequest, QuantSkillsAgentSessionArchiveItem, QuantSkillsAgentSessionBinding, QuantSkillsAgentSessionCreateRequest, QuantSkillsAgentSessionCreateResult, QuantSkillsAgentUpdateRequest, QuantSkillsAgentTeamCreateRequest, QuantSkillsAgentTeamDefinition, QuantSkillsAgentTeamDeleteRequest, QuantSkillsAgentTeamMemberSessionBinding, QuantSkillsAgentTeamSessionArchiveItem, QuantSkillsAgentTeamSessionBinding, QuantSkillsAgentTeamSessionCreateRequest, QuantSkillsAgentTeamSessionCreateResult, QuantSkillsAgentTeamUpdateRequest, QuantSkillsFileAttachRequest, QuantSkillsFileListRequest, QuantSkillsFileListResult, QuantSkillsFileReadRequest, QuantSkillsFileReadResult, QuantSkillsPromptFormListRequest, QuantSkillsPromptFormListResult, QuantSkillsPromptFormRenderRequest, QuantSkillsPromptFormRenderResult, QuantSkillsSessionFileAttachment, QuantSkillsResultPrepareRequest, QuantSkillsResultPrepareResult, QuantSkillsResultPreview, QuantSkillsResultPreviewRequest, QuantSkillsResidentSkillAttachRequest, QuantSkillsResidentSkillChange, QuantSkillsResidentSkillDetachRequest, QuantSkillsResidentSkillResult, QuantSkillsSessionArchiveItem, QuantSkillsPlainSessionArchiveItem, QuantSkillsSessionBinding, QuantSkillsSessionCreateRequest, QuantSkillsSessionCreateResult, QuantSkillsSessionEnsureRequest, QuantSkillsSessionEnsureResult, QuantSkillsPlainSessionBinding, QuantSkillsPlainSessionCreateRequest, QuantSkillsPlainSessionCreateResult, QuantSkillsSessionListRequest, QuantSkillsWorkspaceRequest, QuantSkillsWorkspaceResolveResult, QuantSkillsWorkspaceStatusResult, QuantSkillsPandaRuntimeBinding, QuantSkillsAuthoringKind, QuantSkillsAuthoringCommitRequest, QuantSkillsAuthoringCommitResult, QuantSkillsAuthoringCommitted, QuantSkillsAuthoringSessionCreateRequest, QuantSkillsAuthoringStarted } from './types.ts';
 import type { ModelAccessRequest, ModelAccessResponse } from './model-access-types.ts';
@@ -223,6 +225,8 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private readonly teamForkProvider;
     private readonly workspaceResolver;
     private readonly contest;
+    private readonly factorContest;
+    private factorSessionOpening;
     private contestSessionOpening;
     /**
      * @param ctx - assembled QuantSkills Host context.
@@ -241,6 +245,45 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
      */
     workspaceResolve(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceResolveResult>;
     /** Read local contest status without starting processes or opening a browser. */
+    factorStatus(request: {
+        sessionId?: string;
+    }): Promise<FactorContestStatus>;
+    factorMode(request: {
+        enabled: boolean;
+    }): Promise<FactorContestStatus>;
+    factorConnect(request: {
+        credentials?: FactorCredentials;
+    }): Promise<FactorContestStatus>;
+    factorDisconnect(): Promise<FactorContestStatus>;
+    factorCheckUpdate(): Promise<FactorContestStatus>;
+    factorUpdate(): Promise<FactorContestStatus>;
+    factorInspect(request: {
+        sessionId?: SessionId;
+    }): Promise<FactorInspection>;
+    private factorIdentityForSession;
+    factorQuery(request: FactorQuery): Promise<JsonValue>;
+    factorPrepare(request: {
+        action: FactorPlanAction;
+        sessionId?: SessionId;
+    }): Promise<FactorPlan>;
+    factorConfirm(request: {
+        planId: string;
+        sessionId: string;
+    }): Promise<FactorPlan>;
+    factorDismiss(request: {
+        planId: string;
+        sessionId: string;
+    }): Promise<void>;
+    factorStopBudget(request: {
+        budgetId: string;
+    }): Promise<void>;
+    factorReconcileRun(request: {
+        runId: string;
+    }): Promise<FactorRun>;
+    factorReconcilePlan(request: {
+        planId: string;
+    }): Promise<FactorPlan>;
+    factorSessionOpen(request: ContestSessionOpenRequest, signal?: AbortSignal): Promise<ContestSessionOpenResult>;
     contestStatus(request: {
         sessionId?: string;
     }): Promise<ContestStatus>;

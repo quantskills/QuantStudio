@@ -4,6 +4,10 @@ import { QuantSkillsLibraryStore } from './library-store.ts'
 import { ContestService, sameContest } from './contest-service.ts'
 import { OfficialContestCli } from './contest-cli.ts'
 import { installContestTools } from './contest-tools.ts'
+import { FactorContestService } from './factor-contest-service.ts'
+import { OfficialFactorRuntime } from './factor-contest-cli.ts'
+import { installFactorContestTools } from './factor-contest-tools.ts'
+import type { FactorContestStatus, FactorCredentials, FactorInspection, FactorPlan, FactorPlanAction, FactorQuery, FactorRun } from './factor-contest-types.ts'
 import type { ContestStatus, ContestData, ContestQuery, ContestPlan, ContestInspection } from './contest-types.ts'
 import type { ContestSessionOpenRequest, ContestSessionOpenResult } from './types.ts'
 import { resolveDshHome } from '@deepseek-ai/dsh-home-paths'
@@ -378,11 +382,13 @@ const residentSkillChangeSchema = z.object({
 }).strict()
 const residentSkillsSchema = z.array(bindingSchema).readonly()
 const plainSessionBindingSchema = z.object({
-  purpose: z.enum(['ordinary', 'role-helper', 'contest']),
+  purpose: z.enum(['ordinary', 'role-helper', 'contest', 'factor-contest']),
   contest: z.object({ accountId: z.string().min(1), contestId: z.string().min(1) }).optional(),
+  factorContest: z.object({ accountId: z.string().min(1), contestId: z.literal('pandaai-fourth-factor') }).optional(),
   contestConversation: z.enum(['main', 'topic']).optional(),
 }).strict().refine(value => (value.purpose === 'contest') === (value.contest !== undefined)
-  && (value.contestConversation === undefined || value.purpose === 'contest'), 'contest purpose requires its bound account')
+  && (value.purpose === 'factor-contest') === (value.factorContest !== undefined)
+  && (value.contestConversation === undefined || value.purpose === 'contest' || value.purpose === 'factor-contest'), 'contest purpose requires its bound account')
 const pandaRuntimeBindingSchema = z.object({
   environmentId: z.string().min(1),
   sdkVersion: z.string().min(1),
@@ -939,6 +945,8 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   private readonly teamForkProvider: string
   private readonly workspaceResolver: QuantSkillsWorkspaceResolver
   private readonly contest: ContestService
+  private readonly factorContest: FactorContestService
+  private factorSessionOpening: Promise<unknown> = Promise.resolve()
   private contestSessionOpening: Promise<unknown> = Promise.resolve()
 
   /**
@@ -952,6 +960,11 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       return processes
     },
       join(resolveDshHome(config.dshHome), 'quantskills', 'contest', 'auth')), config.dshHome)
+    this.factorContest = new FactorContestService(new OfficialFactorRuntime(() => {
+      const processes = ctx.get('subprocess')
+      if (!processes) throw new Error('因子 CLI 进程服务未就绪。')
+      return processes
+    }, join(resolveDshHome(config.dshHome), 'quantskills', 'factor-contest', 'auth')), config.dshHome)
     installQuantSkillsIdentity(ctx)
     this.libraryStore = new QuantSkillsLibraryStore(config.dshHome)
     ctx.inject(['connection' as never], (connectionCtx) => {
@@ -1122,6 +1135,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     ctx.effect(() => () => {
       this.lifetime.abort(new Error('quantskills-session: service disposed'))
       this.contest.dispose()
+      this.factorContest.dispose()
       this.reservations.clear()
       this.plainReservations.clear()
       this.agentReservations.clear()
@@ -1156,6 +1170,79 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   }
 
   /** Read local contest status without starting processes or opening a browser. */
+  @Remote('factorStatus')
+  factorStatus(request: { sessionId?: string }): Promise<FactorContestStatus> { return this.factorContest.status(request.sessionId) }
+
+  @Remote('factorMode')
+  factorMode(request: { enabled: boolean }): Promise<FactorContestStatus> { return this.factorContest.mode(request.enabled) }
+
+  @Remote('factorConnect')
+  factorConnect(request: { credentials?: FactorCredentials }): Promise<FactorContestStatus> { return this.factorContest.connect(request.credentials) }
+
+  @Remote('factorDisconnect')
+  factorDisconnect(): Promise<FactorContestStatus> { return this.factorContest.disconnect() }
+
+  @Remote('factorCheckUpdate')
+  factorCheckUpdate(): Promise<FactorContestStatus> { return this.factorContest.checkUpdate() }
+
+  @Remote('factorUpdate')
+  factorUpdate(): Promise<FactorContestStatus> { return this.factorContest.update() }
+
+  @Remote('factorInspect')
+  async factorInspect(request: { sessionId?: SessionId }): Promise<FactorInspection> {
+    return this.factorContest.inspect(await this.factorIdentityForSession(request.sessionId))
+  }
+
+  private async factorIdentityForSession(sessionId?: SessionId) {
+    if (!sessionId) return undefined
+    const existing = await this.inspectExisting(sessionId, this.operationSignal())
+    const binding = existing && foldQuantSkillsPlainSessionBinding(existing.events)
+    if (binding?.purpose !== 'factor-contest' || !binding.factorContest) throw new Error('请在对应的因子比赛会话中操作。')
+    return binding.factorContest
+  }
+
+  @Remote('factorQuery')
+  async factorQuery(request: FactorQuery): Promise<JsonValue> { return this.factorContest.query(request) }
+
+  @Remote('factorPrepare')
+  async factorPrepare(request: { action: FactorPlanAction; sessionId?: SessionId }): Promise<FactorPlan> {
+    if (request.action.kind === 'budget' && !request.sessionId) throw new Error('研究预算必须绑定因子比赛对话。')
+    return this.factorContest.prepare(request.sessionId ?? 'factor-workbench', request.action, await this.factorIdentityForSession(request.sessionId))
+  }
+
+  @Remote('factorConfirm')
+  factorConfirm(request: { planId: string; sessionId: string }): Promise<FactorPlan> { return this.factorContest.confirm(request.planId, request.sessionId) }
+
+  @Remote('factorDismiss')
+  factorDismiss(request: { planId: string; sessionId: string }): Promise<void> { return this.factorContest.dismiss(request.planId, request.sessionId) }
+
+  @Remote('factorStopBudget')
+  factorStopBudget(request: { budgetId: string }): Promise<void> { return this.factorContest.stopBudget(request.budgetId) }
+
+  @Remote('factorReconcileRun')
+  factorReconcileRun(request: { runId: string }): Promise<FactorRun> { return this.factorContest.reconcileRun(request.runId) }
+
+  @Remote('factorReconcilePlan')
+  factorReconcilePlan(request: { planId: string }): Promise<FactorPlan> { return this.factorContest.reconcilePlan(request.planId) }
+
+  @Remote('factorSessionOpen')
+  factorSessionOpen(request: ContestSessionOpenRequest, signal?: AbortSignal): Promise<ContestSessionOpenResult> {
+    const next = this.factorSessionOpening.catch(() => {}).then(async () => {
+      const identity = await this.factorContest.researchIdentity(), active = this.operationSignal(signal)
+      if (!request.topic) {
+        const candidates = (await this.listPlainArchives({}, active)).filter(item => !item.archived && !item.parentSessionId
+          && item.binding.purpose === 'factor-contest' && item.binding.contestConversation !== 'topic' && sameContest(item.binding.factorContest, identity))
+        const prior = candidates.sort((a, b) => a.createdAt - b.createdAt || a.sessionId.localeCompare(b.sessionId))[0]
+        if (prior) { await this.sessionEnsure({ sessionId: prior.sessionId }, active); return { sessionId: prior.sessionId, binding: prior.binding, created: false } }
+      }
+      const created = await this.plainSessionCreate({ sessionId: request.sessionId, purpose: 'factor-contest', contestConversation: request.topic ? 'topic' : 'main',
+        ...(request.workspaceId === undefined ? {} : { workspaceId: request.workspaceId }), ...(request.cwd === undefined ? {} : { cwd: request.cwd }) }, active)
+      if (!sameContest(created.binding.factorContest, identity)) throw new Error('因子账户已切换，请重新进入。')
+      return { sessionId: created.sessionId, binding: created.binding, created: true }
+    })
+    this.factorSessionOpening = next; return next
+  }
+
   @Remote('contestStatus')
   contestStatus(request: { sessionId?: string }): Promise<ContestStatus> { return this.contest.status(request.sessionId) }
 
@@ -1291,9 +1378,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       throw new TypeError('QuantSkills plain Session create accepts workspaceId or cwd, not both')
     }
     const active = this.operationSignal(signal)
-    if (request.contestConversation !== undefined && request.purpose !== 'contest') throw new Error('普通会话不能设置比赛对话类型。')
+    if (request.contestConversation !== undefined && request.purpose !== 'contest' && request.purpose !== 'factor-contest') throw new Error('普通会话不能设置比赛对话类型。')
     const binding = Object.freeze({ purpose: request.purpose,
       ...(request.purpose === 'contest' ? { contest: await this.contest.researchIdentity() } : {}),
+      ...(request.purpose === 'factor-contest' ? { factorContest: await this.factorContest.researchIdentity() } : {}),
       ...(request.contestConversation === undefined ? {} : { contestConversation: request.contestConversation }),
     })
     if (this.reservations.has(request.sessionId)
@@ -2828,6 +2916,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         await this.contest.rules()
         installContestTools(agentCtx, agent, this.contest, binding.contest)
       }
+      if (binding.factorContest) installFactorContestTools(agentCtx, agent, this.factorContest, binding.factorContest)
       if (loggedPlain === null) agent.session.append(PLAIN_SESSION_EVENT, binding)
       return
     }
@@ -3519,7 +3608,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       disposeOutputPolicy = registerLiteralPromptSection(systemPrompt, {
         name: 'quantskills:artifact-output',
         order: 114,
-        text: () => (foldQuantSkillsPlainSessionBinding(agent.session.events) ?? this.plainReservations.get(agent.session.id)?.binding)?.purpose === 'contest'
+        text: () => ['contest', 'factor-contest'].includes((foldQuantSkillsPlainSessionBinding(agent.session.events) ?? this.plainReservations.get(agent.session.id)?.binding)?.purpose ?? '')
           ? '比赛研究在本对话中交付。仅使用本会话已开放的工具和已附文件，不使用 Shell 或任意代码，不声称创建了未生成的文件。'
           : [
           'Write every generated artifact under `output/` in the current Session workspace.',
@@ -4090,7 +4179,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
         : this.ctx.sessionProjections.snapshot(live)
       const binding = projectionPlainBinding(snapshot)
-      if (binding?.purpose !== 'ordinary' && binding?.purpose !== 'contest') continue
+      if (binding?.purpose !== 'ordinary' && binding?.purpose !== 'contest' && binding?.purpose !== 'factor-contest') continue
       const title = typeof snapshot.values.title === 'string' ? snapshot.values.title : undefined
       const metadata = snapshot.values.sessionListMetadata
       items.push(Object.freeze({
@@ -4217,6 +4306,7 @@ function bindingFrom(version: QuantSkillsInstalledVersion): QuantSkillsSessionBi
 
 function samePlainBinding(left: QuantSkillsPlainSessionBinding, right: QuantSkillsPlainSessionBinding): boolean {
   return left.purpose === right.purpose && left.contest?.accountId === right.contest?.accountId && left.contest?.contestId === right.contest?.contestId
+    && left.factorContest?.accountId === right.factorContest?.accountId && left.factorContest?.contestId === right.factorContest?.contestId
     && left.contestConversation === right.contestConversation
 }
 

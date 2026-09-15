@@ -1,5 +1,6 @@
 import { type DatabaseAccess } from './DatabasePage.tsx';
 import type { ContestAccess } from './contest.ts';
+import type { FactorContestAccess } from './factor-contest.ts';
 import { type ManualSkillSave } from './ManualSkillEditor.tsx';
 import { type ReactNode, type RefObject } from 'react';
 import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store';
@@ -18,6 +19,7 @@ export interface QuantSkillsAppInjected {
     renderPluginMarket?: () => ReactNode;
     databaseAccess?: DatabaseAccess;
     contestAccess?: ContestAccess;
+    factorContestAccess?: FactorContestAccess;
     modelAccess?: ModelAccess;
     /** Whether new Sessions use the native plugin's managed-default Workspace policy. */
     managedWorkspace: boolean;
