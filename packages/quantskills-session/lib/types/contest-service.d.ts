@@ -17,6 +17,7 @@ export declare class ContestService {
     private generation;
     private currentRules;
     private lastInspection?;
+    private checkingUpdate?;
     constructor(cli: ContestCli, dshHome?: string);
     private load;
     private save;

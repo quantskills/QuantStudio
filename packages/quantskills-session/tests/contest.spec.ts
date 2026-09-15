@@ -37,6 +37,34 @@ async function fixture() {
 }
 
 describe('contest is opt-in and independent of ordinary sessions', () => {
+  it('cancels an obsolete data read so a foreground connection can leave the queue', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.run.getMockImplementation()!, controller = new AbortController()
+    let reading = false
+    f.run.mockImplementation((runtime, args, signal) => args[0] === 'account' ? new Promise((_resolve, reject) => {
+      reading = true; signal!.addEventListener('abort', () => reject(signal!.reason), { once: true })
+    }) : base(runtime, args, signal))
+    const query = f.service.query({ kind: 'account' }, undefined, controller.signal).catch(error => error)
+    await vi.waitFor(() => expect(reading).toBe(true))
+    const connecting = f.service.connect()
+    controller.abort()
+    expect(await query).toBeInstanceOf(Error)
+    await expect(connecting).resolves.toMatchObject({ phase: 'connected' })
+    await expect(f.service.query({ kind: 'positions' }, undefined, controller.signal)).rejects.toThrow()
+    expect(f.run.mock.calls.some(([, args]) => args[0] === 'positions')).toBe(false)
+  })
+  it('does not queue foreground connection behind a slow background update check', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.run.getMockImplementation()!
+    let finish!: (value: ContestData) => void
+    f.run.mockImplementation((runtime, args, signal) => args[0] === 'update' ? new Promise(resolve => { finish = resolve }) : base(runtime, args, signal))
+    const checking = f.service.checkUpdate()
+    await vi.waitFor(() => expect(finish).toBeDefined())
+    let connected = false
+    const connecting = f.service.connect().then(() => { connected = true })
+    try { await vi.waitFor(() => expect(connected).toBe(true), { timeout: 500 }) }
+    finally { finish(data({ latestVersion: '0.1.20' })); await checking; await connecting }
+  })
   it('inspects only the bound account with read-only commands and drops context on disable or account change', async () => {
     const f = await fixture(); await f.connect()
     const snapshot = await f.service.inspect(identity)

@@ -31,7 +31,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     contestExecute: (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<ContestPlan>>
     contestInspect: (request: { sessionId: SessionId; }, signal?: AbortSignal) => Promise<RemoteResult<ContestInspection>>
     contestMode: (request: { enabled: boolean; }) => Promise<RemoteResult<ContestStatus>>
-    contestQuery: (request: ContestQuery) => Promise<RemoteResult<ContestData>>
+    contestQuery: (request: ContestQuery, signal?: AbortSignal) => Promise<RemoteResult<ContestData>>
     contestReconcile: (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<ContestPlan>>
     contestSessionOpen: (request: ContestSessionOpenRequest, signal?: AbortSignal) => Promise<RemoteResult<ContestSessionOpenResult>>
     contestStatus: (request: { sessionId?: string; }) => Promise<RemoteResult<ContestStatus>>
@@ -42,10 +42,10 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     factorConnect: (request: { credentials?: FactorCredentials; }) => Promise<RemoteResult<FactorContestStatus>>
     factorDisconnect: () => Promise<RemoteResult<FactorContestStatus>>
     factorDismiss: (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<void>>
-    factorInspect: (request: { sessionId?: SessionId; }) => Promise<RemoteResult<FactorInspection>>
+    factorInspect: (request: { sessionId?: SessionId; }, signal?: AbortSignal) => Promise<RemoteResult<FactorInspection>>
     factorMode: (request: { enabled: boolean; }) => Promise<RemoteResult<FactorContestStatus>>
     factorPrepare: (request: { action: FactorPlanAction; sessionId?: SessionId; }) => Promise<RemoteResult<FactorPlan>>
-    factorQuery: (request: FactorQuery) => Promise<RemoteResult<JsonValue>>
+    factorQuery: (request: FactorQuery, signal?: AbortSignal) => Promise<RemoteResult<JsonValue>>
     factorReconcilePlan: (request: { planId: string; }) => Promise<RemoteResult<FactorPlan>>
     factorReconcileRun: (request: { runId: string; }) => Promise<RemoteResult<FactorRun>>
     factorSessionOpen: (request: ContestSessionOpenRequest, signal?: AbortSignal) => Promise<RemoteResult<ContestSessionOpenResult>>
@@ -95,7 +95,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'quantSkillsSessions/contestExecute': (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<ContestPlan>>
     'quantSkillsSessions/contestInspect': (request: { sessionId: SessionId; }, signal?: AbortSignal) => Promise<RemoteResult<ContestInspection>>
     'quantSkillsSessions/contestMode': (request: { enabled: boolean; }) => Promise<RemoteResult<ContestStatus>>
-    'quantSkillsSessions/contestQuery': (request: ContestQuery) => Promise<RemoteResult<ContestData>>
+    'quantSkillsSessions/contestQuery': (request: ContestQuery, signal?: AbortSignal) => Promise<RemoteResult<ContestData>>
     'quantSkillsSessions/contestReconcile': (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<ContestPlan>>
     'quantSkillsSessions/contestSessionOpen': (request: ContestSessionOpenRequest, signal?: AbortSignal) => Promise<RemoteResult<ContestSessionOpenResult>>
     'quantSkillsSessions/contestStatus': (request: { sessionId?: string; }) => Promise<RemoteResult<ContestStatus>>
@@ -106,10 +106,10 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'quantSkillsSessions/factorConnect': (request: { credentials?: FactorCredentials; }) => Promise<RemoteResult<FactorContestStatus>>
     'quantSkillsSessions/factorDisconnect': () => Promise<RemoteResult<FactorContestStatus>>
     'quantSkillsSessions/factorDismiss': (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<void>>
-    'quantSkillsSessions/factorInspect': (request: { sessionId?: SessionId; }) => Promise<RemoteResult<FactorInspection>>
+    'quantSkillsSessions/factorInspect': (request: { sessionId?: SessionId; }, signal?: AbortSignal) => Promise<RemoteResult<FactorInspection>>
     'quantSkillsSessions/factorMode': (request: { enabled: boolean; }) => Promise<RemoteResult<FactorContestStatus>>
     'quantSkillsSessions/factorPrepare': (request: { action: FactorPlanAction; sessionId?: SessionId; }) => Promise<RemoteResult<FactorPlan>>
-    'quantSkillsSessions/factorQuery': (request: FactorQuery) => Promise<RemoteResult<JsonValue>>
+    'quantSkillsSessions/factorQuery': (request: FactorQuery, signal?: AbortSignal) => Promise<RemoteResult<JsonValue>>
     'quantSkillsSessions/factorReconcilePlan': (request: { planId: string; }) => Promise<RemoteResult<FactorPlan>>
     'quantSkillsSessions/factorReconcileRun': (request: { runId: string; }) => Promise<RemoteResult<FactorRun>>
     'quantSkillsSessions/factorSessionOpen': (request: ContestSessionOpenRequest, signal?: AbortSignal) => Promise<RemoteResult<ContestSessionOpenResult>>

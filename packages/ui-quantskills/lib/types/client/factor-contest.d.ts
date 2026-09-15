@@ -7,15 +7,15 @@ export interface FactorContestAccess {
     disconnect(): Promise<FactorContestStatus>;
     checkUpdate(): Promise<FactorContestStatus>;
     update(): Promise<FactorContestStatus>;
-    inspect(sessionId?: string): Promise<FactorInspection>;
-    query(query: FactorQuery): Promise<JsonValue>;
+    inspect(sessionId?: string, signal?: AbortSignal): Promise<FactorInspection>;
+    query(query: FactorQuery, signal?: AbortSignal): Promise<JsonValue>;
     prepare(action: FactorPlanAction, sessionId?: string): Promise<FactorPlan>;
     confirm(plan: FactorPlan): Promise<FactorPlan>;
     dismiss(plan: FactorPlan): Promise<void>;
     stopBudget(budgetId: string): Promise<void>;
     reconcileRun(runId: string): Promise<FactorRun>;
     reconcilePlan(planId: string): Promise<FactorPlan>;
-    startResearch(topic?: boolean): Promise<void>;
+    startResearch(topic?: boolean, signal?: AbortSignal): Promise<void>;
     requestResearch(sessionId: string, text: string): Promise<void>;
 }
 export declare const factorPhases: {
@@ -31,7 +31,7 @@ export declare function useFactorContest(access: FactorContestAccess, sessionId?
     status: FactorContestStatus | undefined;
     error: string;
     busy: string;
-    run: (name: string, work: () => Promise<unknown>) => Promise<boolean>;
+    run: (name: string, work: (signal: AbortSignal) => Promise<unknown>) => Promise<boolean>;
     refresh: () => Promise<void>;
 };
 //# sourceMappingURL=factor-contest.d.ts.map

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { ContestData, ContestQuery, QuantSkillsPlainSessionArchiveItem } from './plugin-types.ts'
 import { asRecord, contestPhases, contestTime, display, useContest, type ContestAccess } from './contest.ts'
 import { ContestPlans } from './ContestPlans.tsx'
+import { waitForCompetition } from './competition-async.ts'
 import css from './ContestPage.module.css'
 
 const tabs: readonly [ContestQuery['kind'], string][] = [['account', '资金'], ['positions', '持仓'], ['open-orders', '当前挂单'], ['orders', '委托记录'], ['trades', '成交记录'], ['ranking-me', '我的排名'], ['ranking', '排行榜'], ['settlements', '每日结算'], ['quote', '最新行情']]
@@ -34,32 +35,36 @@ function ConnectedContestPage({ access, researchSessions = [], openResearch }: C
   const [symbol, setSymbol] = useState(''), [data, setData] = useState<ContestData>()
   const [loading, setLoading] = useState(false), [dataError, setDataError] = useState<string>()
   const request = useRef(0), checked = useRef(false)
+  const queryController = useRef<AbortController | undefined>(undefined)
   const connected = status?.enabled && status.phase === 'connected'
+  const canRead = connected && !['connect', 'disconnect', 'update', 'mode'].includes(busy)
   const recentResearch = status?.identity && researchSessions.filter(session => !session.archived && !session.parentSessionId
     && session.binding.purpose === 'contest' && session.binding.contest?.accountId === status.identity!.accountId
     && session.binding.contest?.contestId === status.identity!.contestId).sort((a, b) => b.updatedAt - a.updatedAt)[0]
   const query = async (lastId?: string) => {
     if (!connected || (tab === 'quote' && !symbol.trim())) return
     const id = ++request.current
+    queryController.current?.abort(); queryController.current = new AbortController()
     setLoading(true); setDataError(undefined); setData(undefined)
     try {
-      const next = await access.query({ kind: tab, ...(tab === 'quote' ? { symbol: symbol.trim() } : {}),
-        ...(['orders', 'trades'].includes(tab) && date ? { date } : {}), ...(['ranking', 'ranking-me'].includes(tab) ? { board } : {}), ...(lastId ? { lastId } : {}) })
+      const next = await waitForCompetition(signal => access.query({ kind: tab, ...(tab === 'quote' ? { symbol: symbol.trim() } : {}),
+        ...(['orders', 'trades'].includes(tab) && date ? { date } : {}), ...(['ranking', 'ranking-me'].includes(tab) ? { board } : {}), ...(lastId ? { lastId } : {}) }, signal), '比赛数据查询', 30_000, queryController.current.signal)
       if (id === request.current) setData(next)
     } catch (error) { if (id === request.current) setDataError(error instanceof Error ? error.message : '查询失败。') }
     finally { if (id === request.current) setLoading(false) }
   }
   useEffect(() => {
     request.current++; setData(undefined); setDataError(undefined); setLoading(false)
-    if (connected && tab !== 'quote') void query()
-    return () => { request.current++ }
-  }, [tab, date, board, connected, status?.identity?.accountId, status?.identity?.contestId])
+    if (canRead && tab !== 'quote') void query()
+    return () => { request.current++; queryController.current?.abort() }
+  }, [tab, date, board, canRead, status?.identity?.accountId, status?.identity?.contestId])
   useEffect(() => {
-    if (!status?.enabled || !status.cliVersion || ['installing', 'authenticating'].includes(status.phase)) { checked.current = false; return }
+    if (!status?.enabled || !status.cliVersion) { checked.current = false; return }
+    if (!connected || busy) return
     if (checked.current) return
     checked.current = true
-    void access.checkUpdate().then(refresh).catch(() => {})
-  }, [status?.enabled, status?.cliVersion, status?.phase, access, refresh])
+    void waitForCompetition(() => access.checkUpdate(), 'CLI 更新检查').then(refresh).catch(() => {})
+  }, [status?.enabled, status?.cliVersion, connected, busy, access, refresh])
   const enabled = status?.enabled ?? false
   return <section className={css.page} aria-label="期货仿真比赛">
     <header className={css.header}>
@@ -68,7 +73,7 @@ function ConnectedContestPage({ access, researchSessions = [], openResearch }: C
         className={css.switch} data-enabled={enabled} onClick={() => { void run('mode', () => access.mode(!enabled)) }}>
         <span aria-hidden="true"/>{enabled ? '比赛模式已开启' : '开启比赛模式'}</button>
     </header>
-    {error && <p className={css.error} role="alert">{error}</p>}
+    {error && <p className={css.error} role="alert">{error} <button type="button" onClick={() => { void refresh() }}>重新读取状态</button></p>}
     {!status ? <p role="status">读取本机比赛状态…</p> : !enabled ? <div className={css.welcome}>
       <h2>准备好时，再进入比赛。</h2><p>开启后可连接自己的参赛账户，查看持仓和战绩，并从这里开始研究。</p>
       <p>普通对话、数据、技能和专家继续按原有方式使用。</p>
@@ -91,9 +96,9 @@ function ConnectedContestPage({ access, researchSessions = [], openResearch }: C
         <div className={css.assistantHeading}>
           <div><h2>让 AI 协助你的比赛交易</h2><p>默认继续本账户主对话，先巡检资金、持仓与委托，再研究、预演，由你确认提交。</p></div>
           <div className={css.actions}>
-            <button type="button" data-primary disabled={!connected || Boolean(busy)} onClick={() => { void run('research', () => access.startResearch()) }}>
+            <button type="button" data-primary disabled={!connected || Boolean(busy)} onClick={() => { void run('research', signal => access.startResearch(undefined, signal)) }}>
               {busy === 'research' ? '正在打开对话…' : '进入 AI 交易助手'}</button>
-            <button type="button" disabled={!connected || Boolean(busy)} onClick={() => { void run('topic', () => access.startResearch(true)) }}>新建专题对话</button>
+            <button type="button" disabled={!connected || Boolean(busy)} onClick={() => { void run('topic', signal => access.startResearch(true, signal)) }}>新建专题对话</button>
             {recentResearch && openResearch && <button type="button" disabled={!connected || Boolean(busy)}
               onClick={() => openResearch(recentResearch.sessionId)}>继续最近对话</button>}
           </div>
@@ -109,7 +114,7 @@ function ConnectedContestPage({ access, researchSessions = [], openResearch }: C
           <div className={css.toolbar}>
             {['orders', 'trades'].includes(tab) && <label>记录范围 <select value={date} onChange={event => setDate(event.target.value)}><option value="today">今天</option><option value="">最近记录</option></select></label>}
             {['ranking', 'ranking-me'].includes(tab) && <label>榜单 <select value={board} onChange={event => setBoard(event.target.value as 'live' | 'settled')}><option value="live">实时榜</option><option value="settled">结算榜</option></select></label>}
-            {tab === 'quote' && <label>品种或实际合约 <input value={symbol} maxLength={32} placeholder="例如：黄金、rb2610" onChange={event => { request.current++; setSymbol(event.target.value); setData(undefined); setLoading(false) }} onKeyDown={event => { if (event.key === 'Enter') void query() }}/></label>}
+            {tab === 'quote' && <label>品种或实际合约 <input value={symbol} maxLength={32} placeholder="例如：黄金、rb2610" onChange={event => { request.current++; queryController.current?.abort(); setSymbol(event.target.value); setData(undefined); setLoading(false) }} onKeyDown={event => { if (event.key === 'Enter') void query() }}/></label>}
             <button type="button" disabled={loading || (tab === 'quote' && !symbol.trim())} onClick={() => { void query() }}>{loading ? '读取中…' : '刷新数据'}</button>
             {data && <small>读取于 {contestTime(data.fetchedAt)}（上海）</small>}
           </div>

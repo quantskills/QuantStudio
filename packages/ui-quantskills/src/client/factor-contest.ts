@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCompetitionState } from './competition-async.ts'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import type { FactorContestStatus, FactorCredentials, FactorInspection, FactorPlan, FactorPlanAction, FactorQuery, FactorRun } from './plugin-types.ts'
 
@@ -9,15 +9,15 @@ export interface FactorContestAccess {
   disconnect(): Promise<FactorContestStatus>
   checkUpdate(): Promise<FactorContestStatus>
   update(): Promise<FactorContestStatus>
-  inspect(sessionId?: string): Promise<FactorInspection>
-  query(query: FactorQuery): Promise<JsonValue>
+  inspect(sessionId?: string, signal?: AbortSignal): Promise<FactorInspection>
+  query(query: FactorQuery, signal?: AbortSignal): Promise<JsonValue>
   prepare(action: FactorPlanAction, sessionId?: string): Promise<FactorPlan>
   confirm(plan: FactorPlan): Promise<FactorPlan>
   dismiss(plan: FactorPlan): Promise<void>
   stopBudget(budgetId: string): Promise<void>
   reconcileRun(runId: string): Promise<FactorRun>
   reconcilePlan(planId: string): Promise<FactorPlan>
-  startResearch(topic?: boolean): Promise<void>
+  startResearch(topic?: boolean, signal?: AbortSignal): Promise<void>
   requestResearch(sessionId: string, text: string): Promise<void>
 }
 export const factorPhases = { off: '已关闭', disconnected: '未连接', installing: '正在准备 CLI', connected: '已连接', error: '需要处理' }
@@ -26,25 +26,5 @@ export const factorStates: Record<string, string> = { prepared: '待确认', exe
 
 /** Local polling only. Invalidates late reads and actions on session changes or mode changes. */
 export function useFactorContest(access: FactorContestAccess, sessionId?: string) {
-  const [status, setStatus] = useState<FactorContestStatus>(), [error, setError] = useState(''), [busy, setBusy] = useState('')
-  const mounted = useRef(false), reads = useRef(0), actions = useRef(0), active = useRef('')
-  const refresh = useCallback(async () => {
-    const serial = ++reads.current
-    try { const next = await access.status(sessionId); if (mounted.current && serial === reads.current) setStatus(next) }
-    catch (e) { if (mounted.current && serial === reads.current) setError(e instanceof Error ? e.message : '无法读取因子比赛状态。') }
-  }, [access, sessionId])
-  useEffect(() => {
-    mounted.current = true; setStatus(undefined); setError(''); void refresh()
-    const timer = window.setInterval(() => { void refresh() }, 2000)
-    return () => { mounted.current = false; reads.current++; actions.current++; window.clearInterval(timer) }
-  }, [refresh])
-  const run = async (name: string, work: () => Promise<unknown>): Promise<boolean> => {
-    if (active.current && name !== 'mode' && name !== 'stop') return false
-    const serial = ++actions.current
-    active.current = name; setBusy(name); setError(''); reads.current++
-    try { await work(); return mounted.current && serial === actions.current }
-    catch (e) { if (mounted.current && serial === actions.current) setError(e instanceof Error ? e.message : '因子操作未完成。'); return false }
-    finally { if (mounted.current && serial === actions.current) { active.current = ''; setBusy(''); await refresh() } }
-  }
-  return { status, error, busy, run, refresh }
+  return useCompetitionState(access, sessionId)
 }

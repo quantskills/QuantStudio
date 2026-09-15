@@ -6,6 +6,7 @@ import { CompetitionDock } from "./CompetitionDock.js";
 import { ContestTable } from "./ContestPage.js";
 import { asRecord, contestTime, display, useContest } from "./contest.js";
 import css from './ContestPage.module.css';
+import { waitForCompetition } from "./competition-async.js";
 /** Normal sessions never mount a contest poller or load account context. */
 export function ContestReview({ useSessions, access, openContest }) {
     const session = useSessions(state => state.current ? state.byId[state.current] : undefined);
@@ -19,15 +20,18 @@ function SessionContestReview({ sessionId, binding, running, access, openContest
     const [inspection, setInspection] = useState(), [inspectionError, setInspectionError] = useState('');
     const [checking, setChecking] = useState(false), [details, setDetails] = useState(false), [symbol, setSymbol] = useState('');
     const reads = useRef(0);
+    const controller = useRef(undefined);
     const identity = binding.contest;
     const matches = status?.identity?.accountId === identity.accountId && status?.identity?.contestId === identity.contestId;
     const ready = Boolean(status?.enabled && status.phase === 'connected' && matches);
     const inspect = async () => {
         const id = ++reads.current;
+        controller.current?.abort();
+        controller.current = new AbortController();
         setChecking(true);
         setInspectionError('');
         try {
-            const next = await access.inspect(sessionId);
+            const next = await waitForCompetition(signal => access.inspect(sessionId, signal), '账户巡检', 30_000, controller.current.signal);
             if (reads.current === id && next.identity.accountId === identity.accountId && next.identity.contestId === identity.contestId)
                 setInspection(next);
         }
@@ -46,7 +50,7 @@ function SessionContestReview({ sessionId, binding, running, access, openContest
         setChecking(false);
         if (ready)
             void inspect();
-        return () => { reads.current++; };
+        return () => { reads.current++; controller.current?.abort(); };
     }, [ready, sessionId, access]);
     const research = (text) => { void run('research', () => access.requestResearch(sessionId, text)); };
     const account = asRecord(inspection?.account.data);

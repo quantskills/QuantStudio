@@ -6,20 +6,20 @@ export interface ContestAccess {
     disconnect(): Promise<ContestStatus>;
     checkUpdate(): Promise<ContestStatus>;
     update(): Promise<ContestStatus>;
-    query(query: ContestQuery): Promise<ContestData>;
+    query(query: ContestQuery, signal?: AbortSignal): Promise<ContestData>;
     execute(plan: ContestPlan): Promise<ContestPlan>;
     dismiss(plan: ContestPlan): Promise<ContestStatus>;
     reconcile(plan: ContestPlan): Promise<ContestPlan>;
-    inspect(sessionId: string): Promise<ContestInspection>;
+    inspect(sessionId: string, signal?: AbortSignal): Promise<ContestInspection>;
     requestResearch(sessionId: string, text: string): Promise<void>;
-    startResearch(topic?: boolean): Promise<void>;
+    startResearch(topic?: boolean, signal?: AbortSignal): Promise<void>;
 }
 /** Polls local status only while a contest surface is mounted. Late responses cannot restore old UI state. */
 export declare function useContest(access: ContestAccess, sessionId?: string): {
+    error: string;
     status: ContestStatus | undefined;
-    error: string | undefined;
     busy: string;
-    run: (name: string, work: () => Promise<unknown>) => Promise<void>;
+    run: (name: string, work: (signal: AbortSignal) => Promise<unknown>) => Promise<boolean>;
     refresh: () => Promise<void>;
 };
 export declare const contestPhases: {
