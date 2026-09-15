@@ -130,8 +130,8 @@ export class FactorContestService {
     return this.call(s => this.runtime.cli(join(this.root, 'runtimes', this.state.runtime!), args, s), signal)
   }
   private arena(path: string, signal?: AbortSignal): Promise<JsonValue> { return this.call(s => this.runtime.arena(path, s), signal) }
-  private async verify(expected?: ContestIdentity): Promise<ContestIdentity> {
-    const accountId = await this.call(s => this.runtime.identity(s))
+  private async verify(expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestIdentity> {
+    const accountId = await this.call(s => this.runtime.identity(s), signal)
     const identity = { accountId, contestId: FACTOR_CONTEST_ID }
     if ((expected && !sameContest(identity, expected)) || (this.state.identity && !sameContest(identity, this.state.identity))) {
       this.ready = false; this.invalidate(); throw new Error('因子登录账户已改变，请重新连接并进入新账户对话。')
@@ -176,7 +176,6 @@ export class FactorContestService {
           : await this.call(s => this.runtime.identity(s))
         this.state.identity = { accountId, contestId: FACTOR_CONTEST_ID }
         this.ready = true; this.phase = 'connected'
-        await this.inspectCurrent()
         this.message = '因子账户已连接。报名及身份资料在赛事官网完成。'
         await this.save()
       } catch (error) {
@@ -213,32 +212,32 @@ export class FactorContestService {
   async researchIdentity(expected?: ContestIdentity): Promise<ContestIdentity> {
     return this.exclusive(async () => { this.assertReady(expected); return this.verify(expected ?? this.state.identity) })
   }
-  private async balance(): Promise<number> {
-    const value = record((await this.cli(['balance'])).balance).computingPower
+  private async balance(signal?: AbortSignal): Promise<number> {
+    const value = record((await this.cli(['balance'], signal)).balance).computingPower
     if ((typeof value !== 'string' && typeof value !== 'number') || !Number.isFinite(Number(value)) || Number(value) < 0) throw new Error('无法核实算力余额，停止启动新回测。')
     return Number(value)
   }
-  private async pool(): Promise<JsonValue> {
-    try { return await this.arena('/factorPool/pools') }
+  private async pool(signal?: AbortSignal): Promise<JsonValue> {
+    try { return await this.arena('/factorPool/pools', signal) }
     catch (error) { if (error instanceof FactorApiError && error.code === 'POOL_NOT_FOUND') return null; throw error }
   }
-  private async inspectCurrent(): Promise<FactorInspection> {
-    const identity = await this.verify(this.state.identity)
-    const balance = await this.balance(), registration = await this.arena('/factorArena/me/registration-state'), pool = await this.pool()
+  private async inspectCurrent(signal?: AbortSignal): Promise<FactorInspection> {
+    const identity = await this.verify(this.state.identity, signal)
+    const balance = await this.balance(signal), registration = await this.arena('/factorArena/me/registration-state', signal), pool = await this.pool(signal)
     this.inspection = { identity, fetchedAt: Date.now(), balance, registration, pool }
     return structuredClone(this.inspection)
   }
-  async inspect(expected?: ContestIdentity): Promise<FactorInspection> {
-    return this.exclusive(async () => { this.assertReady(expected); return this.inspectCurrent() })
+  async inspect(expected?: ContestIdentity, signal?: AbortSignal): Promise<FactorInspection> {
+    return this.exclusive(async () => { this.assertReady(expected); return this.inspectCurrent(signal) })
   }
   async query(input: FactorQuery, expected?: ContestIdentity, signal?: AbortSignal): Promise<JsonValue> {
     const request = z.object({ kind: z.enum(['pool', 'workflows', 'scores', 'factor-info', 'factor-result', 'factors']), id: id.optional(), page: z.number().int().min(1).max(1000).optional() }).strict().parse(input)
     return this.exclusive(async () => {
-      this.assertReady(expected); await this.verify(expected ?? this.state.identity)
-      if (request.kind === 'pool') return this.pool()
+      this.assertReady(expected); await this.verify(expected ?? this.state.identity, signal)
+      if (request.kind === 'pool') return this.pool(signal)
       if (request.kind === 'workflows') return this.arena(`/factorPool/workflows?page=${request.page ?? 1}&page_size=50`, signal)
       if (request.kind === 'scores') {
-        const poolId = id.parse(record(await this.pool()).pool_id)
+        const poolId = id.parse(record(await this.pool(signal)).pool_id)
         return this.arena(`/factorPool/pools/${poolId}/scores`, signal)
       }
       if (request.kind === 'factors') return this.cli(['factor_list', '--no-detail', '--limit', '50', '--page', String(request.page ?? 1)], signal)
@@ -313,7 +312,10 @@ export class FactorContestService {
       }
       await this.save()
       if (p.status === 'completed' && this.state.enabled && this.ready) {
-        try { await this.inspectCurrent() } catch { this.message = '操作已完成，账户快照尚未刷新，请手动刷新核对。' }
+        const generation = this.generation
+        void this.inspect(p.identity, AbortSignal.timeout(30_000)).catch(() => {
+          if (generation === this.generation) this.message = '操作已完成，账户快照尚未刷新，请手动刷新核对。'
+        })
       }
       return structuredClone(p)
     })

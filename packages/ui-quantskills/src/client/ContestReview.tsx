@@ -9,6 +9,7 @@ import { CompetitionDock } from './CompetitionDock.tsx'
 import { ContestTable } from './ContestPage.tsx'
 import { asRecord, contestTime, display, useContest, type ContestAccess } from './contest.ts'
 import css from './ContestPage.module.css'
+import { waitForCompetition } from './competition-async.ts'
 
 export interface ContestReviewInjected { hooks: { sessions: ObservableSnapshot<SessionListState> }; access: ContestAccess; openContest(): void }
 
@@ -27,14 +28,16 @@ function SessionContestReview({ sessionId, binding, running, access, openContest
   const [inspection, setInspection] = useState<ContestInspection>(), [inspectionError, setInspectionError] = useState('')
   const [checking, setChecking] = useState(false), [details, setDetails] = useState(false), [symbol, setSymbol] = useState('')
   const reads = useRef(0)
+  const controller = useRef<AbortController | undefined>(undefined)
   const identity = binding.contest!
   const matches = status?.identity?.accountId === identity.accountId && status?.identity?.contestId === identity.contestId
   const ready = Boolean(status?.enabled && status.phase === 'connected' && matches)
   const inspect = async () => {
     const id = ++reads.current
+    controller.current?.abort(); controller.current = new AbortController()
     setChecking(true); setInspectionError('')
     try {
-      const next = await access.inspect(sessionId)
+      const next = await waitForCompetition(signal => access.inspect(sessionId, signal), '账户巡检', 30_000, controller.current.signal)
       if (reads.current === id && next.identity.accountId === identity.accountId && next.identity.contestId === identity.contestId) setInspection(next)
     } catch (error) { if (reads.current === id) setInspectionError(error instanceof Error ? error.message : '账户巡检未完成。') }
     finally { if (reads.current === id) setChecking(false) }
@@ -42,7 +45,7 @@ function SessionContestReview({ sessionId, binding, running, access, openContest
   useEffect(() => {
     setInspection(undefined); setInspectionError(''); setChecking(false)
     if (ready) void inspect()
-    return () => { reads.current++ }
+    return () => { reads.current++; controller.current?.abort() }
   }, [ready, sessionId, access])
   const research = (text: string) => { void run('research', () => access.requestResearch(sessionId, text)) }
   const account = asRecord(inspection?.account.data)

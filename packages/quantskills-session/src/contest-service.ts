@@ -68,6 +68,7 @@ export class ContestService {
   private generation = 0
   private currentRules = ''
   private lastInspection?: ContestInspection
+  private checkingUpdate?: Promise<ContestStatus>
 
   constructor(private readonly cli: ContestCli, dshHome?: string) {
     this.root = join(resolveDshHome(dshHome), 'quantskills', 'contest')
@@ -109,8 +110,11 @@ export class ContestService {
   private async run(args: readonly string[], signal?: AbortSignal): Promise<ContestData> {
     this.assertEnabled()
     const generation = this.generation
-    const result = await this.cli.run(this.runtime(), args, signal ? AbortSignal.any([this.controller.signal, signal]) : this.controller.signal)
+    const active = signal ? AbortSignal.any([this.controller.signal, signal]) : this.controller.signal
+    active.throwIfAborted()
+    const result = await this.cli.run(this.runtime(), args, active)
     if (generation !== this.generation) throw new Error('比赛模式已切换，本次操作已中止。')
+    active.throwIfAborted()
     this.assertEnabled()
     return result
   }
@@ -180,8 +184,8 @@ export class ContestService {
     await this.save()
   }
 
-  private async validateIdentity(expected?: ContestIdentity): Promise<ContestIdentity> {
-    const me = record((await this.run(['whoami'])).data)
+  private async validateIdentity(expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestIdentity> {
+    const me = record((await this.run(['whoami'], signal)).data)
     const identity = { accountId: String(me.accountId ?? ''), contestId: String(me.contestId ?? '') }
     const scopes = String(me.scope ?? '').split(/\s+/)
     if (me.loggedIn !== true || !identity.accountId || !identity.contestId || !scopes.includes('futures:read') || !scopes.includes('futures:trade')) {
@@ -197,12 +201,12 @@ export class ContestService {
       for (const plan of this.state.plans) if (plan.status === 'prepared') plan.status = 'cancelled'
     }
     this.state.identity = identity
-    const spec = record((await this.run(['agent', 'describe'])).data)
+    const spec = record((await this.run(['agent', 'describe'], signal)).data)
     if (!this.state.version || typeof spec.minimumCliVersion !== 'string' || !versionAtLeast(this.state.version, spec.minimumCliVersion)) {
       this.ready = false
       throw new Error('比赛 CLI 低于服务端最低版本，请在比赛页更新。')
     }
-    const doctor = record((await this.run(['doctor'])).data)
+    const doctor = record((await this.run(['doctor'], signal)).data)
     if (doctor.allOk !== true) { this.ready = false; throw new Error('比赛账户或交易通道自检未通过，请检查官网账户状态。') }
     this.assertEnabled(); this.ready = true; this.phase = 'connected'
     await this.save()
@@ -237,7 +241,7 @@ export class ContestService {
   async inspect(identity: ContestIdentity, signal?: AbortSignal): Promise<ContestInspection> {
     return this.exclusive(async () => {
       this.assertReady(identity)
-      await this.validateIdentity(identity)
+      await this.validateIdentity(identity, signal)
       const account = await this.run(['account'], signal)
       const positions = await this.run(['positions'], signal)
       const openOrders = await this.run(['orders', '--status', 'open', '--count', '200'], signal)
@@ -261,13 +265,18 @@ export class ContestService {
   }
 
   async checkUpdate(): Promise<ContestStatus> {
-    return this.exclusive(async () => {
+    if (this.checkingUpdate) return this.checkingUpdate
+    const checking = (async () => {
+      await this.load()
       this.assertEnabled()
       const result = record((await this.run(['update', '--check'])).data)
       if (typeof result.latestVersion !== 'string') throw new Error('无法读取比赛 CLI 最新版本。')
       this.latestVersion = result.latestVersion
       return this.status()
-    })
+    })()
+    this.checkingUpdate = checking
+    try { return await checking }
+    finally { if (this.checkingUpdate === checking) delete this.checkingUpdate }
   }
 
   async update(): Promise<ContestStatus> {

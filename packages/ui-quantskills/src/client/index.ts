@@ -1120,11 +1120,11 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
     disconnect: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestDisconnect()),
     checkUpdate: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestCheckUpdate()),
     update: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestUpdate()),
-    query: request => unwrapRemote(ctx.remote.quantSkillsSessions.contestQuery(request)),
+    query: (request, signal) => unwrapRemote(ctx.remote.quantSkillsSessions.contestQuery(request, signal)),
     execute: plan => unwrapRemote(ctx.remote.quantSkillsSessions.contestExecute({ planId: plan.id, sessionId: plan.sessionId })),
     dismiss: plan => unwrapRemote(ctx.remote.quantSkillsSessions.contestDismiss({ planId: plan.id, sessionId: plan.sessionId })),
     reconcile: plan => unwrapRemote(ctx.remote.quantSkillsSessions.contestReconcile({ planId: plan.id, sessionId: plan.sessionId })),
-    inspect: sessionId => unwrapRemote(ctx.remote.quantSkillsSessions.contestInspect({ sessionId: sessionId as SessionId })),
+    inspect: (sessionId, signal) => unwrapRemote(ctx.remote.quantSkillsSessions.contestInspect({ sessionId: sessionId as SessionId }, signal)),
     requestResearch: async (sessionId, text) => {
       const current = ctx.sessions.list.getSnapshot()
       if (current.current !== sessionId || current.byId[sessionId as SessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'contest') {
@@ -1135,19 +1135,25 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       const result = await session.prompt([{ type: 'text', text }], 'queue')
       if (!result.ok) throw new Error(result.error.message)
     },
-    startResearch: async topic => {
+    startResearch: async (topic, callerSignal) => {
+      const signal = callerSignal ? AbortSignal.any([lifetime.signal, callerSignal]) : lifetime.signal
+      signal.throwIfAborted()
       const workspace = await resolveSessionWorkspace()
+      signal.throwIfAborted()
       const created = await unwrapRemote(ctx.remote.quantSkillsSessions.contestSessionOpen({
         ...workspace, sessionId: `session-${crypto.randomUUID()}` as SessionId, ...(topic ? { topic: true } : {}),
-      }, lifetime.signal))
-      const adopted = await adoptSession(created.sessionId, lifetime.signal,
+      }, signal))
+      signal.throwIfAborted()
+      const adopted = await adoptSession(created.sessionId, signal,
         summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'contest')
+      signal.throwIfAborted()
       if (created.created) {
         const renamed = await adopted.session.rename(topic ? '比赛 · 专题研究' : '比赛 · 账户主对话')
         if (!renamed.ok) throw new Error(renamed.error.message)
       }
+      signal.throwIfAborted()
       openSession(created.sessionId, false)
-      await boundSessions.refresh(lifetime.signal)
+      void boundSessions.refresh(lifetime.signal).catch(() => {})
     },
   }
   const factorContestAccess: FactorContestAccess = {
@@ -1157,8 +1163,8 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
     disconnect: () => unwrapRemote(ctx.remote.quantSkillsSessions.factorDisconnect()),
     checkUpdate: () => unwrapRemote(ctx.remote.quantSkillsSessions.factorCheckUpdate()),
     update: () => unwrapRemote(ctx.remote.quantSkillsSessions.factorUpdate()),
-    inspect: sessionId => unwrapRemote(ctx.remote.quantSkillsSessions.factorInspect(sessionId ? { sessionId: sessionId as SessionId } : {})),
-    query: request => unwrapRemote(ctx.remote.quantSkillsSessions.factorQuery(request)),
+    inspect: (sessionId, signal) => unwrapRemote(ctx.remote.quantSkillsSessions.factorInspect(sessionId ? { sessionId: sessionId as SessionId } : {}, signal)),
+    query: (request, signal) => unwrapRemote(ctx.remote.quantSkillsSessions.factorQuery(request, signal)),
     prepare: (action, sessionId) => unwrapRemote(ctx.remote.quantSkillsSessions.factorPrepare({ action, ...(sessionId ? { sessionId: sessionId as SessionId } : {}) })),
     confirm: plan => unwrapRemote(ctx.remote.quantSkillsSessions.factorConfirm({ planId: plan.id, sessionId: plan.sessionId })),
     dismiss: plan => unwrapRemote(ctx.remote.quantSkillsSessions.factorDismiss({ planId: plan.id, sessionId: plan.sessionId })),
@@ -1173,16 +1179,22 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       const result = await session.prompt([{ type: 'text', text }], 'queue')
       if (!result.ok) throw new Error(result.error.message)
     },
-    startResearch: async topic => {
+    startResearch: async (topic, callerSignal) => {
+      const signal = callerSignal ? AbortSignal.any([lifetime.signal, callerSignal]) : lifetime.signal
+      signal.throwIfAborted()
       const workspace = await resolveSessionWorkspace()
+      signal.throwIfAborted()
       const created = await unwrapRemote(ctx.remote.quantSkillsSessions.factorSessionOpen({ ...workspace, sessionId: `session-${crypto.randomUUID()}` as SessionId,
-        ...(topic ? { topic: true } : {}) }, lifetime.signal))
-      const adopted = await adoptSession(created.sessionId, lifetime.signal, summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'factor-contest')
+        ...(topic ? { topic: true } : {}) }, signal))
+      signal.throwIfAborted()
+      const adopted = await adoptSession(created.sessionId, signal, summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'factor-contest')
+      signal.throwIfAborted()
       if (created.created) {
         const renamed = await adopted.session.rename(topic ? '因子赛 · 专题研究' : '因子赛 · 账户主对话')
         if (!renamed.ok) throw new Error(renamed.error.message)
       }
-      openSession(created.sessionId, false); await boundSessions.refresh(lifetime.signal)
+      signal.throwIfAborted()
+      openSession(created.sessionId, false); void boundSessions.refresh(lifetime.signal).catch(() => {})
     },
   }
   const removeSessions = async (ids: readonly SessionId[]): Promise<void> => {

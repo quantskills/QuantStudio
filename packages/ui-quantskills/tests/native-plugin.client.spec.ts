@@ -67,12 +67,16 @@ vi.mock('@deepseek-ai/dsh-client-ui-deliverables/client', () => ({
 
 import { apply } from '../src/client/index.ts'
 
-it.each([true, false])('opens the AI trading assistant only after the dedicated session is ready (new=%s)', async created => {
+it.each([
+  { created: true, purpose: 'contest', cancel: false }, { created: false, purpose: 'contest', cancel: false },
+  { created: true, purpose: 'factor-contest', cancel: false },
+  { created: true, purpose: 'contest', cancel: true }, { created: true, purpose: 'factor-contest', cancel: true },
+])('opens the dedicated assistant only after adoption and never after cancellation ($purpose, new=$created, cancel=$cancel)', async ({ created, purpose, cancel }) => {
   const registrations: { name: string; inject?: () => unknown }[] = []
   const listeners = new Set<() => void>()
   let ready = false
   const opened = vi.fn(), rename = vi.fn(async () => ({ ok: true as const, value: undefined }))
-  const create = vi.fn(async () => ({ ok: true as const, value: { sessionId: 'contest-new', binding: { purpose: 'contest' }, created } }))
+  const create = vi.fn(async () => ({ ok: true as const, value: { sessionId: 'contest-new', binding: { purpose }, created } }))
   const empty = async () => ({ ok: true as const, value: [] })
   const ctx = {
     get: (name: string) => name === 'connection' ? { api: { settings: {}, llm: {}, sessions: {} }, isLoopback: true } : undefined,
@@ -86,8 +90,9 @@ it.each([true, false])('opens the AI trading assistant only after the dedicated 
       quantSkills: { catalogSyncStatus: async () => ({ ok: true, value: { mode: 'manual', state: 'idle' } }) },
       quantSkillsSessions: {
         contestSessionOpen: create,
+        factorSessionOpen: create,
         workspaceResolve: async () => ({ ok: true, value: { workspace: { workspaceId: 'workspace-1', path: 'D:\\Research' }, source: 'managed' } }),
-        plainSessionList: empty, list: empty, frequent: empty,
+        plainSessionList: () => new Promise(() => {}), list: empty, frequent: empty,
       },
     },
     settingsScope: { bind: () => ({ getSnapshot: () => ({ status: 'loading', writable: false }), subscribe: () => () => {} }) },
@@ -95,7 +100,7 @@ it.each([true, false])('opens the AI trading assistant only after the dedicated 
       open: opened,
       binding: () => ready ? { session: { rename } } : undefined,
       list: {
-        getSnapshot: () => ({ byId: ready ? { 'contest-new': { sessionId: 'contest-new', projectionValues: { quantSkillsPlainSession: { purpose: 'contest' } } } } : {} }),
+        getSnapshot: () => ({ byId: ready ? { 'contest-new': { sessionId: 'contest-new', projectionValues: { quantSkillsPlainSession: { purpose } } } } : {} }),
         subscribe: (listener: () => void) => { listeners.add(listener); return () => listeners.delete(listener) },
       },
     },
@@ -104,17 +109,20 @@ it.each([true, false])('opens the AI trading assistant only after the dedicated 
   } as unknown as ClientContext
   apply(ctx)
   const page = registrations.find(item => item.name === 'quantskills.page')!.inject!() as QuantSkillsAppInjected
-  const opening = page.contestAccess!.startResearch()
+  const controller = new AbortController(), access = purpose === 'contest' ? page.contestAccess! : page.factorContestAccess!
+  const opening = access.startResearch(undefined, controller.signal).then(() => true, () => false)
   await vi.waitFor(() => expect(create).toHaveBeenCalledOnce())
   expect(opened).not.toHaveBeenCalled(); expect(rename).not.toHaveBeenCalled()
+  if (cancel) controller.abort()
   ready = true
   for (const listener of listeners) listener()
-  await opening
+  expect(await opening).toBe(!cancel)
   expect(create).toHaveBeenCalledWith(expect.objectContaining({ workspaceId: 'workspace-1' }), expect.any(AbortSignal))
-  if (created) expect(rename).toHaveBeenCalledExactlyOnceWith('比赛 · 账户主对话')
+  if (cancel) { expect(opened).not.toHaveBeenCalled(); expect(rename).not.toHaveBeenCalled(); return }
+  if (created) expect(rename).toHaveBeenCalledExactlyOnceWith(purpose === 'contest' ? '比赛 · 账户主对话' : '因子赛 · 账户主对话')
   else expect(rename).not.toHaveBeenCalled()
   expect(opened).toHaveBeenCalledExactlyOnceWith('contest-new')
-  await expect(page.contestAccess!.requestResearch('contest-new', '账户巡检')).rejects.toThrow('请在对应比赛会话中发起研究')
+  await expect(access.requestResearch('contest-new', '账户巡检')).rejects.toThrow(/对应.*比赛会话/)
 })
 
 describe('QuantSkills native application composition', () => {

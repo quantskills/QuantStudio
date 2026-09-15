@@ -11,7 +11,7 @@ import { CompetitionHub } from '../src/client/CompetitionHub.tsx'
 import type { FactorContestAccess } from '../src/client/factor-contest.ts'
 import type { FactorContestStatus, FactorPlan } from '../src/client/plugin-types.ts'
 
-afterEach(() => { cleanup(); sessionStorage.clear() })
+afterEach(() => { cleanup(); sessionStorage.clear(); vi.useRealTimers() })
 const identity = { accountId: 'u1', contestId: 'pandaai-fourth-factor' }
 function plan(): FactorPlan { return { id: 'p1', sessionId: 's1', identity, createdAt: Date.now(), expiresAt: Date.now() + 600000, status: 'prepared', summary: '授权一批因子研究', snapshot: {}, snapshotHash: 'x',
   action: { kind: 'budget', batch: { hypothesis: '低换手反转', maxRuns: 5, creditThreshold: 10, cycle: 5, startDate: '20240101', endDate: '20241231' } } } }
@@ -30,6 +30,57 @@ function fixture(initial: Partial<FactorContestStatus> = {}) {
   return { access, state: () => state, set: (change: Partial<FactorContestStatus>) => { state = { ...state, ...change } }, inspection }
 }
 describe('factor workbench', () => {
+  it('cancels a pending dashboard inspection before checking the connection', async () => {
+    const f = fixture({ enabled: true, phase: 'connected', identity })
+    let signal!: AbortSignal
+    vi.mocked(f.access.inspect).mockImplementationOnce((_session, s) => { signal = s!; return new Promise(() => {}) })
+    render(<FactorContestPage access={f.access}/>)
+    await waitFor(() => expect(f.access.inspect).toHaveBeenCalled())
+    fireEvent.click(screen.getByRole('button', { name: '检查连接' }))
+    await waitFor(() => expect(signal.aborted).toBe(true))
+  })
+  it('recovers from a stalled inspection without blocking navigation or connection', async () => {
+    vi.useFakeTimers()
+    const f = fixture({ enabled: true, phase: 'connected', identity })
+    let signal!: AbortSignal
+    vi.mocked(f.access.inspect).mockImplementationOnce((_session, s) => { signal = s!; return new Promise(() => {}) })
+    render(<FactorContestPage access={f.access}/>)
+    await act(async () => {})
+    await act(async () => { await vi.advanceTimersByTimeAsync(30000) })
+    expect(signal.aborted).toBe(true)
+    expect(screen.getByRole('alert').textContent).toContain('响应超时')
+    expect((screen.getByRole('button', { name: '检查连接' }) as HTMLButtonElement).disabled).toBe(false)
+    fireEvent.click(screen.getByRole('button', { name: '刷新当前数据' }))
+    await act(async () => {})
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+  it('allows closing a timed-out confirmation without authorizing the same batch twice', async () => {
+    vi.useFakeTimers()
+    const pending = plan(), f = fixture({ enabled: true, phase: 'connected', identity, plans: [pending] })
+    vi.mocked(f.access.confirm).mockImplementation(() => new Promise(() => {}))
+    render(<FactorPlans status={f.state()} access={f.access} refresh={async () => {}}/>)
+    fireEvent.click(screen.getByRole('button', { name: /授权一批因子研究/ }))
+    fireEvent.click(screen.getByRole('button', { name: '确认授权本批次' }))
+    await act(async () => { await vi.advanceTimersByTimeAsync(60000) })
+    expect(screen.getByRole('alert').textContent).toContain('请勿重复提交')
+    expect((screen.getByRole('button', { name: '确认授权本批次' }) as HTMLButtonElement).disabled).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: '关闭确认因子比赛操作' }))
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(f.access.confirm).toHaveBeenCalledTimes(1)
+  })
+  it('loads the newly selected tab while an older read is pending without locking connection controls', async () => {
+    const f = fixture({ enabled: true, phase: 'connected', identity })
+    let finish!: (value: typeof f.inspection) => void
+    vi.mocked(f.access.inspect).mockImplementation(() => new Promise(resolve => { finish = resolve }))
+    vi.mocked(f.access.query).mockResolvedValue({ items: [{ workflow_id: 'fresh-workflow', name: '最新工作流', selectable: true }] })
+    render(<FactorContestPage access={f.access}/>)
+    await waitFor(() => expect(f.access.inspect).toHaveBeenCalled())
+    expect((screen.getByRole('button', { name: '检查连接' }) as HTMLButtonElement).disabled).toBe(false)
+    fireEvent.click(screen.getByRole('tab', { name: '可入池工作流' }))
+    await screen.findByText('最新工作流')
+    await act(async () => { finish(f.inspection) })
+    expect(screen.getByText('最新工作流')).toBeTruthy()
+  })
   it('is opt-in and does not log in or inspect an account just by opening the page', async () => {
     const f = fixture(); render(<FactorContestPage access={f.access}/>)
     const toggle = await screen.findByRole('switch', { name: '因子比赛模式' })
@@ -75,6 +126,16 @@ describe('factor workbench', () => {
   })
 })
 describe('factor confirmation cards', () => {
+  it('shows a completed confirmation without waiting for a stalled status refresh', async () => {
+    const f = fixture({ enabled: true, phase: 'connected', identity, plans: [plan()] })
+    render(<FactorPlans status={f.state()} access={f.access} refresh={() => new Promise(() => {})}/>)
+    fireEvent.click(screen.getByRole('button', { name: /授权一批因子研究/ }))
+    fireEvent.click(screen.getByRole('button', { name: '确认授权本批次' }))
+    await waitFor(() => expect(screen.queryByRole('button', { name: '确认授权本批次' })).toBeNull())
+    fireEvent.click(screen.getByRole('button', { name: '关闭确认因子比赛操作' }))
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(f.access.confirm).toHaveBeenCalledOnce()
+  })
   it('shows the budget limitation and sends one confirmation despite double clicking', async () => {
     const f = fixture({ enabled: true, phase: 'connected', identity, plans: [plan()] })
     let finish!: (p: FactorPlan) => void
@@ -110,7 +171,7 @@ describe('factor conversation isolation', () => {
   it('inspects on entry, and requires a user action to start research', async () => {
     const f = fixture({ enabled: true, phase: 'connected', identity })
     render(<FactorContestReview useSessions={bindSnapshotSelector(sessions('factor-contest'))} access={f.access} openContest={() => {}}/>)
-    await screen.findByText(/算力 100/); expect(f.access.inspect).toHaveBeenCalledExactlyOnceWith('s1'); expect(f.access.requestResearch).not.toHaveBeenCalled()
+    await screen.findByText(/算力 100/); expect(f.access.inspect).toHaveBeenCalledExactlyOnceWith('s1', expect.any(AbortSignal)); expect(f.access.requestResearch).not.toHaveBeenCalled()
     fireEvent.click(screen.getByRole('button', { name: '继续预算内研究' }))
     await waitFor(() => expect(f.access.requestResearch).toHaveBeenCalledWith('s1', expect.stringContaining('已授权预算')))
   })

@@ -41,6 +41,34 @@ async function fixture() {
     setBalance: (v: number) => { balance = v }, setContent: (v: string) => { content = v }, mutations: () => arena.mock.calls.filter(([, , mutation]) => mutation) }
 }
 describe('factor contest lifecycle and isolation', () => {
+  it('aborts a slow account inspection and releases the queue for the next tab', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.cli.getMockImplementation()!, controller = new AbortController()
+    let reading = false
+    f.cli.mockImplementation((runtime, args, signal) => args[0] === 'balance' ? new Promise((_resolve, reject) => {
+      reading = true; signal!.addEventListener('abort', () => reject(signal!.reason), { once: true })
+    }) : base(runtime, args, signal))
+    const inspection = f.service.inspect(identity, controller.signal).catch(error => error)
+    await vi.waitFor(() => expect(reading).toBe(true))
+    const next = f.service.query({ kind: 'workflows' })
+    controller.abort()
+    expect(await inspection).toBeInstanceOf(Error)
+    await expect(next).resolves.toEqual({ items: [] })
+    expect((await f.service.status()).inspection).toBeUndefined()
+  })
+  it('returns authenticated connection before optional account inspection', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.cli.getMockImplementation()!
+    let finish: (() => void) | undefined
+    f.cli.mockImplementation(async (runtime, args, signal) => {
+      if (args[0] === 'balance') await new Promise<void>(resolve => { finish = resolve })
+      return base(runtime, args, signal)
+    })
+    let connected = false
+    const connecting = f.service.connect().then(() => { connected = true })
+    try { await vi.waitFor(() => expect(connected).toBe(true), { timeout: 500 }) }
+    finally { finish?.(); await connecting }
+  })
   it('is off without installing or inheriting any credentials', async () => {
     const f = await fixture()
     expect(await f.service.status()).toMatchObject({ enabled: false, phase: 'off', runs: [] })
