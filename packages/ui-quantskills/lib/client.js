@@ -29175,7 +29175,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		}
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/ContestPage.module.css.mjs
-		const css$7 = "._07psQa_page{height:100%;min-height:0;color:var(--qs-ink,var(--dsw-alias-label-primary));padding:30px 40px;overflow:auto}._07psQa_plans{color:var(--qs-ink,var(--dsw-alias-label-primary))}._07psQa_header{justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px;display:flex}._07psQa_header h1{letter-spacing:-.04em;margin:6px 0 8px;font-size:30px}._07psQa_header p,._07psQa_muted,._07psQa_connection p{color:var(--qs-muted);line-height:1.7}._07psQa_eyebrow{letter-spacing:.12em;color:var(--qs-muted);font-size:11px}._07psQa_page button,._07psQa_plans button{cursor:pointer;font:inherit;color:var(--qs-ink,var(--dsw-alias-label-primary));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:8px;padding:9px 14px}._07psQa_page button:not(:disabled):hover,._07psQa_plans button:not(:disabled):hover{border-color:var(--qs-accent)}._07psQa_page button:disabled,._07psQa_plans button:disabled{cursor:default;opacity:.5}._07psQa_page button:focus-visible,._07psQa_plans button:focus-visible,._07psQa_page a:focus-visible{outline:2px solid var(--qs-accent,#3579b5);outline-offset:3px}._07psQa_page button[data-primary],._07psQa_plans button[data-primary]{color:var(--qs-buttonInk,#fff);background:var(--qs-accent,#3579b5);border-color:#0000;font-weight:600}body[data-qs-plugin-theme=dark] ._07psQa_page button[data-primary],body[data-qs-plugin-theme=dark] ._07psQa_plans button[data-primary]{color:var(--qs-buttonInk,var(--qs-deep,#152033))}._07psQa_page a{color:var(--qs-accent,#3579b5);text-decoration:none}._07psQa_page ._07psQa_switch{white-space:nowrap;align-items:center;gap:10px;display:flex}._07psQa_switch>span{background:var(--qs-border,#b8c2cf);border-radius:20px;width:32px;height:19px;position:relative}._07psQa_switch>span:after{content:\"\";background:#fff;border-radius:50%;width:13px;height:13px;position:absolute;top:3px;left:3px}._07psQa_switch[data-enabled=true]>span{background:var(--qs-accent,#3579b5)}._07psQa_switch[data-enabled=true]>span:after{left:16px}._07psQa_welcome{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:16px;max-width:700px;margin:56px auto;padding:38px}._07psQa_welcome h2{font-size:24px}._07psQa_welcome p{color:var(--qs-muted);line-height:1.85}._07psQa_welcome a{margin-top:12px;display:inline-block}._07psQa_connection{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:12px;justify-content:space-between;align-items:center;gap:20px;margin-bottom:22px;padding:22px;display:flex}._07psQa_connection p{margin:6px 0}._07psQa_connection small{color:var(--qs-muted);line-height:1.7;display:block}._07psQa_actions{flex-wrap:wrap;align-items:center;gap:10px;display:flex}._07psQa_actions a{padding:8px}._07psQa_actions button{white-space:nowrap}._07psQa_assistant{border:1px solid var(--qs-accent);background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:14px;margin:22px 0;padding:24px}._07psQa_assistantHeading{justify-content:space-between;align-items:center;gap:24px;display:flex}._07psQa_assistant h2{margin:0 0 8px;font-size:21px}._07psQa_assistant p{color:var(--qs-muted);margin:0;line-height:1.7}._07psQa_steps{border-top:1px solid var(--qs-line);gap:24px;margin:20px 0 14px;padding:18px 0 0;list-style:none;display:flex}._07psQa_steps li{align-items:center;gap:9px;font-size:13px;display:flex}._07psQa_steps b{background:var(--qs-tint);width:25px;height:25px;color:var(--qs-accent);border-radius:50%;place-items:center;font-size:12px;display:grid}._07psQa_assistant ._07psQa_recent{margin-top:12px;font-size:12px}._07psQa_conversation{width:calc(100% - 2 * var(--dsh-composer-side-clearance,16px));max-width:var(--dsh-composer-card-max-width,800px);box-sizing:border-box;overflow-wrap:anywhere;border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));min-width:0;max-height:min(280px,35dvh);color:var(--qs-ink,var(--dsw-alias-label-primary));border-radius:12px;margin:0 auto 10px;padding:14px 16px;font-size:12px;overflow:auto}._07psQa_conversationHeader,._07psQa_conversationActions,._07psQa_symbolResearch{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._07psQa_conversationHeader strong{flex:none;max-width:100%}._07psQa_conversationHeader small{overflow-wrap:anywhere;flex:200px;min-width:min(200px,100%)}._07psQa_conversation small{color:var(--qs-muted,var(--dsw-alias-label-secondary))}._07psQa_conversation p{margin:6px 0;line-height:1.5}._07psQa_conversation button,._07psQa_symbolResearch input{font:inherit;color:var(--qs-ink,var(--dsw-alias-label-primary));background:var(--qs-surface,var(--dsw-alias-bg-base));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:6px;padding:6px 9px}._07psQa_conversation button{cursor:pointer}._07psQa_conversation button:disabled{opacity:.5;cursor:default}._07psQa_conversation button:focus-visible,._07psQa_symbolResearch input:focus-visible{outline:2px solid var(--qs-accent,var(--dsw-alias-brand-primary));outline-offset:2px}._07psQa_inspection{margin:10px 0}._07psQa_symbolResearch{margin-top:8px}._07psQa_symbolResearch input{flex:1;min-width:100px}._07psQa_symbolResearch input::placeholder{color:var(--qs-muted,var(--dsw-alias-label-secondary));opacity:1}._07psQa_dataPanel,._07psQa_plans{min-width:0;margin:22px 0}._07psQa_plans h2{font-size:18px}._07psQa_tabs{border-bottom:1px solid var(--qs-border,#dbe2ea);gap:4px;padding-bottom:8px;display:flex;overflow-x:auto}._07psQa_plans[data-compact=true]{margin:0}._07psQa_page ._07psQa_tabs button{color:var(--qs-muted);background:0 0;border-color:#0000;flex-shrink:0;padding:9px 13px}._07psQa_page ._07psQa_tabs button[aria-selected=true]{background:var(--qs-surface,var(--dsw-alias-bg-base));border-color:var(--qs-line,var(--dsw-alias-border-l2));color:var(--qs-ink);font-weight:600}._07psQa_toolbar{flex-wrap:wrap;align-items:center;gap:14px;padding:18px 0;display:flex}._07psQa_toolbar label{align-items:center;gap:8px;font-size:13px;display:flex}._07psQa_toolbar small{color:var(--qs-muted)}._07psQa_toolbar input,._07psQa_toolbar select{font:inherit;background:var(--qs-surface,var(--dsw-alias-bg-base));color:var(--qs-ink,var(--dsw-alias-label-primary));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:6px;max-width:100%;padding:8px 10px}._07psQa_toolbar input::placeholder{color:var(--qs-muted);opacity:1}._07psQa_tableWrap{border:1px solid var(--qs-border,#dbe2ea);border-radius:10px;max-width:100%;overflow:auto}._07psQa_tableWrap table{border-collapse:collapse;text-align:left;width:100%;font-size:12px}._07psQa_tableWrap th,._07psQa_tableWrap td{border-bottom:1px solid var(--qs-border,#dbe2ea);white-space:nowrap;padding:12px 14px}._07psQa_tableWrap th{color:var(--qs-muted);background:var(--qs-surface,var(--dsw-alias-bg-base));font-weight:500}._07psQa_tableWrap tr:last-child td{border-bottom:0}._07psQa_metrics{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;display:grid}._07psQa_metrics>div{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:10px;padding:18px}._07psQa_metrics dt{color:var(--qs-muted);font-size:12px}._07psQa_metrics dd{color:var(--qs-ink,var(--dsw-alias-label-primary));font-variant-numeric:tabular-nums;overflow-wrap:anywhere;margin:10px 0 0;font-size:19px}._07psQa_empty{text-align:center;color:var(--qs-muted);padding:36px}._07psQa_error{background:#bd625714;border-left:3px solid #bd6257;padding:12px 16px;line-height:1.6}._07psQa_plans ._07psQa_planRow{text-align:left;justify-content:space-between;align-items:center;gap:18px;width:100%;margin:8px 0;padding:16px;display:flex}._07psQa_planRow strong{font-size:13px}._07psQa_planRow small{color:var(--qs-muted);margin-top:6px;display:block}._07psQa_planRow>span:last-child{color:var(--qs-muted);font-size:12px}._07psQa_planDetails h3{margin:0 0 20px;font-size:18px}._07psQa_planDetails dl{grid-template-columns:110px minmax(0,1fr);gap:12px;display:grid}._07psQa_planDetails dt{color:var(--qs-muted)}._07psQa_planDetails dd{overflow-wrap:anywhere;font-variant-numeric:tabular-nums;margin:0}@media (width<=900px){._07psQa_page{padding:24px}._07psQa_connection,._07psQa_assistantHeading{flex-direction:column;align-items:flex-start}._07psQa_steps{flex-wrap:wrap;gap:14px}}@media (width<=600px){._07psQa_page{padding:18px 14px}._07psQa_header{flex-wrap:wrap;gap:14px}._07psQa_header h1{font-size:26px}._07psQa_welcome{margin:20px 0;padding:24px}._07psQa_connection,._07psQa_assistant{padding:16px}._07psQa_assistantHeading ._07psQa_actions,._07psQa_assistantHeading button{width:100%}._07psQa_metrics{grid-template-columns:repeat(2,minmax(0,1fr))}._07psQa_metrics>div{padding:14px}._07psQa_metrics dd{font-size:17px}._07psQa_plans ._07psQa_planRow{flex-direction:column;align-items:flex-start;gap:8px}._07psQa_toolbar label{width:100%}._07psQa_toolbar input{flex:1;min-width:0}._07psQa_planDetails dl{grid-template-columns:95px minmax(0,1fr);font-size:13px}}";
+		const css$7 = "._07psQa_page{height:100%;min-height:0;color:var(--qs-ink,var(--dsw-alias-label-primary));padding:30px 40px;overflow:auto}._07psQa_plans{color:var(--qs-ink,var(--dsw-alias-label-primary))}._07psQa_header{justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px;display:flex}._07psQa_header h1{letter-spacing:-.04em;margin:6px 0 8px;font-size:30px}._07psQa_header p,._07psQa_muted,._07psQa_connection p{color:var(--qs-muted);line-height:1.7}._07psQa_eyebrow{letter-spacing:.12em;color:var(--qs-muted);font-size:11px}._07psQa_page button,._07psQa_plans button{cursor:pointer;font:inherit;color:var(--qs-ink,var(--dsw-alias-label-primary));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:8px;padding:9px 14px}._07psQa_page button:not(:disabled):hover,._07psQa_plans button:not(:disabled):hover{border-color:var(--qs-accent)}._07psQa_page button:disabled,._07psQa_plans button:disabled{cursor:default;opacity:.5}._07psQa_page button:focus-visible,._07psQa_plans button:focus-visible,._07psQa_page a:focus-visible{outline:2px solid var(--qs-accent,#3579b5);outline-offset:3px}._07psQa_page button[data-primary],._07psQa_plans button[data-primary]{color:var(--qs-buttonInk,#fff);background:var(--qs-accent,#3579b5);border-color:#0000;font-weight:600}body[data-qs-plugin-theme=dark] ._07psQa_page button[data-primary],body[data-qs-plugin-theme=dark] ._07psQa_plans button[data-primary]{color:var(--qs-buttonInk,var(--qs-deep,#152033))}._07psQa_page a{color:var(--qs-accent,#3579b5);text-decoration:none}._07psQa_page ._07psQa_switch{white-space:nowrap;align-items:center;gap:10px;display:flex}._07psQa_switch>span{background:var(--qs-border,#b8c2cf);border-radius:20px;width:32px;height:19px;position:relative}._07psQa_switch>span:after{content:\"\";background:#fff;border-radius:50%;width:13px;height:13px;position:absolute;top:3px;left:3px}._07psQa_switch[data-enabled=true]>span{background:var(--qs-accent,#3579b5)}._07psQa_switch[data-enabled=true]>span:after{left:16px}._07psQa_welcome{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:16px;max-width:700px;margin:56px auto;padding:38px}._07psQa_welcome h2{font-size:24px}._07psQa_welcome p{color:var(--qs-muted);line-height:1.85}._07psQa_welcome a{margin-top:12px;display:inline-block}._07psQa_connection{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:12px;justify-content:space-between;align-items:center;gap:20px;margin-bottom:22px;padding:22px;display:flex}._07psQa_connection p{margin:6px 0}._07psQa_connection small{color:var(--qs-muted);line-height:1.7;display:block}._07psQa_actions{flex-wrap:wrap;align-items:center;gap:10px;display:flex}._07psQa_actions a{padding:8px}._07psQa_actions button{white-space:nowrap}._07psQa_assistant{border:1px solid var(--qs-accent);background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:14px;margin:22px 0;padding:24px}._07psQa_assistantHeading{justify-content:space-between;align-items:center;gap:24px;display:flex}._07psQa_assistant h2{margin:0 0 8px;font-size:21px}._07psQa_assistant p{color:var(--qs-muted);margin:0;line-height:1.7}._07psQa_steps{border-top:1px solid var(--qs-line);gap:24px;margin:20px 0 14px;padding:18px 0 0;list-style:none;display:flex}._07psQa_steps li{align-items:center;gap:9px;font-size:13px;display:flex}._07psQa_steps b{background:var(--qs-tint);width:25px;height:25px;color:var(--qs-accent);border-radius:50%;place-items:center;font-size:12px;display:grid}._07psQa_assistant ._07psQa_recent{margin-top:12px;font-size:12px}._07psQa_conversation{width:calc(100% - 2 * var(--dsh-composer-side-clearance,16px));max-width:var(--dsh-composer-card-max-width,800px);box-sizing:border-box;overflow-wrap:anywhere;border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));min-width:0;color:var(--qs-ink,var(--dsw-alias-label-primary));border-radius:12px;flex:none;margin:0 auto 10px;padding:14px 16px;font-size:12px}._07psQa_conversationHeader,._07psQa_conversationActions,._07psQa_symbolResearch{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._07psQa_conversationHeader strong{flex:none;max-width:100%}._07psQa_conversationHeader small{overflow-wrap:anywhere;flex:200px;min-width:min(200px,100%)}._07psQa_conversation small{color:var(--qs-muted,var(--dsw-alias-label-secondary))}._07psQa_conversation p{margin:6px 0;line-height:1.5}._07psQa_conversation button,._07psQa_symbolResearch input{font:inherit;color:var(--qs-ink,var(--dsw-alias-label-primary));background:var(--qs-surface,var(--dsw-alias-bg-base));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:6px;padding:6px 9px}._07psQa_conversation button{cursor:pointer}._07psQa_conversation button:disabled{opacity:.5;cursor:default}._07psQa_conversation button:focus-visible,._07psQa_symbolResearch input:focus-visible{outline:2px solid var(--qs-accent,var(--dsw-alias-brand-primary));outline-offset:2px}._07psQa_inspection{margin:10px 0}._07psQa_symbolResearch{margin-top:8px}._07psQa_symbolResearch input{flex:1;min-width:100px}._07psQa_symbolResearch input::placeholder{color:var(--qs-muted,var(--dsw-alias-label-secondary));opacity:1}._07psQa_dataPanel,._07psQa_plans{min-width:0;margin:22px 0}._07psQa_plans h2{font-size:18px}._07psQa_tabs{border-bottom:1px solid var(--qs-border,#dbe2ea);gap:4px;padding-bottom:8px;display:flex;overflow-x:auto}._07psQa_plans[data-compact=true]{margin:0}._07psQa_page ._07psQa_tabs button{color:var(--qs-muted);background:0 0;border-color:#0000;flex-shrink:0;padding:9px 13px}._07psQa_page ._07psQa_tabs button[aria-selected=true]{background:var(--qs-surface,var(--dsw-alias-bg-base));border-color:var(--qs-line,var(--dsw-alias-border-l2));color:var(--qs-ink);font-weight:600}._07psQa_toolbar{flex-wrap:wrap;align-items:center;gap:14px;padding:18px 0;display:flex}._07psQa_toolbar label{align-items:center;gap:8px;font-size:13px;display:flex}._07psQa_toolbar small{color:var(--qs-muted)}._07psQa_toolbar input,._07psQa_toolbar select{font:inherit;background:var(--qs-surface,var(--dsw-alias-bg-base));color:var(--qs-ink,var(--dsw-alias-label-primary));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:6px;max-width:100%;padding:8px 10px}._07psQa_toolbar input::placeholder{color:var(--qs-muted);opacity:1}._07psQa_tableWrap{border:1px solid var(--qs-border,#dbe2ea);border-radius:10px;max-width:100%;overflow:auto}._07psQa_tableWrap table{border-collapse:collapse;text-align:left;width:100%;font-size:12px}._07psQa_tableWrap th,._07psQa_tableWrap td{border-bottom:1px solid var(--qs-border,#dbe2ea);white-space:nowrap;padding:12px 14px}._07psQa_tableWrap th{color:var(--qs-muted);background:var(--qs-surface,var(--dsw-alias-bg-base));font-weight:500}._07psQa_tableWrap tr:last-child td{border-bottom:0}._07psQa_metrics{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;display:grid}._07psQa_metrics>div{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:10px;padding:18px}._07psQa_metrics dt{color:var(--qs-muted);font-size:12px}._07psQa_metrics dd{color:var(--qs-ink,var(--dsw-alias-label-primary));font-variant-numeric:tabular-nums;overflow-wrap:anywhere;margin:10px 0 0;font-size:19px}._07psQa_empty{text-align:center;color:var(--qs-muted);padding:36px}._07psQa_error{background:#bd625714;border-left:3px solid #bd6257;padding:12px 16px;line-height:1.6}._07psQa_plans ._07psQa_planRow{text-align:left;justify-content:space-between;align-items:center;gap:18px;width:100%;margin:8px 0;padding:16px;display:flex}._07psQa_planRow strong{font-size:13px}._07psQa_planRow small{color:var(--qs-muted);margin-top:6px;display:block}._07psQa_planRow>span:last-child{color:var(--qs-muted);font-size:12px}._07psQa_planDetails h3{margin:0 0 20px;font-size:18px}._07psQa_planDetails dl{grid-template-columns:110px minmax(0,1fr);gap:12px;display:grid}._07psQa_planDetails dt{color:var(--qs-muted)}._07psQa_planDetails dd{overflow-wrap:anywhere;font-variant-numeric:tabular-nums;margin:0}@media (width<=900px){._07psQa_page{padding:24px}._07psQa_connection,._07psQa_assistantHeading{flex-direction:column;align-items:flex-start}._07psQa_steps{flex-wrap:wrap;gap:14px}}@media (width<=600px){._07psQa_page{padding:18px 14px}._07psQa_header{flex-wrap:wrap;gap:14px}._07psQa_header h1{font-size:26px}._07psQa_welcome{margin:20px 0;padding:24px}._07psQa_connection,._07psQa_assistant{padding:16px}._07psQa_assistantHeading ._07psQa_actions,._07psQa_assistantHeading button{width:100%}._07psQa_metrics{grid-template-columns:repeat(2,minmax(0,1fr))}._07psQa_metrics>div{padding:14px}._07psQa_metrics dd{font-size:17px}._07psQa_plans ._07psQa_planRow{flex-direction:column;align-items:flex-start;gap:8px}._07psQa_toolbar label{width:100%}._07psQa_toolbar input{flex:1;min-width:0}._07psQa_planDetails dl{grid-template-columns:95px minmax(0,1fr);font-size:13px}}._07psQa_conversationControls{flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto;display:flex}._07psQa_conversationBody{max-height:min(240px,32dvh);overflow:auto}._07psQa_conversation[data-collapsed=true]{padding-block:8px}";
 		const tagId$7 = "@deepseek-ai/dsh-client-ui-quantskills/ContestPage.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$7) + "]") === null) {
 			const tag = document.createElement("style");
@@ -29191,6 +29191,8 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 			"connection": "_07psQa_connection",
 			"conversation": "_07psQa_conversation",
 			"conversationActions": "_07psQa_conversationActions",
+			"conversationBody": "_07psQa_conversationBody",
+			"conversationControls": "_07psQa_conversationControls",
 			"conversationHeader": "_07psQa_conversationHeader",
 			"dataPanel": "_07psQa_dataPanel",
 			"empty": "_07psQa_empty",
@@ -44230,6 +44232,54 @@ void main() {
 			});
 		}
 		//#endregion
+		//#region lib/types/client/CompetitionDock.js
+		/** Keep plan confirmation mounted and accessible even when account details are folded. */
+		function CompetitionDock({ kind, label, title, subtitle, actions, children }) {
+			const key = `quantskills:${kind}:dock-collapsed`;
+			const [collapsed, setCollapsed] = (0, react.useState)(() => {
+				try {
+					return localStorage.getItem(key) === "true";
+				} catch {
+					return false;
+				}
+			});
+			const bodyId = (0, react.useId)();
+			const toggle = () => {
+				setCollapsed(!collapsed);
+				try {
+					localStorage.setItem(key, String(!collapsed));
+				} catch {}
+			};
+			return (0, react_jsx_runtime.jsxs)("section", {
+				className: ContestPage_module_css_default.conversation,
+				"aria-label": label,
+				"data-collapsed": collapsed,
+				children: [(0, react_jsx_runtime.jsxs)("div", {
+					className: ContestPage_module_css_default.conversationHeader,
+					children: [
+						(0, react_jsx_runtime.jsx)("strong", { children: title }),
+						!collapsed && (0, react_jsx_runtime.jsx)("small", { children: subtitle }),
+						(0, react_jsx_runtime.jsxs)("div", {
+							className: ContestPage_module_css_default.conversationControls,
+							children: [actions, (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								"aria-label": `${collapsed ? "展开" : "收起"}${label}`,
+								"aria-expanded": !collapsed,
+								"aria-controls": bodyId,
+								onClick: toggle,
+								children: collapsed ? "展开" : "收起"
+							})]
+						})
+					]
+				}), (0, react_jsx_runtime.jsx)("div", {
+					id: bodyId,
+					className: ContestPage_module_css_default.conversationBody,
+					hidden: collapsed,
+					children
+				})]
+			});
+		}
+		//#endregion
 		//#region lib/types/client/ContestReview.js
 		/** Normal sessions never mount a contest poller or load account context. */
 		function ContestReview({ useSessions, access, openContest }) {
@@ -44282,146 +44332,137 @@ void main() {
 				run("research", () => access.requestResearch(sessionId, text));
 			};
 			const account = asRecord(inspection?.account.data);
-			return (0, react_jsx_runtime.jsxs)("section", {
-				className: ContestPage_module_css_default.conversation,
-				"aria-label": "比赛专用对话",
-				children: [
+			return (0, react_jsx_runtime.jsxs)(CompetitionDock, {
+				kind: "contest",
+				label: "比赛专用对话",
+				title: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: ["仿真比赛 · ", binding.contestConversation === "topic" ? "专题研究" : binding.contestConversation === "main" ? "账户主对话" : "比赛研究"] }),
+				subtitle: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+					"「巅峰交易者」全国期货模拟赛 · 账户 ",
+					identity.accountId,
+					" · ",
+					identity.contestId
+				] }),
+				actions: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("button", {
+					type: "button",
+					onClick: openContest,
+					children: "比赛工作台"
+				}), ready && status && (0, react_jsx_runtime.jsx)(ContestPlans, {
+					status,
+					access,
+					refresh,
+					compact: true,
+					autoOpen: !running
+				})] }),
+				children: [!status ? (0, react_jsx_runtime.jsx)("p", {
+					role: "status",
+					children: "读取比赛状态…"
+				}) : !ready ? (0, react_jsx_runtime.jsx)("p", {
+					role: "status",
+					children: !status.enabled ? "比赛模式已关闭，普通会话照常使用。已提交委托仍由柜台处理。" : !matches && status.phase === "connected" ? "当前登录账户与本会话不一致，请回比赛工作台进入对应账户主对话。" : "请在比赛工作台连接并验证账户。"
+				}) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 					(0, react_jsx_runtime.jsxs)("div", {
-						className: ContestPage_module_css_default.conversationHeader,
+						className: ContestPage_module_css_default.inspection,
+						"aria-live": "polite",
 						children: [
-							(0, react_jsx_runtime.jsxs)("strong", { children: ["仿真比赛 · ", binding.contestConversation === "topic" ? "专题研究" : binding.contestConversation === "main" ? "账户主对话" : "比赛研究"] }),
-							(0, react_jsx_runtime.jsxs)("small", { children: [
-								"「巅峰交易者」全国期货模拟赛 · 账户 ",
-								identity.accountId,
-								" · ",
-								identity.contestId
+							checking && (0, react_jsx_runtime.jsx)("span", { children: "正在只读巡检账户…" }),
+							inspection && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+								(0, react_jsx_runtime.jsxs)("span", { children: [
+									"动态权益 ",
+									display(account.equity ?? account.totalProfit),
+									" · 可用资金 ",
+									display(account.availableFunds)
+								] }),
+								(0, react_jsx_runtime.jsx)("p", { children: inspection.summary.join(" ") }),
+								(0, react_jsx_runtime.jsxs)("small", { children: [
+									"快照：",
+									contestTime(inspection.fetchedAt),
+									"（上海），分析与预演前重新核对。"
+								] })
 							] }),
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								onClick: openContest,
-								children: "比赛工作台"
-							}),
-							ready && status && (0, react_jsx_runtime.jsx)(ContestPlans, {
-								status,
-								access,
-								refresh,
-								compact: true,
-								autoOpen: !running
+							inspectionError && (0, react_jsx_runtime.jsx)("p", {
+								role: "alert",
+								children: inspectionError
 							})
 						]
 					}),
-					!status ? (0, react_jsx_runtime.jsx)("p", {
-						role: "status",
-						children: "读取比赛状态…"
-					}) : !ready ? (0, react_jsx_runtime.jsx)("p", {
-						role: "status",
-						children: !status.enabled ? "比赛模式已关闭，普通会话照常使用。已提交委托仍由柜台处理。" : !matches && status.phase === "connected" ? "当前登录账户与本会话不一致，请回比赛工作台进入对应账户主对话。" : "请在比赛工作台连接并验证账户。"
-					}) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-						(0, react_jsx_runtime.jsxs)("div", {
-							className: ContestPage_module_css_default.inspection,
-							"aria-live": "polite",
-							children: [
-								checking && (0, react_jsx_runtime.jsx)("span", { children: "正在只读巡检账户…" }),
-								inspection && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-									(0, react_jsx_runtime.jsxs)("span", { children: [
-										"动态权益 ",
-										display(account.equity ?? account.totalProfit),
-										" · 可用资金 ",
-										display(account.availableFunds)
-									] }),
-									(0, react_jsx_runtime.jsx)("p", { children: inspection.summary.join(" ") }),
-									(0, react_jsx_runtime.jsxs)("small", { children: [
-										"快照：",
-										contestTime(inspection.fetchedAt),
-										"（上海），分析与预演前重新核对。"
-									] })
-								] }),
-								inspectionError && (0, react_jsx_runtime.jsx)("p", {
-									role: "alert",
-									children: inspectionError
-								})
-							]
-						}),
-						(0, react_jsx_runtime.jsxs)("div", {
-							className: ContestPage_module_css_default.conversationActions,
-							children: [
-								(0, react_jsx_runtime.jsx)("button", {
-									type: "button",
-									disabled: checking,
-									onClick: () => {
-										inspect();
-									},
-									children: "刷新巡检"
-								}),
-								(0, react_jsx_runtime.jsx)("button", {
-									type: "button",
-									disabled: !inspection,
-									onClick: () => setDetails(true),
-									children: "账户详情"
-								}),
-								(0, react_jsx_runtime.jsx)("button", {
-									type: "button",
-									disabled: running || Boolean(busy),
-									onClick: () => research("请先巡检我的比赛账户，再研究现有持仓。展示数据时间、依据和候选方案，暂不生成交易预演。"),
-									children: "研究持仓"
-								}),
-								(0, react_jsx_runtime.jsx)("button", {
-									type: "button",
-									disabled: running || Boolean(busy),
-									onClick: () => research("请复盘今天的比赛交易，对照本账户计划、委托、成交和结算，列出待核实事项。不要生成新订单。"),
-									children: "今日复盘"
-								})
-							]
-						}),
-						(0, react_jsx_runtime.jsxs)("form", {
-							className: ContestPage_module_css_default.symbolResearch,
-							onSubmit: (event) => {
-								event.preventDefault();
-								if (symbol.trim() && !running && !busy) research(`请研究比赛品种/合约 ${symbol.trim()}，先巡检账户并核对数据覆盖与时间，再给依据和候选方案，暂不生成交易预演。`);
-							},
-							children: [(0, react_jsx_runtime.jsx)("input", {
-								"aria-label": "研究品种或合约",
-								value: symbol,
-								maxLength: 80,
-								placeholder: "研究品种或合约，例如 rb2610",
-								onChange: (event) => setSymbol(event.target.value)
-							}), (0, react_jsx_runtime.jsx)("button", {
-								type: "submit",
-								disabled: !symbol.trim() || running || Boolean(busy),
-								children: "研究品种"
-							})]
-						}),
-						details && inspection && (0, react_jsx_runtime.jsxs)(ActionDialog, {
-							title: "比赛账户巡检",
-							wide: true,
-							onClose: () => setDetails(false),
-							children: [
-								(0, react_jsx_runtime.jsxs)("p", { children: [
-									"账户 ",
-									identity.accountId,
-									" · ",
-									contestTime(inspection.fetchedAt),
-									"（上海）"
-								] }),
-								(0, react_jsx_runtime.jsx)("h3", { children: "资金" }),
-								(0, react_jsx_runtime.jsx)(ContestTable, { value: inspection.account.data }),
-								(0, react_jsx_runtime.jsx)("h3", { children: "持仓" }),
-								(0, react_jsx_runtime.jsx)(ContestTable, { value: inspection.positions.data }),
-								(0, react_jsx_runtime.jsx)("h3", { children: "活动委托" }),
-								(0, react_jsx_runtime.jsx)(ContestTable, { value: inspection.openOrders.data }),
-								(0, react_jsx_runtime.jsxs)("p", { children: [
-									"待处理计划 ",
-									inspection.pendingPlans.length,
-									" 笔。当前会话计划可在“比赛计划”查看，其他会话计划可在比赛工作台查看。"
-								] })
-							]
-						})
-					] }),
-					error && (0, react_jsx_runtime.jsx)("p", {
-						role: "alert",
-						children: error
+					(0, react_jsx_runtime.jsxs)("div", {
+						className: ContestPage_module_css_default.conversationActions,
+						children: [
+							(0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								disabled: checking,
+								onClick: () => {
+									inspect();
+								},
+								children: "刷新巡检"
+							}),
+							(0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								disabled: !inspection,
+								onClick: () => setDetails(true),
+								children: "账户详情"
+							}),
+							(0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								disabled: running || Boolean(busy),
+								onClick: () => research("请先巡检我的比赛账户，再研究现有持仓。展示数据时间、依据和候选方案，暂不生成交易预演。"),
+								children: "研究持仓"
+							}),
+							(0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								disabled: running || Boolean(busy),
+								onClick: () => research("请复盘今天的比赛交易，对照本账户计划、委托、成交和结算，列出待核实事项。不要生成新订单。"),
+								children: "今日复盘"
+							})
+						]
+					}),
+					(0, react_jsx_runtime.jsxs)("form", {
+						className: ContestPage_module_css_default.symbolResearch,
+						onSubmit: (event) => {
+							event.preventDefault();
+							if (symbol.trim() && !running && !busy) research(`请研究比赛品种/合约 ${symbol.trim()}，先巡检账户并核对数据覆盖与时间，再给依据和候选方案，暂不生成交易预演。`);
+						},
+						children: [(0, react_jsx_runtime.jsx)("input", {
+							"aria-label": "研究品种或合约",
+							value: symbol,
+							maxLength: 80,
+							placeholder: "研究品种或合约，例如 rb2610",
+							onChange: (event) => setSymbol(event.target.value)
+						}), (0, react_jsx_runtime.jsx)("button", {
+							type: "submit",
+							disabled: !symbol.trim() || running || Boolean(busy),
+							children: "研究品种"
+						})]
+					}),
+					details && inspection && (0, react_jsx_runtime.jsxs)(ActionDialog, {
+						title: "比赛账户巡检",
+						wide: true,
+						onClose: () => setDetails(false),
+						children: [
+							(0, react_jsx_runtime.jsxs)("p", { children: [
+								"账户 ",
+								identity.accountId,
+								" · ",
+								contestTime(inspection.fetchedAt),
+								"（上海）"
+							] }),
+							(0, react_jsx_runtime.jsx)("h3", { children: "资金" }),
+							(0, react_jsx_runtime.jsx)(ContestTable, { value: inspection.account.data }),
+							(0, react_jsx_runtime.jsx)("h3", { children: "持仓" }),
+							(0, react_jsx_runtime.jsx)(ContestTable, { value: inspection.positions.data }),
+							(0, react_jsx_runtime.jsx)("h3", { children: "活动委托" }),
+							(0, react_jsx_runtime.jsx)(ContestTable, { value: inspection.openOrders.data }),
+							(0, react_jsx_runtime.jsxs)("p", { children: [
+								"待处理计划 ",
+								inspection.pendingPlans.length,
+								" 笔。当前会话计划可在“比赛计划”查看，其他会话计划可在比赛工作台查看。"
+							] })
+						]
 					})
-				]
+				] }), error && (0, react_jsx_runtime.jsx)("p", {
+					role: "alert",
+					children: error
+				})]
 			});
 		}
 		//#endregion
@@ -44459,78 +44500,69 @@ void main() {
 				access,
 				sessionId
 			]);
-			return (0, react_jsx_runtime.jsxs)("section", {
-				className: ContestPage_module_css_default.conversation,
-				"aria-label": "因子比赛专用对话",
-				children: [
-					(0, react_jsx_runtime.jsxs)("div", {
-						className: ContestPage_module_css_default.conversationHeader,
-						children: [
-							(0, react_jsx_runtime.jsxs)("strong", { children: ["第四届因子大赛 · ", binding.contestConversation === "topic" ? "专题研究" : "账户主对话"] }),
-							(0, react_jsx_runtime.jsxs)("small", { children: ["账户 ", identity.accountId] }),
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								onClick: openContest,
-								children: "因子比赛工作台"
-							}),
-							ready && status && (0, react_jsx_runtime.jsx)(FactorPlans, {
-								status,
-								access,
-								refresh,
-								compact: true
-							})
-						]
-					}),
-					!ready ? (0, react_jsx_runtime.jsx)("p", {
-						role: "status",
-						children: "请在比赛工作台开启因子模式并连接本对话对应账户。"
-					}) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("p", { children: inspection ? `算力 ${display(inspection.balance)} · 因子池 ${display(asRecord(inspection.pool).name)} · 快照 ${contestTime(inspection.fetchedAt)}` : "正在只读巡检因子账户…" }), (0, react_jsx_runtime.jsxs)("div", {
-						className: ContestPage_module_css_default.conversationActions,
-						children: [
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								disabled: running || Boolean(busy),
-								onClick: () => {
-									run("research", () => access.requestResearch(sessionId, "请先巡检因子账户并说明比赛因子池状态，再帮我制定一批因子研究计划。先确定假设、日期、周期、运行次数和算力停止阈值，等待预算确认。"));
-								},
-								children: "制定研究计划"
-							}),
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								disabled: running || Boolean(busy),
-								onClick: () => {
-									run("research", () => access.requestResearch(sessionId, "请读取本会话已授权预算与回测记录，继续预算内的因子研究。遇到未知回执停止，不重复启动；没有有效预算时先说明。"));
-								},
-								children: "继续预算内研究"
-							}),
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								disabled: running || Boolean(busy),
-								onClick: () => {
-									run("research", () => access.requestResearch(sessionId, "请复盘本账户已有因子回测结果，比较样本内外表现、多头超额和换手，筛选可入池候选。只做研究，不启动新回测或提交参赛。"));
-								},
-								children: "复盘与筛选"
-							}),
-							status?.budgets.filter((b) => b.status === "active").map((b) => (0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								onClick: () => {
-									run("stop", () => access.stopBudget(b.id));
-								},
-								children: [
-									"停止批次（",
-									b.runsUsed,
-									"/",
-									b.maxRuns,
-									" 次）"
-								]
-							}, b.id))
-						]
-					})] }),
-					(error || inspectError) && (0, react_jsx_runtime.jsx)("p", {
-						role: "alert",
-						children: error || inspectError
-					})
-				]
+			return (0, react_jsx_runtime.jsxs)(CompetitionDock, {
+				kind: "factor-contest",
+				label: "因子比赛专用对话",
+				title: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: ["第四届因子大赛 · ", binding.contestConversation === "topic" ? "专题研究" : "账户主对话"] }),
+				subtitle: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: ["账户 ", identity.accountId] }),
+				actions: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("button", {
+					type: "button",
+					onClick: openContest,
+					children: "因子比赛工作台"
+				}), ready && status && (0, react_jsx_runtime.jsx)(FactorPlans, {
+					status,
+					access,
+					refresh,
+					compact: true
+				})] }),
+				children: [!ready ? (0, react_jsx_runtime.jsx)("p", {
+					role: "status",
+					children: "请在比赛工作台开启因子模式并连接本对话对应账户。"
+				}) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("p", { children: inspection ? `算力 ${display(inspection.balance)} · 因子池 ${display(asRecord(inspection.pool).name)} · 快照 ${contestTime(inspection.fetchedAt)}` : "正在只读巡检因子账户…" }), (0, react_jsx_runtime.jsxs)("div", {
+					className: ContestPage_module_css_default.conversationActions,
+					children: [
+						(0, react_jsx_runtime.jsx)("button", {
+							type: "button",
+							disabled: running || Boolean(busy),
+							onClick: () => {
+								run("research", () => access.requestResearch(sessionId, "请先巡检因子账户并说明比赛因子池状态，再帮我制定一批因子研究计划。先确定假设、日期、周期、运行次数和算力停止阈值，等待预算确认。"));
+							},
+							children: "制定研究计划"
+						}),
+						(0, react_jsx_runtime.jsx)("button", {
+							type: "button",
+							disabled: running || Boolean(busy),
+							onClick: () => {
+								run("research", () => access.requestResearch(sessionId, "请读取本会话已授权预算与回测记录，继续预算内的因子研究。遇到未知回执停止，不重复启动；没有有效预算时先说明。"));
+							},
+							children: "继续预算内研究"
+						}),
+						(0, react_jsx_runtime.jsx)("button", {
+							type: "button",
+							disabled: running || Boolean(busy),
+							onClick: () => {
+								run("research", () => access.requestResearch(sessionId, "请复盘本账户已有因子回测结果，比较样本内外表现、多头超额和换手，筛选可入池候选。只做研究，不启动新回测或提交参赛。"));
+							},
+							children: "复盘与筛选"
+						}),
+						status?.budgets.filter((b) => b.status === "active").map((b) => (0, react_jsx_runtime.jsxs)("button", {
+							type: "button",
+							onClick: () => {
+								run("stop", () => access.stopBudget(b.id));
+							},
+							children: [
+								"停止批次（",
+								b.runsUsed,
+								"/",
+								b.maxRuns,
+								" 次）"
+							]
+						}, b.id))
+					]
+				})] }), (error || inspectError) && (0, react_jsx_runtime.jsx)("p", {
+					role: "alert",
+					children: error || inspectError
+				})]
 			});
 		}
 		//#endregion

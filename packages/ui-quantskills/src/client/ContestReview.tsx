@@ -5,6 +5,7 @@ import type { InjectFace } from '@deepseek-ai/dsh-client-ui-slots'
 import type { ContestInspection, QuantSkillsPlainSessionBinding } from './plugin-types.ts'
 import { ActionDialog } from './ActionDialog.tsx'
 import { ContestPlans } from './ContestPlans.tsx'
+import { CompetitionDock } from './CompetitionDock.tsx'
 import { ContestTable } from './ContestPage.tsx'
 import { asRecord, contestTime, display, useContest, type ContestAccess } from './contest.ts'
 import css from './ContestPage.module.css'
@@ -45,13 +46,13 @@ function SessionContestReview({ sessionId, binding, running, access, openContest
   }, [ready, sessionId, access])
   const research = (text: string) => { void run('research', () => access.requestResearch(sessionId, text)) }
   const account = asRecord(inspection?.account.data)
-  return <section className={css.conversation} aria-label="比赛专用对话">
-    <div className={css.conversationHeader}>
-      <strong>仿真比赛 · {binding.contestConversation === 'topic' ? '专题研究' : binding.contestConversation === 'main' ? '账户主对话' : '比赛研究'}</strong>
-      <small>「巅峰交易者」全国期货模拟赛 · 账户 {identity.accountId} · {identity.contestId}</small>
+  return <CompetitionDock kind="contest" label="比赛专用对话"
+    title={<>仿真比赛 · {binding.contestConversation === 'topic' ? '专题研究' : binding.contestConversation === 'main' ? '账户主对话' : '比赛研究'}</>}
+    subtitle={<>「巅峰交易者」全国期货模拟赛 · 账户 {identity.accountId} · {identity.contestId}</>}
+    actions={<>
       <button type="button" onClick={openContest}>比赛工作台</button>
       {ready && status && <ContestPlans status={status} access={access} refresh={refresh} compact autoOpen={!running}/>}
-    </div>
+    </>}>
     {!status ? <p role="status">读取比赛状态…</p> : !ready ? <p role="status">{!status.enabled ? '比赛模式已关闭，普通会话照常使用。已提交委托仍由柜台处理。'
       : !matches && status.phase === 'connected' ? '当前登录账户与本会话不一致，请回比赛工作台进入对应账户主对话。' : '请在比赛工作台连接并验证账户。'}</p> : <>
       <div className={css.inspection} aria-live="polite">
@@ -79,5 +80,5 @@ function SessionContestReview({ sessionId, binding, running, access, openContest
       </ActionDialog>}
     </>}
     {error && <p role="alert">{error}</p>}
-  </section>
+  </CompetitionDock>
 }
