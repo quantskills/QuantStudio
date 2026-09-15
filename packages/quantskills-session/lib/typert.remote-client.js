@@ -3092,6 +3092,7 @@ export const TYPERT_REMOTE = {
           },
         },
       ],
+      cancellation: { parameter: 'signal' },
       result: {
         mode: 'strict',
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestData',
@@ -3339,6 +3340,7 @@ export const TYPERT_REMOTE = {
           },
         },
       ],
+      cancellation: { parameter: 'signal' },
       result: {
         mode: 'strict',
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorInspection',
@@ -3414,6 +3416,7 @@ export const TYPERT_REMOTE = {
           },
         },
       ],
+      cancellation: { parameter: 'signal' },
       result: {
         mode: 'strict',
         typeSymbol: '@deepseek-ai/dsh-util-values#JsonValue',

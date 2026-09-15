@@ -150,8 +150,8 @@ export class FactorContestService {
         return this.call(s => this.runtime.cli(join(this.root, 'runtimes', this.state.runtime), args, s), signal);
     }
     arena(path, signal) { return this.call(s => this.runtime.arena(path, s), signal); }
-    async verify(expected) {
-        const accountId = await this.call(s => this.runtime.identity(s));
+    async verify(expected, signal) {
+        const accountId = await this.call(s => this.runtime.identity(s), signal);
         const identity = { accountId, contestId: FACTOR_CONTEST_ID };
         if ((expected && !sameContest(identity, expected)) || (this.state.identity && !sameContest(identity, this.state.identity))) {
             this.ready = false;
@@ -211,7 +211,6 @@ export class FactorContestService {
                 this.state.identity = { accountId, contestId: FACTOR_CONTEST_ID };
                 this.ready = true;
                 this.phase = 'connected';
-                await this.inspectCurrent();
                 this.message = '因子账户已连接。报名及身份资料在赛事官网完成。';
                 await this.save();
             }
@@ -270,15 +269,15 @@ export class FactorContestService {
     async researchIdentity(expected) {
         return this.exclusive(async () => { this.assertReady(expected); return this.verify(expected ?? this.state.identity); });
     }
-    async balance() {
-        const value = record((await this.cli(['balance'])).balance).computingPower;
+    async balance(signal) {
+        const value = record((await this.cli(['balance'], signal)).balance).computingPower;
         if ((typeof value !== 'string' && typeof value !== 'number') || !Number.isFinite(Number(value)) || Number(value) < 0)
             throw new Error('无法核实算力余额，停止启动新回测。');
         return Number(value);
     }
-    async pool() {
+    async pool(signal) {
         try {
-            return await this.arena('/factorPool/pools');
+            return await this.arena('/factorPool/pools', signal);
         }
         catch (error) {
             if (error instanceof FactorApiError && error.code === 'POOL_NOT_FOUND')
@@ -286,26 +285,26 @@ export class FactorContestService {
             throw error;
         }
     }
-    async inspectCurrent() {
-        const identity = await this.verify(this.state.identity);
-        const balance = await this.balance(), registration = await this.arena('/factorArena/me/registration-state'), pool = await this.pool();
+    async inspectCurrent(signal) {
+        const identity = await this.verify(this.state.identity, signal);
+        const balance = await this.balance(signal), registration = await this.arena('/factorArena/me/registration-state', signal), pool = await this.pool(signal);
         this.inspection = { identity, fetchedAt: Date.now(), balance, registration, pool };
         return structuredClone(this.inspection);
     }
-    async inspect(expected) {
-        return this.exclusive(async () => { this.assertReady(expected); return this.inspectCurrent(); });
+    async inspect(expected, signal) {
+        return this.exclusive(async () => { this.assertReady(expected); return this.inspectCurrent(signal); });
     }
     async query(input, expected, signal) {
         const request = z.object({ kind: z.enum(['pool', 'workflows', 'scores', 'factor-info', 'factor-result', 'factors']), id: id.optional(), page: z.number().int().min(1).max(1000).optional() }).strict().parse(input);
         return this.exclusive(async () => {
             this.assertReady(expected);
-            await this.verify(expected ?? this.state.identity);
+            await this.verify(expected ?? this.state.identity, signal);
             if (request.kind === 'pool')
-                return this.pool();
+                return this.pool(signal);
             if (request.kind === 'workflows')
                 return this.arena(`/factorPool/workflows?page=${request.page ?? 1}&page_size=50`, signal);
             if (request.kind === 'scores') {
-                const poolId = id.parse(record(await this.pool()).pool_id);
+                const poolId = id.parse(record(await this.pool(signal)).pool_id);
                 return this.arena(`/factorPool/pools/${poolId}/scores`, signal);
             }
             if (request.kind === 'factors')
@@ -419,12 +418,11 @@ export class FactorContestService {
             }
             await this.save();
             if (p.status === 'completed' && this.state.enabled && this.ready) {
-                try {
-                    await this.inspectCurrent();
-                }
-                catch {
-                    this.message = '操作已完成，账户快照尚未刷新，请手动刷新核对。';
-                }
+                const generation = this.generation;
+                void this.inspect(p.identity, AbortSignal.timeout(30_000)).catch(() => {
+                    if (generation === this.generation)
+                        this.message = '操作已完成，账户快照尚未刷新，请手动刷新核对。';
+                });
             }
             return structuredClone(p);
         });

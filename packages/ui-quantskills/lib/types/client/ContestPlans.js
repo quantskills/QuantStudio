@@ -3,18 +3,28 @@ import { useEffect, useRef, useState } from 'react';
 import { ActionDialog } from "./ActionDialog.js";
 import { asRecord, contestTime, display, planStates } from "./contest.js";
 import css from './ContestPage.module.css';
+import { waitForCompetition } from "./competition-async.js";
 export function ContestPlans({ status, access, refresh, compact = false, autoOpen = false }) {
     const [selected, setSelected] = useState();
     const [historyOpen, setHistoryOpen] = useState(false);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState();
     const locked = useRef(false);
+    const controller = useRef(undefined), generation = useRef(0), submitted = useRef(new Set());
+    const [returned, setReturned] = useState();
     const seen = useRef(new Set());
     const [now, setNow] = useState(Date.now());
     useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
-    useEffect(() => { if (!status.enabled)
-        setSelected(undefined); }, [status.enabled]);
-    const plan = status.plans.find(plan => plan.id === selected);
+    useEffect(() => {
+        if (!status.enabled) {
+            setSelected(undefined);
+            setBusy(false);
+            locked.current = false;
+        }
+        return () => { generation.current++; controller.current?.abort(); };
+    }, [status.enabled]);
+    const original = status.plans.find(plan => plan.id === selected);
+    const plan = returned?.value.id === original?.id && (original === returned?.source || original?.status === 'prepared') ? returned?.value : original;
     const ready = status.enabled && status.phase === 'connected';
     const pending = status.plans.filter(plan => plan.status === 'prepared' && plan.expiresAt > now);
     const newest = pending.at(-1)?.id;
@@ -25,31 +35,45 @@ export function ContestPlans({ status, access, refresh, compact = false, autoOpe
         setSelected(newest);
         setError(undefined);
     }, [autoOpen, ready, newest]);
-    const work = async (task) => {
+    const work = async (task, submission) => {
         if (locked.current)
             return;
+        if (submission && submitted.current.has(submission.id))
+            return;
+        if (submission)
+            submitted.current.add(submission.id);
+        const current = generation.current;
+        controller.current = new AbortController();
         locked.current = true;
         setBusy(true);
         setError(undefined);
         try {
-            await task();
-            await refresh();
+            const result = await waitForCompetition(task, '比赛计划操作', 60_000, controller.current.signal);
+            if (current === generation.current && result)
+                setReturned({ source: original, value: result });
         }
         catch (error) {
-            setError(error instanceof Error ? error.message : '操作未完成，请刷新状态。');
+            if (current === generation.current)
+                setError(`${error instanceof Error ? error.message : '操作未完成。'}${submission ? '本次确认结果待核实，请勿重复提交。' : ''}`);
         }
         finally {
-            locked.current = false;
-            setBusy(false);
+            if (current === generation.current) {
+                locked.current = false;
+                setBusy(false);
+                void waitForCompetition(refresh, '比赛状态读取', 15_000).catch(error => {
+                    if (current === generation.current)
+                        setError(previous => previous || (error instanceof Error ? error.message : '请刷新状态。'));
+                });
+            }
         }
     };
     const list = _jsx(_Fragment, { children: status.plans.length === 0 ? _jsx("p", { className: css.muted, children: "\u7814\u7A76\u65B9\u6848\u7ECF\u4F60\u9009\u62E9\u540E\uFF0C\u9884\u6F14\u8BA1\u5212\u4F1A\u51FA\u73B0\u5728\u8FD9\u91CC\u3002" })
-            : [...status.plans].reverse().slice(0, 30).map(item => _jsxs("button", { className: css.planRow, type: "button", onClick: () => { setSelected(item.id); setError(undefined); }, children: [_jsxs("span", { children: [_jsx("strong", { children: item.summary }), _jsx("small", { children: contestTime(item.createdAt) })] }), _jsx("span", { children: item.status === 'prepared' && item.expiresAt <= now ? '已过期' : planStates[item.status] })] }, item.id)) });
+            : [...status.plans].reverse().slice(0, 30).map(item => _jsxs("button", { className: css.planRow, type: "button", disabled: busy, onClick: () => { setSelected(item.id); setError(undefined); }, children: [_jsxs("span", { children: [_jsx("strong", { children: item.summary }), _jsx("small", { children: contestTime(item.createdAt) })] }), _jsx("span", { children: item.status === 'prepared' && item.expiresAt <= now ? '已过期' : planStates[item.status] })] }, item.id)) });
     return _jsxs("section", { className: css.plans, "data-compact": compact || undefined, "aria-label": "\u6BD4\u8D5B\u4EA4\u6613\u8BA1\u5212", children: [compact ? _jsxs("button", { type: "button", onClick: () => { if (newest)
                     setSelected(newest);
                 else
                     setHistoryOpen(true); }, children: ["\u6BD4\u8D5B\u8BA1\u5212", pending.length ? ` · ${pending.length} 笔待确认` : ''] })
-                : _jsxs(_Fragment, { children: [_jsx("h2", { children: "\u4EA4\u6613\u8BA1\u5212\u4E0E\u56DE\u6267" }), list] }), compact && historyOpen && !plan && status.enabled && _jsx(ActionDialog, { title: "\u6BD4\u8D5B\u8BA1\u5212\u4E0E\u56DE\u6267", onClose: () => setHistoryOpen(false), children: list }), plan && status.enabled && _jsxs(ActionDialog, { title: "\u786E\u8BA4\u6BD4\u8D5B\u4EA4\u6613\u8BA1\u5212", busy: busy, error: error, onClose: () => setSelected(undefined), children: [_jsx(PlanDetails, { plan: plan }), _jsx("p", { role: "status", children: plan.status === 'prepared' && plan.expiresAt <= now ? '计划已过期，请回到研究会话重新预演。' : planStates[plan.status] }), plan.result && _jsxs("p", { className: css.muted, children: ["\u67DC\u53F0\u56DE\u62A5\uFF1A", display(plan.result.message ?? plan.result.status), plan.operationId ? ` · 操作号 ${plan.operationId}` : ''] }), _jsxs("footer", { className: css.actions, children: [plan.status === 'prepared' && _jsxs(_Fragment, { children: [_jsx("button", { type: "button", disabled: busy, onClick: () => { void work(async () => { await access.dismiss(plan); setSelected(undefined); }); }, children: "\u53D6\u6D88\u8BA1\u5212" }), _jsx("button", { type: "button", "data-primary": true, disabled: busy || !ready || plan.expiresAt <= now, onClick: () => { void work(() => access.execute(plan)); }, children: busy ? '正在提交…' : '确认执行这笔交易' })] }), ['executing', 'queued', 'submitted', 'unknown', 'partial'].includes(plan.status) && _jsx("button", { type: "button", "data-primary": true, disabled: busy || !ready, onClick: () => { void work(() => access.reconcile(plan)); }, children: busy ? '查询中…' : '查询柜台回执' })] })] })] });
+                : _jsxs(_Fragment, { children: [_jsx("h2", { children: "\u4EA4\u6613\u8BA1\u5212\u4E0E\u56DE\u6267" }), list] }), compact && historyOpen && !plan && status.enabled && _jsx(ActionDialog, { title: "\u6BD4\u8D5B\u8BA1\u5212\u4E0E\u56DE\u6267", onClose: () => setHistoryOpen(false), children: list }), plan && status.enabled && _jsxs(ActionDialog, { title: "\u786E\u8BA4\u6BD4\u8D5B\u4EA4\u6613\u8BA1\u5212", busy: busy, error: error, onClose: () => setSelected(undefined), children: [_jsx(PlanDetails, { plan: plan }), _jsx("p", { role: "status", children: plan.status === 'prepared' && plan.expiresAt <= now ? '计划已过期，请回到研究会话重新预演。' : planStates[plan.status] }), plan.result && _jsxs("p", { className: css.muted, children: ["\u67DC\u53F0\u56DE\u62A5\uFF1A", display(plan.result.message ?? plan.result.status), plan.operationId ? ` · 操作号 ${plan.operationId}` : ''] }), _jsxs("footer", { className: css.actions, children: [plan.status === 'prepared' && _jsxs(_Fragment, { children: [_jsx("button", { type: "button", disabled: busy || submitted.current.has(plan.id), onClick: () => { void work(async () => { await access.dismiss(plan); return { ...plan, status: 'cancelled' }; }); }, children: "\u53D6\u6D88\u8BA1\u5212" }), _jsx("button", { type: "button", "data-primary": true, disabled: busy || !ready || plan.expiresAt <= now || submitted.current.has(plan.id), onClick: () => { void work(() => access.execute(plan), plan); }, children: busy ? '正在提交…' : '确认执行这笔交易' }), submitted.current.has(plan.id) && !busy && _jsx("button", { type: "button", onClick: () => { void work(() => access.reconcile(plan)); }, children: "\u53EA\u8BFB\u6838\u5BF9\u786E\u8BA4\u7ED3\u679C" })] }), ['executing', 'queued', 'submitted', 'unknown', 'partial'].includes(plan.status) && _jsx("button", { type: "button", "data-primary": true, disabled: busy || !ready, onClick: () => { void work(() => access.reconcile(plan)); }, children: busy ? '查询中…' : '查询柜台回执' })] })] })] });
 }
 function PlanDetails({ plan }) {
     const parameters = asRecord(plan.details.parameters), quote = asRecord(plan.details.marketQuote);

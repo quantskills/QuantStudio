@@ -9424,6 +9424,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_parameter_0$schema
 						}
 					}],
+					cancellation: { parameter: "signal" },
 					result: {
 						mode: "strict",
 						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#ContestData",
@@ -9696,6 +9697,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorInspect_parameter_0$schema
 						}
 					}],
+					cancellation: { parameter: "signal" },
 					result: {
 						mode: "strict",
 						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorInspection",
@@ -9777,6 +9779,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorQuery_parameter_0$schema
 						}
 					}],
+					cancellation: { parameter: "signal" },
 					result: {
 						mode: "strict",
 						typeSymbol: "@deepseek-ai/dsh-util-values#JsonValue",

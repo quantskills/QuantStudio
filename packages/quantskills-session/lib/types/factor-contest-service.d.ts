@@ -38,7 +38,7 @@ export declare class FactorContestService {
     private balance;
     private pool;
     private inspectCurrent;
-    inspect(expected?: ContestIdentity): Promise<FactorInspection>;
+    inspect(expected?: ContestIdentity, signal?: AbortSignal): Promise<FactorInspection>;
     query(input: FactorQuery, expected?: ContestIdentity, signal?: AbortSignal): Promise<JsonValue>;
     private snapshot;
     private validatePoolAction;
