@@ -274,3 +274,6 @@ minimumReleaseAgeExclude:
   - '@deepseek-ai/dsh-workspace@0.1.2-alpha.2'
   - '@deepseek-ai/dsh@0.1.2-alpha.2'
   - '@deepseek-ai/schemastery@3.18.2'
+
+patchedDependencies:
+  '@deepseek-ai/dsh-subprocess-local@0.1.2-alpha.2': patches/@deepseek-ai__dsh-subprocess-local@0.1.2-alpha.2.patch
