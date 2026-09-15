@@ -627,6 +627,7 @@ describe('QuantSkills navigation and display scale', () => {
     }
     const mounted = render(<QuantSkillsPluginFrame {...props}/>)
     const frame = screen.getByRole('region', { name: 'QuantSkills 插件应用' })
+    expect([...screen.getByRole('group', { name: 'PandaAI 产品' }).querySelectorAll('button')].map(button => button.textContent)).toEqual(['QUBE', 'EVO', '比赛'])
 
     expect(frame.getAttribute('data-conversation-open')).toBe('true')
     expect(frame.getAttribute('data-plugin-interface-scale')).toBe('1.25')
@@ -791,6 +792,11 @@ describe('QuantSkills navigation and display scale', () => {
     expect(screen.getByRole('button', { name: '会话' }).textContent).toContain('1')
     expect(screen.getByRole('button', { name: '附件清理' })).toBeTruthy()
     expect(footerWide).toBe(false)
+    const destinations = [...screen.getByRole('navigation', { name: 'QuantSkills 主导航' }).querySelectorAll('button')].map(button => button.textContent)
+    expect(destinations.slice(destinations.indexOf('QUBE'), destinations.indexOf('QUBE') + 3)).toEqual(['QUBE', 'EVO', '比赛'])
+    fireEvent.click(screen.getByRole('button', { name: '比赛', exact: true }))
+    expect(view.store.getSnapshot().page).toBe('contest')
+    expect(screen.getByRole('button', { name: '比赛', exact: true }).getAttribute('aria-current')).toBe('page')
   })
 
   it.each([0.6, 0.75, 0.9, 1, 1.1, 1.25, 1.5])(

@@ -1,0 +1,187 @@
+import { mkdtemp, rm, readFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { ContestService, contestQueryArgs } from '../src/contest-service.ts'
+import { ContestCliError, parseCliOutput, type ContestCli } from '../src/contest-cli.ts'
+import type { ContestData } from '../src/contest-types.ts'
+import type { JsonValue } from '@deepseek-ai/dsh-util-values'
+
+const roots: string[] = []
+afterEach(async () => { for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }) })
+const identity = { accountId: 'acct-1', contestId: 'contest-1' }
+const order = { symbol: 'rb2610', direction: 'buy' as const, offset: 'open' as const, volume: 1 }
+const data = (value: JsonValue): ContestData => ({ data: value, fetchedAt: Date.now() })
+async function fixture() {
+  const home = await mkdtemp(join(tmpdir(), 'quantstudio-contest-')); roots.push(home)
+  let current = identity, serial = 0
+  const run = vi.fn<ContestCli['run']>(async (_runtime, args) => {
+    if (args[0] === 'whoami') return data({ loggedIn: true, ...current, scope: 'futures:read futures:trade' })
+    if (args[0] === 'agent') return data({ minimumCliVersion: '0.1.9' })
+    if (args[0] === 'account') return data({ equity: 1000000 })
+    if (args[0] === 'doctor') return data({ allOk: true })
+    if (args[0] === 'positions') return data([{ contractCode: 'rb2610', direction: 'long', volume: 1, closable: 1 }])
+    if (args[0] === 'orders') return data([])
+    if (args[0] === 'order') return data({ wouldSucceed: true, contractCode: 'rb2610', marketQuote: { ready: true, contractCode: 'rb2610', latestPrice: 3250, quoteTime: '2026-09-15 10:00:00' } })
+    if (args[0] === 'plan' && args[1] === 'create') return data({ planId: `plan-${++serial}`, expiresAt: Date.now() + 60_000 })
+    if (args[0] === 'plan' && args[1] === 'execute') return data({ operationId: 'op-1', status: 'queued' })
+    if (args[0] === 'plan' && args[1] === 'show') return data({ operationId: 'op-1', status: 'executing' })
+    if (args[0] === 'operation') return data({ operationId: 'op-1', status: 'completed' })
+    if (args[0] === 'update') return data({ latestVersion: '0.1.20' })
+    return data({})
+  })
+  const cli: ContestCli = { run, install: vi.fn(async () => ({ version: '0.1.19', rules: 'name: panda-trading' })) }
+  const service = new ContestService(cli, home)
+  const connect = async () => { await service.setEnabled(true); await service.connect(); run.mockClear() }
+  return { service, cli, run, connect, home, switchAccount: () => { current = { accountId: 'acct-2', contestId: 'contest-1' } } }
+}
+
+describe('contest is opt-in and independent of ordinary sessions', () => {
+  it('inspects only the bound account with read-only commands and drops context on disable or account change', async () => {
+    const f = await fixture(); await f.connect()
+    const snapshot = await f.service.inspect(identity)
+    expect(snapshot).toMatchObject({ identity, account: { data: { equity: 1000000 } }, positions: { data: [{ contractCode: 'rb2610' }] }, openOrders: { data: [] }, pendingPlans: [] })
+    expect(f.run.mock.calls.every(([, args]) => ['whoami', 'agent', 'doctor', 'account', 'positions', 'orders'].includes(args[0]!))).toBe(true)
+    expect(f.service.inspection({ ...identity, accountId: 'other' })).toBeUndefined()
+    f.switchAccount()
+    await expect(f.service.inspect(identity)).rejects.toThrow('不一致')
+    await f.service.connect()
+    expect(f.service.inspection(identity)).toBeUndefined()
+    await f.service.setEnabled(false)
+    expect(f.service.inspection(identity)).toBeUndefined()
+    await expect(f.service.inspect(identity)).rejects.toThrow('比赛模式已关闭')
+  })
+  it('does not install, authenticate, or call the CLI on construction/status/off queries', async () => {
+    const f = await fixture()
+    expect(await f.service.status()).toMatchObject({ enabled: false, phase: 'off', plans: [] })
+    await expect(f.service.query({ kind: 'account' })).rejects.toThrow('比赛模式已关闭')
+    await expect(f.service.connect()).rejects.toThrow('比赛模式已关闭')
+    expect(f.cli.install).not.toHaveBeenCalled(); expect(f.run).not.toHaveBeenCalled()
+    await f.service.setEnabled(true)
+    expect(f.cli.install).not.toHaveBeenCalled(); expect(f.run).not.toHaveBeenCalled()
+  })
+  it('cancels old plans when turned off, including after enabling again', async () => {
+    const f = await fixture(); await f.connect()
+    const plan = await f.service.prepare({ operation: 'place_order', sessionId: 's1', order }, identity)
+    await f.service.setEnabled(false)
+    await expect(f.service.execute(plan.id, 's1')).rejects.toThrow('比赛模式已关闭')
+    await f.service.setEnabled(true); await f.service.connect()
+    expect((await f.service.execute(plan.id, 's1')).status).toBe('cancelled')
+    expect(f.run.mock.calls.filter(([, args]) => args[0] === 'plan' && args[1] === 'execute')).toHaveLength(0)
+  })
+  it('persists mode and plans, but requires a fresh connection after restart', async () => {
+    const f = await fixture(); await f.connect()
+    const plan = await f.service.prepare({ operation: 'place_order', sessionId: 's1', order }, identity)
+    const restored = new ContestService(f.cli, f.home)
+    expect((await restored.status()).plans[0]?.id).toBe(plan.id)
+    await expect(restored.query({ kind: 'account' })).rejects.toThrow('连接并验证')
+    expect(await readFile(join(f.home, 'quantskills/contest/state.json'), 'utf8')).not.toContain('accessToken')
+  })
+  it('reopens official authorization when a saved login has expired', async () => {
+    const f = await fixture(); await f.connect()
+    f.run.mockRejectedValueOnce(new ContestCliError('login_required', 'Expired'))
+    await f.service.connect()
+    expect(f.run.mock.calls.some(([, args]) => args[0] === 'login')).toBe(true)
+    expect((await f.service.status()).phase).toBe('connected')
+  })
+})
+
+describe('frozen plan execution', () => {
+  it('serializes rapid confirmations and submits exactly once with a stable idempotency key', async () => {
+    const f = await fixture(); await f.connect()
+    const plan = await f.service.prepare({ operation: 'place_order', sessionId: 's1', order }, identity)
+    expect(f.run.mock.calls.find(([, args]) => args[0] === 'order')?.[1]).toContain('--dry-run')
+    const results = await Promise.all([f.service.execute(plan.id, 's1'), f.service.execute(plan.id, 's1')])
+    expect(results.map(x => x.status)).toEqual(['queued', 'queued'])
+    const calls = f.run.mock.calls.filter(([, args]) => args[0] === 'plan' && args[1] === 'execute')
+    expect(calls).toHaveLength(1)
+    expect(calls[0]?.[1]).toEqual(['plan', 'execute', plan.id, '--client-request-id', plan.clientRequestId, '--yes'])
+    expect((await f.service.reconcile(plan.id, 's1')).status).toBe('completed')
+  })
+  it('does not replay an order after a lost response, including after a restart', async () => {
+    const f = await fixture(); await f.connect()
+    const plan = await f.service.prepare({ operation: 'place_order', sessionId: 's1', order }, identity)
+    const base = f.run.getMockImplementation()!
+    f.run.mockImplementation(async (...args) => {
+      if (args[1][0] === 'plan' && args[1][1] === 'execute') throw new Error('timeout')
+      return base(...args)
+    })
+    expect((await f.service.execute(plan.id, 's1')).status).toBe('unknown')
+    const restored = new ContestService(f.cli, f.home); await restored.connect()
+    expect((await restored.execute(plan.id, 's1')).status).toBe('unknown')
+    expect(f.run.mock.calls.filter(([, args]) => args[0] === 'plan' && args[1] === 'execute')).toHaveLength(1)
+    expect((await restored.reconcile(plan.id, 's1')).status).toBe('completed')
+  })
+  it('rejects another session and a changed account', async () => {
+    const f = await fixture(); await f.connect()
+    const plan = await f.service.prepare({ operation: 'place_order', sessionId: 's1', order }, identity)
+    await expect(f.service.execute(plan.id, 's2')).rejects.toThrow('此会话')
+    f.switchAccount()
+    await expect(f.service.execute(plan.id, 's1')).rejects.toThrow('账户与此比赛会话不一致')
+  })
+  it('rejects invalid volume and excessive closes before making a plan', async () => {
+    const f = await fixture(); await f.connect()
+    await expect(f.service.prepare({ operation: 'place_order', sessionId: 's1', order: { ...order, volume: -1 } }, identity)).rejects.toThrow()
+    await expect(f.service.prepare({ operation: 'place_order', sessionId: 's1', order: { ...order, offset: 'close', direction: 'sell', volume: 2 } }, identity)).rejects.toThrow('可平手数不足')
+    expect(f.run.mock.calls.some(([, args]) => args[0] === 'plan')).toBe(false)
+  })
+  it('prevents updates while a plan awaits confirmation', async () => {
+    const f = await fixture(); await f.connect()
+    await f.service.prepare({ operation: 'place_order', sessionId: 's1', order }, identity)
+    await expect(f.service.update()).rejects.toThrow('待确认计划')
+    expect(f.cli.install).toHaveBeenCalledTimes(1)
+  })
+  it('allows an obsolete client to update after checking active orders', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.run.getMockImplementation()!
+    f.run.mockImplementation(async (...args) => args[1][0] === 'agent' ? data({ minimumCliVersion: '0.1.20' }) : base(...args))
+    await expect(f.service.connect()).rejects.toThrow('最低版本')
+    vi.mocked(f.cli.install).mockResolvedValueOnce({ version: '0.1.20', rules: 'new rules' })
+    expect(await f.service.update()).toMatchObject({ cliVersion: '0.1.20', phase: 'connected' })
+    expect(f.service.rulesText()).toBe('new rules')
+  })
+  it('blocks update when there is an active order, even without a local plan', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.run.getMockImplementation()!
+    f.run.mockImplementation(async (...args) => args[1][0] === 'orders' ? data([{ orderId: 'live-order' }]) : base(...args))
+    await expect(f.service.update()).rejects.toThrow('活动委托')
+    expect(f.cli.install).toHaveBeenCalledTimes(1)
+  })
+  it('rejects a plan that expires during account validation before submission', async () => {
+    const f = await fixture(); await f.connect()
+    const plan = await f.service.prepare({ operation: 'place_order', sessionId: 's1', order }, identity)
+    const original = Date.now
+    const base = f.run.getMockImplementation()!
+    f.run.mockImplementation(async (...args) => {
+      const result = await base(...args)
+      if (args[1][0] === 'doctor') Date.now = () => plan.expiresAt + 1
+      return result
+    })
+    try { await expect(f.service.execute(plan.id, 's1')).rejects.toThrow('失效') } finally { Date.now = original }
+    expect(f.run.mock.calls.some(([, args]) => args[0] === 'plan' && args[1] === 'execute')).toBe(false)
+  })
+  it('drops late query results when the mode was switched off and back on', async () => {
+    const f = await fixture(); await f.connect()
+    let resolve!: (value: ContestData) => void
+    f.run.mockImplementationOnce(() => new Promise(done => { resolve = done }))
+    const result = f.service.query({ kind: 'account' })
+    await vi.waitFor(() => expect(resolve).toBeTypeOf('function'))
+    await f.service.setEnabled(false); await f.service.setEnabled(true)
+    resolve(data({ equity: 123 }))
+    await expect(result).rejects.toThrow('比赛模式已切换')
+  })
+})
+
+describe('CLI contract', () => {
+  it('uses explicit today and active-order queries, and retains pagination metadata', () => {
+    expect(contestQueryArgs({ kind: 'orders', date: 'today', lastId: '123' })).toEqual(['orders', '--count', '50', '--date', 'today', '--last-id', '123'])
+    expect(contestQueryArgs({ kind: 'open-orders' })).toEqual(['orders', '--status', 'open', '--count', '200'])
+    expect(parseCliOutput('{"ok":true,"data":[],"meta":{"hasMore":true,"nextLastId":123}}').meta?.nextLastId).toBe(123)
+  })
+  it('redacts nested credentials and never reflects raw upstream errors', () => {
+    const result = parseCliOutput('{"ok":true,"data":{"accessToken":"secret","nested":{"password":"secret","accountId":"a1"}}}')
+    expect(JSON.stringify(result)).not.toContain('secret')
+    expect(() => parseCliOutput('{"ok":false,"error":{"code":"market_closed","message":"token secret"}}')).toThrow('休市')
+    expect(() => parseCliOutput('private credentials')).toThrow('无法解析')
+  })
+})

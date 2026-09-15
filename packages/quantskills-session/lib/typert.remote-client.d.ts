@@ -3,7 +3,7 @@ import type {
   RemoteResult,
   TypertRemoteContribution,
 } from '@deepseek-ai/dsh-typert-protocol'
-import type { ModelAccessRequest, ModelAccessResponse, QuantSkillsAgentCreateRequest, QuantSkillsAgentDefinition, QuantSkillsAgentDeleteRequest, QuantSkillsAgentSessionArchiveItem, QuantSkillsAgentSessionCreateRequest, QuantSkillsAgentSessionCreateResult, QuantSkillsAgentTeamCreateRequest, QuantSkillsAgentTeamDefinition, QuantSkillsAgentTeamDeleteRequest, QuantSkillsAgentTeamSessionArchiveItem, QuantSkillsAgentTeamSessionCreateRequest, QuantSkillsAgentTeamSessionCreateResult, QuantSkillsAgentTeamUpdateRequest, QuantSkillsAgentUpdateRequest, QuantSkillsAuthoringCommitRequest, QuantSkillsAuthoringCommitResult, QuantSkillsAuthoringSessionCreateRequest, QuantSkillsFileAttachRequest, QuantSkillsFileListRequest, QuantSkillsFileListResult, QuantSkillsFileReadRequest, QuantSkillsFileReadResult, QuantSkillsFrequentRequest, QuantSkillsFrequentSkill, QuantSkillsLibrarySourceRecord, QuantSkillsPlainSessionArchiveItem, QuantSkillsPlainSessionCreateRequest, QuantSkillsPlainSessionCreateResult, QuantSkillsPromptFormListRequest, QuantSkillsPromptFormListResult, QuantSkillsPromptFormRenderRequest, QuantSkillsPromptFormRenderResult, QuantSkillsResidentSkillAttachRequest, QuantSkillsResidentSkillDetachRequest, QuantSkillsResidentSkillResult, QuantSkillsResultPrepareRequest, QuantSkillsResultPrepareResult, QuantSkillsResultPreview, QuantSkillsResultPreviewRequest, QuantSkillsSessionArchiveItem, QuantSkillsSessionCreateRequest, QuantSkillsSessionCreateResult, QuantSkillsSessionEnsureRequest, QuantSkillsSessionEnsureResult, QuantSkillsSessionFileAttachment, QuantSkillsSessionListRequest, QuantSkillsWorkspaceRequest, QuantSkillsWorkspaceResolveResult, QuantSkillsWorkspaceStatusResult } from '@deepseek-ai/dsh-quantskills-session/types'
+import type { ContestData, ContestInspection, ContestPlan, ContestQuery, ContestSessionOpenRequest, ContestSessionOpenResult, ContestStatus, ModelAccessRequest, ModelAccessResponse, QuantSkillsAgentCreateRequest, QuantSkillsAgentDefinition, QuantSkillsAgentDeleteRequest, QuantSkillsAgentSessionArchiveItem, QuantSkillsAgentSessionCreateRequest, QuantSkillsAgentSessionCreateResult, QuantSkillsAgentTeamCreateRequest, QuantSkillsAgentTeamDefinition, QuantSkillsAgentTeamDeleteRequest, QuantSkillsAgentTeamSessionArchiveItem, QuantSkillsAgentTeamSessionCreateRequest, QuantSkillsAgentTeamSessionCreateResult, QuantSkillsAgentTeamUpdateRequest, QuantSkillsAgentUpdateRequest, QuantSkillsAuthoringCommitRequest, QuantSkillsAuthoringCommitResult, QuantSkillsAuthoringSessionCreateRequest, QuantSkillsFileAttachRequest, QuantSkillsFileListRequest, QuantSkillsFileListResult, QuantSkillsFileReadRequest, QuantSkillsFileReadResult, QuantSkillsFrequentRequest, QuantSkillsFrequentSkill, QuantSkillsLibrarySourceRecord, QuantSkillsPlainSessionArchiveItem, QuantSkillsPlainSessionCreateRequest, QuantSkillsPlainSessionCreateResult, QuantSkillsPromptFormListRequest, QuantSkillsPromptFormListResult, QuantSkillsPromptFormRenderRequest, QuantSkillsPromptFormRenderResult, QuantSkillsResidentSkillAttachRequest, QuantSkillsResidentSkillDetachRequest, QuantSkillsResidentSkillResult, QuantSkillsResultPrepareRequest, QuantSkillsResultPrepareResult, QuantSkillsResultPreview, QuantSkillsResultPreviewRequest, QuantSkillsSessionArchiveItem, QuantSkillsSessionCreateRequest, QuantSkillsSessionCreateResult, QuantSkillsSessionEnsureRequest, QuantSkillsSessionEnsureResult, QuantSkillsSessionFileAttachment, QuantSkillsSessionListRequest, QuantSkillsWorkspaceRequest, QuantSkillsWorkspaceResolveResult, QuantSkillsWorkspaceStatusResult } from '@deepseek-ai/dsh-quantskills-session/types'
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
   interface TypertRemoteNamespace$7175616e74536b696c6c7353657373696f6e73 {
@@ -23,6 +23,18 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     agentUpdate: (request: QuantSkillsAgentUpdateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAgentDefinition>>
     authoringCommit: (request: QuantSkillsAuthoringCommitRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAuthoringCommitResult>>
     authoringSessionCreate: (request: QuantSkillsAuthoringSessionCreateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAgentSessionCreateResult>>
+    contestCheckUpdate: () => Promise<RemoteResult<ContestStatus>>
+    contestConnect: () => Promise<RemoteResult<ContestStatus>>
+    contestDisconnect: () => Promise<RemoteResult<ContestStatus>>
+    contestDismiss: (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<ContestStatus>>
+    contestExecute: (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<ContestPlan>>
+    contestInspect: (request: { sessionId: SessionId; }, signal?: AbortSignal) => Promise<RemoteResult<ContestInspection>>
+    contestMode: (request: { enabled: boolean; }) => Promise<RemoteResult<ContestStatus>>
+    contestQuery: (request: ContestQuery) => Promise<RemoteResult<ContestData>>
+    contestReconcile: (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<ContestPlan>>
+    contestSessionOpen: (request: ContestSessionOpenRequest, signal?: AbortSignal) => Promise<RemoteResult<ContestSessionOpenResult>>
+    contestStatus: (request: { sessionId?: string; }) => Promise<RemoteResult<ContestStatus>>
+    contestUpdate: () => Promise<RemoteResult<ContestStatus>>
     create: (request: QuantSkillsSessionCreateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsSessionCreateResult>>
     fileAttach: (request: QuantSkillsFileAttachRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsSessionFileAttachment>>
     fileList: (request: QuantSkillsFileListRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsFileListResult>>
@@ -60,6 +72,18 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'quantSkillsSessions/agentUpdate': (request: QuantSkillsAgentUpdateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAgentDefinition>>
     'quantSkillsSessions/authoringCommit': (request: QuantSkillsAuthoringCommitRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAuthoringCommitResult>>
     'quantSkillsSessions/authoringSessionCreate': (request: QuantSkillsAuthoringSessionCreateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAgentSessionCreateResult>>
+    'quantSkillsSessions/contestCheckUpdate': () => Promise<RemoteResult<ContestStatus>>
+    'quantSkillsSessions/contestConnect': () => Promise<RemoteResult<ContestStatus>>
+    'quantSkillsSessions/contestDisconnect': () => Promise<RemoteResult<ContestStatus>>
+    'quantSkillsSessions/contestDismiss': (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<ContestStatus>>
+    'quantSkillsSessions/contestExecute': (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<ContestPlan>>
+    'quantSkillsSessions/contestInspect': (request: { sessionId: SessionId; }, signal?: AbortSignal) => Promise<RemoteResult<ContestInspection>>
+    'quantSkillsSessions/contestMode': (request: { enabled: boolean; }) => Promise<RemoteResult<ContestStatus>>
+    'quantSkillsSessions/contestQuery': (request: ContestQuery) => Promise<RemoteResult<ContestData>>
+    'quantSkillsSessions/contestReconcile': (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<ContestPlan>>
+    'quantSkillsSessions/contestSessionOpen': (request: ContestSessionOpenRequest, signal?: AbortSignal) => Promise<RemoteResult<ContestSessionOpenResult>>
+    'quantSkillsSessions/contestStatus': (request: { sessionId?: string; }) => Promise<RemoteResult<ContestStatus>>
+    'quantSkillsSessions/contestUpdate': () => Promise<RemoteResult<ContestStatus>>
     'quantSkillsSessions/create': (request: QuantSkillsSessionCreateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsSessionCreateResult>>
     'quantSkillsSessions/fileAttach': (request: QuantSkillsFileAttachRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsSessionFileAttachment>>
     'quantSkillsSessions/fileList': (request: QuantSkillsFileListRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsFileListResult>>

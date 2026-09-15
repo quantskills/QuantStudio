@@ -7,6 +7,9 @@ import { declarationDisplay } from './declaration-display.ts'
 import { hasChinese } from './catalog-zh.ts'
 import { ArrowRightIcon as ArrowRight } from '@phosphor-icons/react'
 import { DatabasePage, type DatabaseAccess } from './DatabasePage.tsx'
+import { ContestPage } from './ContestPage.tsx'
+import type { ContestAccess } from './contest.ts'
+import { TrophyIcon } from '@phosphor-icons/react'
 import { ExpertPresets } from './ExpertPresets.tsx'
 import { TeamPresets } from './TeamPresets.tsx'
 import { InteractiveHtml } from './InteractiveHtml.tsx'
@@ -192,6 +195,7 @@ export interface QuantSkillsAppInjected {
 
   renderPluginMarket?: () => ReactNode
   databaseAccess?: DatabaseAccess
+  contestAccess?: ContestAccess
   modelAccess?: ModelAccess
 
   /** Whether new Sessions use the native plugin's managed-default Workspace policy. */
@@ -1379,6 +1383,11 @@ const NAV_ITEMS: readonly { page: QuantSkillsPage; label: string; icon: ReactNod
   { page: 'database', label: '数据库', icon: <Database size={24}/> },
   { page: 'favorites', label: '收藏', icon: <Star size={24} /> },
 ]
+const PRODUCT_NAV_ITEMS: typeof NAV_ITEMS = [
+  { page: 'qube', label: 'QUBE', icon: <Cube size={24}/> },
+  { page: 'evo', label: 'EVO', icon: <Dna size={24}/> },
+  { page: 'contest', label: '比赛', icon: <TrophyIcon size={24}/> },
+]
 
 const PLUGIN_NAV_WIDTH = 96
 const PLUGIN_SESSION_DIVIDER_WIDTH = 9
@@ -1685,7 +1694,7 @@ export function QuantSkillsPluginFrame({
         onClick={() => { closeResults(); setMobilePanel(current => current === 'navigation' ? undefined : 'navigation') }}>
         {mobilePanel === 'navigation' ? <X size={22}/> : <List size={22}/>}
       </button>
-      <span className={css.mobileTitle}><QuantSkillsBrandMark size={20}/><b>{conversationOpen ? '会话' : NAV_ITEMS.find(item => item.page === page)?.label ?? ({ qube: 'QUBE', evo: 'EVO', settings: '设置' } as Record<string, string>)[page] ?? 'QuantSkills'}</b></span>
+      <span className={css.mobileTitle}><QuantSkillsBrandMark size={20}/><b>{conversationOpen ? '会话' : [...NAV_ITEMS, ...PRODUCT_NAV_ITEMS].find(item => item.page === page)?.label ?? (page === 'settings' ? '设置' : 'QuantSkills')}</b></span>
       {conversationOpen && <button type="button" aria-label={mobilePanel === 'sessions' ? '关闭会话列表' : '打开会话列表'} aria-expanded={mobilePanel === 'sessions'} aria-controls={mobileSessionsId}
         onClick={() => { closeResults(); setMobilePanel(current => current === 'sessions' ? undefined : 'sessions') }}><ChatsCircle size={22}/></button>}
       {resultSurfaceVisible && <button type="button" aria-label={resultWorkbenchOpen ? '关闭结果预览' : '打开结果预览'} aria-expanded={resultWorkbenchOpen} aria-controls={mobileResultsId}
@@ -1717,12 +1726,10 @@ export function QuantSkillsPluginFrame({
           <span>{item.label}</span>
         </button>)}
         <div className={css.productLinks} role="group" aria-label="PandaAI 产品">
-          <button type="button" className={clsx(css.pluginNavItem, page === 'qube' && css.pluginNavItemActive)} aria-current={page === 'qube' ? 'page' : undefined} onClick={() => actions.navigate('qube')} title="QUBE · 产品介绍">
-            <Cube size={24} aria-hidden="true"/><span>QUBE</span>
-          </button>
-          <button type="button" className={clsx(css.pluginNavItem, page === 'evo' && css.pluginNavItemActive)} aria-current={page === 'evo' ? 'page' : undefined} onClick={() => actions.navigate('evo')} title="EVO · 产品介绍">
-            <Dna size={24} aria-hidden="true"/><span>EVO</span>
-          </button>
+          {PRODUCT_NAV_ITEMS.map(item => <button key={item.page} type="button" className={clsx(css.pluginNavItem, page === item.page && css.pluginNavItemActive)}
+            aria-current={page === item.page ? 'page' : undefined} onClick={() => actions.navigate(item.page)} title={`${item.label} · ${item.page === 'contest' ? 'AI 交易助手' : '产品介绍'}`}>
+            {item.icon}<span>{item.label}</span>
+          </button>)}
         </div>
         <button
           type="button"
@@ -1862,7 +1869,7 @@ export function QuantSkillsRail({
     <nav className={css.rail} aria-label="QuantSkills 主导航">
       <div className={css.railLogo}><QuantSkillsBrandMark size={38} /></div>
       <div className={css.railItems}>
-        {NAV_ITEMS.map((item) => {
+        {[...NAV_ITEMS, ...PRODUCT_NAV_ITEMS].map((item) => {
           const active = page === item.page || (item.page === 'conversations' && page === 'parallel')
           return <button
             key={item.page}
@@ -1914,6 +1921,7 @@ export function QuantSkillsApp(props: QuantSkillsAppProps) {
       {(page === 'agents' || page === 'teams') && <AgentsPage {...pageProps} />}
       {page === 'settings' && <SettingsPage {...pageProps} />}
       {page === 'database' && <DatabasePage access={pageProps.databaseAccess} />}
+      {page === 'contest' && <ContestPage access={pageProps.contestAccess} researchSessions={boundSessions.plainArchives} openResearch={props.openSession} />}
       {(page === 'qube' || page === 'evo') && <ProductIntro product={page} navigate={props.actions.navigate} />}
     </main>
   )

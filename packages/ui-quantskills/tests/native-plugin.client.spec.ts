@@ -67,6 +67,56 @@ vi.mock('@deepseek-ai/dsh-client-ui-deliverables/client', () => ({
 
 import { apply } from '../src/client/index.ts'
 
+it.each([true, false])('opens the AI trading assistant only after the dedicated session is ready (new=%s)', async created => {
+  const registrations: { name: string; inject?: () => unknown }[] = []
+  const listeners = new Set<() => void>()
+  let ready = false
+  const opened = vi.fn(), rename = vi.fn(async () => ({ ok: true as const, value: undefined }))
+  const create = vi.fn(async () => ({ ok: true as const, value: { sessionId: 'contest-new', binding: { purpose: 'contest' }, created } }))
+  const empty = async () => ({ ok: true as const, value: [] })
+  const ctx = {
+    get: (name: string) => name === 'connection' ? { api: { settings: {}, llm: {}, sessions: {} }, isLoopback: true } : undefined,
+    effect: vi.fn(), inject: vi.fn(),
+    slots: {
+      spec: () => ({ kind: 'list', scope: 'root' }),
+      inject: (_name: string, register: () => void) => register(),
+      register: (options: { name: string; inject?: () => unknown }) => { registrations.push(options); return () => {} },
+    },
+    remote: {
+      quantSkills: { catalogSyncStatus: async () => ({ ok: true, value: { mode: 'manual', state: 'idle' } }) },
+      quantSkillsSessions: {
+        contestSessionOpen: create,
+        workspaceResolve: async () => ({ ok: true, value: { workspace: { workspaceId: 'workspace-1', path: 'D:\\Research' }, source: 'managed' } }),
+        plainSessionList: empty, list: empty, frequent: empty,
+      },
+    },
+    settingsScope: { bind: () => ({ getSnapshot: () => ({ status: 'loading', writable: false }), subscribe: () => () => {} }) },
+    sessions: {
+      open: opened,
+      binding: () => ready ? { session: { rename } } : undefined,
+      list: {
+        getSnapshot: () => ({ byId: ready ? { 'contest-new': { sessionId: 'contest-new', projectionValues: { quantSkillsPlainSession: { purpose: 'contest' } } } } : {} }),
+        subscribe: (listener: () => void) => { listeners.add(listener); return () => listeners.delete(listener) },
+      },
+    },
+    workspaces: { list: { getSnapshot: () => ({ items: [] }) } },
+    conversationDeliverables: {},
+  } as unknown as ClientContext
+  apply(ctx)
+  const page = registrations.find(item => item.name === 'quantskills.page')!.inject!() as QuantSkillsAppInjected
+  const opening = page.contestAccess!.startResearch()
+  await vi.waitFor(() => expect(create).toHaveBeenCalledOnce())
+  expect(opened).not.toHaveBeenCalled(); expect(rename).not.toHaveBeenCalled()
+  ready = true
+  for (const listener of listeners) listener()
+  await opening
+  expect(create).toHaveBeenCalledWith(expect.objectContaining({ workspaceId: 'workspace-1' }), expect.any(AbortSignal))
+  if (created) expect(rename).toHaveBeenCalledExactlyOnceWith('比赛 · 账户主对话')
+  else expect(rename).not.toHaveBeenCalled()
+  expect(opened).toHaveBeenCalledExactlyOnceWith('contest-new')
+  await expect(page.contestAccess!.requestResearch('contest-new', '账户巡检')).rejects.toThrow('请在对应比赛会话中发起研究')
+})
+
 describe('QuantSkills native application composition', () => {
   it('adds the launcher and adopts a Host-known archive without closing the workbench', async () => {
     const lead: QuantSkillsAgentDefinition = {

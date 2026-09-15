@@ -45,6 +45,7 @@ export type {
   QuantSkillsAuthoringInstalledVersion,
   QuantSkillsFrequentSkill,
   QuantSkillsPlainSessionArchiveItem,
+  QuantSkillsPlainSessionBinding,
   QuantSkillsPlainSessionCreateResult,
   QuantSkillsPromptFormCapability,
   QuantSkillsPromptFormListResult,
@@ -67,3 +68,4 @@ export type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types'
 export type { SessionId } from '@deepseek-ai/dsh-session/types'
 
 export type { QuantSkillsLibrarySourceRecord } from '@deepseek-ai/dsh-quantskills-session/types'
+export type { ContestIdentity, ContestStatus, ContestQuery, ContestData, ContestPlan, ContestInspection, ContestSessionOpenResult } from '@deepseek-ai/dsh-quantskills-session/types'

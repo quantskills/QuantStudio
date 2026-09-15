@@ -3,6 +3,7 @@ import type { SessionId } from '@deepseek-ai/dsh-session/types';
 import type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types';
 import type { Branded } from '@deepseek-ai/dsh-brand';
 import type { AttachmentId } from '@deepseek-ai/dsh-attachment/types';
+export type { ContestIdentity, ContestStatus, ContestQuery, ContestData, ContestPlan, ContestOrder, ContestPrepareRequest, ContestInspection } from './contest-types.ts';
 /** QuantSkills catalog asset identity. */
 export type QuantSkillsAssetId = Branded<'QuantSkillsAssetId'>;
 /** Exact approved Git commit. */
@@ -132,18 +133,32 @@ export interface QuantSkillsSessionEnsureResult {
     readonly sessionId: SessionId;
 }
 /** Product-owned purpose of a QuantSkills Session without a frozen asset composition. */
-export type QuantSkillsPlainSessionPurpose = 'ordinary' | 'role-helper';
+export type QuantSkillsPlainSessionPurpose = 'ordinary' | 'role-helper' | 'contest';
 /** Durable ownership marker for a QuantSkills Session without a frozen asset composition. */
 export interface QuantSkillsPlainSessionBinding {
     readonly purpose: QuantSkillsPlainSessionPurpose;
+    readonly contest?: import('./contest-types.ts').ContestIdentity | undefined;
+    readonly contestConversation?: 'main' | 'topic' | undefined;
 }
 /** Request for atomically creating or idempotently adopting one plain QuantSkills Session. */
 export interface QuantSkillsPlainSessionCreateRequest {
     readonly sessionId: SessionId;
     readonly purpose: QuantSkillsPlainSessionPurpose;
+    readonly contestConversation?: 'main' | 'topic';
     readonly workspaceId?: WorkspaceId;
     readonly cwd?: string;
     readonly agentPreset?: string;
+}
+export interface ContestSessionOpenRequest {
+    readonly sessionId: SessionId;
+    readonly workspaceId?: WorkspaceId;
+    readonly cwd?: string;
+    readonly topic?: boolean;
+}
+export interface ContestSessionOpenResult {
+    readonly sessionId: SessionId;
+    readonly binding: QuantSkillsPlainSessionBinding;
+    readonly created: boolean;
 }
 /** Successful plain QuantSkills Session creation or idempotent adoption. */
 export interface QuantSkillsPlainSessionCreateResult {

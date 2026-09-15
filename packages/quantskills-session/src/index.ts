@@ -1,6 +1,14 @@
 /** Exact-version QuantSkills session composition and log-backed archive remotes. */
 
 import { QuantSkillsLibraryStore } from './library-store.ts'
+import { ContestService, sameContest } from './contest-service.ts'
+import { OfficialContestCli } from './contest-cli.ts'
+import { installContestTools } from './contest-tools.ts'
+import type { ContestStatus, ContestData, ContestQuery, ContestPlan, ContestInspection } from './contest-types.ts'
+import type { ContestSessionOpenRequest, ContestSessionOpenResult } from './types.ts'
+import { resolveDshHome } from '@deepseek-ai/dsh-home-paths'
+import type {} from '@deepseek-ai/dsh-subprocess'
+import { join } from 'node:path'
 import { capabilityDisplayName } from './capability-display.ts'
 import type { QuantSkillsLibrarySourceRecord } from './types.ts'
 import { createHash, randomUUID } from 'node:crypto'
@@ -370,8 +378,11 @@ const residentSkillChangeSchema = z.object({
 }).strict()
 const residentSkillsSchema = z.array(bindingSchema).readonly()
 const plainSessionBindingSchema = z.object({
-  purpose: z.enum(['ordinary', 'role-helper']),
-}).strict()
+  purpose: z.enum(['ordinary', 'role-helper', 'contest']),
+  contest: z.object({ accountId: z.string().min(1), contestId: z.string().min(1) }).optional(),
+  contestConversation: z.enum(['main', 'topic']).optional(),
+}).strict().refine(value => (value.purpose === 'contest') === (value.contest !== undefined)
+  && (value.contestConversation === undefined || value.purpose === 'contest'), 'contest purpose requires its bound account')
 const pandaRuntimeBindingSchema = z.object({
   environmentId: z.string().min(1),
   sdkVersion: z.string().min(1),
@@ -927,12 +938,20 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   private readonly teamFreshProvider: string
   private readonly teamForkProvider: string
   private readonly workspaceResolver: QuantSkillsWorkspaceResolver
+  private readonly contest: ContestService
+  private contestSessionOpening: Promise<unknown> = Promise.resolve()
 
   /**
    * @param ctx - assembled QuantSkills Host context.
    */
   constructor(ctx: Context, config: Config) {
     super(ctx, 'quantSkillsSessions', { namespace: 'quantSkillsSessions' })
+    this.contest = new ContestService(new OfficialContestCli(() => {
+      const processes = ctx.get('subprocess')
+      if (!processes) throw new Error('比赛 CLI 进程服务未就绪，请重新启动应用。')
+      return processes
+    },
+      join(resolveDshHome(config.dshHome), 'quantskills', 'contest', 'auth')), config.dshHome)
     installQuantSkillsIdentity(ctx)
     this.libraryStore = new QuantSkillsLibraryStore(config.dshHome)
     ctx.inject(['connection' as never], (connectionCtx) => {
@@ -1102,6 +1121,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
 
     ctx.effect(() => () => {
       this.lifetime.abort(new Error('quantskills-session: service disposed'))
+      this.contest.dispose()
       this.reservations.clear()
       this.plainReservations.clear()
       this.agentReservations.clear()
@@ -1133,6 +1153,85 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   @Remote('workspaceResolve')
   workspaceResolve(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceResolveResult> {
     return this.workspaceResolver.resolve(request.preferredWorkspaceId)
+  }
+
+  /** Read local contest status without starting processes or opening a browser. */
+  @Remote('contestStatus')
+  contestStatus(request: { sessionId?: string }): Promise<ContestStatus> { return this.contest.status(request.sessionId) }
+
+  /** Explicit application mode toggle; never changes ordinary Session composition. */
+  @Remote('contestMode')
+  contestMode(request: { enabled: boolean }): Promise<ContestStatus> { return this.contest.setEnabled(request.enabled) }
+
+  @Remote('contestConnect')
+  contestConnect(): Promise<ContestStatus> { return this.contest.connect() }
+
+  @Remote('contestDisconnect')
+  contestDisconnect(): Promise<ContestStatus> { return this.contest.disconnect() }
+
+  @Remote('contestCheckUpdate')
+  contestCheckUpdate(): Promise<ContestStatus> { return this.contest.checkUpdate() }
+
+  @Remote('contestUpdate')
+  contestUpdate(): Promise<ContestStatus> { return this.contest.update() }
+
+  @Remote('contestQuery')
+  contestQuery(request: ContestQuery): Promise<ContestData> { return this.contest.query(request) }
+
+  /** Entry inspection is bound to the persisted conversation, never a caller-supplied account. */
+  @Remote('contestInspect')
+  async contestInspect(request: { sessionId: SessionId }, signal?: AbortSignal): Promise<ContestInspection> {
+    const existing = await this.inspectExisting(request.sessionId, this.operationSignal(signal))
+    const binding = existing && foldQuantSkillsPlainSessionBinding(existing.events)
+    if (binding?.purpose !== 'contest' || !binding.contest) throw new Error('账户巡检仅用于比赛专用会话。')
+    return this.contest.inspect(binding.contest, signal)
+  }
+
+  /** Serialize entry across clients so each account reuses one main conversation. */
+  @Remote('contestSessionOpen')
+  contestSessionOpen(request: ContestSessionOpenRequest, signal?: AbortSignal): Promise<ContestSessionOpenResult> {
+    const next = this.contestSessionOpening.catch(() => {}).then(async () => {
+      const identity = await this.contest.researchIdentity()
+      const active = this.operationSignal(signal)
+      if (!request.topic) {
+        const archives = await this.listPlainArchives({}, active)
+        const candidates = archives.filter(item => !item.archived && !item.parentSessionId
+          && item.binding.purpose === 'contest' && item.binding.contestConversation !== 'topic'
+          && sameContest(item.binding.contest, identity))
+        // Explicit main conversations win; legacy conversations can be adopted without rewriting history.
+        const prior = candidates.find(item => item.binding.contestConversation === 'main')
+          ?? candidates.sort((a, b) => a.createdAt - b.createdAt || a.sessionId.localeCompare(b.sessionId))[0]
+        if (prior) {
+          await this.sessionEnsure({ sessionId: prior.sessionId }, active)
+          return { sessionId: prior.sessionId, binding: prior.binding, created: false }
+        }
+      }
+      const created = await this.plainSessionCreate({ sessionId: request.sessionId, purpose: 'contest',
+        contestConversation: request.topic ? 'topic' : 'main',
+        ...(request.workspaceId === undefined ? {} : { workspaceId: request.workspaceId }),
+        ...(request.cwd === undefined ? {} : { cwd: request.cwd }),
+      }, active)
+      if (!sameContest(created.binding.contest, identity)) throw new Error('比赛账户已切换，请重新进入。')
+      return { sessionId: created.sessionId, binding: created.binding, created: true }
+    })
+    this.contestSessionOpening = next
+    return next
+  }
+
+  /** Client-only execution endpoint. The model is never given an execute tool. */
+  @Remote('contestExecute')
+  contestExecute(request: { planId: string; sessionId: string }): Promise<ContestPlan> {
+    return this.contest.execute(request.planId, request.sessionId)
+  }
+
+  @Remote('contestDismiss')
+  contestDismiss(request: { planId: string; sessionId: string }): Promise<ContestStatus> {
+    return this.contest.dismiss(request.planId, request.sessionId)
+  }
+
+  @Remote('contestReconcile')
+  contestReconcile(request: { planId: string; sessionId: string }): Promise<ContestPlan> {
+    return this.contest.reconcile(request.planId, request.sessionId)
   }
 
   /**
@@ -1192,7 +1291,11 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       throw new TypeError('QuantSkills plain Session create accepts workspaceId or cwd, not both')
     }
     const active = this.operationSignal(signal)
-    const binding = Object.freeze({ purpose: request.purpose })
+    if (request.contestConversation !== undefined && request.purpose !== 'contest') throw new Error('普通会话不能设置比赛对话类型。')
+    const binding = Object.freeze({ purpose: request.purpose,
+      ...(request.purpose === 'contest' ? { contest: await this.contest.researchIdentity() } : {}),
+      ...(request.contestConversation === undefined ? {} : { contestConversation: request.contestConversation }),
+    })
     if (this.reservations.has(request.sessionId)
       || this.agentReservations.has(request.sessionId)
       || this.teamReservations.has(request.sessionId)
@@ -2721,6 +2824,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       this.installResidentRuntime(agentCtx, agent, Object.freeze([]))
       this.registerAttachmentTool(agentCtx, agent)
       this.registerLiveTradingApproval(agentCtx, agent)
+      if (binding.contest) {
+        await this.contest.rules()
+        installContestTools(agentCtx, agent, this.contest, binding.contest)
+      }
       if (loggedPlain === null) agent.session.append(PLAIN_SESSION_EVENT, binding)
       return
     }
@@ -3412,7 +3519,9 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       disposeOutputPolicy = registerLiteralPromptSection(systemPrompt, {
         name: 'quantskills:artifact-output',
         order: 114,
-        text: () => [
+        text: () => (foldQuantSkillsPlainSessionBinding(agent.session.events) ?? this.plainReservations.get(agent.session.id)?.binding)?.purpose === 'contest'
+          ? '比赛研究在本对话中交付。仅使用本会话已开放的工具和已附文件，不使用 Shell 或任意代码，不声称创建了未生成的文件。'
+          : [
           'Write every generated artifact under `output/` in the current Session workspace.',
           renderArtifactTheme(this.ctx.get('settings')?.get('ui-quantskills')),
           'After creating and checking real files, add one final fenced quantskills-deliverables JSON block: {"version":1,"items":[{"path":"output/report.html","title":"报告","presentation":"interactive"}]}. Use interactive for self-contained HTML, card for other files. Never declare files that do not exist. Include images, audio, video and PDF when delivered. Self-contained HTML must inline scripts and styles; external network resources are unavailable in previews.',
@@ -3981,7 +4090,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
         : this.ctx.sessionProjections.snapshot(live)
       const binding = projectionPlainBinding(snapshot)
-      if (binding?.purpose !== 'ordinary') continue
+      if (binding?.purpose !== 'ordinary' && binding?.purpose !== 'contest') continue
       const title = typeof snapshot.values.title === 'string' ? snapshot.values.title : undefined
       const metadata = snapshot.values.sessionListMetadata
       items.push(Object.freeze({
@@ -4107,7 +4216,8 @@ function bindingFrom(version: QuantSkillsInstalledVersion): QuantSkillsSessionBi
 }
 
 function samePlainBinding(left: QuantSkillsPlainSessionBinding, right: QuantSkillsPlainSessionBinding): boolean {
-  return left.purpose === right.purpose
+  return left.purpose === right.purpose && left.contest?.accountId === right.contest?.accountId && left.contest?.contestId === right.contest?.contestId
+    && left.contestConversation === right.contestConversation
 }
 
 function sameBinding(left: QuantSkillsSessionBinding, right: QuantSkillsSessionBinding): boolean {
