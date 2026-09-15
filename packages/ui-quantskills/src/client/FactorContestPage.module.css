@@ -1,0 +1,17 @@
+.hub { height:100%;min-height:0;display:flex;flex-direction:column;color:var(--qs-ink,var(--dsw-alias-label-primary)); }
+.selector { display:flex;gap:10px;padding:18px 40px 0; }
+.selector button { font:inherit;cursor:pointer;padding:10px 18px;border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:9px;background:var(--qs-surface,var(--dsw-alias-bg-base));color:var(--qs-ink,var(--dsw-alias-label-primary)); }
+.selector button[aria-pressed=true] { border-color:var(--qs-accent);box-shadow:inset 0 -2px var(--qs-accent);font-weight:600; }
+.selector button:focus-visible { outline:2px solid var(--qs-accent);outline-offset:3px; }
+.body { flex:1;min-height:0; }
+.form { display:grid;gap:14px;margin:18px 0;color:var(--qs-ink,var(--dsw-alias-label-primary)); }
+.form label { display:grid;gap:7px;font-size:13px; }
+.form input,.form select { min-width:0;font:inherit;color:var(--qs-ink,var(--dsw-alias-label-primary));background:var(--qs-surface,var(--dsw-alias-bg-base));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:7px;padding:10px; }
+.form input:focus-visible,.form select:focus-visible { outline:2px solid var(--qs-accent);outline-offset:2px; }
+.form button { font:inherit;cursor:pointer;color:var(--qs-buttonInk);background:var(--qs-accent);padding:10px 16px;border:0;border-radius:8px; }
+.form button:disabled { opacity:.5;cursor:default; }
+.json { max-height:350px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.7 monospace;padding:14px;background:var(--qs-surface,var(--dsw-alias-bg-base));color:var(--qs-ink,var(--dsw-alias-label-primary));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:8px; }
+.row { display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:14px 0;border-bottom:1px solid var(--qs-line,var(--dsw-alias-border-l2)); }
+.row p { margin:4px 0;color:var(--qs-muted);font-size:12px; }.row strong { overflow-wrap:anywhere; }
+.login { max-width:500px; }.notice { line-height:1.7;color:var(--qs-muted);font-size:13px; }
+@media(max-width:600px) { .selector { padding:14px 14px 0; }.selector button { flex:1;padding:10px;font-size:13px; } }

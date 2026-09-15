@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os'
 import { basename, dirname, join } from 'node:path'
 import { strToU8, zipSync } from 'fflate'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import type { FactorContestService } from '../src/factor-contest-service.ts'
 import { Context } from '@deepseek-ai/cordis'
 import { AttachmentId, type FileAttachmentRef, type SaveFileAttachment } from '@deepseek-ai/dsh-attachment'
 import AgentRegistry from '@deepseek-ai/dsh-agent'
@@ -845,6 +846,55 @@ describe('QuantSkills exact-version sessions', () => {
     vi.mocked(contest.researchIdentity).mockResolvedValue({ ...identity, accountId: 'another-account' })
     const other = await service.contestSessionOpen({ sessionId: SessionId('other-account-main'), cwd: fixture.root })
     expect(other.created).toBe(true); expect(other.sessionId).not.toBe(main.sessionId)
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('isolates factor-contest tools and prompts, reuses the account main session and separates topics', async () => {
+    const fixture = await harness(), service = fixture.ctx.quantSkillsSessions
+    const factors = (service as unknown as { factorContest: FactorContestService }).factorContest
+    const identity = { accountId: 'factor-user', contestId: 'pandaai-fourth-factor' }
+    vi.spyOn(factors, 'researchIdentity').mockResolvedValue(identity)
+    const inspect = vi.spyOn(factors, 'inspect').mockResolvedValue({ identity } as never)
+    const ordinaryId = SessionId('ordinary-alongside-factor')
+    await service.plainSessionCreate({ sessionId: ordinaryId, purpose: 'ordinary', cwd: fixture.root })
+    const ordinary = fixture.ctx.agents.get(ordinaryId)!
+    const promptBefore = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: ordinary })), toolsBefore = fixture.ctx.tools.schemas(ordinary)
+    await factors.mode(true)
+    const [first, repeated] = await Promise.all([
+      service.factorSessionOpen({ sessionId: SessionId('factor-main-a'), cwd: fixture.root }),
+      service.factorSessionOpen({ sessionId: SessionId('factor-main-b'), cwd: fixture.root }),
+    ])
+    expect(first.created).toBe(true); expect(repeated.created).toBe(false); expect(first.sessionId).toBe(repeated.sessionId)
+    expect(first.binding).toEqual({ purpose: 'factor-contest', factorContest: identity, contestConversation: 'main' })
+    const agent = fixture.ctx.agents.get(first.sessionId)!
+    for (const name of ['quantskills_factor_inspect', 'quantskills_factor_budget', 'quantskills_factor_run', 'quantskills_factor_prepare']) {
+      expect(fixture.ctx.tools.get(name, agent)).toBeDefined(); expect(fixture.ctx.tools.get(name, ordinary)).toBeUndefined()
+    }
+    for (const name of ['quantskills_factor_confirm', 'submit_live_order', 'quantskills_contest_query', 'quantskills_panda_python']) expect(fixture.ctx.tools.get(name, agent)).toBeUndefined()
+    const late = vi.fn(async () => 'must not run')
+    agent.ctx.get('tools')!.register(defineTool({ name: 'factor_late_shell', description: 'Late unsafe tool.', parameters: {}, output: { schema: { type: 'string' }, render: (_a, value) => [{ type: 'text', text: value }] }, execute: late }))
+    await expect(fixture.ctx.tools.execute({ callId: ToolCallId('factor-guard'), agent, name: 'factor_late_shell', arguments: {}, signal: new AbortController().signal })).resolves.toMatchObject({ isError: true })
+    expect(late).not.toHaveBeenCalled()
+    const prompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
+    expect(prompt).toContain('第四届因子大赛'); expect(prompt).toContain('算力阈值不是服务端硬封顶')
+    for (const name of ['factor-contest-inspection', 'factor-contest-research', 'factor-contest-submission']) {
+      expect(await fixture.ctx.skills.get(name, { scope: agent })).toBeDefined(); expect(await fixture.ctx.skills.get(name, { scope: ordinary })).toBeUndefined()
+    }
+    const topic = await service.factorSessionOpen({ sessionId: SessionId('factor-topic'), cwd: fixture.root, topic: true })
+    expect(topic.sessionId).not.toBe(first.sessionId)
+    await service.factorInspect({ sessionId: first.sessionId }); expect(inspect).toHaveBeenCalledWith(identity)
+    await expect(service.factorInspect({ sessionId: ordinaryId })).rejects.toThrow('因子比赛会话')
+    expect((await service.plainSessionList({})).some(s => s.sessionId === first.sessionId)).toBe(true)
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: ordinary }))).toBe(promptBefore)
+    expect(fixture.ctx.tools.schemas(ordinary)).toEqual(toolsBefore)
+    await factors.mode(false)
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain('因子比赛模式已关闭')
+    await fixture.handles.get(first.sessionId)!.dispose(); await service.sessionEnsure({ sessionId: first.sessionId })
+    expect(fixture.ctx.tools.get('quantskills_factor_inspect', fixture.ctx.agents.get(first.sessionId)!)).toBeDefined()
+    expect(fixture.ctx.tools.schemas(ordinary)).toEqual(toolsBefore)
+    vi.mocked(factors.researchIdentity).mockResolvedValue({ ...identity, accountId: 'another-factor-user' })
+    const other = await service.factorSessionOpen({ sessionId: SessionId('other-factor-account'), cwd: fixture.root })
+    expect(other.sessionId).not.toBe(first.sessionId)
     await fixture.ctx.fiber.dispose()
   })
 

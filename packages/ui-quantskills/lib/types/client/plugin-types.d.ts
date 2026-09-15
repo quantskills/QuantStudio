@@ -7,4 +7,5 @@ export type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types';
 export type { SessionId } from '@deepseek-ai/dsh-session/types';
 export type { QuantSkillsLibrarySourceRecord } from '@deepseek-ai/dsh-quantskills-session/types';
 export type { ContestIdentity, ContestStatus, ContestQuery, ContestData, ContestPlan, ContestInspection, ContestSessionOpenResult } from '@deepseek-ai/dsh-quantskills-session/types';
+export type { FactorCredentials, FactorPlanAction, FactorPoolAction, FactorPlan, FactorBudget, FactorRun, FactorInspection, FactorContestStatus, FactorQuery } from '@deepseek-ai/dsh-quantskills-session/types';
 //# sourceMappingURL=plugin-types.d.ts.map

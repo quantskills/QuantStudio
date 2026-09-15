@@ -7,8 +7,9 @@ import { declarationDisplay } from './declaration-display.ts'
 import { hasChinese } from './catalog-zh.ts'
 import { ArrowRightIcon as ArrowRight } from '@phosphor-icons/react'
 import { DatabasePage, type DatabaseAccess } from './DatabasePage.tsx'
-import { ContestPage } from './ContestPage.tsx'
 import type { ContestAccess } from './contest.ts'
+import type { FactorContestAccess } from './factor-contest.ts'
+import { CompetitionHub } from './CompetitionHub.tsx'
 import { TrophyIcon } from '@phosphor-icons/react'
 import { ExpertPresets } from './ExpertPresets.tsx'
 import { TeamPresets } from './TeamPresets.tsx'
@@ -196,6 +197,7 @@ export interface QuantSkillsAppInjected {
   renderPluginMarket?: () => ReactNode
   databaseAccess?: DatabaseAccess
   contestAccess?: ContestAccess
+  factorContestAccess?: FactorContestAccess
   modelAccess?: ModelAccess
 
   /** Whether new Sessions use the native plugin's managed-default Workspace policy. */
@@ -1921,7 +1923,7 @@ export function QuantSkillsApp(props: QuantSkillsAppProps) {
       {(page === 'agents' || page === 'teams') && <AgentsPage {...pageProps} />}
       {page === 'settings' && <SettingsPage {...pageProps} />}
       {page === 'database' && <DatabasePage access={pageProps.databaseAccess} />}
-      {page === 'contest' && <ContestPage access={pageProps.contestAccess} researchSessions={boundSessions.plainArchives} openResearch={props.openSession} />}
+      {page === 'contest' && <CompetitionHub access={pageProps.contestAccess} factorAccess={pageProps.factorContestAccess} researchSessions={boundSessions.plainArchives} openResearch={props.openSession} />}
       {(page === 'qube' || page === 'evo') && <ProductIntro product={page} navigate={props.actions.navigate} />}
     </main>
   )

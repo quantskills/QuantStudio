@@ -5084,6 +5084,114 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			array(lazy(() => JsonValueRemoteCodec$schema12)),
 			record(string(), lazy(() => JsonValueRemoteCodec$schema12))
 		]);
+		const JsonValueRemoteCodec$schema13 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema13)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema13))
+		]);
+		const JsonValueRemoteCodec$schema14 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema14)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema14))
+		]);
+		const JsonValueRemoteCodec$schema15 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema15)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema15))
+		]);
+		const JsonValueRemoteCodec$schema16 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema16)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema16))
+		]);
+		const JsonValueRemoteCodec$schema17 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema17)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema17))
+		]);
+		const JsonValueRemoteCodec$schema18 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema18)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema18))
+		]);
+		const JsonValueRemoteCodec$schema19 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema19)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema19))
+		]);
+		const JsonValueRemoteCodec$schema20 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema20)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema20))
+		]);
+		const JsonValueRemoteCodec$schema21 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema21)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema21))
+		]);
+		const JsonValueRemoteCodec$schema22 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema22)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema22))
+		]);
+		const JsonValueRemoteCodec$schema23 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema23)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema23))
+		]);
+		const JsonValueRemoteCodec$schema24 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema24)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema24))
+		]);
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentCreate_parameter_0$schema = object({
 			"purpose": literal("authoring-helper").readonly().optional(),
 			"copyFrom": object({
@@ -6039,21 +6147,21 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+					array(lazy(() => JsonValueRemoteCodec$schema17)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema17))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
 					literal("failed"),
 					literal("prepared"),
 					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired"),
 					literal("queued"),
 					literal("submitted"),
-					literal("completed"),
-					literal("partial"),
-					literal("expired"),
-					literal("unknown"),
-					literal("cancelled")
+					literal("partial")
 				]),
 				"operationId": union([_undefined(), string()]).optional(),
 				"result": union([_undefined(), record(string(), union([
@@ -6062,8 +6170,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+					array(lazy(() => JsonValueRemoteCodec$schema17)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema17))
 				]))]).optional()
 			})).readonly()
 		});
@@ -6102,21 +6210,21 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+					array(lazy(() => JsonValueRemoteCodec$schema15)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema15))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
 					literal("failed"),
 					literal("prepared"),
 					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired"),
 					literal("queued"),
 					literal("submitted"),
-					literal("completed"),
-					literal("partial"),
-					literal("expired"),
-					literal("unknown"),
-					literal("cancelled")
+					literal("partial")
 				]),
 				"operationId": union([_undefined(), string()]).optional(),
 				"result": union([_undefined(), record(string(), union([
@@ -6125,8 +6233,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+					array(lazy(() => JsonValueRemoteCodec$schema15)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema15))
 				]))]).optional()
 			})).readonly()
 		});
@@ -6165,21 +6273,21 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+					array(lazy(() => JsonValueRemoteCodec$schema16)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema16))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
 					literal("failed"),
 					literal("prepared"),
 					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired"),
 					literal("queued"),
 					literal("submitted"),
-					literal("completed"),
-					literal("partial"),
-					literal("expired"),
-					literal("unknown"),
-					literal("cancelled")
+					literal("partial")
 				]),
 				"operationId": union([_undefined(), string()]).optional(),
 				"result": union([_undefined(), record(string(), union([
@@ -6188,8 +6296,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+					array(lazy(() => JsonValueRemoteCodec$schema16)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema16))
 				]))]).optional()
 			})).readonly()
 		});
@@ -6232,21 +6340,21 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema10)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema10))
+					array(lazy(() => JsonValueRemoteCodec$schema22)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
 					literal("failed"),
 					literal("prepared"),
 					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired"),
 					literal("queued"),
 					literal("submitted"),
-					literal("completed"),
-					literal("partial"),
-					literal("expired"),
-					literal("unknown"),
-					literal("cancelled")
+					literal("partial")
 				]),
 				"operationId": union([_undefined(), string()]).optional(),
 				"result": union([_undefined(), record(string(), union([
@@ -6255,8 +6363,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema10)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema10))
+					array(lazy(() => JsonValueRemoteCodec$schema22)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
 				]))]).optional()
 			})).readonly()
 		});
@@ -6281,21 +6389,21 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema9)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema9))
+				array(lazy(() => JsonValueRemoteCodec$schema21)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema21))
 			])).readonly(),
 			"clientRequestId": string().readonly(),
 			"status": union([
 				literal("failed"),
 				literal("prepared"),
 				literal("executing"),
+				literal("completed"),
+				literal("unknown"),
+				literal("cancelled"),
+				literal("expired"),
 				literal("queued"),
 				literal("submitted"),
-				literal("completed"),
-				literal("partial"),
-				literal("expired"),
-				literal("unknown"),
-				literal("cancelled")
+				literal("partial")
 			]),
 			"operationId": union([_undefined(), string()]).optional(),
 			"result": union([_undefined(), record(string(), union([
@@ -6304,8 +6412,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema9)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema9))
+				array(lazy(() => JsonValueRemoteCodec$schema21)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema21))
 			]))]).optional()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_parameter_0$schema = object({ "sessionId": intersection(string(), unknown()) });
@@ -6322,8 +6430,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
+					array(lazy(() => JsonValueRemoteCodec$schema20)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
 				]).readonly(),
 				"meta": record(string(), union([
 					literal(null),
@@ -6331,8 +6439,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
+					array(lazy(() => JsonValueRemoteCodec$schema20)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
 				])).readonly().optional(),
 				"fetchedAt": number().readonly()
 			}).readonly(),
@@ -6343,8 +6451,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
+					array(lazy(() => JsonValueRemoteCodec$schema20)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
 				]).readonly(),
 				"meta": record(string(), union([
 					literal(null),
@@ -6352,8 +6460,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
+					array(lazy(() => JsonValueRemoteCodec$schema20)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
 				])).readonly().optional(),
 				"fetchedAt": number().readonly()
 			}).readonly(),
@@ -6364,8 +6472,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
+					array(lazy(() => JsonValueRemoteCodec$schema20)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
 				]).readonly(),
 				"meta": record(string(), union([
 					literal(null),
@@ -6373,8 +6481,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
+					array(lazy(() => JsonValueRemoteCodec$schema20)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
 				])).readonly().optional(),
 				"fetchedAt": number().readonly()
 			}).readonly(),
@@ -6395,21 +6503,21 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
+					array(lazy(() => JsonValueRemoteCodec$schema20)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
 					literal("failed"),
 					literal("prepared"),
 					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired"),
 					literal("queued"),
 					literal("submitted"),
-					literal("completed"),
-					literal("partial"),
-					literal("expired"),
-					literal("unknown"),
-					literal("cancelled")
+					literal("partial")
 				]),
 				"operationId": union([_undefined(), string()]).optional(),
 				"result": union([_undefined(), record(string(), union([
@@ -6418,8 +6526,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
+					array(lazy(() => JsonValueRemoteCodec$schema20)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
 				]))]).optional()
 			})).readonly(),
 			"summary": array(string()).readonly()
@@ -6460,21 +6568,21 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+					array(lazy(() => JsonValueRemoteCodec$schema14)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema14))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
 					literal("failed"),
 					literal("prepared"),
 					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired"),
 					literal("queued"),
 					literal("submitted"),
-					literal("completed"),
-					literal("partial"),
-					literal("expired"),
-					literal("unknown"),
-					literal("cancelled")
+					literal("partial")
 				]),
 				"operationId": union([_undefined(), string()]).optional(),
 				"result": union([_undefined(), record(string(), union([
@@ -6483,8 +6591,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+					array(lazy(() => JsonValueRemoteCodec$schema14)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema14))
 				]))]).optional()
 			})).readonly()
 		});
@@ -6512,8 +6620,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema7$1)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
+				array(lazy(() => JsonValueRemoteCodec$schema19)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema19))
 			]).readonly(),
 			"meta": record(string(), union([
 				literal(null),
@@ -6521,8 +6629,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema7$1)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
+				array(lazy(() => JsonValueRemoteCodec$schema19)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema19))
 			])).readonly().optional(),
 			"fetchedAt": number().readonly()
 		});
@@ -6547,21 +6655,21 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema11)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema11))
+				array(lazy(() => JsonValueRemoteCodec$schema23)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema23))
 			])).readonly(),
 			"clientRequestId": string().readonly(),
 			"status": union([
 				literal("failed"),
 				literal("prepared"),
 				literal("executing"),
+				literal("completed"),
+				literal("unknown"),
+				literal("cancelled"),
+				literal("expired"),
 				literal("queued"),
 				literal("submitted"),
-				literal("completed"),
-				literal("partial"),
-				literal("expired"),
-				literal("unknown"),
-				literal("cancelled")
+				literal("partial")
 			]),
 			"operationId": union([_undefined(), string()]).optional(),
 			"result": union([_undefined(), record(string(), union([
@@ -6570,8 +6678,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema11)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema11))
+				array(lazy(() => JsonValueRemoteCodec$schema23)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema23))
 			]))]).optional()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestSessionOpen_parameter_0$schema = object({
@@ -6586,9 +6694,14 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"purpose": union([
 					literal("ordinary"),
 					literal("role-helper"),
-					literal("contest")
+					literal("contest"),
+					literal("factor-contest")
 				]).readonly(),
 				"contest": union([_undefined(), object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				})]).readonly().optional(),
+				"factorContest": union([_undefined(), object({
 					"accountId": string().readonly(),
 					"contestId": string().readonly()
 				})]).readonly().optional(),
@@ -6636,21 +6749,21 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+					array(lazy(() => JsonValueRemoteCodec$schema13)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema13))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
 					literal("failed"),
 					literal("prepared"),
 					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired"),
 					literal("queued"),
 					literal("submitted"),
-					literal("completed"),
-					literal("partial"),
-					literal("expired"),
-					literal("unknown"),
-					literal("cancelled")
+					literal("partial")
 				]),
 				"operationId": union([_undefined(), string()]).optional(),
 				"result": union([_undefined(), record(string(), union([
@@ -6659,8 +6772,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+					array(lazy(() => JsonValueRemoteCodec$schema13)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema13))
 				]))]).optional()
 			})).readonly()
 		});
@@ -6699,21 +6812,21 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+					array(lazy(() => JsonValueRemoteCodec$schema18)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema18))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
 					literal("failed"),
 					literal("prepared"),
 					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired"),
 					literal("queued"),
 					literal("submitted"),
-					literal("completed"),
-					literal("partial"),
-					literal("expired"),
-					literal("unknown"),
-					literal("cancelled")
+					literal("partial")
 				]),
 				"operationId": union([_undefined(), string()]).optional(),
 				"result": union([_undefined(), record(string(), union([
@@ -6722,8 +6835,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+					array(lazy(() => JsonValueRemoteCodec$schema18)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema18))
 				]))]).optional()
 			})).readonly()
 		});
@@ -6743,6 +6856,1495 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"treeDigest": intersection(string(), unknown()).readonly()
 			}).readonly(),
 			"agentPreset": string().readonly().optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorCheckUpdate_result$schema = object({
+			"enabled": boolean(),
+			"phase": union([
+				literal("disconnected"),
+				literal("connected"),
+				literal("error"),
+				literal("installing"),
+				literal("off")
+			]),
+			"cliVersion": string().optional(),
+			"latestVersion": string().optional(),
+			"updateAvailable": boolean(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}).optional(),
+			"message": string(),
+			"inspection": object({
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"fetchedAt": number(),
+				"balance": number(),
+				"registration": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+				]),
+				"pool": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+				])
+			}).optional(),
+			"plans": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"action": union([
+					object({
+						"kind": literal("create-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly()
+					}),
+					object({
+						"kind": literal("update-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly().optional()
+					}),
+					object({
+						"kind": literal("add-factor").readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("replace-factor").readonly(),
+						"factorId": string().readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("remove-factor").readonly(),
+						"factorId": string().readonly()
+					}),
+					object({ "kind": literal("submit-pool").readonly() }),
+					object({
+						"kind": literal("budget").readonly(),
+						"batch": object({
+							"hypothesis": string().readonly(),
+							"maxRuns": number().readonly(),
+							"creditThreshold": number().readonly(),
+							"startDate": string().readonly(),
+							"endDate": string().readonly(),
+							"cycle": number().readonly()
+						}).readonly()
+					})
+				]),
+				"summary": string(),
+				"snapshot": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+				]),
+				"snapshotHash": string(),
+				"createdAt": number(),
+				"expiresAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("prepared"),
+					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+				]).optional()
+			})),
+			"budgets": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"runsUsed": number(),
+				"creditsUsed": number(),
+				"baseline": number(),
+				"status": union([
+					literal("unknown"),
+					literal("active"),
+					literal("stopped"),
+					literal("exhausted")
+				]),
+				"hypothesis": string().readonly(),
+				"maxRuns": number().readonly(),
+				"creditThreshold": number().readonly(),
+				"startDate": string().readonly(),
+				"endDate": string().readonly(),
+				"cycle": number().readonly()
+			})),
+			"runs": array(object({
+				"id": string(),
+				"budgetId": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"candidate": object({
+					"requestId": string().readonly(),
+					"name": string().readonly(),
+					"formula": string().readonly().optional(),
+					"code": string().readonly().optional(),
+					"direction": union([literal(0), literal(1)]).readonly()
+				}),
+				"workflowId": string().optional(),
+				"runId": string().optional(),
+				"createdAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("completed"),
+					literal("unknown"),
+					literal("creating"),
+					literal("running")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+				]).optional()
+			}))
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConfirm_parameter_0$schema = object({
+			"planId": string(),
+			"sessionId": string()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConfirm_result$schema = object({
+			"id": string(),
+			"sessionId": string(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}),
+			"action": union([
+				object({
+					"kind": literal("create-pool").readonly(),
+					"name": string().readonly(),
+					"style": string().readonly(),
+					"cycle": number().readonly()
+				}),
+				object({
+					"kind": literal("update-pool").readonly(),
+					"name": string().readonly(),
+					"style": string().readonly(),
+					"cycle": number().readonly().optional()
+				}),
+				object({
+					"kind": literal("add-factor").readonly(),
+					"workflowId": string().readonly()
+				}),
+				object({
+					"kind": literal("replace-factor").readonly(),
+					"factorId": string().readonly(),
+					"workflowId": string().readonly()
+				}),
+				object({
+					"kind": literal("remove-factor").readonly(),
+					"factorId": string().readonly()
+				}),
+				object({ "kind": literal("submit-pool").readonly() }),
+				object({
+					"kind": literal("budget").readonly(),
+					"batch": object({
+						"hypothesis": string().readonly(),
+						"maxRuns": number().readonly(),
+						"creditThreshold": number().readonly(),
+						"startDate": string().readonly(),
+						"endDate": string().readonly(),
+						"cycle": number().readonly()
+					}).readonly()
+				})
+			]),
+			"summary": string(),
+			"snapshot": union([
+				literal(null),
+				string(),
+				number(),
+				literal(false),
+				literal(true),
+				array(lazy(() => JsonValueRemoteCodec$schema10)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema10))
+			]),
+			"snapshotHash": string(),
+			"createdAt": number(),
+			"expiresAt": number(),
+			"status": union([
+				literal("failed"),
+				literal("prepared"),
+				literal("executing"),
+				literal("completed"),
+				literal("unknown"),
+				literal("cancelled"),
+				literal("expired")
+			]),
+			"result": union([
+				literal(null),
+				string(),
+				number(),
+				literal(false),
+				literal(true),
+				array(lazy(() => JsonValueRemoteCodec$schema10)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema10))
+			]).optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConnect_parameter_0$schema = object({ "credentials": object({
+			"phone": string().readonly(),
+			"password": string().readonly()
+		}).optional() });
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConnect_result$schema = object({
+			"enabled": boolean(),
+			"phase": union([
+				literal("disconnected"),
+				literal("connected"),
+				literal("error"),
+				literal("installing"),
+				literal("off")
+			]),
+			"cliVersion": string().optional(),
+			"latestVersion": string().optional(),
+			"updateAvailable": boolean(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}).optional(),
+			"message": string(),
+			"inspection": object({
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"fetchedAt": number(),
+				"balance": number(),
+				"registration": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+				]),
+				"pool": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+				])
+			}).optional(),
+			"plans": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"action": union([
+					object({
+						"kind": literal("create-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly()
+					}),
+					object({
+						"kind": literal("update-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly().optional()
+					}),
+					object({
+						"kind": literal("add-factor").readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("replace-factor").readonly(),
+						"factorId": string().readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("remove-factor").readonly(),
+						"factorId": string().readonly()
+					}),
+					object({ "kind": literal("submit-pool").readonly() }),
+					object({
+						"kind": literal("budget").readonly(),
+						"batch": object({
+							"hypothesis": string().readonly(),
+							"maxRuns": number().readonly(),
+							"creditThreshold": number().readonly(),
+							"startDate": string().readonly(),
+							"endDate": string().readonly(),
+							"cycle": number().readonly()
+						}).readonly()
+					})
+				]),
+				"summary": string(),
+				"snapshot": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+				]),
+				"snapshotHash": string(),
+				"createdAt": number(),
+				"expiresAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("prepared"),
+					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+				]).optional()
+			})),
+			"budgets": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"runsUsed": number(),
+				"creditsUsed": number(),
+				"baseline": number(),
+				"status": union([
+					literal("unknown"),
+					literal("active"),
+					literal("stopped"),
+					literal("exhausted")
+				]),
+				"hypothesis": string().readonly(),
+				"maxRuns": number().readonly(),
+				"creditThreshold": number().readonly(),
+				"startDate": string().readonly(),
+				"endDate": string().readonly(),
+				"cycle": number().readonly()
+			})),
+			"runs": array(object({
+				"id": string(),
+				"budgetId": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"candidate": object({
+					"requestId": string().readonly(),
+					"name": string().readonly(),
+					"formula": string().readonly().optional(),
+					"code": string().readonly().optional(),
+					"direction": union([literal(0), literal(1)]).readonly()
+				}),
+				"workflowId": string().optional(),
+				"runId": string().optional(),
+				"createdAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("completed"),
+					literal("unknown"),
+					literal("creating"),
+					literal("running")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+				]).optional()
+			}))
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDisconnect_result$schema = object({
+			"enabled": boolean(),
+			"phase": union([
+				literal("disconnected"),
+				literal("connected"),
+				literal("error"),
+				literal("installing"),
+				literal("off")
+			]),
+			"cliVersion": string().optional(),
+			"latestVersion": string().optional(),
+			"updateAvailable": boolean(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}).optional(),
+			"message": string(),
+			"inspection": object({
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"fetchedAt": number(),
+				"balance": number(),
+				"registration": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+				]),
+				"pool": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+				])
+			}).optional(),
+			"plans": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"action": union([
+					object({
+						"kind": literal("create-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly()
+					}),
+					object({
+						"kind": literal("update-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly().optional()
+					}),
+					object({
+						"kind": literal("add-factor").readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("replace-factor").readonly(),
+						"factorId": string().readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("remove-factor").readonly(),
+						"factorId": string().readonly()
+					}),
+					object({ "kind": literal("submit-pool").readonly() }),
+					object({
+						"kind": literal("budget").readonly(),
+						"batch": object({
+							"hypothesis": string().readonly(),
+							"maxRuns": number().readonly(),
+							"creditThreshold": number().readonly(),
+							"startDate": string().readonly(),
+							"endDate": string().readonly(),
+							"cycle": number().readonly()
+						}).readonly()
+					})
+				]),
+				"summary": string(),
+				"snapshot": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+				]),
+				"snapshotHash": string(),
+				"createdAt": number(),
+				"expiresAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("prepared"),
+					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+				]).optional()
+			})),
+			"budgets": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"runsUsed": number(),
+				"creditsUsed": number(),
+				"baseline": number(),
+				"status": union([
+					literal("unknown"),
+					literal("active"),
+					literal("stopped"),
+					literal("exhausted")
+				]),
+				"hypothesis": string().readonly(),
+				"maxRuns": number().readonly(),
+				"creditThreshold": number().readonly(),
+				"startDate": string().readonly(),
+				"endDate": string().readonly(),
+				"cycle": number().readonly()
+			})),
+			"runs": array(object({
+				"id": string(),
+				"budgetId": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"candidate": object({
+					"requestId": string().readonly(),
+					"name": string().readonly(),
+					"formula": string().readonly().optional(),
+					"code": string().readonly().optional(),
+					"direction": union([literal(0), literal(1)]).readonly()
+				}),
+				"workflowId": string().optional(),
+				"runId": string().optional(),
+				"createdAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("completed"),
+					literal("unknown"),
+					literal("creating"),
+					literal("running")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+				]).optional()
+			}))
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDismiss_parameter_0$schema = object({
+			"planId": string(),
+			"sessionId": string()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDismiss_result$schema = _void();
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorInspect_parameter_0$schema = object({ "sessionId": intersection(string(), unknown()).optional() });
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorInspect_result$schema = object({
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}),
+			"fetchedAt": number(),
+			"balance": number(),
+			"registration": union([
+				literal(null),
+				string(),
+				number(),
+				literal(false),
+				literal(true),
+				array(lazy(() => JsonValueRemoteCodec$schema7$1)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
+			]),
+			"pool": union([
+				literal(null),
+				string(),
+				number(),
+				literal(false),
+				literal(true),
+				array(lazy(() => JsonValueRemoteCodec$schema7$1)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
+			])
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorMode_parameter_0$schema = object({ "enabled": boolean() });
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorMode_result$schema = object({
+			"enabled": boolean(),
+			"phase": union([
+				literal("disconnected"),
+				literal("connected"),
+				literal("error"),
+				literal("installing"),
+				literal("off")
+			]),
+			"cliVersion": string().optional(),
+			"latestVersion": string().optional(),
+			"updateAvailable": boolean(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}).optional(),
+			"message": string(),
+			"inspection": object({
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"fetchedAt": number(),
+				"balance": number(),
+				"registration": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+				]),
+				"pool": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+				])
+			}).optional(),
+			"plans": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"action": union([
+					object({
+						"kind": literal("create-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly()
+					}),
+					object({
+						"kind": literal("update-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly().optional()
+					}),
+					object({
+						"kind": literal("add-factor").readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("replace-factor").readonly(),
+						"factorId": string().readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("remove-factor").readonly(),
+						"factorId": string().readonly()
+					}),
+					object({ "kind": literal("submit-pool").readonly() }),
+					object({
+						"kind": literal("budget").readonly(),
+						"batch": object({
+							"hypothesis": string().readonly(),
+							"maxRuns": number().readonly(),
+							"creditThreshold": number().readonly(),
+							"startDate": string().readonly(),
+							"endDate": string().readonly(),
+							"cycle": number().readonly()
+						}).readonly()
+					})
+				]),
+				"summary": string(),
+				"snapshot": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+				]),
+				"snapshotHash": string(),
+				"createdAt": number(),
+				"expiresAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("prepared"),
+					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+				]).optional()
+			})),
+			"budgets": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"runsUsed": number(),
+				"creditsUsed": number(),
+				"baseline": number(),
+				"status": union([
+					literal("unknown"),
+					literal("active"),
+					literal("stopped"),
+					literal("exhausted")
+				]),
+				"hypothesis": string().readonly(),
+				"maxRuns": number().readonly(),
+				"creditThreshold": number().readonly(),
+				"startDate": string().readonly(),
+				"endDate": string().readonly(),
+				"cycle": number().readonly()
+			})),
+			"runs": array(object({
+				"id": string(),
+				"budgetId": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"candidate": object({
+					"requestId": string().readonly(),
+					"name": string().readonly(),
+					"formula": string().readonly().optional(),
+					"code": string().readonly().optional(),
+					"direction": union([literal(0), literal(1)]).readonly()
+				}),
+				"workflowId": string().optional(),
+				"runId": string().optional(),
+				"createdAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("completed"),
+					literal("unknown"),
+					literal("creating"),
+					literal("running")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+				]).optional()
+			}))
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorPrepare_parameter_0$schema = object({
+			"action": union([
+				object({
+					"kind": literal("create-pool").readonly(),
+					"name": string().readonly(),
+					"style": string().readonly(),
+					"cycle": number().readonly()
+				}),
+				object({
+					"kind": literal("update-pool").readonly(),
+					"name": string().readonly(),
+					"style": string().readonly(),
+					"cycle": number().readonly().optional()
+				}),
+				object({
+					"kind": literal("add-factor").readonly(),
+					"workflowId": string().readonly()
+				}),
+				object({
+					"kind": literal("replace-factor").readonly(),
+					"factorId": string().readonly(),
+					"workflowId": string().readonly()
+				}),
+				object({
+					"kind": literal("remove-factor").readonly(),
+					"factorId": string().readonly()
+				}),
+				object({ "kind": literal("submit-pool").readonly() }),
+				object({
+					"kind": literal("budget").readonly(),
+					"batch": object({
+						"hypothesis": string().readonly(),
+						"maxRuns": number().readonly(),
+						"creditThreshold": number().readonly(),
+						"startDate": string().readonly(),
+						"endDate": string().readonly(),
+						"cycle": number().readonly()
+					}).readonly()
+				})
+			]),
+			"sessionId": intersection(string(), unknown()).optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorPrepare_result$schema = object({
+			"id": string(),
+			"sessionId": string(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}),
+			"action": union([
+				object({
+					"kind": literal("create-pool").readonly(),
+					"name": string().readonly(),
+					"style": string().readonly(),
+					"cycle": number().readonly()
+				}),
+				object({
+					"kind": literal("update-pool").readonly(),
+					"name": string().readonly(),
+					"style": string().readonly(),
+					"cycle": number().readonly().optional()
+				}),
+				object({
+					"kind": literal("add-factor").readonly(),
+					"workflowId": string().readonly()
+				}),
+				object({
+					"kind": literal("replace-factor").readonly(),
+					"factorId": string().readonly(),
+					"workflowId": string().readonly()
+				}),
+				object({
+					"kind": literal("remove-factor").readonly(),
+					"factorId": string().readonly()
+				}),
+				object({ "kind": literal("submit-pool").readonly() }),
+				object({
+					"kind": literal("budget").readonly(),
+					"batch": object({
+						"hypothesis": string().readonly(),
+						"maxRuns": number().readonly(),
+						"creditThreshold": number().readonly(),
+						"startDate": string().readonly(),
+						"endDate": string().readonly(),
+						"cycle": number().readonly()
+					}).readonly()
+				})
+			]),
+			"summary": string(),
+			"snapshot": union([
+				literal(null),
+				string(),
+				number(),
+				literal(false),
+				literal(true),
+				array(lazy(() => JsonValueRemoteCodec$schema9)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema9))
+			]),
+			"snapshotHash": string(),
+			"createdAt": number(),
+			"expiresAt": number(),
+			"status": union([
+				literal("failed"),
+				literal("prepared"),
+				literal("executing"),
+				literal("completed"),
+				literal("unknown"),
+				literal("cancelled"),
+				literal("expired")
+			]),
+			"result": union([
+				literal(null),
+				string(),
+				number(),
+				literal(false),
+				literal(true),
+				array(lazy(() => JsonValueRemoteCodec$schema9)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema9))
+			]).optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorQuery_parameter_0$schema = object({
+			"kind": union([
+				literal("pool"),
+				literal("workflows"),
+				literal("scores"),
+				literal("factor-info"),
+				literal("factor-result"),
+				literal("factors")
+			]).readonly(),
+			"id": string().readonly().optional(),
+			"page": number().readonly().optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorQuery_result$schema = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema8$1)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
+		]);
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcilePlan_parameter_0$schema = object({ "planId": string() });
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcilePlan_result$schema = object({
+			"id": string(),
+			"sessionId": string(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}),
+			"action": union([
+				object({
+					"kind": literal("create-pool").readonly(),
+					"name": string().readonly(),
+					"style": string().readonly(),
+					"cycle": number().readonly()
+				}),
+				object({
+					"kind": literal("update-pool").readonly(),
+					"name": string().readonly(),
+					"style": string().readonly(),
+					"cycle": number().readonly().optional()
+				}),
+				object({
+					"kind": literal("add-factor").readonly(),
+					"workflowId": string().readonly()
+				}),
+				object({
+					"kind": literal("replace-factor").readonly(),
+					"factorId": string().readonly(),
+					"workflowId": string().readonly()
+				}),
+				object({
+					"kind": literal("remove-factor").readonly(),
+					"factorId": string().readonly()
+				}),
+				object({ "kind": literal("submit-pool").readonly() }),
+				object({
+					"kind": literal("budget").readonly(),
+					"batch": object({
+						"hypothesis": string().readonly(),
+						"maxRuns": number().readonly(),
+						"creditThreshold": number().readonly(),
+						"startDate": string().readonly(),
+						"endDate": string().readonly(),
+						"cycle": number().readonly()
+					}).readonly()
+				})
+			]),
+			"summary": string(),
+			"snapshot": union([
+				literal(null),
+				string(),
+				number(),
+				literal(false),
+				literal(true),
+				array(lazy(() => JsonValueRemoteCodec$schema12)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema12))
+			]),
+			"snapshotHash": string(),
+			"createdAt": number(),
+			"expiresAt": number(),
+			"status": union([
+				literal("failed"),
+				literal("prepared"),
+				literal("executing"),
+				literal("completed"),
+				literal("unknown"),
+				literal("cancelled"),
+				literal("expired")
+			]),
+			"result": union([
+				literal(null),
+				string(),
+				number(),
+				literal(false),
+				literal(true),
+				array(lazy(() => JsonValueRemoteCodec$schema12)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema12))
+			]).optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcileRun_parameter_0$schema = object({ "runId": string() });
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcileRun_result$schema = object({
+			"id": string(),
+			"budgetId": string(),
+			"sessionId": string(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}),
+			"candidate": object({
+				"requestId": string().readonly(),
+				"name": string().readonly(),
+				"formula": string().readonly().optional(),
+				"code": string().readonly().optional(),
+				"direction": union([literal(0), literal(1)]).readonly()
+			}),
+			"workflowId": string().optional(),
+			"runId": string().optional(),
+			"createdAt": number(),
+			"status": union([
+				literal("failed"),
+				literal("completed"),
+				literal("unknown"),
+				literal("creating"),
+				literal("running")
+			]),
+			"result": union([
+				literal(null),
+				string(),
+				number(),
+				literal(false),
+				literal(true),
+				array(lazy(() => JsonValueRemoteCodec$schema11)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema11))
+			]).optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorSessionOpen_parameter_0$schema = object({
+			"sessionId": intersection(string(), unknown()).readonly(),
+			"workspaceId": intersection(string(), unknown()).readonly().optional(),
+			"cwd": string().readonly().optional(),
+			"topic": boolean().readonly().optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorSessionOpen_result$schema = object({
+			"sessionId": intersection(string(), unknown()).readonly(),
+			"binding": object({
+				"purpose": union([
+					literal("ordinary"),
+					literal("role-helper"),
+					literal("contest"),
+					literal("factor-contest")
+				]).readonly(),
+				"contest": union([_undefined(), object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				})]).readonly().optional(),
+				"factorContest": union([_undefined(), object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				})]).readonly().optional(),
+				"contestConversation": union([
+					_undefined(),
+					literal("main"),
+					literal("topic")
+				]).readonly().optional()
+			}).readonly(),
+			"created": boolean().readonly()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStatus_parameter_0$schema = object({ "sessionId": string().optional() });
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStatus_result$schema = object({
+			"enabled": boolean(),
+			"phase": union([
+				literal("disconnected"),
+				literal("connected"),
+				literal("error"),
+				literal("installing"),
+				literal("off")
+			]),
+			"cliVersion": string().optional(),
+			"latestVersion": string().optional(),
+			"updateAvailable": boolean(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}).optional(),
+			"message": string(),
+			"inspection": object({
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"fetchedAt": number(),
+				"balance": number(),
+				"registration": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+				]),
+				"pool": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+				])
+			}).optional(),
+			"plans": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"action": union([
+					object({
+						"kind": literal("create-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly()
+					}),
+					object({
+						"kind": literal("update-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly().optional()
+					}),
+					object({
+						"kind": literal("add-factor").readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("replace-factor").readonly(),
+						"factorId": string().readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("remove-factor").readonly(),
+						"factorId": string().readonly()
+					}),
+					object({ "kind": literal("submit-pool").readonly() }),
+					object({
+						"kind": literal("budget").readonly(),
+						"batch": object({
+							"hypothesis": string().readonly(),
+							"maxRuns": number().readonly(),
+							"creditThreshold": number().readonly(),
+							"startDate": string().readonly(),
+							"endDate": string().readonly(),
+							"cycle": number().readonly()
+						}).readonly()
+					})
+				]),
+				"summary": string(),
+				"snapshot": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+				]),
+				"snapshotHash": string(),
+				"createdAt": number(),
+				"expiresAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("prepared"),
+					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+				]).optional()
+			})),
+			"budgets": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"runsUsed": number(),
+				"creditsUsed": number(),
+				"baseline": number(),
+				"status": union([
+					literal("unknown"),
+					literal("active"),
+					literal("stopped"),
+					literal("exhausted")
+				]),
+				"hypothesis": string().readonly(),
+				"maxRuns": number().readonly(),
+				"creditThreshold": number().readonly(),
+				"startDate": string().readonly(),
+				"endDate": string().readonly(),
+				"cycle": number().readonly()
+			})),
+			"runs": array(object({
+				"id": string(),
+				"budgetId": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"candidate": object({
+					"requestId": string().readonly(),
+					"name": string().readonly(),
+					"formula": string().readonly().optional(),
+					"code": string().readonly().optional(),
+					"direction": union([literal(0), literal(1)]).readonly()
+				}),
+				"workflowId": string().optional(),
+				"runId": string().optional(),
+				"createdAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("completed"),
+					literal("unknown"),
+					literal("creating"),
+					literal("running")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+				]).optional()
+			}))
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStopBudget_parameter_0$schema = object({ "budgetId": string() });
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStopBudget_result$schema = _void();
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorUpdate_result$schema = object({
+			"enabled": boolean(),
+			"phase": union([
+				literal("disconnected"),
+				literal("connected"),
+				literal("error"),
+				literal("installing"),
+				literal("off")
+			]),
+			"cliVersion": string().optional(),
+			"latestVersion": string().optional(),
+			"updateAvailable": boolean(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}).optional(),
+			"message": string(),
+			"inspection": object({
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"fetchedAt": number(),
+				"balance": number(),
+				"registration": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+				]),
+				"pool": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+				])
+			}).optional(),
+			"plans": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"action": union([
+					object({
+						"kind": literal("create-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly()
+					}),
+					object({
+						"kind": literal("update-pool").readonly(),
+						"name": string().readonly(),
+						"style": string().readonly(),
+						"cycle": number().readonly().optional()
+					}),
+					object({
+						"kind": literal("add-factor").readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("replace-factor").readonly(),
+						"factorId": string().readonly(),
+						"workflowId": string().readonly()
+					}),
+					object({
+						"kind": literal("remove-factor").readonly(),
+						"factorId": string().readonly()
+					}),
+					object({ "kind": literal("submit-pool").readonly() }),
+					object({
+						"kind": literal("budget").readonly(),
+						"batch": object({
+							"hypothesis": string().readonly(),
+							"maxRuns": number().readonly(),
+							"creditThreshold": number().readonly(),
+							"startDate": string().readonly(),
+							"endDate": string().readonly(),
+							"cycle": number().readonly()
+						}).readonly()
+					})
+				]),
+				"summary": string(),
+				"snapshot": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+				]),
+				"snapshotHash": string(),
+				"createdAt": number(),
+				"expiresAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("prepared"),
+					literal("executing"),
+					literal("completed"),
+					literal("unknown"),
+					literal("cancelled"),
+					literal("expired")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+				]).optional()
+			})),
+			"budgets": array(object({
+				"id": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"runsUsed": number(),
+				"creditsUsed": number(),
+				"baseline": number(),
+				"status": union([
+					literal("unknown"),
+					literal("active"),
+					literal("stopped"),
+					literal("exhausted")
+				]),
+				"hypothesis": string().readonly(),
+				"maxRuns": number().readonly(),
+				"creditThreshold": number().readonly(),
+				"startDate": string().readonly(),
+				"endDate": string().readonly(),
+				"cycle": number().readonly()
+			})),
+			"runs": array(object({
+				"id": string(),
+				"budgetId": string(),
+				"sessionId": string(),
+				"identity": object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				}),
+				"candidate": object({
+					"requestId": string().readonly(),
+					"name": string().readonly(),
+					"formula": string().readonly().optional(),
+					"code": string().readonly().optional(),
+					"direction": union([literal(0), literal(1)]).readonly()
+				}),
+				"workflowId": string().optional(),
+				"runId": string().optional(),
+				"createdAt": number(),
+				"status": union([
+					literal("failed"),
+					literal("completed"),
+					literal("unknown"),
+					literal("creating"),
+					literal("running")
+				]),
+				"result": union([
+					literal(null),
+					string(),
+					number(),
+					literal(false),
+					literal(true),
+					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+				]).optional()
+			}))
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileAttach_parameter_0$schema = object({
 			"sessionId": intersection(string(), unknown()).readonly(),
@@ -6956,8 +8558,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema12)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema12))
+					array(lazy(() => JsonValueRemoteCodec$schema24)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema24))
 				]))).optional()
 			}).optional()
 		});
@@ -6966,7 +8568,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			"purpose": union([
 				literal("ordinary"),
 				literal("role-helper"),
-				literal("contest")
+				literal("contest"),
+				literal("factor-contest")
 			]).readonly(),
 			"contestConversation": union([literal("main"), literal("topic")]).readonly().optional(),
 			"workspaceId": intersection(string(), unknown()).readonly().optional(),
@@ -6979,9 +8582,14 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"purpose": union([
 					literal("ordinary"),
 					literal("role-helper"),
-					literal("contest")
+					literal("contest"),
+					literal("factor-contest")
 				]).readonly(),
 				"contest": union([_undefined(), object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				})]).readonly().optional(),
+				"factorContest": union([_undefined(), object({
 					"accountId": string().readonly(),
 					"contestId": string().readonly()
 				})]).readonly().optional(),
@@ -7000,9 +8608,14 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"purpose": union([
 					literal("ordinary"),
 					literal("role-helper"),
-					literal("contest")
+					literal("contest"),
+					literal("factor-contest")
 				]).readonly(),
 				"contest": union([_undefined(), object({
+					"accountId": string().readonly(),
+					"contestId": string().readonly()
+				})]).readonly().optional(),
+				"factorContest": union([_undefined(), object({
 					"accountId": string().readonly(),
 					"contestId": string().readonly()
 				})]).readonly().optional(),
@@ -7243,7 +8856,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1642,
+						"line": 1730,
 						"column": 9
 					}
 				},
@@ -7270,7 +8883,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1744,
+						"line": 1832,
 						"column": 9
 					}
 				},
@@ -7288,7 +8901,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1630,
+						"line": 1718,
 						"column": 9
 					}
 				},
@@ -7306,7 +8919,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1618,
+						"line": 1706,
 						"column": 3
 					}
 				},
@@ -7334,7 +8947,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1783,
+						"line": 1871,
 						"column": 9
 					}
 				},
@@ -7362,7 +8975,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2031,
+						"line": 2119,
 						"column": 9
 					}
 				},
@@ -7389,7 +9002,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2053,
+						"line": 2141,
 						"column": 9
 					}
 				},
@@ -7416,7 +9029,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2105,
+						"line": 2193,
 						"column": 9
 					}
 				},
@@ -7434,7 +9047,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2043,
+						"line": 2131,
 						"column": 3
 					}
 				},
@@ -7462,7 +9075,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2123,
+						"line": 2211,
 						"column": 9
 					}
 				},
@@ -7490,7 +9103,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2202,
+						"line": 2290,
 						"column": 9
 					}
 				},
@@ -7517,7 +9130,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2075,
+						"line": 2163,
 						"column": 9
 					}
 				},
@@ -7544,7 +9157,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1760,
+						"line": 1848,
 						"column": 9
 					}
 				},
@@ -7572,7 +9185,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1700,
+						"line": 1788,
 						"column": 9
 					}
 				},
@@ -7600,7 +9213,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1811,
+						"line": 1899,
 						"column": 3
 					}
 				},
@@ -7628,7 +9241,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1797,
+						"line": 1885,
 						"column": 9
 					}
 				},
@@ -7646,7 +9259,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1173,
+						"line": 1260,
 						"column": 3
 					}
 				},
@@ -7664,7 +9277,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1167,
+						"line": 1254,
 						"column": 3
 					}
 				},
@@ -7682,7 +9295,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1170,
+						"line": 1257,
 						"column": 3
 					}
 				},
@@ -7709,7 +9322,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1228,
+						"line": 1315,
 						"column": 3
 					}
 				},
@@ -7736,7 +9349,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1223,
+						"line": 1310,
 						"column": 3
 					}
 				},
@@ -7764,7 +9377,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1183,
+						"line": 1270,
 						"column": 9
 					}
 				},
@@ -7791,7 +9404,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1164,
+						"line": 1251,
 						"column": 3
 					}
 				},
@@ -7818,7 +9431,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1179,
+						"line": 1266,
 						"column": 3
 					}
 				},
@@ -7845,7 +9458,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1233,
+						"line": 1320,
 						"column": 3
 					}
 				},
@@ -7873,7 +9486,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1192,
+						"line": 1279,
 						"column": 3
 					}
 				},
@@ -7900,7 +9513,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1160,
+						"line": 1247,
 						"column": 3
 					}
 				},
@@ -7918,7 +9531,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1176,
+						"line": 1263,
 						"column": 3
 					}
 				},
@@ -7946,8 +9559,387 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1364,
+						"line": 1452,
 						"column": 9
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorCheckUpdate",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorCheckUpdate",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorCheckUpdate_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1186,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorConfirm",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorConfirm",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorConfirm:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConfirm_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorPlan",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConfirm_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1214,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorConnect",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorConnect",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorConnect:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConnect_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConnect_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1180,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorDisconnect",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorDisconnect",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDisconnect_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1183,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorDismiss",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorDismiss",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorDismiss:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDismiss_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorDismiss:result",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDismiss_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1217,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorInspect",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorInspect",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorInspect:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorInspect_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorInspection",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorInspect_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1192,
+						"column": 9
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorMode",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorMode",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorMode:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorMode_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorMode_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1177,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorPrepare",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorPrepare",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorPrepare:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorPrepare_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorPlan",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorPrepare_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1208,
+						"column": 9
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorQuery",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorQuery",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorQuery",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorQuery_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-util-values#JsonValue",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorQuery_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1205,
+						"column": 9
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorReconcilePlan",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorReconcilePlan",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorReconcilePlan:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcilePlan_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorPlan",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcilePlan_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1226,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorReconcileRun",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorReconcileRun",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorReconcileRun:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcileRun_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorRun",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcileRun_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1223,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorSessionOpen",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorSessionOpen",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#ContestSessionOpenRequest",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorSessionOpen_parameter_0$schema
+						}
+					}],
+					cancellation: { parameter: "signal" },
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#ContestSessionOpenResult",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorSessionOpen_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1229,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStatus",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorStatus",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStatus:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStatus_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStatus_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1174,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStopBudget",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorStopBudget",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStopBudget:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStopBudget_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStopBudget:result",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStopBudget_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1220,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorUpdate",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "factorUpdate",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorUpdate_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1189,
+						"column": 3
 					}
 				},
 				{
@@ -7974,7 +9966,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2218,
+						"line": 2306,
 						"column": 9
 					}
 				},
@@ -8002,7 +9994,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2252,
+						"line": 2340,
 						"column": 9
 					}
 				},
@@ -8030,7 +10022,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2270,
+						"line": 2358,
 						"column": 9
 					}
 				},
@@ -8058,7 +10050,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1471,
+						"line": 1559,
 						"column": 9
 					}
 				},
@@ -8086,7 +10078,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1442,
+						"line": 1530,
 						"column": 9
 					}
 				},
@@ -8113,7 +10105,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 913,
+						"line": 919,
 						"column": 9
 					}
 				},
@@ -8141,7 +10133,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1286,
+						"line": 1373,
 						"column": 9
 					}
 				},
@@ -8169,7 +10161,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1457,
+						"line": 1545,
 						"column": 9
 					}
 				},
@@ -8197,7 +10189,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1577,
+						"line": 1665,
 						"column": 9
 					}
 				},
@@ -8225,7 +10217,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1593,
+						"line": 1681,
 						"column": 9
 					}
 				},
@@ -8253,7 +10245,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1506,
+						"line": 1594,
 						"column": 9
 					}
 				},
@@ -8280,7 +10272,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1550,
+						"line": 1638,
 						"column": 3
 					}
 				},
@@ -8308,7 +10300,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2332,
+						"line": 2420,
 						"column": 9
 					}
 				},
@@ -8336,7 +10328,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2287,
+						"line": 2375,
 						"column": 3
 					}
 				},
@@ -8364,7 +10356,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2351,
+						"line": 2439,
 						"column": 9
 					}
 				},
@@ -8392,7 +10384,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1244,
+						"line": 1331,
 						"column": 9
 					}
 				},
@@ -8419,7 +10411,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1154,
+						"line": 1168,
 						"column": 3
 					}
 				},
@@ -8446,7 +10438,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1144,
+						"line": 1158,
 						"column": 3
 					}
 				}

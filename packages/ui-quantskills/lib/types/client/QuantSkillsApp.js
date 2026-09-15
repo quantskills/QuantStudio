@@ -8,7 +8,7 @@ import { declarationDisplay } from "./declaration-display.js";
 import { hasChinese } from "./catalog-zh.js";
 import { ArrowRightIcon as ArrowRight } from '@phosphor-icons/react';
 import { DatabasePage } from "./DatabasePage.js";
-import { ContestPage } from "./ContestPage.js";
+import { CompetitionHub } from "./CompetitionHub.js";
 import { TrophyIcon } from '@phosphor-icons/react';
 import { ExpertPresets } from "./ExpertPresets.js";
 import { TeamPresets } from "./TeamPresets.js";
@@ -1007,7 +1007,7 @@ export function QuantSkillsApp(props) {
     const boundSessions = props.useBoundSessions(snapshot => snapshot);
     const agents = props.useAgents(snapshot => snapshot);
     const pageProps = { ...props, catalog, boundSessions, agents };
-    return (_jsxs("main", { className: css.app, "data-page": page, children: [page === 'home' && _jsx(HomePage, { ...pageProps }), page === 'skills' && _jsx(SkillsPage, { ...pageProps }), page === 'conversations' && _jsx(ConversationPage, { ...pageProps }), page === 'parallel' && _jsx(ParallelPage, { ...pageProps }), page === 'favorites' && _jsx(FavoritesPage, { ...pageProps }), (page === 'agents' || page === 'teams') && _jsx(AgentsPage, { ...pageProps }), page === 'settings' && _jsx(SettingsPage, { ...pageProps }), page === 'database' && _jsx(DatabasePage, { access: pageProps.databaseAccess }), page === 'contest' && _jsx(ContestPage, { access: pageProps.contestAccess, researchSessions: boundSessions.plainArchives, openResearch: props.openSession }), (page === 'qube' || page === 'evo') && _jsx(ProductIntro, { product: page, navigate: props.actions.navigate })] }));
+    return (_jsxs("main", { className: css.app, "data-page": page, children: [page === 'home' && _jsx(HomePage, { ...pageProps }), page === 'skills' && _jsx(SkillsPage, { ...pageProps }), page === 'conversations' && _jsx(ConversationPage, { ...pageProps }), page === 'parallel' && _jsx(ParallelPage, { ...pageProps }), page === 'favorites' && _jsx(FavoritesPage, { ...pageProps }), (page === 'agents' || page === 'teams') && _jsx(AgentsPage, { ...pageProps }), page === 'settings' && _jsx(SettingsPage, { ...pageProps }), page === 'database' && _jsx(DatabasePage, { access: pageProps.databaseAccess }), page === 'contest' && _jsx(CompetitionHub, { access: pageProps.contestAccess, factorAccess: pageProps.factorContestAccess, researchSessions: boundSessions.plainArchives, openResearch: props.openSession }), (page === 'qube' || page === 'evo') && _jsx(ProductIntro, { product: page, navigate: props.actions.navigate })] }));
 }
 const DRAWER_OVERLAY_QUERY = '(max-width: 1180px)';
 function drawerOverlayMatches() {
