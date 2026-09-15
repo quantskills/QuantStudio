@@ -1,11 +1,22 @@
 /** Official research CLI in a private Python environment; credentials stay in the Host. */
 import { createHash } from 'node:crypto';
-import { mkdir, readFile, rm } from 'node:fs/promises';
-import { join } from 'node:path';
+import { access, mkdir, readFile, rm } from 'node:fs/promises';
+import { homedir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write';
 import { record, safeData } from "./contest-cli.js";
 const GATEWAY = 'https://www.pandaaiquant.com/pandaApi';
 const ARENA = 'https://api.pandaaiquant.com';
+/** Keep Python's deeply nested dependencies below Windows' legacy path limit.
+ * The complete logical runtime path (including its UUID) keeps homes and updates isolated.
+ * Credentials and persisted competition state remain in the original DSH home.
+ */
+export function factorRuntimeDirectory(runtime) {
+    const absolute = resolve(runtime);
+    if (process.platform !== 'win32' || absolute.length <= 100)
+        return runtime;
+    return join(process.env.LOCALAPPDATA || join(homedir(), 'AppData', 'Local'), 'QuantStudio', 'factor', createHash('sha256').update(absolute).digest('hex').slice(0, 24));
+}
 export class FactorApiError extends Error {
     code;
     rejected;
@@ -64,6 +75,7 @@ export class OfficialFactorRuntime {
             throw new Error('因子比赛首版支持 Windows 和 macOS 本机运行。');
         if (!/^\d+\.\d+\.\d+$/.test(version))
             throw new Error('CLI 版本无效。');
+        runtime = factorRuntimeDirectory(runtime);
         await mkdir(runtime, { recursive: true, mode: 0o700 });
         let python;
         for (const name of process.platform === 'win32' ? ['python', 'python3'] : ['python3', 'python']) {
@@ -79,7 +91,13 @@ export class OfficialFactorRuntime {
         }
         if (!python)
             throw new Error('请安装 Python 3.10 或更新版本后重试；应用会自动准备独立的因子 CLI。');
-        await this.process([python, '-m', 'venv', runtime], runtime, signal, 120_000);
+        try {
+            await this.process([python, '-m', 'venv', runtime], runtime, signal, 120_000);
+        }
+        catch (error) {
+            signal.throwIfAborted();
+            throw new Error('因子 CLI 的独立 Python 环境创建失败，请检查安装目录权限和路径长度。', { cause: error });
+        }
         await this.process([this.python(runtime), '-m', 'pip', 'install', '--disable-pip-version-check', '--no-input',
             '--index-url', 'https://pypi.org/simple', `pandaai-cli==${version}`], runtime, signal, 240_000);
         const installed = await this.process([this.python(runtime), '-c', 'import importlib.metadata; print(importlib.metadata.version("pandaai-cli"))'], runtime, signal);
@@ -139,6 +157,15 @@ export class OfficialFactorRuntime {
     }
     async logout() { await rm(this.configPath(), { force: true }); }
     async cli(runtime, args, signal) {
+        const compact = factorRuntimeDirectory(runtime);
+        if (compact !== runtime) {
+            // Previously installed versions may still live in the original directory.
+            try {
+                await access(this.python(compact));
+                runtime = compact;
+            }
+            catch { /* retain the legacy runtime */ }
+        }
         const text = await this.process([this.python(runtime), '-m', 'cli', '--config', this.configPath(), '--json', ...args], runtime, signal, args[0] === 'factor_run' ? 720_000 : 90_000);
         let body;
         try {

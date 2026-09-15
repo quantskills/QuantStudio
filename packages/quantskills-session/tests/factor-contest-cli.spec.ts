@@ -1,13 +1,13 @@
-import { mkdtemp, readFile, rm } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import { afterEach, expect, it, vi } from 'vitest'
 import type { SubprocessRuntime, SubprocessSpawnSpec } from '@deepseek-ai/dsh-subprocess'
-import { OfficialFactorRuntime } from '../src/factor-contest-cli.ts'
+import { factorRuntimeDirectory, OfficialFactorRuntime } from '../src/factor-contest-cli.ts'
 
 const roots: string[] = []
-afterEach(async () => { vi.unstubAllGlobals(); for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }) })
+afterEach(async () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }) })
 async function fixture() {
   const root = await mkdtemp(join(tmpdir(), 'factor-cli-auth-')); roots.push(root)
   const spawn = vi.fn((spec: SubprocessSpawnSpec) => ({ done: Promise.resolve({ exitCode: 0 }), terminate: vi.fn(), waitForExit: async () => {},
@@ -15,6 +15,30 @@ async function fixture() {
   const runtime = new OfficialFactorRuntime(() => ({ spawn } as unknown as SubprocessRuntime), root)
   return { root, runtime, spawn }
 }
+it.skipIf(process.platform !== 'win32')('installs and runs long-path environments in the same short isolated directory', async () => {
+  const f = await fixture()
+  vi.stubEnv('LOCALAPPDATA', f.root)
+  const logical = join(f.root, 'deep-workspace-'.repeat(10), 'runtime-1')
+  const physical = factorRuntimeDirectory(logical)
+  expect(physical.length).toBeLessThan(logical.length)
+  expect(factorRuntimeDirectory(logical)).toBe(physical)
+  expect(factorRuntimeDirectory(logical + '-other-home')).not.toBe(physical)
+  const spawn = vi.fn((spec: SubprocessSpawnSpec) => ({ done: Promise.resolve({ exitCode: 0 }), terminate: vi.fn(), waitForExit: async () => {},
+    collected: { stdout: { readFrom: () => ({ lossy: false, text: spec.argv.includes('-c')
+      ? spec.argv.at(-1)?.includes('metadata') ? '0.1.7' : 'ok'
+      : JSON.stringify({ success: true }) }) } } }))
+  const runtime = new OfficialFactorRuntime(() => ({ spawn, resolveExecutable: async () => 'python.exe' } as unknown as SubprocessRuntime), f.root)
+  await runtime.install(logical, '0.1.7', new AbortController().signal)
+  expect(spawn.mock.calls.some(([spec]) => spec.argv.includes('venv') && spec.argv.at(-1) === physical)).toBe(true)
+  await mkdir(join(physical, 'Scripts'), { recursive: true })
+  await writeFile(join(physical, 'Scripts/python.exe'), '')
+  await runtime.cli(logical, ['balance'], new AbortController().signal)
+  expect(spawn.mock.calls.at(-1)?.[0]).toMatchObject({ cwd: physical,
+    argv: [join(physical, 'Scripts/python.exe'), '-m', 'cli', '--config', join(f.root, 'config.json'), '--json', 'balance'] })
+  await rm(join(physical, 'Scripts/python.exe'))
+  await runtime.cli(logical, ['balance'], new AbortController().signal)
+  expect(spawn.mock.calls.at(-1)?.[0].cwd).toBe(logical)
+})
 it('uses the official password protocol without including credentials in process arguments', async () => {
   const f = await fixture()
   const fetch = vi.fn(async (url: string) => new Response(JSON.stringify({ code: '200', data: url.endsWith('/login/pw') ? 'private-token' : { id: 'user1' } })))

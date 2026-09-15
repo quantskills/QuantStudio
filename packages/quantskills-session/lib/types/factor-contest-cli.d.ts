@@ -1,6 +1,11 @@
 import type { SubprocessRuntime } from '@deepseek-ai/dsh-subprocess';
 import type { JsonValue } from '@deepseek-ai/dsh-util-values';
 import type { FactorCredentials } from './factor-contest-types.ts';
+/** Keep Python's deeply nested dependencies below Windows' legacy path limit.
+ * The complete logical runtime path (including its UUID) keeps homes and updates isolated.
+ * Credentials and persisted competition state remain in the original DSH home.
+ */
+export declare function factorRuntimeDirectory(runtime: string): string;
 export declare class FactorApiError extends Error {
     readonly code: string;
     readonly rejected: boolean;
