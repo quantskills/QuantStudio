@@ -198,7 +198,3 @@ Direct dependencies of the `pyproject.toml` manifests, plus `uv` as the developm
 ## First-party native packages
 
 `@deepseek-ai/node-addon-landlock-run` (and its platform packages) is built and released from this repository under BSD 3-Clause. It is listed here for completeness; it is first-party, not third-party.
-
-## dsh-context
-
-Context insight by bowenliang123, https://github.com/bowenliang123/dsh-context, version 0.41.3. Licensed under Apache-2.0; see LICENSES/dsh-context-Apache-2.0.txt. QuantSkills modifies the Chinese presentation strings in lib/client.js using scripts/adapt-context.mjs (2026-09-12), with an explicit modification notice in that file. Separate CSS supplies theme and layout overrides. All upstream attribution and licenses are retained. No endorsement or trademark rights are implied.

@@ -66,9 +66,6 @@ importers:
       '@deepseek-ai/dsh-tool-agent-team':
         specifier: workspace:^
         version: link:packages/tool-agent-team
-      dsh-context:
-        specifier: 0.41.3
-        version: 0.41.3(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-session@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))))(@deepseek-ai/dsh-settings@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-brand@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-session@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))))(@deepseek-ai/schemastery@3.18.2))(@deepseek-ai/schemastery@3.18.2)(react@18.2.0)
       dsh-file-upload:
         specifier: github:GLFzr/dsh-file-upload#baa569938c03404b4eac6c6740c27afb49b60ba8
         version: https://codeload.github.com/GLFzr/dsh-file-upload/tar.gz/baa569938c03404b4eac6c6740c27afb49b60ba8
@@ -5033,22 +5030,6 @@ packages:
 
   dom-accessibility-api@0.5.16:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
-
-  dsh-context@0.41.3:
-    resolution: {integrity: sha512-S/3nQjq3JfuWG9Id/jHLMNnKMRrHrMzfO60+vH6pDubXPXPErB2W+bHO2SU96D/3MoJmHP7rjI8dqaZyjGgwPQ==}
-    engines: {node: ^22.19.0 || >=24.0.0}
-    peerDependencies:
-      '@deepseek-ai/cordis': 4.0.2
-      '@deepseek-ai/dsh-client-ui-primitives': '>=0.1.1-rc.2'
-      '@deepseek-ai/dsh-session': '>=0.1.1-rc.2'
-      '@deepseek-ai/dsh-settings': '>=0.1.1-rc.2'
-      '@deepseek-ai/schemastery': 3.18.2
-      react: ^18.3.1
-    peerDependenciesMeta:
-      '@deepseek-ai/dsh-client-ui-primitives':
-        optional: true
-      react:
-        optional: true
 
   dsh-file-upload@https://codeload.github.com/GLFzr/dsh-file-upload/tar.gz/baa569938c03404b4eac6c6740c27afb49b60ba8:
     resolution: {gitHosted: true, integrity: sha512-rVmhcc0jVcTA29yFGdFsE3O4xks+JmFfbStguch+TgGh4814GaVc4lgwhOd4Dn0R4ClAYdQJHrLpQf4SIXVFQA==, tarball: https://codeload.github.com/GLFzr/dsh-file-upload/tar.gz/baa569938c03404b4eac6c6740c27afb49b60ba8}
@@ -11087,16 +11068,6 @@ snapshots:
   diff@9.0.0: {}
 
   dom-accessibility-api@0.5.16: {}
-
-  dsh-context@0.41.3(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-session@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))))(@deepseek-ai/dsh-settings@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-brand@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-session@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))))(@deepseek-ai/schemastery@3.18.2))(@deepseek-ai/schemastery@3.18.2)(react@18.2.0):
-    dependencies:
-      '@deepseek-ai/cordis': 4.0.2(@deepseek-ai/cordis-plugin-include@1.0.7)(@deepseek-ai/cordis-plugin-loader@1.0.3)
-      '@deepseek-ai/dsh-session': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))
-      '@deepseek-ai/dsh-settings': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-brand@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-session@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))))(@deepseek-ai/schemastery@3.18.2)
-      '@deepseek-ai/schemastery': 3.18.2
-      zod: 4.4.3
-    optionalDependencies:
-      react: 18.2.0
 
   dsh-file-upload@https://codeload.github.com/GLFzr/dsh-file-upload/tar.gz/baa569938c03404b4eac6c6740c27afb49b60ba8: {}
 

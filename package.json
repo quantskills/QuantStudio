@@ -33,18 +33,16 @@
     "LICENSE",
     "COMMERCIAL-LICENSE.md",
     "THIRD_PARTY_NOTICES.md",
-    "LICENSES/DeepSeek-Harness-MIT.txt",
-    "LICENSES/dsh-context-Apache-2.0.txt",
-    "scripts/adapt-context.mjs"
+    "LICENSES/DeepSeek-Harness-MIT.txt"
   ],
   "scripts": {
-    "install:plugin": "dsh plugin --profile web add . ./packages/agent-team ./packages/tool-agent-team ./packages/quantskills-host ./packages/quantskills-session ./packages/panda-mcp ./packages/client-ui-layout ./packages/client-ui-input-trigger ./packages/client-ui-conversation ./packages/client-ui-chat ./packages/client-remotes-quantskills ./node_modules/dsh-file-upload ./packages/ui-quantskills ./node_modules/dshmarket ./node_modules/dsh-context",
-    "uninstall:plugin": "dsh plugin --profile web remove @quantskills/dsh-plugin @deepseek-ai/dsh-agent-team @deepseek-ai/dsh-tool-agent-team @deepseek-ai/dsh-quantskills-host @deepseek-ai/dsh-quantskills-session @deepseek-ai/dsh-panda-mcp @deepseek-ai/dsh-client-ui-layout @deepseek-ai/dsh-client-ui-input-trigger @deepseek-ai/dsh-client-ui-conversation @deepseek-ai/dsh-client-ui-chat @deepseek-ai/dsh-client-remotes-quantskills dsh-file-upload @deepseek-ai/dsh-client-ui-quantskills dshmarket dsh-context",
-    "preweb": "node ./scripts/adapt-context.mjs && node ./scripts/install-application-bootstrap.mjs",
+    "install:plugin": "node ./scripts/retire-context-plugin.mjs && dsh plugin --profile web add . ./packages/agent-team ./packages/tool-agent-team ./packages/quantskills-host ./packages/quantskills-session ./packages/panda-mcp ./packages/client-ui-layout ./packages/client-ui-input-trigger ./packages/client-ui-conversation ./packages/client-ui-chat ./packages/client-remotes-quantskills ./node_modules/dsh-file-upload ./packages/ui-quantskills ./node_modules/dshmarket",
+    "uninstall:plugin": "dsh plugin --profile web remove @quantskills/dsh-plugin @deepseek-ai/dsh-agent-team @deepseek-ai/dsh-tool-agent-team @deepseek-ai/dsh-quantskills-host @deepseek-ai/dsh-quantskills-session @deepseek-ai/dsh-panda-mcp @deepseek-ai/dsh-client-ui-layout @deepseek-ai/dsh-client-ui-input-trigger @deepseek-ai/dsh-client-ui-conversation @deepseek-ai/dsh-client-ui-chat @deepseek-ai/dsh-client-remotes-quantskills dsh-file-upload @deepseek-ai/dsh-client-ui-quantskills dshmarket",
+    "preweb": "node ./scripts/install-application-bootstrap.mjs",
     "web": "node ./scripts/launch-quantskills.mjs",
     "typecheck:portable": "tsc -p tsconfig.json --noEmit && pnpm --dir packages/agent-team run typecheck && pnpm --dir packages/client-ui-layout run typecheck && pnpm --dir packages/client-ui-input-trigger run typecheck && pnpm --dir packages/client-ui-conversation run typecheck && pnpm --dir packages/client-ui-chat run typecheck && pnpm --dir packages/client-remotes-quantskills run typecheck && pnpm --dir packages/panda-connector run typecheck && pnpm --dir packages/panda-mcp run typecheck && pnpm --dir packages/quantskills-host run typecheck && pnpm --dir packages/quantskills-session run typecheck && pnpm --dir packages/tool-agent-team run typecheck && pnpm --dir packages/ui-quantskills run typecheck",
     "check": "pnpm run verify:source && pnpm run typecheck:portable",
-    "test": "vitest run tests/quantskills-plugin.spec.ts packages/panda-mcp/tests/panda-mcp.spec.ts tests/background-subprocess.spec.ts",
+    "test": "vitest run tests/quantskills-plugin.spec.ts packages/panda-mcp/tests/panda-mcp.spec.ts tests/background-subprocess.spec.ts tests/retire-context-plugin.spec.ts",
     "test:update": "vitest run packages/quantskills-host/tests/application-update.spec.ts packages/quantskills-host/tests/host.spec.ts tests/application-bootstrap.spec.ts tests/application-release-mirrors.spec.ts",
     "verify:update-mirrors": "node ./scripts/verify-application-release-mirrors.mjs",
     "ci:smoke": "node ./scripts/ci-plugin-smoke.mjs",
@@ -82,7 +80,6 @@
     "@deepseek-ai/dsh-quantskills-host": "workspace:^",
     "@deepseek-ai/dsh-quantskills-session": "workspace:^",
     "@deepseek-ai/dsh-tool-agent-team": "workspace:^",
-    "dsh-context": "0.41.3",
     "dsh-file-upload": "github:GLFzr/dsh-file-upload#baa569938c03404b4eac6c6740c27afb49b60ba8",
     "dshmarket": "1.45.1"
   },
@@ -100,8 +97,7 @@
     "@deepseek-ai/dsh-quantskills-session",
     "@deepseek-ai/dsh-tool-agent-team",
     "dsh-file-upload",
-    "dshmarket",
-    "dsh-context"
+    "dshmarket"
   ],
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1",

@@ -162,9 +162,9 @@ describe('dsh-quantskills-plugin bundle', () => {
     expect(manifest.dsh?.bundle?.patch).toBe('./cordis.patch.yml')
     expect(manifest.files).toContain('cordis.patch.yml')
     expect(manifest.scripts).toMatchObject({
-      'install:plugin': 'dsh plugin --profile web add . ./packages/agent-team ./packages/tool-agent-team ./packages/quantskills-host ./packages/quantskills-session ./packages/panda-mcp ./packages/client-ui-layout ./packages/client-ui-input-trigger ./packages/client-ui-conversation ./packages/client-ui-chat ./packages/client-remotes-quantskills ./node_modules/dsh-file-upload ./packages/ui-quantskills ./node_modules/dshmarket ./node_modules/dsh-context',
-      'uninstall:plugin': 'dsh plugin --profile web remove @quantskills/dsh-plugin @deepseek-ai/dsh-agent-team @deepseek-ai/dsh-tool-agent-team @deepseek-ai/dsh-quantskills-host @deepseek-ai/dsh-quantskills-session @deepseek-ai/dsh-panda-mcp @deepseek-ai/dsh-client-ui-layout @deepseek-ai/dsh-client-ui-input-trigger @deepseek-ai/dsh-client-ui-conversation @deepseek-ai/dsh-client-ui-chat @deepseek-ai/dsh-client-remotes-quantskills dsh-file-upload @deepseek-ai/dsh-client-ui-quantskills dshmarket dsh-context',
-      preweb: 'node ./scripts/adapt-context.mjs && node ./scripts/install-application-bootstrap.mjs',
+      'install:plugin': 'node ./scripts/retire-context-plugin.mjs && dsh plugin --profile web add . ./packages/agent-team ./packages/tool-agent-team ./packages/quantskills-host ./packages/quantskills-session ./packages/panda-mcp ./packages/client-ui-layout ./packages/client-ui-input-trigger ./packages/client-ui-conversation ./packages/client-ui-chat ./packages/client-remotes-quantskills ./node_modules/dsh-file-upload ./packages/ui-quantskills ./node_modules/dshmarket',
+      'uninstall:plugin': 'dsh plugin --profile web remove @quantskills/dsh-plugin @deepseek-ai/dsh-agent-team @deepseek-ai/dsh-tool-agent-team @deepseek-ai/dsh-quantskills-host @deepseek-ai/dsh-quantskills-session @deepseek-ai/dsh-panda-mcp @deepseek-ai/dsh-client-ui-layout @deepseek-ai/dsh-client-ui-input-trigger @deepseek-ai/dsh-client-ui-conversation @deepseek-ai/dsh-client-ui-chat @deepseek-ai/dsh-client-remotes-quantskills dsh-file-upload @deepseek-ai/dsh-client-ui-quantskills dshmarket',
+      preweb: 'node ./scripts/install-application-bootstrap.mjs',
       web: 'node ./scripts/launch-quantskills.mjs',
     })
     expect(manifest.devDependencies?.['@deepseek-ai/dsh']).toBe('0.1.2-alpha.2')
@@ -191,7 +191,6 @@ describe('dsh-quantskills-plugin bundle', () => {
       '@deepseek-ai/dsh-quantskills-host': 'workspace:^',
       '@deepseek-ai/dsh-quantskills-session': 'workspace:^',
       '@deepseek-ai/dsh-tool-agent-team': 'workspace:^',
-      'dsh-context': '0.41.3',
       dshmarket: '1.45.1',
       'dsh-file-upload': 'github:GLFzr/dsh-file-upload#baa569938c03404b4eac6c6740c27afb49b60ba8',
     })

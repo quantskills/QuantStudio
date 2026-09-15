@@ -2413,26 +2413,10 @@ body[data-qs-plugin-theme] .pluginNav .capabilityIcon[data-kind] { color:inherit
 body:has(> :global([data-qs-motion])) :global(#root) { position:relative; z-index:1; }
 body:has(> :global([data-qs-motion])) .pluginFrame, body:has(> :global([data-qs-motion])) .rootFrame { background:transparent; }
 
-/* dsh-context 0.41.x keeps its own state and UI; these styles only adapt presentation. */
-body[data-qs-plugin-theme] :global(.lc-root) { font-family:inherit;font-size:14px;line-height:1.6;padding:28px clamp(20px,3vw,48px) 40px;max-width:1500px;margin-inline:auto;background:color-mix(in srgb,var(--qs-chrome) var(--qs-conversation-surface-opacity,92%),transparent); }
-body[data-qs-plugin-theme] :global(.lc-root .lc-card) { padding:18px 20px;margin-bottom:14px;border-radius:16px;border-color:var(--qs-border);background:color-mix(in srgb,var(--qs-surface) 90%,transparent);box-shadow:0 2px 8px #00000005; }
-body[data-qs-plugin-theme] :global(.lc-root .lc-cols) { gap:14px;margin-bottom:14px; }
-body[data-qs-plugin-theme] :global(.lc-card-title) { font-size:14px;letter-spacing:-.01em;margin-bottom:16px; }
-body[data-qs-plugin-theme] :global(.lc-gran),body[data-qs-plugin-theme] :global(.lc-kinds) { border-radius:9px;border-color:var(--qs-border);padding:3px;gap:2px;background:var(--qs-chrome); }
-body[data-qs-plugin-theme] :global(.lc-gran-btn) { padding:6px 10px;font-size:12px;border-radius:6px; }
-body[data-qs-plugin-theme] :global(.lc-gran-on) { background:var(--qs-tint);color:var(--qs-accent); }
-body[data-qs-plugin-theme] :global(.lc-stat) { border-radius:12px;padding:12px; }
-body[data-qs-plugin-theme] :global(.lc-foot) { padding-top:14px;opacity:.75; }
-@media(max-width:900px) { body[data-qs-plugin-theme] :global(.lc-head) { flex-direction:column; } }
 
 .pluginFrame[data-qs-background^='motion-'],.rootFrame[data-qs-background^='motion-'] { background:transparent; }
 .pluginFrame > :global([data-qs-motion]),.rootFrame > :global([data-qs-motion]) { position:absolute;inset:0;z-index:-1; }
 
-body[data-qs-plugin-theme] :global(.lc-root) { width:100%;min-width:0;max-width:100%;container:qs-context / inline-size; }
-body[data-qs-plugin-theme] :global(.lc-head) { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr)); }
-body[data-qs-plugin-theme] :global(.lc-cols:not(.lc-head)) { display:grid;grid-template-columns:repeat(2,minmax(0,1fr)); }
-body[data-qs-plugin-theme] :global(.lc-col) { min-width:0; }
-@container qs-context (max-width:750px) { body[data-qs-plugin-theme] :global(.lc-cols:not(.lc-head)) { grid-template-columns:1fr; } }
 .catalogMetricTotal > span:first-child { flex-wrap:wrap;row-gap:12px;width:100%; }
 .catalogMetricTotal > span:first-child > small { flex-basis:100%; }
 .catalogMetricTotal > span:first-child > b,.catalogMetricTotal em { white-space:nowrap; }
@@ -2451,9 +2435,6 @@ body[data-qs-plugin-theme='light'][data-qs-background='motion-jiangnan'] { --qs-
 body[data-qs-plugin-theme='light'][data-qs-background='motion-cyber'] { --qs-accent:#8451ad;--qs-tint:#eee3f7; }
 @media(prefers-reduced-motion:reduce) { :global([data-qs-motion]::before) { animation:none; } }
 
-body[data-qs-plugin-theme] :global(.lc-stats) { grid-template-columns:repeat(auto-fit,minmax(92px,1fr)); }
-body[data-qs-plugin-theme] :global(.lc-stat-label) { white-space:normal;line-height:1.4; }
-body[data-qs-plugin-theme] :global(.lc-pi-update) { display:none; }
 
 /* Complete theme tokens shared by native menus, dialogs, the workbench and portals. */
 body[data-qs-plugin-theme],
