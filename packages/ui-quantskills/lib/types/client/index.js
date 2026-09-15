@@ -18,6 +18,7 @@ import { buildSkillGuidePrompt, parseSkillGuideDecision, } from "./task-recommen
 import { resultPreviewRank } from "./result-data.js";
 import { QuantSkillsAttachmentControl, QuantSkillsAttachmentController, } from "./QuantSkillsAttachmentControl.js";
 import { QuantSkillsPandaMcpControl, QuantSkillsPandaMcpHeroControl, } from "./QuantSkillsPandaMcpControl.js";
+import { ContestReview } from "./ContestReview.js";
 import { AuthoringReview } from "./AuthoringReview.js";
 import { SessionFavorite } from "./SessionFavorite.js";
 import { QuantSkillsTeamDraftCard, } from "./QuantSkillsTeamDraftCard.js";
@@ -925,6 +926,45 @@ export function mountQuantSkillsApplication(ctx, options) {
             throw new Error(result.error.message);
         await Promise.all([boundSessions.refresh(lifetime.signal), agents.refresh()]);
     };
+    const contestAccess = {
+        status: sessionId => unwrapRemote(ctx.remote.quantSkillsSessions.contestStatus(sessionId ? { sessionId } : {})),
+        mode: enabled => unwrapRemote(ctx.remote.quantSkillsSessions.contestMode({ enabled })),
+        connect: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestConnect()),
+        disconnect: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestDisconnect()),
+        checkUpdate: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestCheckUpdate()),
+        update: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestUpdate()),
+        query: request => unwrapRemote(ctx.remote.quantSkillsSessions.contestQuery(request)),
+        execute: plan => unwrapRemote(ctx.remote.quantSkillsSessions.contestExecute({ planId: plan.id, sessionId: plan.sessionId })),
+        dismiss: plan => unwrapRemote(ctx.remote.quantSkillsSessions.contestDismiss({ planId: plan.id, sessionId: plan.sessionId })),
+        reconcile: plan => unwrapRemote(ctx.remote.quantSkillsSessions.contestReconcile({ planId: plan.id, sessionId: plan.sessionId })),
+        inspect: sessionId => unwrapRemote(ctx.remote.quantSkillsSessions.contestInspect({ sessionId: sessionId })),
+        requestResearch: async (sessionId, text) => {
+            const current = ctx.sessions.list.getSnapshot();
+            if (current.current !== sessionId || current.byId[sessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'contest') {
+                throw new Error('请在对应比赛会话中发起研究。');
+            }
+            const session = ctx.sessions.binding(sessionId)?.session;
+            if (!session)
+                throw new Error('比赛会话尚未就绪。');
+            const result = await session.prompt([{ type: 'text', text }], 'queue');
+            if (!result.ok)
+                throw new Error(result.error.message);
+        },
+        startResearch: async (topic) => {
+            const workspace = await resolveSessionWorkspace();
+            const created = await unwrapRemote(ctx.remote.quantSkillsSessions.contestSessionOpen({
+                ...workspace, sessionId: `session-${crypto.randomUUID()}`, ...(topic ? { topic: true } : {}),
+            }, lifetime.signal));
+            const adopted = await adoptSession(created.sessionId, lifetime.signal, summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'contest');
+            if (created.created) {
+                const renamed = await adopted.session.rename(topic ? '比赛 · 专题研究' : '比赛 · 账户主对话');
+                if (!renamed.ok)
+                    throw new Error(renamed.error.message);
+            }
+            openSession(created.sessionId, false);
+            await boundSessions.refresh(lifetime.signal);
+        },
+    };
     const removeSessions = async (ids) => {
         const uniqueIds = [...new Set(ids)];
         if (uniqueIds.length === 0)
@@ -1509,6 +1549,12 @@ export function mountQuantSkillsApplication(ctx, options) {
             focusComposer: () => { document.querySelector('[data-composer-card] textarea:not(:disabled)')?.focus(); },
         }),
     }, AuthoringReview));
+    ctx.slots.inject('conversation.input.dock', () => ctx.slots.register({
+        name: 'conversation.input.dock', id: 'quantskills-contest-review', order: 15,
+        inject: () => ({ hooks: { sessions: ctx.sessions.list }, access: contestAccess,
+            openContest: () => viewActions.navigate('contest'),
+        }),
+    }, ContestReview));
     const resultTrigger = { current: null };
     ctx.effect(() => bindQuantSkillsResultMentionClicks(document, (path, trigger) => {
         if (resultPreviewRank(path) >= 4)
@@ -1702,6 +1748,7 @@ export function mountQuantSkillsApplication(ctx, options) {
                 remove: id => unwrapRemote(ctx.remote.pandaMcp.databaseRemove({ id })),
                 categorize: (id, category) => unwrapRemote(ctx.remote.pandaMcp.databaseCategorize({ id, category })),
             },
+            contestAccess,
             modelAccess: request => unwrapRemote(ctx.remote.quantSkillsSessions.modelsAccess(request)),
             readAssetReadme,
             installAsset: asset => catalog.install(asset).then(() => { }),

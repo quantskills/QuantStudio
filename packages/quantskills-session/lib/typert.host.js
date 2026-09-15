@@ -2,6 +2,17 @@
 import { z } from 'zod'
 
 const JsonValueRemoteCodec$schema = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema))])
+const JsonValueRemoteCodec$schema2 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema2)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema2))])
+const JsonValueRemoteCodec$schema3 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema3)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema3))])
+const JsonValueRemoteCodec$schema4 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema4)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema4))])
+const JsonValueRemoteCodec$schema5 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema5)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema5))])
+const JsonValueRemoteCodec$schema6 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema6)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema6))])
+const JsonValueRemoteCodec$schema7 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema7)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema7))])
+const JsonValueRemoteCodec$schema8 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema8)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema8))])
+const JsonValueRemoteCodec$schema9 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema9)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema9))])
+const JsonValueRemoteCodec$schema10 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema10)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema10))])
+const JsonValueRemoteCodec$schema11 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema11)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema11))])
+const JsonValueRemoteCodec$schema12 = z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema12)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema12))])
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentCreate_parameter_0$schema = z.object({
   'purpose': z.literal("authoring-helper").readonly().optional(),
   'copyFrom': z.object({
@@ -143,7 +154,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentSessionList_
   'parentSessionId': z.intersection(z.string(), z.unknown()).readonly().optional(),
   'archived': z.boolean().readonly(),
   'running': z.boolean().readonly(),
-  'runState': z.union([z.literal("idle"), z.literal("failed"), z.literal("running"), z.literal("cancelled"), z.literal("completed")]).readonly(),
+  'runState': z.union([z.literal("idle"), z.literal("failed"), z.literal("completed"), z.literal("cancelled"), z.literal("running")]).readonly(),
 }))
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamCreate_parameter_0$schema = z.object({
   'name': z.string().readonly(),
@@ -510,7 +521,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamSessionL
   'parentSessionId': z.intersection(z.string(), z.unknown()).readonly().optional(),
   'archived': z.boolean().readonly(),
   'running': z.boolean().readonly(),
-  'runState': z.union([z.literal("idle"), z.literal("failed"), z.literal("running"), z.literal("cancelled"), z.literal("completed")]).readonly(),
+  'runState': z.union([z.literal("idle"), z.literal("failed"), z.literal("completed"), z.literal("cancelled"), z.literal("running")]).readonly(),
 }))
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamUpdate_parameter_0$schema = z.object({
   'teamId': z.intersection(z.string(), z.unknown()).readonly(),
@@ -844,6 +855,334 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringSessionC
 }).readonly(),
   'agentPreset': z.string().readonly().optional(),
 })
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestCheckUpdate_result$schema = z.object({
+  'enabled': z.boolean().readonly(),
+  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("error"), z.literal("installing"), z.literal("off")]).readonly(),
+  'cliVersion': z.string().readonly().optional(),
+  'latestVersion': z.string().readonly().optional(),
+  'updateAvailable': z.boolean().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly().optional(),
+  'message': z.string().readonly(),
+  'plans': z.array(z.object({
+  'id': z.string().readonly(),
+  'sessionId': z.string().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'operation': z.union([z.literal("place_order"), z.literal("cancel_order")]).readonly(),
+  'createdAt': z.number().readonly(),
+  'expiresAt': z.number().readonly(),
+  'summary': z.string().readonly(),
+  'details': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema5)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema5))])).readonly(),
+  'clientRequestId': z.string().readonly(),
+  'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("queued"), z.literal("submitted"), z.literal("completed"), z.literal("partial"), z.literal("expired"), z.literal("unknown"), z.literal("cancelled")]),
+  'operationId': z.union([z.undefined(), z.string()]).optional(),
+  'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema5)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema5))]))]).optional(),
+})).readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestConnect_result$schema = z.object({
+  'enabled': z.boolean().readonly(),
+  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("error"), z.literal("installing"), z.literal("off")]).readonly(),
+  'cliVersion': z.string().readonly().optional(),
+  'latestVersion': z.string().readonly().optional(),
+  'updateAvailable': z.boolean().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly().optional(),
+  'message': z.string().readonly(),
+  'plans': z.array(z.object({
+  'id': z.string().readonly(),
+  'sessionId': z.string().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'operation': z.union([z.literal("place_order"), z.literal("cancel_order")]).readonly(),
+  'createdAt': z.number().readonly(),
+  'expiresAt': z.number().readonly(),
+  'summary': z.string().readonly(),
+  'details': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema3)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema3))])).readonly(),
+  'clientRequestId': z.string().readonly(),
+  'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("queued"), z.literal("submitted"), z.literal("completed"), z.literal("partial"), z.literal("expired"), z.literal("unknown"), z.literal("cancelled")]),
+  'operationId': z.union([z.undefined(), z.string()]).optional(),
+  'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema3)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema3))]))]).optional(),
+})).readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDisconnect_result$schema = z.object({
+  'enabled': z.boolean().readonly(),
+  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("error"), z.literal("installing"), z.literal("off")]).readonly(),
+  'cliVersion': z.string().readonly().optional(),
+  'latestVersion': z.string().readonly().optional(),
+  'updateAvailable': z.boolean().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly().optional(),
+  'message': z.string().readonly(),
+  'plans': z.array(z.object({
+  'id': z.string().readonly(),
+  'sessionId': z.string().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'operation': z.union([z.literal("place_order"), z.literal("cancel_order")]).readonly(),
+  'createdAt': z.number().readonly(),
+  'expiresAt': z.number().readonly(),
+  'summary': z.string().readonly(),
+  'details': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema4)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema4))])).readonly(),
+  'clientRequestId': z.string().readonly(),
+  'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("queued"), z.literal("submitted"), z.literal("completed"), z.literal("partial"), z.literal("expired"), z.literal("unknown"), z.literal("cancelled")]),
+  'operationId': z.union([z.undefined(), z.string()]).optional(),
+  'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema4)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema4))]))]).optional(),
+})).readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_parameter_0$schema = z.object({
+  'planId': z.string(),
+  'sessionId': z.string(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_result$schema = z.object({
+  'enabled': z.boolean().readonly(),
+  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("error"), z.literal("installing"), z.literal("off")]).readonly(),
+  'cliVersion': z.string().readonly().optional(),
+  'latestVersion': z.string().readonly().optional(),
+  'updateAvailable': z.boolean().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly().optional(),
+  'message': z.string().readonly(),
+  'plans': z.array(z.object({
+  'id': z.string().readonly(),
+  'sessionId': z.string().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'operation': z.union([z.literal("place_order"), z.literal("cancel_order")]).readonly(),
+  'createdAt': z.number().readonly(),
+  'expiresAt': z.number().readonly(),
+  'summary': z.string().readonly(),
+  'details': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema10)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema10))])).readonly(),
+  'clientRequestId': z.string().readonly(),
+  'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("queued"), z.literal("submitted"), z.literal("completed"), z.literal("partial"), z.literal("expired"), z.literal("unknown"), z.literal("cancelled")]),
+  'operationId': z.union([z.undefined(), z.string()]).optional(),
+  'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema10)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema10))]))]).optional(),
+})).readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestExecute_parameter_0$schema = z.object({
+  'planId': z.string(),
+  'sessionId': z.string(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestExecute_result$schema = z.object({
+  'id': z.string().readonly(),
+  'sessionId': z.string().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'operation': z.union([z.literal("place_order"), z.literal("cancel_order")]).readonly(),
+  'createdAt': z.number().readonly(),
+  'expiresAt': z.number().readonly(),
+  'summary': z.string().readonly(),
+  'details': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema9)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema9))])).readonly(),
+  'clientRequestId': z.string().readonly(),
+  'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("queued"), z.literal("submitted"), z.literal("completed"), z.literal("partial"), z.literal("expired"), z.literal("unknown"), z.literal("cancelled")]),
+  'operationId': z.union([z.undefined(), z.string()]).optional(),
+  'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema9)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema9))]))]).optional(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_parameter_0$schema = z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_result$schema = z.object({
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'fetchedAt': z.number().readonly(),
+  'account': z.object({
+  'data': z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema8)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema8))]).readonly(),
+  'meta': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema8)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema8))])).readonly().optional(),
+  'fetchedAt': z.number().readonly(),
+}).readonly(),
+  'positions': z.object({
+  'data': z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema8)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema8))]).readonly(),
+  'meta': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema8)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema8))])).readonly().optional(),
+  'fetchedAt': z.number().readonly(),
+}).readonly(),
+  'openOrders': z.object({
+  'data': z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema8)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema8))]).readonly(),
+  'meta': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema8)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema8))])).readonly().optional(),
+  'fetchedAt': z.number().readonly(),
+}).readonly(),
+  'pendingPlans': z.array(z.object({
+  'id': z.string().readonly(),
+  'sessionId': z.string().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'operation': z.union([z.literal("place_order"), z.literal("cancel_order")]).readonly(),
+  'createdAt': z.number().readonly(),
+  'expiresAt': z.number().readonly(),
+  'summary': z.string().readonly(),
+  'details': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema8)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema8))])).readonly(),
+  'clientRequestId': z.string().readonly(),
+  'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("queued"), z.literal("submitted"), z.literal("completed"), z.literal("partial"), z.literal("expired"), z.literal("unknown"), z.literal("cancelled")]),
+  'operationId': z.union([z.undefined(), z.string()]).optional(),
+  'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema8)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema8))]))]).optional(),
+})).readonly(),
+  'summary': z.array(z.string()).readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_parameter_0$schema = z.object({
+  'enabled': z.boolean(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_result$schema = z.object({
+  'enabled': z.boolean().readonly(),
+  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("error"), z.literal("installing"), z.literal("off")]).readonly(),
+  'cliVersion': z.string().readonly().optional(),
+  'latestVersion': z.string().readonly().optional(),
+  'updateAvailable': z.boolean().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly().optional(),
+  'message': z.string().readonly(),
+  'plans': z.array(z.object({
+  'id': z.string().readonly(),
+  'sessionId': z.string().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'operation': z.union([z.literal("place_order"), z.literal("cancel_order")]).readonly(),
+  'createdAt': z.number().readonly(),
+  'expiresAt': z.number().readonly(),
+  'summary': z.string().readonly(),
+  'details': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema2)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema2))])).readonly(),
+  'clientRequestId': z.string().readonly(),
+  'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("queued"), z.literal("submitted"), z.literal("completed"), z.literal("partial"), z.literal("expired"), z.literal("unknown"), z.literal("cancelled")]),
+  'operationId': z.union([z.undefined(), z.string()]).optional(),
+  'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema2)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema2))]))]).optional(),
+})).readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_parameter_0$schema = z.object({
+  'kind': z.union([z.literal("account"), z.literal("positions"), z.literal("open-orders"), z.literal("orders"), z.literal("trades"), z.literal("ranking"), z.literal("ranking-me"), z.literal("settlements"), z.literal("quote")]).readonly(),
+  'symbol': z.string().readonly().optional(),
+  'date': z.string().readonly().optional(),
+  'lastId': z.string().readonly().optional(),
+  'board': z.union([z.literal("live"), z.literal("settled")]).readonly().optional(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_result$schema = z.object({
+  'data': z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema7)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema7))]).readonly(),
+  'meta': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema7)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema7))])).readonly().optional(),
+  'fetchedAt': z.number().readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestReconcile_parameter_0$schema = z.object({
+  'planId': z.string(),
+  'sessionId': z.string(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestReconcile_result$schema = z.object({
+  'id': z.string().readonly(),
+  'sessionId': z.string().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'operation': z.union([z.literal("place_order"), z.literal("cancel_order")]).readonly(),
+  'createdAt': z.number().readonly(),
+  'expiresAt': z.number().readonly(),
+  'summary': z.string().readonly(),
+  'details': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema11)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema11))])).readonly(),
+  'clientRequestId': z.string().readonly(),
+  'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("queued"), z.literal("submitted"), z.literal("completed"), z.literal("partial"), z.literal("expired"), z.literal("unknown"), z.literal("cancelled")]),
+  'operationId': z.union([z.undefined(), z.string()]).optional(),
+  'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema11)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema11))]))]).optional(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestSessionOpen_parameter_0$schema = z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
+  'workspaceId': z.intersection(z.string(), z.unknown()).readonly().optional(),
+  'cwd': z.string().readonly().optional(),
+  'topic': z.boolean().readonly().optional(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestSessionOpen_result$schema = z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
+  'binding': z.object({
+  'purpose': z.union([z.literal("ordinary"), z.literal("role-helper"), z.literal("contest")]).readonly(),
+  'contest': z.union([z.undefined(), z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+})]).readonly().optional(),
+  'contestConversation': z.union([z.undefined(), z.literal("main"), z.literal("topic")]).readonly().optional(),
+}).readonly(),
+  'created': z.boolean().readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestStatus_parameter_0$schema = z.object({
+  'sessionId': z.string().optional(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestStatus_result$schema = z.object({
+  'enabled': z.boolean().readonly(),
+  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("error"), z.literal("installing"), z.literal("off")]).readonly(),
+  'cliVersion': z.string().readonly().optional(),
+  'latestVersion': z.string().readonly().optional(),
+  'updateAvailable': z.boolean().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly().optional(),
+  'message': z.string().readonly(),
+  'plans': z.array(z.object({
+  'id': z.string().readonly(),
+  'sessionId': z.string().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'operation': z.union([z.literal("place_order"), z.literal("cancel_order")]).readonly(),
+  'createdAt': z.number().readonly(),
+  'expiresAt': z.number().readonly(),
+  'summary': z.string().readonly(),
+  'details': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema))])).readonly(),
+  'clientRequestId': z.string().readonly(),
+  'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("queued"), z.literal("submitted"), z.literal("completed"), z.literal("partial"), z.literal("expired"), z.literal("unknown"), z.literal("cancelled")]),
+  'operationId': z.union([z.undefined(), z.string()]).optional(),
+  'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema))]))]).optional(),
+})).readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestUpdate_result$schema = z.object({
+  'enabled': z.boolean().readonly(),
+  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("error"), z.literal("installing"), z.literal("off")]).readonly(),
+  'cliVersion': z.string().readonly().optional(),
+  'latestVersion': z.string().readonly().optional(),
+  'updateAvailable': z.boolean().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly().optional(),
+  'message': z.string().readonly(),
+  'plans': z.array(z.object({
+  'id': z.string().readonly(),
+  'sessionId': z.string().readonly(),
+  'identity': z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+}).readonly(),
+  'operation': z.union([z.literal("place_order"), z.literal("cancel_order")]).readonly(),
+  'createdAt': z.number().readonly(),
+  'expiresAt': z.number().readonly(),
+  'summary': z.string().readonly(),
+  'details': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema6)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema6))])).readonly(),
+  'clientRequestId': z.string().readonly(),
+  'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("queued"), z.literal("submitted"), z.literal("completed"), z.literal("partial"), z.literal("expired"), z.literal("unknown"), z.literal("cancelled")]),
+  'operationId': z.union([z.undefined(), z.string()]).optional(),
+  'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema6)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema6))]))]).optional(),
+})).readonly(),
+})
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_create_parameter_0$schema = z.object({
   'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
   'versionId': z.intersection(z.string(), z.unknown()).readonly(),
@@ -962,7 +1301,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_list_result$schem
   'parentSessionId': z.intersection(z.string(), z.unknown()).readonly().optional(),
   'archived': z.boolean().readonly(),
   'running': z.boolean().readonly(),
-  'runState': z.union([z.literal("idle"), z.literal("failed"), z.literal("running"), z.literal("cancelled"), z.literal("completed")]).readonly(),
+  'runState': z.union([z.literal("idle"), z.literal("failed"), z.literal("completed"), z.literal("cancelled"), z.literal("running")]).readonly(),
 }))
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_modelsAccess_parameter_0$schema = z.object({
   'action': z.union([z.literal("auto"), z.literal("list"), z.literal("verify"), z.literal("save"), z.literal("remove"), z.literal("test")]),
@@ -1024,12 +1363,13 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_modelsAccess_resu
   'code': z.string(),
   'message': z.string(),
   'modelIds': z.array(z.string()),
-  'modelProfiles': z.array(z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema))]))).optional(),
+  'modelProfiles': z.array(z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema12)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema12))]))).optional(),
 }).optional(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionCreate_parameter_0$schema = z.object({
   'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
-  'purpose': z.union([z.literal("ordinary"), z.literal("role-helper")]).readonly(),
+  'purpose': z.union([z.literal("ordinary"), z.literal("role-helper"), z.literal("contest")]).readonly(),
+  'contestConversation': z.union([z.literal("main"), z.literal("topic")]).readonly().optional(),
   'workspaceId': z.intersection(z.string(), z.unknown()).readonly().optional(),
   'cwd': z.string().readonly().optional(),
   'agentPreset': z.string().readonly().optional(),
@@ -1037,7 +1377,12 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionCreat
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionCreate_result$schema = z.object({
   'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
   'binding': z.object({
-  'purpose': z.union([z.literal("ordinary"), z.literal("role-helper")]).readonly(),
+  'purpose': z.union([z.literal("ordinary"), z.literal("role-helper"), z.literal("contest")]).readonly(),
+  'contest': z.union([z.undefined(), z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+})]).readonly().optional(),
+  'contestConversation': z.union([z.undefined(), z.literal("main"), z.literal("topic")]).readonly().optional(),
 }).readonly(),
   'agentPreset': z.string().readonly().optional(),
 })
@@ -1047,7 +1392,12 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionList_
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionList_result$schema = z.array(z.object({
   'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
   'binding': z.object({
-  'purpose': z.union([z.literal("ordinary"), z.literal("role-helper")]).readonly(),
+  'purpose': z.union([z.literal("ordinary"), z.literal("role-helper"), z.literal("contest")]).readonly(),
+  'contest': z.union([z.undefined(), z.object({
+  'accountId': z.string().readonly(),
+  'contestId': z.string().readonly(),
+})]).readonly().optional(),
+  'contestConversation': z.union([z.undefined(), z.literal("main"), z.literal("topic")]).readonly().optional(),
 }).readonly(),
   'createdAt': z.number().readonly(),
   'updatedAt': z.number().readonly(),
@@ -1056,7 +1406,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionList_
   'parentSessionId': z.intersection(z.string(), z.unknown()).readonly().optional(),
   'archived': z.boolean().readonly(),
   'running': z.boolean().readonly(),
-  'runState': z.union([z.literal("idle"), z.literal("failed"), z.literal("running"), z.literal("cancelled"), z.literal("completed")]).readonly(),
+  'runState': z.union([z.literal("idle"), z.literal("failed"), z.literal("completed"), z.literal("cancelled"), z.literal("running")]).readonly(),
 }))
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_promptFormList_parameter_0$schema = z.object({
   'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
@@ -1276,7 +1626,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1539,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1642,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentDelete',
@@ -1301,7 +1651,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentDelete:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentDelete_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1641,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1744,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentLibrarySources',
@@ -1316,7 +1666,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentLibrarySources:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentLibrarySources_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1527,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1630,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentList',
@@ -1331,7 +1681,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1515,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1618,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionCreate',
@@ -1357,7 +1707,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1680,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1783,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionList',
@@ -1383,7 +1733,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1928,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2031,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamCreate',
@@ -1408,7 +1758,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1950,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2053,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamDelete',
@@ -1433,7 +1783,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamDelete:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamDelete_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2002,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2105,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamList',
@@ -1448,7 +1798,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1940,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2043,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionCreate',
@@ -1474,7 +1824,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2020,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2123,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionList',
@@ -1500,7 +1850,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2099,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2202,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamUpdate',
@@ -1525,7 +1875,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1972,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2075,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUninstall',
@@ -1550,7 +1900,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUninstall:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUninstall_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1657,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1760,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUpdate',
@@ -1576,7 +1926,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1597,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1700,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/authoringCommit',
@@ -1602,7 +1952,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAuthoringCommitResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringCommit_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1708,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1811,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/authoringSessionCreate',
@@ -1628,7 +1978,269 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1694,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1797,"column":9},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestCheckUpdate',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestCheckUpdate',
+      invocation: { kind: 'direct' },
+      parameters: [
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestCheckUpdate_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1173,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestConnect',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestConnect',
+      invocation: { kind: 'direct' },
+      parameters: [
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestConnect_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1167,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestDisconnect',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestDisconnect',
+      invocation: { kind: 'direct' },
+      parameters: [
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDisconnect_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1170,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestDismiss',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestDismiss',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestDismiss:request',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_parameter_0$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1228,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestExecute',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestExecute',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestExecute:request',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestExecute_parameter_0$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestPlan',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestExecute_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1223,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestInspect',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestInspect',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestInspect:request',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_parameter_0$schema,
+          },
+        },
+      ],
+      cancellation: { parameter: 'signal' },
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestInspection',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1183,"column":9},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestMode',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestMode',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestMode:request',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_parameter_0$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1164,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestQuery',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestQuery',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestQuery',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_parameter_0$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestData',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1179,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestReconcile',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestReconcile',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestReconcile:request',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestReconcile_parameter_0$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestPlan',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestReconcile_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1233,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestSessionOpen',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestSessionOpen',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestSessionOpenRequest',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestSessionOpen_parameter_0$schema,
+          },
+        },
+      ],
+      cancellation: { parameter: 'signal' },
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestSessionOpenResult',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestSessionOpen_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1192,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestStatus',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestStatus',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestStatus:request',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestStatus_parameter_0$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestStatus_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1160,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestUpdate',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'contestUpdate',
+      invocation: { kind: 'direct' },
+      parameters: [
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestUpdate_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1176,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/create',
@@ -1654,7 +2266,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_create_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1261,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1364,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileAttach',
@@ -1680,7 +2292,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsSessionFileAttachment',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileAttach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2115,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2218,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileList',
@@ -1706,7 +2318,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsFileListResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2149,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2252,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileRead',
@@ -1732,7 +2344,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsFileReadResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileRead_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2167,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2270,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/frequent',
@@ -1758,7 +2370,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/frequent:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_frequent_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1368,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1471,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/list',
@@ -1784,7 +2396,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/list:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_list_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1339,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1442,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/modelsAccess',
@@ -1809,7 +2421,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ModelAccessResponse',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_modelsAccess_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":902,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":913,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/plainSessionCreate',
@@ -1835,7 +2447,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPlainSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1187,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1286,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/plainSessionList',
@@ -1861,7 +2473,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/plainSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1354,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1457,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/promptFormList',
@@ -1887,7 +2499,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPromptFormListResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_promptFormList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1474,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1577,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/promptFormRender',
@@ -1913,7 +2525,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPromptFormRenderResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_promptFormRender_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1490,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1593,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/residentSkillAttach',
@@ -1939,7 +2551,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResidentSkillResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_residentSkillAttach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1403,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1506,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/residentSkillDetach',
@@ -1964,7 +2576,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResidentSkillResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_residentSkillDetach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1447,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1550,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultList',
@@ -1990,7 +2602,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPrepareResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2229,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2332,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultPrepare',
@@ -2016,7 +2628,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPrepareResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultPrepare_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2184,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2287,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultPreview',
@@ -2042,7 +2654,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPreview',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultPreview_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2248,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2351,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/sessionEnsure',
@@ -2068,7 +2680,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsSessionEnsureResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionEnsure_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1145,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1244,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/workspaceResolve',
@@ -2093,7 +2705,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsWorkspaceResolveResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_workspaceResolve_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1134,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1154,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/workspaceStatus',
@@ -2118,7 +2730,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsWorkspaceStatusResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_workspaceStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1124,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1144,"column":3},
     },
   ],
   model: {
@@ -2151,6 +2763,76 @@ export const TYPERT = {
             "signature": "@Remote('workspaceResolve') workspaceResolve(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceResolveResult>",
             "summary": "Select the preferred Workspace or create and register the managed fallback.",
             "jsDoc": "/**\r\n * Select the preferred Workspace or create and register the managed fallback.\r\n * @param request - optional user-selected Workspace.\r\n * @returns the explicit Workspace target for a new Session.\r\n */"
+          },
+          {
+            "kind": "method",
+            "name": "contestStatus",
+            "signature": "@Remote('contestStatus') contestStatus(request: { sessionId?: string }): Promise<ContestStatus>",
+            "summary": "Read local contest status without starting processes or opening a browser.",
+            "jsDoc": "/** Read local contest status without starting processes or opening a browser. */"
+          },
+          {
+            "kind": "method",
+            "name": "contestMode",
+            "signature": "@Remote('contestMode') contestMode(request: { enabled: boolean }): Promise<ContestStatus>",
+            "summary": "Explicit application mode toggle; never changes ordinary Session composition.",
+            "jsDoc": "/** Explicit application mode toggle; never changes ordinary Session composition. */"
+          },
+          {
+            "kind": "method",
+            "name": "contestConnect",
+            "signature": "@Remote('contestConnect') contestConnect(): Promise<ContestStatus>"
+          },
+          {
+            "kind": "method",
+            "name": "contestDisconnect",
+            "signature": "@Remote('contestDisconnect') contestDisconnect(): Promise<ContestStatus>"
+          },
+          {
+            "kind": "method",
+            "name": "contestCheckUpdate",
+            "signature": "@Remote('contestCheckUpdate') contestCheckUpdate(): Promise<ContestStatus>"
+          },
+          {
+            "kind": "method",
+            "name": "contestUpdate",
+            "signature": "@Remote('contestUpdate') contestUpdate(): Promise<ContestStatus>"
+          },
+          {
+            "kind": "method",
+            "name": "contestQuery",
+            "signature": "@Remote('contestQuery') contestQuery(request: ContestQuery): Promise<ContestData>"
+          },
+          {
+            "kind": "method",
+            "name": "contestInspect",
+            "signature": "@Remote('contestInspect') async contestInspect(request: { sessionId: SessionId }, signal?: AbortSignal): Promise<ContestInspection>",
+            "summary": "Entry inspection is bound to the persisted conversation, never a caller-supplied account.",
+            "jsDoc": "/** Entry inspection is bound to the persisted conversation, never a caller-supplied account. */"
+          },
+          {
+            "kind": "method",
+            "name": "contestSessionOpen",
+            "signature": "@Remote('contestSessionOpen') contestSessionOpen(request: ContestSessionOpenRequest, signal?: AbortSignal): Promise<ContestSessionOpenResult>",
+            "summary": "Serialize entry across clients so each account reuses one main conversation.",
+            "jsDoc": "/** Serialize entry across clients so each account reuses one main conversation. */"
+          },
+          {
+            "kind": "method",
+            "name": "contestExecute",
+            "signature": "@Remote('contestExecute') contestExecute(request: { planId: string; sessionId: string }): Promise<ContestPlan>",
+            "summary": "Client-only execution endpoint.",
+            "jsDoc": "/** Client-only execution endpoint. The model is never given an execute tool. */"
+          },
+          {
+            "kind": "method",
+            "name": "contestDismiss",
+            "signature": "@Remote('contestDismiss') contestDismiss(request: { planId: string; sessionId: string }): Promise<ContestStatus>"
+          },
+          {
+            "kind": "method",
+            "name": "contestReconcile",
+            "signature": "@Remote('contestReconcile') contestReconcile(request: { planId: string; sessionId: string }): Promise<ContestPlan>"
           },
           {
             "kind": "method",
@@ -2377,6 +3059,38 @@ export const TYPERT = {
         ],
         "types": [
           {
+            "name": "ContestData",
+            "declaration": "export interface ContestData {\n    readonly data: JsonValue;\n    readonly meta?: Record<string, JsonValue>;\n    readonly fetchedAt: number;\n}"
+          },
+          {
+            "name": "ContestIdentity",
+            "declaration": "export interface ContestIdentity {\n    readonly accountId: string;\n    readonly contestId: string;\n}"
+          },
+          {
+            "name": "ContestInspection",
+            "declaration": "export interface ContestInspection {\n    readonly identity: ContestIdentity;\n    readonly fetchedAt: number;\n    readonly account: ContestData;\n    readonly positions: ContestData;\n    readonly openOrders: ContestData;\n    readonly pendingPlans: readonly ContestPlan[];\n    readonly summary: readonly string[];\n}"
+          },
+          {
+            "name": "ContestPlan",
+            "declaration": "export interface ContestPlan {\n    readonly id: string;\n    readonly sessionId: string;\n    readonly identity: ContestIdentity;\n    readonly operation: 'place_order' | 'cancel_order';\n    readonly createdAt: number;\n    readonly expiresAt: number;\n    readonly summary: string;\n    readonly details: Record<string, JsonValue>;\n    readonly clientRequestId: string;\n    status: 'prepared' | 'executing' | 'queued' | 'submitted' | 'completed' | 'partial' | 'failed' | 'expired' | 'unknown' | 'cancelled';\n    operationId?: string | undefined;\n    result?: Record<string, JsonValue> | undefined;\n}"
+          },
+          {
+            "name": "ContestQuery",
+            "declaration": "export interface ContestQuery {\n    readonly kind: 'account' | 'positions' | 'open-orders' | 'orders' | 'trades' | 'ranking' | 'ranking-me' | 'settlements' | 'quote';\n    readonly symbol?: string;\n    readonly date?: string;\n    readonly lastId?: string;\n    readonly board?: 'live' | 'settled';\n}"
+          },
+          {
+            "name": "ContestSessionOpenRequest",
+            "declaration": "export interface ContestSessionOpenRequest {\n    readonly sessionId: SessionId;\n    readonly workspaceId?: WorkspaceId;\n    readonly cwd?: string;\n    readonly topic?: boolean;\n}"
+          },
+          {
+            "name": "ContestSessionOpenResult",
+            "declaration": "export interface ContestSessionOpenResult {\n    readonly sessionId: SessionId;\n    readonly binding: QuantSkillsPlainSessionBinding;\n    readonly created: boolean;\n}"
+          },
+          {
+            "name": "ContestStatus",
+            "declaration": "export interface ContestStatus {\n    readonly enabled: boolean;\n    readonly phase: 'off' | 'disconnected' | 'installing' | 'authenticating' | 'connected' | 'error';\n    readonly cliVersion?: string;\n    readonly latestVersion?: string;\n    readonly updateAvailable: boolean;\n    readonly identity?: ContestIdentity;\n    readonly message: string;\n    readonly plans: readonly ContestPlan[];\n}"
+          },
+          {
             "name": "JsonValue",
             "declaration": "export type JsonValue = null | boolean | number | string | JsonValue[] | { [key: string]: JsonValue; };"
           },
@@ -2598,11 +3312,11 @@ export const TYPERT = {
           },
           {
             "name": "QuantSkillsPlainSessionBinding",
-            "declaration": "export interface QuantSkillsPlainSessionBinding {\n    readonly purpose: QuantSkillsPlainSessionPurpose;\n}"
+            "declaration": "export interface QuantSkillsPlainSessionBinding {\n    readonly purpose: QuantSkillsPlainSessionPurpose;\n    readonly contest?: import('./contest-types.ts').ContestIdentity | undefined;\n    readonly contestConversation?: 'main' | 'topic' | undefined;\n}"
           },
           {
             "name": "QuantSkillsPlainSessionCreateRequest",
-            "declaration": "export interface QuantSkillsPlainSessionCreateRequest {\n    readonly sessionId: SessionId;\n    readonly purpose: QuantSkillsPlainSessionPurpose;\n    readonly workspaceId?: WorkspaceId;\n    readonly cwd?: string;\n    readonly agentPreset?: string;\n}"
+            "declaration": "export interface QuantSkillsPlainSessionCreateRequest {\n    readonly sessionId: SessionId;\n    readonly purpose: QuantSkillsPlainSessionPurpose;\n    readonly contestConversation?: 'main' | 'topic';\n    readonly workspaceId?: WorkspaceId;\n    readonly cwd?: string;\n    readonly agentPreset?: string;\n}"
           },
           {
             "name": "QuantSkillsPlainSessionCreateResult",
@@ -2610,7 +3324,7 @@ export const TYPERT = {
           },
           {
             "name": "QuantSkillsPlainSessionPurpose",
-            "declaration": "export type QuantSkillsPlainSessionPurpose = 'ordinary' | 'role-helper';"
+            "declaration": "export type QuantSkillsPlainSessionPurpose = 'ordinary' | 'role-helper' | 'contest';"
           },
           {
             "name": "QuantSkillsPreparedResult",

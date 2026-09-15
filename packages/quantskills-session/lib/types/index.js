@@ -34,6 +34,11 @@ var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, 
     done = true;
 };
 import { QuantSkillsLibraryStore } from "./library-store.js";
+import { ContestService, sameContest } from "./contest-service.js";
+import { OfficialContestCli } from "./contest-cli.js";
+import { installContestTools } from "./contest-tools.js";
+import { resolveDshHome } from '@deepseek-ai/dsh-home-paths';
+import { join } from 'node:path';
 import { capabilityDisplayName } from "./capability-display.js";
 import { createHash, randomUUID } from 'node:crypto';
 import { createReadStream } from 'node:fs';
@@ -279,8 +284,11 @@ const residentSkillChangeSchema = z.object({
 }).strict();
 const residentSkillsSchema = z.array(bindingSchema).readonly();
 const plainSessionBindingSchema = z.object({
-    purpose: z.enum(['ordinary', 'role-helper']),
-}).strict();
+    purpose: z.enum(['ordinary', 'role-helper', 'contest']),
+    contest: z.object({ accountId: z.string().min(1), contestId: z.string().min(1) }).optional(),
+    contestConversation: z.enum(['main', 'topic']).optional(),
+}).strict().refine(value => (value.purpose === 'contest') === (value.contest !== undefined)
+    && (value.contestConversation === undefined || value.purpose === 'contest'), 'contest purpose requires its bound account');
 const pandaRuntimeBindingSchema = z.object({
     environmentId: z.string().min(1),
     sdkVersion: z.string().min(1),
@@ -636,6 +644,18 @@ let QuantSkillsSessionService = (() => {
     let _modelsAccess_decorators;
     let _workspaceStatus_decorators;
     let _workspaceResolve_decorators;
+    let _contestStatus_decorators;
+    let _contestMode_decorators;
+    let _contestConnect_decorators;
+    let _contestDisconnect_decorators;
+    let _contestCheckUpdate_decorators;
+    let _contestUpdate_decorators;
+    let _contestQuery_decorators;
+    let _contestInspect_decorators;
+    let _contestSessionOpen_decorators;
+    let _contestExecute_decorators;
+    let _contestDismiss_decorators;
+    let _contestReconcile_decorators;
     let _sessionEnsure_decorators;
     let _plainSessionCreate_decorators;
     let _create_decorators;
@@ -674,6 +694,18 @@ let QuantSkillsSessionService = (() => {
             _modelsAccess_decorators = [Remote('modelsAccess')];
             _workspaceStatus_decorators = [Remote('workspaceStatus')];
             _workspaceResolve_decorators = [Remote('workspaceResolve')];
+            _contestStatus_decorators = [Remote('contestStatus')];
+            _contestMode_decorators = [Remote('contestMode')];
+            _contestConnect_decorators = [Remote('contestConnect')];
+            _contestDisconnect_decorators = [Remote('contestDisconnect')];
+            _contestCheckUpdate_decorators = [Remote('contestCheckUpdate')];
+            _contestUpdate_decorators = [Remote('contestUpdate')];
+            _contestQuery_decorators = [Remote('contestQuery')];
+            _contestInspect_decorators = [Remote('contestInspect')];
+            _contestSessionOpen_decorators = [Remote('contestSessionOpen')];
+            _contestExecute_decorators = [Remote('contestExecute')];
+            _contestDismiss_decorators = [Remote('contestDismiss')];
+            _contestReconcile_decorators = [Remote('contestReconcile')];
             _sessionEnsure_decorators = [Remote('sessionEnsure')];
             _plainSessionCreate_decorators = [Remote('plainSessionCreate')];
             _create_decorators = [Remote('create')];
@@ -709,6 +741,18 @@ let QuantSkillsSessionService = (() => {
             __esDecorate(this, null, _modelsAccess_decorators, { kind: "method", name: "modelsAccess", static: false, private: false, access: { has: obj => "modelsAccess" in obj, get: obj => obj.modelsAccess }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _workspaceStatus_decorators, { kind: "method", name: "workspaceStatus", static: false, private: false, access: { has: obj => "workspaceStatus" in obj, get: obj => obj.workspaceStatus }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _workspaceResolve_decorators, { kind: "method", name: "workspaceResolve", static: false, private: false, access: { has: obj => "workspaceResolve" in obj, get: obj => obj.workspaceResolve }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestStatus_decorators, { kind: "method", name: "contestStatus", static: false, private: false, access: { has: obj => "contestStatus" in obj, get: obj => obj.contestStatus }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestMode_decorators, { kind: "method", name: "contestMode", static: false, private: false, access: { has: obj => "contestMode" in obj, get: obj => obj.contestMode }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestConnect_decorators, { kind: "method", name: "contestConnect", static: false, private: false, access: { has: obj => "contestConnect" in obj, get: obj => obj.contestConnect }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestDisconnect_decorators, { kind: "method", name: "contestDisconnect", static: false, private: false, access: { has: obj => "contestDisconnect" in obj, get: obj => obj.contestDisconnect }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestCheckUpdate_decorators, { kind: "method", name: "contestCheckUpdate", static: false, private: false, access: { has: obj => "contestCheckUpdate" in obj, get: obj => obj.contestCheckUpdate }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestUpdate_decorators, { kind: "method", name: "contestUpdate", static: false, private: false, access: { has: obj => "contestUpdate" in obj, get: obj => obj.contestUpdate }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestQuery_decorators, { kind: "method", name: "contestQuery", static: false, private: false, access: { has: obj => "contestQuery" in obj, get: obj => obj.contestQuery }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestInspect_decorators, { kind: "method", name: "contestInspect", static: false, private: false, access: { has: obj => "contestInspect" in obj, get: obj => obj.contestInspect }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestSessionOpen_decorators, { kind: "method", name: "contestSessionOpen", static: false, private: false, access: { has: obj => "contestSessionOpen" in obj, get: obj => obj.contestSessionOpen }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestExecute_decorators, { kind: "method", name: "contestExecute", static: false, private: false, access: { has: obj => "contestExecute" in obj, get: obj => obj.contestExecute }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestDismiss_decorators, { kind: "method", name: "contestDismiss", static: false, private: false, access: { has: obj => "contestDismiss" in obj, get: obj => obj.contestDismiss }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestReconcile_decorators, { kind: "method", name: "contestReconcile", static: false, private: false, access: { has: obj => "contestReconcile" in obj, get: obj => obj.contestReconcile }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _sessionEnsure_decorators, { kind: "method", name: "sessionEnsure", static: false, private: false, access: { has: obj => "sessionEnsure" in obj, get: obj => obj.sessionEnsure }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _plainSessionCreate_decorators, { kind: "method", name: "plainSessionCreate", static: false, private: false, access: { has: obj => "plainSessionCreate" in obj, get: obj => obj.plainSessionCreate }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _create_decorators, { kind: "method", name: "create", static: false, private: false, access: { has: obj => "create" in obj, get: obj => obj.create }, metadata: _metadata }, null, _instanceExtraInitializers);
@@ -801,11 +845,19 @@ let QuantSkillsSessionService = (() => {
         teamFreshProvider;
         teamForkProvider;
         workspaceResolver;
+        contest;
+        contestSessionOpening = Promise.resolve();
         /**
          * @param ctx - assembled QuantSkills Host context.
          */
         constructor(ctx, config) {
             super(ctx, 'quantSkillsSessions', { namespace: 'quantSkillsSessions' });
+            this.contest = new ContestService(new OfficialContestCli(() => {
+                const processes = ctx.get('subprocess');
+                if (!processes)
+                    throw new Error('比赛 CLI 进程服务未就绪，请重新启动应用。');
+                return processes;
+            }, join(resolveDshHome(config.dshHome), 'quantskills', 'contest', 'auth')), config.dshHome);
             installQuantSkillsIdentity(ctx);
             this.libraryStore = new QuantSkillsLibraryStore(config.dshHome);
             ctx.inject(['connection'], (connectionCtx) => {
@@ -973,6 +1025,7 @@ let QuantSkillsSessionService = (() => {
             });
             ctx.effect(() => () => {
                 this.lifetime.abort(new Error('quantskills-session: service disposed'));
+                this.contest.dispose();
                 this.reservations.clear();
                 this.plainReservations.clear();
                 this.agentReservations.clear();
@@ -1001,6 +1054,63 @@ let QuantSkillsSessionService = (() => {
          */
         workspaceResolve(request) {
             return this.workspaceResolver.resolve(request.preferredWorkspaceId);
+        }
+        /** Read local contest status without starting processes or opening a browser. */
+        contestStatus(request) { return this.contest.status(request.sessionId); }
+        /** Explicit application mode toggle; never changes ordinary Session composition. */
+        contestMode(request) { return this.contest.setEnabled(request.enabled); }
+        contestConnect() { return this.contest.connect(); }
+        contestDisconnect() { return this.contest.disconnect(); }
+        contestCheckUpdate() { return this.contest.checkUpdate(); }
+        contestUpdate() { return this.contest.update(); }
+        contestQuery(request) { return this.contest.query(request); }
+        /** Entry inspection is bound to the persisted conversation, never a caller-supplied account. */
+        async contestInspect(request, signal) {
+            const existing = await this.inspectExisting(request.sessionId, this.operationSignal(signal));
+            const binding = existing && foldQuantSkillsPlainSessionBinding(existing.events);
+            if (binding?.purpose !== 'contest' || !binding.contest)
+                throw new Error('账户巡检仅用于比赛专用会话。');
+            return this.contest.inspect(binding.contest, signal);
+        }
+        /** Serialize entry across clients so each account reuses one main conversation. */
+        contestSessionOpen(request, signal) {
+            const next = this.contestSessionOpening.catch(() => { }).then(async () => {
+                const identity = await this.contest.researchIdentity();
+                const active = this.operationSignal(signal);
+                if (!request.topic) {
+                    const archives = await this.listPlainArchives({}, active);
+                    const candidates = archives.filter(item => !item.archived && !item.parentSessionId
+                        && item.binding.purpose === 'contest' && item.binding.contestConversation !== 'topic'
+                        && sameContest(item.binding.contest, identity));
+                    // Explicit main conversations win; legacy conversations can be adopted without rewriting history.
+                    const prior = candidates.find(item => item.binding.contestConversation === 'main')
+                        ?? candidates.sort((a, b) => a.createdAt - b.createdAt || a.sessionId.localeCompare(b.sessionId))[0];
+                    if (prior) {
+                        await this.sessionEnsure({ sessionId: prior.sessionId }, active);
+                        return { sessionId: prior.sessionId, binding: prior.binding, created: false };
+                    }
+                }
+                const created = await this.plainSessionCreate({ sessionId: request.sessionId, purpose: 'contest',
+                    contestConversation: request.topic ? 'topic' : 'main',
+                    ...(request.workspaceId === undefined ? {} : { workspaceId: request.workspaceId }),
+                    ...(request.cwd === undefined ? {} : { cwd: request.cwd }),
+                }, active);
+                if (!sameContest(created.binding.contest, identity))
+                    throw new Error('比赛账户已切换，请重新进入。');
+                return { sessionId: created.sessionId, binding: created.binding, created: true };
+            });
+            this.contestSessionOpening = next;
+            return next;
+        }
+        /** Client-only execution endpoint. The model is never given an execute tool. */
+        contestExecute(request) {
+            return this.contest.execute(request.planId, request.sessionId);
+        }
+        contestDismiss(request) {
+            return this.contest.dismiss(request.planId, request.sessionId);
+        }
+        contestReconcile(request) {
+            return this.contest.reconcile(request.planId, request.sessionId);
         }
         /**
          * Resume one persisted QuantSkills Session and restore its plugin-owned composition.
@@ -1048,7 +1158,12 @@ let QuantSkillsSessionService = (() => {
                 throw new TypeError('QuantSkills plain Session create accepts workspaceId or cwd, not both');
             }
             const active = this.operationSignal(signal);
-            const binding = Object.freeze({ purpose: request.purpose });
+            if (request.contestConversation !== undefined && request.purpose !== 'contest')
+                throw new Error('普通会话不能设置比赛对话类型。');
+            const binding = Object.freeze({ purpose: request.purpose,
+                ...(request.purpose === 'contest' ? { contest: await this.contest.researchIdentity() } : {}),
+                ...(request.contestConversation === undefined ? {} : { contestConversation: request.contestConversation }),
+            });
             if (this.reservations.has(request.sessionId)
                 || this.agentReservations.has(request.sessionId)
                 || this.teamReservations.has(request.sessionId)
@@ -2422,6 +2537,10 @@ let QuantSkillsSessionService = (() => {
                 this.installResidentRuntime(agentCtx, agent, Object.freeze([]));
                 this.registerAttachmentTool(agentCtx, agent);
                 this.registerLiveTradingApproval(agentCtx, agent);
+                if (binding.contest) {
+                    await this.contest.rules();
+                    installContestTools(agentCtx, agent, this.contest, binding.contest);
+                }
                 if (loggedPlain === null)
                     agent.session.append(PLAIN_SESSION_EVENT, binding);
                 return;
@@ -3109,16 +3228,18 @@ let QuantSkillsSessionService = (() => {
                 disposeOutputPolicy = registerLiteralPromptSection(systemPrompt, {
                     name: 'quantskills:artifact-output',
                     order: 114,
-                    text: () => [
-                        'Write every generated artifact under `output/` in the current Session workspace.',
-                        renderArtifactTheme(this.ctx.get('settings')?.get('ui-quantskills')),
-                        'After creating and checking real files, add one final fenced quantskills-deliverables JSON block: {"version":1,"items":[{"path":"output/report.html","title":"报告","presentation":"interactive"}]}. Use interactive for self-contained HTML, card for other files. Never declare files that do not exist. Include images, audio, video and PDF when delivered. Self-contained HTML must inline scripts and styles; external network resources are unavailable in previews.',
-                        'Treat every installed QuantSkills Skill resource directory as read-only source material; never write generated files into a Skill resource directory.',
-                        'When a Skill instruction names a relative `output/` path, resolve it against the current Session workspace, not the installed Skill resource directory.',
-                        'Treat Python, PandaData, and other runtime requirements declared by an installed asset as descriptive requirements, not as proof that a plugin-managed runtime or login exists.',
-                        'Use the Python interpreter, virtual environment, PandaData SDK, and credentials available to the current Session workspace or user environment through the normal shell and subprocess tools.',
-                        'If a required interpreter, package, credential, or API is unavailable, stop only the affected task. Report the observed failure and the exact repair options; install or change the user environment only after explicit user approval. Continue unrelated QuantSkills work normally.',
-                    ].join('\n'),
+                    text: () => (foldQuantSkillsPlainSessionBinding(agent.session.events) ?? this.plainReservations.get(agent.session.id)?.binding)?.purpose === 'contest'
+                        ? '比赛研究在本对话中交付。仅使用本会话已开放的工具和已附文件，不使用 Shell 或任意代码，不声称创建了未生成的文件。'
+                        : [
+                            'Write every generated artifact under `output/` in the current Session workspace.',
+                            renderArtifactTheme(this.ctx.get('settings')?.get('ui-quantskills')),
+                            'After creating and checking real files, add one final fenced quantskills-deliverables JSON block: {"version":1,"items":[{"path":"output/report.html","title":"报告","presentation":"interactive"}]}. Use interactive for self-contained HTML, card for other files. Never declare files that do not exist. Include images, audio, video and PDF when delivered. Self-contained HTML must inline scripts and styles; external network resources are unavailable in previews.',
+                            'Treat every installed QuantSkills Skill resource directory as read-only source material; never write generated files into a Skill resource directory.',
+                            'When a Skill instruction names a relative `output/` path, resolve it against the current Session workspace, not the installed Skill resource directory.',
+                            'Treat Python, PandaData, and other runtime requirements declared by an installed asset as descriptive requirements, not as proof that a plugin-managed runtime or login exists.',
+                            'Use the Python interpreter, virtual environment, PandaData SDK, and credentials available to the current Session workspace or user environment through the normal shell and subprocess tools.',
+                            'If a required interpreter, package, credential, or API is unavailable, stop only the affected task. Report the observed failure and the exact repair options; install or change the user environment only after explicit user approval. Continue unrelated QuantSkills work normally.',
+                        ].join('\n'),
                 });
             }
             catch (error) {
@@ -3645,7 +3766,7 @@ let QuantSkillsSessionService = (() => {
                     ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
                     : this.ctx.sessionProjections.snapshot(live);
                 const binding = projectionPlainBinding(snapshot);
-                if (binding?.purpose !== 'ordinary')
+                if (binding?.purpose !== 'ordinary' && binding?.purpose !== 'contest')
                     continue;
                 const title = typeof snapshot.values.title === 'string' ? snapshot.values.title : undefined;
                 const metadata = snapshot.values.sessionListMetadata;
@@ -3767,7 +3888,8 @@ function bindingFrom(version) {
     });
 }
 function samePlainBinding(left, right) {
-    return left.purpose === right.purpose;
+    return left.purpose === right.purpose && left.contest?.accountId === right.contest?.accountId && left.contest?.contestId === right.contest?.contestId
+        && left.contestConversation === right.contestConversation;
 }
 function sameBinding(left, right) {
     return left.assetId === right.assetId

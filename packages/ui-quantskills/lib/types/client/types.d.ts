@@ -1,6 +1,6 @@
 import type { PandaConnectionState, QuantSkillsAgentDefinition, QuantSkillsAgentSessionArchiveItem, QuantSkillsLibrarySourceRecord, QuantSkillsAgentTeamDefinition, QuantSkillsAgentTeamSessionArchiveItem, QuantSkillsFrequentSkill, QuantSkillsPlainSessionArchiveItem, QuantSkillsSessionArchiveItem } from './plugin-types.ts';
 /** QuantSkills application routes owned by the client shell. */
-export type QuantSkillsPage = 'database' | 'home' | 'skills' | 'conversations' | 'favorites' | 'agents' | 'teams' | 'settings' | 'parallel' | 'qube' | 'evo';
+export type QuantSkillsPage = 'database' | 'home' | 'skills' | 'conversations' | 'favorites' | 'agents' | 'teams' | 'settings' | 'parallel' | 'qube' | 'evo' | 'contest';
 /** Asset kind supported by the shared QuantSkills AI authoring launcher. */
 export type QuantSkillsAuthoringKind = 'skill' | 'agent' | 'agent-team';
 /** One category projected from the published QuantSkills catalog taxonomy. */

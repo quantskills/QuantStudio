@@ -47,7 +47,7 @@ importers:
         version: link:packages/client-ui-layout
       '@deepseek-ai/dsh-client-ui-quantskills':
         specifier: workspace:^
-        version: file:packages/ui-quantskills(75bfb45c362ec7a2493b5810f16c1f9f)
+        version: file:packages/ui-quantskills(2a97729c7138e7f74f21c0243a8b1e7c)
       '@deepseek-ai/dsh-panda-connector':
         specifier: workspace:^
         version: link:packages/panda-connector
@@ -709,6 +709,9 @@ importers:
       '@deepseek-ai/dsh-subagent':
         specifier: 0.1.2-alpha.2
         version: 0.1.2-alpha.2(015c6aae6a515e00a19794e437147bd4)
+      '@deepseek-ai/dsh-subprocess':
+        specifier: 0.1.2-alpha.2
+        version: 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))
       '@deepseek-ai/dsh-system-prompt':
         specifier: 0.1.2-alpha.2
         version: 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-llm@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))
@@ -2339,6 +2342,7 @@ packages:
       '@deepseek-ai/dsh-settings': 0.1.2-alpha.2
       '@deepseek-ai/dsh-skill': 0.1.2-alpha.2
       '@deepseek-ai/dsh-subagent': 0.1.2-alpha.2
+      '@deepseek-ai/dsh-subprocess': 0.1.2-alpha.2
       '@deepseek-ai/dsh-system-prompt': 0.1.2-alpha.2
       '@deepseek-ai/dsh-tools': 0.1.2-alpha.2
       '@deepseek-ai/dsh-typert-protocol': 0.1.2-alpha.2
@@ -7516,7 +7520,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@deepseek-ai/dsh-client-ui-quantskills@file:packages/ui-quantskills(75bfb45c362ec7a2493b5810f16c1f9f)':
+  '@deepseek-ai/dsh-client-ui-quantskills@file:packages/ui-quantskills(2a97729c7138e7f74f21c0243a8b1e7c)':
     dependencies:
       '@deepseek-ai/cordis': 4.0.2(@deepseek-ai/cordis-plugin-include@1.0.7)(@deepseek-ai/cordis-plugin-loader@1.0.3)
       '@deepseek-ai/dsh-api-remotes': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))
@@ -7539,7 +7543,7 @@ snapshots:
       '@deepseek-ai/dsh-panda-connector': file:packages/panda-connector(eabedeb2ad7519ac57c0c6d8350ecd5e)
       '@deepseek-ai/dsh-panda-mcp': file:packages/panda-mcp(1ab43c5bb9b3b205483380bc1039e02d)
       '@deepseek-ai/dsh-quantskills-host': file:packages/quantskills-host(d538cdeb03983562421b79ffb8e95f8e)
-      '@deepseek-ai/dsh-quantskills-session': file:packages/quantskills-session(a42fd7a065ab328727d110a62ff4d3aa)
+      '@deepseek-ai/dsh-quantskills-session': file:packages/quantskills-session(c1840f55304aeff76f113faaa8e51695)
       '@deepseek-ai/dsh-session': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))
       '@deepseek-ai/dsh-settings': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-brand@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-session@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))))(@deepseek-ai/schemastery@3.18.2)
       '@deepseek-ai/dsh-typert-protocol': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))
@@ -8231,7 +8235,7 @@ snapshots:
       yaml: 2.9.0
       zod: 4.4.3
 
-  '@deepseek-ai/dsh-quantskills-session@file:packages/quantskills-session(a42fd7a065ab328727d110a62ff4d3aa)':
+  '@deepseek-ai/dsh-quantskills-session@file:packages/quantskills-session(c1840f55304aeff76f113faaa8e51695)':
     dependencies:
       '@deepseek-ai/cordis': 4.0.2(@deepseek-ai/cordis-plugin-include@1.0.7)(@deepseek-ai/cordis-plugin-loader@1.0.3)
       '@deepseek-ai/dsh-agent': 0.1.2-alpha.2(de969efc173e356795ed4d6dbfa9fb01)
@@ -8255,6 +8259,7 @@ snapshots:
       '@deepseek-ai/dsh-settings': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-brand@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-session@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))))(@deepseek-ai/schemastery@3.18.2)
       '@deepseek-ai/dsh-skill': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-llm@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))
       '@deepseek-ai/dsh-subagent': 0.1.2-alpha.2(015c6aae6a515e00a19794e437147bd4)
+      '@deepseek-ai/dsh-subprocess': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))
       '@deepseek-ai/dsh-system-prompt': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-llm@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))
       '@deepseek-ai/dsh-tools': 0.1.2-alpha.2(1121451e7f334db134f1e0d3fbe914bd)
       '@deepseek-ai/dsh-typert-protocol': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))

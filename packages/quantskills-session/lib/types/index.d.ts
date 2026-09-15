@@ -1,4 +1,6 @@
 /** Exact-version QuantSkills session composition and log-backed archive remotes. */
+import type { ContestStatus, ContestData, ContestQuery, ContestPlan, ContestInspection } from './contest-types.ts';
+import type { ContestSessionOpenRequest, ContestSessionOpenResult } from './types.ts';
 import type { QuantSkillsLibrarySourceRecord } from './types.ts';
 import type { Context } from '@deepseek-ai/cordis';
 import s from '@deepseek-ai/schemastery';
@@ -220,6 +222,8 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private readonly teamFreshProvider;
     private readonly teamForkProvider;
     private readonly workspaceResolver;
+    private readonly contest;
+    private contestSessionOpening;
     /**
      * @param ctx - assembled QuantSkills Host context.
      */
@@ -236,6 +240,38 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
      * @returns the explicit Workspace target for a new Session.
      */
     workspaceResolve(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceResolveResult>;
+    /** Read local contest status without starting processes or opening a browser. */
+    contestStatus(request: {
+        sessionId?: string;
+    }): Promise<ContestStatus>;
+    /** Explicit application mode toggle; never changes ordinary Session composition. */
+    contestMode(request: {
+        enabled: boolean;
+    }): Promise<ContestStatus>;
+    contestConnect(): Promise<ContestStatus>;
+    contestDisconnect(): Promise<ContestStatus>;
+    contestCheckUpdate(): Promise<ContestStatus>;
+    contestUpdate(): Promise<ContestStatus>;
+    contestQuery(request: ContestQuery): Promise<ContestData>;
+    /** Entry inspection is bound to the persisted conversation, never a caller-supplied account. */
+    contestInspect(request: {
+        sessionId: SessionId;
+    }, signal?: AbortSignal): Promise<ContestInspection>;
+    /** Serialize entry across clients so each account reuses one main conversation. */
+    contestSessionOpen(request: ContestSessionOpenRequest, signal?: AbortSignal): Promise<ContestSessionOpenResult>;
+    /** Client-only execution endpoint. The model is never given an execute tool. */
+    contestExecute(request: {
+        planId: string;
+        sessionId: string;
+    }): Promise<ContestPlan>;
+    contestDismiss(request: {
+        planId: string;
+        sessionId: string;
+    }): Promise<ContestStatus>;
+    contestReconcile(request: {
+        planId: string;
+        sessionId: string;
+    }): Promise<ContestPlan>;
     /**
      * Resume one persisted QuantSkills Session and restore its plugin-owned composition.
      * @param request - existing QuantSkills Session identity.

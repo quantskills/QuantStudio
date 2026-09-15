@@ -47,6 +47,7 @@ import QuantSkillsSessionService, {
   foldQuantSkillsAuthoringStarted,
   foldQuantSkillsResidentSkills,
 } from '../src/index.ts'
+import type { ContestService } from '../src/contest-service.ts'
 import {
   QUANTSKILLS_SESSION_EVENT_TYPES,
   registerQuantSkillsSessionEventTypes,
@@ -711,6 +712,8 @@ describe('QuantSkills exact-version sessions', () => {
     expect(foldQuantSkillsPlainSessionBinding(agent.session.events)).toEqual({ purpose: 'ordinary' })
     expect(foldQuantSkillsPandaRuntimeBinding(agent.session.events)).toBeNull()
     expect(fixture.ctx.tools.get('quantskills_panda_python', agent)).toBeUndefined()
+    expect(fixture.ctx.tools.get('quantskills_contest_query', agent)).toBeUndefined()
+    expect(fixture.ctx.tools.get('quantskills_contest_prepare', agent)).toBeUndefined()
     const prompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
     expect(prompt).not.toContain('PandaData is the default data source')
     expect(prompt).not.toContain('Do not use AkShare, Yahoo, Tushare, or any other replacement data source')
@@ -744,6 +747,104 @@ describe('QuantSkills exact-version sessions', () => {
     expect(resumed.session.events.filter(event => event.type === 'quantskills/plain-session')).toHaveLength(1)
     expect(resumed.session.events.filter(event => event.type === 'panda/runtime-bound')).toHaveLength(0)
     expect(fixture.ctx.tools.get('quantskills_panda_python', resumed)).toBeUndefined()
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('scopes contest tools to a dedicated, account-bound session and keeps it in the archive', async () => {
+    const fixture = await harness()
+    const service = fixture.ctx.quantSkillsSessions
+    const contest = (service as unknown as { contest: ContestService }).contest
+    const identity = { accountId: 'account-test', contestId: 'contest-test' }
+    const queryData = vi.fn(async () => 'cached rows')
+    fixture.ctx.tools.register(defineTool({ name: 'quantskills_data_query', description: 'Test cached data.',
+      parameters: { refresh: { type: 'boolean' } },
+      output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] }, execute: queryData }))
+    const ordinaryId = SessionId('ordinary-alongside-contest')
+    await service.plainSessionCreate({ sessionId: ordinaryId, purpose: 'ordinary', cwd: fixture.root })
+    const ordinary = fixture.ctx.agents.get(ordinaryId)!
+    const ordinaryBefore = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: ordinary }))
+    const ordinaryTools = fixture.ctx.tools.schemas(ordinary)
+    await contest.setEnabled(true)
+    vi.spyOn(contest, 'researchIdentity').mockResolvedValue(identity)
+    vi.spyOn(contest, 'rules').mockResolvedValue('official rules')
+    vi.spyOn(contest, 'rulesText').mockReturnValue('official rules')
+    const sessionId = SessionId('contest-session')
+    await service.plainSessionCreate({ sessionId, purpose: 'contest', cwd: fixture.root })
+    const agent = fixture.ctx.agents.get(sessionId)!
+    expect(foldQuantSkillsPlainSessionBinding(agent.session.events)).toEqual({ purpose: 'contest', contest: identity })
+    expect(fixture.ctx.tools.get('quantskills_contest_query', agent)).toBeDefined()
+    expect(fixture.ctx.tools.get('quantskills_contest_prepare', agent)).toBeDefined()
+    expect(fixture.ctx.tools.get('quantskills_contest_execute', agent)).toBeUndefined()
+    expect(fixture.ctx.tools.get('submit_live_order', agent)).toBeUndefined()
+    expect(fixture.ctx.tools.get('submit_live_order', ordinary)).toBeDefined()
+    const call = (target: Agent, name: string, args = {}) => fixture.ctx.tools.execute({
+      callId: ToolCallId(`contest-test-${name}`), agent: target, name, arguments: args, signal: new AbortController().signal,
+    })
+    await expect(call(agent, 'submit_live_order', { order_id: 'must-not-submit' })).resolves.toMatchObject({ isError: true })
+    await expect(call(agent, 'quantskills_data_query', { refresh: true })).resolves.toMatchObject({ isError: true })
+    await expect(call(agent, 'quantskills_data_query')).resolves.toMatchObject({ isError: true })
+    expect(queryData).not.toHaveBeenCalled()
+    await expect(call(agent, 'quantskills_data_query', { refresh: false })).resolves.toMatchObject({ isError: false })
+    await expect(call(ordinary, 'quantskills_data_query', { refresh: true })).resolves.toMatchObject({ isError: false })
+    const late = vi.fn(async () => 'should never run')
+    agent.ctx.get('tools')!.register(defineTool({ name: 'late_shell', description: 'Added after contest setup.', parameters: {},
+      output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] }, execute: late }))
+    await expect(call(agent, 'late_shell')).resolves.toMatchObject({ isError: true })
+    expect(late).not.toHaveBeenCalled()
+    await expect(call(agent, 'quantskills_contest_prepare', { operation: 'place_order' })).resolves.toMatchObject({ isError: true })
+    const contestPrompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
+    expect(contestPrompt).toContain('contest-account-check')
+    expect(contestPrompt).not.toContain('official rules')
+    expect(contestPrompt).not.toContain('through the normal shell')
+    for (const name of ['contest-account-check', 'contest-research-plan', 'contest-daily-review']) {
+      expect(await fixture.ctx.skills.get(name, { scope: agent })).toBeDefined()
+      expect(await fixture.ctx.skills.get(name, { scope: ordinary })).toBeUndefined()
+    }
+    expect(await service.plainSessionList({})).toContainEqual(expect.objectContaining({ sessionId }))
+    expect(fixture.ctx.tools.get('quantskills_contest_query', ordinary)).toBeUndefined()
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: ordinary }))).toBe(ordinaryBefore)
+    expect(fixture.ctx.tools.schemas(ordinary)).toEqual(ordinaryTools)
+    await service.contestMode({ enabled: false })
+    await expect(service.contestQuery({ kind: 'account' })).rejects.toThrow('比赛模式已关闭')
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain('比赛模式已关闭')
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: ordinary }))).toBe(ordinaryBefore)
+    await expect(call(ordinary, 'submit_live_order', { order_id: 'ordinary-still-works' })).resolves.toMatchObject({ isError: false })
+    expect(fixture.liveOrders).toEqual(['ordinary-still-works'])
+    await fixture.handles.get(sessionId)!.dispose()
+    await service.sessionEnsure({ sessionId })
+    const resumed = fixture.ctx.agents.get(sessionId)!
+    expect(fixture.ctx.tools.get('submit_live_order', resumed)).toBeUndefined()
+    expect(fixture.ctx.tools.get('quantskills_contest_inspect', resumed)).toBeDefined()
+    expect(fixture.ctx.tools.schemas(ordinary)).toEqual(ordinaryTools)
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('reuses an account main conversation across concurrent opens, separates topics and rejects ordinary inspections', async () => {
+    const fixture = await harness(), service = fixture.ctx.quantSkillsSessions
+    const contest = (service as unknown as { contest: ContestService }).contest
+    const identity = { accountId: 'account-main', contestId: 'contest-main' }
+    vi.spyOn(contest, 'researchIdentity').mockResolvedValue(identity)
+    vi.spyOn(contest, 'rules').mockResolvedValue('official rules')
+    const inspect = vi.spyOn(contest, 'inspect').mockResolvedValue({ identity } as never)
+    const [main, repeated] = await Promise.all([
+      service.contestSessionOpen({ sessionId: SessionId('main-candidate-a'), cwd: fixture.root }),
+      service.contestSessionOpen({ sessionId: SessionId('main-candidate-b'), cwd: fixture.root }),
+    ])
+    expect(main.created).toBe(true); expect(repeated.created).toBe(false)
+    expect(repeated.sessionId).toBe(main.sessionId)
+    expect(main.binding).toEqual({ purpose: 'contest', contest: identity, contestConversation: 'main' })
+    const topic = await service.contestSessionOpen({ sessionId: SessionId('topic-a'), cwd: fixture.root, topic: true })
+    expect(topic.sessionId).not.toBe(main.sessionId)
+    expect((await service.contestSessionOpen({ sessionId: SessionId('main-candidate-c'), cwd: fixture.root })).sessionId).toBe(main.sessionId)
+    await service.contestInspect({ sessionId: main.sessionId })
+    expect(inspect).toHaveBeenCalledWith(identity, undefined)
+    const ordinaryId = SessionId('normal-cannot-inspect')
+    await service.plainSessionCreate({ sessionId: ordinaryId, purpose: 'ordinary', cwd: fixture.root })
+    await expect(service.contestInspect({ sessionId: ordinaryId })).rejects.toThrow('仅用于比赛专用会话')
+    expect(inspect).toHaveBeenCalledTimes(1)
+    vi.mocked(contest.researchIdentity).mockResolvedValue({ ...identity, accountId: 'another-account' })
+    const other = await service.contestSessionOpen({ sessionId: SessionId('other-account-main'), cwd: fixture.root })
+    expect(other.created).toBe(true); expect(other.sessionId).not.toBe(main.sessionId)
     await fixture.ctx.fiber.dispose()
   })
 
