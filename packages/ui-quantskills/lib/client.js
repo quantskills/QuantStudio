@@ -29502,7 +29502,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		function ContestPage({ access, researchSessions = [], openResearch }) {
 			if (!access) return (0, react_jsx_runtime.jsxs)("section", {
 				className: ContestPage_module_css_default.page,
-				children: [(0, react_jsx_runtime.jsx)("h1", { children: "期货仿真比赛" }), (0, react_jsx_runtime.jsx)("p", { children: "比赛功能暂未就绪，请重新启动应用。" })]
+				children: [(0, react_jsx_runtime.jsx)("h1", { children: "「巅峰交易者」全国期货模拟赛" }), (0, react_jsx_runtime.jsx)("p", { children: "比赛功能暂未就绪，请重新启动应用。" })]
 			});
 			return (0, react_jsx_runtime.jsx)(ConnectedContestPage, {
 				access,
@@ -29582,9 +29582,9 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 						children: [(0, react_jsx_runtime.jsxs)("div", { children: [
 							(0, react_jsx_runtime.jsx)("span", {
 								className: ContestPage_module_css_default.eyebrow,
-								children: "PANDAAI · 期货仿真赛"
+								children: "PANDAAI · 比赛工作台"
 							}),
-							(0, react_jsx_runtime.jsx)("h1", { children: "比赛工作台" }),
+							(0, react_jsx_runtime.jsx)("h1", { children: "「巅峰交易者」全国期货模拟赛" }),
 							(0, react_jsx_runtime.jsx)("p", { children: "研究、预演、确认，跟踪每一笔交易。" })
 						] }), (0, react_jsx_runtime.jsxs)("button", {
 							type: "button",
@@ -43249,7 +43249,7 @@ void main() {
 						children: [
 							(0, react_jsx_runtime.jsxs)("strong", { children: ["仿真比赛 · ", binding.contestConversation === "topic" ? "专题研究" : binding.contestConversation === "main" ? "账户主对话" : "比赛研究"] }),
 							(0, react_jsx_runtime.jsxs)("small", { children: [
-								"账户 ",
+								"「巅峰交易者」全国期货模拟赛 · 账户 ",
 								identity.accountId,
 								" · ",
 								identity.contestId

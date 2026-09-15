@@ -48,7 +48,7 @@ function SessionContestReview({ sessionId, binding, running, access, openContest
   return <section className={css.conversation} aria-label="比赛专用对话">
     <div className={css.conversationHeader}>
       <strong>仿真比赛 · {binding.contestConversation === 'topic' ? '专题研究' : binding.contestConversation === 'main' ? '账户主对话' : '比赛研究'}</strong>
-      <small>账户 {identity.accountId} · {identity.contestId}</small>
+      <small>「巅峰交易者」全国期货模拟赛 · 账户 {identity.accountId} · {identity.contestId}</small>
       <button type="button" onClick={openContest}>比赛工作台</button>
       {ready && status && <ContestPlans status={status} access={access} refresh={refresh} compact autoOpen={!running}/>}
     </div>

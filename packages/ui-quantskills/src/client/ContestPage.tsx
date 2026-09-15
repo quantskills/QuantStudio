@@ -23,7 +23,7 @@ interface ContestPageProps {
 }
 
 export function ContestPage({ access, researchSessions = [], openResearch }: ContestPageProps) {
-  if (!access) return <section className={css.page}><h1>期货仿真比赛</h1><p>比赛功能暂未就绪，请重新启动应用。</p></section>
+  if (!access) return <section className={css.page}><h1>「巅峰交易者」全国期货模拟赛</h1><p>比赛功能暂未就绪，请重新启动应用。</p></section>
   return <ConnectedContestPage access={access} researchSessions={researchSessions} openResearch={openResearch}/>
 }
 
@@ -63,7 +63,7 @@ function ConnectedContestPage({ access, researchSessions = [], openResearch }: C
   const enabled = status?.enabled ?? false
   return <section className={css.page} aria-label="期货仿真比赛">
     <header className={css.header}>
-      <div><span className={css.eyebrow}>PANDAAI · 期货仿真赛</span><h1>比赛工作台</h1><p>研究、预演、确认，跟踪每一笔交易。</p></div>
+      <div><span className={css.eyebrow}>PANDAAI · 比赛工作台</span><h1>「巅峰交易者」全国期货模拟赛</h1><p>研究、预演、确认，跟踪每一笔交易。</p></div>
       <button type="button" role="switch" aria-label="比赛模式" aria-checked={enabled} disabled={!status || busy === 'mode'}
         className={css.switch} data-enabled={enabled} onClick={() => { void run('mode', () => access.mode(!enabled)) }}>
         <span aria-hidden="true"/>{enabled ? '比赛模式已开启' : '开启比赛模式'}</button>
