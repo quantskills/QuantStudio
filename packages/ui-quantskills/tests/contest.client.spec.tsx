@@ -9,7 +9,7 @@ import type { SessionListState } from '@deepseek-ai/dsh-api-session-controller/c
 import { bindSnapshotSelector } from './bind-snapshot.ts'
 import type { ContestAccess } from '../src/client/contest.ts'
 import type { ContestData, ContestPlan, ContestStatus, QuantSkillsPlainSessionArchiveItem } from '../src/client/plugin-types.ts'
-afterEach(cleanup)
+afterEach(() => { cleanup(); vi.useRealTimers() })
 
 const identity = { accountId: 'account-1', contestId: 'contest-1' }
 function plan(): ContestPlan { return { id: 'plan-1', sessionId: 'session-1', identity, operation: 'place_order', createdAt: Date.now(), expiresAt: Date.now() + 60_000,
@@ -31,6 +31,48 @@ function api(initial: Partial<ContestStatus> = {}) {
 }
 
 describe('contest mode interaction', () => {
+  it('cancels a pending dashboard read before checking the connection', async () => {
+    const f = api({ enabled: true, phase: 'connected', identity })
+    let signal!: AbortSignal
+    vi.mocked(f.access.query).mockImplementationOnce((_query, s) => { signal = s!; return new Promise(() => {}) })
+    render(<ContestPage access={f.access}/>)
+    await waitFor(() => expect(f.access.query).toHaveBeenCalled())
+    fireEvent.click(screen.getByRole('button', { name: '检查连接' }))
+    await waitFor(() => expect(signal.aborted).toBe(true))
+  })
+  it('unlocks a timed-out data read for retry and aborts the expired request', async () => {
+    vi.useFakeTimers()
+    const f = api({ enabled: true, phase: 'connected', identity })
+    let signal!: AbortSignal
+    vi.mocked(f.access.query).mockImplementationOnce((_query, s) => { signal = s!; return new Promise(() => {}) })
+    render(<ContestPage access={f.access}/>)
+    await act(async () => {})
+    await act(async () => { await vi.advanceTimersByTimeAsync(30000) })
+    expect(signal.aborted).toBe(true)
+    expect(screen.getByRole('alert').textContent).toContain('响应超时')
+    const retry = screen.getByRole('button', { name: '刷新数据' }) as HTMLButtonElement
+    expect(retry.disabled).toBe(false)
+    fireEvent.click(retry)
+    await act(async () => {})
+    expect(screen.getByText('1,000,000')).toBeTruthy()
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+  it('allows closing a timed-out confirmation without allowing a duplicate trade', async () => {
+    vi.useFakeTimers()
+    const pending = { ...plan(), expiresAt: Date.now() + 600000 }
+    const f = api({ enabled: true, phase: 'connected', identity, plans: [pending] })
+    vi.mocked(f.access.execute).mockImplementation(() => new Promise(() => {}))
+    render(<ContestPlans status={f.status()} access={f.access} refresh={async () => {}}/>)
+    fireEvent.click(screen.getByRole('button', { name: /rb2610/ }))
+    fireEvent.click(screen.getByRole('button', { name: '确认执行这笔交易' }))
+    await act(async () => { await vi.advanceTimersByTimeAsync(60000) })
+    expect(screen.getByRole('alert').textContent).toContain('请勿重复提交')
+    expect((screen.getByRole('button', { name: '确认执行这笔交易' }) as HTMLButtonElement).disabled).toBe(true)
+    expect((screen.getByRole('button', { name: '取消计划' }) as HTMLButtonElement).disabled).toBe(true)
+    fireEvent.click(screen.getByRole('button', { name: '关闭确认比赛交易计划' }))
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(f.access.execute).toHaveBeenCalledTimes(1)
+  })
   it('starts off, never connects or fetches account data until explicitly connected', async () => {
     const f = api(); render(<ContestPage access={f.access}/>)
     const toggle = await screen.findByRole('switch', { name: '比赛模式' })
@@ -72,9 +114,9 @@ describe('contest mode interaction', () => {
   it('uses explicit today for records and the active-order endpoint for current orders', async () => {
     const f = api({ enabled: true, phase: 'connected', identity }); render(<ContestPage access={f.access}/>)
     fireEvent.click(await screen.findByRole('tab', { name: '委托记录' }))
-    await waitFor(() => expect(f.access.query).toHaveBeenCalledWith({ kind: 'orders', date: 'today' }))
+    await waitFor(() => expect(f.access.query).toHaveBeenCalledWith({ kind: 'orders', date: 'today' }, expect.any(AbortSignal)))
     fireEvent.click(screen.getByRole('tab', { name: '当前挂单' }))
-    await waitFor(() => expect(f.access.query).toHaveBeenCalledWith({ kind: 'open-orders' }))
+    await waitFor(() => expect(f.access.query).toHaveBeenCalledWith({ kind: 'open-orders' }, expect.any(AbortSignal)))
   })
   it('shows the AI entry before connection, then starts one dedicated conversation on a click', async () => {
     const f = api({ enabled: true, phase: 'disconnected' })
@@ -92,7 +134,7 @@ describe('contest mode interaction', () => {
     expect(screen.getByRole('list', { name: 'AI 交易步骤' })).toBeTruthy()
     await act(async () => finish())
     fireEvent.click(screen.getByRole('button', { name: '新建专题对话' }))
-    expect(f.access.startResearch).toHaveBeenLastCalledWith(true)
+    expect(f.access.startResearch).toHaveBeenLastCalledWith(true, expect.any(AbortSignal))
     await act(async () => finish())
   })
   it('keeps a conversation launch failure visible on the contest page', async () => {
@@ -100,7 +142,7 @@ describe('contest mode interaction', () => {
     vi.mocked(f.access.startResearch).mockRejectedValue(new Error('无法建立比赛对话，请重试。'))
     render(<ContestPage access={f.access}/>)
     fireEvent.click(await screen.findByRole('button', { name: '进入 AI 交易助手' }))
-    expect((await screen.findByRole('alert')).textContent).toBe('无法建立比赛对话，请重试。')
+    expect((await screen.findByRole('alert')).textContent).toContain('无法建立比赛对话，请重试。')
     await waitFor(() => expect((screen.getByRole('button', { name: '进入 AI 交易助手' }) as HTMLButtonElement).disabled).toBe(false))
   })
   it('continues only the latest unarchived competition conversation for the connected account', async () => {
@@ -148,7 +190,7 @@ describe('competition conversation isolation', () => {
     const f = api({ enabled: true, phase: 'connected', identity })
     render(<ContestReview useSessions={bindSnapshotSelector(sessions('contest'))} access={f.access} openContest={() => {}}/>)
     await screen.findByText('当前没有待处理的交易计划。')
-    expect(f.access.inspect).toHaveBeenCalledExactlyOnceWith('session-1')
+    expect(f.access.inspect).toHaveBeenCalledExactlyOnceWith('session-1', expect.any(AbortSignal))
     expect(f.access.requestResearch).not.toHaveBeenCalled()
     fireEvent.click(screen.getByRole('button', { name: '研究持仓' }))
     await waitFor(() => expect(f.access.requestResearch).toHaveBeenCalledWith('session-1', expect.stringContaining('研究现有持仓')))
@@ -187,6 +229,16 @@ describe('competition conversation isolation', () => {
 })
 
 describe('contest confirmation cards', () => {
+  it('shows the returned receipt and lets the user close the dialog while status refresh is stalled', async () => {
+    const p = plan(), f = api({ enabled: true, phase: 'connected', identity, plans: [p] })
+    render(<ContestPlans status={f.status()} access={f.access} refresh={() => new Promise(() => {})} compact autoOpen/>)
+    fireEvent.click(await screen.findByRole('button', { name: '确认执行这笔交易' }))
+    await screen.findByText('已排队 · 尚未成交')
+    expect(screen.queryByRole('button', { name: '确认执行这笔交易' })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: '关闭确认比赛交易计划' }))
+    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(f.access.execute).toHaveBeenCalledOnce()
+  })
   it('requires one explicit click and blocks rapid repeat submission', async () => {
     const p = plan(), f = api({ enabled: true, phase: 'connected', identity, plans: [p] })
     let finish!: (value: ContestPlan) => void
@@ -227,4 +279,58 @@ describe('contest confirmation cards', () => {
     view.rerender(<ContestPlans status={{ ...f.status() }} access={f.access} refresh={async () => {}} compact autoOpen/>)
     expect(screen.queryByRole('dialog')).toBeNull()
   })
+})
+
+
+it('restores cancellation and explicit retry after read-only reconciliation confirms an unsubmitted plan', async () => {
+  const p = plan(), f = api({ enabled: true, phase: 'connected', identity, plans: [p] })
+  vi.mocked(f.access.execute).mockRejectedValue(new Error('交易通道自检未通过。'))
+  vi.mocked(f.access.reconcile).mockResolvedValue(p)
+  render(<ContestPlans status={f.status()} access={f.access} refresh={async () => {}}/>)
+  fireEvent.click(screen.getByRole('button', { name: /rb2610/ }))
+  fireEvent.click(screen.getByRole('button', { name: '确认执行这笔交易' }))
+  await screen.findByRole('alert')
+  fireEvent.click(screen.getByRole('button', { name: '只读核对确认结果' }))
+  await waitFor(() => expect(f.access.reconcile).toHaveBeenCalledOnce())
+  await act(async () => {})
+  expect((screen.getByRole('button', { name: '取消计划' }) as HTMLButtonElement).disabled).toBe(false)
+  expect((screen.getByRole('button', { name: '确认执行这笔交易' }) as HTMLButtonElement).disabled).toBe(false)
+  expect(f.access.execute).toHaveBeenCalledOnce()
+  fireEvent.click(screen.getByRole('button', { name: '确认执行这笔交易' }))
+  await act(async () => {})
+  expect(f.access.execute).toHaveBeenCalledTimes(2)
+})
+
+
+it('keeps a timed-out submission locked across polling and failed verification', async () => {
+  vi.useFakeTimers()
+  const pending = { ...plan(), expiresAt: Date.now() + 600000 }
+  const f = api({ enabled: true, phase: 'connected', identity, plans: [pending] })
+  vi.mocked(f.access.execute).mockImplementation(() => new Promise(() => {}))
+  vi.mocked(f.access.reconcile).mockRejectedValue(new Error('核对服务暂不可用'))
+  const { rerender } = render(<ContestPlans status={f.status()} access={f.access} refresh={async () => {}}/>)
+  fireEvent.click(screen.getByRole('button', { name: /rb2610/ }))
+  fireEvent.click(screen.getByRole('button', { name: '确认执行这笔交易' }))
+  await act(async () => { await vi.advanceTimersByTimeAsync(60000) })
+  rerender(<ContestPlans status={structuredClone(f.status())} access={f.access} refresh={async () => {}}/>)
+  expect((screen.getByRole('button', { name: '确认执行这笔交易' }) as HTMLButtonElement).disabled).toBe(true)
+  fireEvent.click(screen.getByRole('button', { name: '只读核对确认结果' }))
+  await act(async () => {})
+  expect((screen.getByRole('button', { name: '确认执行这笔交易' }) as HTMLButtonElement).disabled).toBe(true)
+  expect((screen.getByRole('button', { name: '取消计划' }) as HTMLButtonElement).disabled).toBe(true)
+  expect(f.access.execute).toHaveBeenCalledOnce()
+})
+
+it('does not restore submission after verification returns an unknown outcome', async () => {
+  const pending = plan(), f = api({ enabled: true, phase: 'connected', identity, plans: [pending] })
+  vi.mocked(f.access.execute).mockRejectedValue(new Error('响应丢失'))
+  vi.mocked(f.access.reconcile).mockResolvedValue({ ...pending, status: 'unknown' })
+  render(<ContestPlans status={f.status()} access={f.access} refresh={async () => {}}/>)
+  fireEvent.click(screen.getByRole('button', { name: /rb2610/ }))
+  fireEvent.click(screen.getByRole('button', { name: '确认执行这笔交易' }))
+  await screen.findByRole('alert')
+  fireEvent.click(screen.getByRole('button', { name: '只读核对确认结果' }))
+  await waitFor(() => expect(screen.queryByRole('button', { name: '确认执行这笔交易' })).toBeNull())
+  expect(screen.queryByRole('button', { name: '取消计划' })).toBeNull()
+  expect(f.access.execute).toHaveBeenCalledOnce()
 })

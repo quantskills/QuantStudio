@@ -1,30 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useCompetitionState, waitForCompetition } from "./competition-async.js";
 /** Polls local status only while a contest surface is mounted. Late responses cannot restore old UI state. */
 export function useContest(access, sessionId) {
-    const [status, setStatus] = useState();
-    const [error, setError] = useState();
-    const [busy, setBusy] = useState('');
-    const reads = useRef(0), action = useRef(0), mounted = useRef(true), active = useRef('');
+    const state = useCompetitionState(access, sessionId), { status } = state;
     const watched = useRef(new Map()), watching = useRef(new Set());
-    const refresh = useCallback(async () => {
-        const request = ++reads.current;
-        try {
-            const next = await access.status(sessionId);
-            if (mounted.current && request === reads.current)
-                setStatus(next);
-        }
-        catch (error) {
-            if (mounted.current && request === reads.current)
-                setError(error instanceof Error ? error.message : '无法读取比赛状态。');
-        }
-    }, [access, sessionId]);
+    const [reconcileError, setReconcileError] = useState('');
+    const lifetime = useRef(new AbortController());
     useEffect(() => {
-        mounted.current = true;
-        setStatus(undefined);
-        void refresh();
-        const timer = window.setInterval(() => { void refresh(); }, 2000);
-        return () => { mounted.current = false; reads.current++; window.clearInterval(timer); };
-    }, [refresh]);
+        lifetime.current = new AbortController();
+        watched.current.clear();
+        watching.current.clear();
+        setReconcileError('');
+        return () => lifetime.current.abort();
+    }, [access, sessionId, status?.enabled, status?.identity?.accountId, status?.identity?.contestId]);
     useEffect(() => {
         if (!status?.enabled || status.phase !== 'connected')
             return;
@@ -34,37 +22,17 @@ export function useContest(access, sessionId) {
                 continue;
             watching.current.add(plan.id);
             watched.current.set(plan.id, (watched.current.get(plan.id) ?? 0) + 1);
-            void access.reconcile(plan).catch(error => {
-                if (mounted.current)
-                    setError(error instanceof Error ? error.message : '无法查询交易回执，请稍后手动查询。');
-                watched.current.set(plan.id, 10);
-            }).finally(() => { watching.current.delete(plan.id); });
+            const signal = lifetime.current.signal;
+            void waitForCompetition(() => access.reconcile(plan), '回执查询', 30_000, signal).catch(error => {
+                if (!signal.aborted) {
+                    watched.current.set(plan.id, 10);
+                    setReconcileError(error instanceof Error ? error.message : '回执查询失败，请打开计划只读核对。');
+                }
+            }).finally(() => { if (!signal.aborted)
+                watching.current.delete(plan.id); });
         }
     }, [status, access]);
-    const run = async (name, work) => {
-        if (active.current && name !== 'mode')
-            return;
-        const id = ++action.current;
-        active.current = name;
-        setBusy(name);
-        setError(undefined);
-        reads.current++;
-        try {
-            await work();
-        }
-        catch (error) {
-            if (mounted.current && id === action.current)
-                setError(error instanceof Error ? error.message : '比赛操作未完成。');
-        }
-        finally {
-            if (mounted.current && id === action.current) {
-                active.current = '';
-                setBusy('');
-                await refresh();
-            }
-        }
-    };
-    return { status, error, busy, run, refresh };
+    return { ...state, error: state.error || reconcileError };
 }
 export const contestPhases = { off: '已关闭', disconnected: '未连接', installing: '准备中', authenticating: '等待官网授权', connected: '已连接', error: '需要处理' };
 export const planStates = {

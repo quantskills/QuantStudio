@@ -41,6 +41,34 @@ async function fixture() {
     setBalance: (v: number) => { balance = v }, setContent: (v: string) => { content = v }, mutations: () => arena.mock.calls.filter(([, , mutation]) => mutation) }
 }
 describe('factor contest lifecycle and isolation', () => {
+  it('aborts a slow account inspection and releases the queue for the next tab', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.cli.getMockImplementation()!, controller = new AbortController()
+    let reading = false
+    f.cli.mockImplementation((runtime, args, signal) => args[0] === 'balance' ? new Promise((_resolve, reject) => {
+      reading = true; signal!.addEventListener('abort', () => reject(signal!.reason), { once: true })
+    }) : base(runtime, args, signal))
+    const inspection = f.service.inspect(identity, controller.signal).catch(error => error)
+    await vi.waitFor(() => expect(reading).toBe(true))
+    const next = f.service.query({ kind: 'workflows' })
+    controller.abort()
+    expect(await inspection).toBeInstanceOf(Error)
+    await expect(next).resolves.toEqual({ items: [] })
+    expect((await f.service.status()).inspection).toBeUndefined()
+  })
+  it('returns authenticated connection before optional account inspection', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.cli.getMockImplementation()!
+    let finish: (() => void) | undefined
+    f.cli.mockImplementation(async (runtime, args, signal) => {
+      if (args[0] === 'balance') await new Promise<void>(resolve => { finish = resolve })
+      return base(runtime, args, signal)
+    })
+    let connected = false
+    const connecting = f.service.connect().then(() => { connected = true })
+    try { await vi.waitFor(() => expect(connected).toBe(true), { timeout: 500 }) }
+    finally { finish?.(); await connecting }
+  })
   it('is off without installing or inheriting any credentials', async () => {
     const f = await fixture()
     expect(await f.service.status()).toMatchObject({ enabled: false, phase: 'off', runs: [] })
@@ -242,5 +270,62 @@ describe('factor pool confirmations', () => {
     const f = await fixture(); await f.connect(); await f.authorize()
     await expect(f.service.update()).rejects.toThrow('先处理')
     expect(f.runtime.install).toHaveBeenCalledTimes(1)
+  })
+})
+
+
+describe('read-only confirmation recovery', () => {
+  it('can retry a verified pre-submit failure without creating a duplicate budget', async () => {
+    const f = await fixture(); await f.connect()
+    const p = await f.service.prepare('session1', budget, identity)
+    f.setBalance(0)
+    await expect(f.service.confirm(p.id, 'session1')).rejects.toThrow('算力余额不足')
+    await expect(f.service.reconcilePlan(p.id)).resolves.toMatchObject({ id: p.id, status: 'prepared' })
+    expect((await f.service.status()).budgets).toHaveLength(0)
+    f.setBalance(100)
+    await f.service.confirm(p.id, 'session1')
+    await expect(f.service.reconcilePlan(p.id)).resolves.toMatchObject({ status: 'completed' })
+    expect((await f.service.status()).budgets).toHaveLength(1)
+    expect(f.arena.mock.calls.some(([, , mutation]) => mutation !== undefined)).toBe(false)
+  })
+
+  it('waits behind a pending confirmation instead of trusting a prepared status snapshot', async () => {
+    const f = await fixture(); await f.connect()
+    const p = await f.service.prepare('session1', budget, identity)
+    const base = f.cli.getMockImplementation()!
+    let release!: () => void
+    f.cli.mockImplementationOnce(async () => { await new Promise<void>(resolve => { release = resolve }); throw new Error('余额查询失败') })
+    const confirming = f.service.confirm(p.id, 'session1').catch(error => error)
+    await vi.waitFor(() => expect(release).toBeDefined())
+    expect((await f.service.status()).plans[0]?.status).toBe('prepared')
+    let verified = false
+    const verification = f.service.reconcilePlan(p.id).then(result => { verified = true; return result })
+    await new Promise(resolve => setTimeout(resolve, 10))
+    expect(verified).toBe(false)
+    release(); await confirming
+    await expect(verification).resolves.toMatchObject({ status: 'prepared' })
+    f.cli.mockImplementation(base)
+    expect((await f.service.status()).budgets).toHaveLength(0)
+  })
+
+  it('never treats an uncertain mutation as safe to retry', async () => {
+    const f = await fixture(); await f.connect()
+    const p = await f.service.prepare('session1', { kind: 'submit-pool' }, identity)
+    const base = f.arena.getMockImplementation()!
+    let release!: () => void
+    f.arena.mockImplementation(async (path, signal, mutation) => {
+      if (mutation) { await new Promise<void>(resolve => { release = resolve }); throw new Error('response lost') }
+      return base(path, signal, mutation)
+    })
+    const confirming = f.service.confirm(p.id, 'session1')
+    await vi.waitFor(() => expect(release).toBeDefined())
+    let verified = false
+    const verification = f.service.reconcilePlan(p.id).then(result => { verified = true; return result })
+    await new Promise(resolve => setTimeout(resolve, 10))
+    expect(verified).toBe(false)
+    release(); await confirming
+    await expect(verification).resolves.toMatchObject({ status: 'unknown' })
+    await expect(f.service.confirm(p.id, 'session1')).rejects.toThrow('请勿重复确认')
+    expect(f.arena.mock.calls.filter(([, , mutation]) => mutation !== undefined)).toHaveLength(1)
   })
 })

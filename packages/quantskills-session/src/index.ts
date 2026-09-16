@@ -1189,8 +1189,8 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   factorUpdate(): Promise<FactorContestStatus> { return this.factorContest.update() }
 
   @Remote('factorInspect')
-  async factorInspect(request: { sessionId?: SessionId }): Promise<FactorInspection> {
-    return this.factorContest.inspect(await this.factorIdentityForSession(request.sessionId))
+  async factorInspect(request: { sessionId?: SessionId }, signal?: AbortSignal): Promise<FactorInspection> {
+    return this.factorContest.inspect(await this.factorIdentityForSession(request.sessionId), signal)
   }
 
   private async factorIdentityForSession(sessionId?: SessionId) {
@@ -1202,7 +1202,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   }
 
   @Remote('factorQuery')
-  async factorQuery(request: FactorQuery): Promise<JsonValue> { return this.factorContest.query(request) }
+  async factorQuery(request: FactorQuery, signal?: AbortSignal): Promise<JsonValue> { return this.factorContest.query(request, undefined, signal) }
 
   @Remote('factorPrepare')
   async factorPrepare(request: { action: FactorPlanAction; sessionId?: SessionId }): Promise<FactorPlan> {
@@ -1263,7 +1263,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   contestUpdate(): Promise<ContestStatus> { return this.contest.update() }
 
   @Remote('contestQuery')
-  contestQuery(request: ContestQuery): Promise<ContestData> { return this.contest.query(request) }
+  contestQuery(request: ContestQuery, signal?: AbortSignal): Promise<ContestData> { return this.contest.query(request, undefined, signal) }
 
   /** Entry inspection is bound to the persisted conversation, never a caller-supplied account. */
   @Remote('contestInspect')

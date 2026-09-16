@@ -3095,6 +3095,7 @@ export const TYPERT = {
           },
         },
       ],
+      cancellation: { parameter: 'signal' },
       result: {
         mode: 'strict',
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestData',
@@ -3342,6 +3343,7 @@ export const TYPERT = {
           },
         },
       ],
+      cancellation: { parameter: 'signal' },
       result: {
         mode: 'strict',
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorInspection',
@@ -3417,6 +3419,7 @@ export const TYPERT = {
           },
         },
       ],
+      cancellation: { parameter: 'signal' },
       result: {
         mode: 'strict',
         typeSymbol: '@deepseek-ai/dsh-util-values#JsonValue',
@@ -4096,12 +4099,12 @@ export const TYPERT = {
           {
             "kind": "method",
             "name": "factorInspect",
-            "signature": "@Remote('factorInspect') async factorInspect(request: { sessionId?: SessionId }): Promise<FactorInspection>"
+            "signature": "@Remote('factorInspect') async factorInspect(request: { sessionId?: SessionId }, signal?: AbortSignal): Promise<FactorInspection>"
           },
           {
             "kind": "method",
             "name": "factorQuery",
-            "signature": "@Remote('factorQuery') async factorQuery(request: FactorQuery): Promise<JsonValue>"
+            "signature": "@Remote('factorQuery') async factorQuery(request: FactorQuery, signal?: AbortSignal): Promise<JsonValue>"
           },
           {
             "kind": "method",
@@ -4173,7 +4176,7 @@ export const TYPERT = {
           {
             "kind": "method",
             "name": "contestQuery",
-            "signature": "@Remote('contestQuery') contestQuery(request: ContestQuery): Promise<ContestData>"
+            "signature": "@Remote('contestQuery') contestQuery(request: ContestQuery, signal?: AbortSignal): Promise<ContestData>"
           },
           {
             "kind": "method",

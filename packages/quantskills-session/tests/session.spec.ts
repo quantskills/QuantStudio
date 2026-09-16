@@ -882,7 +882,8 @@ describe('QuantSkills exact-version sessions', () => {
     }
     const topic = await service.factorSessionOpen({ sessionId: SessionId('factor-topic'), cwd: fixture.root, topic: true })
     expect(topic.sessionId).not.toBe(first.sessionId)
-    await service.factorInspect({ sessionId: first.sessionId }); expect(inspect).toHaveBeenCalledWith(identity)
+    const inspectionSignal = new AbortController().signal
+    await service.factorInspect({ sessionId: first.sessionId }, inspectionSignal); expect(inspect).toHaveBeenCalledWith(identity, inspectionSignal)
     await expect(service.factorInspect({ sessionId: ordinaryId })).rejects.toThrow('因子比赛会话')
     expect((await service.plainSessionList({})).some(s => s.sessionId === first.sessionId)).toBe(true)
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: ordinary }))).toBe(promptBefore)

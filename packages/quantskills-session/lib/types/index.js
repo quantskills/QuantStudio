@@ -1121,8 +1121,8 @@ let QuantSkillsSessionService = (() => {
         factorDisconnect() { return this.factorContest.disconnect(); }
         factorCheckUpdate() { return this.factorContest.checkUpdate(); }
         factorUpdate() { return this.factorContest.update(); }
-        async factorInspect(request) {
-            return this.factorContest.inspect(await this.factorIdentityForSession(request.sessionId));
+        async factorInspect(request, signal) {
+            return this.factorContest.inspect(await this.factorIdentityForSession(request.sessionId), signal);
         }
         async factorIdentityForSession(sessionId) {
             if (!sessionId)
@@ -1133,7 +1133,7 @@ let QuantSkillsSessionService = (() => {
                 throw new Error('请在对应的因子比赛会话中操作。');
             return binding.factorContest;
         }
-        async factorQuery(request) { return this.factorContest.query(request); }
+        async factorQuery(request, signal) { return this.factorContest.query(request, undefined, signal); }
         async factorPrepare(request) {
             if (request.action.kind === 'budget' && !request.sessionId)
                 throw new Error('研究预算必须绑定因子比赛对话。');
@@ -1172,7 +1172,7 @@ let QuantSkillsSessionService = (() => {
         contestDisconnect() { return this.contest.disconnect(); }
         contestCheckUpdate() { return this.contest.checkUpdate(); }
         contestUpdate() { return this.contest.update(); }
-        contestQuery(request) { return this.contest.query(request); }
+        contestQuery(request, signal) { return this.contest.query(request, undefined, signal); }
         /** Entry inspection is bound to the persisted conversation, never a caller-supplied account. */
         async contestInspect(request, signal) {
             const existing = await this.inspectExisting(request.sessionId, this.operationSignal(signal));

@@ -259,9 +259,9 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     factorUpdate(): Promise<FactorContestStatus>;
     factorInspect(request: {
         sessionId?: SessionId;
-    }): Promise<FactorInspection>;
+    }, signal?: AbortSignal): Promise<FactorInspection>;
     private factorIdentityForSession;
-    factorQuery(request: FactorQuery): Promise<JsonValue>;
+    factorQuery(request: FactorQuery, signal?: AbortSignal): Promise<JsonValue>;
     factorPrepare(request: {
         action: FactorPlanAction;
         sessionId?: SessionId;
@@ -295,7 +295,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     contestDisconnect(): Promise<ContestStatus>;
     contestCheckUpdate(): Promise<ContestStatus>;
     contestUpdate(): Promise<ContestStatus>;
-    contestQuery(request: ContestQuery): Promise<ContestData>;
+    contestQuery(request: ContestQuery, signal?: AbortSignal): Promise<ContestData>;
     /** Entry inspection is bound to the persisted conversation, never a caller-supplied account. */
     contestInspect(request: {
         sessionId: SessionId;
