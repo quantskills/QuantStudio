@@ -2,75 +2,97 @@
 
 # QuantStudio
 
-### From a research question to a real deliverable.
+### Your personal, open-source quant workspace for the AI era.
 
-QuantSkills AI workspace · by PandaAI
+**Quant · Work · Trade**
 
-[简体中文](README.md) · [Get started](#get-started) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
+From QuantSkills, an open-source community under PandaAI
 
-![QuantSkills workspace](docs/images/launch/hero-white.webp)
+[Get started](#get-started) · [简体中文](README.md) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
+
+![White workspace: start with a research question](docs/images/launch-white/hero.png)
 
 </div>
 
-Describe a task, choose the right capabilities, follow the work, and open the reports, charts, code and files it produces. QuantStudio brings skills, specialists, teams, conversations and data into one workspace for quantitative research, investment analysis and everyday office work.
+**Research methods, specialists, team collaboration and deliverables in one workspace.**
 
-## One task, from start to finish
+Describe a task, load a skill, choose a specialist or assemble a team. Follow the conversation and execution trace, then inspect the reports, charts, code and files produced. QuantStudio runs locally on Windows, macOS and Linux, and can also be deployed as a shared team workspace. The QuantSkills branding in the current interface identifies its community and capability ecosystem.
 
-1. Describe your goal, input materials and expected output.
-2. Load a skill, choose a specialist or assemble a team.
-3. Follow the conversation, execution trace and tool calls.
-4. Preview, inspect and download the actual deliverables.
+## Quant · Work · Trade
 
-![A real research task with its report open in the result panel](docs/images/launch/report-workbench.webp)
+| Area | Tasks | Deliverables |
+| --- | --- | --- |
+| **Quant** | Market reviews, event tracking, capital flows, factor research, strategy development and backtest audits | Research reports, factor evaluations, charts, code and data |
+| **Work** | Document preparation, spreadsheet cleanup, meeting notes, business analysis and presentations | Documents, workbooks, slide decks and action lists |
+| **Trade** | Futures simulation account inspection, contract research, trade previews and factor competition research | Confirmation plans, execution receipts, research batches and factor pool records |
 
-The recorded example reads existing moving-average backtest files, recomputes metrics and creates an HTML report and Markdown summary. Historical results illustrate the workflow; they do not predict future returns. Waiting periods are edited out of the promotional video.
+### Research with results you can inspect
 
-## Explore the workspace
+Ask the assistant to turn existing backtest files into a report, check costs and explain limitations. Open the HTML report beside the conversation to examine its charts and tables while continuing the analysis.
 
-| Section | What it does |
+![Conversation and HTML report in the white result workbench](docs/images/launch-white/report.png)
+
+This screenshot shows a review of existing historical backtest files, not a promise of future performance.
+
+### Turn working materials into deliverables
+
+Use specialists for spreadsheets, meeting notes, writing, presentations, business analysis and customer proposals. Teams can divide larger reporting and delivery tasks. Supported output formats depend on the configured model, skills and document tools.
+
+![Office specialists and their expected outputs](docs/images/launch-white/work.png)
+
+### Research and preview before confirming
+
+Connect to the futures simulation competition or the fourth factor competition through **PandaAI CLI and competition APIs**. Each has its own account connection and research conversations.
+
+- **Futures simulation:** inspect funds, positions, orders, fills, rankings and quotes. The assistant proposes plans; the user reviews and confirms opening, closing or cancelling orders. Automatic account inspection is read-only.
+- **Factor competition:** agree on a research batch and budget, inspect backtests, compare candidates and manage the factor pool. Pool changes and competition submissions use confirmation plans. The compute threshold stops additional work; it is not a guaranteed spending cap.
+
+![Futures research assistant and public contract quotes; account details excluded](docs/images/launch-white/trade.png)
+
+Accounts, Python and appropriate permissions are required. [Futures guide](docs/contest.md) · [Factor competition guide](docs/factor-contest.md)
+
+## Skills, specialists and teams
+
+**Skills** capture reusable methods, steps and tool conventions. Discover and install existing skills, or describe a workflow for AI to draft and save after confirmation.
+
+![Skill discovery and creation](docs/images/launch-white/skills.png)
+
+**Specialists** combine responsibilities, instructions and skills into a focused role with its own conversations. Choose an existing equity, financial statement, factor, strategy or office specialist, or create your own.
+
+![Recommended specialists](docs/images/launch-white/experts.png)
+
+**Teams** define a lead, members, dependencies and expected outputs. Start from a company research or market review team, or describe a goal and confirm an AI-generated team draft before starting collaboration.
+
+![Team responsibilities and deliverables](docs/images/launch-white/teams.png)
+
+The portable library snapshot includes **15 skills, 44 specialist definitions and 14 teams**. It is separate from the online catalog and recommendations. It contains no model keys or conversation history and is imported into an empty library only on explicit request. [Snapshot guide](docs/library-snapshot.md).
+
+## Data and results in your workspace
+
+Search local market, news and fundamental data caches, inspect their sources and dates, preview tables, and refresh or remove them. Research checks existing caches before requesting missing or stale data.
+
+![Local data cache and table preview](docs/images/launch-white/database.png)
+
+The result workbench previews HTML, Markdown, PDF, images, code and data files. Resize or collapse panels, inspect outputs and download them.
+
+| Section | Purpose |
 | --- | --- |
 | Home | Discover capabilities and resume recent work. |
-| Skills | Discover, install, create and reuse research methods. |
-| Specialists | Start an independent conversation with a role and its configured skills. |
-| Teams | Define a lead, members, responsibilities, workflow and deliverables. |
-| Conversations | Follow the task and inspect reports, charts, code and files in the result panel. |
-| Database | Search, preview, refresh and manage local data caches. |
-| Favorites | Keep frequently used capabilities and entry points close at hand. |
-| Competitions | Use dedicated futures simulation and factor research workspaces. |
+| Skills | Discover, install, create and manage reusable methods. |
+| Specialists | Configure a role and its skills; start or resume conversations. |
+| Teams | Coordinate members, responsibilities and workflows. |
+| Conversations | Manage ordinary, skill, specialist and team conversations; inspect traces and results. |
+| Database | Search, preview and manage local data caches. |
+| Favorites | Keep frequently used capabilities within reach. |
+| Competitions | Open the futures simulation and factor competition workspaces. |
 | QUBE / EVO | Explore and open the corresponding independent PandaAI services. |
-| Settings | Configure models, permissions, workspace, connections, appearance and updates. |
+| Settings | Configure workspace, models, permissions, plugins, data connections, appearance and updates. |
 
-![Recommended specialists](docs/images/launch/experts.webp)
-
-Specialists cover equity, industry, financial statement, strategy and factor research, as well as spreadsheets, meeting notes, documents and presentations. Teams coordinate larger tasks with explicit responsibilities and outputs.
-
-![Team roles and workflow](docs/images/launch/team-flow.webp)
-
-The portable library snapshot contains **15 skills, 44 specialist definitions and 14 teams**. This snapshot differs from the online discovery catalog. It contains no API keys or conversation history and is imported into an empty library only on explicit request. [Library snapshot](docs/library-snapshot.md).
-
-## Keep results and data within reach
-
-Preview Markdown, HTML, PDF, images, code and data files. Expand images, resize or collapse panels, and download deliverables. The database shows sources, dates, cache status, row counts and table previews; existing data can be checked before requesting more.
-
-![Local database](docs/images/launch/database.webp)
-
-## Competition research
-
-**Futures simulation:** connect a competition account to inspect positions, funds, orders, fills, rankings and quotes. Use the AI assistant for research and review, then explicitly confirm write operations through plan cards. [Futures guide](docs/contest.md).
-
-**Fourth Factor Competition:** define a research goal, approve a batch budget, inspect backtests and manage factor pools. Pool changes and submissions require confirmation. Accounts, registration and service permissions are separate requirements. The compute threshold stops additional runs; it is not a platform-enforced spending cap. [Factor guide](docs/factor-contest.md).
-
-## Make the workspace yours
-
-Choose mist blue, white, jade, ink or other themes. Change interface and conversation text sizes independently, or disable animated backgrounds.
-
-![Live mist-blue interface animation](docs/images/launch/mist-blue.gif)
-
-QUBE provides a separate natural-language strategy and backtesting service; EVO provides a separate factor and strategy research environment. The workspace includes introductions and links to each product.
+Themes adjust the interface, icons and accent colors. Animated backgrounds can be disabled, and interface and conversation text sizes are adjustable independently. All screenshots on this page use the white theme. [QUBE](https://www.pandaaiquant.com/agent_quant/) · [EVO](https://www.pandaaiquant.com/evo/)
 
 ## Get started
 
-Install Git and **Node.js 22.19+ on the 22.x line, or Node.js 24+**. The project pins pnpm 11.7.0. Windows, macOS and Linux use the same launch command; macOS and Linux do not require PowerShell.
+Install Git and **Node.js 22.x at 22.19 or later, or Node.js 24+**. The project pins pnpm 11.7.0. Windows, macOS and Linux share the same launch command; macOS and Linux do not require PowerShell.
 
 ```sh
 git clone -c core.longpaths=true https://github.com/quantskills/QuantStudio.git
@@ -80,21 +102,17 @@ pnpm install --frozen-lockfile
 pnpm run web
 ```
 
-For the domestic mirror, clone `https://gitee.com/quantskills/QuantStudio.git` instead. Open the local URL printed in the terminal, for example `http://127.0.0.1:3198/`, and configure your model service.
+For the Gitee mirror, use `https://gitee.com/quantskills/QuantStudio.git` as the clone URL. Open the address printed in the terminal, typically `http://127.0.0.1:3198/`, configure a model service in Settings and start a conversation. Configure Python, PandaData MCP and competition CLIs as required by the task.
 
-Python, PandaData MCP and competition CLIs are configured as needed for particular tasks. Ordinary conversations and work with supplied files do not require a data-service login.
+The configuration directory defaults to `~/.dsh` and can be overridden with `DSH_HOME`. Select your workspace in Settings. Press `Ctrl+C` to stop the local service and run the same command to resume.
 
-Configuration defaults to `~/.dsh`; set `DSH_HOME` to change it. The default workspace uses the system Documents directory on Windows and `~/Documents/QuantSkills` on macOS. Allow terminal access if macOS requests Documents permission. Stop with `Ctrl+C` and run the launch command again to resume.
+Local conversations, configuration and files remain on the host; model and data services connect according to your settings. A shared deployment shares conversations and artifacts and **does not isolate data between members**. Concurrency depends on model quotas, workloads and server resources.
 
-Local sessions, settings and files remain on the local machine; model and data services connect according to your configuration. A shared server workspace shares conversations and outputs; it does not provide per-member data isolation. Concurrency depends on server resources, model services and workload.
+## Updates and your own content
 
-## Update without replacing your work
+Choose GitHub or Gitee as the update source. Available official releases change the update button color and show version details and release notes. Application updates preserve custom capabilities, conversations, model configuration, credentials, caches and workspace artifacts.
 
-Choose GitHub or Gitee as the release source. Available updates change the button color and show a version and release notes. Download and installation require a click to confirm.
-
-Updates replace application code, runtime packages, assets and bundled templates. Personal skills, specialists, teams, sessions, credentials, caches and workspace outputs are retained. Candidate releases are checked in a separate directory and activated at the next normal launch, with rollback on startup failure. A commit to `main` alone does not create an installable release.
-
-When migrating from an older repository, clone a new directory and retain the existing workspace and `DSH_HOME`. Do not force-reset the old development checkout. [Publishing guide](docs/publishing.md).
+Candidates are validated separately and switched on the next normal startup, with rollback on startup failure. A commit to `main` without an official release tag does not trigger an install. When migrating, clone into a new directory and keep the original workspace and `DSH_HOME`. [Publishing and mirrors](docs/publishing.md).
 
 ## Development and licensing
 
@@ -105,8 +123,14 @@ pnpm run test:update
 pnpm run ci:smoke
 ```
 
-Source: `src/` and `packages/`. Built output: `lib/`. Library snapshot: `assets/library-v2/`. The application integrates a pinned DSH runtime and related components. [Runtime baseline](SOURCE_BASELINE.md) · [Release notes](RELEASE_NOTES.md) · [Media notes](docs/launch/README.md).
+Source lives in `src/` and `packages/`, built artifacts in `lib/`, and library snapshots in `assets/library-v2/`. [Runtime baseline](SOURCE_BASELINE.md) · [Release notes](RELEASE_NOTES.md) · [Launch media](docs/launch/README.md).
 
-QuantStudio is dual-licensed under [GPL-3.0-or-later](LICENSE) / [PandaAI commercial terms](COMMERCIAL-LICENSE.md). Third-party components retain their own licenses and attribution; see [Third-party notices](THIRD_PARTY_NOTICES.md) and `LICENSES/`.
+QuantStudio originates from the **QuantSkills open-source community under PandaAI** and is dual-licensed under [GPL-3.0-or-later](LICENSE) and the [PandaAI commercial license](COMMERCIAL-LICENSE.md). Third-party components retain their own licenses; see [third-party notices](THIRD_PARTY_NOTICES.md) and `LICENSES/`.
+
+<div align="center">
+
+**QuantStudio · by PandaAI**
 
 [QuantSkills](https://www.quantskills.ai/) · [PandaAI](https://www.pandaaiquant.com/)
+
+</div>

@@ -1,0 +1,63 @@
+{
+  "capturedOn": "2026-09-16",
+  "theme": "white",
+  "source": "Local running QuantStudio application; browser screenshots",
+  "notes": [
+    "Screenshots show current QuantSkills UI branding; project name is QuantStudio.",
+    "Trade image excludes account details; factor image shows disconnected state.",
+    "Report reviews previously generated historical backtest files.",
+    "film-cover.png is the previously approved promotional video cover, not an application screenshot."
+  ],
+  "files": [
+    {
+      "file": "database.png",
+      "bytes": 93868,
+      "sha256": "7eeef8a79a37a7a336062d60bd5c3b53eaae897550c72519e3b5ba8ba0732f5b"
+    },
+    {
+      "file": "experts.png",
+      "bytes": 128697,
+      "sha256": "a135063236bfd21610dc0adc21cae96f4bd57b7178d6f063b25521e1f91f8610"
+    },
+    {
+      "file": "factor.png",
+      "bytes": 40008,
+      "sha256": "ff586b3b50cc1442bd5150ae24ff5ee06d9608d91542c5d77b054f27455e5770"
+    },
+    {
+      "file": "film-cover.png",
+      "bytes": 68013,
+      "sha256": "c74d030295976f690d4647676792c85042110eefd56dac823fd5f88e9579981e"
+    },
+    {
+      "file": "hero.png",
+      "bytes": 33689,
+      "sha256": "6abe4b8e1e2ab45be7ae04647d15604bd75409a26bc02fd1a24d7c1ef1d64c6d"
+    },
+    {
+      "file": "report.png",
+      "bytes": 107640,
+      "sha256": "2d48b6a7d25e33de11f9260207910a6418856b198f9f3f58cbd715df34dda653"
+    },
+    {
+      "file": "skills.png",
+      "bytes": 97246,
+      "sha256": "d79fd904d5d90748e3ef434540f5201aeced16077dceb23cd0c279347b58363d"
+    },
+    {
+      "file": "teams.png",
+      "bytes": 63712,
+      "sha256": "7909799ab614102deed0b6775a92e3f5814bc9d78aa7a336a3eaf0d81e20b413"
+    },
+    {
+      "file": "trade.png",
+      "bytes": 45015,
+      "sha256": "5b18fc44f9a9731c2aae15cfd2634f24916ef89ffe861003da505d36f203c7f0"
+    },
+    {
+      "file": "work.png",
+      "bytes": 125743,
+      "sha256": "c6e074c7f4ec8bb5a7bfcec81b3fef589ca56ae4b6b1b6b05528508793a6d35d"
+    }
+  ]
+}
