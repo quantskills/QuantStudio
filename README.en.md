@@ -1,115 +1,112 @@
-<p align="center"><img src="docs/images/quantstudio-cover.png" alt="QuantStudio · A local AI workspace for research and everyday work" width="100%"></p>
+<div align="center">
 
-<p align="center"><b>Skills, experts, data and deliverables. One workspace.</b></p>
-<p align="center"><a href="README.md">简体中文</a> · <a href="#get-started">Get started</a> · <a href="RELEASE_NOTES.md">Release notes</a></p>
-<p align="center"><a href="https://github.com/quantskills/QuantStudio">GitHub</a> · <a href="https://gitee.com/quantskills/QuantStudio">Gitee mirror</a> · <a href="https://github.com/songshuquant/QuantStudio">songshuquant mirror</a></p>
+# QuantStudio
 
-## Meet QuantStudio
+### From a research question to a real deliverable.
 
-QuantStudio is a local AI workspace from QuantSkills / PandaAI for quantitative research and everyday office work. Describe a task, select reusable skills, work with an expert or expert team, and inspect the resulting reports, charts, code and data in the same interface.
+QuantSkills AI workspace · by PandaAI
 
-The application integrates a pinned DSH runtime, its own interface and a launcher. Installing the project dependencies provides the runtime; no separate DSH setup is needed. Sessions, your capability library and working files stay on your computer. Model calls and external data requests use the services you configure.
+[简体中文](README.md) · [Get started](#get-started) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
 
-<p align="center"><img src="docs/images/backtest-workbench.png" alt="The workspace with session navigation, a research conversation and an artifact preview" width="100%"></p>
+![QuantSkills workspace](docs/images/launch/hero-white.webp)
 
-## Work from a question to a deliverable
+</div>
 
-| Task | Workflow |
+Describe a task, choose the right capabilities, follow the work, and open the reports, charts, code and files it produces. QuantStudio brings skills, specialists, teams, conversations and data into one workspace for quantitative research, investment analysis and everyday office work.
+
+## One task, from start to finish
+
+1. Describe your goal, input materials and expected output.
+2. Load a skill, choose a specialist or assemble a team.
+3. Follow the conversation, execution trace and tool calls.
+4. Preview, inspect and download the actual deliverables.
+
+![A real research task with its report open in the result panel](docs/images/launch/report-workbench.webp)
+
+The recorded example reads existing moving-average backtest files, recomputes metrics and creates an HTML report and Markdown summary. Historical results illustrate the workflow; they do not predict future returns. Waiting periods are edited out of the promotional video.
+
+## Explore the workspace
+
+| Section | What it does |
 | --- | --- |
-| Evaluate a strategy or factor | Specify instruments, dates and rules; inspect data, backtest results and reproducible code. |
-| Research a company, industry or event | Assign collection, analysis and review to relevant experts, then assemble a report with evidence. |
-| Prepare documents, spreadsheets and presentations | Attach source files and work with office specialists to produce editable deliverables. |
-| Reuse a proven process | Save a skill, package it with a role as an expert, or coordinate several experts as a team. |
-| Reuse research data | Browse local market, news, fundamental and other data; preview, refresh, delete or clear cached entries. |
+| Home | Discover capabilities and resume recent work. |
+| Skills | Discover, install, create and reuse research methods. |
+| Specialists | Start an independent conversation with a role and its configured skills. |
+| Teams | Define a lead, members, responsibilities, workflow and deliverables. |
+| Conversations | Follow the task and inspect reports, charts, code and files in the result panel. |
+| Database | Search, preview, refresh and manage local data caches. |
+| Favorites | Keep frequently used capabilities and entry points close at hand. |
+| Competitions | Use dedicated futures simulation and factor research workspaces. |
+| QUBE / EVO | Explore and open the corresponding independent PandaAI services. |
+| Settings | Configure models, permissions, workspace, connections, appearance and updates. |
 
-Data requests check the local cache first and refresh when freshness, date coverage or row count is insufficient. PandaData and other sources require the relevant configuration and access.
+![Recommended specialists](docs/images/launch/experts.webp)
 
-## Skills, experts and teams
+Specialists cover equity, industry, financial statement, strategy and factor research, as well as spreadsheets, meeting notes, documents and presentations. Teams coordinate larger tasks with explicit responsibilities and outputs.
 
-A **skill** defines a repeatable method. An **expert** combines a role with skills. An **expert team** assigns a lead and members to a shared objective. Each has a dedicated navigation entry; the conversation picker supports authored, recommended, installed and discoverable capabilities.
+![Team roles and workflow](docs/images/launch/team-flow.webp)
 
-The verified portable snapshot includes **15 skills, 44 expert definitions and 14 teams**, including authoring assistants. It preserves versions and bindings without model credentials or session history. Quantitative research, company and industry analysis, news, documents, spreadsheets and office collaboration are covered. You can create your own definitions manually or review an AI-generated draft before saving it.
+The portable library snapshot contains **15 skills, 44 specialist definitions and 14 teams**. This snapshot differs from the online discovery catalog. It contains no API keys or conversation history and is imported into an empty library only on explicit request. [Library snapshot](docs/library-snapshot.md).
 
-Application updates do not restore this snapshot over your personal library. [Snapshot and import instructions](docs/library-snapshot.md).
+## Keep results and data within reach
 
-## A complete workspace
+Preview Markdown, HTML, PDF, images, code and data files. Expand images, resize or collapse panels, and download deliverables. The database shows sources, dates, cache status, row counts and table previews; existing data can be checked before requesting more.
 
-- **Conversations beside deliverables**: inspect Markdown, HTML, PDF, tables and code. Double-click images to enlarge them and use the wheel to zoom.
-- **Coordinated themes**: mist blue is the default, alongside other dark palettes, pale blue glass, rainy and ink themes. Controls, text, icons, panels and artifact generation guidance follow the palette.
-- **Interactive backgrounds**: fluid motion, particles and ripples, with pause controls and reduced-motion support.
-- **Responsive layouts**: navigation and side panels adapt to narrow screens so conversations remain readable.
-- **Model setup**: first-run guidance appears when no model is configured. You manage model and data-source credentials locally.
+![Local database](docs/images/launch/database.webp)
+
+## Competition research
+
+**Futures simulation:** connect a competition account to inspect positions, funds, orders, fills, rankings and quotes. Use the AI assistant for research and review, then explicitly confirm write operations through plan cards. [Futures guide](docs/contest.md).
+
+**Fourth Factor Competition:** define a research goal, approve a batch budget, inspect backtests and manage factor pools. Pool changes and submissions require confirmation. Accounts, registration and service permissions are separate requirements. The compute threshold stops additional runs; it is not a platform-enforced spending cap. [Factor guide](docs/factor-contest.md).
+
+## Make the workspace yours
+
+Choose mist blue, white, jade, ink or other themes. Change interface and conversation text sizes independently, or disable animated backgrounds.
+
+![Live mist-blue interface animation](docs/images/launch/mist-blue.gif)
+
+QUBE provides a separate natural-language strategy and backtesting service; EVO provides a separate factor and strategy research environment. The workspace includes introductions and links to each product.
 
 ## Get started
 
-Install Git and Node.js **22.19 or newer within 22.x, or version 24 and above**. The project pins pnpm 11.7.0 and DSH 0.1.2-alpha.2 and includes installable build output.
+Install Git and **Node.js 22.19+ on the 22.x line, or Node.js 24+**. The project pins pnpm 11.7.0. Windows, macOS and Linux use the same launch command; macOS and Linux do not require PowerShell.
 
-~~~sh
+```sh
 git clone -c core.longpaths=true https://github.com/quantskills/QuantStudio.git
 cd QuantStudio
 corepack enable
 pnpm install --frozen-lockfile
 pnpm run web
-~~~
+```
 
-For the China mirror, replace the clone command with:
+For the domestic mirror, clone `https://gitee.com/quantskills/QuantStudio.git` instead. Open the local URL printed in the terminal, for example `http://127.0.0.1:3198/`, and configure your model service.
 
-~~~sh
-git clone -c core.longpaths=true https://gitee.com/quantskills/QuantStudio.git
-~~~
+Python, PandaData MCP and competition CLIs are configured as needed for particular tasks. Ordinary conversations and work with supplied files do not require a data-service login.
 
-After launch, open the local address printed in the terminal, for example [http://127.0.0.1:3198/](http://127.0.0.1:3198/). Local browsers do not require copying a token; remote and proxied requests retain origin and authentication checks. Configure a model, then choose an expert or start a conversation.
+Configuration defaults to `~/.dsh`; set `DSH_HOME` to change it. The default workspace uses the system Documents directory on Windows and `~/Documents/QuantSkills` on macOS. Allow terminal access if macOS requests Documents permission. Stop with `Ctrl+C` and run the launch command again to resume.
 
-Configure Python and data services when a task needs them. Ordinary conversations do not require Python or a PandaData login. Run all commands from the repository root.
+Local sessions, settings and files remain on the local machine; model and data services connect according to your configuration. A shared server workspace shares conversations and outputs; it does not provide per-member data isolation. Concurrency depends on server resources, model services and workload.
 
-## Updates that preserve your work
+## Update without replacing your work
 
-The home page automatically checks stable releases from your selected GitHub or Gitee source. Manual checks are also available. **The update button changes color when a release is available and shows its version and release notes.** Downloading requires confirmation.
+Choose GitHub or Gitee as the release source. Available updates change the button color and show a version and release notes. Download and installation require a click to confirm.
 
-| Updated | Preserved |
-| --- | --- |
-| Application code, UI, runtime packages and built-in recommended templates | Authored and installed skills, experts and teams |
-| Release assets and verified dependencies | Sessions, cached data, model settings and credentials |
-| The managed application version | Workspace files and generated deliverables |
+Updates replace application code, runtime packages, assets and bundled templates. Personal skills, specialists, teams, sessions, credentials, caches and workspace outputs are retained. Candidate releases are checked in a separate directory and activated at the next normal launch, with rollback on startup failure. A commit to `main` alone does not create an installable release.
 
-Candidates are downloaded into a separate directory, installed, type-checked and smoke-tested before activation on the next normal launch. Failed startup rolls back to the previous version. Untagged main commits are not installable releases.
+When migrating from an older repository, clone a new directory and retain the existing workspace and `DSH_HOME`. Do not force-reset the old development checkout. [Publishing guide](docs/publishing.md).
 
-**Migrating from the legacy repository:** QuantStudio has an independent Git history. Clone into a new directory and keep the same DSH_HOME and workspaces. Do not force-pull or reset the legacy checkout. Custom branches, local edits and diverged histories remain protected. Snapshot restoration is explicit and requires an empty capability library.
+## Development and licensing
 
-## PandaAI products
-
-| Product | Intended workflow | Link |
-| --- | --- | --- |
-| QUBE | Natural-language strategy creation, backtests and rapid validation | [Try QUBE](https://www.pandaaiquant.com/agent_quant/) |
-| EVO | Ongoing factor and strategy research with a managed research environment | [Try EVO](https://www.pandaaiquant.com/evo/) |
-
-In-app introduction pages include real interface images and a button to open each service.
-
-## Development and verification
-
-~~~sh
+```sh
 pnpm run check
 pnpm run test
 pnpm run test:update
 pnpm run ci:smoke
-~~~
+```
 
-After a release is published:
+Source: `src/` and `packages/`. Built output: `lib/`. Library snapshot: `assets/library-v2/`. The application integrates a pinned DSH runtime and related components. [Runtime baseline](SOURCE_BASELINE.md) · [Release notes](RELEASE_NOTES.md) · [Media notes](docs/launch/README.md).
 
-~~~sh
-pnpm run verify:update-mirrors
-pnpm run verify:update-live github
-pnpm run verify:update-live gitee
-~~~
+QuantStudio is dual-licensed under [GPL-3.0-or-later](LICENSE) / [PandaAI commercial terms](COMMERCIAL-LICENSE.md). Third-party components retain their own licenses and attribution; see [Third-party notices](THIRD_PARTY_NOTICES.md) and `LICENSES/`.
 
-The live verification uses temporary directories to exercise anonymous discovery, downloading, installation, activation and preservation of personal data. Source is in src/ and packages/, build output in lib/, and the portable library in assets/library-v2/. [Runtime baseline](SOURCE_BASELINE.md) · [Publishing and mirrors](docs/publishing.md).
-
-## License
-
-QuantStudio is offered under [GPL-3.0-or-later](LICENSE) or a separate [PandaAI commercial license](COMMERCIAL-LICENSE.md). DSH and other third-party components retain their own licenses and copyright notices; see [Third-Party Notices](THIRD_PARTY_NOTICES.md) and LICENSES/.
-
-This repository is maintained by QuantSkills with an independent release history. Reinitializing Git history does not change third-party provenance or licensing.
-
-## Windows and macOS
-
-Both platforms use `pnpm run web`. macOS does not require PowerShell; Windows supports Windows PowerShell and PowerShell 7. The default workspace is the Windows Documents known folder or `~/Documents/QuantSkills` on macOS. Configuration is stored under `~/.dsh` unless `DSH_HOME` is set. On macOS, allow the terminal to access Documents if prompted by the operating system.
+[QuantSkills](https://www.quantskills.ai/) · [PandaAI](https://www.pandaaiquant.com/)
