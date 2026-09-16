@@ -272,3 +272,60 @@ describe('factor pool confirmations', () => {
     expect(f.runtime.install).toHaveBeenCalledTimes(1)
   })
 })
+
+
+describe('read-only confirmation recovery', () => {
+  it('can retry a verified pre-submit failure without creating a duplicate budget', async () => {
+    const f = await fixture(); await f.connect()
+    const p = await f.service.prepare('session1', budget, identity)
+    f.setBalance(0)
+    await expect(f.service.confirm(p.id, 'session1')).rejects.toThrow('算力余额不足')
+    await expect(f.service.reconcilePlan(p.id)).resolves.toMatchObject({ id: p.id, status: 'prepared' })
+    expect((await f.service.status()).budgets).toHaveLength(0)
+    f.setBalance(100)
+    await f.service.confirm(p.id, 'session1')
+    await expect(f.service.reconcilePlan(p.id)).resolves.toMatchObject({ status: 'completed' })
+    expect((await f.service.status()).budgets).toHaveLength(1)
+    expect(f.arena.mock.calls.some(([, , mutation]) => mutation !== undefined)).toBe(false)
+  })
+
+  it('waits behind a pending confirmation instead of trusting a prepared status snapshot', async () => {
+    const f = await fixture(); await f.connect()
+    const p = await f.service.prepare('session1', budget, identity)
+    const base = f.cli.getMockImplementation()!
+    let release!: () => void
+    f.cli.mockImplementationOnce(async () => { await new Promise<void>(resolve => { release = resolve }); throw new Error('余额查询失败') })
+    const confirming = f.service.confirm(p.id, 'session1').catch(error => error)
+    await vi.waitFor(() => expect(release).toBeDefined())
+    expect((await f.service.status()).plans[0]?.status).toBe('prepared')
+    let verified = false
+    const verification = f.service.reconcilePlan(p.id).then(result => { verified = true; return result })
+    await new Promise(resolve => setTimeout(resolve, 10))
+    expect(verified).toBe(false)
+    release(); await confirming
+    await expect(verification).resolves.toMatchObject({ status: 'prepared' })
+    f.cli.mockImplementation(base)
+    expect((await f.service.status()).budgets).toHaveLength(0)
+  })
+
+  it('never treats an uncertain mutation as safe to retry', async () => {
+    const f = await fixture(); await f.connect()
+    const p = await f.service.prepare('session1', { kind: 'submit-pool' }, identity)
+    const base = f.arena.getMockImplementation()!
+    let release!: () => void
+    f.arena.mockImplementation(async (path, signal, mutation) => {
+      if (mutation) { await new Promise<void>(resolve => { release = resolve }); throw new Error('response lost') }
+      return base(path, signal, mutation)
+    })
+    const confirming = f.service.confirm(p.id, 'session1')
+    await vi.waitFor(() => expect(release).toBeDefined())
+    let verified = false
+    const verification = f.service.reconcilePlan(p.id).then(result => { verified = true; return result })
+    await new Promise(resolve => setTimeout(resolve, 10))
+    expect(verified).toBe(false)
+    release(); await confirming
+    await expect(verification).resolves.toMatchObject({ status: 'unknown' })
+    await expect(f.service.confirm(p.id, 'session1')).rejects.toThrow('请勿重复确认')
+    expect(f.arena.mock.calls.filter(([, , mutation]) => mutation !== undefined)).toHaveLength(1)
+  })
+})

@@ -2056,9 +2056,14 @@ var FactorContestService = class {
 	async reconcilePlan(planId) {
 		return this.exclusive(async () => {
 			const p = this.state.plans.find((p) => p.id === planId && sameContest(p.identity, this.state.identity));
-			if (!p || p.status !== "unknown" || p.action.kind === "budget") throw new Error("没有待核实的赛事操作。");
+			if (!p) throw new Error("没有待核实的赛事操作。");
 			this.assertReady(p.identity);
 			await this.verify(p.identity);
+			if (p.status !== "unknown") return structuredClone({
+				...p,
+				status: p.status === "prepared" && p.expiresAt <= Date.now() ? "expired" : p.status
+			});
+			if (p.action.kind === "budget") throw new Error("预算状态待核实，请勿重复确认。");
 			const pool = await this.pool(), current = record(pool), a = p.action;
 			const factors = Array.isArray(current.factors) ? current.factors.map(record) : [];
 			const original = record(record(p.snapshot).pool);

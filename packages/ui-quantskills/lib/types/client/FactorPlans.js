@@ -24,7 +24,7 @@ export function FactorPlans({ status, access, refresh, compact = false }) {
         active.current = false;
         setBusy(false);
     } }, [ready]);
-    const perform = async (work, submission) => {
+    const perform = async (work, submission, verificationId) => {
         if (active.current)
             return;
         if (submission && submitted.current.has(submission.id))
@@ -38,8 +38,12 @@ export function FactorPlans({ status, access, refresh, compact = false }) {
         setError('');
         try {
             const result = await waitForCompetition(work, '因子计划操作', 60_000, controller.current.signal);
-            if (current === generation.current && result)
+            if (current === generation.current && result) {
+                // Polling may still show prepared while confirmation is queued. Never unlock from it.
+                if (result.id === verificationId && result.status === 'prepared')
+                    submitted.current.delete(result.id);
                 setReturned({ source: original, value: result });
+            }
         }
         catch (e) {
             if (current === generation.current)
@@ -62,6 +66,6 @@ export function FactorPlans({ status, access, refresh, compact = false }) {
                                         const item = asRecord(f);
                                         return { factor_name: item.name, workflow_id: item.workflow, direction: item.direction, revision: item.revision };
                                     }) }), action.kind === 'remove-factor' && _jsx("p", { className: css.error, children: "\u5220\u9664\u540E\u6709\u6548\u56E0\u5B50\u4E0D\u8DB3 5 \u53EA\uFF0C\u53EF\u80FD\u5F71\u54CD\u5F53\u6708\u8BA1\u5206\u3002\u5DF2\u4EA7\u751F\u7684\u5386\u53F2\u6570\u636E\u6309\u8D5B\u4E8B\u89C4\u5219\u5904\u7406\u3002" }), _jsxs("details", { children: [_jsx("summary", { children: "\u6838\u5BF9\u56E0\u5B50\u6C60\u4E0E\u5DE5\u4F5C\u6D41\u5FEB\u7167" }), _jsx("pre", { className: factorCss.json, children: JSON.stringify(plan.snapshot, null, 2) })] })] }), plan.result !== undefined && _jsx("pre", { className: factorCss.json, children: JSON.stringify(plan.result, null, 2) }), error && _jsx("p", { role: "alert", className: css.error, children: error }), _jsxs("div", { className: css.actions, children: [plan.status === 'prepared' && _jsxs(_Fragment, { children: [_jsx("button", { type: "button", "data-primary": true, disabled: busy || !ready || plan.expiresAt <= Date.now() || submitted.current.has(plan.id)
-                                                || plan.identity.accountId !== status.identity?.accountId || plan.identity.contestId !== status.identity?.contestId, onClick: () => { void perform(() => access.confirm(plan), plan); }, children: busy ? '正在提交…' : action.kind === 'budget' ? '确认授权本批次' : '确认执行此操作' }), _jsx("button", { type: "button", disabled: busy || submitted.current.has(plan.id), onClick: () => { void perform(async () => { await access.dismiss(plan); return { ...plan, status: 'cancelled' }; }); }, children: "\u53D6\u6D88\u8BA1\u5212" }), submitted.current.has(plan.id) && !busy && _jsx("button", { type: "button", onClick: () => { void perform(async () => { await waitForCompetition(refresh, '因子状态读取', 15_000); }); }, children: "\u5237\u65B0\u64CD\u4F5C\u72B6\u6001" })] }), plan.status === 'unknown' && _jsx("button", { type: "button", disabled: busy || !ready, onClick: () => { void perform(() => access.reconcilePlan(plan.id)); }, children: "\u53EA\u8BFB\u6838\u5BF9\u7ED3\u679C" })] })] }) })] });
+                                                || plan.identity.accountId !== status.identity?.accountId || plan.identity.contestId !== status.identity?.contestId, onClick: () => { void perform(() => access.confirm(plan), plan); }, children: busy ? '正在提交…' : action.kind === 'budget' ? '确认授权本批次' : '确认执行此操作' }), _jsx("button", { type: "button", disabled: busy || submitted.current.has(plan.id), onClick: () => { void perform(async () => { await access.dismiss(plan); return { ...plan, status: 'cancelled' }; }); }, children: "\u53D6\u6D88\u8BA1\u5212" }), submitted.current.has(plan.id) && !busy && _jsx("button", { type: "button", onClick: () => { void perform(() => access.reconcilePlan(plan.id), undefined, plan.id); }, children: "\u53EA\u8BFB\u6838\u5BF9\u786E\u8BA4\u7ED3\u679C" })] }), plan.status === 'unknown' && _jsx("button", { type: "button", disabled: busy || !ready, onClick: () => { void perform(() => access.reconcilePlan(plan.id), undefined, plan.id); }, children: "\u53EA\u8BFB\u6838\u5BF9\u7ED3\u679C" })] })] }) })] });
 }
 //# sourceMappingURL=FactorPlans.js.map

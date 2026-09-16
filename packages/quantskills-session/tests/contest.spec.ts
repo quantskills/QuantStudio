@@ -213,3 +213,26 @@ describe('CLI contract', () => {
     expect(() => parseCliOutput('private credentials')).toThrow('无法解析')
   })
 })
+
+
+it('serializes read-only confirmation recovery behind a failed pre-submit check', async () => {
+  const f = await fixture(); await f.connect()
+  const p = await f.service.prepare({ sessionId: 'session1', operation: 'place_order', order }, identity)
+  const base = f.run.getMockImplementation()!
+  let release!: () => void
+  f.run.mockImplementationOnce(async () => { await new Promise<void>(resolve => { release = resolve }); throw new Error('identity read failed') })
+  const confirming = f.service.execute(p.id, 'session1').catch(error => error)
+  await vi.waitFor(() => expect(release).toBeDefined())
+  expect((await f.service.status()).plans[0]?.status).toBe('prepared')
+  f.run.mockImplementation((runtime, args, signal) => args[0] === 'plan' && args[1] === 'show'
+    ? Promise.resolve(data({ status: 'prepared' })) : base(runtime, args, signal))
+  let verified = false
+  const verification = f.service.reconcile(p.id, 'session1').then(result => { verified = true; return result })
+  await new Promise(resolve => setTimeout(resolve, 10))
+  expect(verified).toBe(false)
+  release(); await confirming
+  await expect(verification).resolves.toMatchObject({ id: p.id, status: 'prepared' })
+  expect(f.run.mock.calls.some(([, args]) => args[0] === 'plan' && args[1] === 'execute')).toBe(false)
+  await f.service.dismiss(p.id, 'session1')
+  expect((await f.service.status()).plans[0]?.status).toBe('cancelled')
+})

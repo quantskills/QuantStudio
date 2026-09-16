@@ -405,8 +405,13 @@ export class FactorContestService {
   async reconcilePlan(planId: string): Promise<FactorPlan> {
     return this.exclusive(async () => {
       const p = this.state.plans.find(p => p.id === planId && sameContest(p.identity, this.state.identity))
-      if (!p || p.status !== 'unknown' || p.action.kind === 'budget') throw new Error('没有待核实的赛事操作。')
+      if (!p) throw new Error('没有待核实的赛事操作。')
       this.assertReady(p.identity); await this.verify(p.identity)
+      // This runs behind confirm() in the same queue, unlike status(). A prepared
+      // plan here proves that prior confirmation finished without submitting.
+      if (p.status !== 'unknown') return structuredClone({ ...p,
+        status: p.status === 'prepared' && p.expiresAt <= Date.now() ? 'expired' as const : p.status })
+      if (p.action.kind === 'budget') throw new Error('预算状态待核实，请勿重复确认。')
       const pool = await this.pool(), current = record(pool), a = p.action
       const factors = Array.isArray(current.factors) ? current.factors.map(record) : []
       const original = record(record(p.snapshot).pool)

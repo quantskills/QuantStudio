@@ -31,7 +31,7 @@ export function ContestPlans({ status, access, refresh, compact = false, autoOpe
     if (!autoOpen || !ready || !newest || seen.current.has(newest)) return
     seen.current.add(newest); setSelected(newest); setError(undefined)
   }, [autoOpen, ready, newest])
-  const work = async (task: () => Promise<ContestPlan | void>, submission?: ContestPlan) => {
+  const work = async (task: () => Promise<ContestPlan | void>, submission?: ContestPlan, verificationId?: string) => {
     if (locked.current) return
     if (submission && submitted.current.has(submission.id)) return
     if (submission) submitted.current.add(submission.id)
@@ -40,7 +40,11 @@ export function ContestPlans({ status, access, refresh, compact = false, autoOpe
     locked.current = true; setBusy(true); setError(undefined)
     try {
       const result = await waitForCompetition(task, '比赛计划操作', 60_000, controller.current.signal)
-      if (current === generation.current && result) setReturned({ source: original, value: result })
+      if (current === generation.current && result) {
+        // Only a serialized, read-only server check can release an uncertain submission.
+        if (result.id === verificationId && result.status === 'prepared' && !result.operationId) submitted.current.delete(result.id)
+        setReturned({ source: original, value: result })
+      }
     } catch (error) {
       if (current === generation.current) setError(`${error instanceof Error ? error.message : '操作未完成。'}${submission ? '本次确认结果待核实，请勿重复提交。' : ''}`)
     } finally {
@@ -73,10 +77,10 @@ export function ContestPlans({ status, access, refresh, compact = false, autoOpe
           <button type="button" disabled={busy || submitted.current.has(plan.id)} onClick={() => { void work(async () => { await access.dismiss(plan); return { ...plan, status: 'cancelled' } }) }}>取消计划</button>
           <button type="button" data-primary disabled={busy || !ready || plan.expiresAt <= now || submitted.current.has(plan.id)}
             onClick={() => { void work(() => access.execute(plan), plan) }}>{busy ? '正在提交…' : '确认执行这笔交易'}</button>
-          {submitted.current.has(plan.id) && !busy && <button type="button" onClick={() => { void work(() => access.reconcile(plan)) }}>只读核对确认结果</button>}
+          {submitted.current.has(plan.id) && !busy && <button type="button" onClick={() => { void work(() => access.reconcile(plan), undefined, plan.id) }}>只读核对确认结果</button>}
         </>}
         {['executing', 'queued', 'submitted', 'unknown', 'partial'].includes(plan.status) && <button type="button" data-primary disabled={busy || !ready}
-          onClick={() => { void work(() => access.reconcile(plan)) }}>{busy ? '查询中…' : '查询柜台回执'}</button>}
+          onClick={() => { void work(() => access.reconcile(plan), undefined, plan.id) }}>{busy ? '查询中…' : '查询柜台回执'}</button>}
       </footer>
     </ActionDialog>}
   </section>

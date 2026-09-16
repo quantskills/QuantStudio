@@ -18,7 +18,7 @@ export function FactorPlans({ status, access, refresh, compact = false }: { stat
   const plan = returned?.value.id === original?.id && (original === returned?.source || original?.status === 'prepared') ? returned?.value : original
   const ready = status.enabled && status.phase === 'connected'
   useEffect(() => { if (!ready) { select(undefined); setOpen(false); generation.current++; controller.current?.abort(); active.current = false; setBusy(false) } }, [ready])
-  const perform = async (work: () => Promise<FactorPlan | void>, submission?: FactorPlan) => {
+  const perform = async (work: () => Promise<FactorPlan | void>, submission?: FactorPlan, verificationId?: string) => {
     if (active.current) return
     if (submission && submitted.current.has(submission.id)) return
     if (submission) submitted.current.add(submission.id)
@@ -27,7 +27,11 @@ export function FactorPlans({ status, access, refresh, compact = false }: { stat
     active.current = true; setBusy(true); setError('')
     try {
       const result = await waitForCompetition(work, '因子计划操作', 60_000, controller.current.signal)
-      if (current === generation.current && result) setReturned({ source: original, value: result })
+      if (current === generation.current && result) {
+        // Polling may still show prepared while confirmation is queued. Never unlock from it.
+        if (result.id === verificationId && result.status === 'prepared') submitted.current.delete(result.id)
+        setReturned({ source: original, value: result })
+      }
     } catch (e) { if (current === generation.current) setError(`${e instanceof Error ? e.message : '操作未完成。'}${submission ? '本次确认结果待核实，请勿重复提交。' : ''}`) }
     finally {
       if (current === generation.current) {
@@ -78,8 +82,8 @@ export function FactorPlans({ status, access, refresh, compact = false }: { stat
             || plan.identity.accountId !== status.identity?.accountId || plan.identity.contestId !== status.identity?.contestId}
             onClick={() => { void perform(() => access.confirm(plan), plan) }}>{busy ? '正在提交…' : action.kind === 'budget' ? '确认授权本批次' : '确认执行此操作'}</button>
             <button type="button" disabled={busy || submitted.current.has(plan.id)} onClick={() => { void perform(async () => { await access.dismiss(plan); return { ...plan, status: 'cancelled' } }) }}>取消计划</button>
-            {submitted.current.has(plan.id) && !busy && <button type="button" onClick={() => { void perform(async () => { await waitForCompetition(refresh, '因子状态读取', 15_000) }) }}>刷新操作状态</button>}</>}
-          {plan.status === 'unknown' && <button type="button" disabled={busy || !ready} onClick={() => { void perform(() => access.reconcilePlan(plan.id)) }}>只读核对结果</button>}
+            {submitted.current.has(plan.id) && !busy && <button type="button" onClick={() => { void perform(() => access.reconcilePlan(plan.id), undefined, plan.id) }}>只读核对确认结果</button>}</>}
+          {plan.status === 'unknown' && <button type="button" disabled={busy || !ready} onClick={() => { void perform(() => access.reconcilePlan(plan.id), undefined, plan.id) }}>只读核对结果</button>}
         </div>
       </div>
     </ActionDialog>}

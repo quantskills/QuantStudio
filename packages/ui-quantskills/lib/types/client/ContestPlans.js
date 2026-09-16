@@ -35,7 +35,7 @@ export function ContestPlans({ status, access, refresh, compact = false, autoOpe
         setSelected(newest);
         setError(undefined);
     }, [autoOpen, ready, newest]);
-    const work = async (task, submission) => {
+    const work = async (task, submission, verificationId) => {
         if (locked.current)
             return;
         if (submission && submitted.current.has(submission.id))
@@ -49,8 +49,12 @@ export function ContestPlans({ status, access, refresh, compact = false, autoOpe
         setError(undefined);
         try {
             const result = await waitForCompetition(task, '比赛计划操作', 60_000, controller.current.signal);
-            if (current === generation.current && result)
+            if (current === generation.current && result) {
+                // Only a serialized, read-only server check can release an uncertain submission.
+                if (result.id === verificationId && result.status === 'prepared' && !result.operationId)
+                    submitted.current.delete(result.id);
                 setReturned({ source: original, value: result });
+            }
         }
         catch (error) {
             if (current === generation.current)
@@ -73,7 +77,7 @@ export function ContestPlans({ status, access, refresh, compact = false, autoOpe
                     setSelected(newest);
                 else
                     setHistoryOpen(true); }, children: ["\u6BD4\u8D5B\u8BA1\u5212", pending.length ? ` · ${pending.length} 笔待确认` : ''] })
-                : _jsxs(_Fragment, { children: [_jsx("h2", { children: "\u4EA4\u6613\u8BA1\u5212\u4E0E\u56DE\u6267" }), list] }), compact && historyOpen && !plan && status.enabled && _jsx(ActionDialog, { title: "\u6BD4\u8D5B\u8BA1\u5212\u4E0E\u56DE\u6267", onClose: () => setHistoryOpen(false), children: list }), plan && status.enabled && _jsxs(ActionDialog, { title: "\u786E\u8BA4\u6BD4\u8D5B\u4EA4\u6613\u8BA1\u5212", busy: busy, error: error, onClose: () => setSelected(undefined), children: [_jsx(PlanDetails, { plan: plan }), _jsx("p", { role: "status", children: plan.status === 'prepared' && plan.expiresAt <= now ? '计划已过期，请回到研究会话重新预演。' : planStates[plan.status] }), plan.result && _jsxs("p", { className: css.muted, children: ["\u67DC\u53F0\u56DE\u62A5\uFF1A", display(plan.result.message ?? plan.result.status), plan.operationId ? ` · 操作号 ${plan.operationId}` : ''] }), _jsxs("footer", { className: css.actions, children: [plan.status === 'prepared' && _jsxs(_Fragment, { children: [_jsx("button", { type: "button", disabled: busy || submitted.current.has(plan.id), onClick: () => { void work(async () => { await access.dismiss(plan); return { ...plan, status: 'cancelled' }; }); }, children: "\u53D6\u6D88\u8BA1\u5212" }), _jsx("button", { type: "button", "data-primary": true, disabled: busy || !ready || plan.expiresAt <= now || submitted.current.has(plan.id), onClick: () => { void work(() => access.execute(plan), plan); }, children: busy ? '正在提交…' : '确认执行这笔交易' }), submitted.current.has(plan.id) && !busy && _jsx("button", { type: "button", onClick: () => { void work(() => access.reconcile(plan)); }, children: "\u53EA\u8BFB\u6838\u5BF9\u786E\u8BA4\u7ED3\u679C" })] }), ['executing', 'queued', 'submitted', 'unknown', 'partial'].includes(plan.status) && _jsx("button", { type: "button", "data-primary": true, disabled: busy || !ready, onClick: () => { void work(() => access.reconcile(plan)); }, children: busy ? '查询中…' : '查询柜台回执' })] })] })] });
+                : _jsxs(_Fragment, { children: [_jsx("h2", { children: "\u4EA4\u6613\u8BA1\u5212\u4E0E\u56DE\u6267" }), list] }), compact && historyOpen && !plan && status.enabled && _jsx(ActionDialog, { title: "\u6BD4\u8D5B\u8BA1\u5212\u4E0E\u56DE\u6267", onClose: () => setHistoryOpen(false), children: list }), plan && status.enabled && _jsxs(ActionDialog, { title: "\u786E\u8BA4\u6BD4\u8D5B\u4EA4\u6613\u8BA1\u5212", busy: busy, error: error, onClose: () => setSelected(undefined), children: [_jsx(PlanDetails, { plan: plan }), _jsx("p", { role: "status", children: plan.status === 'prepared' && plan.expiresAt <= now ? '计划已过期，请回到研究会话重新预演。' : planStates[plan.status] }), plan.result && _jsxs("p", { className: css.muted, children: ["\u67DC\u53F0\u56DE\u62A5\uFF1A", display(plan.result.message ?? plan.result.status), plan.operationId ? ` · 操作号 ${plan.operationId}` : ''] }), _jsxs("footer", { className: css.actions, children: [plan.status === 'prepared' && _jsxs(_Fragment, { children: [_jsx("button", { type: "button", disabled: busy || submitted.current.has(plan.id), onClick: () => { void work(async () => { await access.dismiss(plan); return { ...plan, status: 'cancelled' }; }); }, children: "\u53D6\u6D88\u8BA1\u5212" }), _jsx("button", { type: "button", "data-primary": true, disabled: busy || !ready || plan.expiresAt <= now || submitted.current.has(plan.id), onClick: () => { void work(() => access.execute(plan), plan); }, children: busy ? '正在提交…' : '确认执行这笔交易' }), submitted.current.has(plan.id) && !busy && _jsx("button", { type: "button", onClick: () => { void work(() => access.reconcile(plan), undefined, plan.id); }, children: "\u53EA\u8BFB\u6838\u5BF9\u786E\u8BA4\u7ED3\u679C" })] }), ['executing', 'queued', 'submitted', 'unknown', 'partial'].includes(plan.status) && _jsx("button", { type: "button", "data-primary": true, disabled: busy || !ready, onClick: () => { void work(() => access.reconcile(plan), undefined, plan.id); }, children: busy ? '查询中…' : '查询柜台回执' })] })] })] });
 }
 function PlanDetails({ plan }) {
     const parameters = asRecord(plan.details.parameters), quote = asRecord(plan.details.marketQuote);
