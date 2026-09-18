@@ -10579,7 +10579,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema8)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema8))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"dateColumn": string().optional(),
 			"ttlSeconds": number()
@@ -10603,7 +10604,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema3)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema3))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"kind": union([
 				literal("timeseries"),
@@ -10653,7 +10655,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema4)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema4))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"dateColumn": string().optional(),
 			"ttlSeconds": number()
@@ -10710,7 +10713,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema2)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema2))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"dateColumn": string().optional(),
 			"ttlSeconds": number()
@@ -10749,7 +10753,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"dateColumn": string().optional(),
 			"ttlSeconds": number()
@@ -10790,7 +10795,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						array(lazy(() => JsonValueRemoteCodec$schema6)),
 						record(string(), lazy(() => JsonValueRemoteCodec$schema6))
 					])).optional(),
-					"filename": string().optional()
+					"filename": string().optional(),
+					"rollingDay": boolean().optional()
 				}),
 				"dateColumn": string().optional(),
 				"ttlSeconds": number()
@@ -10857,7 +10863,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						array(lazy(() => JsonValueRemoteCodec$schema5)),
 						record(string(), lazy(() => JsonValueRemoteCodec$schema5))
 					])).optional(),
-					"filename": string().optional()
+					"filename": string().optional(),
+					"rollingDay": boolean().optional()
 				}),
 				"dateColumn": string().optional(),
 				"ttlSeconds": number()
@@ -10915,7 +10922,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema7)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema7))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"dateColumn": string().optional(),
 			"ttlSeconds": number()
