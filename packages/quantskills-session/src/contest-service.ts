@@ -7,6 +7,7 @@ import { resolveDshHome } from '@deepseek-ai/dsh-home-paths'
 import { z } from 'zod'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import { ContestCliError, record, type ContestCli, versionAtLeast } from './contest-cli.ts'
+import { contestFillSchema, mergePlanFills, planOrderId } from './contest-fills.ts'
 import type { ContestData, ContestIdentity, ContestInspection, ContestOrder, ContestPlan, ContestPrepareRequest, ContestQuery, ContestStatus } from './contest-types.ts'
 
 const identitySchema = z.object({ accountId: z.string().min(1), contestId: z.string().min(1) })
@@ -16,6 +17,7 @@ const planSchema = z.object({
   summary: z.string(), details: z.record(z.string(), z.json()), clientRequestId: z.string().uuid(),
   status: z.enum(['prepared', 'executing', 'queued', 'submitted', 'completed', 'partial', 'failed', 'expired', 'unknown', 'cancelled']),
   operationId: z.string().optional(), result: z.record(z.string(), z.json()).optional(),
+  fills: z.array(contestFillSchema).optional(),
 })
 const stateSchema = z.object({
   enabled: z.boolean(), runtime: z.string().uuid().optional(), version: z.string().optional(),
@@ -163,6 +165,7 @@ export class ContestService {
           await this.run(['login'])
         }
         await this.validateIdentity()
+        await this.refreshFills().catch(() => {})
         this.message = '比赛账户已连接。'
       } catch (error) {
         this.ready = false
@@ -235,7 +238,24 @@ export class ContestService {
 
   async query(input: ContestQuery, expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestData> {
     const args = contestQueryArgs(input)
-    return this.exclusive(async () => { this.assertReady(expected); return this.run(args, signal) })
+    return this.exclusive(async () => {
+      this.assertReady(expected)
+      const result = await this.run(args, signal)
+      if (input.kind === 'trades') await this.recordFills(result.data)
+      return result
+    })
+  }
+
+  private async recordFills(rows: unknown) {
+    let changed = false
+    for (const plan of this.state.plans) if (sameContest(plan.identity, this.state.identity)) changed = mergePlanFills(plan, rows) || changed
+    if (changed) await this.save()
+  }
+  private async refreshFills(plan?: ContestPlan) {
+    const candidates = (plan ? [plan] : this.state.plans).filter(item => sameContest(item.identity, this.state.identity) && planOrderId(item))
+    if (!candidates.length) return
+    // One bounded recent page; older executions can be backfilled by browsing trade-history pages.
+    await this.recordFills((await this.run(['trades', '--count', '200'])).data)
   }
 
   async inspect(identity: ContestIdentity, signal?: AbortSignal): Promise<ContestInspection> {
@@ -385,6 +405,8 @@ export class ContestService {
         plan.status = operationStates.has(String(result.status)) ? result.status as ContestPlan['status'] : 'unknown'
       } catch { plan.status = 'unknown' }
       await this.save()
+      // Optional price lookup must never downgrade a successful submission or replay it.
+      await this.refreshFills(plan).catch(() => {})
       return structuredClone(plan)
     })
   }
@@ -418,6 +440,7 @@ export class ContestService {
         plan.status = operationStates.has(String(result.status)) ? result.status as ContestPlan['status'] : 'unknown'
       }
       await this.save()
+      await this.refreshFills(plan).catch(() => {})
       return structuredClone(plan)
     })
   }

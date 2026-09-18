@@ -41,7 +41,10 @@ export interface ContestPlan {
   status: 'prepared' | 'executing' | 'queued' | 'submitted' | 'completed' | 'partial' | 'failed' | 'expired' | 'unknown' | 'cancelled'
   operationId?: string | undefined
   result?: Record<string, JsonValue> | undefined
+  fills?: ContestFill[] | undefined
 }
+
+export interface ContestFill { id: string; tradeId: string; orderId: string; price: number; volume: number; time: string }
 
 export interface ContestStatus {
   readonly enabled: boolean

@@ -115,6 +115,41 @@ describe('contest is opt-in and independent of ordinary sessions', () => {
 })
 
 describe('frozen plan execution', () => {
+  it('records matched actual fills after reconciliation and preserves them after restart', async () => {
+    const f = await fixture(); await f.connect()
+    const p = await f.service.prepare({ operation: 'place_order', sessionId: 's1', order: { ...order, volume: 3 } }, identity)
+    const base = f.run.getMockImplementation()!
+    const fills = [1, 2].map((volume, i) => ({ id: `fill-${i}`, tradeId: String(i), orderId: 'actual-order', contractCode: 'RB2610.SHF', side: 'buy', offset: 'open', volume, price: 3200 + i * 3, tradeTime: new Date().toISOString() }))
+    f.run.mockImplementation(async (...args) => args[1][0] === 'operation'
+      ? data({ operationId: 'op-1', status: 'completed', latestOrder: { orderId: 'actual-order', filledQuantity: 3 } })
+      : args[1][0] === 'trades' ? data([...fills, fills[0]!, { ...fills[0]!, id: 'other', orderId: 'other-order', price: 9999 }]) : base(...args))
+    await f.service.execute(p.id, 's1')
+    const result = await f.service.reconcile(p.id, 's1')
+    expect(result.fills).toHaveLength(2)
+    expect(result.fills?.map(fill => fill.price)).toEqual([3200, 3203])
+    await f.service.reconcile(p.id, 's1')
+    expect((await f.service.status()).plans[0]?.fills).toHaveLength(2)
+    const restored = new ContestService(f.cli, f.home)
+    expect((await restored.status()).plans[0]?.fills).toEqual(result.fills)
+    expect(f.run.mock.calls.filter(([, args]) => args[0] === 'plan' && args[1] === 'execute')).toHaveLength(1)
+  })
+  it('backfills historical completed plans on reconnect without substituting a quote on read failure', async () => {
+    const f = await fixture(); await f.connect()
+    const p = await f.service.prepare({ operation: 'place_order', sessionId: 's1', order }, identity)
+    const base = f.run.getMockImplementation()!
+    let available = false
+    f.run.mockImplementation(async (...args) => {
+      if (args[1][0] === 'operation') return data({ operationId: 'op-1', status: 'completed', latestOrder: { orderId: 'actual-order', filledQuantity: 1 } })
+      if (args[1][0] === 'trades') { if (!available) throw Error('offline'); return data([{ id: 'fill-1', tradeId: '1', orderId: 'actual-order', contractCode: 'RB2610.SHF', side: 'buy', offset: 'open', volume: 1, price: 3240, tradeTime: new Date().toISOString() }]) }
+      return base(...args)
+    })
+    await f.service.execute(p.id, 's1')
+    const completed = await f.service.reconcile(p.id, 's1')
+    expect(completed.status).toBe('completed'); expect(completed.fills).toBeUndefined()
+    available = true; await f.service.connect()
+    expect((await f.service.status()).plans[0]?.fills?.[0]?.price).toBe(3240)
+    expect(f.run.mock.calls.filter(([, args]) => args[0] === 'plan' && args[1] === 'execute')).toHaveLength(1)
+  })
   it('serializes rapid confirmations and submits exactly once with a stable idempotency key', async () => {
     const f = await fixture(); await f.connect()
     const plan = await f.service.prepare({ operation: 'place_order', sessionId: 's1', order }, identity)

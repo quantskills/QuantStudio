@@ -36,6 +36,8 @@ export declare class ContestService {
     isEnabled(): boolean;
     rulesText(): string;
     query(input: ContestQuery, expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestData>;
+    private recordFills;
+    private refreshFills;
     inspect(identity: ContestIdentity, signal?: AbortSignal): Promise<ContestInspection>;
     inspection(identity: ContestIdentity): ContestInspection | undefined;
     checkUpdate(): Promise<ContestStatus>;

@@ -6172,7 +6172,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					literal(true),
 					array(lazy(() => JsonValueRemoteCodec$schema17)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema17))
-				]))]).optional()
+				]))]).optional(),
+				"fills": union([_undefined(), array(object({
+					"id": string(),
+					"tradeId": string(),
+					"orderId": string(),
+					"price": number(),
+					"volume": number(),
+					"time": string()
+				}))]).optional()
 			})).readonly()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestConnect_result$schema = object({
@@ -6235,7 +6243,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					literal(true),
 					array(lazy(() => JsonValueRemoteCodec$schema15)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema15))
-				]))]).optional()
+				]))]).optional(),
+				"fills": union([_undefined(), array(object({
+					"id": string(),
+					"tradeId": string(),
+					"orderId": string(),
+					"price": number(),
+					"volume": number(),
+					"time": string()
+				}))]).optional()
 			})).readonly()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDisconnect_result$schema = object({
@@ -6298,7 +6314,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					literal(true),
 					array(lazy(() => JsonValueRemoteCodec$schema16)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema16))
-				]))]).optional()
+				]))]).optional(),
+				"fills": union([_undefined(), array(object({
+					"id": string(),
+					"tradeId": string(),
+					"orderId": string(),
+					"price": number(),
+					"volume": number(),
+					"time": string()
+				}))]).optional()
 			})).readonly()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_parameter_0$schema = object({
@@ -6365,7 +6389,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					literal(true),
 					array(lazy(() => JsonValueRemoteCodec$schema22)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
-				]))]).optional()
+				]))]).optional(),
+				"fills": union([_undefined(), array(object({
+					"id": string(),
+					"tradeId": string(),
+					"orderId": string(),
+					"price": number(),
+					"volume": number(),
+					"time": string()
+				}))]).optional()
 			})).readonly()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestExecute_parameter_0$schema = object({
@@ -6414,7 +6446,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				literal(true),
 				array(lazy(() => JsonValueRemoteCodec$schema21)),
 				record(string(), lazy(() => JsonValueRemoteCodec$schema21))
-			]))]).optional()
+			]))]).optional(),
+			"fills": union([_undefined(), array(object({
+				"id": string(),
+				"tradeId": string(),
+				"orderId": string(),
+				"price": number(),
+				"volume": number(),
+				"time": string()
+			}))]).optional()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_parameter_0$schema = object({ "sessionId": intersection(string(), unknown()) });
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_result$schema = object({
@@ -6528,7 +6568,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					literal(true),
 					array(lazy(() => JsonValueRemoteCodec$schema20)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
-				]))]).optional()
+				]))]).optional(),
+				"fills": union([_undefined(), array(object({
+					"id": string(),
+					"tradeId": string(),
+					"orderId": string(),
+					"price": number(),
+					"volume": number(),
+					"time": string()
+				}))]).optional()
 			})).readonly(),
 			"summary": array(string()).readonly()
 		});
@@ -6593,7 +6641,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					literal(true),
 					array(lazy(() => JsonValueRemoteCodec$schema14)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema14))
-				]))]).optional()
+				]))]).optional(),
+				"fills": union([_undefined(), array(object({
+					"id": string(),
+					"tradeId": string(),
+					"orderId": string(),
+					"price": number(),
+					"volume": number(),
+					"time": string()
+				}))]).optional()
 			})).readonly()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_parameter_0$schema = object({
@@ -6680,7 +6736,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				literal(true),
 				array(lazy(() => JsonValueRemoteCodec$schema23)),
 				record(string(), lazy(() => JsonValueRemoteCodec$schema23))
-			]))]).optional()
+			]))]).optional(),
+			"fills": union([_undefined(), array(object({
+				"id": string(),
+				"tradeId": string(),
+				"orderId": string(),
+				"price": number(),
+				"volume": number(),
+				"time": string()
+			}))]).optional()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestSessionOpen_parameter_0$schema = object({
 			"sessionId": intersection(string(), unknown()).readonly(),
@@ -6774,7 +6838,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					literal(true),
 					array(lazy(() => JsonValueRemoteCodec$schema13)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema13))
-				]))]).optional()
+				]))]).optional(),
+				"fills": union([_undefined(), array(object({
+					"id": string(),
+					"tradeId": string(),
+					"orderId": string(),
+					"price": number(),
+					"volume": number(),
+					"time": string()
+				}))]).optional()
 			})).readonly()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestUpdate_result$schema = object({
@@ -6837,7 +6909,15 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					literal(true),
 					array(lazy(() => JsonValueRemoteCodec$schema18)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema18))
-				]))]).optional()
+				]))]).optional(),
+				"fills": union([_undefined(), array(object({
+					"id": string(),
+					"tradeId": string(),
+					"orderId": string(),
+					"price": number(),
+					"volume": number(),
+					"time": string()
+				}))]).optional()
 			})).readonly()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_create_parameter_0$schema = object({

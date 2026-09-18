@@ -248,6 +248,54 @@ var OfficialContestCli = class {
 	}
 };
 //#endregion
+//#region lib/types/contest-fills.js
+const contestFillSchema = z.object({
+	id: z.string().min(1).max(200),
+	tradeId: z.string().min(1).max(200),
+	orderId: z.string().min(1).max(200),
+	price: z.number().finite().positive(),
+	volume: z.number().int().positive(),
+	time: z.string().min(1).max(80)
+});
+function planOrderId(plan) {
+	if (plan.operation !== "place_order" || ["prepared", "cancelled"].includes(plan.status)) return void 0;
+	const result = plan.result ?? {};
+	const ids = [record(result.latestOrder).orderId, record(result.result).orderId].filter((id) => typeof id === "string" && id.length > 0);
+	return ids.length && new Set(ids).size === 1 ? ids[0] : void 0;
+}
+/** Only trade records joined to the bound order can supply execution prices. */
+function mergePlanFills(plan, rows) {
+	const orderId = planOrderId(plan), parameters = record(plan.details.parameters);
+	if (!orderId || !Array.isArray(rows) || typeof parameters.contractCode !== "string") return false;
+	const contract = (value) => typeof value === "string" ? /^([a-z]{1,3}\d{3,4})(?:\.(SHF|DCE|CZC|CFE|INE|GFE))?$/i.exec(value) : null;
+	const planned = contract(parameters.contractCode);
+	const expected = contract(record(plan.result?.latestOrder ?? plan.result?.result).contractCode) ?? planned;
+	if (!planned || !expected || planned[1].toLowerCase() !== expected[1].toLowerCase()) return false;
+	const merged = new Map((plan.fills ?? []).map((fill) => [fill.id, fill]));
+	for (const value of rows) {
+		const row = record(value), actual = contract(row.contractCode);
+		if (row.orderId !== orderId || !actual || actual[1].toLowerCase() !== expected[1].toLowerCase() || row.accountId !== void 0 && row.accountId !== plan.identity.accountId || row.contestId !== void 0 && row.contestId !== plan.identity.contestId || expected[2] && actual[2] && expected[2].toUpperCase() !== actual[2].toUpperCase() || row.side !== parameters.side || row.offset !== parameters.offset) continue;
+		const parsed = contestFillSchema.safeParse({
+			id: row.id,
+			tradeId: row.tradeId,
+			orderId,
+			price: row.price,
+			volume: row.volume,
+			time: row.tradeTime
+		});
+		if (!parsed.success) continue;
+		const fill = parsed.data, timestamp = Date.parse(/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(fill.time) ? fill.time.replace(" ", "T") + "+08:00" : fill.time);
+		if (!Number.isFinite(timestamp) || timestamp < plan.createdAt - 5e3 || timestamp > Date.now() + 5e3) continue;
+		const prior = merged.get(fill.id);
+		if (prior && JSON.stringify(prior) !== JSON.stringify(fill)) return false;
+		merged.set(fill.id, fill);
+	}
+	const fills = [...merged.values()], volume = fills.reduce((sum, fill) => sum + fill.volume, 0);
+	if (!volume || typeof parameters.volume !== "number" || volume > parameters.volume || fills.length === (plan.fills?.length ?? 0)) return false;
+	plan.fills = fills;
+	return true;
+}
+//#endregion
 //#region lib/types/contest-service.js
 /** Opt-in contest lifecycle and durable, single-use confirmation plans. */
 const identitySchema$1 = z.object({
@@ -277,7 +325,8 @@ const planSchema$1 = z.object({
 		"cancelled"
 	]),
 	operationId: z.string().optional(),
-	result: z.record(z.string(), z.json()).optional()
+	result: z.record(z.string(), z.json()).optional(),
+	fills: z.array(contestFillSchema).optional()
 });
 const stateSchema$1 = z.object({
 	enabled: z.boolean(),
@@ -476,6 +525,7 @@ var ContestService = class {
 					await this.run(["login"]);
 				}
 				await this.validateIdentity();
+				await this.refreshFills().catch(() => {});
 				this.message = "比赛账户已连接。";
 			} catch (error) {
 				this.ready = false;
@@ -564,8 +614,23 @@ var ContestService = class {
 		const args = contestQueryArgs(input);
 		return this.exclusive(async () => {
 			this.assertReady(expected);
-			return this.run(args, signal);
+			const result = await this.run(args, signal);
+			if (input.kind === "trades") await this.recordFills(result.data);
+			return result;
 		});
+	}
+	async recordFills(rows) {
+		let changed = false;
+		for (const plan of this.state.plans) if (sameContest(plan.identity, this.state.identity)) changed = mergePlanFills(plan, rows) || changed;
+		if (changed) await this.save();
+	}
+	async refreshFills(plan) {
+		if (!(plan ? [plan] : this.state.plans).filter((item) => sameContest(item.identity, this.state.identity) && planOrderId(item)).length) return;
+		await this.recordFills((await this.run([
+			"trades",
+			"--count",
+			"200"
+		])).data);
 	}
 	async inspect(identity, signal) {
 		return this.exclusive(async () => {
@@ -793,6 +858,7 @@ var ContestService = class {
 				plan.status = "unknown";
 			}
 			await this.save();
+			await this.refreshFills(plan).catch(() => {});
 			return structuredClone(plan);
 		});
 	}
@@ -834,6 +900,7 @@ var ContestService = class {
 				plan.status = operationStates.has(String(result.status)) ? result.status : "unknown";
 			}
 			await this.save();
+			await this.refreshFills(plan).catch(() => {});
 			return structuredClone(plan);
 		});
 	}
