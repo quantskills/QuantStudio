@@ -1,4 +1,5 @@
 /** Exact-version QuantSkills session composition and log-backed archive remotes. */
+import type { ContestJevSettings, ContestJevUsage, ContestWatchConfig, ContestWatchDataset, ContestWatchTemplate, ContestWatchStatus } from './contest-watch-types.ts';
 import type { FactorContestStatus, FactorCredentials, FactorInspection, FactorPlan, FactorPlanAction, FactorQuery, FactorRun } from './factor-contest-types.ts';
 import type { ContestStatus, ContestData, ContestQuery, ContestPlan, ContestInspection } from './contest-types.ts';
 import type { ContestSessionOpenRequest, ContestSessionOpenResult } from './types.ts';
@@ -225,6 +226,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private readonly teamForkProvider;
     private readonly workspaceResolver;
     private readonly contest;
+    private readonly contestWatcher;
     private readonly factorContest;
     private factorSessionOpening;
     private contestSessionOpening;
@@ -295,6 +297,28 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     contestDisconnect(): Promise<ContestStatus>;
     contestCheckUpdate(): Promise<ContestStatus>;
     contestUpdate(): Promise<ContestStatus>;
+    contestWatchStatus(): Promise<ContestWatchStatus>;
+    contestJevSettings(): Promise<ContestJevSettings>;
+    contestJevUsage(): Promise<ContestJevUsage>;
+    contestWatchTemplates(): Promise<ContestWatchTemplate[]>;
+    contestWatchSaveTemplate(request: ContestWatchTemplate): Promise<ContestWatchTemplate[]>;
+    contestWatchDatasets(): Promise<ContestWatchDataset[]>;
+    contestWatchPrepareHistory(request: {
+        symbol: string;
+        barSeconds: number;
+    }): Promise<NonNullable<ContestWatchConfig['history']>>;
+    contestJevConfigure(request: {
+        apiKey?: string;
+        translator?: {
+            provider: string;
+            model: string;
+        };
+    }): Promise<ContestJevSettings>;
+    contestWatchStart(request: {
+        config: ContestWatchConfig;
+        confirmed: boolean;
+    }): Promise<ContestWatchStatus>;
+    contestWatchStop(): Promise<ContestWatchStatus>;
     contestQuery(request: ContestQuery, signal?: AbortSignal): Promise<ContestData>;
     /** Entry inspection is bound to the persisted conversation, never a caller-supplied account. */
     contestInspect(request: {

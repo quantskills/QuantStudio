@@ -6532,6 +6532,71 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			})).readonly(),
 			"summary": array(string()).readonly()
 		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevConfigure_parameter_0$schema = object({
+			"apiKey": string().optional(),
+			"translator": object({
+				"provider": string(),
+				"model": string()
+			}).optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevConfigure_result$schema = object({
+			"configured": boolean(),
+			"writable": boolean(),
+			"model": string(),
+			"testedAt": number().optional(),
+			"latencyMs": number().optional(),
+			"message": string().optional(),
+			"translator": union([_undefined(), object({
+				"provider": string(),
+				"model": string()
+			})]).optional(),
+			"translationModels": array(object({
+				"provider": string(),
+				"model": string()
+			})).optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevSettings_result$schema = object({
+			"configured": boolean(),
+			"writable": boolean(),
+			"model": string(),
+			"testedAt": number().optional(),
+			"latencyMs": number().optional(),
+			"message": string().optional(),
+			"translator": union([_undefined(), object({
+				"provider": string(),
+				"model": string()
+			})]).optional(),
+			"translationModels": array(object({
+				"provider": string(),
+				"model": string()
+			})).optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevUsage_result$schema = object({
+			"since": number(),
+			"requests": number(),
+			"responsesOk": number(),
+			"unknownUsage": number(),
+			"inputTokens": number(),
+			"outputTokens": number(),
+			"records": array(object({
+				"id": string(),
+				"purpose": union([
+					literal("watch"),
+					literal("connection-test"),
+					literal("research"),
+					literal("validation")
+				]),
+				"startedAt": number(),
+				"finishedAt": number(),
+				"keyFingerprint": string(),
+				"httpStatus": number().optional(),
+				"model": string().optional(),
+				"usage": object({
+					"input_tokens": number(),
+					"output_tokens": number()
+				}).optional()
+			}))
+		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_parameter_0$schema = object({ "enabled": boolean() });
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_result$schema = object({
 			"enabled": boolean().readonly(),
@@ -6840,6 +6905,1419 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				]))]).optional()
 			})).readonly()
 		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchDatasets_result$schema = array(object({
+			"id": string(),
+			"name": string(),
+			"columns": array(string()),
+			"rows": number(),
+			"source": string()
+		}));
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchPrepareHistory_parameter_0$schema = object({
+			"symbol": string(),
+			"barSeconds": number()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchPrepareHistory_result$schema = object({
+			"datasetId": string(),
+			"barSeconds": union([literal(60), literal(300)]),
+			"timeMeaning": union([literal("open"), literal("close")]),
+			"refresh": boolean(),
+			"columns": object({
+				"time": string(),
+				"symbol": string(),
+				"open": string(),
+				"high": string(),
+				"low": string(),
+				"close": string()
+			})
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_parameter_0$schema = object({
+			"name": string(),
+			"config": object({
+				"symbol": string(),
+				"volume": number(),
+				"intervalSeconds": number(),
+				"decisionIntervalSeconds": number().optional(),
+				"openingCooldownSeconds": number().optional(),
+				"decisionMode": union([
+					_undefined(),
+					literal("jev"),
+					literal("strict")
+				]).optional(),
+				"durationMinutes": number(),
+				"minConfidence": number(),
+				"maxEquityDrop": number(),
+				"maxPlans": number(),
+				"instructions": string(),
+				"strategyName": union([_undefined(), string()]).optional(),
+				"actionCriteria": union([_undefined(), object({
+					"hold": union([_undefined(), string()]).optional(),
+					"open_long": union([_undefined(), string()]).optional(),
+					"open_short": union([_undefined(), string()]).optional(),
+					"close_long": union([_undefined(), string()]).optional(),
+					"close_short": union([_undefined(), string()]).optional()
+				})]).optional(),
+				"referenceMaterial": union([_undefined(), string()]).optional(),
+				"allowedSide": union([
+					_undefined(),
+					literal("both"),
+					literal("long_only"),
+					literal("short_only")
+				]).optional(),
+				"minSamples": union([_undefined(), number()]).optional(),
+				"maxSpread": union([_undefined(), number()]).optional(),
+				"builtInTemplate": union([
+					_undefined(),
+					literal("rb-range"),
+					literal("range"),
+					literal("trend"),
+					literal("breakout")
+				]).optional(),
+				"customStrategy": union([
+					_undefined(),
+					literal(false),
+					literal(true)
+				]).optional(),
+				"instrument": union([_undefined(), object({
+					"product": string(),
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"tickSize": number()
+				})]).optional(),
+				"signalRules": union([_undefined(), object({
+					"kind": union([literal("trend"), literal("breakout")]),
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number(),
+					"fastBars": number(),
+					"slowBars": number(),
+					"pullbackTicks": number(),
+					"reboundTicks": number(),
+					"bufferTicks": number(),
+					"maxChaseTicks": number()
+				})]).optional(),
+				"autoHistory": union([_undefined(), object({
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"barSeconds": union([literal(60), literal(300)])
+				})]).optional(),
+				"history": union([_undefined(), object({
+					"datasetId": string(),
+					"barSeconds": union([literal(60), literal(300)]),
+					"timeMeaning": union([literal("open"), literal("close")]),
+					"refresh": boolean(),
+					"columns": object({
+						"time": string(),
+						"symbol": string(),
+						"open": string(),
+						"high": string(),
+						"low": string(),
+						"close": string()
+					})
+				})]).optional(),
+				"rangeRules": union([_undefined(), object({
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"minWidthTicks": number(),
+					"minTouches": number(),
+					"edgeFraction": number(),
+					"reboundTicks": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number()
+				})]).optional()
+			})
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_result$schema = array(object({
+			"name": string(),
+			"config": object({
+				"symbol": string(),
+				"volume": number(),
+				"intervalSeconds": number(),
+				"decisionIntervalSeconds": number().optional(),
+				"openingCooldownSeconds": number().optional(),
+				"decisionMode": union([
+					_undefined(),
+					literal("jev"),
+					literal("strict")
+				]).optional(),
+				"durationMinutes": number(),
+				"minConfidence": number(),
+				"maxEquityDrop": number(),
+				"maxPlans": number(),
+				"instructions": string(),
+				"strategyName": union([_undefined(), string()]).optional(),
+				"actionCriteria": union([_undefined(), object({
+					"hold": union([_undefined(), string()]).optional(),
+					"open_long": union([_undefined(), string()]).optional(),
+					"open_short": union([_undefined(), string()]).optional(),
+					"close_long": union([_undefined(), string()]).optional(),
+					"close_short": union([_undefined(), string()]).optional()
+				})]).optional(),
+				"referenceMaterial": union([_undefined(), string()]).optional(),
+				"allowedSide": union([
+					_undefined(),
+					literal("both"),
+					literal("long_only"),
+					literal("short_only")
+				]).optional(),
+				"minSamples": union([_undefined(), number()]).optional(),
+				"maxSpread": union([_undefined(), number()]).optional(),
+				"builtInTemplate": union([
+					_undefined(),
+					literal("rb-range"),
+					literal("range"),
+					literal("trend"),
+					literal("breakout")
+				]).optional(),
+				"customStrategy": union([
+					_undefined(),
+					literal(false),
+					literal(true)
+				]).optional(),
+				"instrument": union([_undefined(), object({
+					"product": string(),
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"tickSize": number()
+				})]).optional(),
+				"signalRules": union([_undefined(), object({
+					"kind": union([literal("trend"), literal("breakout")]),
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number(),
+					"fastBars": number(),
+					"slowBars": number(),
+					"pullbackTicks": number(),
+					"reboundTicks": number(),
+					"bufferTicks": number(),
+					"maxChaseTicks": number()
+				})]).optional(),
+				"autoHistory": union([_undefined(), object({
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"barSeconds": union([literal(60), literal(300)])
+				})]).optional(),
+				"history": union([_undefined(), object({
+					"datasetId": string(),
+					"barSeconds": union([literal(60), literal(300)]),
+					"timeMeaning": union([literal("open"), literal("close")]),
+					"refresh": boolean(),
+					"columns": object({
+						"time": string(),
+						"symbol": string(),
+						"open": string(),
+						"high": string(),
+						"low": string(),
+						"close": string()
+					})
+				})]).optional(),
+				"rangeRules": union([_undefined(), object({
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"minWidthTicks": number(),
+					"minTouches": number(),
+					"edgeFraction": number(),
+					"reboundTicks": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number()
+				})]).optional()
+			})
+		}));
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_parameter_0$schema = object({
+			"config": object({
+				"symbol": string(),
+				"volume": number(),
+				"intervalSeconds": number(),
+				"decisionIntervalSeconds": number().optional(),
+				"openingCooldownSeconds": number().optional(),
+				"decisionMode": union([
+					_undefined(),
+					literal("jev"),
+					literal("strict")
+				]).optional(),
+				"durationMinutes": number(),
+				"minConfidence": number(),
+				"maxEquityDrop": number(),
+				"maxPlans": number(),
+				"instructions": string(),
+				"strategyName": union([_undefined(), string()]).optional(),
+				"actionCriteria": union([_undefined(), object({
+					"hold": union([_undefined(), string()]).optional(),
+					"open_long": union([_undefined(), string()]).optional(),
+					"open_short": union([_undefined(), string()]).optional(),
+					"close_long": union([_undefined(), string()]).optional(),
+					"close_short": union([_undefined(), string()]).optional()
+				})]).optional(),
+				"referenceMaterial": union([_undefined(), string()]).optional(),
+				"allowedSide": union([
+					_undefined(),
+					literal("both"),
+					literal("long_only"),
+					literal("short_only")
+				]).optional(),
+				"minSamples": union([_undefined(), number()]).optional(),
+				"maxSpread": union([_undefined(), number()]).optional(),
+				"builtInTemplate": union([
+					_undefined(),
+					literal("rb-range"),
+					literal("range"),
+					literal("trend"),
+					literal("breakout")
+				]).optional(),
+				"customStrategy": union([
+					_undefined(),
+					literal(false),
+					literal(true)
+				]).optional(),
+				"instrument": union([_undefined(), object({
+					"product": string(),
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"tickSize": number()
+				})]).optional(),
+				"signalRules": union([_undefined(), object({
+					"kind": union([literal("trend"), literal("breakout")]),
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number(),
+					"fastBars": number(),
+					"slowBars": number(),
+					"pullbackTicks": number(),
+					"reboundTicks": number(),
+					"bufferTicks": number(),
+					"maxChaseTicks": number()
+				})]).optional(),
+				"autoHistory": union([_undefined(), object({
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"barSeconds": union([literal(60), literal(300)])
+				})]).optional(),
+				"history": union([_undefined(), object({
+					"datasetId": string(),
+					"barSeconds": union([literal(60), literal(300)]),
+					"timeMeaning": union([literal("open"), literal("close")]),
+					"refresh": boolean(),
+					"columns": object({
+						"time": string(),
+						"symbol": string(),
+						"open": string(),
+						"high": string(),
+						"low": string(),
+						"close": string()
+					})
+				})]).optional(),
+				"rangeRules": union([_undefined(), object({
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"minWidthTicks": number(),
+					"minTouches": number(),
+					"edgeFraction": number(),
+					"reboundTicks": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number()
+				})]).optional()
+			}),
+			"confirmed": boolean()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_result$schema = object({
+			"running": boolean(),
+			"message": string(),
+			"strategyNotices": array(string()).optional(),
+			"phase": union([
+				literal("checking"),
+				literal("sampling"),
+				literal("waiting_quote"),
+				literal("deciding"),
+				literal("waiting_plan")
+			]).optional(),
+			"lastQuoteCheckedAt": number().optional(),
+			"nextDecisionAt": number().optional(),
+			"openingCooldownUntil": number().optional(),
+			"nextRetryAt": number().optional(),
+			"accountCheckedAt": number().optional(),
+			"samples": array(object({
+				"time": number(),
+				"price": number(),
+				"bid": number().optional(),
+				"ask": number().optional()
+			})).optional(),
+			"analyses": array(object({
+				"id": string(),
+				"startedAt": number(),
+				"responseAt": number().optional(),
+				"finishedAt": number().optional(),
+				"sampleCount": number(),
+				"fromTime": number(),
+				"toTime": number(),
+				"price": number(),
+				"allowedActions": array(union([
+					literal("hold"),
+					literal("open_long"),
+					literal("open_short"),
+					literal("close_long"),
+					literal("close_short")
+				])),
+				"decision": object({
+					"action": union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					]),
+					"confidence": number(),
+					"probabilities": record(string(), number()),
+					"model": string(),
+					"time": number(),
+					"usage": object({
+						"input_tokens": number(),
+						"output_tokens": number()
+					}).optional(),
+					"assessments": object({
+						"regime": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"fit": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"blocker": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						})
+					}).optional()
+				}).optional(),
+				"outcome": string(),
+				"planId": string().optional(),
+				"strategyName": string().optional(),
+				"strategyVersion": string().optional(),
+				"evidence": object({
+					"evaluatedAt": number(),
+					"decisionMode": union([literal("jev"), literal("strict")]).optional(),
+					"history": object({
+						"source": string(),
+						"barSeconds": number(),
+						"count": number(),
+						"from": number().optional(),
+						"to": number().optional(),
+						"fetchedAt": number().optional(),
+						"issue": string().optional(),
+						"warning": string().optional(),
+						"diagnostic": object({
+							"stage": string(),
+							"code": string(),
+							"retryable": boolean()
+						}).optional()
+					}),
+					"features": object({
+						"quoteWindowSeconds": number(),
+						"quoteCount": number(),
+						"lower": union([literal(null), number()]),
+						"upper": union([literal(null), number()]),
+						"widthTicks": union([literal(null), number()]),
+						"lowerTouches": number(),
+						"upperTouches": number(),
+						"location": union([literal(null), number()]),
+						"reboundTicks": union([literal(null), number()]),
+						"pullbackTicks": union([literal(null), number()]),
+						"spreadTicks": union([literal(null), number()]),
+						"longRewardCostRatio": union([literal(null), number()]),
+						"shortRewardCostRatio": union([literal(null), number()])
+					}),
+					"checks": array(object({
+						"id": string(),
+						"label": string(),
+						"state": union([
+							literal("unknown"),
+							literal("pass"),
+							literal("fail")
+						]),
+						"detail": string(),
+						"actions": array(union([
+							literal("hold"),
+							literal("open_long"),
+							literal("open_short"),
+							literal("close_long"),
+							literal("close_short")
+						])),
+						"enforcement": union([literal("hard"), literal("reference")]).optional(),
+						"facts": record(string(), union([
+							literal(null),
+							string(),
+							number(),
+							literal(false),
+							literal(true)
+						])).optional()
+					})),
+					"allowedActions": array(union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					]))
+				}).optional(),
+				"planStatus": union([
+					literal("blocked"),
+					literal("prepared"),
+					literal("hold"),
+					literal("restricted"),
+					literal("candidate")
+				]).optional(),
+				"reviewNotes": array(string()).optional()
+			})).optional(),
+			"config": object({
+				"symbol": string(),
+				"volume": number(),
+				"intervalSeconds": number(),
+				"decisionIntervalSeconds": number().optional(),
+				"openingCooldownSeconds": number().optional(),
+				"decisionMode": union([
+					_undefined(),
+					literal("jev"),
+					literal("strict")
+				]).optional(),
+				"durationMinutes": number(),
+				"minConfidence": number(),
+				"maxEquityDrop": number(),
+				"maxPlans": number(),
+				"instructions": string(),
+				"strategyName": union([_undefined(), string()]).optional(),
+				"actionCriteria": union([_undefined(), object({
+					"hold": union([_undefined(), string()]).optional(),
+					"open_long": union([_undefined(), string()]).optional(),
+					"open_short": union([_undefined(), string()]).optional(),
+					"close_long": union([_undefined(), string()]).optional(),
+					"close_short": union([_undefined(), string()]).optional()
+				})]).optional(),
+				"referenceMaterial": union([_undefined(), string()]).optional(),
+				"allowedSide": union([
+					_undefined(),
+					literal("both"),
+					literal("long_only"),
+					literal("short_only")
+				]).optional(),
+				"minSamples": union([_undefined(), number()]).optional(),
+				"maxSpread": union([_undefined(), number()]).optional(),
+				"builtInTemplate": union([
+					_undefined(),
+					literal("rb-range"),
+					literal("range"),
+					literal("trend"),
+					literal("breakout")
+				]).optional(),
+				"customStrategy": union([
+					_undefined(),
+					literal(false),
+					literal(true)
+				]).optional(),
+				"instrument": union([_undefined(), object({
+					"product": string(),
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"tickSize": number()
+				})]).optional(),
+				"signalRules": union([_undefined(), object({
+					"kind": union([literal("trend"), literal("breakout")]),
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number(),
+					"fastBars": number(),
+					"slowBars": number(),
+					"pullbackTicks": number(),
+					"reboundTicks": number(),
+					"bufferTicks": number(),
+					"maxChaseTicks": number()
+				})]).optional(),
+				"autoHistory": union([_undefined(), object({
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"barSeconds": union([literal(60), literal(300)])
+				})]).optional(),
+				"history": union([_undefined(), object({
+					"datasetId": string(),
+					"barSeconds": union([literal(60), literal(300)]),
+					"timeMeaning": union([literal("open"), literal("close")]),
+					"refresh": boolean(),
+					"columns": object({
+						"time": string(),
+						"symbol": string(),
+						"open": string(),
+						"high": string(),
+						"low": string(),
+						"close": string()
+					})
+				})]).optional(),
+				"rangeRules": union([_undefined(), object({
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"minWidthTicks": number(),
+					"minTouches": number(),
+					"edgeFraction": number(),
+					"reboundTicks": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number()
+				})]).optional()
+			}).optional(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}).optional(),
+			"runId": string().optional(),
+			"startedAt": number().optional(),
+			"expiresAt": number().optional(),
+			"equityBaseline": number().optional(),
+			"sampleCount": number(),
+			"planCount": number(),
+			"openingPlanCount": number().optional(),
+			"lastPlanId": string().optional(),
+			"lastDecision": object({
+				"action": union([
+					literal("hold"),
+					literal("open_long"),
+					literal("open_short"),
+					literal("close_long"),
+					literal("close_short")
+				]),
+				"confidence": number(),
+				"probabilities": record(string(), number()),
+				"model": string(),
+				"time": number(),
+				"usage": object({
+					"input_tokens": number(),
+					"output_tokens": number()
+				}).optional(),
+				"assessments": object({
+					"regime": object({
+						"choice": string(),
+						"confidence": number(),
+						"probabilities": record(string(), number())
+					}),
+					"fit": object({
+						"choice": string(),
+						"confidence": number(),
+						"probabilities": record(string(), number())
+					}),
+					"blocker": object({
+						"choice": string(),
+						"confidence": number(),
+						"probabilities": record(string(), number())
+					})
+				}).optional()
+			}).optional(),
+			"events": array(object({
+				"time": number(),
+				"message": string()
+			}))
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatus_result$schema = object({
+			"running": boolean(),
+			"message": string(),
+			"strategyNotices": array(string()).optional(),
+			"phase": union([
+				literal("checking"),
+				literal("sampling"),
+				literal("waiting_quote"),
+				literal("deciding"),
+				literal("waiting_plan")
+			]).optional(),
+			"lastQuoteCheckedAt": number().optional(),
+			"nextDecisionAt": number().optional(),
+			"openingCooldownUntil": number().optional(),
+			"nextRetryAt": number().optional(),
+			"accountCheckedAt": number().optional(),
+			"samples": array(object({
+				"time": number(),
+				"price": number(),
+				"bid": number().optional(),
+				"ask": number().optional()
+			})).optional(),
+			"analyses": array(object({
+				"id": string(),
+				"startedAt": number(),
+				"responseAt": number().optional(),
+				"finishedAt": number().optional(),
+				"sampleCount": number(),
+				"fromTime": number(),
+				"toTime": number(),
+				"price": number(),
+				"allowedActions": array(union([
+					literal("hold"),
+					literal("open_long"),
+					literal("open_short"),
+					literal("close_long"),
+					literal("close_short")
+				])),
+				"decision": object({
+					"action": union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					]),
+					"confidence": number(),
+					"probabilities": record(string(), number()),
+					"model": string(),
+					"time": number(),
+					"usage": object({
+						"input_tokens": number(),
+						"output_tokens": number()
+					}).optional(),
+					"assessments": object({
+						"regime": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"fit": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"blocker": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						})
+					}).optional()
+				}).optional(),
+				"outcome": string(),
+				"planId": string().optional(),
+				"strategyName": string().optional(),
+				"strategyVersion": string().optional(),
+				"evidence": object({
+					"evaluatedAt": number(),
+					"decisionMode": union([literal("jev"), literal("strict")]).optional(),
+					"history": object({
+						"source": string(),
+						"barSeconds": number(),
+						"count": number(),
+						"from": number().optional(),
+						"to": number().optional(),
+						"fetchedAt": number().optional(),
+						"issue": string().optional(),
+						"warning": string().optional(),
+						"diagnostic": object({
+							"stage": string(),
+							"code": string(),
+							"retryable": boolean()
+						}).optional()
+					}),
+					"features": object({
+						"quoteWindowSeconds": number(),
+						"quoteCount": number(),
+						"lower": union([literal(null), number()]),
+						"upper": union([literal(null), number()]),
+						"widthTicks": union([literal(null), number()]),
+						"lowerTouches": number(),
+						"upperTouches": number(),
+						"location": union([literal(null), number()]),
+						"reboundTicks": union([literal(null), number()]),
+						"pullbackTicks": union([literal(null), number()]),
+						"spreadTicks": union([literal(null), number()]),
+						"longRewardCostRatio": union([literal(null), number()]),
+						"shortRewardCostRatio": union([literal(null), number()])
+					}),
+					"checks": array(object({
+						"id": string(),
+						"label": string(),
+						"state": union([
+							literal("unknown"),
+							literal("pass"),
+							literal("fail")
+						]),
+						"detail": string(),
+						"actions": array(union([
+							literal("hold"),
+							literal("open_long"),
+							literal("open_short"),
+							literal("close_long"),
+							literal("close_short")
+						])),
+						"enforcement": union([literal("hard"), literal("reference")]).optional(),
+						"facts": record(string(), union([
+							literal(null),
+							string(),
+							number(),
+							literal(false),
+							literal(true)
+						])).optional()
+					})),
+					"allowedActions": array(union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					]))
+				}).optional(),
+				"planStatus": union([
+					literal("blocked"),
+					literal("prepared"),
+					literal("hold"),
+					literal("restricted"),
+					literal("candidate")
+				]).optional(),
+				"reviewNotes": array(string()).optional()
+			})).optional(),
+			"config": object({
+				"symbol": string(),
+				"volume": number(),
+				"intervalSeconds": number(),
+				"decisionIntervalSeconds": number().optional(),
+				"openingCooldownSeconds": number().optional(),
+				"decisionMode": union([
+					_undefined(),
+					literal("jev"),
+					literal("strict")
+				]).optional(),
+				"durationMinutes": number(),
+				"minConfidence": number(),
+				"maxEquityDrop": number(),
+				"maxPlans": number(),
+				"instructions": string(),
+				"strategyName": union([_undefined(), string()]).optional(),
+				"actionCriteria": union([_undefined(), object({
+					"hold": union([_undefined(), string()]).optional(),
+					"open_long": union([_undefined(), string()]).optional(),
+					"open_short": union([_undefined(), string()]).optional(),
+					"close_long": union([_undefined(), string()]).optional(),
+					"close_short": union([_undefined(), string()]).optional()
+				})]).optional(),
+				"referenceMaterial": union([_undefined(), string()]).optional(),
+				"allowedSide": union([
+					_undefined(),
+					literal("both"),
+					literal("long_only"),
+					literal("short_only")
+				]).optional(),
+				"minSamples": union([_undefined(), number()]).optional(),
+				"maxSpread": union([_undefined(), number()]).optional(),
+				"builtInTemplate": union([
+					_undefined(),
+					literal("rb-range"),
+					literal("range"),
+					literal("trend"),
+					literal("breakout")
+				]).optional(),
+				"customStrategy": union([
+					_undefined(),
+					literal(false),
+					literal(true)
+				]).optional(),
+				"instrument": union([_undefined(), object({
+					"product": string(),
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"tickSize": number()
+				})]).optional(),
+				"signalRules": union([_undefined(), object({
+					"kind": union([literal("trend"), literal("breakout")]),
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number(),
+					"fastBars": number(),
+					"slowBars": number(),
+					"pullbackTicks": number(),
+					"reboundTicks": number(),
+					"bufferTicks": number(),
+					"maxChaseTicks": number()
+				})]).optional(),
+				"autoHistory": union([_undefined(), object({
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"barSeconds": union([literal(60), literal(300)])
+				})]).optional(),
+				"history": union([_undefined(), object({
+					"datasetId": string(),
+					"barSeconds": union([literal(60), literal(300)]),
+					"timeMeaning": union([literal("open"), literal("close")]),
+					"refresh": boolean(),
+					"columns": object({
+						"time": string(),
+						"symbol": string(),
+						"open": string(),
+						"high": string(),
+						"low": string(),
+						"close": string()
+					})
+				})]).optional(),
+				"rangeRules": union([_undefined(), object({
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"minWidthTicks": number(),
+					"minTouches": number(),
+					"edgeFraction": number(),
+					"reboundTicks": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number()
+				})]).optional()
+			}).optional(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}).optional(),
+			"runId": string().optional(),
+			"startedAt": number().optional(),
+			"expiresAt": number().optional(),
+			"equityBaseline": number().optional(),
+			"sampleCount": number(),
+			"planCount": number(),
+			"openingPlanCount": number().optional(),
+			"lastPlanId": string().optional(),
+			"lastDecision": object({
+				"action": union([
+					literal("hold"),
+					literal("open_long"),
+					literal("open_short"),
+					literal("close_long"),
+					literal("close_short")
+				]),
+				"confidence": number(),
+				"probabilities": record(string(), number()),
+				"model": string(),
+				"time": number(),
+				"usage": object({
+					"input_tokens": number(),
+					"output_tokens": number()
+				}).optional(),
+				"assessments": object({
+					"regime": object({
+						"choice": string(),
+						"confidence": number(),
+						"probabilities": record(string(), number())
+					}),
+					"fit": object({
+						"choice": string(),
+						"confidence": number(),
+						"probabilities": record(string(), number())
+					}),
+					"blocker": object({
+						"choice": string(),
+						"confidence": number(),
+						"probabilities": record(string(), number())
+					})
+				}).optional()
+			}).optional(),
+			"events": array(object({
+				"time": number(),
+				"message": string()
+			}))
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_result$schema = object({
+			"running": boolean(),
+			"message": string(),
+			"strategyNotices": array(string()).optional(),
+			"phase": union([
+				literal("checking"),
+				literal("sampling"),
+				literal("waiting_quote"),
+				literal("deciding"),
+				literal("waiting_plan")
+			]).optional(),
+			"lastQuoteCheckedAt": number().optional(),
+			"nextDecisionAt": number().optional(),
+			"openingCooldownUntil": number().optional(),
+			"nextRetryAt": number().optional(),
+			"accountCheckedAt": number().optional(),
+			"samples": array(object({
+				"time": number(),
+				"price": number(),
+				"bid": number().optional(),
+				"ask": number().optional()
+			})).optional(),
+			"analyses": array(object({
+				"id": string(),
+				"startedAt": number(),
+				"responseAt": number().optional(),
+				"finishedAt": number().optional(),
+				"sampleCount": number(),
+				"fromTime": number(),
+				"toTime": number(),
+				"price": number(),
+				"allowedActions": array(union([
+					literal("hold"),
+					literal("open_long"),
+					literal("open_short"),
+					literal("close_long"),
+					literal("close_short")
+				])),
+				"decision": object({
+					"action": union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					]),
+					"confidence": number(),
+					"probabilities": record(string(), number()),
+					"model": string(),
+					"time": number(),
+					"usage": object({
+						"input_tokens": number(),
+						"output_tokens": number()
+					}).optional(),
+					"assessments": object({
+						"regime": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"fit": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"blocker": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						})
+					}).optional()
+				}).optional(),
+				"outcome": string(),
+				"planId": string().optional(),
+				"strategyName": string().optional(),
+				"strategyVersion": string().optional(),
+				"evidence": object({
+					"evaluatedAt": number(),
+					"decisionMode": union([literal("jev"), literal("strict")]).optional(),
+					"history": object({
+						"source": string(),
+						"barSeconds": number(),
+						"count": number(),
+						"from": number().optional(),
+						"to": number().optional(),
+						"fetchedAt": number().optional(),
+						"issue": string().optional(),
+						"warning": string().optional(),
+						"diagnostic": object({
+							"stage": string(),
+							"code": string(),
+							"retryable": boolean()
+						}).optional()
+					}),
+					"features": object({
+						"quoteWindowSeconds": number(),
+						"quoteCount": number(),
+						"lower": union([literal(null), number()]),
+						"upper": union([literal(null), number()]),
+						"widthTicks": union([literal(null), number()]),
+						"lowerTouches": number(),
+						"upperTouches": number(),
+						"location": union([literal(null), number()]),
+						"reboundTicks": union([literal(null), number()]),
+						"pullbackTicks": union([literal(null), number()]),
+						"spreadTicks": union([literal(null), number()]),
+						"longRewardCostRatio": union([literal(null), number()]),
+						"shortRewardCostRatio": union([literal(null), number()])
+					}),
+					"checks": array(object({
+						"id": string(),
+						"label": string(),
+						"state": union([
+							literal("unknown"),
+							literal("pass"),
+							literal("fail")
+						]),
+						"detail": string(),
+						"actions": array(union([
+							literal("hold"),
+							literal("open_long"),
+							literal("open_short"),
+							literal("close_long"),
+							literal("close_short")
+						])),
+						"enforcement": union([literal("hard"), literal("reference")]).optional(),
+						"facts": record(string(), union([
+							literal(null),
+							string(),
+							number(),
+							literal(false),
+							literal(true)
+						])).optional()
+					})),
+					"allowedActions": array(union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					]))
+				}).optional(),
+				"planStatus": union([
+					literal("blocked"),
+					literal("prepared"),
+					literal("hold"),
+					literal("restricted"),
+					literal("candidate")
+				]).optional(),
+				"reviewNotes": array(string()).optional()
+			})).optional(),
+			"config": object({
+				"symbol": string(),
+				"volume": number(),
+				"intervalSeconds": number(),
+				"decisionIntervalSeconds": number().optional(),
+				"openingCooldownSeconds": number().optional(),
+				"decisionMode": union([
+					_undefined(),
+					literal("jev"),
+					literal("strict")
+				]).optional(),
+				"durationMinutes": number(),
+				"minConfidence": number(),
+				"maxEquityDrop": number(),
+				"maxPlans": number(),
+				"instructions": string(),
+				"strategyName": union([_undefined(), string()]).optional(),
+				"actionCriteria": union([_undefined(), object({
+					"hold": union([_undefined(), string()]).optional(),
+					"open_long": union([_undefined(), string()]).optional(),
+					"open_short": union([_undefined(), string()]).optional(),
+					"close_long": union([_undefined(), string()]).optional(),
+					"close_short": union([_undefined(), string()]).optional()
+				})]).optional(),
+				"referenceMaterial": union([_undefined(), string()]).optional(),
+				"allowedSide": union([
+					_undefined(),
+					literal("both"),
+					literal("long_only"),
+					literal("short_only")
+				]).optional(),
+				"minSamples": union([_undefined(), number()]).optional(),
+				"maxSpread": union([_undefined(), number()]).optional(),
+				"builtInTemplate": union([
+					_undefined(),
+					literal("rb-range"),
+					literal("range"),
+					literal("trend"),
+					literal("breakout")
+				]).optional(),
+				"customStrategy": union([
+					_undefined(),
+					literal(false),
+					literal(true)
+				]).optional(),
+				"instrument": union([_undefined(), object({
+					"product": string(),
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"tickSize": number()
+				})]).optional(),
+				"signalRules": union([_undefined(), object({
+					"kind": union([literal("trend"), literal("breakout")]),
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number(),
+					"fastBars": number(),
+					"slowBars": number(),
+					"pullbackTicks": number(),
+					"reboundTicks": number(),
+					"bufferTicks": number(),
+					"maxChaseTicks": number()
+				})]).optional(),
+				"autoHistory": union([_undefined(), object({
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"barSeconds": union([literal(60), literal(300)])
+				})]).optional(),
+				"history": union([_undefined(), object({
+					"datasetId": string(),
+					"barSeconds": union([literal(60), literal(300)]),
+					"timeMeaning": union([literal("open"), literal("close")]),
+					"refresh": boolean(),
+					"columns": object({
+						"time": string(),
+						"symbol": string(),
+						"open": string(),
+						"high": string(),
+						"low": string(),
+						"close": string()
+					})
+				})]).optional(),
+				"rangeRules": union([_undefined(), object({
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"minWidthTicks": number(),
+					"minTouches": number(),
+					"edgeFraction": number(),
+					"reboundTicks": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number()
+				})]).optional()
+			}).optional(),
+			"identity": object({
+				"accountId": string().readonly(),
+				"contestId": string().readonly()
+			}).optional(),
+			"runId": string().optional(),
+			"startedAt": number().optional(),
+			"expiresAt": number().optional(),
+			"equityBaseline": number().optional(),
+			"sampleCount": number(),
+			"planCount": number(),
+			"openingPlanCount": number().optional(),
+			"lastPlanId": string().optional(),
+			"lastDecision": object({
+				"action": union([
+					literal("hold"),
+					literal("open_long"),
+					literal("open_short"),
+					literal("close_long"),
+					literal("close_short")
+				]),
+				"confidence": number(),
+				"probabilities": record(string(), number()),
+				"model": string(),
+				"time": number(),
+				"usage": object({
+					"input_tokens": number(),
+					"output_tokens": number()
+				}).optional(),
+				"assessments": object({
+					"regime": object({
+						"choice": string(),
+						"confidence": number(),
+						"probabilities": record(string(), number())
+					}),
+					"fit": object({
+						"choice": string(),
+						"confidence": number(),
+						"probabilities": record(string(), number())
+					}),
+					"blocker": object({
+						"choice": string(),
+						"confidence": number(),
+						"probabilities": record(string(), number())
+					})
+				}).optional()
+			}).optional(),
+			"events": array(object({
+				"time": number(),
+				"message": string()
+			}))
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchTemplates_result$schema = array(object({
+			"name": string(),
+			"config": object({
+				"symbol": string(),
+				"volume": number(),
+				"intervalSeconds": number(),
+				"decisionIntervalSeconds": number().optional(),
+				"openingCooldownSeconds": number().optional(),
+				"decisionMode": union([
+					_undefined(),
+					literal("jev"),
+					literal("strict")
+				]).optional(),
+				"durationMinutes": number(),
+				"minConfidence": number(),
+				"maxEquityDrop": number(),
+				"maxPlans": number(),
+				"instructions": string(),
+				"strategyName": union([_undefined(), string()]).optional(),
+				"actionCriteria": union([_undefined(), object({
+					"hold": union([_undefined(), string()]).optional(),
+					"open_long": union([_undefined(), string()]).optional(),
+					"open_short": union([_undefined(), string()]).optional(),
+					"close_long": union([_undefined(), string()]).optional(),
+					"close_short": union([_undefined(), string()]).optional()
+				})]).optional(),
+				"referenceMaterial": union([_undefined(), string()]).optional(),
+				"allowedSide": union([
+					_undefined(),
+					literal("both"),
+					literal("long_only"),
+					literal("short_only")
+				]).optional(),
+				"minSamples": union([_undefined(), number()]).optional(),
+				"maxSpread": union([_undefined(), number()]).optional(),
+				"builtInTemplate": union([
+					_undefined(),
+					literal("rb-range"),
+					literal("range"),
+					literal("trend"),
+					literal("breakout")
+				]).optional(),
+				"customStrategy": union([
+					_undefined(),
+					literal(false),
+					literal(true)
+				]).optional(),
+				"instrument": union([_undefined(), object({
+					"product": string(),
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"tickSize": number()
+				})]).optional(),
+				"signalRules": union([_undefined(), object({
+					"kind": union([literal("trend"), literal("breakout")]),
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number(),
+					"fastBars": number(),
+					"slowBars": number(),
+					"pullbackTicks": number(),
+					"reboundTicks": number(),
+					"bufferTicks": number(),
+					"maxChaseTicks": number()
+				})]).optional(),
+				"autoHistory": union([_undefined(), object({
+					"exchange": union([
+						literal("SHF"),
+						literal("DCE"),
+						literal("CZC"),
+						literal("CFE"),
+						literal("INE"),
+						literal("GFE")
+					]),
+					"barSeconds": union([literal(60), literal(300)])
+				})]).optional(),
+				"history": union([_undefined(), object({
+					"datasetId": string(),
+					"barSeconds": union([literal(60), literal(300)]),
+					"timeMeaning": union([literal("open"), literal("close")]),
+					"refresh": boolean(),
+					"columns": object({
+						"time": string(),
+						"symbol": string(),
+						"open": string(),
+						"high": string(),
+						"low": string(),
+						"close": string()
+					})
+				})]).optional(),
+				"rangeRules": union([_undefined(), object({
+					"lookbackBars": number(),
+					"tickSize": number(),
+					"minWidthTicks": number(),
+					"minTouches": number(),
+					"edgeFraction": number(),
+					"reboundTicks": number(),
+					"roundTripCostTicks": number(),
+					"minRewardCostRatio": number(),
+					"stopLossTicks": number(),
+					"takeProfitTicks": number()
+				})]).optional()
+			})
+		}));
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_create_parameter_0$schema = object({
 			"sessionId": intersection(string(), unknown()).readonly(),
 			"versionId": intersection(string(), unknown()).readonly(),
@@ -8856,7 +10334,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1730,
+						"line": 1780,
 						"column": 9
 					}
 				},
@@ -8883,7 +10361,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1832,
+						"line": 1882,
 						"column": 9
 					}
 				},
@@ -8901,7 +10379,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1718,
+						"line": 1768,
 						"column": 9
 					}
 				},
@@ -8919,7 +10397,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1706,
+						"line": 1756,
 						"column": 3
 					}
 				},
@@ -8947,7 +10425,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1871,
+						"line": 1921,
 						"column": 9
 					}
 				},
@@ -8975,7 +10453,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2119,
+						"line": 2169,
 						"column": 9
 					}
 				},
@@ -9002,7 +10480,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2141,
+						"line": 2191,
 						"column": 9
 					}
 				},
@@ -9029,7 +10507,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2193,
+						"line": 2243,
 						"column": 9
 					}
 				},
@@ -9047,7 +10525,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2131,
+						"line": 2181,
 						"column": 3
 					}
 				},
@@ -9075,7 +10553,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2211,
+						"line": 2261,
 						"column": 9
 					}
 				},
@@ -9103,7 +10581,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2290,
+						"line": 2340,
 						"column": 9
 					}
 				},
@@ -9130,7 +10608,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2163,
+						"line": 2213,
 						"column": 9
 					}
 				},
@@ -9157,7 +10635,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1848,
+						"line": 1898,
 						"column": 9
 					}
 				},
@@ -9185,7 +10663,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1788,
+						"line": 1838,
 						"column": 9
 					}
 				},
@@ -9213,7 +10691,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1899,
+						"line": 1949,
 						"column": 3
 					}
 				},
@@ -9241,7 +10719,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1885,
+						"line": 1935,
 						"column": 9
 					}
 				},
@@ -9259,7 +10737,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1260,
+						"line": 1274,
 						"column": 3
 					}
 				},
@@ -9277,7 +10755,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1254,
+						"line": 1265,
 						"column": 3
 					}
 				},
@@ -9295,8 +10773,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1257,
-						"column": 3
+						"line": 1268,
+						"column": 9
 					}
 				},
 				{
@@ -9322,7 +10800,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1315,
+						"line": 1365,
 						"column": 3
 					}
 				},
@@ -9349,7 +10827,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1310,
+						"line": 1360,
 						"column": 3
 					}
 				},
@@ -9377,8 +10855,71 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1270,
+						"line": 1320,
 						"column": 9
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestJevConfigure",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "contestJevConfigure",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestJevConfigure:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevConfigure_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#ContestJevSettings",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevConfigure_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1304,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestJevSettings",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "contestJevSettings",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#ContestJevSettings",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevSettings_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1286,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestJevUsage",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "contestJevUsage",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#ContestJevUsage",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevUsage_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1289,
+						"column": 3
 					}
 				},
 				{
@@ -9404,8 +10945,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1251,
-						"column": 3
+						"line": 1259,
+						"column": 9
 					}
 				},
 				{
@@ -9432,7 +10973,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1266,
+						"line": 1316,
 						"column": 3
 					}
 				},
@@ -9459,7 +11000,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1320,
+						"line": 1370,
 						"column": 3
 					}
 				},
@@ -9487,7 +11028,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1279,
+						"line": 1329,
 						"column": 3
 					}
 				},
@@ -9514,7 +11055,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1247,
+						"line": 1255,
 						"column": 3
 					}
 				},
@@ -9532,7 +11073,160 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1263,
+						"line": 1277,
+						"column": 9
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchDatasets",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "contestWatchDatasets",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchDatasets:result",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchDatasets_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1298,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchPrepareHistory",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "contestWatchPrepareHistory",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchPrepareHistory:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchPrepareHistory_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchPrepareHistory:result",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchPrepareHistory_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1301,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchSaveTemplate",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "contestWatchSaveTemplate",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#ContestWatchTemplate",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchSaveTemplate:result",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1295,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchStart",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "contestWatchStart",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchStart:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#ContestWatchStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1307,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchStatus",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "contestWatchStatus",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#ContestWatchStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatus_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1283,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchStop",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "contestWatchStop",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#ContestWatchStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1313,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchTemplates",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "contestWatchTemplates",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchTemplates:result",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchTemplates_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1292,
 						"column": 3
 					}
 				},
@@ -9560,7 +11254,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1452,
+						"line": 1502,
 						"column": 9
 					}
 				},
@@ -9578,7 +11272,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1186,
+						"line": 1194,
 						"column": 3
 					}
 				},
@@ -9605,7 +11299,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1214,
+						"line": 1222,
 						"column": 3
 					}
 				},
@@ -9632,7 +11326,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1180,
+						"line": 1188,
 						"column": 3
 					}
 				},
@@ -9650,7 +11344,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1183,
+						"line": 1191,
 						"column": 3
 					}
 				},
@@ -9677,7 +11371,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1217,
+						"line": 1225,
 						"column": 3
 					}
 				},
@@ -9705,7 +11399,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1192,
+						"line": 1200,
 						"column": 9
 					}
 				},
@@ -9732,7 +11426,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1177,
+						"line": 1185,
 						"column": 3
 					}
 				},
@@ -9759,7 +11453,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1208,
+						"line": 1216,
 						"column": 9
 					}
 				},
@@ -9787,7 +11481,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1205,
+						"line": 1213,
 						"column": 9
 					}
 				},
@@ -9814,7 +11508,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1226,
+						"line": 1234,
 						"column": 3
 					}
 				},
@@ -9841,7 +11535,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1223,
+						"line": 1231,
 						"column": 3
 					}
 				},
@@ -9869,7 +11563,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1229,
+						"line": 1237,
 						"column": 3
 					}
 				},
@@ -9896,7 +11590,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1174,
+						"line": 1182,
 						"column": 3
 					}
 				},
@@ -9923,7 +11617,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1220,
+						"line": 1228,
 						"column": 3
 					}
 				},
@@ -9941,7 +11635,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1189,
+						"line": 1197,
 						"column": 3
 					}
 				},
@@ -9969,7 +11663,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2306,
+						"line": 2356,
 						"column": 9
 					}
 				},
@@ -9997,7 +11691,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2340,
+						"line": 2390,
 						"column": 9
 					}
 				},
@@ -10025,7 +11719,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2358,
+						"line": 2408,
 						"column": 9
 					}
 				},
@@ -10053,7 +11747,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1559,
+						"line": 1609,
 						"column": 9
 					}
 				},
@@ -10081,7 +11775,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1530,
+						"line": 1580,
 						"column": 9
 					}
 				},
@@ -10108,7 +11802,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 919,
+						"line": 924,
 						"column": 9
 					}
 				},
@@ -10136,7 +11830,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1373,
+						"line": 1423,
 						"column": 9
 					}
 				},
@@ -10164,7 +11858,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1545,
+						"line": 1595,
 						"column": 9
 					}
 				},
@@ -10192,7 +11886,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1665,
+						"line": 1715,
 						"column": 9
 					}
 				},
@@ -10220,7 +11914,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1681,
+						"line": 1731,
 						"column": 9
 					}
 				},
@@ -10248,7 +11942,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1594,
+						"line": 1644,
 						"column": 9
 					}
 				},
@@ -10275,7 +11969,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1638,
+						"line": 1688,
 						"column": 3
 					}
 				},
@@ -10303,7 +11997,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2420,
+						"line": 2470,
 						"column": 9
 					}
 				},
@@ -10331,7 +12025,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2375,
+						"line": 2425,
 						"column": 3
 					}
 				},
@@ -10359,7 +12053,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2439,
+						"line": 2489,
 						"column": 9
 					}
 				},
@@ -10387,7 +12081,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1331,
+						"line": 1381,
 						"column": 9
 					}
 				},
@@ -10414,7 +12108,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1168,
+						"line": 1176,
 						"column": 3
 					}
 				},
@@ -10441,7 +12135,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1158,
+						"line": 1166,
 						"column": 3
 					}
 				}
@@ -10579,7 +12273,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema8)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema8))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"dateColumn": string().optional(),
 			"ttlSeconds": number()
@@ -10603,7 +12298,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema3)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema3))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"kind": union([
 				literal("timeseries"),
@@ -10653,7 +12349,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema4)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema4))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"dateColumn": string().optional(),
 			"ttlSeconds": number()
@@ -10710,7 +12407,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema2)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema2))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"dateColumn": string().optional(),
 			"ttlSeconds": number()
@@ -10749,7 +12447,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"dateColumn": string().optional(),
 			"ttlSeconds": number()
@@ -10790,7 +12489,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						array(lazy(() => JsonValueRemoteCodec$schema6)),
 						record(string(), lazy(() => JsonValueRemoteCodec$schema6))
 					])).optional(),
-					"filename": string().optional()
+					"filename": string().optional(),
+					"rollingDay": boolean().optional()
 				}),
 				"dateColumn": string().optional(),
 				"ttlSeconds": number()
@@ -10857,7 +12557,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 						array(lazy(() => JsonValueRemoteCodec$schema5)),
 						record(string(), lazy(() => JsonValueRemoteCodec$schema5))
 					])).optional(),
-					"filename": string().optional()
+					"filename": string().optional(),
+					"rollingDay": boolean().optional()
 				}),
 				"dateColumn": string().optional(),
 				"ttlSeconds": number()
@@ -10915,7 +12616,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					array(lazy(() => JsonValueRemoteCodec$schema7)),
 					record(string(), lazy(() => JsonValueRemoteCodec$schema7))
 				])).optional(),
-				"filename": string().optional()
+				"filename": string().optional(),
+				"rollingDay": boolean().optional()
 			}),
 			"dateColumn": string().optional(),
 			"ttlSeconds": number()

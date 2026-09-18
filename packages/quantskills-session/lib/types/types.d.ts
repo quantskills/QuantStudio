@@ -4,6 +4,7 @@ import type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types';
 import type { Branded } from '@deepseek-ai/dsh-brand';
 import type { AttachmentId } from '@deepseek-ai/dsh-attachment/types';
 export type { ContestIdentity, ContestStatus, ContestQuery, ContestData, ContestPlan, ContestOrder, ContestPrepareRequest, ContestInspection } from './contest-types.ts';
+export type { ContestWatchDataset, ContestWatchTemplate, ContestWatchEvidence, ContestWatchHistory, ContestWatchBar, ContestJevSettings, ContestJevUsage, ContestJevRequest, ContestWatchConfig, ContestWatchAction, ContestWatchDecision, ContestWatchQuote, ContestWatchAnalysis, ContestWatchStatus } from './contest-watch-types.ts';
 export type { FactorCredentials, FactorBatchRequest, FactorCandidate, FactorPoolAction, FactorPlanAction, FactorPlan, FactorBudget, FactorRun, FactorInspection, FactorContestStatus, FactorQuery } from './factor-contest-types.ts';
 /** QuantSkills catalog asset identity. */
 export type QuantSkillsAssetId = Branded<'QuantSkillsAssetId'>;

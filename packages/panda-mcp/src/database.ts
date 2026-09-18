@@ -6,7 +6,7 @@ import { join } from 'node:path'
 import { DATA_CATEGORIES, inferDataCategory, type DataCategory } from './data-category.ts'
 export type { DataCategory } from './data-category.ts'
 
-export interface DataSource { kind: 'file' | 'http' | 'pandadata'; url?: string; method?: string; params?: Record<string, JsonValue>; filename?: string }
+export interface DataSource { kind: 'file' | 'http' | 'pandadata'; url?: string; method?: string; params?: Record<string, JsonValue>; filename?: string; rollingDay?: boolean }
 export interface DataImport { name: string; format: 'csv' | 'json'; content: string; kind: 'timeseries' | 'table' | 'auto'; category?: DataCategory; dateColumn?: string; ttlSeconds: number }
 export interface DataFetch { name: string; source: DataSource; kind: 'timeseries' | 'table' | 'auto'; category?: DataCategory; dateColumn?: string; ttlSeconds: number }
 export interface DataSummary extends DataFetch { id: string; kind: 'timeseries' | 'table'; category: DataCategory; columns: string[]; rowCount: number; fetchedAt: string; expiresAt: string; from?: string; to?: string; bytes: number }
@@ -62,7 +62,14 @@ export function dataRows(raw: unknown): Record<string, unknown>[] {
   if (raw && typeof raw === 'object') {
     const obj = raw as Record<string, unknown>
     if (obj.error || obj.isError === true || obj.success === false || obj.ok === false || obj.status === 'error') throw new Error('数据源返回错误，未写入缓存')
-    if (Array.isArray(obj.columns) && Array.isArray(obj.data) && obj.data.every(Array.isArray)) return obj.data.map(row => Object.fromEntries((obj.columns as unknown[]).map((c, i) => [String(c), (row as unknown[])[i]])))
+    if (obj.truncated === true) throw new Error('数据源返回被截断的预览，请缩小查询日期范围；未写入缓存')
+    const matrix = obj.rows ?? obj.data
+    if (Array.isArray(obj.columns) && Array.isArray(matrix) && matrix.every(Array.isArray)) {
+      const columns = obj.columns
+      if (!columns.length || columns.some(c => typeof c !== 'string' || !c.trim()) || new Set(columns).size !== columns.length
+        || matrix.some(row => row.length !== columns.length)) throw new Error('表格列名或行列数不一致，未写入缓存')
+      return matrix.map(row => Object.fromEntries(columns.map((c, i) => [c, row[i]])))
+    }
     for (const key of ['data', 'rows', 'records', 'result', 'items']) if (obj[key] !== undefined) return dataRows(obj[key])
   }
   throw new Error('没有识别到表格数据；请检查接口返回格式')
@@ -135,6 +142,13 @@ export class LocalDatabase {
     return /csv/i.test(response.headers.get('content-type') ?? '') || /\.csv$/i.test(url.pathname) ? parseCsv(text) : JSON.parse(text)
   }
   async fetch(input: DataFetch, signal?: AbortSignal, id?: string): Promise<DataSummary> {
+    if (input.source.rollingDay) {
+      if (input.source.kind !== 'pandadata' || input.source.method !== 'get_future_min') throw new Error('随日期更新仅支持 PandaData 期货分钟行情')
+      const day = (offset: number) => new Date(this.now() + 8 * 3600000 + offset * 86400000).toISOString().slice(0, 10).replaceAll('-', '')
+      // Dates select trading-day labels: Friday's night session can belong to Monday.
+      // Future labels include the current night session; consumers still reject future bars.
+      input = { ...input, source: { ...input.source, params: { ...input.source.params, start_date: day(0), end_date: day(3) } } }
+    }
     const raw = await this.sourceData(input.source, signal)
     return summary(await this.save(input, dataRows(raw), id))
   }

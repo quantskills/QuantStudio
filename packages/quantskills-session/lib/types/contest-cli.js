@@ -10,6 +10,7 @@ export class ContestCliError extends Error {
         this.code = code;
     }
 }
+export const transientContestCodes = new Set(['rate_limit_exceeded', 'timeout', 'network_error', 'http_429', 'http_502', 'http_503', 'http_504']);
 export function record(value) {
     return typeof value === 'object' && value !== null && !Array.isArray(value) ? value : {};
 }
