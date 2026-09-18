@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import type { ContestWatchConfig, ContestWatchStatus, ContestWatchTemplate } from './plugin-types.ts'
 import type { ContestAccess } from './contest.ts'
 import { contestTime } from './contest.ts'
@@ -23,6 +23,7 @@ const fields = [
 ] as const
 
 export function ContestWatch({ access, connected = true }: { access: NonNullable<ContestAccess['watch']>; connected?: boolean }) {
+  const [expanded, setExpanded] = useState(true), contentId = useId()
   const [status, setStatus] = useState<ContestWatchStatus>(), [config, setConfig] = useState(initial)
   const [tuning, setTuning] = useState(false), [busy, setBusy] = useState(''), [error, setError] = useState('')
   const [templates, setTemplates] = useState<ContestWatchTemplate[]>([]), [templateName, setTemplateName] = useState(''), [templateMessage, setTemplateMessage] = useState('')
@@ -86,9 +87,12 @@ export function ContestWatch({ access, connected = true }: { access: NonNullable
     : !status ? '正在读取盯盘状态' : status.running ? phases[status.phase ?? 'sampling'] : '盯盘未运行'
   return <section className={`${css.assistant} ${css.watchWorkbench}`} aria-label="Jev 持续盯盘">
     <div className={css.assistantHeading}>
-      <div><span className={css.jevCaption}>JEV / 期货模拟交易</span><h2>Jev 持续盯盘</h2><p>选一个模板即可开始，想调整时再展开微调。每笔交易仍由你确认。</p></div>
+      <div><span className={css.jevCaption}>JEV / 期货模拟交易</span><h2><button type="button" className={css.watchToggle} aria-expanded={expanded} aria-controls={contentId}
+        onClick={() => setExpanded(value => !value)}>Jev 持续盯盘 <span>{expanded ? '▾ 收起' : '▸ 展开'}</span></button></h2>
+        <p>{expanded ? '选一个模板即可开始，想调整时再展开微调。每笔交易仍由你确认。' : label}</p></div>
       {(status?.running || busy === 'start') && <button type="button" disabled={busy === 'stop'} onClick={() => { void run('stop') }}>{busy === 'stop' ? '停止中…' : '停止盯盘'}</button>}
     </div>
+    <div id={contentId} hidden={!expanded}>
     <JevConnection access={access} disabled={Boolean(status?.running || busy || saving || historyBusy)} onConfigured={setConfigured} onBusy={setKeyBusy}/>
     {error && <p className={css.error} role="alert">{error}</p>}
     {statusError && <p className={css.error} role="alert">{statusError}</p>}
@@ -174,5 +178,6 @@ export function ContestWatch({ access, connected = true }: { access: NonNullable
     {status?.events.length ? <details><summary>运行记录（{status.events.length}）</summary><ol className={css.watchLog}>
       {[...status.events].reverse().map((entry, index) => <li key={`${entry.time}-${index}`}><time>{contestTime(entry.time)}</time> {entry.message}</li>)}
     </ol></details> : null}
+    </div>
   </section>
 }
