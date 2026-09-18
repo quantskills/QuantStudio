@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { ContestData, ContestQuery, QuantSkillsPlainSessionArchiveItem } from './plugin-types.ts'
 import { asRecord, contestPhases, contestTime, display, useContest, type ContestAccess } from './contest.ts'
 import { ContestPlans } from './ContestPlans.tsx'
+import { ContestWatch } from './ContestWatch.tsx'
 import { waitForCompetition } from './competition-async.ts'
 import css from './ContestPage.module.css'
 
@@ -107,6 +108,7 @@ function ConnectedContestPage({ access, researchSessions = [], openResearch }: C
         <p>{connected ? '可以这样问：查看我的持仓，分析下一步操作，先给出建议。' : '连接比赛账户后，即可进入 AI 交易助手。'}</p>
         {recentResearch && <p className={css.recent}>最近对话：{recentResearch.title || '比赛 · AI 交易助手'} · {contestTime(recentResearch.updatedAt)}</p>}
       </section>
+      {access.watch && <ContestWatch access={access.watch} connected={Boolean(connected)}/>}
       {connected && <>
         <section className={css.dataPanel} aria-label="比赛账户数据">
           <div className={css.tabs} role="tablist" aria-label="比赛数据分类">{tabs.map(([kind, label]) => <button type="button" role="tab" key={kind}

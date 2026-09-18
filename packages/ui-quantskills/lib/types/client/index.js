@@ -928,6 +928,18 @@ export function mountQuantSkillsApplication(ctx, options) {
         await Promise.all([boundSessions.refresh(lifetime.signal), agents.refresh()]);
     };
     const contestAccess = {
+        watch: {
+            settings: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestJevSettings()),
+            usage: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestJevUsage()),
+            templates: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchTemplates()),
+            saveTemplate: request => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchSaveTemplate(request)),
+            datasets: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchDatasets()),
+            prepareHistory: request => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchPrepareHistory(request)),
+            configure: request => unwrapRemote(ctx.remote.quantSkillsSessions.contestJevConfigure(request)),
+            status: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchStatus()),
+            start: config => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchStart({ config, confirmed: true })),
+            stop: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchStop()),
+        },
         status: sessionId => unwrapRemote(ctx.remote.quantSkillsSessions.contestStatus(sessionId ? { sessionId } : {})),
         mode: enabled => unwrapRemote(ctx.remote.quantSkillsSessions.contestMode({ enabled })),
         connect: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestConnect()),

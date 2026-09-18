@@ -4,6 +4,11 @@ import { QuantSkillsLibraryStore } from './library-store.ts'
 import { ContestService, sameContest } from './contest-service.ts'
 import { OfficialContestCli } from './contest-cli.ts'
 import { installContestTools } from './contest-tools.ts'
+import { ContestWatcher } from './contest-watch.ts'
+import type { ContestJevSettings, ContestJevUsage, ContestWatchConfig, ContestWatchDataset, ContestWatchTemplate, ContestWatchStatus } from './contest-watch-types.ts'
+import { prepareWatchHistory, watchDatasets } from './contest-watch-history.ts'
+import { jevUsage } from './contest-jev-audit.ts'
+import { jevSettings } from './contest-jev-settings.ts'
 import { FactorContestService } from './factor-contest-service.ts'
 import { OfficialFactorRuntime } from './factor-contest-cli.ts'
 import { installFactorContestTools } from './factor-contest-tools.ts'
@@ -945,6 +950,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   private readonly teamForkProvider: string
   private readonly workspaceResolver: QuantSkillsWorkspaceResolver
   private readonly contest: ContestService
+  private readonly contestWatcher: ContestWatcher
   private readonly factorContest: FactorContestService
   private factorSessionOpening: Promise<unknown> = Promise.resolve()
   private contestSessionOpening: Promise<unknown> = Promise.resolve()
@@ -960,6 +966,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       return processes
     },
       join(resolveDshHome(config.dshHome), 'quantskills', 'contest', 'auth')), config.dshHome)
+    this.contestWatcher = new ContestWatcher(ctx, this.contest)
     this.factorContest = new FactorContestService(new OfficialFactorRuntime(() => {
       const processes = ctx.get('subprocess')
       if (!processes) throw new Error('因子 CLI 进程服务未就绪。')
@@ -1135,6 +1142,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     ctx.effect(() => () => {
       this.lifetime.abort(new Error('quantskills-session: service disposed'))
       this.contest.dispose()
+      this.contestWatcher.dispose()
       this.factorContest.dispose()
       this.reservations.clear()
       this.plainReservations.clear()
@@ -1248,19 +1256,61 @@ export class QuantSkillsSessionService extends TypertRemoteService {
 
   /** Explicit application mode toggle; never changes ordinary Session composition. */
   @Remote('contestMode')
-  contestMode(request: { enabled: boolean }): Promise<ContestStatus> { return this.contest.setEnabled(request.enabled) }
+  async contestMode(request: { enabled: boolean }): Promise<ContestStatus> {
+    if (!request.enabled) await this.contestWatcher.stop('比赛模式关闭，盯盘已停止。')
+    return this.contest.setEnabled(request.enabled)
+  }
 
   @Remote('contestConnect')
   contestConnect(): Promise<ContestStatus> { return this.contest.connect() }
 
   @Remote('contestDisconnect')
-  contestDisconnect(): Promise<ContestStatus> { return this.contest.disconnect() }
+  async contestDisconnect(): Promise<ContestStatus> {
+    await this.contestWatcher.stop('退出比赛账户，盯盘已停止。')
+    return this.contest.disconnect()
+  }
 
   @Remote('contestCheckUpdate')
   contestCheckUpdate(): Promise<ContestStatus> { return this.contest.checkUpdate() }
 
   @Remote('contestUpdate')
-  contestUpdate(): Promise<ContestStatus> { return this.contest.update() }
+  async contestUpdate(): Promise<ContestStatus> {
+    await this.contestWatcher.stop('准备更新比赛 CLI，盯盘已停止。')
+    return this.contest.update()
+  }
+
+  @Remote('contestWatchStatus')
+  contestWatchStatus(): Promise<ContestWatchStatus> { return this.contestWatcher.status() }
+
+  @Remote('contestJevSettings')
+  contestJevSettings(): Promise<ContestJevSettings> { return jevSettings(this.ctx, this.contest.root) }
+
+  @Remote('contestJevUsage')
+  contestJevUsage(): Promise<ContestJevUsage> { return jevUsage(this.contest.root) }
+
+  @Remote('contestWatchTemplates')
+  contestWatchTemplates(): Promise<ContestWatchTemplate[]> { return this.contestWatcher.templates() }
+
+  @Remote('contestWatchSaveTemplate')
+  contestWatchSaveTemplate(request: ContestWatchTemplate): Promise<ContestWatchTemplate[]> { return this.contestWatcher.saveTemplate(request) }
+
+  @Remote('contestWatchDatasets')
+  contestWatchDatasets(): Promise<ContestWatchDataset[]> { return watchDatasets(this.ctx) }
+
+  @Remote('contestWatchPrepareHistory')
+  contestWatchPrepareHistory(request: { symbol: string; barSeconds: number }): Promise<NonNullable<ContestWatchConfig['history']>> { return prepareWatchHistory(this.ctx, request) }
+
+  @Remote('contestJevConfigure')
+  contestJevConfigure(request: { apiKey?: string; translator?: { provider: string; model: string } }): Promise<ContestJevSettings> { return this.contestWatcher.configure(request) }
+
+  @Remote('contestWatchStart')
+  contestWatchStart(request: { config: ContestWatchConfig; confirmed: boolean }): Promise<ContestWatchStatus> {
+    if (request.confirmed !== true) throw new Error('请先在比赛页确认盯盘范围；生成的计划仍需逐笔确认。')
+    return this.contestWatcher.start(request.config)
+  }
+
+  @Remote('contestWatchStop')
+  contestWatchStop(): Promise<ContestWatchStatus> { return this.contestWatcher.stop() }
 
   @Remote('contestQuery')
   contestQuery(request: ContestQuery, signal?: AbortSignal): Promise<ContestData> { return this.contest.query(request, undefined, signal) }

@@ -37,6 +37,10 @@ import { QuantSkillsLibraryStore } from "./library-store.js";
 import { ContestService, sameContest } from "./contest-service.js";
 import { OfficialContestCli } from "./contest-cli.js";
 import { installContestTools } from "./contest-tools.js";
+import { ContestWatcher } from "./contest-watch.js";
+import { prepareWatchHistory, watchDatasets } from "./contest-watch-history.js";
+import { jevUsage } from "./contest-jev-audit.js";
+import { jevSettings } from "./contest-jev-settings.js";
 import { FactorContestService } from "./factor-contest-service.js";
 import { OfficialFactorRuntime } from "./factor-contest-cli.js";
 import { installFactorContestTools } from "./factor-contest-tools.js";
@@ -670,6 +674,16 @@ let QuantSkillsSessionService = (() => {
     let _contestDisconnect_decorators;
     let _contestCheckUpdate_decorators;
     let _contestUpdate_decorators;
+    let _contestWatchStatus_decorators;
+    let _contestJevSettings_decorators;
+    let _contestJevUsage_decorators;
+    let _contestWatchTemplates_decorators;
+    let _contestWatchSaveTemplate_decorators;
+    let _contestWatchDatasets_decorators;
+    let _contestWatchPrepareHistory_decorators;
+    let _contestJevConfigure_decorators;
+    let _contestWatchStart_decorators;
+    let _contestWatchStop_decorators;
     let _contestQuery_decorators;
     let _contestInspect_decorators;
     let _contestSessionOpen_decorators;
@@ -735,6 +749,16 @@ let QuantSkillsSessionService = (() => {
             _contestDisconnect_decorators = [Remote('contestDisconnect')];
             _contestCheckUpdate_decorators = [Remote('contestCheckUpdate')];
             _contestUpdate_decorators = [Remote('contestUpdate')];
+            _contestWatchStatus_decorators = [Remote('contestWatchStatus')];
+            _contestJevSettings_decorators = [Remote('contestJevSettings')];
+            _contestJevUsage_decorators = [Remote('contestJevUsage')];
+            _contestWatchTemplates_decorators = [Remote('contestWatchTemplates')];
+            _contestWatchSaveTemplate_decorators = [Remote('contestWatchSaveTemplate')];
+            _contestWatchDatasets_decorators = [Remote('contestWatchDatasets')];
+            _contestWatchPrepareHistory_decorators = [Remote('contestWatchPrepareHistory')];
+            _contestJevConfigure_decorators = [Remote('contestJevConfigure')];
+            _contestWatchStart_decorators = [Remote('contestWatchStart')];
+            _contestWatchStop_decorators = [Remote('contestWatchStop')];
             _contestQuery_decorators = [Remote('contestQuery')];
             _contestInspect_decorators = [Remote('contestInspect')];
             _contestSessionOpen_decorators = [Remote('contestSessionOpen')];
@@ -797,6 +821,16 @@ let QuantSkillsSessionService = (() => {
             __esDecorate(this, null, _contestDisconnect_decorators, { kind: "method", name: "contestDisconnect", static: false, private: false, access: { has: obj => "contestDisconnect" in obj, get: obj => obj.contestDisconnect }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _contestCheckUpdate_decorators, { kind: "method", name: "contestCheckUpdate", static: false, private: false, access: { has: obj => "contestCheckUpdate" in obj, get: obj => obj.contestCheckUpdate }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _contestUpdate_decorators, { kind: "method", name: "contestUpdate", static: false, private: false, access: { has: obj => "contestUpdate" in obj, get: obj => obj.contestUpdate }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestWatchStatus_decorators, { kind: "method", name: "contestWatchStatus", static: false, private: false, access: { has: obj => "contestWatchStatus" in obj, get: obj => obj.contestWatchStatus }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestJevSettings_decorators, { kind: "method", name: "contestJevSettings", static: false, private: false, access: { has: obj => "contestJevSettings" in obj, get: obj => obj.contestJevSettings }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestJevUsage_decorators, { kind: "method", name: "contestJevUsage", static: false, private: false, access: { has: obj => "contestJevUsage" in obj, get: obj => obj.contestJevUsage }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestWatchTemplates_decorators, { kind: "method", name: "contestWatchTemplates", static: false, private: false, access: { has: obj => "contestWatchTemplates" in obj, get: obj => obj.contestWatchTemplates }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestWatchSaveTemplate_decorators, { kind: "method", name: "contestWatchSaveTemplate", static: false, private: false, access: { has: obj => "contestWatchSaveTemplate" in obj, get: obj => obj.contestWatchSaveTemplate }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestWatchDatasets_decorators, { kind: "method", name: "contestWatchDatasets", static: false, private: false, access: { has: obj => "contestWatchDatasets" in obj, get: obj => obj.contestWatchDatasets }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestWatchPrepareHistory_decorators, { kind: "method", name: "contestWatchPrepareHistory", static: false, private: false, access: { has: obj => "contestWatchPrepareHistory" in obj, get: obj => obj.contestWatchPrepareHistory }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestJevConfigure_decorators, { kind: "method", name: "contestJevConfigure", static: false, private: false, access: { has: obj => "contestJevConfigure" in obj, get: obj => obj.contestJevConfigure }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestWatchStart_decorators, { kind: "method", name: "contestWatchStart", static: false, private: false, access: { has: obj => "contestWatchStart" in obj, get: obj => obj.contestWatchStart }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _contestWatchStop_decorators, { kind: "method", name: "contestWatchStop", static: false, private: false, access: { has: obj => "contestWatchStop" in obj, get: obj => obj.contestWatchStop }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _contestQuery_decorators, { kind: "method", name: "contestQuery", static: false, private: false, access: { has: obj => "contestQuery" in obj, get: obj => obj.contestQuery }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _contestInspect_decorators, { kind: "method", name: "contestInspect", static: false, private: false, access: { has: obj => "contestInspect" in obj, get: obj => obj.contestInspect }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _contestSessionOpen_decorators, { kind: "method", name: "contestSessionOpen", static: false, private: false, access: { has: obj => "contestSessionOpen" in obj, get: obj => obj.contestSessionOpen }, metadata: _metadata }, null, _instanceExtraInitializers);
@@ -896,6 +930,7 @@ let QuantSkillsSessionService = (() => {
         teamForkProvider;
         workspaceResolver;
         contest;
+        contestWatcher;
         factorContest;
         factorSessionOpening = Promise.resolve();
         contestSessionOpening = Promise.resolve();
@@ -910,6 +945,7 @@ let QuantSkillsSessionService = (() => {
                     throw new Error('比赛 CLI 进程服务未就绪，请重新启动应用。');
                 return processes;
             }, join(resolveDshHome(config.dshHome), 'quantskills', 'contest', 'auth')), config.dshHome);
+            this.contestWatcher = new ContestWatcher(ctx, this.contest);
             this.factorContest = new FactorContestService(new OfficialFactorRuntime(() => {
                 const processes = ctx.get('subprocess');
                 if (!processes)
@@ -1084,6 +1120,7 @@ let QuantSkillsSessionService = (() => {
             ctx.effect(() => () => {
                 this.lifetime.abort(new Error('quantskills-session: service disposed'));
                 this.contest.dispose();
+                this.contestWatcher.dispose();
                 this.factorContest.dispose();
                 this.reservations.clear();
                 this.plainReservations.clear();
@@ -1167,11 +1204,35 @@ let QuantSkillsSessionService = (() => {
         }
         contestStatus(request) { return this.contest.status(request.sessionId); }
         /** Explicit application mode toggle; never changes ordinary Session composition. */
-        contestMode(request) { return this.contest.setEnabled(request.enabled); }
+        async contestMode(request) {
+            if (!request.enabled)
+                await this.contestWatcher.stop('比赛模式关闭，盯盘已停止。');
+            return this.contest.setEnabled(request.enabled);
+        }
         contestConnect() { return this.contest.connect(); }
-        contestDisconnect() { return this.contest.disconnect(); }
+        async contestDisconnect() {
+            await this.contestWatcher.stop('退出比赛账户，盯盘已停止。');
+            return this.contest.disconnect();
+        }
         contestCheckUpdate() { return this.contest.checkUpdate(); }
-        contestUpdate() { return this.contest.update(); }
+        async contestUpdate() {
+            await this.contestWatcher.stop('准备更新比赛 CLI，盯盘已停止。');
+            return this.contest.update();
+        }
+        contestWatchStatus() { return this.contestWatcher.status(); }
+        contestJevSettings() { return jevSettings(this.ctx, this.contest.root); }
+        contestJevUsage() { return jevUsage(this.contest.root); }
+        contestWatchTemplates() { return this.contestWatcher.templates(); }
+        contestWatchSaveTemplate(request) { return this.contestWatcher.saveTemplate(request); }
+        contestWatchDatasets() { return watchDatasets(this.ctx); }
+        contestWatchPrepareHistory(request) { return prepareWatchHistory(this.ctx, request); }
+        contestJevConfigure(request) { return this.contestWatcher.configure(request); }
+        contestWatchStart(request) {
+            if (request.confirmed !== true)
+                throw new Error('请先在比赛页确认盯盘范围；生成的计划仍需逐笔确认。');
+            return this.contestWatcher.start(request.config);
+        }
+        contestWatchStop() { return this.contestWatcher.stop(); }
         contestQuery(request, signal) { return this.contest.query(request, undefined, signal); }
         /** Entry inspection is bound to the persisted conversation, never a caller-supplied account. */
         async contestInspect(request, signal) {

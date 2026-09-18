@@ -775,12 +775,32 @@ describe('QuantSkills exact-version sessions', () => {
     expect(foldQuantSkillsPlainSessionBinding(agent.session.events)).toEqual({ purpose: 'contest', contest: identity })
     expect(fixture.ctx.tools.get('quantskills_contest_query', agent)).toBeDefined()
     expect(fixture.ctx.tools.get('quantskills_contest_prepare', agent)).toBeDefined()
+    expect(fixture.ctx.tools.get('quantskills_contest_jev_evaluate', agent)).toBeDefined()
+    expect(fixture.ctx.tools.get('quantskills_contest_jev_evaluate', ordinary)).toBeUndefined()
     expect(fixture.ctx.tools.get('quantskills_contest_execute', agent)).toBeUndefined()
     expect(fixture.ctx.tools.get('submit_live_order', agent)).toBeUndefined()
     expect(fixture.ctx.tools.get('submit_live_order', ordinary)).toBeDefined()
     const call = (target: Agent, name: string, args = {}) => fixture.ctx.tools.execute({
       callId: ToolCallId(`contest-test-${name}`), agent: target, name, arguments: args, signal: new AbortController().signal,
     })
+    fixture.ctx.provide('credentials', { resolve: async () => ({ value: 'jev-test-key' }) } as never)
+    vi.spyOn(contest, 'inspect').mockResolvedValue({ identity, fetchedAt: Date.now(),
+      account: { data: { equity: 1000000 } }, positions: { data: [] }, openOrders: { data: [] },
+    } as never)
+    const jevRequest = vi.spyOn(globalThis, 'fetch').mockResolvedValue(Response.json({ model: 'jev-1.13.0', answers: {
+      evidence: { type: 'choice', choice: 'incomplete', confidence: 1, probabilities: { sufficient: 0, incomplete: 1, conflicting: 0 } },
+      support: { type: 'score', score: 0, confidence: 1, probabilities: { '0': 1, '1': 0, '2': 0, '3': 0 } },
+      risk: { type: 'noul', noul: 1 },
+    }, usage: { input_tokens: 100, output_tokens: 50 } }))
+    try {
+      const result = await call(agent, 'quantskills_contest_jev_evaluate', { evidence: 'No historical data.', proposal: 'Evaluate a candidate.' })
+      expect(result.isError).toBe(false)
+      expect(JSON.stringify(result)).toContain('jev-1.13.0')
+      expect(JSON.stringify(result)).not.toContain('jev-test-key')
+      expect(jevRequest).toHaveBeenCalledTimes(1)
+      await expect(call(ordinary, 'quantskills_contest_jev_evaluate', { evidence: 'data', proposal: 'candidate' })).resolves.toMatchObject({ isError: true })
+      expect(jevRequest).toHaveBeenCalledTimes(1)
+    } finally { jevRequest.mockRestore() }
     await expect(call(agent, 'submit_live_order', { order_id: 'must-not-submit' })).resolves.toMatchObject({ isError: true })
     await expect(call(agent, 'quantskills_data_query', { refresh: true })).resolves.toMatchObject({ isError: true })
     await expect(call(agent, 'quantskills_data_query')).resolves.toMatchObject({ isError: true })
@@ -795,6 +815,7 @@ describe('QuantSkills exact-version sessions', () => {
     await expect(call(agent, 'quantskills_contest_prepare', { operation: 'place_order' })).resolves.toMatchObject({ isError: true })
     const contestPrompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
     expect(contestPrompt).toContain('contest-account-check')
+    expect(contestPrompt).toContain('quantskills_contest_jev_evaluate')
     expect(contestPrompt).not.toContain('official rules')
     expect(contestPrompt).not.toContain('through the normal shell')
     for (const name of ['contest-account-check', 'contest-research-plan', 'contest-daily-review']) {
@@ -816,6 +837,7 @@ describe('QuantSkills exact-version sessions', () => {
     const resumed = fixture.ctx.agents.get(sessionId)!
     expect(fixture.ctx.tools.get('submit_live_order', resumed)).toBeUndefined()
     expect(fixture.ctx.tools.get('quantskills_contest_inspect', resumed)).toBeDefined()
+    expect(fixture.ctx.tools.get('quantskills_contest_jev_evaluate', resumed)).toBeDefined()
     expect(fixture.ctx.tools.schemas(ordinary)).toEqual(ordinaryTools)
     await fixture.ctx.fiber.dispose()
   })

@@ -1,5 +1,26 @@
-import type { ContestData, ContestPlan, ContestQuery, ContestStatus, ContestInspection } from './plugin-types.ts';
+import type { ContestData, ContestPlan, ContestQuery, ContestStatus, ContestInspection, ContestJevSettings, ContestJevUsage, ContestWatchConfig, ContestWatchDataset, ContestWatchTemplate, ContestWatchStatus } from './plugin-types.ts';
 export interface ContestAccess {
+    watch?: {
+        settings(): Promise<ContestJevSettings>;
+        usage(): Promise<ContestJevUsage>;
+        templates(): Promise<ContestWatchTemplate[]>;
+        saveTemplate(request: ContestWatchTemplate): Promise<ContestWatchTemplate[]>;
+        datasets(): Promise<ContestWatchDataset[]>;
+        prepareHistory(request: {
+            symbol: string;
+            barSeconds: number;
+        }): Promise<NonNullable<ContestWatchConfig['history']>>;
+        configure(request: {
+            apiKey?: string;
+            translator?: {
+                provider: string;
+                model: string;
+            };
+        }): Promise<ContestJevSettings>;
+        status(): Promise<ContestWatchStatus>;
+        start(config: ContestWatchConfig): Promise<ContestWatchStatus>;
+        stop(): Promise<ContestWatchStatus>;
+    };
     status(sessionId?: string): Promise<ContestStatus>;
     mode(enabled: boolean): Promise<ContestStatus>;
     connect(): Promise<ContestStatus>;
