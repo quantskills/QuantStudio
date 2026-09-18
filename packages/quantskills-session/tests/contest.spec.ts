@@ -37,6 +37,23 @@ async function fixture() {
 }
 
 describe('contest is opt-in and independent of ordinary sessions', () => {
+  it('preserves transient doctor failures and permits a later fresh inspection', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.run.getMockImplementation()!
+    f.run.mockImplementation((runtime, args, signal) => args[0] === 'doctor'
+      ? Promise.resolve(data({ allOk: false, checks: [{ name: '交易通道', ok: false, detail: 'rate_limit_exceeded: upstream secret' }] })) : base(runtime, args, signal))
+    await expect(f.service.inspect(identity)).rejects.toMatchObject({ code: 'rate_limit_exceeded' })
+    f.run.mockImplementation(base)
+    await expect(f.service.inspect(identity)).resolves.toMatchObject({ identity })
+  })
+  it('does not retry a revoked mandate even when another check is rate limited', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.run.getMockImplementation()!
+    f.run.mockImplementation((runtime, args, signal) => args[0] === 'doctor'
+      ? Promise.resolve(data({ allOk: false, checks: [{ name: '交易通道', ok: false, detail: 'rate_limit_exceeded: secret' }, { name: '交易授权', ok: false, detail: '已到期' }] })) : base(runtime, args, signal))
+    await expect(f.service.inspect(identity)).rejects.toThrow('交易授权')
+    await expect(f.service.query({ kind: 'account' })).rejects.toThrow('连接并验证')
+  })
   it('cancels an obsolete data read so a foreground connection can leave the queue', async () => {
     const f = await fixture(); await f.connect()
     const base = f.run.getMockImplementation()!, controller = new AbortController()

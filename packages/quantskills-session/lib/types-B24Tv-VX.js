@@ -97,6 +97,15 @@ var ContestCliError = class extends Error {
 		this.code = code;
 	}
 };
+const transientContestCodes = /* @__PURE__ */ new Set([
+	"rate_limit_exceeded",
+	"timeout",
+	"network_error",
+	"http_429",
+	"http_502",
+	"http_503",
+	"http_504"
+]);
 function record(value) {
 	return typeof value === "object" && value !== null && !Array.isArray(value) ? value : {};
 }
@@ -527,9 +536,22 @@ var ContestService = class {
 			this.ready = false;
 			throw new Error("比赛 CLI 低于服务端最低版本，请在比赛页更新。");
 		}
-		if (record((await this.run(["doctor"], signal)).data).allOk !== true) {
+		const doctor = record((await this.run(["doctor"], signal)).data);
+		if (doctor.allOk !== true) {
+			delete this.lastInspection;
+			const failed = Array.isArray(doctor.checks) ? doctor.checks.map(record).filter((check) => check.ok !== true) : [];
+			const codes = failed.map((check) => typeof check.detail === "string" ? /^([a-z_0-9]+):/.exec(check.detail)?.[1] ?? "" : "");
+			if (codes.length && codes.every((code) => transientContestCodes.has(code))) {
+				const code = codes.find((value) => value === "rate_limit_exceeded" || value === "http_429") ?? codes[0];
+				throw new ContestCliError(code, `比赛自检暂不可用（${code}）；稍后重试，不代表账户失效。`);
+			}
 			this.ready = false;
-			throw new Error("比赛账户或交易通道自检未通过，请检查官网账户状态。");
+			const names = [...new Set(failed.map((check) => [
+				"本地凭证",
+				"交易通道",
+				"交易授权"
+			].includes(String(check.name)) ? String(check.name) : "未知检查项"))];
+			throw new Error(`比赛自检未通过：${names.join("、") || "未返回完整检查结果"}。请检查官网授权及账户状态后重新连接。`);
 		}
 		this.assertEnabled();
 		this.ready = true;

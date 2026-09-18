@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write';
 import { resolveDshHome } from '@deepseek-ai/dsh-home-paths';
 import { z } from 'zod';
-import { ContestCliError, record, versionAtLeast } from "./contest-cli.js";
+import { ContestCliError, record, transientContestCodes, versionAtLeast } from "./contest-cli.js";
 const identitySchema = z.object({ accountId: z.string().min(1), contestId: z.string().min(1) });
 const planSchema = z.object({
     id: z.string().min(1), sessionId: z.string().min(1), identity: identitySchema,
@@ -226,8 +226,16 @@ export class ContestService {
         }
         const doctor = record((await this.run(['doctor'], signal)).data);
         if (doctor.allOk !== true) {
+            delete this.lastInspection;
+            const failed = Array.isArray(doctor.checks) ? doctor.checks.map(record).filter(check => check.ok !== true) : [];
+            const codes = failed.map(check => typeof check.detail === 'string' ? /^([a-z_0-9]+):/.exec(check.detail)?.[1] ?? '' : '');
+            if (codes.length && codes.every(code => transientContestCodes.has(code))) {
+                const code = codes.find(value => value === 'rate_limit_exceeded' || value === 'http_429') ?? codes[0];
+                throw new ContestCliError(code, `比赛自检暂不可用（${code}）；稍后重试，不代表账户失效。`);
+            }
             this.ready = false;
-            throw new Error('比赛账户或交易通道自检未通过，请检查官网账户状态。');
+            const names = [...new Set(failed.map(check => ['本地凭证', '交易通道', '交易授权'].includes(String(check.name)) ? String(check.name) : '未知检查项'))];
+            throw new Error(`比赛自检未通过：${names.join('、') || '未返回完整检查结果'}。请检查官网授权及账户状态后重新连接。`);
         }
         this.assertEnabled();
         this.ready = true;
