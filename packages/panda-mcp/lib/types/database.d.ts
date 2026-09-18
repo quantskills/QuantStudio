@@ -8,6 +8,7 @@ export interface DataSource {
     method?: string;
     params?: Record<string, JsonValue>;
     filename?: string;
+    rollingDay?: boolean;
 }
 export interface DataImport {
     name: string;

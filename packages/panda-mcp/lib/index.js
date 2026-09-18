@@ -142,7 +142,13 @@ function dataRows(raw) {
 	if (raw && typeof raw === "object") {
 		const obj = raw;
 		if (obj.error || obj.isError === true || obj.success === false || obj.ok === false || obj.status === "error") throw new Error("数据源返回错误，未写入缓存");
-		if (Array.isArray(obj.columns) && Array.isArray(obj.data) && obj.data.every(Array.isArray)) return obj.data.map((row) => Object.fromEntries(obj.columns.map((c, i) => [String(c), row[i]])));
+		if (obj.truncated === true) throw new Error("数据源返回被截断的预览，请缩小查询日期范围；未写入缓存");
+		const matrix = obj.rows ?? obj.data;
+		if (Array.isArray(obj.columns) && Array.isArray(matrix) && matrix.every(Array.isArray)) {
+			const columns = obj.columns;
+			if (!columns.length || columns.some((c) => typeof c !== "string" || !c.trim()) || new Set(columns).size !== columns.length || matrix.some((row) => row.length !== columns.length)) throw new Error("表格列名或行列数不一致，未写入缓存");
+			return matrix.map((row) => Object.fromEntries(columns.map((c, i) => [c, row[i]])));
+		}
 		for (const key of [
 			"data",
 			"rows",
@@ -289,6 +295,21 @@ var LocalDatabase = class {
 		return /csv/i.test(response.headers.get("content-type") ?? "") || /\.csv$/i.test(url.pathname) ? parseCsv(text) : JSON.parse(text);
 	}
 	async fetch(input, signal, id) {
+		if (input.source.rollingDay) {
+			if (input.source.kind !== "pandadata" || input.source.method !== "get_future_min") throw new Error("随日期更新仅支持 PandaData 期货分钟行情");
+			const day = (offset) => new Date(this.now() + 8 * 36e5 + offset * 864e5).toISOString().slice(0, 10).replaceAll("-", "");
+			input = {
+				...input,
+				source: {
+					...input.source,
+					params: {
+						...input.source.params,
+						start_date: day(0),
+						end_date: day(3)
+					}
+				}
+			};
+		}
 		const raw = await this.sourceData(input.source, signal);
 		return summary(await this.save(input, dataRows(raw), id));
 	}

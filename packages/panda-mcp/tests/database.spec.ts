@@ -2,7 +2,7 @@ import { mkdtemp, rm, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { LocalDatabase, parseCsv } from '../src/database.ts'
+import { dataRows, LocalDatabase, parseCsv } from '../src/database.ts'
 import { inferDataCategory } from '../src/data-category.ts'
 
 const roots: string[] = []
@@ -13,6 +13,24 @@ async function setup(panda = vi.fn(async () => [{ date: '2026-09-10', close: 12 
 }
 const data = { name: '研究行情', kind: 'timeseries' as const, ttlSeconds: 60, dateColumn: 'date' }
 describe('local research database', () => {
+  it('accepts the PandaData column/row matrix but rejects truncated or malformed previews', () => {
+    const result = { type: 'dataframe', columns: ['datetime', 'close'], rows: [['2026-09-18 11:30:00', 3050]], truncated: false }
+    expect(dataRows({ ok: true, result })).toEqual([{ datetime: '2026-09-18 11:30:00', close: 3050 }])
+    expect(() => dataRows({ result: { ...result, truncated: true, total_rows: 2000 } })).toThrow('截断')
+    expect(() => dataRows({ ...result, rows: [[3050]] })).toThrow('行列数')
+    expect(() => dataRows({ ...result, columns: ['close', 'close'] })).toThrow('列名')
+  })
+  it('rolls an opted-in minute source to the current Shanghai date on refresh, without growing the request window', async () => {
+    let clock = Date.parse('2026-09-18T15:59:00Z')
+    const { store, panda } = await setup(undefined, () => clock)
+    const item = await store.fetch({ ...data, source: { kind: 'pandadata', method: 'get_future_min', rollingDay: true, params: { symbol: 'RB2610.SHF', start_date: '20260917', end_date: '20260917', frequency: '1m' } } })
+    expect(panda).toHaveBeenLastCalledWith('get_future_min', expect.objectContaining({ start_date: '20260918', end_date: '20260921' }), undefined)
+    clock += 120000
+    const refreshed = await store.query({ id: item.id })
+    expect(panda).toHaveBeenLastCalledWith('get_future_min', expect.objectContaining({ start_date: '20260919', end_date: '20260922' }), undefined)
+    expect(refreshed.dataset.source.params).toMatchObject({ start_date: '20260919', end_date: '20260922' })
+    await expect(store.fetch({ ...data, source: { kind: 'pandadata', method: 'get_daily', rollingDay: true } })).rejects.toThrow('期货分钟')
+  })
   it('classifies research subjects independently of storage shape', () => {
     expect(inferDataCategory({ name: '行情研究', source: { method: 'get_fina_reports' }, columns: ['date', 'quarter'] })).toBe('fundamental')
     expect(inferDataCategory({ name: '数据', source: { method: 'get_fina_performance' }, columns: ['info_date', 'roe_weighted'] })).toBe('fundamental')
