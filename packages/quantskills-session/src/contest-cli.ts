@@ -17,6 +17,8 @@ export class ContestCliError extends Error {
   constructor(readonly code: string, message: string) { super(message) }
 }
 
+export const transientContestCodes = new Set(['rate_limit_exceeded', 'timeout', 'network_error', 'http_429', 'http_502', 'http_503', 'http_504'])
+
 export function record(value: unknown): Record<string, JsonValue> {
   return typeof value === 'object' && value !== null && !Array.isArray(value) ? value as Record<string, JsonValue> : {}
 }

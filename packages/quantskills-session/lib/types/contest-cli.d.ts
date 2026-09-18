@@ -14,6 +14,7 @@ export declare class ContestCliError extends Error {
     readonly code: string;
     constructor(code: string, message: string);
 }
+export declare const transientContestCodes: Set<string>;
 export declare function record(value: unknown): Record<string, JsonValue>;
 /** Remove credential fields even if upstream adds them to a response. */
 export declare function safeData(value: unknown): JsonValue;
