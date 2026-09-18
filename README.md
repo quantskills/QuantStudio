@@ -72,6 +72,10 @@ QuantStudio 已接入 [TypeSafe Jev](https://docs.typesafe.ai/introduction)，�
 
 完整配置与运行说明见 [Jev 持续盯盘](docs/contest.md#jev-持续盯盘与自动计划)。
 
+![Jev 接入期货模拟赛工作台：账户连接、AI 交易助手与持续盯盘入口](docs/images/jev/monitoring-workspace.png)
+
+账户连接、AI 交易助手和 Jev 持续盯盘位于同一页面，配置连接后可以选择策略模板开始分析。
+
 | 能力 | 可以做什么 |
 | --- | --- |
 | **策略模板** | 选择区间回归、趋势回调、突破跟随，或自建并保存策略；调整合约、手数、采样频率和决策间隔。 |
@@ -83,6 +87,21 @@ QuantStudio 已接入 [TypeSafe Jev](https://docs.typesafe.ai/introduction)，�
 进入 **比赛 → 期货模拟赛 → Jev 持续盯盘**，配置自己的 TypeSafe API Key、连接比赛账户与 PandaData，选择模板并核对参数后即可启动。密钥保存在本机凭据库；界面可以查看请求记录和返回的 token 用量。自定义中文策略支持选择已验证的模型进行翻译，原文保留，翻译与 Jev 调用分别产生用量。
 
 比赛专用对话也可调用 Jev，对候选方案的证据充分性、支持程度和风险进行评估。**持续盯盘负责分析和生成计划，每笔交易仍需你确认。** 权益停止线只暂停盯盘，不自动平仓；动作概率与置信度表示模型判断，不是交易胜率。当前期货 CLI 联动支持 Windows、macOS 本机运行。
+
+<details>
+<summary>查看 Jev 运行日志、账户资金与交易计划截图</summary>
+
+**持续采样与判断过程**：日志显示采样、Jev 分析、主动观望、计划生成及等待确认等状态，便于了解当前进展。
+
+![Jev 运行日志：行情采样、策略判断、计划生成与等待确认](docs/images/jev/monitoring-log.png)
+
+**账户与执行记录**：同页查看资金、持仓和委托，并核对已取消或已执行的计划；操作完成与实际成交分别记录。
+
+![账户资金面板与交易计划记录：动态权益、保证金、风险度及计划状态](docs/images/jev/account-and-plans.png)
+
+以上为期货模拟赛实际运行截图，展示功能与操作状态；账户数据对应截图时点。
+
+</details>
 
 ## 技能、专家、专家团：你的能力库
 
@@ -135,7 +154,7 @@ QuantStudio 已接入 [TypeSafe Jev](https://docs.typesafe.ai/introduction)，�
 | **QUBE / EVO** | 查看介绍并进入 PandaAI 对应的独立研究服务。 |
 | **设置** | 配置工作区、模型、权限、插件、PandaData、外观与更新。 |
 
-主题同时调整界面、图标和强调色，支持动态背景开关，以及界面与对话字号独立设置。本页截图全部采用白色主题。[QUBE](https://www.pandaaiquant.com/agent_quant/) · [EVO](https://www.pandaaiquant.com/evo/)
+主题同时调整界面、图标和强调色，支持动态背景开关，以及界面与对话字号独立设置。本页常规功能截图采用白色主题，Jev 实际运行截图采用雾蓝主题。[QUBE](https://www.pandaaiquant.com/agent_quant/) · [EVO](https://www.pandaaiquant.com/evo/)
 
 ## 开始使用
 

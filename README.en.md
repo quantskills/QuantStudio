@@ -57,6 +57,10 @@ QuantStudio integrates [TypeSafe Jev](https://docs.typesafe.ai/introduction), br
 
 See the [Jev monitoring guide](docs/contest.md#jev-持续盯盘与自动计划) for configuration and operation details.
 
+![Jev in the futures simulation workspace: account connection, AI assistant and monitoring entry](docs/images/jev/monitoring-workspace.png)
+
+Account connection, the AI trading assistant and Jev monitoring share one page. Configure the connection, then choose a strategy template to begin analysis.
+
 | Capability | What it does |
 | --- | --- |
 | **Strategy templates** | Choose range mean reversion, trend pullback or breakout following, or create and save your own strategy. Configure the contract, size, sampling frequency and decision interval. |
@@ -68,6 +72,21 @@ See the [Jev monitoring guide](docs/contest.md#jev-持续盯盘与自动计划) 
 Open **Competitions → Futures simulation → Jev monitoring**, configure your TypeSafe API key, connect the competition account and PandaData, then select a template and review its parameters before starting. Keys are stored in the local credential store. The interface shows request records and reported token usage. Custom Chinese strategy text can be translated with a selected, verified model while preserving the original; translation and Jev calls incur separate usage.
 
 Dedicated competition conversations can also ask Jev to assess a proposal's evidence, support and risk. **Monitoring analyzes data and prepares plans; every trade still requires user confirmation.** The equity-drop stop pauses monitoring without automatically closing positions. Action probabilities and confidence describe the model's judgment, not a trading win rate. The current futures CLI integration supports local Windows and macOS installations.
+
+<details>
+<summary>View Jev monitoring logs, account funds and trade plans</summary>
+
+**Sampling and decision history:** follow sampling, Jev analysis, decisions to hold, plan creation and pending confirmation in the activity log.
+
+![Jev activity log showing sampling, analysis, plan creation and pending confirmation](docs/images/jev/monitoring-log.png)
+
+**Account and execution records:** inspect funds, positions and orders alongside cancelled or executed plans. Operation completion and actual fills are recorded separately.
+
+![Account funds and trade plans showing equity, margin, risk ratio and plan status](docs/images/jev/account-and-plans.png)
+
+These screenshots show an actual futures simulation session. Account figures reflect the time each screenshot was taken.
+
+</details>
 
 ## Skills, specialists and teams
 
@@ -106,7 +125,7 @@ The result workbench previews HTML, Markdown, PDF, images, code and data files. 
 | QUBE / EVO | Explore and open the corresponding independent PandaAI services. |
 | Settings | Configure workspace, models, permissions, plugins, data connections, appearance and updates. |
 
-Themes adjust the interface, icons and accent colors. Animated backgrounds can be disabled, and interface and conversation text sizes are adjustable independently. All screenshots on this page use the white theme. [QUBE](https://www.pandaaiquant.com/agent_quant/) · [EVO](https://www.pandaaiquant.com/evo/)
+Themes adjust the interface, icons and accent colors. Animated backgrounds can be disabled, and interface and conversation text sizes are adjustable independently. General feature screenshots use the white theme; the Jev session screenshots use the mist-blue theme. [QUBE](https://www.pandaaiquant.com/agent_quant/) · [EVO](https://www.pandaaiquant.com/evo/)
 
 ## Get started
 
