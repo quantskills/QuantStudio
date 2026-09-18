@@ -31,6 +31,44 @@ function harness(response: () => Promise<Response> = async () => Response.json({
 }
 
 describe('native model connection contract', () => {
+  it.each(['http://192.168.1.20:8080/v1', 'http://models.example.com/v1', 'https://models.example.com/v1'])(
+    'verifies and saves an API key connection at %s', async baseURL => {
+      const h = harness()
+      const draft: ModelConnectionDraft = { service: 'custom', name: 'Custom test', api: 'openai-completions',
+        baseURL, apiKey: 'custom-secret', modelIds: [], auto: false }
+      const verified = await h.access.run({ action: 'verify', draft })
+      expect(verified.verification?.state).toBe('verified')
+      expect(h.fetch).toHaveBeenCalledWith(baseURL + '/models', expect.objectContaining({
+        headers: { Authorization: 'Bearer custom-secret' }, redirect: 'error',
+      }))
+      const saved = await h.access.run({ action: 'save', draft })
+      const connection = saved.connections.find(row => row.baseURL === baseURL)!
+      expect(connection).toMatchObject({ configured: true, state: 'verified', modelIds: ['model-a'] })
+      const profile = h.docs['llm-pi-ai'].providers[connection.route]
+      expect(profile.baseURL).toBe(baseURL)
+      expect(h.secrets.get(profile.apiKeyEnv)).toBe('custom-secret')
+      expect(JSON.stringify(saved)).not.toContain('custom-secret')
+    },
+  )
+  it.each(['ftp://models.example.com/v1', 'file:///models', 'http://user:password@models.example.com/v1',
+    'http://models.example.com/v1?key=secret', 'http://models.example.com/v1#fragment'])(
+    'rejects unsafe endpoint %s before sending credentials', async baseURL => {
+      const h = harness()
+      const draft = { ...h.draft, baseURL, apiKey: 'custom-secret' }
+      const result = await h.access.run({ action: 'verify', draft })
+      expect(result.verification?.code).toBe('endpoint')
+      await expect(h.access.run({ action: 'save', draft })).rejects.toThrow()
+      expect(h.fetch).not.toHaveBeenCalled()
+      expect(h.secrets.size).toBe(1)
+    },
+  )
+  it('requires key re-entry when changing a saved HTTPS endpoint to HTTP', async () => {
+    const h = harness()
+    const result = await h.access.run({ action: 'verify', draft: { ...h.draft,
+      baseURL: h.draft.baseURL.replace('https:', 'http:') } })
+    expect(result.verification?.code).toBe('credential-scope')
+    expect(h.fetch).not.toHaveBeenCalled()
+  })
   it('supports unauthenticated loopback servers without supplying a real credential', async () => {
     const h = harness()
     await h.access.run({ action: 'save', draft: { service: 'custom', name: 'Local test', api: 'openai-completions', baseURL: 'http://127.0.0.1:3201/v1', modelIds: ['model-a'], auto: false } })

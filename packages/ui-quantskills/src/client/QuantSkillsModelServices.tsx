@@ -132,6 +132,7 @@ export function QuantSkillsModelServices({ access, initialData, initialAdding = 
               }}><option value="" disabled>自定义地址（高级设置）</option>{service?.variants.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}</select>
             </label>}
             {draft.service === 'custom' && <label>服务地址<input required type="url" value={draft.baseURL} placeholder="https://example.com/v1" onChange={event => { setDraft({ ...draft, baseURL: event.target.value }) }}/></label>}
+            {/^http:/i.test(draft.baseURL.trim()) && <small>HTTP 会明文传输 API 密钥和请求内容；请确认网络可信，公网服务建议使用 HTTPS。</small>}
             <label>API 密钥<input type="password" autoComplete="new-password" value={draft.apiKey ?? ''} placeholder={draft.route ? '已保存的密钥不回显；输入新值才替换' : draft.service === 'custom' ? '本机无鉴权服务可留空' : '填写厂商提供的 API 密钥'}
               onChange={event => { setDraft({ ...draft, apiKey: event.target.value }) }}/></label>
           </>}

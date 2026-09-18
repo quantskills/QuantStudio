@@ -26,8 +26,7 @@ const unavailable = (): ModelVerification => ({ state: 'discovery-unavailable', 
 /** Sanitized endpoint contract. Never redirects credentials or copies them into query strings. */
 export function modelDiscoveryRequest(draft: ModelConnectionDraft, key: string): { url: string; headers: Record<string, string> } {
   const url = new URL(draft.baseURL)
-  if (url.username || url.password || url.search || url.hash || (url.protocol !== 'https:' &&
-    !(url.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)))) {
+  if (url.username || url.password || url.search || url.hash || !['https:', 'http:'].includes(url.protocol)) {
     throw new Error('invalid endpoint')
   }
   const base = url.href.replace(/\/$/, '')
@@ -105,7 +104,7 @@ export class QuantSkillsModelAccess {
     if (!key && prior?.apiKeyEnv) key = (await this.connected.credentials.resolve(credentialRef(prior.apiKeyEnv)))?.value
     if (!key && draft.service !== 'custom') return failed('authentication', '请填写 API 密钥，或检查已保存密钥是否仍可用。')
     let request: ReturnType<typeof modelDiscoveryRequest>
-    try { request = modelDiscoveryRequest(draft, key ?? '') } catch { return failed('endpoint', '地址必须为 HTTPS（本机服务可使用 HTTP），不能携带用户名、密码或查询参数。') }
+    try { request = modelDiscoveryRequest(draft, key ?? '') } catch { return failed('endpoint', '地址必须为 HTTP 或 HTTPS，不能携带用户名、密码、查询参数或片段。') }
     if (MODEL_SERVICES.find(item => item.id === draft.service)?.discovery === false) return unavailable()
     try {
       const modelIds: string[] = []
