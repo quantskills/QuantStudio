@@ -8,7 +8,7 @@
 
 From QuantSkills, an open-source community under PandaAI
 
-[Get started](#get-started) · [简体中文](README.md) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
+[Get started](#get-started) · [Jev monitoring](#jev-market-monitoring-and-proposal-evaluation) · [简体中文](README.md) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
 
 ![White workspace: start with a research question](docs/images/launch-white/hero.png)
 
@@ -50,6 +50,24 @@ Connect to the futures simulation competition or the fourth factor competition t
 ![Futures research assistant and public contract quotes; account details excluded](docs/images/launch-white/trade.png)
 
 Accounts, Python and appropriate permissions are required. [Futures guide](docs/contest.md) · [Factor competition guide](docs/factor-contest.md)
+
+### Jev: market monitoring and proposal evaluation
+
+QuantStudio integrates [TypeSafe Jev](https://docs.typesafe.ai/introduction) in its development branch, bringing market sampling, strategy evaluation, account inspection and confirmation plans into the futures simulation workspace. Jev evaluates completed bars, live quote snapshots, positions and strategy constraints to suggest holding, opening a long or short position, or closing an existing position. Inspect the evidence before deciding whether to execute a plan.
+
+> **Integration status (2026-09-18):** [PR #8](https://github.com/quantskills/QuantStudio/pull/8) is under review and has not been merged into `main`. A checkout of `main` does not yet include the Jev interface.
+
+| Capability | What it does |
+| --- | --- |
+| **Strategy templates** | Choose range mean reversion, trend pullback or breakout following, or create and save your own strategy. Configure the contract, size, sampling frequency and decision interval. |
+| **Continuous monitoring** | Prepare minute bars through PandaData and analyze them alongside live competition quotes, funds, positions and open orders. |
+| **Reviewable decisions** | Inspect market regime, strategy fit, blockers, action probabilities and analysis history. Distinguish missing data, program constraints and the model's decision to hold. |
+| **Constraints and modes** | Set permitted directions, spread limits, opening cooldown, plan limits and an equity-drop stop. Autonomous mode lets Jev weigh strategy evidence; strict mode applies strategy gates first. Both retain account and data-validity checks. |
+| **Plans and receipts** | Generate a confirmation plan when conditions permit. Recheck the account and quotes before preparation, then track orders and fills after the user confirms submission. |
+
+In a version containing this feature, open **Competitions → Futures simulation → Jev monitoring**, configure your TypeSafe API key, connect the competition account and PandaData, then select a template and review its parameters before starting. Keys are stored in the local credential store. The interface shows request records and reported token usage. Custom Chinese strategy text can be translated with a selected, verified model while preserving the original; translation and Jev calls incur separate usage.
+
+Dedicated competition conversations can also ask Jev to assess a proposal's evidence, support and risk. **Monitoring analyzes data and prepares plans; every trade still requires user confirmation.** The equity-drop stop pauses monitoring without automatically closing positions. Action probabilities and confidence describe the model's judgment, not a trading win rate. The current futures CLI integration supports local Windows and macOS installations.
 
 ## Skills, specialists and teams
 
