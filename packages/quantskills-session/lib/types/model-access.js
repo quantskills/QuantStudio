@@ -18,8 +18,7 @@ const unavailable = () => ({ state: 'discovery-unavailable', code: 'discovery', 
 /** Sanitized endpoint contract. Never redirects credentials or copies them into query strings. */
 export function modelDiscoveryRequest(draft, key) {
     const url = new URL(draft.baseURL);
-    if (url.username || url.password || url.search || url.hash || (url.protocol !== 'https:' &&
-        !(url.protocol === 'http:' && ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname)))) {
+    if (url.username || url.password || url.search || url.hash || !['https:', 'http:'].includes(url.protocol)) {
         throw new Error('invalid endpoint');
     }
     const base = url.href.replace(/\/$/, '');
@@ -112,7 +111,7 @@ export class QuantSkillsModelAccess {
             request = modelDiscoveryRequest(draft, key ?? '');
         }
         catch {
-            return failed('endpoint', '地址必须为 HTTPS（本机服务可使用 HTTP），不能携带用户名、密码或查询参数。');
+            return failed('endpoint', '地址必须为 HTTP 或 HTTPS，不能携带用户名、密码、查询参数或片段。');
         }
         if (MODEL_SERVICES.find(item => item.id === draft.service)?.discovery === false)
             return unavailable();

@@ -15,7 +15,12 @@ describe('native model services', () => {
     fireEvent.click(screen.getByRole('button', { name: '添加模型服务' }))
     fireEvent.change(screen.getByRole('textbox', { name: '搜索模型服务' }), { target: { value: 'custom' } })
     fireEvent.click(screen.getByRole('button', { name: /自定义/ }))
-    fireEvent.change(screen.getByLabelText('服务地址'), { target: { value: 'http://127.0.0.1:1234/v1' } })
+    fireEvent.change(screen.getByLabelText('服务地址'), { target: { value: 'http://192.168.1.20:1234/v1' } })
+    expect((screen.getByLabelText('服务地址') as HTMLInputElement).checkValidity()).toBe(true)
+    expect(screen.getByText(/HTTP 会明文传输/)).toBeTruthy()
+    fireEvent.change(screen.getByLabelText('服务地址'), { target: { value: 'https://models.example.com/v1' } })
+    expect(screen.queryByText(/HTTP 会明文传输/)).toBeNull()
+    fireEvent.change(screen.getByLabelText('服务地址'), { target: { value: 'http://192.168.1.20:1234/v1' } })
     const ids = screen.getByLabelText(/模型 ID/)
     fireEvent.change(ids, { target: { value: 'model-a\n' } })
     expect((ids as HTMLTextAreaElement).value).toBe('model-a\n')
@@ -23,7 +28,7 @@ describe('native model services', () => {
     expect(screen.getByText('高级设置').parentElement?.hasAttribute('open')).toBe(false)
     expect(screen.queryByRole('checkbox', { name: '参与 Auto' })).toBeNull()
     fireEvent.click(screen.getByRole('button', { name: '验证并保存' }))
-    await waitFor(() => expect(access).toHaveBeenLastCalledWith(expect.objectContaining({ action: 'save', draft: expect.objectContaining({ modelIds: ['model-a', 'model-b'], auto: false }) })))
+    await waitFor(() => expect(access).toHaveBeenLastCalledWith(expect.objectContaining({ action: 'save', draft: expect.objectContaining({ baseURL: 'http://192.168.1.20:1234/v1', modelIds: ['model-a', 'model-b'], auto: false }) })))
   })
   it('does not offer local login and reports Host errors', async () => {
     const access = vi.fn<ModelAccess>(async request => {
