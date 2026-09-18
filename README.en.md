@@ -53,9 +53,9 @@ Accounts, Python and appropriate permissions are required. [Futures guide](docs/
 
 ### Jev: market monitoring and proposal evaluation
 
-QuantStudio integrates [TypeSafe Jev](https://docs.typesafe.ai/introduction) in its development branch, bringing market sampling, strategy evaluation, account inspection and confirmation plans into the futures simulation workspace. Jev evaluates completed bars, live quote snapshots, positions and strategy constraints to suggest holding, opening a long or short position, or closing an existing position. Inspect the evidence before deciding whether to execute a plan.
+QuantStudio integrates [TypeSafe Jev](https://docs.typesafe.ai/introduction), bringing market sampling, strategy evaluation, account inspection and confirmation plans into the futures simulation workspace. Jev evaluates completed bars, live quote snapshots, positions and strategy constraints to suggest holding, opening a long or short position, or closing an existing position. Inspect the evidence before deciding whether to execute a plan.
 
-> **Integration status (2026-09-18):** [PR #8](https://github.com/quantskills/QuantStudio/pull/8) is under review and has not been merged into `main`. A checkout of `main` does not yet include the Jev interface.
+See the [Jev monitoring guide](docs/contest.md#jev-持续盯盘与自动计划) for configuration and operation details.
 
 | Capability | What it does |
 | --- | --- |
@@ -65,7 +65,7 @@ QuantStudio integrates [TypeSafe Jev](https://docs.typesafe.ai/introduction) in 
 | **Constraints and modes** | Set permitted directions, spread limits, opening cooldown, plan limits and an equity-drop stop. Autonomous mode lets Jev weigh strategy evidence; strict mode applies strategy gates first. Both retain account and data-validity checks. |
 | **Plans and receipts** | Generate a confirmation plan when conditions permit. Recheck the account and quotes before preparation, then track orders and fills after the user confirms submission. |
 
-In a version containing this feature, open **Competitions → Futures simulation → Jev monitoring**, configure your TypeSafe API key, connect the competition account and PandaData, then select a template and review its parameters before starting. Keys are stored in the local credential store. The interface shows request records and reported token usage. Custom Chinese strategy text can be translated with a selected, verified model while preserving the original; translation and Jev calls incur separate usage.
+Open **Competitions → Futures simulation → Jev monitoring**, configure your TypeSafe API key, connect the competition account and PandaData, then select a template and review its parameters before starting. Keys are stored in the local credential store. The interface shows request records and reported token usage. Custom Chinese strategy text can be translated with a selected, verified model while preserving the original; translation and Jev calls incur separate usage.
 
 Dedicated competition conversations can also ask Jev to assess a proposal's evidence, support and risk. **Monitoring analyzes data and prepares plans; every trade still requires user confirmation.** The equity-drop stop pauses monitoring without automatically closing positions. Action probabilities and confidence describe the model's judgment, not a trading win rate. The current futures CLI integration supports local Windows and macOS installations.
 

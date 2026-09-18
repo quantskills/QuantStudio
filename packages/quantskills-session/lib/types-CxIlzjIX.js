@@ -257,6 +257,63 @@ var OfficialContestCli = class {
 	}
 };
 //#endregion
+//#region lib/types/contest-fills.js
+const contestFillSchema = z.object({
+	id: z.string().min(1).max(200),
+	tradeId: z.string().min(1).max(200),
+	orderId: z.string().min(1).max(200),
+	price: z.number().finite().positive(),
+	volume: z.number().int().positive(),
+	time: z.string().min(1).max(80)
+});
+function planOrderId(plan) {
+	if (plan.operation !== "place_order" || ["prepared", "cancelled"].includes(plan.status)) return void 0;
+	const result = plan.result ?? {};
+	const ids = [record(result.latestOrder).orderId, record(result.result).orderId].filter((id) => typeof id === "string" && id.length > 0);
+	return ids.length && new Set(ids).size === 1 ? ids[0] : void 0;
+}
+/** Only trade records joined to the bound order can supply execution prices. */
+function mergePlanFills(plan, rows) {
+	const orderId = planOrderId(plan), parameters = record(plan.details.parameters);
+	if (!orderId || !Array.isArray(rows) || typeof parameters.contractCode !== "string") return false;
+	const contract = (value) => typeof value === "string" ? /^([a-z]{1,3}\d{3,4})(?:\.(SHF|DCE|CZC|CFE|INE|GFE))?$/i.exec(value) : null;
+	const planned = contract(parameters.contractCode);
+	const expected = contract(record(plan.result?.latestOrder ?? plan.result?.result).contractCode) ?? planned;
+	if (!planned || !expected || planned[1].toLowerCase() !== expected[1].toLowerCase()) return false;
+	const merged = new Map((plan.fills ?? []).map((fill) => [fill.id, fill]));
+	for (const value of rows) {
+		const row = record(value), actual = contract(row.contractCode);
+		if (row.orderId !== orderId || !actual || actual[1].toLowerCase() !== expected[1].toLowerCase() || row.accountId !== void 0 && row.accountId !== plan.identity.accountId || row.contestId !== void 0 && row.contestId !== plan.identity.contestId || expected[2] && actual[2] && expected[2].toUpperCase() !== actual[2].toUpperCase() || row.side !== parameters.side || row.offset !== parameters.offset) continue;
+		const parsed = contestFillSchema.safeParse({
+			id: row.id,
+			tradeId: row.tradeId,
+			orderId,
+			price: row.price,
+			volume: row.volume,
+			time: row.tradeTime
+		});
+		if (!parsed.success) continue;
+		const fill = parsed.data, timestamp = Date.parse(/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(fill.time) ? fill.time.replace(" ", "T") + "+08:00" : fill.time);
+		if (!Number.isFinite(timestamp) || timestamp < plan.createdAt - 5e3 || timestamp > Date.now() + 5e3) continue;
+		const prior = merged.get(fill.id);
+		if (prior && JSON.stringify(prior) !== JSON.stringify(fill)) return false;
+		merged.set(fill.id, fill);
+	}
+	const fills = [...merged.values()], volume = fills.reduce((sum, fill) => sum + fill.volume, 0);
+	if (!volume || typeof parameters.volume !== "number" || volume > parameters.volume || fills.length === (plan.fills?.length ?? 0)) return false;
+	plan.fills = fills;
+	return true;
+}
+//#endregion
+//#region lib/types/contest-contract.js
+/** Compare actual futures contracts without losing an explicit exchange constraint. */
+const contestContractParts = (value) => typeof value === "string" ? /^([a-z]{1,3}\d{3,4})(?:\.(SHF|DCE|CZC|CFE|INE|GFE))?$/i.exec(value.trim()) : null;
+function sameContestContract(a, b, exchange) {
+	const left = contestContractParts(a), right = contestContractParts(b);
+	const expectedExchange = right?.[2] ?? exchange;
+	return Boolean(left && right && left[1].toLowerCase() === right[1].toLowerCase() && (!left[2] || !expectedExchange || left[2].toUpperCase() === expectedExchange.toUpperCase()));
+}
+//#endregion
 //#region lib/types/contest-service.js
 /** Opt-in contest lifecycle and durable, single-use confirmation plans. */
 const identitySchema$1 = z.object({
@@ -286,7 +343,8 @@ const planSchema$1 = z.object({
 		"cancelled"
 	]),
 	operationId: z.string().optional(),
-	result: z.record(z.string(), z.json()).optional()
+	result: z.record(z.string(), z.json()).optional(),
+	fills: z.array(contestFillSchema).optional()
 });
 const stateSchema$1 = z.object({
 	enabled: z.boolean(),
@@ -485,6 +543,7 @@ var ContestService = class {
 					await this.run(["login"]);
 				}
 				await this.validateIdentity();
+				await this.refreshFills().catch(() => {});
 				this.message = "比赛账户已连接。";
 			} catch (error) {
 				this.ready = false;
@@ -586,8 +645,23 @@ var ContestService = class {
 		const args = contestQueryArgs(input);
 		return this.exclusive(async () => {
 			this.assertReady(expected);
-			return this.run(args, signal);
+			const result = await this.run(args, signal);
+			if (input.kind === "trades") await this.recordFills(result.data);
+			return result;
 		});
+	}
+	async recordFills(rows) {
+		let changed = false;
+		for (const plan of this.state.plans) if (sameContest(plan.identity, this.state.identity)) changed = mergePlanFills(plan, rows) || changed;
+		if (changed) await this.save();
+	}
+	async refreshFills(plan) {
+		if (!(plan ? [plan] : this.state.plans).filter((item) => sameContest(item.identity, this.state.identity) && planOrderId(item)).length) return;
+		await this.recordFills((await this.run([
+			"trades",
+			"--count",
+			"200"
+		])).data);
 	}
 	async inspect(identity, signal) {
 		return this.exclusive(async () => {
@@ -704,16 +778,21 @@ var ContestService = class {
 			let quote = {};
 			if (input.operation === "place_order") {
 				const order = orderSchema.parse(input.order);
+				let symbol = order.symbol, expectedContract = order.symbol;
 				const positions = (await this.run(["positions"], signal)).data;
 				if (!Array.isArray(positions)) throw new Error("持仓查询失败，无法预演。");
 				if (order.offset === "close") {
-					const position = positions.map(record).find((item) => item.contractCode === order.symbol && item.direction === (order.direction === "sell" ? "long" : "short"));
+					const matches = positions.map(record).filter((item) => sameContestContract(item.contractCode, order.symbol) && item.direction === (order.direction === "sell" ? "long" : "short"));
+					if (matches.length > 1) throw new Error("实际合约存在多条同方向持仓，请核对交易所与持仓后再预演。");
+					const position = matches[0];
 					if (!position || Number(position.closable ?? position.sellable ?? 0) < order.volume) throw new Error("实际合约的可平手数不足，请刷新持仓。");
+					expectedContract = String(position.contractCode);
+					symbol = contestContractParts(position.contractCode)[1];
 				}
 				const args = [
 					"order",
 					"--symbol",
-					order.symbol,
+					symbol,
 					"--direction",
 					order.direction,
 					"--offset",
@@ -726,8 +805,9 @@ var ContestService = class {
 				const preview = record((await this.run(args, signal)).data);
 				if (preview.wouldSucceed !== true) throw new Error("交易预演未通过，请检查合约、手数、价格和可用资金。");
 				quote = record(preview.marketQuote);
-				const contract = preview.contractCode ?? record(preview.order).contractCode ?? quote.contractCode ?? quote.symbol ?? order.symbol;
+				const contract = preview.contractCode ?? record(preview.order).contractCode ?? quote.contractCode ?? quote.symbol ?? symbol;
 				if (typeof contract !== "string" || !/^[A-Za-z]+\d{3,4}$/.test(contract)) throw new Error("预演未返回实际合约，请填写完整合约代码后重试。");
+				if (contestContractParts(expectedContract) && (!sameContestContract(contract, expectedContract) || quote.contractCode !== void 0 && !sameContestContract(quote.contractCode, expectedContract))) throw new Error("预演返回的合约或交易所与请求不符，请核对后重试。");
 				parameters = {
 					contractCode: contract,
 					side: order.direction,
@@ -815,6 +895,7 @@ var ContestService = class {
 				plan.status = "unknown";
 			}
 			await this.save();
+			await this.refreshFills(plan).catch(() => {});
 			return structuredClone(plan);
 		});
 	}
@@ -856,6 +937,7 @@ var ContestService = class {
 				plan.status = operationStates.has(String(result.status)) ? result.status : "unknown";
 			}
 			await this.save();
+			await this.refreshFills(plan).catch(() => {});
 			return structuredClone(plan);
 		});
 	}
@@ -2220,17 +2302,11 @@ const labels = {
 	close_short: "平空"
 };
 const numeric = (value) => typeof value === "number" ? value : NaN;
-const contractParts = (value) => typeof value === "string" ? /^([a-z]{1,3}\d{3,4})(?:\.(SHF|DCE|CZC|CFE|INE|GFE))?$/i.exec(value.trim()) : null;
-const sameSymbol = (a, b, exchange) => {
-	const left = contractParts(a), right = contractParts(b);
-	const expectedExchange = right?.[2] ?? exchange;
-	return Boolean(left && right && left[1].toLowerCase() === right[1].toLowerCase() && (!left[2] || !expectedExchange || left[2].toUpperCase() === expectedExchange.toUpperCase()));
-};
 /** Quotes without an explicit timezone are exchange-local Shanghai timestamps. */
 function watchQuote(value, symbol, now = Date.now(), exchange) {
 	const row = record(value), text = row.quoteTime;
 	if (row.ready !== true) return { issue: "柜台行情尚未就绪；请检查行情连接，系统将继续重试。" };
-	if (!sameSymbol(row.contractCode ?? row.symbol, symbol, exchange)) return { issue: `行情合约与 ${symbol} 不符；请检查实际合约配置。` };
+	if (!sameContestContract(row.contractCode ?? row.symbol, symbol, exchange)) return { issue: `行情合约与 ${symbol} 不符；请检查实际合约配置。` };
 	if (typeof text !== "string") return { issue: "柜台未返回行情时间；等待完整行情。" };
 	const normalized = text.replace(/^(\d{4}-\d{2}-\d{2})[ T](\d{2})(\d{2})(\d{2})(\.\d+)?$/, "$1T$2:$3:$4$5");
 	const iso = /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(\.\d+)?$/.test(normalized) ? normalized.replace(" ", "T") + "+08:00" : normalized;
@@ -2254,9 +2330,9 @@ function watchAccount(snapshot, config, baseline) {
 	if (!Array.isArray(snapshot.positions.data) || !Array.isArray(snapshot.openOrders.data)) throw new Error("持仓或挂单数据不完整。");
 	const exchange = config.instrument?.exchange ?? config.autoHistory?.exchange;
 	const rows = snapshot.positions.data.map(record).filter((row) => {
-		if (!contractParts(row.contractCode)) throw new Error("持仓合约代码无法识别，需核对后再开始盯盘。");
-		if (!sameSymbol(row.contractCode, config.symbol)) return false;
-		if (!sameSymbol(row.contractCode, config.symbol, exchange)) throw new Error("持仓交易所与盯盘配置不符，请核对合约。");
+		if (!contestContractParts(row.contractCode)) throw new Error("持仓合约代码无法识别，需核对后再开始盯盘。");
+		if (!sameContestContract(row.contractCode, config.symbol)) return false;
+		if (!sameContestContract(row.contractCode, config.symbol, exchange)) throw new Error("持仓交易所与盯盘配置不符，请核对合约。");
 		return true;
 	});
 	if (rows.length > 1) throw new Error("所选合约存在多条持仓，需人工处理后再开始盯盘。");
@@ -2988,7 +3064,7 @@ var ContestWatcher = class {
 				analysis.outcome = "生成期间运行状态发生变化，计划已取消。";
 				return;
 			}
-			if (!sameSymbol(record(plan.details.parameters).contractCode, config.symbol, config.instrument?.exchange ?? config.autoHistory?.exchange)) {
+			if (!sameContestContract(record(plan.details.parameters).contractCode, config.symbol, config.instrument?.exchange ?? config.autoHistory?.exchange)) {
 				await this.contest.dismiss(plan.id, runId);
 				throw new Error("预演合约与盯盘合约不符，计划已取消。");
 			}

@@ -7,6 +7,7 @@ import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write'
 import { credentialRef } from '@deepseek-ai/dsh-credentials'
 import { z } from 'zod'
 import { ContestCliError, record, transientContestCodes } from './contest-cli.ts'
+import { contestContractParts as contractParts, sameContestContract as sameSymbol } from './contest-contract.ts'
 import { configureJev } from './contest-jev-settings.ts'
 import { auditedJevFetch, jevUsageSchema } from './contest-jev-audit.ts'
 import { historySchema, rangeRulesSchema, signalRulesSchema, watchEvidence } from './contest-watch-evidence.ts'
@@ -52,13 +53,6 @@ const actions = ['hold', 'open_long', 'open_short', 'close_long', 'close_short']
 const labels: Record<ContestWatchAction, string> = { hold: '观望', open_long: '开多', open_short: '开空', close_long: '平多', close_short: '平空' }
 type Quote = ContestWatchQuote
 const numeric = (value: unknown): number => typeof value === 'number' ? value : NaN
-const contractParts = (value: unknown) => typeof value === 'string' ? /^([a-z]{1,3}\d{3,4})(?:\.(SHF|DCE|CZC|CFE|INE|GFE))?$/i.exec(value.trim()) : null
-const sameSymbol = (a: unknown, b: string, exchange?: string) => {
-  const left = contractParts(a), right = contractParts(b)
-  const expectedExchange = right?.[2] ?? exchange
-  return Boolean(left && right && left[1]!.toLowerCase() === right[1]!.toLowerCase()
-    && (!left[2] || !expectedExchange || left[2].toUpperCase() === expectedExchange.toUpperCase()))
-}
 
 /** Quotes without an explicit timezone are exchange-local Shanghai timestamps. */
 export function watchQuote(value: unknown, symbol: string, now = Date.now(), exchange?: string): { quote: Quote; issue?: never } | { quote?: never; issue: string } {

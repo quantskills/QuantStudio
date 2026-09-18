@@ -894,6 +894,14 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestCheckUpdat
   'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("completed"), z.literal("unknown"), z.literal("cancelled"), z.literal("expired"), z.literal("queued"), z.literal("submitted"), z.literal("partial")]),
   'operationId': z.union([z.undefined(), z.string()]).optional(),
   'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema17)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema17))]))]).optional(),
+  'fills': z.union([z.undefined(), z.array(z.object({
+  'id': z.string(),
+  'tradeId': z.string(),
+  'orderId': z.string(),
+  'price': z.number(),
+  'volume': z.number(),
+  'time': z.string(),
+}))]).optional(),
 })).readonly(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestConnect_result$schema = z.object({
@@ -923,6 +931,14 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestConnect_re
   'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("completed"), z.literal("unknown"), z.literal("cancelled"), z.literal("expired"), z.literal("queued"), z.literal("submitted"), z.literal("partial")]),
   'operationId': z.union([z.undefined(), z.string()]).optional(),
   'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema15)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema15))]))]).optional(),
+  'fills': z.union([z.undefined(), z.array(z.object({
+  'id': z.string(),
+  'tradeId': z.string(),
+  'orderId': z.string(),
+  'price': z.number(),
+  'volume': z.number(),
+  'time': z.string(),
+}))]).optional(),
 })).readonly(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDisconnect_result$schema = z.object({
@@ -952,6 +968,14 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDisconnect
   'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("completed"), z.literal("unknown"), z.literal("cancelled"), z.literal("expired"), z.literal("queued"), z.literal("submitted"), z.literal("partial")]),
   'operationId': z.union([z.undefined(), z.string()]).optional(),
   'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema16)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema16))]))]).optional(),
+  'fills': z.union([z.undefined(), z.array(z.object({
+  'id': z.string(),
+  'tradeId': z.string(),
+  'orderId': z.string(),
+  'price': z.number(),
+  'volume': z.number(),
+  'time': z.string(),
+}))]).optional(),
 })).readonly(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_parameter_0$schema = z.object({
@@ -985,6 +1009,14 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_re
   'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("completed"), z.literal("unknown"), z.literal("cancelled"), z.literal("expired"), z.literal("queued"), z.literal("submitted"), z.literal("partial")]),
   'operationId': z.union([z.undefined(), z.string()]).optional(),
   'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema22)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema22))]))]).optional(),
+  'fills': z.union([z.undefined(), z.array(z.object({
+  'id': z.string(),
+  'tradeId': z.string(),
+  'orderId': z.string(),
+  'price': z.number(),
+  'volume': z.number(),
+  'time': z.string(),
+}))]).optional(),
 })).readonly(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestExecute_parameter_0$schema = z.object({
@@ -1007,6 +1039,14 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestExecute_re
   'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("completed"), z.literal("unknown"), z.literal("cancelled"), z.literal("expired"), z.literal("queued"), z.literal("submitted"), z.literal("partial")]),
   'operationId': z.union([z.undefined(), z.string()]).optional(),
   'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema21)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema21))]))]).optional(),
+  'fills': z.union([z.undefined(), z.array(z.object({
+  'id': z.string(),
+  'tradeId': z.string(),
+  'orderId': z.string(),
+  'price': z.number(),
+  'volume': z.number(),
+  'time': z.string(),
+}))]).optional(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_parameter_0$schema = z.object({
   'sessionId': z.intersection(z.string(), z.unknown()),
@@ -1048,6 +1088,14 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_re
   'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("completed"), z.literal("unknown"), z.literal("cancelled"), z.literal("expired"), z.literal("queued"), z.literal("submitted"), z.literal("partial")]),
   'operationId': z.union([z.undefined(), z.string()]).optional(),
   'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema20)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema20))]))]).optional(),
+  'fills': z.union([z.undefined(), z.array(z.object({
+  'id': z.string(),
+  'tradeId': z.string(),
+  'orderId': z.string(),
+  'price': z.number(),
+  'volume': z.number(),
+  'time': z.string(),
+}))]).optional(),
 })).readonly(),
   'summary': z.array(z.string()).readonly(),
 })
@@ -1141,6 +1189,14 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_resul
   'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("completed"), z.literal("unknown"), z.literal("cancelled"), z.literal("expired"), z.literal("queued"), z.literal("submitted"), z.literal("partial")]),
   'operationId': z.union([z.undefined(), z.string()]).optional(),
   'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema14)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema14))]))]).optional(),
+  'fills': z.union([z.undefined(), z.array(z.object({
+  'id': z.string(),
+  'tradeId': z.string(),
+  'orderId': z.string(),
+  'price': z.number(),
+  'volume': z.number(),
+  'time': z.string(),
+}))]).optional(),
 })).readonly(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_parameter_0$schema = z.object({
@@ -1175,6 +1231,14 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestReconcile_
   'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("completed"), z.literal("unknown"), z.literal("cancelled"), z.literal("expired"), z.literal("queued"), z.literal("submitted"), z.literal("partial")]),
   'operationId': z.union([z.undefined(), z.string()]).optional(),
   'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema23)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema23))]))]).optional(),
+  'fills': z.union([z.undefined(), z.array(z.object({
+  'id': z.string(),
+  'tradeId': z.string(),
+  'orderId': z.string(),
+  'price': z.number(),
+  'volume': z.number(),
+  'time': z.string(),
+}))]).optional(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestSessionOpen_parameter_0$schema = z.object({
   'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
@@ -1228,6 +1292,14 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestStatus_res
   'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("completed"), z.literal("unknown"), z.literal("cancelled"), z.literal("expired"), z.literal("queued"), z.literal("submitted"), z.literal("partial")]),
   'operationId': z.union([z.undefined(), z.string()]).optional(),
   'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema13)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema13))]))]).optional(),
+  'fills': z.union([z.undefined(), z.array(z.object({
+  'id': z.string(),
+  'tradeId': z.string(),
+  'orderId': z.string(),
+  'price': z.number(),
+  'volume': z.number(),
+  'time': z.string(),
+}))]).optional(),
 })).readonly(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestUpdate_result$schema = z.object({
@@ -1257,6 +1329,14 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestUpdate_res
   'status': z.union([z.literal("failed"), z.literal("prepared"), z.literal("executing"), z.literal("completed"), z.literal("unknown"), z.literal("cancelled"), z.literal("expired"), z.literal("queued"), z.literal("submitted"), z.literal("partial")]),
   'operationId': z.union([z.undefined(), z.string()]).optional(),
   'result': z.union([z.undefined(), z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true), z.array(z.lazy(() => JsonValueRemoteCodec$schema18)), z.record(z.string(), z.lazy(() => JsonValueRemoteCodec$schema18))]))]).optional(),
+  'fills': z.union([z.undefined(), z.array(z.object({
+  'id': z.string(),
+  'tradeId': z.string(),
+  'orderId': z.string(),
+  'price': z.number(),
+  'volume': z.number(),
+  'time': z.string(),
+}))]).optional(),
 })).readonly(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchDatasets_result$schema = z.array(z.object({

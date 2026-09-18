@@ -7,6 +7,8 @@ import { resolveDshHome } from '@deepseek-ai/dsh-home-paths'
 import { z } from 'zod'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import { ContestCliError, record, transientContestCodes, type ContestCli, versionAtLeast } from './contest-cli.ts'
+import { contestFillSchema, mergePlanFills, planOrderId } from './contest-fills.ts'
+import { contestContractParts, sameContestContract } from './contest-contract.ts'
 import type { ContestData, ContestIdentity, ContestInspection, ContestOrder, ContestPlan, ContestPrepareRequest, ContestQuery, ContestStatus } from './contest-types.ts'
 
 const identitySchema = z.object({ accountId: z.string().min(1), contestId: z.string().min(1) })
@@ -16,6 +18,7 @@ const planSchema = z.object({
   summary: z.string(), details: z.record(z.string(), z.json()), clientRequestId: z.string().uuid(),
   status: z.enum(['prepared', 'executing', 'queued', 'submitted', 'completed', 'partial', 'failed', 'expired', 'unknown', 'cancelled']),
   operationId: z.string().optional(), result: z.record(z.string(), z.json()).optional(),
+  fills: z.array(contestFillSchema).optional(),
 })
 const stateSchema = z.object({
   enabled: z.boolean(), runtime: z.string().uuid().optional(), version: z.string().optional(),
@@ -163,6 +166,7 @@ export class ContestService {
           await this.run(['login'])
         }
         await this.validateIdentity()
+        await this.refreshFills().catch(() => {})
         this.message = '比赛账户已连接。'
       } catch (error) {
         this.ready = false
@@ -246,7 +250,24 @@ export class ContestService {
 
   async query(input: ContestQuery, expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestData> {
     const args = contestQueryArgs(input)
-    return this.exclusive(async () => { this.assertReady(expected); return this.run(args, signal) })
+    return this.exclusive(async () => {
+      this.assertReady(expected)
+      const result = await this.run(args, signal)
+      if (input.kind === 'trades') await this.recordFills(result.data)
+      return result
+    })
+  }
+
+  private async recordFills(rows: unknown) {
+    let changed = false
+    for (const plan of this.state.plans) if (sameContest(plan.identity, this.state.identity)) changed = mergePlanFills(plan, rows) || changed
+    if (changed) await this.save()
+  }
+  private async refreshFills(plan?: ContestPlan) {
+    const candidates = (plan ? [plan] : this.state.plans).filter(item => sameContest(item.identity, this.state.identity) && planOrderId(item))
+    if (!candidates.length) return
+    // One bounded recent page; older executions can be backfilled by browsing trade-history pages.
+    await this.recordFills((await this.run(['trades', '--count', '200'])).data)
   }
 
   async inspect(identity: ContestIdentity, signal?: AbortSignal): Promise<ContestInspection> {
@@ -340,19 +361,30 @@ export class ContestService {
       let quote: Record<string, JsonValue> = {}
       if (input.operation === 'place_order') {
         const order: ContestOrder = orderSchema.parse(input.order)
+        let symbol = order.symbol, expectedContract = order.symbol
         const positions = (await this.run(['positions'], signal)).data
         if (!Array.isArray(positions)) throw new Error('持仓查询失败，无法预演。')
         if (order.offset === 'close') {
-          const position = positions.map(record).find(item => item.contractCode === order.symbol && item.direction === (order.direction === 'sell' ? 'long' : 'short'))
+          const matches = positions.map(record).filter(item => sameContestContract(item.contractCode, order.symbol)
+            && item.direction === (order.direction === 'sell' ? 'long' : 'short'))
+          if (matches.length > 1) throw new Error('实际合约存在多条同方向持仓，请核对交易所与持仓后再预演。')
+          const position = matches[0]
           if (!position || Number(position.closable ?? position.sellable ?? 0) < order.volume) throw new Error('实际合约的可平手数不足，请刷新持仓。')
+          // Keep the counter's casing for its CLI, removing only the recognized exchange suffix.
+          expectedContract = String(position.contractCode)
+          symbol = contestContractParts(position.contractCode)![1]!
         }
-        const args = ['order', '--symbol', order.symbol, '--direction', order.direction, '--offset', order.offset, '--volume', String(order.volume), '--dry-run']
+        const args = ['order', '--symbol', symbol, '--direction', order.direction, '--offset', order.offset, '--volume', String(order.volume), '--dry-run']
         if (order.price !== undefined) args.push('--price', String(order.price))
         const preview = record((await this.run(args, signal)).data)
         if (preview.wouldSucceed !== true) throw new Error('交易预演未通过，请检查合约、手数、价格和可用资金。')
         quote = record(preview.marketQuote)
-        const contract = preview.contractCode ?? record(preview.order).contractCode ?? quote.contractCode ?? quote.symbol ?? order.symbol
+        const contract = preview.contractCode ?? record(preview.order).contractCode ?? quote.contractCode ?? quote.symbol ?? symbol
         if (typeof contract !== 'string' || !/^[A-Za-z]+\d{3,4}$/.test(contract)) throw new Error('预演未返回实际合约，请填写完整合约代码后重试。')
+        if (contestContractParts(expectedContract) && (!sameContestContract(contract, expectedContract)
+          || (quote.contractCode !== undefined && !sameContestContract(quote.contractCode, expectedContract)))) {
+          throw new Error('预演返回的合约或交易所与请求不符，请核对后重试。')
+        }
         parameters = { contractCode: contract, side: order.direction, offset: order.offset, volume: order.volume,
           ...(order.price === undefined ? {} : { price: order.price }) }
         summary = `${contract} ${order.offset === 'open' ? '开' : '平'}${(order.offset === 'open') === (order.direction === 'buy') ? '多' : '空'} ${order.volume} 手 · ${order.price === undefined ? '市价 IOC' : `限价 ${order.price} GFD`}`
@@ -396,6 +428,8 @@ export class ContestService {
         plan.status = operationStates.has(String(result.status)) ? result.status as ContestPlan['status'] : 'unknown'
       } catch { plan.status = 'unknown' }
       await this.save()
+      // Optional price lookup must never downgrade a successful submission or replay it.
+      await this.refreshFills(plan).catch(() => {})
       return structuredClone(plan)
     })
   }
@@ -429,6 +463,7 @@ export class ContestService {
         plan.status = operationStates.has(String(result.status)) ? result.status as ContestPlan['status'] : 'unknown'
       }
       await this.save()
+      await this.refreshFills(plan).catch(() => {})
       return structuredClone(plan)
     })
   }

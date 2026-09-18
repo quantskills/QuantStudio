@@ -31,6 +31,30 @@ function api(initial: Partial<ContestStatus> = {}) {
 }
 
 describe('contest mode interaction', () => {
+  it('shows volume-weighted opening fills in history and never uses the quote as an execution price', async () => {
+    const completed: ContestPlan = { ...plan(), status: 'completed', operationId: 'op-1', details: { ...plan().details, parameters: { contractCode: 'rb2610', side: 'buy', offset: 'open', volume: 3 } },
+      fills: [{ id: 'f1', tradeId: 't1', orderId: 'o1', volume: 1, price: 3200, time: new Date().toISOString() }, { id: 'f2', tradeId: 't2', orderId: 'o1', volume: 2, price: 3203, time: new Date().toISOString() }] }
+    const cancelled = { ...completed, id: 'cancelled', status: 'cancelled' as const, fills: undefined }
+    const f = api({ enabled: true, phase: 'connected', identity, plans: [completed, cancelled] })
+    render(<ContestPlans status={f.status()} access={f.access} refresh={async () => {}}/>)
+    expect(screen.getByText('开仓成交均价：3,202 · 已记录成交 3/3 手')).toBeTruthy()
+    expect(screen.getByText('开仓成交均价：—（未执行）')).toBeTruthy()
+    fireEvent.click(screen.getByText('开仓成交均价：3,202 · 已记录成交 3/3 手'))
+    const dialog = within(screen.getByRole('dialog'))
+    expect(dialog.getByText('开仓成交均价：3,202 · 已记录成交 3/3 手')).toBeTruthy()
+    expect(dialog.getByText(/成交价来源/)).toBeTruthy()
+    expect(dialog.queryByText('核对成交价格')).toBeNull()
+    expect(f.access.execute).not.toHaveBeenCalled()
+  })
+  it('offers read-only price lookup for completed plans with missing fills', async () => {
+    const p = { ...plan(), status: 'completed' as const, operationId: 'op-1' }
+    const f = api({ enabled: true, phase: 'connected', identity, plans: [p] })
+    render(<ContestPlans status={f.status()} access={f.access} refresh={async () => {}}/>)
+    fireEvent.click(screen.getByText('成交均价：待核对'))
+    fireEvent.click(screen.getByRole('button', { name: '核对成交价格' }))
+    await waitFor(() => expect(f.access.reconcile).toHaveBeenCalledWith(p))
+    expect(f.access.execute).not.toHaveBeenCalled()
+  })
   it('cancels a pending dashboard read before checking the connection', async () => {
     const f = api({ enabled: true, phase: 'connected', identity })
     let signal!: AbortSignal
