@@ -57,7 +57,10 @@ const numeric = (value: unknown): number => typeof value === 'number' ? value : 
 /** Quotes without an explicit timezone are exchange-local Shanghai timestamps. */
 export function watchQuote(value: unknown, symbol: string, now = Date.now(), exchange?: string): { quote: Quote; issue?: never } | { quote?: never; issue: string } {
   const row = record(value), text = row.quoteTime
-  if (row.ready !== true) return { issue: '柜台行情尚未就绪；请检查行情连接，系统将继续重试。' }
+  // The public quote contract guarantees price/time/contract fields, not a `ready` flag.
+  // Explicit unavailability still blocks sampling; omission must pass every quote check below.
+  if (row.ready === false) return { issue: `比赛柜台行情尚未就绪（${symbol}）；请在比赛页「最新行情」核对同一合约，系统将继续重试。` }
+  if (row.ready !== undefined && row.ready !== true) return { issue: '比赛柜台返回了无法识别的行情就绪标记；请检查比赛 CLI 版本与行情接口。' }
   if (!sameSymbol(row.contractCode ?? row.symbol, symbol, exchange)) return { issue: `行情合约与 ${symbol} 不符；请检查实际合约配置。` }
   if (typeof text !== 'string') return { issue: '柜台未返回行情时间；等待完整行情。' }
   // The contest CLI also returns e.g. "2026-09-18 101050" (HHmmss).

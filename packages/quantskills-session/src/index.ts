@@ -1636,7 +1636,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
 
   /**
    * Attach one exact installed Skill as resident Session context without creating a user message.
-   * @param request - live QuantSkills Session and exact installed version.
+   * @param request - live conversation and exact installed version; an ordinary workspace conversation is adopted on explicit attachment.
    * @param signal - optional caller cancellation.
    * @returns the authoritative resident Skill set after the append.
    */
@@ -1648,11 +1648,12 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     const active = this.operationSignal(signal)
     return this.withSessionLock(this.residentSkillTails, request.sessionId, async () => {
       active.throwIfAborted()
-      const agent = this.requireLiveQuantSkillsAgent(request.sessionId)
-      await this.ensureAgentSetup(agent)
-      const runtime = this.requireResidentRuntime(request.sessionId)
+      const agent = this.ctx.agents.get(request.sessionId)
+      if (agent === undefined) throw new Error(`会话「${request.sessionId}」尚未打开，请先打开会话再加载技能。`)
       const resolved = await this.ctx.quantSkillsHost.resolveInstalledSkill(request.versionId, active)
       active.throwIfAborted()
+      await this.ensureSkillSession(agent, active)
+      const runtime = this.requireResidentRuntime(request.sessionId)
       const binding = bindingFrom(resolved.version)
       const current = foldQuantSkillsResidentSkills(agent.session.events)
       const occupied = current.find(item => item.assetId === binding.assetId)
@@ -1717,7 +1718,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     signal?: AbortSignal,
   ): Promise<QuantSkillsPromptFormListResult> {
     const active = this.operationSignal(signal)
-    const agent = this.requireLiveQuantSkillsAgent(request.sessionId)
+    const agent = this.ctx.agents.get(request.sessionId)
+    if (agent === undefined) throw new Error(`QuantSkills Session "${request.sessionId}" is not live.`)
+    // Opening the capability menu is read-only; an ordinary conversation has no forms yet.
+    if (!isQuantSkillsSession(agent.session.events)) return Object.freeze({ forms: Object.freeze([]) })
     return Object.freeze({ forms: await this.listPromptForms(agent, active) })
   }
 
@@ -2959,7 +2963,8 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       }
       const binding = loggedPlain ?? plainReservation?.binding
       if (binding === undefined) return
-      this.installResidentRuntime(agentCtx, agent, Object.freeze([]))
+      const resident = await this.resolveBindings(foldQuantSkillsResidentSkills(agent.session.events), this.lifetime.signal)
+      this.installResidentRuntime(agentCtx, agent, resident)
       this.registerAttachmentTool(agentCtx, agent)
       this.registerLiveTradingApproval(agentCtx, agent)
       if (binding.contest) {
@@ -3929,6 +3934,31 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       for (const location of locations ?? []) add(location.path, 'mutation')
     }
     return Object.freeze(candidates)
+  }
+
+  /** Adopt only the conversation explicitly targeted by a Skill attachment, preserving its workspace and history. */
+  private async ensureSkillSession(agent: Agent, signal: AbortSignal): Promise<void> {
+    await this.ensureAgentSetup(agent)
+    signal.throwIfAborted()
+    if (isQuantSkillsSession(agent.session.events)) return
+    const sessionId = agent.session.id
+    if (agent.session.header.parentSession !== undefined && agent.session.header.seedLength === undefined) {
+      throw new Error('子代理会话的能力由所属任务管理，请在主会话中加载技能。')
+    }
+    if (!agent.session.header.cwd) throw new Error('当前会话没有工作区，请先选择工作区再加载技能。')
+    if (this.plainReservations.has(sessionId) || this.reservations.has(sessionId)
+      || this.agentReservations.has(sessionId) || this.teamReservations.has(sessionId) || this.teamMemberReservations.has(sessionId)) {
+      throw new QuantSkillsSessionConflictError('当前会话正在初始化，请稍后重试加载技能。')
+    }
+    const reservation = Object.freeze({ binding: Object.freeze({ purpose: 'ordinary' as const }) })
+    this.plainReservations.set(sessionId, reservation)
+    // Native session setup was a cached no-op. Run it once with the requested ownership marker.
+    this.agentSetups.delete(agent)
+    try {
+      await this.ensureAgentSetup(agent)
+    } finally {
+      if (this.plainReservations.get(sessionId) === reservation) this.plainReservations.delete(sessionId)
+    }
   }
 
   private requireLiveQuantSkillsAgent(sessionId: SessionId): Agent {

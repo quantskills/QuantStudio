@@ -92,6 +92,8 @@ These screenshots show an actual futures simulation session. Account figures ref
 
 **Skills** capture reusable methods, steps and tool conventions. Discover and install existing skills, or describe a workflow for AI to draft and save after confirmation.
 
+Load skills from the composer into conversations in your own workspace, including existing ordinary conversations. The conversation, workspace and history stay intact, and loaded skills are restored when you reopen it. Specialists and teams still start in separate conversations.
+
 ![Skill discovery and creation](docs/images/launch-white/skills.png)
 
 **Specialists** combine responsibilities, instructions and skills into a focused role with its own conversations. Choose an existing equity, financial statement, factor, strategy or office specialist, or create your own.

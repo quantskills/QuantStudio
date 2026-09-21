@@ -396,6 +396,13 @@ describe('Jev plan-only watcher', () => {
     expect(await f.watcher.status()).toMatchObject({ running: true, sampleCount: 1, message: '采样中：1/8 个有效行情快照。' })
     expect(f.decide).not.toHaveBeenCalled(); expect(f.execute).not.toHaveBeenCalled()
   })
+  it('samples complete quote responses without the optional ready flag', async () => {
+    const f = await fixture(); await f.watcher.start(config)
+    f.setQuote({ contractCode: 'rb2610', latestPrice: 3000, quoteTime: new Date().toISOString() })
+    await f.watcher.tick()
+    expect(await f.watcher.status()).toMatchObject({ running: true, phase: 'sampling', sampleCount: 1 })
+    expect(f.decide).not.toHaveBeenCalled(); expect(f.execute).not.toHaveBeenCalled()
+  })
   it('explains unavailable quotes and resumes sampling when valid data returns', async () => {
     const f = await fixture(); await f.watcher.start(config); await f.warm(2)
     f.setQuote({ ready: true, contractCode: 'rb2610', latestPrice: 3000, quoteTime: '2026-09-18 100000' })
@@ -486,6 +493,14 @@ describe('Jev plan-only watcher', () => {
 })
 
 describe('Jev decision boundary', () => {
+  it.each([
+    [{ ready: false }, '尚未就绪'], [{ ready: 'true' }, '就绪标记'],
+    [{ latestPrice: 0 }, '有效最新价'], [{ quoteTime: undefined }, '未返回行情时间'],
+    [{ quoteTime: '2026-09-18 09:58:00' }, '超过 90 秒'], [{ contractCode: 'rb2611' }, '不符'],
+  ])('still rejects invalid quote facts without relying on ready: %s', (change, cause) => {
+    const result = watchQuote({ contractCode: 'rb2610', latestPrice: 3000, quoteTime: '2026-09-18 10:00:00', ...change }, 'rb2610')
+    expect(result.quote).toBeUndefined(); expect(result.issue).toContain(cause)
+  })
   it('recognizes exchange-qualified positions and refuses mismatched or ambiguous contracts', () => {
     const cfg = { ...config, symbol: 'ag2612', instrument: { product: 'ag', exchange: 'SHF' as const, tickSize: 1 } }
     const held = (rows: unknown[]) => ({ ...snapshot(), positions: { data: rows, fetchedAt: Date.now() } })

@@ -3740,7 +3740,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1780,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1784,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentDelete',
@@ -3765,7 +3765,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentDelete:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentDelete_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1882,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1886,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentLibrarySources',
@@ -3780,7 +3780,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentLibrarySources:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentLibrarySources_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1768,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1772,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentList',
@@ -3795,7 +3795,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1756,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1760,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionCreate',
@@ -3821,7 +3821,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1921,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1925,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionList',
@@ -3847,7 +3847,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2169,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2173,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamCreate',
@@ -3872,7 +3872,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2191,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2195,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamDelete',
@@ -3897,7 +3897,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamDelete:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamDelete_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2243,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2247,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamList',
@@ -3912,7 +3912,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2181,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2185,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionCreate',
@@ -3938,7 +3938,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2261,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2265,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionList',
@@ -3964,7 +3964,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2340,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2344,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamUpdate',
@@ -3989,7 +3989,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2213,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2217,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUninstall',
@@ -4014,7 +4014,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUninstall:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUninstall_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1898,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1902,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUpdate',
@@ -4040,7 +4040,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1838,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1842,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/authoringCommit',
@@ -4066,7 +4066,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAuthoringCommitResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringCommit_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1949,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1953,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/authoringSessionCreate',
@@ -4092,7 +4092,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1935,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1939,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestCheckUpdate',
@@ -4945,7 +4945,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsSessionFileAttachment',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileAttach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2356,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2360,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileList',
@@ -4971,7 +4971,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsFileListResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2390,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2394,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileRead',
@@ -4997,7 +4997,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsFileReadResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileRead_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2408,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2412,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/frequent',
@@ -5152,7 +5152,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPromptFormListResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_promptFormList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1715,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1716,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/promptFormRender',
@@ -5178,7 +5178,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPromptFormRenderResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_promptFormRender_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1731,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1735,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/residentSkillAttach',
@@ -5229,7 +5229,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResidentSkillResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_residentSkillDetach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1688,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1689,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultList',
@@ -5255,7 +5255,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPrepareResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2470,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2474,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultPrepare',
@@ -5281,7 +5281,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPrepareResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultPrepare_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2425,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2429,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultPreview',
@@ -5307,7 +5307,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPreview',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultPreview_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2489,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2493,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/sessionEnsure',

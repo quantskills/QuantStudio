@@ -2305,7 +2305,8 @@ const numeric = (value) => typeof value === "number" ? value : NaN;
 /** Quotes without an explicit timezone are exchange-local Shanghai timestamps. */
 function watchQuote(value, symbol, now = Date.now(), exchange) {
 	const row = record(value), text = row.quoteTime;
-	if (row.ready !== true) return { issue: "柜台行情尚未就绪；请检查行情连接，系统将继续重试。" };
+	if (row.ready === false) return { issue: `比赛柜台行情尚未就绪（${symbol}）；请在比赛页「最新行情」核对同一合约，系统将继续重试。` };
+	if (row.ready !== void 0 && row.ready !== true) return { issue: "比赛柜台返回了无法识别的行情就绪标记；请检查比赛 CLI 版本与行情接口。" };
 	if (!sameContestContract(row.contractCode ?? row.symbol, symbol, exchange)) return { issue: `行情合约与 ${symbol} 不符；请检查实际合约配置。` };
 	if (typeof text !== "string") return { issue: "柜台未返回行情时间；等待完整行情。" };
 	const normalized = text.replace(/^(\d{4}-\d{2}-\d{2})[ T](\d{2})(\d{2})(\d{2})(\.\d+)?$/, "$1T$2:$3:$4$5");
@@ -8140,7 +8141,7 @@ let QuantSkillsSessionService = (() => {
 		}
 		/**
 		* Attach one exact installed Skill as resident Session context without creating a user message.
-		* @param request - live QuantSkills Session and exact installed version.
+		* @param request - live conversation and exact installed version; an ordinary workspace conversation is adopted on explicit attachment.
 		* @param signal - optional caller cancellation.
 		* @returns the authoritative resident Skill set after the append.
 		*/
@@ -8148,11 +8149,12 @@ let QuantSkillsSessionService = (() => {
 			const active = this.operationSignal(signal);
 			return this.withSessionLock(this.residentSkillTails, request.sessionId, async () => {
 				active.throwIfAborted();
-				const agent = this.requireLiveQuantSkillsAgent(request.sessionId);
-				await this.ensureAgentSetup(agent);
-				const runtime = this.requireResidentRuntime(request.sessionId);
+				const agent = this.ctx.agents.get(request.sessionId);
+				if (agent === void 0) throw new Error(`会话「${request.sessionId}」尚未打开，请先打开会话再加载技能。`);
 				const resolved = await this.ctx.quantSkillsHost.resolveInstalledSkill(request.versionId, active);
 				active.throwIfAborted();
+				await this.ensureSkillSession(agent, active);
+				const runtime = this.requireResidentRuntime(request.sessionId);
 				const binding = bindingFrom(resolved.version);
 				const current = foldQuantSkillsResidentSkills(agent.session.events);
 				const occupied = current.find((item) => item.assetId === binding.assetId);
@@ -8208,7 +8210,9 @@ let QuantSkillsSessionService = (() => {
 		*/
 		async promptFormList(request, signal) {
 			const active = this.operationSignal(signal);
-			const agent = this.requireLiveQuantSkillsAgent(request.sessionId);
+			const agent = this.ctx.agents.get(request.sessionId);
+			if (agent === void 0) throw new Error(`QuantSkills Session "${request.sessionId}" is not live.`);
+			if (!isQuantSkillsSession(agent.session.events)) return Object.freeze({ forms: Object.freeze([]) });
 			return Object.freeze({ forms: await this.listPromptForms(agent, active) });
 		}
 		/**
@@ -9198,7 +9202,8 @@ let QuantSkillsSessionService = (() => {
 				if (loggedPlain !== null && plainReservation !== void 0 && !samePlainBinding(loggedPlain, plainReservation.binding)) throw new QuantSkillsSessionConflictError(`session "${agent.session.id}" has another logged QuantSkills purpose`);
 				const binding = loggedPlain ?? plainReservation?.binding;
 				if (binding === void 0) return;
-				this.installResidentRuntime(agentCtx, agent, Object.freeze([]));
+				const resident = await this.resolveBindings(foldQuantSkillsResidentSkills(agent.session.events), this.lifetime.signal);
+				this.installResidentRuntime(agentCtx, agent, resident);
 				this.registerAttachmentTool(agentCtx, agent);
 				this.registerLiveTradingApproval(agentCtx, agent);
 				if (binding.contest) {
@@ -10125,6 +10130,24 @@ let QuantSkillsSessionService = (() => {
 				for (const location of locations ?? []) add(location.path, "mutation");
 			}
 			return Object.freeze(candidates);
+		}
+		/** Adopt only the conversation explicitly targeted by a Skill attachment, preserving its workspace and history. */
+		async ensureSkillSession(agent, signal) {
+			await this.ensureAgentSetup(agent);
+			signal.throwIfAborted();
+			if (isQuantSkillsSession(agent.session.events)) return;
+			const sessionId = agent.session.id;
+			if (agent.session.header.parentSession !== void 0 && agent.session.header.seedLength === void 0) throw new Error("子代理会话的能力由所属任务管理，请在主会话中加载技能。");
+			if (!agent.session.header.cwd) throw new Error("当前会话没有工作区，请先选择工作区再加载技能。");
+			if (this.plainReservations.has(sessionId) || this.reservations.has(sessionId) || this.agentReservations.has(sessionId) || this.teamReservations.has(sessionId) || this.teamMemberReservations.has(sessionId)) throw new QuantSkillsSessionConflictError("当前会话正在初始化，请稍后重试加载技能。");
+			const reservation = Object.freeze({ binding: Object.freeze({ purpose: "ordinary" }) });
+			this.plainReservations.set(sessionId, reservation);
+			this.agentSetups.delete(agent);
+			try {
+				await this.ensureAgentSetup(agent);
+			} finally {
+				if (this.plainReservations.get(sessionId) === reservation) this.plainReservations.delete(sessionId);
+			}
 		}
 		requireLiveQuantSkillsAgent(sessionId) {
 			const agent = this.ctx.agents.get(sessionId);

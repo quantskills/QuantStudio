@@ -10414,7 +10414,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1780,
+						"line": 1784,
 						"column": 9
 					}
 				},
@@ -10441,7 +10441,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1882,
+						"line": 1886,
 						"column": 9
 					}
 				},
@@ -10459,7 +10459,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1768,
+						"line": 1772,
 						"column": 9
 					}
 				},
@@ -10477,7 +10477,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1756,
+						"line": 1760,
 						"column": 3
 					}
 				},
@@ -10505,7 +10505,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1921,
+						"line": 1925,
 						"column": 9
 					}
 				},
@@ -10533,7 +10533,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2169,
+						"line": 2173,
 						"column": 9
 					}
 				},
@@ -10560,7 +10560,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2191,
+						"line": 2195,
 						"column": 9
 					}
 				},
@@ -10587,7 +10587,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2243,
+						"line": 2247,
 						"column": 9
 					}
 				},
@@ -10605,7 +10605,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2181,
+						"line": 2185,
 						"column": 3
 					}
 				},
@@ -10633,7 +10633,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2261,
+						"line": 2265,
 						"column": 9
 					}
 				},
@@ -10661,7 +10661,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2340,
+						"line": 2344,
 						"column": 9
 					}
 				},
@@ -10688,7 +10688,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2213,
+						"line": 2217,
 						"column": 9
 					}
 				},
@@ -10715,7 +10715,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1898,
+						"line": 1902,
 						"column": 9
 					}
 				},
@@ -10743,7 +10743,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1838,
+						"line": 1842,
 						"column": 9
 					}
 				},
@@ -10771,7 +10771,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1949,
+						"line": 1953,
 						"column": 3
 					}
 				},
@@ -10799,7 +10799,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1935,
+						"line": 1939,
 						"column": 9
 					}
 				},
@@ -11743,7 +11743,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2356,
+						"line": 2360,
 						"column": 9
 					}
 				},
@@ -11771,7 +11771,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2390,
+						"line": 2394,
 						"column": 9
 					}
 				},
@@ -11799,7 +11799,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2408,
+						"line": 2412,
 						"column": 9
 					}
 				},
@@ -11966,7 +11966,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1715,
+						"line": 1716,
 						"column": 9
 					}
 				},
@@ -11994,7 +11994,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1731,
+						"line": 1735,
 						"column": 9
 					}
 				},
@@ -12049,7 +12049,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1688,
+						"line": 1689,
 						"column": 3
 					}
 				},
@@ -12077,7 +12077,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2470,
+						"line": 2474,
 						"column": 9
 					}
 				},
@@ -12105,7 +12105,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2425,
+						"line": 2429,
 						"column": 3
 					}
 				},
@@ -12133,7 +12133,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2489,
+						"line": 2493,
 						"column": 9
 					}
 				},

@@ -383,7 +383,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     frequent(request: QuantSkillsFrequentRequest, signal?: AbortSignal): Promise<readonly QuantSkillsFrequentSkill[]>;
     /**
      * Attach one exact installed Skill as resident Session context without creating a user message.
-     * @param request - live QuantSkills Session and exact installed version.
+     * @param request - live conversation and exact installed version; an ordinary workspace conversation is adopted on explicit attachment.
      * @param signal - optional caller cancellation.
      * @returns the authoritative resident Skill set after the append.
      */
@@ -579,6 +579,8 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private readTextAttachment;
     /** Complete-log result candidates, newest reference first and bounded for one prepare request. */
     private resultCandidates;
+    /** Adopt only the conversation explicitly targeted by a Skill attachment, preserving its workspace and history. */
+    private ensureSkillSession;
     private requireLiveQuantSkillsAgent;
     private listPromptForms;
     private requireQuantSkillsSession;

@@ -934,6 +934,78 @@ describe('QuantSkills exact-version sessions', () => {
     await fixture.ctx.fiber.dispose()
   })
 
+  it('loads installed Skills into an existing native workspace conversation and restores them', async () => {
+    const fixture = await harness(), service = fixture.ctx.quantSkillsSessions
+    const sessionId = SessionId('native-custom-workspace-skills'), cwd = join(fixture.root, 'my-workspace')
+    await mkdir(cwd)
+    await fixture.sessionController.create({ sessionId, cwd })
+    const agent = fixture.ctx.agents.get(sessionId)!
+    agent.session.append('assistant/message', { turn: 1, step: 1, message: createMessage({
+      role: 'assistant', content: [{ type: 'text', text: '保留已有研究结论与后续任务。' }],
+      source: { kind: 'model', provider: 'test', model: 'test' },
+    }) }, { surfaceOp: 'append' })
+    const header = structuredClone(agent.session.header), history = [...agent.session.events]
+    await expect(service.promptFormList({ sessionId })).resolves.toEqual({ forms: [] })
+    expect(foldQuantSkillsPlainSessionBinding(agent.session.events)).toBeNull()
+    await Promise.all([assetId, secondAssetId, assetId].map(id => service.residentSkillAttach({
+      sessionId, versionId: `${id}@${commitV1}` as QuantSkillsInstalledVersionId,
+    })))
+    expect(fixture.ctx.agents.get(sessionId)).toBe(agent)
+    expect(agent.session.header).toEqual(header)
+    expect(agent.session.events.slice(0, history.length)).toEqual(history)
+    expect(agent.session.events.filter(event => event.type === 'quantskills/plain-session')).toHaveLength(1)
+    expect(foldQuantSkillsResidentSkills(agent.session.events).map(binding => binding.assetId)).toEqual([assetId, secondAssetId])
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain('version one')
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain('beta version')
+    expect(fixture.ctx.tools.get('quantskills_contest_prepare', agent)).toBeUndefined()
+    await fixture.handles.get(sessionId)!.dispose()
+    await fixture.sessionController.create({ sessionId })
+    await service.sessionEnsure({ sessionId })
+    const resumed = fixture.ctx.agents.get(sessionId)!
+    expect(resumed.session.header.cwd).toBe(cwd)
+    expect(resumed.session.events.slice(0, history.length)).toEqual(history)
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).toContain('version one')
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).toContain('beta version')
+    await service.residentSkillDetach({ sessionId, assetId })
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).not.toContain('version one')
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('does not adopt an ordinary conversation when the requested Skill cannot be resolved', async () => {
+    const fixture = await harness(), sessionId = SessionId('native-invalid-skill')
+    await fixture.sessionController.create({ sessionId })
+    await expect(fixture.ctx.quantSkillsSessions.residentSkillAttach({
+      sessionId, versionId: 'missing@unknown' as QuantSkillsInstalledVersionId,
+    })).rejects.toThrow()
+    expect(foldQuantSkillsPlainSessionBinding(fixture.ctx.agents.get(sessionId)!.session.events)).toBeNull()
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('keeps unselected conversations untouched and refuses adoption of task-owned children', async () => {
+    const fixture = await harness(), service = fixture.ctx.quantSkillsSessions
+    const parentId = SessionId('native-parent'), childId = SessionId('native-task-child')
+    await fixture.sessionController.create({ sessionId: parentId })
+    const child = await fixture.ctx.agents.create({ sessionId: childId, meta: { cwd: fixture.root, parentSession: parentId } })
+    await expect(service.residentSkillAttach({ sessionId: childId,
+      versionId: `${assetId}@${commitV1}` as QuantSkillsInstalledVersionId })).rejects.toThrow('主会话')
+    expect(foldQuantSkillsPlainSessionBinding(child.agent.session.events)).toBeNull()
+    expect(foldQuantSkillsPlainSessionBinding(fixture.ctx.agents.get(parentId)!.session.events)).toBeNull()
+    expect(foldQuantSkillsResidentSkills(child.agent.session.events)).toEqual([])
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('restores hot-plugged Skills in a product-created ordinary session', async () => {
+    const fixture = await harness(), service = fixture.ctx.quantSkillsSessions, sessionId = SessionId('plain-resident-resume')
+    await service.plainSessionCreate({ sessionId, purpose: 'ordinary', cwd: fixture.root })
+    await service.residentSkillAttach({ sessionId, versionId: `${assetId}@${commitV1}` as QuantSkillsInstalledVersionId })
+    await fixture.handles.get(sessionId)!.dispose()
+    await service.plainSessionCreate({ sessionId, purpose: 'ordinary', cwd: fixture.root })
+    const resumed = fixture.ctx.agents.get(sessionId)!
+    await expect(fixture.ctx.skills.get(assetId, { scope: resumed })).resolves.toMatchObject({ content: 'version one' })
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).toContain('version one')
+    await fixture.ctx.fiber.dispose()
+  })
+
   it('verifies the declaration name when a standard Skill omits the repository prefix', async () => {
     const fixture = await harness()
     fixture.versions.set(

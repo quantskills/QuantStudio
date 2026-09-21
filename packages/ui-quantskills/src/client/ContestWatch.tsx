@@ -99,6 +99,7 @@ export function ContestWatch({ access, connected = true }: { access: NonNullable
     <div className={css.watchStatus} role="status" data-phase={phase} data-active={active}>
       <span className={css.watchIndicator} aria-hidden="true"/>
       <div><strong>{label}</strong><p>{statusError ? '暂时无法确认盯盘状态，正在重试连接。' : status?.message ?? '读取盯盘状态…'}</p>
+        {phase === 'waiting_quote' && <p>实时报价来自比赛柜台，PandaData 用于历史 K 线；PandaData 已授权不代表柜台已返回有效报价。请在比赛页「最新行情」核对{status?.config?.symbol ? ` ${status.config.symbol} ` : '同一合约'}的价格与时间。</p>}
         {status?.lastQuoteCheckedAt && <small>最近行情检查：{contestTime(status.lastQuoteCheckedAt)}{status.running && status.config ? ` · 采样间隔 ${status.config.intervalSeconds} 秒` : ''}</small>}
         {status?.nextRetryAt && status.running && <p>柜台重试时间：{contestTime(status.nextRetryAt)}，等待期间不请求 Jev。</p>}
         {status?.accountCheckedAt && <small>最近账户巡检：{contestTime(status.accountCheckedAt)}</small>}
