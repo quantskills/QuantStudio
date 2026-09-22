@@ -10,6 +10,7 @@ import type { ContestService } from '../src/contest-service.ts'
 import type { ContestInspection, ContestPlan } from '../src/contest-types.ts'
 import type { ContestWatchConfig, ContestWatchDecision } from '../src/contest-watch-types.ts'
 import { makeTemplate, rangeTemplate } from '../../ui-quantskills/src/client/jev-templates.ts'
+import { products } from '../../ui-quantskills/src/client/jev-products.ts'
 
 const identity = { accountId: 'watch-account', contestId: 'watch-contest' }
 const assessments = Object.fromEntries(Object.entries(watchAssessments).map(([key, value]) => {
@@ -45,6 +46,20 @@ async function fixture(gateway?: unknown) {
 }
 
 describe('Jev plan-only watcher', () => {
+  it('accepts every futures product without a server whitelist and routes history to its exact contract', async () => {
+    const databaseFetch = vi.fn(async () => ({ id: 'all-products-history' }))
+    const f = await fixture({ databaseList: async () => [], databaseFetch })
+    for (const row of products) {
+      const symbol = row.product.replace('_f', '') + (row.exchange === 'CZC' ? '701' : '2701') + (row.product.endsWith('_f') ? 'F' : '')
+      const state = await f.watcher.start(rangeTemplate(symbol))
+      expect(state.config?.symbol).toBe(symbol)
+      expect(databaseFetch).toHaveBeenLastCalledWith(expect.objectContaining({ source: expect.objectContaining({ params: expect.objectContaining({ symbol: symbol.toUpperCase() + '.' + row.exchange }) }) }), expect.any(AbortSignal))
+      await f.watcher.stop()
+    }
+    expect(f.decide).not.toHaveBeenCalled()
+    expect(f.prepare).not.toHaveBeenCalled()
+    expect(f.execute).not.toHaveBeenCalled()
+  })
   it('continues exit decisions during opening cooldown and after the opening quota is exhausted', async () => {
     const f = await fixture()
     await f.watcher.start({ ...config, maxPlans: 1 }); await f.warm()

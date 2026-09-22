@@ -2,6 +2,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-panda-mcp'
 import { z } from 'zod'
 import { normalizeWatchBars } from './contest-watch-evidence.ts'
+import { contestContractParts } from './contest-contract.ts'
 import type { ContestWatchConfig, ContestWatchDataset, ContestWatchHistory } from './contest-watch-types.ts'
 
 /** Classify without exposing raw provider messages, URLs or credentials. */
@@ -24,7 +25,7 @@ export async function watchDatasets(ctx: Context): Promise<ContestWatchDataset[]
     .map(item => ({ id: item.id, name: item.name, columns: item.columns, rows: item.rowCount, source: item.source.kind }))
 }
 export async function prepareWatchHistory(ctx: Context, input: { symbol: string; barSeconds: number }, signal?: AbortSignal): Promise<NonNullable<ContestWatchConfig['history']>> {
-  const parsed = z.object({ symbol: z.string().trim().toUpperCase().regex(/^[A-Z]{1,3}\d{3,4}\.(SHF|DCE|CZC|CFE|INE|GFE)$/), barSeconds: z.union([z.literal(60), z.literal(300)]) }).strict().safeParse(input)
+  const parsed = z.object({ symbol: z.string().trim().toUpperCase().refine(value => Boolean(contestContractParts(value)?.[2])), barSeconds: z.union([z.literal(60), z.literal(300)]) }).strict().safeParse(input)
   if (!parsed.success) throw new Error('请填写 PandaData 实际合约代码（如 RB2610.SHF），周期为 1 或 5 分钟。')
   const gateway = ctx.get('pandaMcp')
   if (!gateway) throw new Error('PandaData 服务不可用，请在设置中连接。')

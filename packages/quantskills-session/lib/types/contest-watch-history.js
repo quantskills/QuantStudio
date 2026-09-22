@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { normalizeWatchBars } from "./contest-watch-evidence.js";
+import { contestContractParts } from "./contest-contract.js";
 /** Classify without exposing raw provider messages, URLs or credentials. */
 export function historyFailure(error, stage) {
     const value = error;
@@ -20,7 +21,7 @@ export async function watchDatasets(ctx) {
         .map(item => ({ id: item.id, name: item.name, columns: item.columns, rows: item.rowCount, source: item.source.kind }));
 }
 export async function prepareWatchHistory(ctx, input, signal) {
-    const parsed = z.object({ symbol: z.string().trim().toUpperCase().regex(/^[A-Z]{1,3}\d{3,4}\.(SHF|DCE|CZC|CFE|INE|GFE)$/), barSeconds: z.union([z.literal(60), z.literal(300)]) }).strict().safeParse(input);
+    const parsed = z.object({ symbol: z.string().trim().toUpperCase().refine(value => Boolean(contestContractParts(value)?.[2])), barSeconds: z.union([z.literal(60), z.literal(300)]) }).strict().safeParse(input);
     if (!parsed.success)
         throw new Error('请填写 PandaData 实际合约代码（如 RB2610.SHF），周期为 1 或 5 分钟。');
     const gateway = ctx.get('pandaMcp');

@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { record } from './contest-cli.ts'
+import { contestContractParts } from './contest-contract.ts'
 import type { ContestPlan } from './contest-types.ts'
 
 export const contestFillSchema = z.object({ id: z.string().min(1).max(200), tradeId: z.string().min(1).max(200), orderId: z.string().min(1).max(200),
@@ -16,7 +17,7 @@ export function planOrderId(plan: ContestPlan): string | undefined {
 export function mergePlanFills(plan: ContestPlan, rows: unknown): boolean {
   const orderId = planOrderId(plan), parameters = record(plan.details.parameters)
   if (!orderId || !Array.isArray(rows) || typeof parameters.contractCode !== 'string') return false
-  const contract = (value: unknown) => typeof value === 'string' ? /^([a-z]{1,3}\d{3,4})(?:\.(SHF|DCE|CZC|CFE|INE|GFE))?$/i.exec(value) : null
+  const contract = contestContractParts
   const planned = contract(parameters.contractCode), receipt = record(plan.result?.latestOrder ?? plan.result?.result)
   const expected = contract(receipt.contractCode) ?? planned
   if (!planned || !expected || planned[1]!.toLowerCase() !== expected[1]!.toLowerCase()) return false

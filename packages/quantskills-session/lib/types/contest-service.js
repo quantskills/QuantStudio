@@ -7,7 +7,7 @@ import { resolveDshHome } from '@deepseek-ai/dsh-home-paths';
 import { z } from 'zod';
 import { ContestCliError, record, transientContestCodes, versionAtLeast } from "./contest-cli.js";
 import { contestFillSchema, mergePlanFills, planOrderId } from "./contest-fills.js";
-import { contestContractParts, sameContestContract } from "./contest-contract.js";
+import { contestContractParts, futuresContractPattern, sameContestContract } from "./contest-contract.js";
 const identitySchema = z.object({ accountId: z.string().min(1), contestId: z.string().min(1) });
 const planSchema = z.object({
     id: z.string().min(1), sessionId: z.string().min(1), identity: identitySchema,
@@ -32,7 +32,7 @@ export function sameContest(a, b) {
     return a !== undefined && b !== undefined && a.accountId === b.accountId && a.contestId === b.contestId;
 }
 export function contestQueryArgs(input) {
-    const query = z.object({ kind: z.enum(['account', 'positions', 'open-orders', 'orders', 'trades', 'ranking', 'ranking-me', 'settlements', 'quote']),
+    const query = z.object({ kind: z.enum(['account', 'positions', 'open-orders', 'orders', 'trades', 'ranking', 'ranking-me', 'settlements', 'quote', 'varieties']),
         symbol: z.string().trim().min(1).max(32).regex(/^[\p{Script=Han}a-zA-Z0-9]+$/u).optional(),
         date: z.string().regex(/^(today|\d{4}-\d{2}-\d{2})$/).optional(), lastId: z.string().regex(/^\d+$/).optional(), board: z.enum(['live', 'settled']).optional(),
     }).strict().parse(input);
@@ -270,6 +270,8 @@ export class ContestService {
         const args = contestQueryArgs(input);
         return this.exclusive(async () => {
             this.assertReady(expected);
+            if (input.kind === 'varieties' && !versionAtLeast(this.state.version ?? '', '0.1.23'))
+                throw new Error('同步柜台品种需要比赛 CLI 0.1.23 或以上，请在比赛页检查更新；本地品种目录和手动配置仍可使用。');
             const result = await this.run(args, signal);
             if (input.kind === 'trades')
                 await this.recordFills(result.data);
@@ -431,7 +433,7 @@ export class ContestService {
                     throw new Error('交易预演未通过，请检查合约、手数、价格和可用资金。');
                 quote = record(preview.marketQuote);
                 const contract = preview.contractCode ?? record(preview.order).contractCode ?? quote.contractCode ?? quote.symbol ?? symbol;
-                if (typeof contract !== 'string' || !/^[A-Za-z]+\d{3,4}$/.test(contract))
+                if (typeof contract !== 'string' || !futuresContractPattern.test(contract))
                     throw new Error('预演未返回实际合约，请填写完整合约代码后重试。');
                 if (contestContractParts(expectedContract) && (!sameContestContract(contract, expectedContract)
                     || (quote.contractCode !== undefined && !sameContestContract(quote.contractCode, expectedContract)))) {

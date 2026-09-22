@@ -1200,7 +1200,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_resul
 })).readonly(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_parameter_0$schema = z.object({
-  'kind': z.union([z.literal("account"), z.literal("positions"), z.literal("open-orders"), z.literal("orders"), z.literal("trades"), z.literal("ranking"), z.literal("ranking-me"), z.literal("settlements"), z.literal("quote")]).readonly(),
+  'kind': z.union([z.literal("account"), z.literal("positions"), z.literal("open-orders"), z.literal("orders"), z.literal("trades"), z.literal("ranking"), z.literal("ranking-me"), z.literal("settlements"), z.literal("quote"), z.literal("varieties")]).readonly(),
   'symbol': z.string().readonly().optional(),
   'date': z.string().readonly().optional(),
   'lastId': z.string().readonly().optional(),
@@ -5873,7 +5873,7 @@ export const TYPERT = {
           },
           {
             "name": "ContestQuery",
-            "declaration": "export interface ContestQuery {\n    readonly kind: 'account' | 'positions' | 'open-orders' | 'orders' | 'trades' | 'ranking' | 'ranking-me' | 'settlements' | 'quote';\n    readonly symbol?: string;\n    readonly date?: string;\n    readonly lastId?: string;\n    readonly board?: 'live' | 'settled';\n}"
+            "declaration": "export interface ContestQuery {\n    readonly kind: 'account' | 'positions' | 'open-orders' | 'orders' | 'trades' | 'ranking' | 'ranking-me' | 'settlements' | 'quote' | 'varieties';\n    readonly symbol?: string;\n    readonly date?: string;\n    readonly lastId?: string;\n    readonly board?: 'live' | 'settled';\n}"
           },
           {
             "name": "ContestSessionOpenRequest",

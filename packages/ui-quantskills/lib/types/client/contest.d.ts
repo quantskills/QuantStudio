@@ -1,6 +1,7 @@
 import type { ContestData, ContestPlan, ContestQuery, ContestStatus, ContestInspection, ContestJevSettings, ContestJevUsage, ContestWatchConfig, ContestWatchDataset, ContestWatchTemplate, ContestWatchStatus } from './plugin-types.ts';
 export interface ContestAccess {
     watch?: {
+        varieties?(signal?: AbortSignal): Promise<ContestData>;
         settings(): Promise<ContestJevSettings>;
         usage(): Promise<ContestJevUsage>;
         templates(): Promise<ContestWatchTemplate[]>;

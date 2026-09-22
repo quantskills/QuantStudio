@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { record } from "./contest-cli.js";
+import { contestContractParts } from "./contest-contract.js";
 export const contestFillSchema = z.object({ id: z.string().min(1).max(200), tradeId: z.string().min(1).max(200), orderId: z.string().min(1).max(200),
     price: z.number().finite().positive(), volume: z.number().int().positive(), time: z.string().min(1).max(80) });
 export function planOrderId(plan) {
@@ -14,7 +15,7 @@ export function mergePlanFills(plan, rows) {
     const orderId = planOrderId(plan), parameters = record(plan.details.parameters);
     if (!orderId || !Array.isArray(rows) || typeof parameters.contractCode !== 'string')
         return false;
-    const contract = (value) => typeof value === 'string' ? /^([a-z]{1,3}\d{3,4})(?:\.(SHF|DCE|CZC|CFE|INE|GFE))?$/i.exec(value) : null;
+    const contract = contestContractParts;
     const planned = contract(parameters.contractCode), receipt = record(plan.result?.latestOrder ?? plan.result?.result);
     const expected = contract(receipt.contractCode) ?? planned;
     if (!planned || !expected || planned[1].toLowerCase() !== expected[1].toLowerCase())

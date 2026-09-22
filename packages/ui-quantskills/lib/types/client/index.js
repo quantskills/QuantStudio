@@ -929,6 +929,7 @@ export function mountQuantSkillsApplication(ctx, options) {
     };
     const contestAccess = {
         watch: {
+            varieties: signal => unwrapRemote(ctx.remote.quantSkillsSessions.contestQuery({ kind: 'varieties' }, signal)),
             settings: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestJevSettings()),
             usage: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestJevUsage()),
             templates: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchTemplates()),

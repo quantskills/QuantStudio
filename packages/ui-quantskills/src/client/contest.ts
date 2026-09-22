@@ -4,6 +4,7 @@ import type { ContestData, ContestPlan, ContestQuery, ContestStatus, ContestInsp
 
 export interface ContestAccess {
   watch?: {
+    varieties?(signal?: AbortSignal): Promise<ContestData>
     settings(): Promise<ContestJevSettings>
     usage(): Promise<ContestJevUsage>
     templates(): Promise<ContestWatchTemplate[]>

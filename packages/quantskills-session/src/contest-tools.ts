@@ -63,9 +63,9 @@ export function installContestTools(ctx: Context, agent: Agent, contest: Contest
   }))
   tools.register(defineTool({
     name: 'quantskills_contest_query',
-    description: '查询本比赛会话绑定的账户、持仓、当前挂单、委托、成交、排名、结算或单品种最新价。今天的委托/成交必须传 date=today；历史分页使用 last_id。',
+    description: '查询本比赛会话绑定的账户、持仓、当前挂单、委托、成交、排名、结算、期货品种目录或单品种最新价。varieties 返回柜台品种及启用状态（CLI 0.1.23 起），不代表指定合约行情已就绪。今天的委托/成交必须传 date=today；历史分页使用 last_id。',
     parameters: {
-      kind: { type: 'string', required: true, enum: ['account', 'positions', 'open-orders', 'orders', 'trades', 'ranking', 'ranking-me', 'settlements', 'quote'] },
+      kind: { type: 'string', required: true, enum: ['account', 'positions', 'open-orders', 'orders', 'trades', 'ranking', 'ranking-me', 'settlements', 'quote', 'varieties'] },
       symbol: { type: 'string' }, date: { type: 'string' }, last_id: { type: 'string' }, board: { type: 'string', enum: ['live', 'settled'] },
     },
     output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },

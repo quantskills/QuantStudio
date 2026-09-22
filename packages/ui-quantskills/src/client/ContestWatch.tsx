@@ -8,7 +8,8 @@ import { JevUsage } from './JevUsage.tsx'
 import { JevStrategy } from './JevStrategy.tsx'
 import { JevEvidenceSettings } from './JevEvidenceSettings.tsx'
 import { ContestWatchVisuals } from './ContestWatchVisuals.tsx'
-import { makeTemplate, rangeTemplate, templates as builtIns, withInstrument, type TemplateKind } from './jev-templates.ts'
+import { instrumentIssue, makeTemplate, rangeTemplate, templates as builtIns, withInstrument, type TemplateKind } from './jev-templates.ts'
+import { useJevProducts } from './jev-catalog.ts'
 import { JevInstrument } from './JevInstrument.tsx'
 import css from './ContestPage.module.css'
 
@@ -23,6 +24,7 @@ const fields = [
 ] as const
 
 export function ContestWatch({ access, connected = true }: { access: NonNullable<ContestAccess['watch']>; connected?: boolean }) {
+  const { catalog, message: catalogMessage, loading: catalogLoading, refresh: refreshCatalog } = useJevProducts(access, connected)
   const [expanded, setExpanded] = useState(true), contentId = useId()
   const [status, setStatus] = useState<ContestWatchStatus>(), [config, setConfig] = useState(initial)
   const [tuning, setTuning] = useState(false), [busy, setBusy] = useState(''), [error, setError] = useState('')
@@ -60,6 +62,7 @@ export function ContestWatch({ access, connected = true }: { access: NonNullable
   }, [access])
   const run = async (action: 'start' | 'stop') => {
     if (action === 'start' && pending.current) return
+    if (action === 'start') { const issue = instrumentIssue(config, catalog); if (issue) { setError(issue); return } }
     const version = ++epoch.current
     pending.current = true; setBusy(action); setError('')
     try {
@@ -138,12 +141,16 @@ export function ContestWatch({ access, connected = true }: { access: NonNullable
           <label>决策方式<select value={config.decisionMode ?? 'strict'} onChange={event => setConfig({ ...config, decisionMode: event.target.value as 'jev' | 'strict' })}>
             <option value="jev">Jev 自主决策（推荐）</option><option value="strict">严格规则模式</option>
           </select></label>
-          <JevInstrument config={config} onChange={setConfig}/>
+          <JevInstrument config={config} onChange={setConfig} catalog={catalog}/>
           <div className={css.jevRunSummary}><strong>{config.strategyName ?? '自定义配置'} · 每笔最多 {config.volume} 手</strong>
             <span>{config.decisionIntervalSeconds ?? 30} 秒决策 · 运行 {config.durationMinutes} 分钟 · 最多 {config.maxPlans} 个开仓计划</span>
             <span>权益回落 {config.maxEquityDrop} 元暂停 · {config.autoHistory ? 'PandaData 行情自动准备' : '使用手动行情配置'}</span>
           </div>
           {!status?.running && <button type="submit" data-primary disabled={!config.symbol || !configured || !connected}>{busy === 'start' ? '正在准备行情并启动…' : '开始盯盘'}</button>}
+        </div>
+        <div className={css.jevCatalogTools}><span>{catalogMessage}</span>
+          {access.varieties && <button type="button" disabled={!connected || catalogLoading} onClick={() => { void refreshCatalog() }}>{catalogLoading ? '正在同步…' : '同步柜台品种'}</button>}
+          <span>自动识别交易所并预填 tick；合约月份由你填写。预填参数可修改，实际行情与交易以柜台为准。</span>
         </div>
         <details className={css.jevControls} open={tuning} onToggle={event => setTuning(event.currentTarget.open)}><summary>微调模板<span>频率、风控、策略与行情</span></summary>
         <p className={css.jevFine}>{config.decisionMode === 'jev' ? '策略条件作为参考发送给 Jev，由模型判断机会。历史不足也会请求分析并产生用量，但不允许新开仓；账户、方向、手数和风控限制仍生效。' : '严格规则模式：程序条件先筛选，全部可交易动作被拦截时不请求 Jev。旧配置沿用此模式，可在上方切换。'}</p>

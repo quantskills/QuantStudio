@@ -5,7 +5,7 @@ export interface ContestIdentity {
     readonly contestId: string;
 }
 export interface ContestQuery {
-    readonly kind: 'account' | 'positions' | 'open-orders' | 'orders' | 'trades' | 'ranking' | 'ranking-me' | 'settlements' | 'quote';
+    readonly kind: 'account' | 'positions' | 'open-orders' | 'orders' | 'trades' | 'ranking' | 'ranking-me' | 'settlements' | 'quote' | 'varieties';
     readonly symbol?: string;
     readonly date?: string;
     readonly lastId?: string;

@@ -1,6 +1,16 @@
-/** Compare actual futures contracts without losing an explicit exchange constraint. */
+/** Actual delivery contracts, including DCE monthly-average contracts (e.g. l2610F). */
+export const futuresContractPattern = /^[a-z]{1,3}\d{3,4}f?$/i;
+export const futuresProductPattern = /^[a-z]{1,3}(?:_f)?$/i;
+export const futuresExchanges = { SHF: '上海期货交易所', DCE: '大连商品交易所', CZC: '郑州商品交易所', CFE: '中国金融期货交易所', INE: '上海国际能源交易中心', GFE: '广州期货交易所' };
+/** Compare actual futures contracts without losing an explicit exchange or the monthly-average suffix. */
 export const contestContractParts = (value) => typeof value === 'string'
-    ? /^([a-z]{1,3}\d{3,4})(?:\.(SHF|DCE|CZC|CFE|INE|GFE))?$/i.exec(value.trim()) : null;
+    ? /^([a-z]{1,3}\d{3,4}f?)(?:\.(SHF|DCE|CZC|CFE|INE|GFE))?$/i.exec(value.trim()) : null;
+export function futuresProduct(symbol) {
+    const contract = contestContractParts(symbol)?.[1];
+    if (!contract)
+        return undefined;
+    return contract.match(/^[a-z]+/i)[0].toLowerCase() + (/\df$/i.test(contract) ? '_f' : '');
+}
 export function sameContestContract(a, b, exchange) {
     const left = contestContractParts(a), right = contestContractParts(b);
     const expectedExchange = right?.[2] ?? exchange;

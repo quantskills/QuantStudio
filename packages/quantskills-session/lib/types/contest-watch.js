@@ -6,7 +6,7 @@ import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write';
 import { credentialRef } from '@deepseek-ai/dsh-credentials';
 import { z } from 'zod';
 import { ContestCliError, record, transientContestCodes } from "./contest-cli.js";
-import { contestContractParts as contractParts, sameContestContract as sameSymbol } from "./contest-contract.js";
+import { contestContractParts as contractParts, sameContestContract as sameSymbol, futuresContractPattern, futuresProductPattern, futuresProduct } from "./contest-contract.js";
 import { configureJev } from "./contest-jev-settings.js";
 import { auditedJevFetch, jevUsageSchema } from "./contest-jev-audit.js";
 import { historySchema, rangeRulesSchema, signalRulesSchema, watchEvidence } from "./contest-watch-evidence.js";
@@ -16,7 +16,7 @@ import { defaultActionCriteria, upgradeWatchStrategy, watchStrategyWarnings } fr
 import { englishJevBody, englishJevInput } from "./contest-jev-english.js";
 import { englishEvidence } from "./contest-watch-input.js";
 const configObject = z.object({
-    symbol: z.string().trim().regex(/^[a-zA-Z]{1,3}\d{3,4}$/), volume: z.number().int().min(1).max(100),
+    symbol: z.string().trim().regex(futuresContractPattern), volume: z.number().int().min(1).max(100),
     intervalSeconds: z.number().int().min(3).max(86400), decisionIntervalSeconds: z.number().int().min(3).max(86400).default(30),
     openingCooldownSeconds: z.number().int().min(0).max(3600).default(300),
     decisionMode: z.enum(['jev', 'strict']).optional(),
@@ -30,7 +30,7 @@ const configObject = z.object({
     minSamples: z.number().int().min(8).max(60).optional(), maxSpread: z.number().finite().min(0).optional(),
     history: historySchema.optional(), rangeRules: rangeRulesSchema.optional(), signalRules: signalRulesSchema.optional(), customStrategy: z.boolean().optional(),
     builtInTemplate: z.enum(['rb-range', 'range', 'trend', 'breakout']).optional(),
-    instrument: z.object({ product: z.string().regex(/^[a-zA-Z]{1,3}$/), exchange: z.enum(['SHF', 'DCE', 'CZC', 'CFE', 'INE', 'GFE']), tickSize: z.number().finite().positive() }).strict().optional(),
+    instrument: z.object({ product: z.string().regex(futuresProductPattern), exchange: z.enum(['SHF', 'DCE', 'CZC', 'CFE', 'INE', 'GFE']), tickSize: z.number().finite().positive() }).strict().optional(),
     autoHistory: z.object({ exchange: z.enum(['SHF', 'DCE', 'CZC', 'CFE', 'INE', 'GFE']), barSeconds: z.union([z.literal(60), z.literal(300)]) }).strict().optional(),
 }).strict();
 const consistentConfig = (config) => {
@@ -43,11 +43,11 @@ const consistentConfig = (config) => {
     if (config.customStrategy && (config.rangeRules || config.signalRules || actions.some(action => !config.actionCriteria?.[action]?.trim())))
         return false;
     const instrument = config.instrument, rules = config.rangeRules ?? config.signalRules;
-    return !instrument || ((!config.symbol || config.symbol.match(/^[a-z]+/i)?.[0].toLowerCase() === instrument.product.toLowerCase())
+    return !instrument || ((!config.symbol || futuresProduct(config.symbol) === instrument.product.toLowerCase())
         && (!config.autoHistory || config.autoHistory.exchange === instrument.exchange) && (!rules || rules.tickSize === instrument.tickSize));
 };
 const configSchema = configObject.refine(consistentConfig);
-const templateConfigSchema = configObject.extend({ symbol: z.string().trim().regex(/^(?:[a-zA-Z]{1,3}\d{3,4})?$/) }).refine(consistentConfig);
+const templateConfigSchema = configObject.extend({ symbol: z.string().trim().refine(value => !value || futuresContractPattern.test(value)) }).refine(consistentConfig);
 const actions = ['hold', 'open_long', 'open_short', 'close_long', 'close_short'];
 const labels = { hold: '观望', open_long: '开多', open_short: '开空', close_long: '平多', close_short: '平空' };
 const numeric = (value) => typeof value === 'number' ? value : NaN;
@@ -301,6 +301,11 @@ export class ContestWatcher {
         await this.load();
         if (this.state.running || this.starting || this.stopping || this.working || this.decisionTask || this.configuring)
             throw new Error('盯盘或配置操作仍在运行，请勿重复启动。');
+        if (typeof input?.symbol !== 'string' || !futuresContractPattern.test(input.symbol.trim()))
+            throw new Error('请填写实际合约（如 m2701、MA701、IF2612、l2610F），不能使用品种简称或主力连续代码。');
+        const tick = input.instrument?.tickSize ?? input.rangeRules?.tickSize ?? input.signalRules?.tickSize;
+        if (tick !== undefined && (!Number.isFinite(tick) || tick <= 0))
+            throw new Error('请填写该合约的最小价格变动（tick），必须大于 0；品种目录未提供参数时请按合约规格填写。');
         const parsed = configSchema.safeParse(input);
         if (!parsed.success)
             throw new Error('请检查实际合约、品种交易所及 tick、3–86400 秒的采样及决策间隔、0–3600 秒的开仓冷却、风控和策略条件；空白策略须填写目标及五种动作标准。');

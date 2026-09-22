@@ -26,6 +26,46 @@ function fixture(running = false) {
   return { access, setState: (next: ContestWatchStatus) => { state = next } }
 }
 describe('Jev continuous watch controls', () => {
+  it('syncs and searches live products, requiring an explicit tick for new products before starting', async () => {
+    const f = fixture()
+    f.access.varieties = vi.fn(async () => ({ fetchedAt: Date.now(), data: { total: 2, items: [
+      { code: 'RB', name: '螺纹钢', exchange: 'SHF', enabled: false },
+      { code: 'ZZ', name: '测试新品种', exchange: 'GFE', enabled: true },
+    ] } }))
+    render(<ContestWatch access={f.access}/>); await screen.findByText(/已同步柜台目录/)
+    expect((screen.getByRole('option', { name: /螺纹钢.*柜台未启用/ }) as HTMLOptionElement).disabled).toBe(true)
+    fireEvent.change(screen.getByLabelText('搜索期货品种'), { target: { value: '广州' } })
+    fireEvent.change(screen.getByLabelText('交易品种'), { target: { value: 'zz' } })
+    expect((screen.getByLabelText('交易所') as HTMLSelectElement).value).toBe('GFE')
+    expect((screen.getByLabelText('最小价格变动（tick 对应价格）') as HTMLInputElement).value).toBe('')
+    fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'zz2701' } })
+    fireEvent.click(screen.getByRole('button', { name: '开始盯盘' }))
+    expect(f.access.start).not.toHaveBeenCalled()
+    fireEvent.change(screen.getByLabelText('最小价格变动（tick 对应价格）'), { target: { value: '.25' } })
+    fireEvent.click(screen.getByRole('button', { name: '开始盯盘' })); await screen.findByText('已启动')
+    expect(f.access.start).toHaveBeenCalledWith(expect.objectContaining({ symbol: 'zz2701', instrument: { product: 'zz', exchange: 'GFE', tickSize: .25 }, maxSpread: .5 }))
+  })
+  it('keeps the offline catalog usable when the CLI cannot fetch metadata', async () => {
+    const f = fixture()
+    f.access.varieties = vi.fn(async () => { throw new Error('需要比赛 CLI 0.1.23') })
+    render(<ContestWatch access={f.access}/>); await screen.findByText(/保留现有目录/)
+    expect(screen.getByRole('option', { name: '豆粕 · M' })).toBeTruthy()
+    fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'm2701' } })
+    fireEvent.click(screen.getByRole('button', { name: '开始盯盘' })); await screen.findByText('已启动')
+    expect(f.access.start).toHaveBeenCalledWith(expect.objectContaining({ instrument: { product: 'm', exchange: 'DCE', tickSize: 1 } }))
+  })
+  it('cancels catalog reads on unmount and does not reset manually edited parameters when metadata arrives', async () => {
+    const f = fixture()
+    let finish!: (value: Awaited<ReturnType<NonNullable<typeof f.access.varieties>>>) => void
+    f.access.varieties = vi.fn(() => new Promise(resolve => { finish = resolve }))
+    const view = render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'm2701' } })
+    fireEvent.change(screen.getByLabelText('最小价格变动（tick 对应价格）'), { target: { value: '2' } })
+    await act(async () => finish({ fetchedAt: Date.now(), data: { total: 1, items: [{ code: 'M', name: '豆粕', exchange: 'DCE', enabled: true }] } }))
+    expect((screen.getByLabelText('最小价格变动（tick 对应价格）') as HTMLInputElement).value).toBe('2')
+    const signal = vi.mocked(f.access.varieties).mock.calls[0]![0]!
+    view.unmount(); expect(signal.aborted).toBe(true)
+  })
   it('offers a persisted opening-only cooldown and opening plan quota', async () => {
     const f = fixture(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
     fireEvent.click(screen.getByText('微调模板'))

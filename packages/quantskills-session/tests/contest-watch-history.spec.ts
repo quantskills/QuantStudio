@@ -15,6 +15,11 @@ function fixture() {
   const gateway = { databaseList: vi.fn(async () => [dataset]), databaseQuery: vi.fn(async () => result), databaseFetch: vi.fn(async () => dataset) }
   return { dataset, result, gateway, ctx: { get: () => gateway } as unknown as Context }
 }
+it.each(['m2701.DCE', 'MA701.CZC', 'IF2612.CFE', 'sc2611.INE', 'lc2611.GFE', 'l2610F.DCE'])('prepares exact exchange-qualified history for %s', async symbol => {
+  const f = fixture()
+  await prepareWatchHistory(f.ctx, { symbol, barSeconds: 60 })
+  expect(f.gateway.databaseFetch).toHaveBeenCalledWith(expect.objectContaining({ source: expect.objectContaining({ params: expect.objectContaining({ symbol: symbol.toUpperCase(), frequency: '1m' }) }) }), undefined)
+})
 it('fetches PandaData minute bars through the app gateway with a bounded date window', async () => {
   const f = fixture(), result = await prepareWatchHistory(f.ctx, { symbol: 'rb2610.shf', barSeconds: 300 })
   expect(result).toMatchObject({ datasetId: 'minute-bars', barSeconds: 300, refresh: true, timeMeaning: 'close' })

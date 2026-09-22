@@ -1,37 +1,58 @@
+import { futuresProduct, futuresExchanges, futuresContractPattern } from '@deepseek-ai/dsh-quantskills-session/contracts';
+import { products } from "./jev-products.js";
+export { products } from "./jev-products.js";
+export const exchanges = futuresExchanges;
 export const templates = [
     { id: 'range', name: '区间回归', description: '识别上下沿，等待回升或回落确认' },
     { id: 'trend', name: '趋势回调', description: '确认均线方向，等待回踩后恢复' },
     { id: 'breakout', name: '突破跟随', description: '等待收盘突破前高或前低，限制追价' },
 ];
-// SHFE product rules effective 2026-01-01; sources are recorded in docs/contest.md.
-export const products = [
-    { product: 'rb', name: '螺纹钢', exchange: 'SHF', tickSize: 1 },
-    { product: 'au', name: '黄金', exchange: 'SHF', tickSize: .02 },
-    { product: 'ag', name: '白银', exchange: 'SHF', tickSize: 1 },
-    { product: 'al', name: '铝', exchange: 'SHF', tickSize: 5 },
-];
-export const exchanges = { SHF: '上海期货交易所', DCE: '大连商品交易所', CZC: '郑州商品交易所', CFE: '中国金融期货交易所', INE: '上海国际能源交易中心', GFE: '广州期货交易所' };
-export function instrumentFor(symbol) {
-    const product = symbol.match(/^[a-z]+/i)?.[0].toLowerCase() ?? 'rb';
-    const preset = products.find(item => item.product === product);
+export function instrumentFor(symbol, catalog = products) {
+    const product = futuresProduct(symbol) ?? (symbol ? '' : 'rb');
+    const preset = catalog.find(item => item.product === product);
     return { product, exchange: preset?.exchange ?? 'SHF', tickSize: preset?.tickSize ?? 0 };
+}
+export function configuredInstrument(config, catalog = products) {
+    const inferred = instrumentFor(config.symbol, catalog);
+    return config.instrument ?? { ...inferred, exchange: config.autoHistory?.exchange ?? inferred.exchange,
+        tickSize: config.rangeRules?.tickSize ?? config.signalRules?.tickSize ?? inferred.tickSize };
 }
 export function withInstrument(config, instrument) {
     const oldTick = config.instrument?.tickSize ?? config.rangeRules?.tickSize ?? config.signalRules?.tickSize;
-    const oldProduct = config.instrument?.product ?? config.symbol.match(/^[a-z]+/i)?.[0].toLowerCase();
+    const oldProduct = config.instrument?.product ?? futuresProduct(config.symbol);
     const sameMarket = oldProduct === instrument.product && (config.instrument?.exchange ?? config.autoHistory?.exchange ?? instrument.exchange) === instrument.exchange;
     return { ...config, instrument, builtInTemplate: config.builtInTemplate === 'rb-range' && config.rangeRules ? 'range' : config.builtInTemplate,
-        symbol: config.symbol.match(/^[a-z]+/i)?.[0].toLowerCase() === instrument.product.toLowerCase() ? config.symbol : '', history: sameMarket ? config.history : undefined,
+        symbol: futuresProduct(config.symbol) === instrument.product.toLowerCase() ? config.symbol : '', history: sameMarket ? config.history : undefined,
         autoHistory: config.autoHistory ? { ...config.autoHistory, exchange: instrument.exchange } : undefined,
         maxSpread: Number(((oldTick ? (config.maxSpread ?? oldTick * 2) / oldTick : 2) * instrument.tickSize).toPrecision(12)),
         ...(config.rangeRules ? { rangeRules: { ...config.rangeRules, tickSize: instrument.tickSize } } : {}),
         ...(config.signalRules ? { signalRules: { ...config.signalRules, tickSize: instrument.tickSize } } : {}) };
 }
-export function withSymbol(config, symbol) {
-    const product = symbol.match(/^[a-z]+/i)?.[0].toLowerCase();
+export function withSymbol(config, symbol, catalog = products) {
+    // Do not select a different market for intermediate keystrokes (e.g. I -> IF -> IF2612).
+    const product = futuresProduct(symbol);
     if (!product || product === config.instrument?.product.toLowerCase())
         return { ...config, symbol, history: undefined };
-    return { ...withInstrument(config, instrumentFor(symbol)), symbol };
+    const preset = catalog.find(item => item.product === product);
+    // Preserve metadata filled before a contract, including during incomplete keystrokes.
+    const pending = !config.instrument?.product && config.instrument;
+    const instrument = pending && (!preset || (pending.tickSize > 0 && pending.exchange === preset.exchange))
+        ? { ...pending, product } : preset ? instrumentFor(symbol, catalog) : { product, exchange: config.instrument?.exchange ?? 'SHF', tickSize: 0 };
+    return { ...withInstrument(config, instrument), symbol };
+}
+export function instrumentIssue(config, catalog = products) {
+    if (!futuresContractPattern.test(config.symbol))
+        return '请输入实际交割合约，例如 m2701、MA701、IF2612 或 l2610F。';
+    const product = futuresProduct(config.symbol), instrument = configuredInstrument(config, catalog), known = catalog.find(item => item.product === product);
+    if (known && !known.enabled)
+        return `${known.name}（${known.product.toUpperCase()}）在柜台品种目录中未启用，请先同步目录或联系比赛服务。`;
+    if (instrument.product.toLowerCase() !== product)
+        return '合约与所选品种不一致，请重新选择品种或填写实际合约。';
+    if (known && known.exchange !== instrument.exchange)
+        return `该品种属于${exchanges[known.exchange]}，请核对交易所。`;
+    if (!Number.isFinite(instrument.tickSize) || instrument.tickSize <= 0)
+        return '请填写该合约的最小价格变动（tick），必须大于 0。';
+    return undefined;
 }
 /** Starting values for a simulation workflow, not an optimized or backtested strategy. */
 export function rangeTemplate(symbol = '') {

@@ -36,6 +36,10 @@
     },
     "./src/*": "./src/*",
     "./package.json": "./package.json",
+    "./contracts": {
+      "types": "./lib/types/contest-contract.d.ts",
+      "default": "./lib/types/contest-contract.js"
+    },
     "./display": {
       "types": "./lib/types/capability-display.d.ts",
       "default": "./lib/types/capability-display.js"

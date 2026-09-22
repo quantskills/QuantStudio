@@ -6727,7 +6727,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				literal("ranking"),
 				literal("ranking-me"),
 				literal("settlements"),
-				literal("quote")
+				literal("quote"),
+				literal("varieties")
 			]).readonly(),
 			"symbol": string().readonly().optional(),
 			"date": string().readonly().optional(),

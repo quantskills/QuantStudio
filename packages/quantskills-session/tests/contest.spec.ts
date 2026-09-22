@@ -37,6 +37,28 @@ async function fixture() {
 }
 
 describe('contest is opt-in and independent of ordinary sessions', () => {
+  it('queries the official catalog on supported CLI versions without any order operation', async () => {
+    const f = await fixture()
+    vi.mocked(f.cli.install).mockResolvedValue({ version: '0.1.23', rules: 'name: panda-trading' })
+    await f.connect()
+    await f.service.query({ kind: 'varieties' }, identity)
+    expect(f.run.mock.calls.map(([, args]) => args)).toEqual([['varieties']])
+  })
+  it('explains the catalog upgrade requirement before invoking an older CLI', async () => {
+    const f = await fixture(); await f.connect()
+    await expect(f.service.query({ kind: 'varieties' }, identity)).rejects.toThrow('0.1.23')
+    expect(f.run).not.toHaveBeenCalled()
+  })
+  it.each(['l2610F', 'v2610F', 'pp2610F'])('preserves the monthly-average suffix in a frozen preview: %s', async symbol => {
+    const f = await fixture(); await f.connect()
+    const base = f.run.getMockImplementation()!
+    f.run.mockImplementation((runtime, args, signal) => args[0] === 'order'
+      ? Promise.resolve(data({ wouldSucceed: true, contractCode: symbol, marketQuote: { contractCode: symbol.toUpperCase() + '.DCE' } }))
+      : base(runtime, args, signal))
+    const plan = await f.service.prepare({ operation: 'place_order', sessionId: 's1', order: { ...order, symbol } }, identity)
+    expect(plan.details.parameters).toMatchObject({ contractCode: symbol })
+    expect(f.run.mock.calls.some(([, args]) => args[0] === 'plan' && args[1] === 'execute')).toBe(false)
+  })
   it.each([
     [{ contractCode: 'rb2611', direction: 'long', closable: 1 }],
     [{ contractCode: 'RB2610.SHF', direction: 'short', closable: 1 }],

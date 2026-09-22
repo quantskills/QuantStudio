@@ -12,6 +12,13 @@ function fixture() {
   return { plan, trade }
 }
 describe('actual execution evidence', () => {
+  it('matches monthly-average fills without mixing them with the regular contract', () => {
+    const { plan, trade } = fixture()
+    plan.details.parameters = { contractCode: 'l2610F', side: 'buy', offset: 'open', volume: 3 }
+    plan.result = { latestOrder: { orderId: 'order', contractCode: 'L2610F.DCE' } }
+    expect(mergePlanFills(plan, [{ ...trade, contractCode: 'L2610.DCE' }])).toBe(false)
+    expect(mergePlanFills(plan, [{ ...trade, contractCode: 'L2610F.DCE' }])).toBe(true)
+  })
   it('merges partial fills and overlapping pages without counting a fill twice', () => {
     const { plan, trade } = fixture()
     expect(mergePlanFills(plan, [trade])).toBe(true)

@@ -130,7 +130,8 @@ function clientConfig(id: string, entry: string): UserConfig {
       resolveId(source: string) {
         if (!source.startsWith('@deepseek-ai/')) return null
         if (isRequested(source) || VENDORED_LIBRARY.test(source)) return null
-        if (INLINE_SAFE.test(source) || GENERATED_REMOTE.test(source) || source === '@deepseek-ai/dsh-quantskills-session/display') return null
+        if (INLINE_SAFE.test(source) || GENERATED_REMOTE.test(source) || source === '@deepseek-ai/dsh-quantskills-session/display'
+          || source === '@deepseek-ai/dsh-quantskills-session/contracts') return null
         throw new Error(`client bundle purity: unsupported cross-plugin value import ${JSON.stringify(source)}`)
       },
     }, {
