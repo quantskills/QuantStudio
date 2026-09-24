@@ -86,19 +86,19 @@ function ConnectedContestPage({ access, flyAccess, openFly, researchSessions = [
       {status.message && <p role="status">{status.message}</p>}
       <a href="https://www.pandaaiquant.com/contest/" target="_blank" rel="noreferrer">查看赛事与报名 ↗</a>
     </div> : <>
-      <section className={css.connection} aria-label="比赛连接">
-        <div><strong>{contestPhases[status.phase]}</strong><p role="status">{status.message || '首次连接将准备官方 CLI，再打开官网授权。'}</p>
+      <section className={css.connection} data-compact={connected || undefined} aria-label="比赛连接">
+        <div><strong>{contestPhases[status.phase]}</strong>{(!connected || status.message) && <p role="status">{status.message || '首次连接将准备官方 CLI，再打开官网授权。'}</p>}
           {status.identity && <small>仿真账户 {status.identity.accountId} · 赛事 {status.identity.contestId}</small>}
           {status.cliVersion && <small>CLI {status.cliVersion}{status.updateAvailable ? ` · 可更新至 ${status.latestVersion}` : ''}</small>}
-        </div><div className={css.actions}>
+        </div><details className={css.accountActions} open={!connected}><summary>账户管理</summary><div className={css.actions}>
           <a href="https://www.pandaaiquant.com/contest/" target="_blank" rel="noreferrer">赛事报名 ↗</a>
           <button type="button" disabled={Boolean(busy)} onClick={() => { void run('connect', () => access.connect()) }}>{busy === 'connect' ? '连接中…' : connected ? '检查连接' : '连接比赛'}</button>
           {status.cliVersion && <button type="button" disabled={Boolean(busy)} onClick={() => { void run('check-update', () => access.checkUpdate()) }}>检查更新</button>}
           {status.updateAvailable && <button type="button" disabled={Boolean(busy)} onClick={() => { void run('update', () => access.update()) }}>{busy === 'update' ? '更新中…' : '更新 CLI'}</button>}
           {connected && <button type="button" disabled={Boolean(busy)} onClick={() => { void run('disconnect', () => access.disconnect()) }}>退出账户</button>}
-        </div>
+        </div></details>
       </section>
-      <section className={css.assistant} aria-label="AI 交易助手">
+      <details className={css.assistantDisclosure}><summary>AI 交易助手 <span>在对话中研究、预演与核对交易</span></summary><section className={css.assistant} aria-label="AI 交易助手">
         <div className={css.assistantHeading}>
           <div><h2>让 AI 协助你的比赛交易</h2><p>默认继续本账户主对话，先巡检资金、持仓与委托，再研究、预演，由你确认提交。</p></div>
           <div className={css.actions}>
@@ -112,10 +112,10 @@ function ConnectedContestPage({ access, flyAccess, openFly, researchSessions = [
         <ol className={css.steps} aria-label="AI 交易步骤"><li><b>1</b>在对话中提出需求</li><li><b>2</b>选择方案并预演</li><li><b>3</b>核对计划，确认执行</li></ol>
         <p>{connected ? '可以这样问：查看我的持仓，分析下一步操作，先给出建议。' : '连接比赛账户后，即可进入 AI 交易助手。'}</p>
         {recentResearch && <p className={css.recent}>最近对话：{recentResearch.title || '比赛 · AI 交易助手'} · {contestTime(recentResearch.updatedAt)}</p>}
-      </section>
-      {access.watch && <ContestWatch access={access.watch} connected={Boolean(connected)} openModelSettings={openModelSettings}/>}
+      </section></details>
+      {access.watch && <ContestWatch access={access.watch} connected={Boolean(connected)} openModelSettings={openModelSettings} plans={<ContestPlans status={status} access={access} refresh={refresh} compact/>}/>}
       <FlyContestPanel access={flyAccess} contest={status} openFly={openFly ?? (() => {})}/>
-      <details className={css.contestDetails} open aria-label="比赛详情">
+      <details className={css.contestDetails} aria-label="比赛详情">
         <summary><h2>比赛详情</h2><span>比赛账户整体数据</span></summary>
         <p className={css.muted}>当前比赛账户的整体数据，包含各策略与手工交易。</p>
         {connected ? <>
@@ -136,7 +136,7 @@ function ConnectedContestPage({ access, flyAccess, openFly, researchSessions = [
             onClick={() => { void query(String(data.meta?.nextLastId)) }}>下一页记录</button>}
           {tab === 'quote' && !data && !loading && <p className={css.muted}>输入一个品种或实际合约，查询最新行情快照。</p>}
         </section>
-        <ContestPlans status={status} access={access} refresh={refresh}/>
+        {!access.watch && <ContestPlans status={status} access={access} refresh={refresh}/>}
         </> : <p className={css.muted}>连接比赛账户后，可查看资金、持仓、成交、排名及交易计划。</p>}
       </details>
     </>}

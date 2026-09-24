@@ -1,9 +1,11 @@
+import { products } from '@deepseek-ai/dsh-quantskills-session/contracts'
 import { flyFetch } from './transport.ts'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as echarts from 'echarts'
 import type { EChartsOption } from 'echarts'
 import ResizableNativeTable from './FlyTable.tsx'
 import './trade-analytics.css'
+import { useChartPalette, type ChartPalette } from './useChartPalette'
 
 type Period = 'raw' | '1m' | '3m' | '5m' | '1h' | '1d'
 type NetPnl = { realized_net: number | null; cumulative_net: number | null; realized_equity: number | null }
@@ -25,27 +27,26 @@ type Analytics = {
 const periodNames: Record<Period, string> = { raw: '原始采样', '1m': '1 分钟', '3m': '3 分钟', '5m': '5 分钟', '1h': '1 小时', '1d': '日线' }
 const dateInput = (day: string) => `${day.slice(0, 4)}-${day.slice(4, 6)}-${day.slice(6)}`
 const moveDay = (day: string, offset: number) => { const d = new Date(`${dateInput(day)}T00:00:00Z`); d.setUTCDate(d.getUTCDate() + offset); return d.toISOString().slice(0, 10).replace(/-/g, '') }
-const names: Record<string, string> = { IF: '沪深 300', IM: '中证 1000', au: '黄金', ag: '白银', rb: '螺纹', m: '豆粕', sc: '原油' }
-const colors = { equity: '#cee3a5', profit: '#e8a390', loss: '#84c8b0', muted: '#8fa592', blue: '#91bbcd', text: '#c8d5c5', grid: '#2d4035' }
+const names: Record<string, string> = Object.fromEntries(products.flatMap(p => [[p.product, p.name], [p.product.toUpperCase(), p.name]]))
 const fmt = (v: number | null | undefined, digits = 2) => v == null ? '—' : v.toLocaleString('zh-CN', { minimumFractionDigits: digits, maximumFractionDigits: digits })
 const money = (v: number | null | undefined) => `${v != null && v > 0 ? '+' : ''}${fmt(v)}`
 const clock = (at: number | null) => at == null ? '尚未记录' : new Date(at * 1000).toLocaleTimeString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai' })
 const stamp = (at: number | null) => at == null ? '尚未记录' : new Date(at * 1000).toLocaleString('zh-CN', { hour12: false, timeZone: 'Asia/Shanghai' })
 const tone = (value: number | null | undefined) => value == null || value === 0 ? '' : value > 0 ? 'positive' : 'negative'
 
-function baseOption(): EChartsOption {
+function baseOption(colors: ChartPalette): EChartsOption {
   return {
     animation: false, backgroundColor: 'transparent', color: [colors.equity, colors.profit, colors.loss],
     textStyle: { fontFamily: 'Inter, "Microsoft YaHei", sans-serif', color: colors.text, fontSize: 11 },
     aria: { enabled: true },
-    tooltip: { trigger: 'axis', renderMode: 'richText', backgroundColor: '#23382a', borderColor: '#516647', textStyle: { color: '#edf1e6', fontSize: 11 }, valueFormatter: value => typeof value === 'number' ? fmt(value) : String(value ?? '—') },
+    tooltip: { trigger: 'axis', renderMode: 'richText', backgroundColor: colors.surface, borderColor: colors.grid, textStyle: { color: colors.text, fontSize: 11 }, valueFormatter: value => typeof value === 'number' ? fmt(value) : String(value ?? '—') },
     grid: { left: 15, right: 23, top: 25, bottom: 25, containLabel: true },
     xAxis: { type: 'category', axisLine: { lineStyle: { color: colors.grid } }, axisTick: { show: false }, axisLabel: { color: colors.muted, hideOverlap: true } },
     yAxis: { type: 'value', scale: true, axisLabel: { color: colors.muted }, splitLine: { lineStyle: { color: colors.grid, type: 'dashed' } } },
   }
 }
 
-function equityOption(points: (Sample | Bucket)[], field: 'Balance' | 'drawdown' | 'cumulative_net' | 'realized_equity', period: Period, bridge: boolean, gaps: Gap[], multiDay: boolean): EChartsOption {
+function equityOption(points: (Sample | Bucket)[], field: 'Balance' | 'drawdown' | 'cumulative_net' | 'realized_equity', period: Period, bridge: boolean, gaps: Gap[], multiDay: boolean, colors: ChartPalette): EChartsOption {
   const data: [number, number | null][] = []
   const bridges: [number, number | null][] = []
   let previous: (Sample | Bucket) | undefined
@@ -58,16 +59,16 @@ function equityOption(points: (Sample | Bucket)[], field: 'Balance' | 'drawdown'
     if (p[field] != null) previous = p
   })
   return {
-    ...baseOption(),
+    ...baseOption(colors),
     grid: { left: 18, right: 25, top: 25, bottom: 54, containLabel: true },
     xAxis: { type: 'time', minInterval: period === '1d' ? 86400000 : 0, axisLine: { lineStyle: { color: colors.grid } }, axisLabel: { color: colors.muted, hideOverlap: true, formatter: value => period === '1d' ? new Date(Number(value)).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' }) : `${multiDay ? new Date(Number(value)).toLocaleDateString('zh-CN', { timeZone: 'Asia/Shanghai' })+'\n' : ''}${clock(Number(value) / 1000)}` } },
     yAxis: { type: 'value', scale: field !== 'cumulative_net', axisLabel: { color: colors.muted, formatter: value => field === 'Balance' || field === 'realized_equity' ? `${(value / 10000).toFixed(2)}万` : fmt(value, 0) }, splitLine: { lineStyle: { color: colors.grid, type: 'dashed' } } },
-    dataZoom: [{ type: 'inside', zoomOnMouseWheel: 'ctrl' }, { type: 'slider', height: 17, bottom: 8, borderColor: colors.grid, textStyle: { color: colors.muted }, fillerColor: '#cee3a51a', handleStyle: { color: '#8b9f71' } }],
+    dataZoom: [{ type: 'inside', zoomOnMouseWheel: 'ctrl' }, { type: 'slider', height: 17, bottom: 8, borderColor: colors.grid, textStyle: { color: colors.muted }, fillerColor: colors.grid, handleStyle: { color: colors.equity } }],
     series: [{ name: field === 'Balance' ? '账户权益（元）' : field === 'realized_equity' ? '固定基准＋累计平仓净盈亏（元）' : field === 'cumulative_net' ? '累计平仓净盈亏（已扣手续费 / 元）' : '距采样峰值（元）', type: 'line', data, step: field === 'cumulative_net' || field === 'realized_equity' ? 'end' : false, connectNulls: false, smooth: false, showSymbol: true, symbolSize: points.length < 3 ? 7 : 3,
       lineStyle: { width: 2, color: field !== 'drawdown' ? colors.equity : colors.loss }, itemStyle: { color: field !== 'drawdown' ? colors.equity : colors.loss },
-      areaStyle: { color: field !== 'drawdown' ? '#cee3a515' : '#84c8b01c' },
-      markArea: ['raw', '1m', '3m', '5m'].includes(period) ? { silent: true, itemStyle: { color: '#d4ae7420' }, label: { color: '#d4ae74', fontSize: 10 }, data: gaps.map(g => [{ name: '无采样', xAxis: g.from * 1000 }, { xAxis: g.to * 1000 }]) } : { data: [] } },
-      { name: '缺口连接（非采样）', type: 'line', data: bridges, connectNulls: false, showSymbol: false, lineStyle: { type: 'dashed', color: '#d4ae74', width: 1.5 }, itemStyle: { color: '#d4ae74' } }],
+      areaStyle: { color: field !== 'drawdown' ? colors.equity : colors.loss, opacity: .08 },
+      markArea: ['raw', '1m', '3m', '5m'].includes(period) ? { silent: true, itemStyle: { color: colors.warning, opacity: .1 }, label: { color: colors.warning, fontSize: 10 }, data: gaps.map(g => [{ name: '无采样', xAxis: g.from * 1000 }, { xAxis: g.to * 1000 }]) } : { data: [] } },
+      { name: '缺口连接（非采样）', type: 'line', data: bridges, connectNulls: false, showSymbol: false, lineStyle: { type: 'dashed', color: colors.warning, width: 1.5 }, itemStyle: { color: colors.warning } }],
   }
 }
 
@@ -90,6 +91,7 @@ function Chart({ title, subtitle, option, empty, wide = false }: { title: string
 }
 
 export function TradeAnalytics({ active }: { active: boolean }) {
+  const { ref: paletteRef, palette: colors } = useChartPalette()
   const [data, setData] = useState<Analytics>()
   const [range, setRange] = useState({ start: '', end: '' })
   const [draft, setDraft] = useState({ start: '', end: '' })
@@ -132,17 +134,17 @@ export function TradeAnalytics({ active }: { active: boolean }) {
     const categories = raw ? closes.map(c => `${c.time}\n${c.symbol}`) : groups.map(g => g.label)
     const equity = raw ? data.equity : groups.filter(g => g.Balance != null)
     const drawdown = raw ? data.equity : groups.filter(g => g.worst_drawdown != null).map(g => ({ ...g, drawdown: g.worst_drawdown }))
-    const base = baseOption()
+    const base = baseOption(colors)
     return {
-      equity: equityOption(equity, 'Balance', data.period, bridge, data.gaps, data.start_day !== data.end_day), drawdown: equityOption(drawdown, 'drawdown', data.period, bridge, data.gaps, data.start_day !== data.end_day),
+      equity: equityOption(equity, 'Balance', data.period, bridge, data.gaps, data.start_day !== data.end_day, colors), drawdown: equityOption(drawdown, 'drawdown', data.period, bridge, data.gaps, data.start_day !== data.end_day, colors),
       products: { ...base, xAxis: { ...base.xAxis, axisLabel: { color: colors.muted, interval: 0, fontSize: 10 }, data: products.map(p => `${p.product}\n${names[p.product] || p.product}`) }, series: [{ name: '已实现毛盈亏（元）', type: 'bar', barMaxWidth: 38, data: products.map(p => ({ value: p.realized_gross, itemStyle: { color: (p.realized_gross ?? 0) >= 0 ? colors.profit : colors.loss, borderRadius: [4, 4, 0, 0] } })), label: { show: true, position: 'top', color: colors.text, fontSize: 10, formatter: p => typeof p.value === 'number' ? fmt(p.value, 0) : '—' } }] } as EChartsOption,
-      cumulative: equityOption(equity, 'cumulative_net', data.period, bridge, data.gaps, data.start_day !== data.end_day),
-      realizedEquity: equityOption(equity, 'realized_equity', data.period, bridge, data.gaps, data.start_day !== data.end_day),
+      cumulative: equityOption(equity, 'cumulative_net', data.period, bridge, data.gaps, data.start_day !== data.end_day, colors),
+      realizedEquity: equityOption(equity, 'realized_equity', data.period, bridge, data.gaps, data.start_day !== data.end_day, colors),
       distribution: { ...base, xAxis: [], yAxis: [], tooltip: { ...base.tooltip, trigger: 'item' }, legend: { bottom: 15, textStyle: { color: colors.text } }, series: [{ name: '平仓成交笔数', type: 'pie', radius: ['45%', '68%'], center: ['50%', '44%'], label: { color: colors.text, formatter: '{b}\n{c} 笔' }, data: [{ name: '盈利', value: s.wins, itemStyle: { color: colors.profit } }, { name: '亏损', value: s.losses, itemStyle: { color: colors.loss } }, { name: '持平', value: s.breakeven, itemStyle: { color: colors.muted } }].filter(p => p.value > 0) }] } as EChartsOption,
       closes: { ...base, xAxis: { ...base.xAxis, data: categories }, series: [{ name: raw ? '本次平仓毛盈亏（元）' : '周期平仓毛盈亏（元）', type: 'bar', barMaxWidth: 32, data: (raw ? closes : groups).map(c => ({ value: c.realized_gross, itemStyle: { color: (c.realized_gross ?? 0) >= 0 ? colors.profit : colors.loss } })) }] } as EChartsOption,
       activity: { ...base, xAxis: { ...base.xAxis, data: groups.map(g => g.label) }, yAxis: { type: 'value', minInterval: 1, splitLine: { lineStyle: { color: colors.grid } } }, series: [{ name: '成交笔数', type: 'bar', data: groups.map(g => g.fill_count), itemStyle: { color: colors.blue }, barMaxWidth: 30 }] } as EChartsOption,
     }
-  }, [data, bridge])
+  }, [data, bridge, colors])
   const s = data?.summary
   const exportData = () => {
     if (!data) return
@@ -161,7 +163,7 @@ export function TradeAnalytics({ active }: { active: boolean }) {
     const url = URL.createObjectURL(new Blob(['\uFEFF', csv], { type: 'text/csv;charset=utf-8;' }))
     const a = document.createElement('a'); a.href = url; a.download = `小果-交易分析-${data.start_day}-${data.end_day}-${data.period}.csv`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
-  return <section className="fv-analysis" aria-label="交易分析看板">
+  return <section ref={paletteRef} className="fv-analysis" aria-label="交易分析看板">
     <header className="fv-analysis-heading"><div><span className="fv-kicker">TRADING ANALYTICS</span><h2>每一次交易，留下怎样的结果</h2><p>平仓盈亏、盈亏来源与成交表现 · PandaAI 模拟赛</p></div><div className="fv-analysis-tools"><button type="button" onClick={() => setReload(v => v + 1)}>刷新</button><button type="button" disabled={!data} onClick={exportData}>导出 CSV ↗</button></div></header>
     <div className="fv-analysis-controls">
       <div className="fv-period-switch" aria-label="图表周期">{(Object.keys(periodNames) as Period[]).map(p => <button type="button" key={p} aria-pressed={period === p} onClick={() => { if (p === period) return; setPeriod(p); setBucketPage(0); setData(undefined) }}>{periodNames[p]}</button>)}</div>

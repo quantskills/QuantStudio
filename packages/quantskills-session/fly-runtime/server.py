@@ -28,12 +28,6 @@ def dispatch(manager, path, body=None):
     if route == 'state' and body is None: return item.status()
     if route == 'settings' and body is not None:
         settings = Settings.model_validate(body)
-        if len({i.product for i in settings.instruments}) != len(settings.instruments):
-            raise ValueError('每个品种只能配置一个实际合约')
-        if any(i.symbol.rstrip('0123456789').lower() != i.product.lower() for i in settings.instruments):
-            raise ValueError('品种与实际合约不匹配')
-        if any(i.exchange != {'IF':'CFE','IM':'CFE','au':'SHF','ag':'SHF','rb':'SHF','m':'DCE','sc':'INE'}[i.product] for i in settings.instruments):
-            raise ValueError('品种与交易所不匹配')
         item.configure(settings)
         return settings.model_dump()
     if route == 'control' and body is not None:

@@ -1,3 +1,4 @@
+import { futuresProduct, futuresContractPattern, futuresProductPattern, products } from './contest-contract.ts'
 import type { Context } from '@deepseek-ai/cordis'
 import { createMessage } from '@deepseek-ai/dsh-llm'
 import { credentialRef } from '@deepseek-ai/dsh-credentials'
@@ -15,10 +16,11 @@ import { historyFailure } from './contest-watch-history.ts'
 import { FlyRuntime, type FlyRequest } from './fly-runtime.ts'
 
 const identitySchema = z.object({ accountId: z.string().min(1), contestId: z.string().min(1) })
-export const flyInstrumentSchema = z.object({ product: z.enum(['IF','IM','au','ag','rb','m','sc']),
-  symbol: z.string().regex(/^[a-zA-Z]{1,3}\d{3,4}$/), exchange: z.enum(['SHF','DCE','CZC','CFE','INE','GFE']) })
-  .refine(i => i.symbol.replace(/\d+$/, '').toLowerCase() === i.product.toLowerCase(), '品种与实际合约不一致')
-  .refine(i => i.exchange === ({ IF: 'CFE', IM: 'CFE', au: 'SHF', ag: 'SHF', rb: 'SHF', m: 'DCE', sc: 'INE' })[i.product], '品种与交易所不一致')
+export const flyInstrumentSchema = z.object({ product: z.string().trim().regex(futuresProductPattern),
+  symbol: z.string().trim().regex(futuresContractPattern), exchange: z.enum(['SHF','DCE','CZC','CFE','INE','GFE']) })
+  .refine(i => futuresProduct(i.symbol) === i.product.toLowerCase(), '品种与实际合约不一致')
+  .refine(i => !products.some(p => p.product === i.product.toLowerCase() && p.exchange !== i.exchange), '品种与交易所不一致')
+
 const same = (a: ContestIdentity, b: ContestIdentity) => a.accountId === b.accountId && a.contestId === b.contestId
 const rows = (value: unknown) => Array.isArray(value) ? value.map(record) : []
 const contract = (value: unknown) => String(value ?? '').split('.')[0]!.toLowerCase()
@@ -124,7 +126,7 @@ export class FlyService {
   }
 
   private async market(input: Record<string, JsonValue>, signal: AbortSignal): Promise<JsonValue> {
-    const identity = await this.identity(input.identity, false), instruments = z.array(flyInstrumentSchema).max(7).parse(input.instruments)
+    const identity = await this.identity(input.identity, false), instruments = z.array(flyInstrumentSchema).max(1000).refine(items => new Set(items.map(i => i.product.toLowerCase())).size === items.length, '每个品种只能配置一个实际合约').parse(input.instruments)
     // Continue receipt recovery with the page closed. Never re-submit an order.
     const plans = (await this.contest.status()).plans
     const pending = plans.filter(plan => plan.sessionId.startsWith('fly:') && same(plan.identity, identity)

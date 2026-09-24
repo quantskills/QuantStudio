@@ -20,3 +20,5 @@ export function sameContestContract(a: unknown, b: string, exchange?: string): b
   return Boolean(left && right && left[1]!.toLowerCase() === right[1]!.toLowerCase()
     && (!left[2] || !expectedExchange || left[2].toUpperCase() === expectedExchange.toUpperCase()))
 }
+
+export { products, catalogCheckedAt, catalogVersion, type FuturesProduct } from './contest-products.ts'

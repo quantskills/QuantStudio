@@ -27,7 +27,7 @@ export function useJevProducts(access, connected) {
     const [message, setMessage] = useState(`本地目录 · ${catalogCheckedAt} · ${products.length} 个品种`);
     const [loading, setLoading] = useState(false), generation = useRef(0), controller = useRef();
     const refresh = useCallback(async () => {
-        if (!connected || !access.varieties)
+        if (!connected || !access?.varieties)
             return;
         controller.current?.abort();
         const active = new AbortController(), version = ++generation.current;

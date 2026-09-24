@@ -6,7 +6,7 @@ import type { FlyAccess } from '../src/client/fly/transport.ts'
 import type { ContestAccess } from '../src/client/contest.ts'
 import type { ContestPlan, ContestStatus } from '../src/client/plugin-types.ts'
 
-vi.mock('../src/client/fly/FlyV2Page.tsx', () => ({ default: ({ tradePlans }: { tradePlans?: import('react').ReactNode }) => <div>果蝇家园{tradePlans}</div> }))
+vi.mock('../src/client/fly/FlyV2Page.tsx', () => ({ default: ({ tradePlans, openContest, openModelSettings }: { tradePlans?: import('react').ReactNode; openContest?: () => void; openModelSettings?: () => void }) => <div>果蝇家园<button onClick={openContest}>比赛账户</button><button onClick={openModelSettings}>前往模型服务配置 Jev</button>{tradePlans}</div> }))
 afterEach(cleanup)
 const ready = { supported: true, installed: true, installing: false, running: true, message: '' }
 const access = (): FlyAccess => ({ status: vi.fn(async () => ready), install: vi.fn(async () => ready), request: vi.fn(async () => ({})) })
@@ -15,7 +15,7 @@ describe('fly entry and manual confirmation', () => {
   it('opens model services separately from the competition account', async () => {
     const openModelSettings = vi.fn(), openContest = vi.fn()
     render(<FlyPage access={access()} openContest={openContest} openModelSettings={openModelSettings}/>)
-    fireEvent.click(await screen.findByRole('button', { name: '模型服务与 Jev API Key' }))
+    fireEvent.click(await screen.findByRole('button', { name: '前往模型服务配置 Jev' }))
     expect(openModelSettings).toHaveBeenCalledOnce()
     expect(openContest).not.toHaveBeenCalled()
     fireEvent.click(screen.getByRole('button', { name: '比赛账户' }))

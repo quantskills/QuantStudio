@@ -1,0 +1,33 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useState } from 'react';
+import { futuresExchanges, futuresProduct, futuresContractPattern } from '@deepseek-ai/dsh-quantskills-session/contracts';
+import { useJevProducts } from "../jev-catalog.js";
+import { FlyInstrumentContract } from "./FlyInstrumentContract.js";
+export function FlyInstruments({ instruments, contest, accountKey, invalid, onChange }) {
+    const { catalog, message, loading, refresh } = useJevProducts(contest?.watch, !!accountKey);
+    const [search, setSearch] = useState(''), [exchange, setExchange] = useState('');
+    const [custom, setCustom] = useState(''), [customExchange, setCustomExchange] = useState('SHF'), [error, setError] = useState('');
+    const term = search.trim().toLowerCase();
+    const visible = catalog.filter(p => (!exchange || p.exchange === exchange) && `${p.name} ${p.product} ${futuresExchanges[p.exchange]}`.toLowerCase().includes(term));
+    const labelFor = (item) => catalog.find(p => p.product === item.product.toLowerCase())?.name || item.product.toUpperCase();
+    function addCustom() {
+        const symbol = custom.trim(), product = futuresProduct(symbol);
+        if (!futuresContractPattern.test(symbol) || !product) {
+            setError('请填写实际合约，例如 MA701、cu2612、l2610F。');
+            return;
+        }
+        const known = catalog.find(p => p.product === product);
+        if (known && known.exchange !== customExchange) {
+            setError(`该品种属于${futuresExchanges[known.exchange]}，请核对交易所。`);
+            return;
+        }
+        const current = instruments.find(i => i.product.toLowerCase() === product);
+        const item = { product: customExchange === 'CFE' ? product.toUpperCase() : product, symbol, exchange: customExchange };
+        onChange(current ? instruments.map(i => i === current ? item : i) : [...instruments, item]);
+        setCustom('');
+        setError('');
+    }
+    return _jsxs("div", { className: "fv-instruments", children: [_jsxs("details", { className: "fv-catalog-picker", open: !instruments.length, children: [_jsx("summary", { children: "\u6DFB\u52A0\u54C1\u79CD \u00B7 \u5168\u90E8\u671F\u8D27\u5E02\u573A" }), _jsxs("div", { className: "fv-instrument-search", children: [_jsxs("label", { children: ["\u641C\u7D22\u671F\u8D27\u54C1\u79CD", _jsx("input", { type: "search", value: search, placeholder: "\u540D\u79F0\u3001\u4EE3\u7801\u6216\u4EA4\u6613\u6240", onChange: e => setSearch(e.target.value) })] }), _jsxs("label", { children: ["\u7B5B\u9009\u4EA4\u6613\u6240", _jsxs("select", { value: exchange, onChange: e => setExchange(e.target.value), children: [_jsx("option", { value: "", children: "\u5168\u90E8\u4EA4\u6613\u6240" }), Object.entries(futuresExchanges).map(([code, name]) => _jsx("option", { value: code, children: name }, code))] })] }), _jsx("button", { type: "button", disabled: !accountKey || !contest?.watch?.varieties || loading, onClick: () => void refresh(), children: loading ? '正在同步…' : '同步柜台品种' })] }), _jsx("p", { className: "fv-note", children: message }), _jsxs("div", { className: "fv-product-catalog", "aria-label": "\u5168\u90E8\u671F\u8D27\u54C1\u79CD", children: [visible.map(p => _jsxs("label", { className: "fv-product-option", children: [_jsx("input", { type: "checkbox", checked: instruments.some(i => i.product.toLowerCase() === p.product), onChange: e => onChange(e.target.checked ? [...instruments, { product: p.exchange === 'CFE' ? p.product.toUpperCase() : p.product, symbol: '', exchange: p.exchange }] : instruments.filter(i => i.product.toLowerCase() !== p.product)) }), p.name, " \u00B7 ", p.product, !p.enabled && _jsx("small", { children: "\u67DC\u53F0\u672A\u542F\u7528" })] }, p.product)), !visible.length && _jsx("p", { children: "\u6CA1\u6709\u5339\u914D\u54C1\u79CD\uFF0C\u53EF\u5728\u4E0B\u9762\u624B\u52A8\u6DFB\u52A0\u5B9E\u9645\u5408\u7EA6\u3002" })] }), _jsxs("details", { className: "fv-data-details", children: [_jsx("summary", { children: "\u624B\u52A8\u6DFB\u52A0\u5176\u4ED6\u54C1\u79CD\u6216\u5B9E\u9645\u5408\u7EA6" }), _jsxs("div", { className: "fv-instrument-search", children: [_jsxs("label", { children: ["\u81EA\u5B9A\u4E49\u5B9E\u9645\u5408\u7EA6", _jsx("input", { value: custom, placeholder: "\u4F8B\u5982 MA701\u3001cu2612\u3001l2610F", onChange: e => { const value = e.target.value; setCustom(value); setError(''); const known = catalog.find(p => p.product === futuresProduct(value.trim())); if (known)
+                                                    setCustomExchange(known.exchange); } })] }), _jsxs("label", { children: ["\u5408\u7EA6\u4EA4\u6613\u6240", _jsx("select", { value: customExchange, onChange: e => setCustomExchange(e.target.value), children: Object.entries(futuresExchanges).map(([code, name]) => _jsx("option", { value: code, children: name }, code)) })] }), _jsx("button", { type: "button", disabled: !custom.trim(), onClick: addCustom, children: "\u6DFB\u52A0\u5408\u7EA6" })] }), error && _jsx("p", { role: "alert", className: "fv-error", children: error })] })] }), _jsxs("h3", { children: ["\u5DF2\u9009\u54C1\u79CD \u00B7 ", instruments.length] }), instruments.map(item => _jsxs("div", { className: "fv-instrument", children: [_jsxs("div", { children: [_jsxs("strong", { children: [labelFor(item), " \u00B7 ", item.product] }), _jsx("small", { children: futuresExchanges[item.exchange] })] }), _jsx(FlyInstrumentContract, { product: item.product, label: labelFor(item), symbol: item.symbol, invalid: invalid && (!futuresContractPattern.test(item.symbol) || futuresProduct(item.symbol) !== item.product.toLowerCase()), contest: contest, accountKey: accountKey, onSymbolChange: (symbol, onlyIfEmpty) => onChange(current => current.map(i => i.product === item.product && (!onlyIfEmpty || !i.symbol.trim()) ? { ...i, symbol } : i)) }), _jsx("button", { type: "button", "aria-label": `移除${labelFor(item)}`, onClick: () => onChange(instruments.filter(i => i.product !== item.product)), children: "\u79FB\u9664" })] }, item.product)), _jsx("p", { className: "fv-note", children: "\u53EF\u9009\u62E9\u5168\u90E8\u54C1\u79CD\u6216\u624B\u52A8\u6DFB\u52A0\u3002\u80FD\u5426\u53D6\u5F97\u884C\u60C5\u53CA\u53C2\u8D5B\u4EA4\u6613\uFF0C\u4EE5\u6BD4\u8D5B\u8D26\u6237\u548C\u67DC\u53F0\u5B9E\u9645\u5F00\u653E\u60C5\u51B5\u4E3A\u51C6\uFF1B\u6BCF\u4E2A\u54C1\u79CD\u914D\u7F6E\u4E00\u4E2A\u5B9E\u9645\u5408\u7EA6\u3002" })] });
+}
+//# sourceMappingURL=FlyInstruments.js.map

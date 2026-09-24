@@ -17,4 +17,5 @@ export function sameContestContract(a, b, exchange) {
     return Boolean(left && right && left[1].toLowerCase() === right[1].toLowerCase()
         && (!left[2] || !expectedExchange || left[2].toUpperCase() === expectedExchange.toUpperCase()));
 }
+export { products, catalogCheckedAt, catalogVersion } from "./contest-products.js";
 //# sourceMappingURL=contest-contract.js.map

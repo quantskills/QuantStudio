@@ -5,8 +5,9 @@ export type TradeFilterSettings = {
     reentry_cooldown_minutes: number;
     cost_filter_multiplier: number;
 };
-export declare function TradeFilterControls({ settings, onApply }: {
+export declare function TradeFilterControls({ settings, onApply, onDraftChange }: {
     settings: TradeFilterSettings;
     onApply: (value: TradeFilterSettings) => Promise<unknown>;
+    onDraftChange?: (value: TradeFilterSettings) => void;
 }): import("react").JSX.Element;
 //# sourceMappingURL=TradeFilterControls.d.ts.map

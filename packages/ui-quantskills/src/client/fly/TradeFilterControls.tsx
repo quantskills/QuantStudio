@@ -6,11 +6,12 @@ export type TradeFilterSettings = {
 }
 const legacy: TradeFilterSettings = { trade_period_minutes: 1, signal_confirmations: 1, min_signal_margin: 0, reentry_cooldown_minutes: 0, cost_filter_multiplier: 0 }
 
-export function TradeFilterControls({ settings, onApply }: { settings: TradeFilterSettings; onApply: (value: TradeFilterSettings) => Promise<unknown> }) {
-  const [draft, setDraft] = useState<TradeFilterSettings>({ ...legacy, ...settings })
+export function TradeFilterControls({ settings, onApply, onDraftChange }: { settings: TradeFilterSettings; onApply: (value: TradeFilterSettings) => Promise<unknown>; onDraftChange?: (value: TradeFilterSettings) => void }) {
+  const [draft, setLocalDraft] = useState<TradeFilterSettings>({ ...legacy, ...settings })
+  const setDraft = (value: TradeFilterSettings) => { setLocalDraft(value); onDraftChange?.(value) }
   const [pending, setPending] = useState(false)
   const [message, setMessage] = useState('')
-  useEffect(() => { setDraft({ ...legacy, ...settings }) }, [settings.trade_period_minutes, settings.signal_confirmations, settings.min_signal_margin, settings.reentry_cooldown_minutes, settings.cost_filter_multiplier])
+  useEffect(() => { setLocalDraft({ ...legacy, ...settings }) }, [settings.trade_period_minutes, settings.signal_confirmations, settings.min_signal_margin, settings.reentry_cooldown_minutes, settings.cost_filter_multiplier])
   const apply = async () => {
     setPending(true); setMessage('')
     try { await onApply(draft); setMessage('已保存，使用新设置下的完整周期信号。') }
@@ -29,7 +30,7 @@ export function TradeFilterControls({ settings, onApply }: { settings: TradeFilt
     </div>
     <p>开仓须连续同向且分数差足够；平仓后等待冷却结束，再重新确认。神经平仓选择不增加这些开仓限制。</p>
     <small>比赛接口暂未提供完整费用参数，成本过滤保持关闭。实际手续费只使用柜台返回的数据。</small>
-    <div className="fv-actions"><button type="button" disabled={pending} onClick={() => setDraft({ trade_period_minutes: 5, signal_confirmations: 2, min_signal_margin: 0.08, reentry_cooldown_minutes: 10, cost_filter_multiplier: 0 })}>填入低频预设</button><button type="button" disabled={pending} onClick={() => void apply()}>{pending ? '保存中…' : '应用交易过滤'}</button></div>
+    <div className="fv-actions"><button type="button" disabled={pending} onClick={() => setDraft({ trade_period_minutes: 5, signal_confirmations: 2, min_signal_margin: 0.08, reentry_cooldown_minutes: 10, cost_filter_multiplier: 0 })}>填入低频预设</button>{!onDraftChange && <button type="button" disabled={pending} onClick={() => void apply()}>{pending ? '保存中…' : '应用交易过滤'}</button>}</div>
     {message && <p role="status">{message}</p>}
   </details>
 }

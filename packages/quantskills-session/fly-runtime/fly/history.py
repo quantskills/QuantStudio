@@ -1,6 +1,7 @@
 """Normalize native SSQUANT period bars; never resample them inside the fly."""
 from datetime import datetime, timezone, timedelta
 import math
+from .models import EXCHANGES
 
 TZ = timezone(timedelta(hours=8))
 
@@ -82,14 +83,29 @@ def session_key(at, product):
     session, missing minutes are never interpolated and block new decisions.
     """
     moment=datetime.fromtimestamp(at,TZ);minute=moment.hour*60+moment.minute
-    periods=[(570,690),(780,900)] if product in ('IF','IM') else [(540,615),(630,690),(810,900)]
-    for index,(start,end) in enumerate(periods):
-        if start<=minute<end:return (moment.date().isoformat(),index)
-    if product in ('IF','IM'):return None
-    end=150 if product in ('au','ag','sc') else 0
-    if minute>=1260 and (end or minute<1380):return (moment.date().isoformat(),'night')
-    if end and minute<end:return ((moment-timedelta(days=1)).date().isoformat(),'night')
+    product=product.lower()
+    base=product.removesuffix('_f')
+    if product not in EXCHANGES:
+        # Unknown products retain provider bars; no invented recesses are skipped.
+        return (moment.date().isoformat(),'unverified')
+    financial=EXCHANGES[product]=='CFE'
+    bonds=base in ('t','tf','ts','tl')
+    periods=[(570,690),(780,915 if bonds else 900)] if financial else [(540,615),(630,690),(810,900)]
+    if moment.weekday()<5:
+        for index,(start,end) in enumerate(periods):
+            if start<=minute<end:return (moment.date().isoformat(),index)
+    if financial:return None
+    # Exchange schedules; overnight timestamps belong to the preceding evening.
+    night_1=set('cu bc al ao zn pb ni sn ss ad'.split())
+    night_230=set('au ag sc'.split())
+    night_23=set('rb hc fu bu ru br sp op nr lu a b bz c cs eb eg i j jm l m p pg pp rr v y cf cy fg ma oi pf pl pr px rm sa sh sr ta zc'.split())
+    end=150 if base in night_230 else 60 if base in night_1 else 1380 if base in night_23 else None
+    if end is None:return None
+    if moment.weekday()<5 and minute>=1260 and (end<1260 or minute<end):return (moment.date().isoformat(),'night')
+    evening=moment-timedelta(days=1)
+    if end<1260 and minute<end and evening.weekday()<5:return (evening.date().isoformat(),'night')
     return None
+
 
 
 def missing_minutes(bars,product,minutes=1):

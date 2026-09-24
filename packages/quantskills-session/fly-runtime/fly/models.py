@@ -1,7 +1,12 @@
 from typing import Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator, model_validator
+from pathlib import Path
+import json
+import re
 
-PRODUCTS = ('IF', 'IM', 'au', 'ag', 'rb', 'm', 'sc')
+CATALOG = json.loads(Path(__file__).with_name('futures-products.json').read_text(encoding='utf-8'))
+EXCHANGES = {item['product']: item['exchange'] for item in CATALOG}
+PRODUCTS = tuple(EXCHANGES)
 LIFE_ACTIONS = ('observe', 'explore', 'eat', 'rest', 'interact')
 TRADE_ACTIONS = ('WAIT', 'LONG', 'SHORT', 'CLOSE')
 WIDGETS = ('markets', 'positions', 'orders', 'trades', 'equity', 'intent', 'neural', 'learning', 'usage', 'life_trace', 'statistics', 'trade_learning')
@@ -15,14 +20,33 @@ class TradingFilters(BaseModel):
     cost_filter_multiplier: float = Field(default=0, ge=0, le=10, allow_inf_nan=False)
 
 
+def contract_product(symbol):
+    match = re.fullmatch(r'([A-Za-z]{1,3})([0-9]{3,4})([fF]?)', symbol)
+    return (match[1].lower() + ('_f' if match[3] else '')) if match else None
+
+
 class Instrument(BaseModel):
-    product:Literal['IF','IM','au','ag','rb','m','sc']
-    symbol:str=Field(pattern=r'^[A-Za-z]{1,3}[0-9]{3,4}$')
-    exchange:Literal['SHF','DCE','CZC','CFE','INE','GFE']
+    product: str = Field(pattern=r'^[A-Za-z]{1,3}(?:_[fF])?$')
+    symbol: str = Field(pattern=r'^[A-Za-z]{1,3}[0-9]{3,4}[fF]?$')
+    exchange: Literal['SHF','DCE','CZC','CFE','INE','GFE']
+
+    @field_validator('product')
+    @classmethod
+    def canonical_product(cls, value):
+        # Preserve existing financial-index state keys while accepting case-insensitive input.
+        return value.upper() if EXCHANGES.get(value.lower()) == 'CFE' else value.lower()
+
+    @model_validator(mode='after')
+    def matching_contract(self):
+        if contract_product(self.symbol) != self.product.lower():
+            raise ValueError('品种与实际合约不匹配')
+        if EXCHANGES.get(self.product.lower(), self.exchange) != self.exchange:
+            raise ValueError('品种与交易所不匹配')
+        return self
 
 
 class Settings(TradingFilters):
-    instruments:list[Instrument]=Field(default_factory=list,max_length=7)
+    instruments:list[Instrument]=Field(default_factory=list,max_length=1000)
     name: str = Field(default='小果', min_length=1, max_length=24)
     account: str = Field(default='', max_length=80)
     target_notional: float = Field(default=0, ge=0, le=100_000_000, allow_inf_nan=False)
@@ -38,6 +62,13 @@ class Settings(TradingFilters):
     learning: bool = True
     life_validation: bool = False
     onboarding_complete: bool = False
+
+    @field_validator('instruments')
+    @classmethod
+    def distinct_products(cls, items):
+        if len({i.product.lower() for i in items}) != len(items):
+            raise ValueError('每个品种只能配置一个实际合约')
+        return items
 
     def trading_configured(self):
         return (not self.life_validation and bool(self.instruments)

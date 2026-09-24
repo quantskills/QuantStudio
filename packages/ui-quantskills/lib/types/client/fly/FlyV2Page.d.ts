@@ -1,7 +1,9 @@
 import { type ReactNode } from 'react';
 import './fly-v2.css';
 import type { ContestAccess } from '../contest.ts';
-export default function FlyV2Page({ active, contest, openModelSettings, preparing, prepareMessage, onPrepare, tradePlans }: {
+import './fly-workspace.css';
+export default function FlyV2Page({ active, contest, openContest, openModelSettings, preparing, prepareMessage, onPrepare, tradePlans }: {
+    openContest?: (() => void) | undefined;
     tradePlans?: ReactNode;
     active: boolean;
     contest?: Pick<ContestAccess, 'query' | 'status' | 'mode' | 'connect'> | undefined;

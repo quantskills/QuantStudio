@@ -16,8 +16,18 @@ def encode(value):
 
 def atomic_json(path, value):
     path = Path(path)
+    if os.name == 'nt':
+        # Deep workspace + owner + checkpoint directories can exceed MAX_PATH.
+        # Use an absolute extended path for both the write and atomic rename.
+        absolute = str(path.absolute())
+        if not absolute.startswith('\\\\?\\'):
+            absolute = ('\\\\?\\UNC\\' + absolute[2:] if absolute.startswith('\\\\')
+                        else '\\\\?\\' + absolute)
+        path = Path(absolute)
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(path.name+'.'+uuid.uuid4().hex+'.partial')
+    # Keep the temporary basename independent of the destination name. Appending
+    # it can exceed Windows MAX_PATH even when the destination itself is valid.
+    temporary = path.with_name(uuid.uuid4().hex+'.partial')
     with temporary.open('w',encoding='utf-8') as handle:
         handle.write(encode(value));handle.flush();os.fsync(handle.fileno())
     temporary.replace(path)

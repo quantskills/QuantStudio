@@ -244,3 +244,21 @@ describe('fly contest bridge', () => {
     expect(f.execute).not.toHaveBeenCalled()
   })
 })
+
+
+it.each([
+  ['cu','cu2612','SHF'], ['ma','MA701','CZC'], ['TL','TL2612','CFE'],
+  ['lc','lc2611','GFE'], ['ec','ec2612','INE'], ['l_f','l2610F','DCE'], ['xyz','xyz2701','GFE'],
+])('routes %s actual contracts through both quote and PandaData history', async (product,symbol,exchange) => {
+  const f = await fixture()
+  Object.assign(f.quote,{contractCode:symbol}); Object.assign(f.spec,{symbol})
+  const instrument = {product,symbol,exchange}
+  const result = await f.call('market',{identity:f.input.identity,instruments:[instrument]}) as any
+  expect(result.feeds[product].symbol).toBe(symbol)
+  expect(f.mock.query).toHaveBeenCalledWith({kind:'quote',symbol},f.input.identity,expect.any(AbortSignal))
+  const fetch = vi.fn(async () => ({id:'history'}))
+  f.ctx.get.mockReturnValue({databaseList:async () => [],databaseFetch:fetch,databaseQuery:async () => ({status:'hit',rows:[],total:0,dataset:{fetchedAt:new Date().toISOString()}})})
+  await f.call('history',{identity:f.input.identity,instrument,minutes:1})
+  expect(fetch).toHaveBeenCalledWith(expect.objectContaining({source:expect.objectContaining({params:expect.objectContaining({symbol:symbol.toUpperCase()+'.'+exchange})})}),expect.anything())
+  expect(f.execute).not.toHaveBeenCalled()
+})

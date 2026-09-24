@@ -22,12 +22,12 @@ export function parseVarieties(value: unknown): FuturesProduct[] {
   })
 }
 
-export function useJevProducts(access: NonNullable<ContestAccess['watch']>, connected: boolean) {
+export function useJevProducts(access: Pick<NonNullable<ContestAccess['watch']>, 'varieties'> | undefined, connected: boolean) {
   const [catalog, setCatalog] = useState<readonly FuturesProduct[]>(products)
   const [message, setMessage] = useState(`本地目录 · ${catalogCheckedAt} · ${products.length} 个品种`)
   const [loading, setLoading] = useState(false), generation = useRef(0), controller = useRef<AbortController>()
   const refresh = useCallback(async () => {
-    if (!connected || !access.varieties) return
+    if (!connected || !access?.varieties) return
     controller.current?.abort()
     const active = new AbortController(), version = ++generation.current
     controller.current = active; setLoading(true)

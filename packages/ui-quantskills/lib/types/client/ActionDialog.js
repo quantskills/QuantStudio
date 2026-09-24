@@ -1,9 +1,17 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useId, useRef } from 'react';
 import css from './ActionDialog.module.css';
+import './TradingWorkspace.css';
+function isBackdrop(event) {
+    if (event.target !== event.currentTarget)
+        return false;
+    const { left, right, top, bottom } = event.currentTarget.getBoundingClientRect();
+    return event.clientX < left || event.clientX > right || event.clientY < top || event.clientY > bottom;
+}
 /** Native modal: top-layer rendering, inert background and browser focus containment. */
-export function ActionDialog({ title, children, busy = false, error, wide = false, onClose }) {
+export function ActionDialog({ title, children, busy = false, error, wide = false, drawer = false, onClose }) {
     const ref = useRef(null);
+    const backdropPress = useRef(false);
     const titleId = useId();
     useEffect(() => {
         const dialog = ref.current;
@@ -20,7 +28,15 @@ export function ActionDialog({ title, children, busy = false, error, wide = fals
                 trigger.focus();
         };
     }, []);
-    return _jsxs("dialog", { ref: ref, className: css.dialog, "data-wide": wide || undefined, "aria-labelledby": titleId, "aria-modal": "true", "aria-busy": busy, onKeyDown: event => {
+    return _jsxs("dialog", { ref: ref, className: `${css.dialog}${drawer ? ' qs-trading-drawer' : ''}`, "data-wide": wide || undefined, "aria-labelledby": titleId, "aria-modal": "true", "aria-busy": busy, onPointerDown: event => {
+            backdropPress.current = drawer && !busy && event.button === 0 && isBackdrop(event);
+        }, onPointerCancel: () => { backdropPress.current = false; }, onClick: event => {
+            // Native backdrop events target the dialog too; ignore its padding and drags from inside.
+            const dismiss = backdropPress.current && drawer && !busy && event.button === 0 && isBackdrop(event);
+            backdropPress.current = false;
+            if (dismiss)
+                onClose();
+        }, onKeyDown: event => {
             if (event.key === 'Escape') {
                 event.stopPropagation();
                 return;

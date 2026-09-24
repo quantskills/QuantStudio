@@ -4,15 +4,7 @@ import type { JsonValue } from '@deepseek-ai/dsh-util-values';
 import type { ContestService } from './contest-service.ts';
 import { FlyRuntime, type FlyRequest } from './fly-runtime.ts';
 export declare const flyInstrumentSchema: z.ZodObject<{
-    product: z.ZodEnum<{
-        m: "m";
-        IF: "IF";
-        IM: "IM";
-        au: "au";
-        ag: "ag";
-        rb: "rb";
-        sc: "sc";
-    }>;
+    product: z.ZodString;
     symbol: z.ZodString;
     exchange: z.ZodEnum<{
         SHF: "SHF";

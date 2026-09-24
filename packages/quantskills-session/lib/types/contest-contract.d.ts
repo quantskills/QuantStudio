@@ -14,4 +14,5 @@ export type FuturesExchange = keyof typeof futuresExchanges;
 export declare const contestContractParts: (value: unknown) => RegExpExecArray | null;
 export declare function futuresProduct(symbol: string): string | undefined;
 export declare function sameContestContract(a: unknown, b: string, exchange?: string): boolean;
+export { products, catalogCheckedAt, catalogVersion, type FuturesProduct } from './contest-products.ts';
 //# sourceMappingURL=contest-contract.d.ts.map

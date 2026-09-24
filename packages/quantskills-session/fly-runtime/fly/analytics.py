@@ -39,7 +39,10 @@ def record_account_sample(store, snapshot, account_id, now=None):
     # Preserve multiplier evidence when active contracts roll or allocation is disabled.
     contracts = store.get('analytics_contracts', {})
     updated = dict(contracts)
-    for product in PRODUCTS:
+    configured = store.get('settings', {}).get('instruments', [])
+    bound = store.get('binding', {}).get('instruments', [])
+    tracked = {i['product'] for i in [*configured, *bound] if i.get('product')}
+    for product in tracked | set(PRODUCTS) | {'IF', 'IM'}:
         feed = store.get('feed:' + product, {})
         multiplier = number(feed.get('multiplier'))
         if feed.get('symbol') and multiplier is not None and multiplier > 0:
