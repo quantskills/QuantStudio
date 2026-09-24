@@ -13,6 +13,8 @@ export type TradeMarket = {
             action: string;
             reason: string;
             sampling: boolean;
+            current_position?: number;
+            target_position?: number;
         };
         trade_response?: Record<string, {
             value: number;

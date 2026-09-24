@@ -41,6 +41,15 @@ export function flyQuoteTime(value: unknown): number {
   return Date.parse(text)
 }
 
+// Reference margin is an estimate; the competition dry-run remains authoritative.
+function marginPerLot(spec: Record<string, JsonValue>, price: number, side: 'long' | 'short'): number | null {
+  const margin = record(spec.margin), ratio = amount(margin[`${side}MarginRatioByMoney`]), fixed = amount(margin[`${side}MarginByVolume`])
+  const multiplier = amount(spec.contractMultiplier)
+  if (ratio === null || fixed === null || multiplier === null || ratio < 0 || fixed < 0 || multiplier <= 0 || !Number.isFinite(price) || price <= 0) return null
+  const value = price * multiplier * ratio + fixed
+  return Number.isFinite(value) && value > 0 ? value : null
+}
+
 export class FlyService {
   readonly runtime: FlyRuntime
   private readonly specs = new Map<string, { at: number; value: Record<string, JsonValue> }>()
@@ -74,8 +83,12 @@ export class FlyService {
 
   private async identity(expected: unknown, verify = true): Promise<ContestIdentity> {
     const status = await this.contest.status()
-    if (!status.enabled || status.phase !== 'connected' || !status.identity) throw new Error('请先在比赛页连接自己的期货模拟赛账户。')
+    if (!status.enabled || !status.identity) throw new Error('请先在比赛页连接自己的期货模拟赛账户。')
     if (expected && !same(identitySchema.parse(expected), status.identity)) throw new Error('比赛账户已变化，请切回果蝇绑定账户。')
+    if (status.phase !== 'connected') {
+      if (!expected) throw new Error('请先在比赛页连接自己的期货模拟赛账户。')
+      await this.contest.resume(status.identity)
+    }
     if (verify) await this.contest.researchIdentity(status.identity)
     return status.identity
   }
@@ -131,8 +144,10 @@ export class FlyService {
     const { snapshot, trades } = this.observation
     const account = record(snapshot.account.data), positions = rows(snapshot.positions.data)
     const fees = amount(account.commission ?? account.Commission)
-    const equity = amount(account.equity ?? account.balance ?? account.Balance)
+    const equity = amount(account.totalProfit ?? account.equity ?? account.balance ?? account.Balance)
     if (equity !== null && equity > 0) await this.equityPeak(identity, equity)
+    const notionals = positions.map(p => amount(p.openMarketValue))
+    const occupied = notionals.every(n => n !== null && n >= 0) ? notionals.reduce<number>((sum, n) => sum + n!, 0) : null
     const feeds: Record<string, JsonValue> = {}
     for (const instrument of instruments) {
       const quote = record((await this.contest.query({ kind: 'quote', symbol: instrument.symbol }, identity, signal)).data)
@@ -142,6 +157,14 @@ export class FlyService {
       feeds[instrument.product] = { symbol: instrument.symbol, price: Number(quote.latestPrice) || 0,
         at: Date.now() / 1000, quote_at: quote.ready !== false && contract(quote.contractCode ?? quote.symbol) === contract(instrument.symbol) && Number.isFinite(at) ? at / 1000 : 0,
         multiplier: Number(spec.contractMultiplier) || 0, long: quantity('long'), short: quantity('short'),
+        occupied_notional: occupied,
+        sizing: Object.fromEntries((['long', 'short'] as const).map(side => {
+          const margin = marginPerLot(spec, Number(quote.latestPrice), side), available = amount(account.availableFunds)
+          // Reserve 10% for costs and price changes; share capital among selected instruments.
+          const capacity = margin !== null && available !== null && equity !== null && equity > 0
+            ? Math.max(0, Math.min(500, quantity(side) + Math.floor(Math.max(0, available) * .9 / margin), Math.floor(equity * .9 / instruments.length / margin))) : null
+          return [`${side}_capacity`, capacity]
+        })),
         inflight: snapshot.pendingPlans.length > 0 || rows(snapshot.openOrders.data).length > 0 }
     }
     await this.identity(identity, false)
@@ -208,39 +231,53 @@ export class FlyService {
     const identity = await this.identity(input.identity), instrument = flyInstrumentSchema.parse(input.instrument)
     if (await this.watcherRunning()) throw new Error('Jev 盯盘正在运行，请先停止再生成果蝇计划。')
     const decision = z.object({ decision_id: z.string().regex(/^[a-f0-9]{32}$/), input_at: z.number(), symbol: z.string(),
-      choice: z.object({ action: z.enum(['LONG','SHORT','CLOSE']), readout: z.literal('neural-trade-2'), sampling: z.literal(false) }) }).parse(input.decision)
+      choice: z.object({ action: z.enum(['LONG','SHORT','CLOSE']), readout: z.literal('neural-trade-3'), sampling: z.literal(false), current_position: z.number().int(), target_position: z.number().int().min(-500).max(500) }) }).parse(input.decision)
     if (contract(decision.symbol) !== contract(instrument.symbol) || Date.now() / 1000 - decision.input_at < 0 || Date.now() / 1000 - decision.input_at > 15) throw new Error('交易信号已过期或合约不一致。')
-    const limits = z.object({ target: z.number().positive().max(100000000), total: z.number().positive().max(500000000), loss: z.number().positive().max(100000000) }).parse(input.limits)
+    const limits = z.object({ target: z.number().nonnegative().max(100000000), total: z.number().nonnegative().max(500000000), loss: z.number().nonnegative().max(100000000) }).parse(input.limits)
     const snapshot = await this.contest.inspect(identity, signal)
     if (snapshot.pendingPlans.length || rows(snapshot.openOrders.data).length) throw new Error('请先处理账户的待确认计划或活动委托。')
     const positions = rows(snapshot.positions.data), matching = positions.filter(p => contract(p.contractCode) === contract(instrument.symbol))
     if (matching.length > 1) throw new Error('存在双向或重复持仓，请先核对。')
-    const held = matching[0], opening = decision.choice.action !== 'CLOSE'
-    if (opening && held && Number(held.volume ?? held.position) > 0) throw new Error('果蝇不加仓或直接反手。')
-    if (!opening && (!held || !['long','short'].includes(String(held.direction)))) throw new Error('没有可核对的持仓方向。')
+    const held = matching[0]
+    if (held && !['long','short'].includes(String(held.direction))) throw new Error('没有可核对的持仓方向。')
+    const current = held ? Number(held.volume ?? held.position) * (held.direction === 'long' ? 1 : -1) : 0
+    if (!Number.isInteger(current) || current !== decision.choice.current_position) throw new Error('持仓已变化，等待新的仓位决策。')
+    const target = decision.choice.target_position
+    if ((decision.choice.action === 'CLOSE' && target !== 0) || (target > 0 && decision.choice.action !== 'LONG') || (target < 0 && decision.choice.action !== 'SHORT')) throw new Error('目标仓位与交易方向不一致。')
+    // Reversals only close the old side. Opening requires a new decision after fills.
+    const reversing = current * target < 0
+    const delta = reversing ? -current : target - current
+    const opening = current === 0 || (!reversing && Math.abs(target) > Math.abs(current))
+    const volume = Math.abs(delta)
+    if (!Number.isInteger(volume) || volume < 1 || volume > 500) throw new Error('目标仓位未变化或调整手数超过上限。')
+    if (!opening && (!held || !Number.isInteger(Number(held.closable ?? held.sellable)) || Number(held.closable ?? held.sellable) < volume)) throw new Error('可平手数不足，等待持仓更新。')
     const quote = record((await this.contest.query({ kind: 'quote', symbol: instrument.symbol }, identity, signal)).data)
     const price = Number(quote.latestPrice), quoteAt = flyQuoteTime(quote.quoteTime), spec = await this.spec(instrument.symbol, identity, signal)
     const multiplier = Number(spec.contractMultiplier)
     if (quote.ready === false || contract(quote.contractCode ?? quote.symbol) !== contract(instrument.symbol) || !Number.isFinite(quoteAt) || Date.now() - quoteAt > 10000 || quoteAt > Date.now() + 1000 || !(price > 0 && multiplier > 0)) throw new Error('新鲜报价或合约乘数不可用。')
-    const account = record(snapshot.account.data), equity = amount(account.equity ?? account.balance ?? account.Balance)
+    const account = record(snapshot.account.data), equity = amount(account.totalProfit ?? account.equity ?? account.balance ?? account.Balance)
     if (equity === null) throw new Error('账户权益不可用。')
     if (!Number.isFinite(equity) || equity <= 0) throw new Error('账户权益不可用。')
     const peak = await this.equityPeak(identity, equity)
-    if (opening && peak - equity >= limits.loss) throw new Error('账户权益回落达到设置上限，仅允许平仓计划。')
-    const volume = opening ? Math.floor(limits.target / (price * multiplier)) : Number(held!.closable ?? held!.sellable)
-    if (!Number.isInteger(volume) || volume < 1 || volume > 500) throw new Error('名义额度不足一手或手数超过上限。')
+    if (opening && limits.loss > 0 && peak - equity >= limits.loss) throw new Error('账户权益回落达到设置上限，仅允许平仓计划。')
     if (opening) {
-      let occupied = 0
-      for (const position of positions) {
-        const value = amount(position.openMarketValue)
-        if (value === null || value < 0) throw new Error('已有持仓名义占用不完整，不能追加开仓。')
-        occupied += value
+      const margin = marginPerLot(spec, price, target > 0 ? 'long' : 'short'), available = amount(account.availableFunds)
+      if (margin === null) throw new Error('比赛合约保证金数据不完整，等待更新。')
+      if (available === null || volume * margin > Math.max(0, available) * .9) throw new Error('可用资金不足，等待新的仓位决策。')
+      if (limits.target > 0 && price * multiplier * Math.abs(target) > limits.target) throw new Error('超过每品种名义上限。')
+      if (limits.total > 0) {
+        let occupied = 0
+        for (const position of positions) {
+          const value = amount(position.openMarketValue)
+          if (value === null || value < 0) throw new Error('已有持仓名义占用不完整，不能追加开仓。')
+          occupied += value
+        }
+        if (occupied + price * multiplier * volume > limits.total) throw new Error('超过总名义占用额度。')
       }
-      if (occupied + price * multiplier * volume > limits.total) throw new Error('超过总名义占用额度。')
     }
     if (Date.now() / 1000 - decision.input_at > 15) throw new Error('核对耗时较长，等待新的神经信号。')
     return safeData(await this.contest.prepare({ sessionId: `fly:${decision.decision_id}`, operation: 'place_order', order: {
-      symbol: instrument.symbol, direction: opening ? decision.choice.action === 'LONG' ? 'buy' : 'sell' : held!.direction === 'long' ? 'sell' : 'buy',
+      symbol: instrument.symbol, direction: delta > 0 ? 'buy' : 'sell',
       offset: opening ? 'open' : 'close', volume } }, identity, signal))
   }
 

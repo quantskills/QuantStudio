@@ -76,8 +76,11 @@ def propose(organism, identity):
         organism.store.put('consumed:' + product, decision['decision_id'])
         action = decision['choice']['action']
         if action == 'WAIT': continue
+        choice = decision['choice']
+        current, target = choice.get('current_position',0), choice.get('target_position',0)
+        reducing = bool(current and (current*target<=0 or abs(target)<abs(current)))
         try:
-            if organism.control.get('close_only') and action != 'CLOSE':
+            if organism.control.get('close_only') and not reducing:
                 raise ValueError('当前仅生成平仓计划')
             if not 0 <= time.time() - decision['input_at'] <= 15:
                 raise ValueError('神经信号已过期，等待新决策')
@@ -88,9 +91,10 @@ def propose(organism, identity):
             if readiness(bars, feed.get('quote_at', 0), minutes=organism.settings.trade_period_minutes) != 'ready' or missing_minutes(bars, product, organism.settings.trade_period_minutes):
                 raise ValueError('历史窗口不完整或行情过期')
             if feed.get('inflight'): raise ValueError('账户已有待处理计划或委托')
-            if action != 'CLOSE' and organism.settings.cost_filter_multiplier:
+            if not reducing and organism.settings.cost_filter_multiplier:
                 raise ValueError('比赛接口缺少完整手续费参数，请关闭成本过滤或补齐数据')
-            filtered, trace = opening_filter(organism.store.get('trade_filter:' + product, {}), decision,
+            filter_decision = {**decision,'choice':{**choice,'action':'CLOSE'}} if reducing else decision
+            filtered, trace = opening_filter(organism.store.get('trade_filter:' + product, {}), filter_decision,
                 organism.settings.model_dump(), product, time.time(), organism.store.get('last_close:' + product, 0), None)
             organism.store.put_many({'trade_filter:' + product: filtered, 'trade_filter_status:' + product: trace})
             if not trace['allowed']: raise ValueError(trace['reason'])

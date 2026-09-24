@@ -9,6 +9,8 @@ vi.mock('../src/client/fly/transport.ts', () => ({ flyFetch: vi.fn() }))
 vi.mock('../src/client/fly/RuntimeContinuity.tsx', () => ({ RuntimeContinuity: () => null }))
 vi.mock('../src/client/fly/TradeFilterControls.tsx', () => ({ TradeFilterControls: () => null }))
 vi.mock('../src/client/fly/TradeLoop.tsx', () => ({ TradeLoop: () => null }))
+vi.mock('../src/client/fly/TradeStatistics.tsx', () => ({ TradeStatistics: () => null }))
+vi.mock('../src/client/fly/TradeLearning.tsx', () => ({ TradeLearning: () => null }))
 vi.mock('../src/client/fly/FlyHomeV2.tsx', () => ({ default: () => null }))
 afterEach(() => { cleanup(); vi.useRealTimers() })
 
@@ -45,7 +47,8 @@ it('connects the dashboard button to the shared background history job', async (
     checkpoints: [], environment: { blender: '', brain_ready: true, blender_ready: true, progress: { status: 'complete' } }, onboarding: false }
   vi.mocked(flyFetch).mockImplementation(async url => ({ ok: true, json: async () => url.endsWith('/state') ? state : url.endsWith('/control') ? { history: { status: 'running' } } : { profiles: [], jev_configured: false } }) as Response)
   render(<FlyV2Page active/>)
-  fireEvent.click(await screen.findByRole('button', { name: '获取历史数据' }))
+  fireEvent.click(await screen.findByText(/行情与运行详情/))
+  fireEvent.click(screen.getByRole('button', { name: '获取历史数据' }))
   expect(await screen.findByRole('button', { name: '正在获取历史数据…' })).toBeTruthy()
   expect(vi.mocked(flyFetch).mock.calls.some(([url, init]) => url.endsWith('/control') && JSON.parse(String(init?.body)).action === 'history')).toBe(true)
   expect(screen.getByRole('button', { name: '正在获取历史数据…' }).matches(':disabled')).toBe(true)

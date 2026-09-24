@@ -37,6 +37,19 @@ async function fixture() {
 }
 
 describe('contest is opt-in and independent of ordinary sessions', () => {
+  it('resumes only an already enabled bound account without installing or logging in', async () => {
+    const f = await fixture(); await f.connect()
+    const resumed = new ContestService(f.cli, f.home)
+    await resumed.resume(identity)
+    expect((await resumed.status()).phase).toBe('connected')
+    expect(f.run.mock.calls.map(([, args]) => args[0])).toEqual(['whoami', 'agent', 'doctor'])
+    f.run.mockClear(); f.switchAccount()
+    await expect(new ContestService(f.cli, f.home).resume(identity)).rejects.toThrow('账户')
+    expect(f.run.mock.calls.map(([, args]) => args[0])).toEqual(['whoami'])
+    await f.service.setEnabled(false); f.run.mockClear()
+    await expect(new ContestService(f.cli, f.home).resume(identity)).rejects.toThrow('比赛模式已关闭')
+    expect(f.run).not.toHaveBeenCalled()
+  })
   it('queries the official catalog on supported CLI versions without any order operation', async () => {
     const f = await fixture()
     vi.mocked(f.cli.install).mockResolvedValue({ version: '0.1.23', rules: 'name: panda-trading' })

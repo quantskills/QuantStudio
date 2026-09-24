@@ -36,9 +36,6 @@ export function TradeStatistics() {
     <div className="fv-statistics-caption">PandaAI 模拟赛 · 统计日期 {data.day} · 金额单位：元 · 每 5 秒刷新</div>
     {error && <p role="status" className="fv-runtime-note">{error}，以下保留上次数据。</p>}
     <div className="fv-pnl-cards">
-      <div><small>柜台账户权益</small><strong>{fmt(data.official.Balance)}</strong></div>
-      <div><small>柜台今日净盈亏</small><strong>{pnl(data.official.day_net)}</strong></div>
-      <div><small>柜台今日手续费</small><strong>{fmt(data.official.Commission)}</strong></div>
       <div><small>果蝇已实现毛盈亏</small><strong>{pnl(data.summary.realized_gross)}</strong></div>
       <div><small>果蝇浮盈估算</small><strong>{pnl(data.summary.floating_gross)}</strong></div>
       <div><small>确认成交笔数</small><strong>{data.summary.fill_count}</strong></div>
@@ -59,6 +56,11 @@ export function TradeStatistics() {
       </tr>)}{!fills.length && <tr><td colSpan={8}>所选合约暂无柜台成交记录</td></tr>}</tbody></ResizableNativeTable>}
     </div>
     {tab === 'fills' && <div className="fv-statistics-pagination"><span>{fills.length} 笔 · 第 {shownPage + 1} / {pages} 页</span><button type="button" disabled={shownPage === 0} onClick={() => setPage(shownPage - 1)}>上一页</button><button type="button" disabled={shownPage + 1 >= pages} onClick={() => setPage(shownPage + 1)}>下一页</button></div>}
-    <small className="fv-note">{data.note} 柜台今日净盈亏＝柜台平仓盈亏＋持仓盈亏－手续费；报价与柜台刷新时间不同，数值可能暂有差异。</small>
+    <small className="fv-note">果蝇统计为毛盈亏，未扣费用。</small>
+    <details className="fv-data-details"><summary>比赛账户汇总与统计口径</summary><div className="fv-pnl-cards">
+      <div><small>柜台账户权益</small><strong>{fmt(data.official.Balance)}</strong></div>
+      <div><small>柜台今日净盈亏</small><strong>{pnl(data.official.day_net)}</strong></div>
+      <div><small>柜台今日手续费</small><strong>{fmt(data.official.Commission)}</strong></div>
+    </div><small className="fv-note">{data.note} 柜台今日净盈亏＝柜台平仓盈亏＋持仓盈亏－手续费；报价与柜台刷新时间不同，数值可能暂有差异。</small></details>
   </section>
 }

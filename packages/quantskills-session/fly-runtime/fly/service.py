@@ -49,9 +49,12 @@ class Organism:
             accounts=manager.accounts
             if accounts:self.settings.account=accounts[0]['name']
         self.control=self.store.get('control',{'paused':True,'trading':False})
-        self.control['trading']=False;self.store.put('control',self.control)
-        if self.settings.life_validation:
+        if self.control['paused'] or not self.settings.trading_configured():
             self.control['trading']=False;self.store.put('control',self.control)
+        # A restart may resume the preference, but never an old signal.
+        for item in self.settings.instruments:
+            signal=self.store.get('signal:'+item.product)
+            if signal:self.store.put('consumed:'+item.product,signal['decision_id'])
         self.store.put('settings',self.settings.model_dump())
         home_version=self.store.get('home_version','default')
         body=self.store.get('world')
@@ -128,7 +131,7 @@ class Organism:
                 self.next_history_at=0
                 self.store.put('history_success_at',None)
                 self.history_status={**self.history_status,'status':'running' if self.history_lock.locked() else 'idle','last_success_at':None}
-            if settings.life_validation:
+            if not settings.trading_configured():
                 self.control['trading']=False;self.store.put('control',self.control)
             self.store.event('settings_changed',settings.model_dump(),actor='user')
 
@@ -143,7 +146,8 @@ class Organism:
             elif action=='observe':self.control['trading']=False
             elif action in ('trade','close_only'):
                 if self.settings.life_validation:raise ValueError('当前仅验证生活，请先在设置中关闭仅验证生活')
-                if not all(getattr(self.settings,k)>0 for k in ('target_notional','total_notional','loss_limit')):raise ValueError('请先设置名义金额、总占用和损失上限')
+                if not self.settings.instruments:raise ValueError('请先选择品种并填写实际合约')
+                if self.settings.total_notional and self.settings.target_notional>self.settings.total_notional:raise ValueError('总名义占用上限不能小于每品种目标名义金额')
                 if action=='trade' and (self.store.get('risk') or {}).get('halted'):raise ValueError('损失上限已触发；请在实盘监控核对账户，本轮不能继续开仓')
                 self.start();self.request_connection();self.control.update(trading=True,close_only=action=='close_only')
             elif action=='connect': self.request_connection()
@@ -386,7 +390,6 @@ class Organism:
             self.connection_retry={};self.store.put('connection_retry',{})
             self.connection['updated_at']=time.time()
         except Exception as exc:
-            self.control['trading']=False;self.store.put('control',self.control)
             self.connection_retry=bridge.retry_state(self.connection_retry,exc,time.time(),'competition')
             self.store.put('connection_retry',self.connection_retry)
             self.connection={'status':'needs_auth' if self.connection_retry['blocked'] else 'waiting',**self.connection_retry,
@@ -404,14 +407,11 @@ class Organism:
                 key=bars_key(product,minutes)
                 same_symbol=self.store.get('meta:'+key,{}).get('symbol','').lower()==item.symbol.lower()
                 bars=self.store.get(key,[]) if same_symbol else []
-                from .bridge import equal_notional_lots
-                try:allocation=equal_notional_lots(self.settings.target_notional,float(feed.get('price') or 0),float(feed.get('multiplier') or 0))
-                except ValueError:allocation=None
                 markets.append({'product':product,'symbol':item.symbol,'price':feed.get('price'),'count':len(bars),
                                 'period_minutes':minutes,
                                 'readiness':'history_gap' if missing_minutes(bars,product,minutes) else readiness(bars,feed.get('quote_at',0),minutes=minutes), 'last_bar':bars[-1]['datetime'] if bars else None,
                                 'chart':[b['close'] for b in bars], 'long':feed.get('long',0),'short':feed.get('short',0),
-                                'allocation':allocation, 'quote_at':feed.get('quote_at'),
+                                'quote_at':feed.get('quote_at'),
                                 'decision':self.store.get('signal:'+product), 'execution':self.store.get('execution_status:'+product),
                                 'signal_filter':self.store.get('trade_filter_status:'+product),
                                 'pending':(self.store.get('execution:'+product) or {}).get('pending')})
@@ -436,8 +436,8 @@ class Organism:
     def close(self):
         with self.lock:
             self.closed=True
-            self.control['trading']=False
             self.store.put('control',self.control)
+            self.control['trading']=False
             self.store.put('runtime_health',{'at':time.time(),'neural_ready':False,'stopped':True})
             scene_process=getattr(self,'scene_process',None)
             if scene_process and scene_process.poll() is None:

@@ -36,8 +36,12 @@ class Settings(TradingFilters):
     jev_provider: Literal['typesafe'] = 'typesafe'
     jev_enabled: bool = False
     learning: bool = True
-    life_validation: bool = True
+    life_validation: bool = False
     onboarding_complete: bool = False
+
+    def trading_configured(self):
+        return (not self.life_validation and bool(self.instruments)
+                and (not self.total_notional or self.target_notional<=self.total_notional))
 
 
 class Oracle(BaseModel):

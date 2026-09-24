@@ -254,6 +254,17 @@ export class ContestService {
     async researchIdentity(expected) {
         return this.exclusive(async () => { this.assertReady(expected); return this.validateIdentity(expected ?? this.state.identity); });
     }
+    /** Restore an existing binding after a host restart; never installs or starts login. */
+    async resume(expected) {
+        await this.exclusive(async () => {
+            this.assertEnabled();
+            if (!this.state.runtime || !sameContest(this.state.identity, expected))
+                throw new Error('请先在比赛页连接对应账户。');
+            if (this.ready && this.phase === 'connected')
+                return;
+            await this.validateIdentity(expected);
+        });
+    }
     assertReady(expected) {
         this.assertEnabled();
         if (!this.ready || !this.state.identity)
