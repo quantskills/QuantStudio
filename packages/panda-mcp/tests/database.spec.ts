@@ -20,6 +20,40 @@ describe('local research database', () => {
     expect(() => dataRows({ ...result, rows: [[3050]] })).toThrow('行列数')
     expect(() => dataRows({ ...result, columns: ['close', 'close'] })).toThrow('列名')
   })
+  it('retrieves complete minute history by splitting truncated PandaData date windows', async () => {
+    const { root } = await setup()
+    const rows = ['17', '18', '21', '22', '23', '24'].flatMap((day, index) => Array.from({ length: index === 5 ? 39 : 240 }, (_, minute) =>
+      [`2026-09-${day} ${String(9 + Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}:00`, 'IF2612', minute + 4400]))
+    const panda = vi.fn(async (_method, params) => {
+      const selected = rows.filter(row => String(row[0]).slice(0, 10).replaceAll('-', '') >= params.start_date && String(row[0]).slice(0, 10).replaceAll('-', '') <= params.end_date)
+      return { ok: true, result: { type: 'dataframe', columns: ['datetime', 'trading_code', 'close'], rows: selected.slice(0, 1000), total_rows: selected.length, truncated: selected.length > 1000 } }
+    })
+    const store = new LocalDatabase(root, panda)
+    const params = { symbol: 'IF2612.CFE', start_date: '20260917', end_date: '20260927', frequency: '1m', fields: ['datetime', 'trading_code', 'close'] }
+    const item = await store.fetch({ ...data, dateColumn: 'datetime', source: { kind: 'pandadata', method: 'get_future_min', params } })
+    const result = await store.query({ id: item.id, limit: 5000 })
+    expect(result.total).toBe(1239)
+    expect(result.rows.at(-1)?.datetime).toBe('2026-09-24 09:38:00')
+    expect(item.source.params).toEqual(params)
+    expect(panda.mock.calls.map(([, request]) => [request.start_date, request.end_date])).toEqual([
+      ['20260917', '20260927'], ['20260917', '20260922'], ['20260923', '20260927'],
+    ])
+    expect(panda).toHaveBeenLastCalledWith('get_future_min', { ...params, start_date: '20260923' }, undefined)
+  })
+  it('never commits a partial split refresh when a single-day preview is still truncated', async () => {
+    const { root } = await setup()
+    let truncate = false
+    const panda = vi.fn(async (_method, params) => ({ result: { columns: ['date', 'close'], rows: [[params.start_date, 4400]], truncated: truncate && params.start_date !== '20260917' } }))
+    const store = new LocalDatabase(root, panda)
+    const item = await store.fetch({ ...data, source: { kind: 'pandadata', method: 'get_future_min', params: { start_date: '20260917', end_date: '20260919' } } })
+    const before = await readFile(join(root, item.id + '.json'), 'utf8')
+    truncate = true
+    // The broad request and its later slice are truncated; the first slice is complete.
+    panda.mockImplementation(async (_method, params) => ({ result: { columns: ['date', 'close'], rows: [[params.start_date, 4400]], truncated: params.start_date !== params.end_date || params.start_date === '20260919' } }))
+    await expect(store.fetch(item, undefined, item.id)).rejects.toThrow('截断')
+    expect(await readFile(join(root, item.id + '.json'), 'utf8')).toBe(before)
+    expect(panda).toHaveBeenCalledTimes(6)
+  })
   it('rolls an opted-in minute source to the current Shanghai date on refresh, without growing the request window', async () => {
     let clock = Date.parse('2026-09-18T15:59:00Z')
     const { store, panda } = await setup(undefined, () => clock)

@@ -74,6 +74,7 @@ export declare class LocalDatabase {
     private save;
     import(input: DataImport): Promise<DataSummary>;
     private sourceData;
+    private sourceRows;
     fetch(input: DataFetch, signal?: AbortSignal, id?: string): Promise<DataSummary>;
     query(query: DataQuery, signal?: AbortSignal): Promise<DataResult>;
     /** Preview is explicitly allowed to show stale rows, and always returns freshness metadata. */
