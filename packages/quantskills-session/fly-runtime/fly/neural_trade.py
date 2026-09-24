@@ -12,7 +12,7 @@ try:
 except ImportError:
     from neural_life import CHANNELS, LifeReadout
 
-VERSION = 'neural-trade-2'
+VERSION = 'neural-trade-3'
 SENSES = ('fast_up', 'fast_down', 'slow_up', 'slow_down', 'volatility')
 
 
@@ -39,7 +39,7 @@ def market_senses(bars, minutes=1, product=None):
 class TradeReadout(LifeReadout):
     actions = ('LONG', 'SHORT', 'CLOSE')
 
-    def choose(self, values, decision_id, *, held=0, valid=True):
+    def choose(self, values, decision_id, *, held=0, valid=True, sizing=None):
         x = np.array([values[k] for k in SENSES], float)
         if not np.isfinite(x).all() or ((x < 0) | (x > 1)).any() or held not in (-1, 0, 1):
             raise ValueError('交易神经读出无效')
@@ -50,10 +50,8 @@ class TradeReadout(LifeReadout):
         scores = drives * (1 + np.clip(expected, -.65, .65))
         wait = .18 + .28*x[4]
         if held:
-            # Continue holding unless opposite neural evidence wins. Eligibility
-            # comes from owned positions, never from model-provided inventory.
-            wait = max(wait, float(up if held == 1 else down))
-            scores[:2] = 0
+            # Same-side evidence can increase or reduce exposure; opposite evidence closes first.
+            scores[1 if held == 1 else 0] = 0
         else:
             scores[2] = 0
         if not valid:
@@ -61,24 +59,52 @@ class TradeReadout(LifeReadout):
         index = int(np.argmax(scores))
         # Equal competing evidence abstains; list order cannot select a side.
         action = self.actions[index] if scores[index] > wait and np.count_nonzero(np.isclose(scores, scores[index], atol=.02)) == 1 else 'WAIT'
+        sizing = sizing or {}
+        current = int(sizing.get('current_position', held))
+        target = current
+        reason = '神经响应无效，等待' if not valid else '神经证据不足，保持仓位'
+        if action == 'CLOSE':
+            target = 0
+            reason = '反向神经证据占优，先平仓；成交后重新决策'
+        elif action in ('LONG', 'SHORT'):
+            capacity = sizing.get('long_capacity' if action == 'LONG' else 'short_capacity')
+            if capacity is None:
+                action = 'WAIT'
+                reason = '等待比赛账户可用资金和完整保证金数据'
+            else:
+                edge = max(0., float(scores[index]) - max(wait, float(np.max(np.delete(scores,index)))))
+                fraction = min(1., edge / max(float(scores[index]), 1e-9)) * (1-float(x[4]))
+                target = int(np.floor(max(0,capacity) * fraction)) * (1 if action == 'LONG' else -1)
+                if target == current:
+                    action = 'WAIT'
+                    reason = '目标仓位未变化，保持仓位'
+                elif target == 0:
+                    if current:
+                        action = 'CLOSE'
+                        reason = '神经强度对应不足一手，退出当前仓位'
+                    else:
+                        action = 'WAIT'
+                        reason = '可用资金与信号强度对应不足一手，等待'
+                else:
+                    reason = f'神经优势与波动读出决定资金比例 {fraction:.0%}，目标 {abs(target)} 手'
         if action != 'WAIT':
-            self.pending[decision_id] = {'x': x.tolist(), 'index': index, 'expected': float(expected[index])}
-        return {'action': action, 'scores': {**dict(zip(self.actions, scores.tolist())), 'WAIT': float(wait)},
+            self.pending[decision_id] = {'x': x.tolist(), 'index': self.actions.index(action), 'expected': float(expected[self.actions.index(action)])}
+        return {'action': action, 'current_position': current, 'target_position': target, 'sizing': sizing, 'scores': {**dict(zip(self.actions, scores.tolist())), 'WAIT': float(wait)},
                 'drives': dict(zip(self.actions, drives.tolist())), 'expected_rewards': dict(zip(self.actions, expected.tolist())),
                 'readout': VERSION, 'sampling': False, 'connectome_frozen': True, 'learning_scope': 'trade_readout_only',
-                'reason': '神经响应无效，等待' if not valid else '神经证据不足或持仓方向仍占优' if action == 'WAIT' else '神经放电读出竞争胜出',
+                'reason': reason,
                 'engineering_prior': '显式趋势读出规则，尚未验证交易有效性'}
 
     def state(self):
         return {**super().state(), 'version': VERSION, 'applied':sorted(self.applied)}
 
     def restore(self, state):
-        if state['version'] != VERSION:
+        if state['version'] not in (VERSION, 'neural-trade-2'):
             raise ValueError('交易读出检查点版本不兼容')
         super().restore({**state, 'version': super().state()['version']})
 
 
-def observe_trade(brain, channels, readout, bars, decision_id, *, held=0, input_cut=False, output_cut=False, minutes=1, product=None):
+def observe_trade(brain, channels, readout, bars, decision_id, *, held=0, sizing=None, input_cut=False, output_cut=False, minutes=1, product=None):
     sensory = market_senses(bars, minutes, product)
     encoded = dict(zip(CHANNELS, sensory['values'].values()))
     stimulus = channels.encode(encoded, disconnect=CHANNELS if input_cut else ())
@@ -89,7 +115,7 @@ def observe_trade(brain, channels, readout, bars, decision_id, *, held=0, input_
     decoded, trace = channels.decode(counts)
     values = dict(zip(SENSES, (decoded[k] for k in CHANNELS)))
     response = dict(zip(SENSES, (trace[k] for k in CHANNELS)))
-    choice = readout.choose(values, decision_id, held=held, valid=all(t['valid'] for t in response.values()))
+    choice = readout.choose(values, decision_id, held=held, sizing=sizing, valid=all(t['valid'] for t in response.values()))
     return {'choice': choice, 'market_sensory': sensory, 'trade_response': response,
             'response_hash': hashlib.sha256(counts.tobytes()).hexdigest(),
             'total_spikes': int(sum(o.counts.sum() for o in observations)), 'sim_ms': observations[-1].sim_ms,

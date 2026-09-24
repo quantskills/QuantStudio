@@ -32,6 +32,8 @@ export declare class ContestService {
     private validateAccount;
     private validateIdentity;
     researchIdentity(expected?: ContestIdentity): Promise<ContestIdentity>;
+    /** Restore an existing binding after a host restart; never installs or starts login. */
+    resume(expected: ContestIdentity): Promise<void>;
     private assertReady;
     rules(): Promise<string>;
     isEnabled(): boolean;

@@ -42,7 +42,7 @@ def learning_report(store, day, worker_updates=None):
     for e in applied:
         key=e['decision_id'];d=decisions.get(key,{})
         try:
-            if key in steps or d['choice']['readout']!=VERSION:raise ValueError('incomplete history')
+            if key in steps or d['choice']['readout'] not in (VERSION,'neural-trade-2'):raise ValueError('incomplete history')
             x=[float(d['trade_response'][sense]['value']) for sense in SENSES]
             if not all(np.isfinite(x)) or any(v<0 or v>1 for v in x):raise ValueError('invalid features')
             before=copy.deepcopy(replay.state())
@@ -79,7 +79,7 @@ def learning_report(store, day, worker_updates=None):
                     and keys=={e['decision_id'] for e in owned}
                     and all(decisions.get(k,{}).get('choice',{}).get('sampling') is False for k in keys))
         cycle_steps=[steps[k] for k in keys if k in steps]
-        can_compare=verified and len(cycle_steps)==len(keys)
+        can_compare=verified and len(cycle_steps)==len(keys) and all(decisions.get(k,{}).get('choice',{}).get('readout')==VERSION for k in keys)
         before=min(cycle_steps,key=lambda s:s['seq'])['before'] if can_compare else None
         after=max(cycle_steps,key=lambda s:s['seq'])['after'] if can_compare else None
         comparisons=[];weights=[];delta=None
@@ -98,7 +98,7 @@ def learning_report(store, day, worker_updates=None):
             if can_compare and receipts:
                 fill=receipts[0]['payload'];held=0 if fill['offset']=='0' else 1 if fill['direction']=='1' else -1
                 values={sense:d['trade_response'][sense]['value'] for sense in SENSES}
-                a=left.choose(values,key,held=held);b=right.choose(values,key,held=held)
+                a=left.choose(values,key,held=held,sizing=d['choice'].get('sizing'));b=right.choose(values,key,held=held,sizing=d['choice'].get('sizing'))
                 row.update(before_score=a['scores'][row['action']],after_score=b['scores'][row['action']],
                            before_choice=a['action'],after_choice=b['action'])
             comparisons.append(row)

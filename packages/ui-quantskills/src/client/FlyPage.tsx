@@ -29,11 +29,12 @@ export function FlyPage({ access, contest, openContest, openModelSettings }: { a
       onClick={() => { void access.install({ blenderPath: blenderPath.trim() }).then(setState).catch(error => setError(String(error))) }}>{state?.installing ? '正在准备…' : '一键准备果蝇'}</button>}</div>
   return <div className="quantstudio-fly"><div className="fv-contest-banner"><span>期货模拟赛 · 每笔交易需确认</span><a href="#fly-contest-plans">查看交易计划</a><button type="button" onClick={openContest}>比赛账户</button>
     {openModelSettings && <button type="button" onClick={openModelSettings}>模型服务与 Jev API Key</button>}</div>
-    <FlyV2Page active contest={contest} openModelSettings={openModelSettings} preparing={state.installing} prepareMessage={state.message} onPrepare={path => access.install({ blenderPath: path })}/>{contest && <FlyPlans access={contest} />}</div>
+    <FlyV2Page active contest={contest} openModelSettings={openModelSettings} preparing={state.installing} prepareMessage={state.message} onPrepare={path => access.install({ blenderPath: path })} tradePlans={contest && <FlyPlans access={contest} />}/></div>
 }
 function FlyPlans({ access }: { access: ContestAccess }) {
   const state = useContest(access)
   if (!state.status) return null
   const filtered = { ...state.status, plans: state.status.plans.filter(plan => plan.sessionId.startsWith('fly:')) }
-  return <div id="fly-contest-plans" className="fv-contest-plans"><h2>果蝇交易计划</h2><p>核对账户、合约与手数后逐笔确认。停止建议不会撤销已提交的委托；待确认计划可在此取消。</p><ContestPlans status={filtered} access={access} refresh={state.refresh} /></div>
+  const pending = filtered.plans.filter(plan => plan.status === 'prepared').length
+  return <details id="fly-contest-plans" className="fv-contest-plans" open={pending > 0}><summary>待确认交易计划 · {pending} 笔</summary><p>核对账户、合约与手数后逐笔确认。停止建议不会撤销已提交的委托。</p><ContestPlans status={filtered} access={access} refresh={state.refresh} /></details>
 }

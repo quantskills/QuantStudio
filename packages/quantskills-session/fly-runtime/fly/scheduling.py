@@ -4,7 +4,8 @@ from .trade_filters import filter_config, config_key
 
 
 def next_trade(store, products, seen, cursor, now):
-    cfg = filter_config(store.get('settings', {}))
+    settings = store.get('settings', {})
+    cfg = filter_config(settings)
     minutes=cfg['trade_period_minutes']
     for offset in range(len(products)):
         index=(cursor+offset)%len(products);product=products[index]
@@ -18,8 +19,21 @@ def next_trade(store, products, seen, cursor, now):
         key=str(feed.get('symbol'))+':'+bar+':'+config_key(cfg)
         if key==seen.get(product):continue
         seen[product]=key
+        sizing={**feed.get('sizing',{}),'current_position':int(feed.get('long',0)-feed.get('short',0))}
+        notional=float(feed.get('price',0))*float(feed.get('multiplier',0))
+        if settings.get('target_notional',0)>0 and notional>0:
+            for side in ('long_capacity','short_capacity'):
+                if sizing.get(side) is not None:sizing[side]=min(sizing[side],int(settings['target_notional']/notional))
+        if settings.get('total_notional',0)>0 and notional>0:
+            occupied=feed.get('occupied_notional')
+            for side in ('long_capacity','short_capacity'):
+                if sizing.get(side) is not None:
+                    held_lots=feed.get('long' if side=='long_capacity' else 'short',0)
+                    extra=int(max(0,settings['total_notional']-occupied)/notional) if occupied is not None else 0
+                    sizing[side]=min(sizing[side],held_lots+extra)
         return {'head':'trade','product':product,'symbol':feed['symbol'],'bars':bars,'input_key':key,
                 'filter_config':cfg,'signal_bar':bar,
+                'sizing':sizing,
                 'held':1 if feed.get('long') else -1 if feed.get('short') else 0},(index+1)%len(products)
     return None,cursor
 

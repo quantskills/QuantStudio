@@ -16,6 +16,34 @@ from server import dispatch
 
 
 class RuntimeTests(unittest.TestCase):
+    def test_new_settings_enable_trade_choices(self):
+        self.assertFalse(Settings().life_validation)
+
+    def test_restart_preserves_enabled_plans_and_manual_stop(self):
+        item = self.manager.get('local')
+        item.configure(Settings(instruments=[{'product':'rb','symbol':'rb2610','exchange':'SHF'}],
+                                target_notional=100000,total_notional=200000,loss_limit=10000,
+                                life_validation=False,onboarding_complete=True))
+        item.store.put('binding',{'identity':{'accountId':'a','contestId':'c'}})
+        item.control.update(paused=False,trading=True)
+        item.store.put('control',item.control)
+        item.store.put('signal:rb',{'decision_id':'before-restart'})
+        item.close()
+        with patch.object(Organism,'loop'):
+            reopened=Organism(self.manager,'local')
+        self.manager.instances['local']=reopened
+        self.assertTrue(reopened.control['trading'])
+        self.assertEqual(reopened.store.get('consumed:rb'),'before-restart')
+        reopened.command('observe')
+        reopened.close()
+        with patch.object(Organism,'loop'):
+            stopped=Organism(self.manager,'local')
+        self.manager.instances['local']=stopped
+        self.assertFalse(stopped.control['trading'])
+
+    def test_nominal_limits_are_optional(self):
+        self.assertTrue(Settings(instruments=[{'product':'rb','symbol':'rb2610','exchange':'SHF'}]).trading_configured())
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.manager = FlyManager(self.temp.name)
@@ -30,7 +58,7 @@ class RuntimeTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Blender'):
             dispatch(self.manager,'environment/config',{'blender_path':sys.executable})
 
-    def test_restart_disables_trading_but_preserves_memory(self):
+    def test_restart_keeps_a_paused_or_unconfigured_instance_stopped(self):
         item = self.manager.get('local')
         item.store.put('memory', {'message': 'saved'})
         item.control.update(paused=True, trading=True)

@@ -6,7 +6,7 @@ import type { FlyAccess } from '../src/client/fly/transport.ts'
 import type { ContestAccess } from '../src/client/contest.ts'
 import type { ContestPlan, ContestStatus } from '../src/client/plugin-types.ts'
 
-vi.mock('../src/client/fly/FlyV2Page.tsx', () => ({ default: () => <div>果蝇家园</div> }))
+vi.mock('../src/client/fly/FlyV2Page.tsx', () => ({ default: ({ tradePlans }: { tradePlans?: import('react').ReactNode }) => <div>果蝇家园{tradePlans}</div> }))
 afterEach(cleanup)
 const ready = { supported: true, installed: true, installing: false, running: true, message: '' }
 const access = (): FlyAccess => ({ status: vi.fn(async () => ready), install: vi.fn(async () => ready), request: vi.fn(async () => ({})) })

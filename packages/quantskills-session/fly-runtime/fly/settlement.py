@@ -72,10 +72,10 @@ class Settlement:
         if fees<0:
             self.store.event('learning_deferred',{'reason':'跨结算手续费重置，保留成交但不拼接奖励'})
             self.store.put('settlement_baseline',state);return []
-        denominator=max(1,float(self.store.get('settings',{}).get('target_notional',1)))
+        denominator=baseline['balance']
         reward=max(-1,min(1,pnl/denominator*100))/len(decision_ids)
         evidence={'outcome':'账户平仓周期已结算','pnl_after_fees':pnl,'actual_account_commission':fees,
-                  'from':baseline['at'],'to':at,'trade_ids':[t['trade_id'] for t in new],
+                  'normalization_equity':denominator,'from':baseline['at'],'to':at,'trade_ids':[t['trade_id'] for t in new],
                   'decision_ids':decision_ids,'credit':'同一平仓周期各决策平分已实现净结果；不虚构每笔手续费'}
         rewards=[{'decision_id':key,'reward':reward,'evidence':evidence} for key in decision_ids]
         # Durable outbox is replayed after restart; neural checkpoints carry

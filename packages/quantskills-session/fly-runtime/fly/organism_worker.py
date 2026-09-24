@@ -104,7 +104,7 @@ def main():
                  input_hash=hashlib.sha256(json.dumps(request,sort_keys=True).encode()).hexdigest(),**outcome)
             continue
         if head=='trade':
-            outcome=observe_trade(brain,channels,trade,request['bars'],request['decision_id'],held=request.get('held',0),
+            outcome=observe_trade(brain,channels,trade,request['bars'],request['decision_id'],held=request.get('held',0),sizing=request.get('sizing'),
                                   minutes=request.get('filter_config',{}).get('trade_period_minutes',1),product=request['product'])
             emit(kind='decision',head=head,decision_id=request['decision_id'],product=request['product'],symbol=request['symbol'],
                  input_key=request['input_key'],input_at=request['input_at'],
