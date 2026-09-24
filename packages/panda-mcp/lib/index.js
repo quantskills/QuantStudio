@@ -133,6 +133,11 @@ function parseCsv(text) {
 		return Object.fromEntries(headers.map((h, j) => [h, values[j]]));
 	});
 }
+var TruncatedPreview = class extends Error {
+	constructor() {
+		super("数据源返回被截断的预览，请缩小查询日期范围；未写入缓存");
+	}
+};
 function dataRows(raw) {
 	if (typeof raw === "string") return dataRows(JSON.parse(raw));
 	if (Array.isArray(raw)) {
@@ -142,7 +147,7 @@ function dataRows(raw) {
 	if (raw && typeof raw === "object") {
 		const obj = raw;
 		if (obj.error || obj.isError === true || obj.success === false || obj.ok === false || obj.status === "error") throw new Error("数据源返回错误，未写入缓存");
-		if (obj.truncated === true) throw new Error("数据源返回被截断的预览，请缩小查询日期范围；未写入缓存");
+		if (obj.truncated === true) throw new TruncatedPreview();
 		const matrix = obj.rows ?? obj.data;
 		if (Array.isArray(obj.columns) && Array.isArray(matrix) && matrix.every(Array.isArray)) {
 			const columns = obj.columns;
@@ -294,6 +299,39 @@ var LocalDatabase = class {
 		const text = Buffer.concat(chunks).toString("utf8").replace(/^\uFEFF/, "");
 		return /csv/i.test(response.headers.get("content-type") ?? "") || /\.csv$/i.test(url.pathname) ? parseCsv(text) : JSON.parse(text);
 	}
+	async sourceRows(source, signal, budget = { remaining: 64 }) {
+		signal?.throwIfAborted();
+		if (--budget.remaining < 0) throw new Error("PandaData 历史分段请求过多，请缩小日期范围；未写入缓存");
+		const raw = await this.sourceData(source, signal);
+		signal?.throwIfAborted();
+		try {
+			return dataRows(raw);
+		} catch (error) {
+			if (!(error instanceof TruncatedPreview) || source.kind !== "pandadata" || source.method !== "get_future_min") throw error;
+			const start = String(source.params?.start_date ?? ""), end = String(source.params?.end_date ?? "");
+			if (!/^\d{8}$/.test(start) || !/^\d{8}$/.test(end)) throw error;
+			const first = instant(start), last = instant(end), day = 864e5;
+			if (!Number.isFinite(first) || !Number.isFinite(last) || first >= last) throw error;
+			const middle = first + Math.floor((last - first) / day / 2) * day;
+			const date = (time) => new Date(time).toISOString().slice(0, 10).replaceAll("-", "");
+			const left = await this.sourceRows({
+				...source,
+				params: {
+					...source.params,
+					end_date: date(middle)
+				}
+			}, signal, budget);
+			const right = await this.sourceRows({
+				...source,
+				params: {
+					...source.params,
+					start_date: date(middle + day)
+				}
+			}, signal, budget);
+			if (left.length + right.length > MAX_ROWS) throw new Error("历史数据超过 100000 行，请缩小日期范围；未写入缓存");
+			return [...left, ...right];
+		}
+	}
 	async fetch(input, signal, id) {
 		if (input.source.rollingDay) {
 			if (input.source.kind !== "pandadata" || input.source.method !== "get_future_min") throw new Error("随日期更新仅支持 PandaData 期货分钟行情");
@@ -310,8 +348,8 @@ var LocalDatabase = class {
 				}
 			};
 		}
-		const raw = await this.sourceData(input.source, signal);
-		return summary(await this.save(input, dataRows(raw), id));
+		const rows = await this.sourceRows(input.source, signal);
+		return summary(await this.save(input, rows, id));
 	}
 	async query(query, signal) {
 		const from = boundary(query.from), to = boundary(query.to, true);
