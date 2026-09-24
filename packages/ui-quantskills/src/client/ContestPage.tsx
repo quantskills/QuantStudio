@@ -115,7 +115,10 @@ function ConnectedContestPage({ access, flyAccess, openFly, researchSessions = [
       </section>
       {access.watch && <ContestWatch access={access.watch} connected={Boolean(connected)} openModelSettings={openModelSettings}/>}
       <FlyContestPanel access={flyAccess} contest={status} openFly={openFly ?? (() => {})}/>
-      {connected && <>
+      <details className={css.contestDetails} open aria-label="比赛详情">
+        <summary><h2>比赛详情</h2><span>比赛账户整体数据</span></summary>
+        <p className={css.muted}>当前比赛账户的整体数据，包含各策略与手工交易。</p>
+        {connected ? <>
         <section className={css.dataPanel} aria-label="比赛账户数据">
           <div className={css.tabs} role="tablist" aria-label="比赛数据分类">{tabs.map(([kind, label]) => <button type="button" role="tab" key={kind}
             aria-selected={tab === kind} onClick={() => setTab(kind)}>{label}</button>)}</div>
@@ -134,7 +137,8 @@ function ConnectedContestPage({ access, flyAccess, openFly, researchSessions = [
           {tab === 'quote' && !data && !loading && <p className={css.muted}>输入一个品种或实际合约，查询最新行情快照。</p>}
         </section>
         <ContestPlans status={status} access={access} refresh={refresh}/>
-      </>}
+        </> : <p className={css.muted}>连接比赛账户后，可查看资金、持仓、成交、排名及交易计划。</p>}
+      </details>
     </>}
   </section>
 }
