@@ -3,7 +3,6 @@ import type { ContestWatchConfig, ContestWatchStatus, ContestWatchTemplate } fro
 import type { ContestAccess } from './contest.ts'
 import { contestTime } from './contest.ts'
 import { waitForCompetition } from './competition-async.ts'
-import { JevConnection } from './JevConnection.tsx'
 import { JevUsage } from './JevUsage.tsx'
 import { JevStrategy } from './JevStrategy.tsx'
 import { JevEvidenceSettings } from './JevEvidenceSettings.tsx'
@@ -23,21 +22,23 @@ const fields = [
   ['minSamples', '最少有效快照', 8, 60, 1], ['maxSpread', '开仓最大买卖价差（价格单位，0 不限制）', 0, undefined, 0.01],
 ] as const
 
-export function ContestWatch({ access, connected = true }: { access: NonNullable<ContestAccess['watch']>; connected?: boolean }) {
+export function ContestWatch({ access, connected = true, openModelSettings }: { access: NonNullable<ContestAccess['watch']>; connected?: boolean; openModelSettings?: (() => void) | undefined }) {
+  const [expanded, setExpanded] = useState(false), contentId = useId()
   const { catalog, message: catalogMessage, loading: catalogLoading, refresh: refreshCatalog } = useJevProducts(access, connected)
-  const [expanded, setExpanded] = useState(true), contentId = useId()
   const [status, setStatus] = useState<ContestWatchStatus>(), [config, setConfig] = useState(initial)
   const [tuning, setTuning] = useState(false), [busy, setBusy] = useState(''), [error, setError] = useState('')
   const [templates, setTemplates] = useState<ContestWatchTemplate[]>([]), [templateName, setTemplateName] = useState(''), [templateMessage, setTemplateMessage] = useState('')
   const [saving, setSaving] = useState(false), [previousConfig, setPreviousConfig] = useState<ContestWatchConfig>()
   const [creating, setCreating] = useState(false), [newKind, setNewKind] = useState<TemplateKind>('range'), [newName, setNewName] = useState('')
   const [statusError, setStatusError] = useState('')
-  const [configured, setConfigured] = useState(false), [keyBusy, setKeyBusy] = useState(false)
+  const [configured, setConfigured] = useState<boolean>(), [connectionError, setConnectionError] = useState('')
   const [historyBusy, setHistoryBusy] = useState(false)
   const hydrated = useRef(false), epoch = useRef(0), pending = useRef(false)
   useEffect(() => {
     let disposed = false
     void access.templates().then(items => { if (!disposed) setTemplates(items) }).catch(() => { if (!disposed) setTemplateMessage('模板列表读取失败，请重新进入页面；内置模板仍可使用。') })
+    void waitForCompetition(() => access.settings(), 'Jev 配置').then(value => { if (!disposed) setConfigured(value.configured) })
+      .catch(failure => { if (!disposed) setConnectionError(failure instanceof Error ? failure.message : 'Jev 配置读取失败。') })
     return () => { disposed = true }
   }, [access])
   useEffect(() => {
@@ -72,7 +73,7 @@ export function ContestWatch({ access, connected = true }: { access: NonNullable
       if (version === epoch.current) { setError(failure instanceof Error ? failure.message : '盯盘操作失败。'); setTuning(true) }
     } finally { if (version === epoch.current) { pending.current = false; setBusy('') } }
   }
-  const locked = Boolean(!status || status.running || busy || keyBusy || historyBusy || saving)
+  const locked = Boolean(!status || status.running || busy || historyBusy || saving)
   const saveTemplate = async () => {
     if (locked) return
     setSaving(true); setTemplateMessage('')
@@ -96,7 +97,11 @@ export function ContestWatch({ access, connected = true }: { access: NonNullable
       {(status?.running || busy === 'start') && <button type="button" disabled={busy === 'stop'} onClick={() => { void run('stop') }}>{busy === 'stop' ? '停止中…' : '停止盯盘'}</button>}
     </div>
     <div id={contentId} hidden={!expanded}>
-    <JevConnection access={access} disabled={Boolean(status?.running || busy || saving || historyBusy)} onConfigured={setConfigured} onBusy={setKeyBusy}/>
+    <div className={css.jevConnectionBody}>
+      <p>Jev · {configured === undefined ? '配置状态待确认' : configured ? 'API Key 已配置' : 'API Key 未配置'}。API Key 请在「设置 → 模型服务 → Jev」中配置，与果蝇共用。</p>
+      {openModelSettings && <button type="button" onClick={openModelSettings}>前往模型服务配置 Jev</button>}
+      {connectionError && <p className={css.error} role="alert">{connectionError}</p>}
+    </div>
     {error && <p className={css.error} role="alert">{error}</p>}
     {statusError && <p className={css.error} role="alert">{statusError}</p>}
     <div className={css.watchStatus} role="status" data-phase={phase} data-active={active}>
@@ -171,7 +176,7 @@ export function ContestWatch({ access, connected = true }: { access: NonNullable
         </details>
       </fieldset>
       {templateMessage && <p className={css.jevFine}>{templateMessage}</p>}
-      {!configured && <p className={css.jevFine}>首次使用：在上方配置 Jev 密钥，后续无需重复填写。</p>}
+      {!configured && <p className={css.jevFine}>首次使用：请在「设置 → 模型服务 → Jev」配置 API Key，后续无需重复填写。</p>}
       {!connected && <p className={css.jevFine}>先连接上方比赛账户，再开始盯盘。</p>}
       <p className={css.jevFine}>开始后向 TypeSafe 发送策略、行情与持仓摘要并产生 API 用量。权益停止线仅暂停盯盘，不自动清仓；每笔计划仍由你确认。</p>
     </form>

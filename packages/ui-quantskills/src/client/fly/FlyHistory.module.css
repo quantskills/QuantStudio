@@ -1,0 +1,6 @@
+.history { margin:16px 0;padding:16px;border:1px solid var(--qs-line,#394b3b);border-radius:10px; }
+.heading { display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap; }
+.history p { margin:8px 0;font-size:13px;line-height:1.6; }
+.history ul { list-style:none;padding:0;margin:12px 0 0; }
+.history li { display:flex;gap:8px 20px;flex-wrap:wrap;padding:7px 0;font-size:13px; }
+.error { color:var(--qs-danger,#ebad90);overflow-wrap:anywhere; }

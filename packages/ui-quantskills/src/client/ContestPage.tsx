@@ -3,6 +3,8 @@ import type { ContestData, ContestQuery, QuantSkillsPlainSessionArchiveItem } fr
 import { asRecord, contestPhases, contestTime, display, useContest, type ContestAccess } from './contest.ts'
 import { ContestPlans } from './ContestPlans.tsx'
 import { ContestWatch } from './ContestWatch.tsx'
+import { FlyContestPanel } from './FlyContestPanel.tsx'
+import type { FlyAccess } from './fly/transport.ts'
 import { waitForCompetition } from './competition-async.ts'
 import css from './ContestPage.module.css'
 
@@ -20,16 +22,19 @@ function cell(value: unknown, key: string): string {
 
 interface ContestPageProps {
   access?: ContestAccess | undefined
+  flyAccess?: FlyAccess | undefined
+  openFly?: (() => void) | undefined
+  openModelSettings?: (() => void) | undefined
   researchSessions?: readonly QuantSkillsPlainSessionArchiveItem[] | undefined
   openResearch?: ((sessionId: QuantSkillsPlainSessionArchiveItem['sessionId']) => void) | undefined
 }
 
-export function ContestPage({ access, researchSessions = [], openResearch }: ContestPageProps) {
+export function ContestPage({ access, flyAccess, openFly, researchSessions = [], openResearch, openModelSettings }: ContestPageProps) {
   if (!access) return <section className={css.page}><h1>「巅峰交易者」全国期货模拟赛</h1><p>比赛功能暂未就绪，请重新启动应用。</p></section>
-  return <ConnectedContestPage access={access} researchSessions={researchSessions} openResearch={openResearch}/>
+  return <ConnectedContestPage access={access} flyAccess={flyAccess} openFly={openFly} researchSessions={researchSessions} openResearch={openResearch} openModelSettings={openModelSettings}/>
 }
 
-function ConnectedContestPage({ access, researchSessions = [], openResearch }: ContestPageProps & { access: ContestAccess }) {
+function ConnectedContestPage({ access, flyAccess, openFly, researchSessions = [], openResearch, openModelSettings }: ContestPageProps & { access: ContestAccess }) {
   const { status, busy, error, run, refresh } = useContest(access)
   const [tab, setTab] = useState<ContestQuery['kind']>('account')
   const [date, setDate] = useState('today'), [board, setBoard] = useState<'live' | 'settled'>('live')
@@ -108,8 +113,12 @@ function ConnectedContestPage({ access, researchSessions = [], openResearch }: C
         <p>{connected ? '可以这样问：查看我的持仓，分析下一步操作，先给出建议。' : '连接比赛账户后，即可进入 AI 交易助手。'}</p>
         {recentResearch && <p className={css.recent}>最近对话：{recentResearch.title || '比赛 · AI 交易助手'} · {contestTime(recentResearch.updatedAt)}</p>}
       </section>
-      {access.watch && <ContestWatch access={access.watch} connected={Boolean(connected)}/>}
-      {connected && <>
+      {access.watch && <ContestWatch access={access.watch} connected={Boolean(connected)} openModelSettings={openModelSettings}/>}
+      <FlyContestPanel access={flyAccess} contest={status} openFly={openFly ?? (() => {})}/>
+      <details className={css.contestDetails} open aria-label="比赛详情">
+        <summary><h2>比赛详情</h2><span>比赛账户整体数据</span></summary>
+        <p className={css.muted}>当前比赛账户的整体数据，包含各策略与手工交易。</p>
+        {connected ? <>
         <section className={css.dataPanel} aria-label="比赛账户数据">
           <div className={css.tabs} role="tablist" aria-label="比赛数据分类">{tabs.map(([kind, label]) => <button type="button" role="tab" key={kind}
             aria-selected={tab === kind} onClick={() => setTab(kind)}>{label}</button>)}</div>
@@ -128,7 +137,8 @@ function ConnectedContestPage({ access, researchSessions = [], openResearch }: C
           {tab === 'quote' && !data && !loading && <p className={css.muted}>输入一个品种或实际合约，查询最新行情快照。</p>}
         </section>
         <ContestPlans status={status} access={access} refresh={refresh}/>
-      </>}
+        </> : <p className={css.muted}>连接比赛账户后，可查看资金、持仓、成交、排名及交易计划。</p>}
+      </details>
     </>}
   </section>
 }

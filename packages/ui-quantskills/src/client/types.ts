@@ -7,7 +7,7 @@ import type {
 } from './plugin-types.ts'
 
 /** QuantSkills application routes owned by the client shell. */
-export type QuantSkillsPage = 'database' | 'home' | 'skills' | 'conversations' | 'favorites' | 'agents' | 'teams' | 'settings' | 'parallel' | 'qube' | 'evo' | 'contest'
+export type QuantSkillsPage = 'database' | 'home' | 'skills' | 'conversations' | 'favorites' | 'agents' | 'teams' | 'settings' | 'parallel' | 'qube' | 'evo' | 'contest' | 'fly'
 
 /** Asset kind supported by the shared QuantSkills AI authoring launcher. */
 export type QuantSkillsAuthoringKind = 'skill' | 'agent' | 'agent-team'

@@ -32,7 +32,7 @@ describe('Jev continuous watch controls', () => {
       { code: 'RB', name: '螺纹钢', exchange: 'SHF', enabled: false },
       { code: 'ZZ', name: '测试新品种', exchange: 'GFE', enabled: true },
     ] } }))
-    render(<ContestWatch access={f.access}/>); await screen.findByText(/已同步柜台目录/)
+    render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText(/已同步柜台目录/)
     expect((screen.getByRole('option', { name: /螺纹钢.*柜台未启用/ }) as HTMLOptionElement).disabled).toBe(true)
     fireEvent.change(screen.getByLabelText('搜索期货品种'), { target: { value: '广州' } })
     fireEvent.change(screen.getByLabelText('交易品种'), { target: { value: 'zz' } })
@@ -48,7 +48,7 @@ describe('Jev continuous watch controls', () => {
   it('keeps the offline catalog usable when the CLI cannot fetch metadata', async () => {
     const f = fixture()
     f.access.varieties = vi.fn(async () => { throw new Error('需要比赛 CLI 0.1.23') })
-    render(<ContestWatch access={f.access}/>); await screen.findByText(/保留现有目录/)
+    render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText(/保留现有目录/)
     expect(screen.getByRole('option', { name: '豆粕 · M' })).toBeTruthy()
     fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'm2701' } })
     fireEvent.click(screen.getByRole('button', { name: '开始盯盘' })); await screen.findByText('已启动')
@@ -58,7 +58,7 @@ describe('Jev continuous watch controls', () => {
     const f = fixture()
     let finish!: (value: Awaited<ReturnType<NonNullable<typeof f.access.varieties>>>) => void
     f.access.varieties = vi.fn(() => new Promise(resolve => { finish = resolve }))
-    const view = render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    const view = render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'm2701' } })
     fireEvent.change(screen.getByLabelText('最小价格变动（tick 对应价格）'), { target: { value: '2' } })
     await act(async () => finish({ fetchedAt: Date.now(), data: { total: 1, items: [{ code: 'M', name: '豆粕', exchange: 'DCE', enabled: true }] } }))
@@ -66,8 +66,20 @@ describe('Jev continuous watch controls', () => {
     const signal = vi.mocked(f.access.varieties).mock.calls[0]![0]!
     view.unmount(); expect(signal.aborted).toBe(true)
   })
+  it('starts collapsed and keeps polling its visible running status', async () => {
+    vi.useFakeTimers()
+    const f = fixture()
+    render(<ContestWatch access={f.access}/> )
+    await act(async () => { await vi.advanceTimersByTimeAsync(0) })
+    expect(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ }).getAttribute('aria-expanded')).toBe('false')
+    expect(screen.queryByRole('button', { name: '开始盯盘' })).toBeNull()
+    f.setState({ running: true, phase: 'deciding', sampleCount: 1, planCount: 0, events: [], message: '分析中' })
+    await act(async () => { await vi.advanceTimersByTimeAsync(3000) })
+    expect(screen.getAllByText('正在盯盘 · Jev 分析中').some(node => !node.closest('[hidden]'))).toBe(true)
+    expect(screen.getByRole('button', { name: '停止盯盘' })).toBeTruthy()
+  })
   it('offers a persisted opening-only cooldown and opening plan quota', async () => {
-    const f = fixture(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    const f = fixture(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.click(screen.getByText('微调模板'))
     expect((screen.getByLabelText('开仓冷却时间（秒，0 不冷却）') as HTMLInputElement).value).toBe('300')
     fireEvent.change(screen.getByLabelText('开仓冷却时间（秒，0 不冷却）'), { target: { value: '0' } })
@@ -79,15 +91,15 @@ describe('Jev continuous watch controls', () => {
     fireEvent.click(screen.getByRole('button', { name: '开始盯盘' })); await screen.findByText('已启动')
     expect(f.access.start).toHaveBeenCalledWith(expect.objectContaining({ openingCooldownSeconds: 0, maxPlans: 2 }))
   })
-  it('saves an explicit translator independently of the Jev key and retains Chinese strategy text', async () => {
-    const f = fixture(), translator = { provider: 'verified-route', model: 'DeepSeek-V4-Flash' }
-    vi.mocked(f.access.settings).mockResolvedValue({ configured: true, writable: true, model: 'jev-1.13.0', translationModels: [translator] })
-    render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
-    fireEvent.click(screen.getByText('Jev 连接配置'))
-    fireEvent.change(screen.getByLabelText('中文专用翻译模型'), { target: { value: JSON.stringify(translator) } })
-    fireEvent.click(screen.getByRole('button', { name: '保存翻译模型' }))
-    await waitFor(() => expect(f.access.configure).toHaveBeenCalledWith({ translator }))
-    expect((screen.getByLabelText('研究目标和约束') as HTMLTextAreaElement).value).toContain('以区间回归')
+  it('points to model services without exposing a second Jev configuration form', async () => {
+    const f = fixture(), openModelSettings = vi.fn()
+    render(<ContestWatch access={f.access} openModelSettings={openModelSettings}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
+    await screen.findByText(/Jev · API Key 已配置/)
+    expect(screen.queryByLabelText('Jev API Key')).toBeNull()
+    expect(screen.queryByLabelText('中文专用翻译模型')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: '前往模型服务配置 Jev' }))
+    expect(openModelSettings).toHaveBeenCalledOnce()
+    expect(f.access.configure).not.toHaveBeenCalled()
     expect(f.access.start).not.toHaveBeenCalled()
   })
   it('keeps review warnings and candidate outcomes visible while folding detailed evidence', () => {
@@ -122,7 +134,7 @@ describe('Jev continuous watch controls', () => {
     expect(panel.getByText('100.0%')).toBeTruthy()
   })
   it('defaults to Jev-led decisions, preserves explicit strict mode across templates and persists the choice', async () => {
-    const f = fixture(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    const f = fixture(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     expect((screen.getByLabelText('决策方式') as HTMLSelectElement).value).toBe('jev')
     expect(screen.getByText(/历史不足也会请求分析并产生用量/)).toBeTruthy()
     fireEvent.change(screen.getByLabelText('决策方式'), { target: { value: 'strict' } })
@@ -131,7 +143,7 @@ describe('Jev continuous watch controls', () => {
     fireEvent.click(screen.getByText('微调模板'))
     fireEvent.change(screen.getByLabelText('保存模板名称'), { target: { value: '严格趋势' } })
     fireEvent.click(screen.getByRole('button', { name: '保存为我的模板' })); await screen.findByText(/已保存至本机/)
-    cleanup(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    cleanup(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.click(await screen.findByRole('button', { name: /我的模板.*严格趋势/ }))
     expect((screen.getByLabelText('决策方式') as HTMLSelectElement).value).toBe('strict')
     fireEvent.change(screen.getByLabelText('决策方式'), { target: { value: 'jev' } })
@@ -152,7 +164,7 @@ describe('Jev continuous watch controls', () => {
     expect(screen.getByText(/本轮硬性限制只允许观望/)).toBeTruthy()
   })
   it('keeps the selected product when switching defaults and applies decimal tick and spread values', async () => {
-    const f = fixture(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    const f = fixture(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.change(screen.getByLabelText('交易品种'), { target: { value: 'au' } })
     fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'au2612' } })
     for (const name of ['趋势回调', '突破跟随']) {
@@ -166,7 +178,7 @@ describe('Jev continuous watch controls', () => {
     expect(f.access.start).toHaveBeenCalledWith(expect.objectContaining({ symbol: 'au2612', maxSpread: .04, rangeRules: undefined, signalRules: expect.objectContaining({ kind: 'breakout', tickSize: .02 }) }))
   })
   it('clears stale contract data on a product change and supports manual products on another exchange', async () => {
-    const f = fixture(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    const f = fixture(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'rb2610' } })
     fireEvent.change(screen.getByLabelText('交易品种'), { target: { value: 'custom' } })
     expect((screen.getByLabelText('实际合约') as HTMLInputElement).value).toBe('')
@@ -179,7 +191,7 @@ describe('Jev continuous watch controls', () => {
     expect(f.access.start).toHaveBeenCalledWith(expect.objectContaining({ symbol: 'IF2609', instrument: { product: 'if', exchange: 'CFE', tickSize: .2 }, autoHistory: { exchange: 'CFE', barSeconds: 60 }, signalRules: expect.objectContaining({ kind: 'trend', tickSize: .2 }) }))
   })
   it('creates, saves and reloads an independent template without needing a contract or starting', async () => {
-    const f = fixture(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    const f = fixture(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.click(screen.getByRole('button', { name: '＋ 新建模板' }))
     fireEvent.change(screen.getByLabelText('新模板名称'), { target: { value: '我的突破' } })
     fireEvent.change(screen.getByLabelText('创建方式'), { target: { value: 'breakout' } })
@@ -189,7 +201,7 @@ describe('Jev continuous watch controls', () => {
     fireEvent.click(screen.getByRole('button', { name: '保存为我的模板' })); await screen.findByText(/已保存至本机/)
     expect(f.access.start).not.toHaveBeenCalled()
     expect(f.access.saveTemplate).toHaveBeenCalledWith(expect.objectContaining({ name: '我的突破', config: expect.objectContaining({ symbol: '', signalRules: expect.objectContaining({ kind: 'breakout', maxChaseTicks: 6 }) }) }))
-    cleanup(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    cleanup(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.click(await screen.findByRole('button', { name: /我的模板.*我的突破/ }))
     expect((screen.getByLabelText('突破追价上限（tick）') as HTMLInputElement).value).toBe('6')
     fireEvent.click(screen.getByRole('button', { name: '＋ 新建模板' }))
@@ -198,7 +210,7 @@ describe('Jev continuous watch controls', () => {
     expect(screen.getByRole('alert').textContent).toContain('已有同名模板')
   })
   it('creates a blank strategy without inherited range conditions and retains custom action text', async () => {
-    const f = fixture(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    const f = fixture(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.click(screen.getByRole('button', { name: '＋ 新建模板' }))
     fireEvent.change(screen.getByLabelText('新模板名称'), { target: { value: '我的自主策略' } })
     fireEvent.change(screen.getByLabelText('创建方式'), { target: { value: 'blank' } })
@@ -212,7 +224,7 @@ describe('Jev continuous watch controls', () => {
     expect(f.access.start).not.toHaveBeenCalled()
   })
   it('saves edits without starting, reloads the custom template and can restore built-in defaults', async () => {
-    const f = fixture(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    const f = fixture(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'rb2610' } })
     fireEvent.click(screen.getByText('微调模板'))
     fireEvent.change(screen.getByLabelText('决策间隔（秒）'), { target: { value: '45' } })
@@ -222,7 +234,7 @@ describe('Jev continuous watch controls', () => {
     await screen.findByText(/已保存至本机/)
     expect(f.access.start).not.toHaveBeenCalled()
     expect(f.access.saveTemplate).toHaveBeenCalledWith(expect.objectContaining({ name: '午后区间', config: expect.objectContaining({ decisionIntervalSeconds: 45, referenceMaterial: '我的区间研究' }) }))
-    cleanup(); render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    cleanup(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.click(await screen.findByRole('button', { name: /午后区间/ }))
     expect((screen.getByLabelText('实际合约') as HTMLInputElement).value).toBe('rb2610')
     expect((screen.getByLabelText('决策间隔（秒）') as HTMLInputElement).value).toBe('45')
@@ -235,7 +247,7 @@ describe('Jev continuous watch controls', () => {
     const f = fixture()
     const previous = { symbol: 'rb2610', volume: 5, intervalSeconds: 3, durationMinutes: 120, minConfidence: .8, maxEquityDrop: 5000, maxPlans: 2, instructions: '旧配置' }
     f.setState({ running: false, message: '尚未启动', sampleCount: 0, planCount: 0, events: [], config: previous })
-    render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     expect((screen.getByLabelText('实际合约') as HTMLInputElement).value).toBe('rb2610')
     expect(f.access.start).not.toHaveBeenCalled()
     fireEvent.click(screen.getByRole('button', { name: '载入上次运行配置' }))
@@ -258,7 +270,7 @@ describe('Jev continuous watch controls', () => {
     const f = fixture(), columns = { time: 'datetime', symbol: 'symbol', open: 'open', high: 'high', low: 'low', close: 'close' }
     let finish!: (history: NonNullable<Parameters<typeof f.access.start>[0]['history']>) => void
     vi.mocked(f.access.prepareHistory).mockImplementation(() => new Promise(resolve => { finish = resolve }))
-    render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     fireEvent.click(screen.getByText('微调模板'))
     fireEvent.click(screen.getByLabelText('启动时自动准备 PandaData 行情'))
     fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'rb2610' } })
@@ -279,7 +291,7 @@ describe('Jev continuous watch controls', () => {
     const f = fixture()
     vi.mocked(f.access.usage).mockResolvedValue({ since: Date.now(), requests: 1, responsesOk: 1, unknownUsage: 0, inputTokens: 382, outputTokens: 34,
       records: [{ id: 'local-id', purpose: 'connection-test', startedAt: Date.now(), finishedAt: Date.now() + 100, keyFingerprint: 'abcdef123456', httpStatus: 200, model: 'jev-1.13.0', usage: { input_tokens: 382, output_tokens: 34 } }] })
-    render(<ContestWatch access={f.access}/>); await screen.findByText('尚未启动')
+    render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ })); await screen.findByText('尚未启动')
     expect(await screen.findByText('382 / 34')).toBeTruthy()
     expect(screen.getByText(/非官网账单/)).toBeTruthy()
     fireEvent.click(screen.getByText('微调模板'))
@@ -293,7 +305,7 @@ describe('Jev continuous watch controls', () => {
     expect(f.access.start).toHaveBeenCalledWith(expect.objectContaining({ strategyName: '我的区间', allowedSide: 'long_only', referenceMaterial: '自编策略参考', actionCriteria: expect.objectContaining({ open_long: expect.any(String) }) }))
   })
   it('starts a complete template without editing parameters or a second confirmation dialog', async () => {
-    const f = fixture(); render(<ContestWatch access={f.access}/>)
+    const f = fixture(); render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ }))
     await screen.findByText('尚未启动')
     fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'rb2610' } })
     fireEvent.change(screen.getByLabelText('权益回落停止线（元）'), { target: { value: '1000' } })
@@ -312,19 +324,16 @@ describe('Jev continuous watch controls', () => {
     expect(screen.getByRole('status').getAttribute('data-active')).toBe('false')
     expect(f.access.stop).toHaveBeenCalledOnce()
   })
-  it('lets a new user configure Jev in the page before connecting a contest account', async () => {
-    const f = fixture()
+  it('directs an unconfigured user to model services before starting a watch', async () => {
+    const f = fixture(), openModelSettings = vi.fn()
     vi.mocked(f.access.settings).mockResolvedValueOnce({ configured: false, writable: true, model: 'jev-1.13.0' })
-    render(<ContestWatch access={f.access} connected={false}/>)
-    await screen.findByText('尚未启动')
+    render(<ContestWatch access={f.access} connected={false} openModelSettings={openModelSettings}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ }))
+    await screen.findByText(/Jev · API Key 未配置/)
     expect(screen.getByRole('button', { name: '开始盯盘' }).matches(':disabled')).toBe(true)
-    fireEvent.change(screen.getByLabelText('Jev API Key'), { target: { value: 'private-candidate' } })
-    fireEvent.click(screen.getByRole('button', { name: '测试并保存密钥' }))
-    await screen.findByText('密钥已配置')
-    expect(f.access.configure).toHaveBeenCalledWith({ apiKey: 'private-candidate' })
-    expect((screen.getByLabelText('Jev API Key') as HTMLInputElement).value).toBe('')
-    expect(screen.getByLabelText('Jev API Key').getAttribute('type')).toBe('password')
-    expect(screen.getByRole('button', { name: '开始盯盘' }).matches(':disabled')).toBe(true)
+    expect(screen.queryByLabelText('Jev API Key')).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: '前往模型服务配置 Jev' }))
+    expect(openModelSettings).toHaveBeenCalledOnce()
+    expect(f.access.configure).not.toHaveBeenCalled()
     expect(f.access.start).not.toHaveBeenCalled()
   })
   it('shows real samples, action probabilities and the recorded reason a plan was not created', async () => {
@@ -334,7 +343,7 @@ describe('Jev continuous watch controls', () => {
       samples: [{ time: time - 3000, price: 3042 }, { time, price: 3044 }],
       analyses: [{ id: 'round-one', startedAt: time - 1000, responseAt: time, finishedAt: time, sampleCount: 8, fromTime: time - 24000,
         toTime: time - 1000, price: 3044, allowedActions: ['hold', 'open_long', 'open_short'], decision, outcome: '证据不足，本轮观望。' }] })
-    render(<ContestWatch access={f.access}/>)
+    render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ }))
     await screen.findByText('等待下次决策')
     expect(screen.getByRole('img', { name: /最低 3042，最高 3044，最新 3044/ })).toBeTruthy()
     expect(within(screen.getByRole('region', { name: 'Jev 决策输出' })).getByText('82.0%')).toBeTruthy()
@@ -349,7 +358,8 @@ describe('Jev continuous watch controls', () => {
       lastQuoteCheckedAt: Date.now(), events: [] })
     render(<ContestWatch access={f.access}/>)
     await act(async () => {})
-    expect(screen.getByText('正在盯盘 · 等待行情')).toBeTruthy()
+    fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ }))
+    expect(within(screen.getByRole('status')).getByText('正在盯盘 · 等待行情')).toBeTruthy()
     expect(screen.getByText(/实时报价来自比赛柜台，PandaData 用于历史 K 线/)).toBeTruthy()
     expect(screen.getByText(/最新行情.*价格与时间/)).toBeTruthy()
     expect(screen.getByText(/最近行情检查/)).toBeTruthy()
@@ -368,7 +378,7 @@ describe('Jev continuous watch controls', () => {
   it('allows stopping during startup and ignores the late start response', async () => {
     const f = fixture(); let finish!: (state: ContestWatchStatus) => void
     vi.mocked(f.access.start).mockImplementation(() => new Promise(resolve => { finish = resolve }))
-    render(<ContestWatch access={f.access}/>)
+    render(<ContestWatch access={f.access}/>); fireEvent.click(screen.getByRole('button', { name: /Jev 持续盯盘.*展开/ }))
     await screen.findByText('尚未启动')
     fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'rb2610' } })
     fireEvent.change(screen.getByLabelText('权益回落停止线（元）'), { target: { value: '1000' } })

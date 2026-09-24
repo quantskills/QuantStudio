@@ -67,7 +67,7 @@ export async function englishJevInput<T>(ctx: Context, original: T, signal: Abor
   const translated = new Map(builtins)
   if (pending.size) {
     const route = await readTranslator(root)
-    if (!route || !translationModels(ctx).some(item => item.provider === route.provider && item.model === route.model)) throw new Error('含自定义中文：请在 Jev 连接配置中选择已验证的专用翻译模型。')
+    if (!route || !translationModels(ctx).some(item => item.provider === route.provider && item.model === route.model)) throw new Error('含自定义中文：请在「设置 → 模型服务 → Jev」选择已验证的专用翻译模型。')
     const saved = cache.get(ctx) ?? new Map<string, string>(); cache.set(ctx, saved)
     const keyFor = (text: string) => createHash('sha256').update(JSON.stringify([route, text])).digest('hex')
     const missing = [...pending].filter(text => !saved.has(keyFor(text)))

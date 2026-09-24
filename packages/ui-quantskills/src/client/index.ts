@@ -89,6 +89,7 @@ import {
 } from './QuantSkillsPandaMcpControl.tsx'
 import { ContestReview, type ContestReviewInjected } from './ContestReview.tsx'
 import type { ContestAccess } from './contest.ts'
+import { connectFlyTransport, type FlyAccess } from './fly/transport.ts'
 import type { FactorContestAccess } from './factor-contest.ts'
 import { FactorContestReview, type FactorReviewInjected } from './FactorContestReview.tsx'
 import { AuthoringReview, type AuthoringReviewInjected } from './AuthoringReview.tsx'
@@ -863,6 +864,12 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       if (options.mode === 'native-plugin') view.actions.showPluginConversationIndex()
     })
   }
+  const flyAccess: FlyAccess = {
+    status: () => unwrapRemote(ctx.remote.quantSkillsSessions.flyStatus()),
+    install: input => unwrapRemote(ctx.remote.quantSkillsSessions.flyInstall(input)),
+    request: request => unwrapRemote(ctx.remote.quantSkillsSessions.flyRequest(request)),
+  }
+  connectFlyTransport(flyAccess)
   if (options.mode === 'standalone') {
     ctx.effect(() => {
       const disposeService = ctx.reflect.provide('layout', layout)
@@ -928,6 +935,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
           },
           actions: viewActions,
           modelAccess: request => unwrapRemote(ctx.remote.quantSkillsSessions.modelsAccess(request)),
+          flyAccess,
           openSession,
           acknowledgeNotification: (id) => { notifications.actions.acknowledge(id) },
           renameSession: (id, title) => renameSession(id, title),
@@ -2071,6 +2079,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
           categorize: (id, category) => unwrapRemote(ctx.remote.pandaMcp.databaseCategorize({ id, category })),
         },
         contestAccess,
+        flyAccess,
         factorContestAccess,
         modelAccess: request => unwrapRemote(ctx.remote.quantSkillsSessions.modelsAccess(request)),
         readAssetReadme,

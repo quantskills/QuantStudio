@@ -1,0 +1,25 @@
+import { jsxs as _jsxs, jsx as _jsx } from "react/jsx-runtime";
+import { useEffect, useState } from 'react';
+const legacy = { trade_period_minutes: 1, signal_confirmations: 1, min_signal_margin: 0, reentry_cooldown_minutes: 0, cost_filter_multiplier: 0 };
+export function TradeFilterControls({ settings, onApply }) {
+    const [draft, setDraft] = useState({ ...legacy, ...settings });
+    const [pending, setPending] = useState(false);
+    const [message, setMessage] = useState('');
+    useEffect(() => { setDraft({ ...legacy, ...settings }); }, [settings.trade_period_minutes, settings.signal_confirmations, settings.min_signal_margin, settings.reentry_cooldown_minutes, settings.cost_filter_multiplier]);
+    const apply = async () => {
+        setPending(true);
+        setMessage('');
+        try {
+            await onApply(draft);
+            setMessage('已保存，使用新设置下的完整周期信号。');
+        }
+        catch (error) {
+            setMessage(String(error).replace(/^Error: /, ''));
+        }
+        finally {
+            setPending(false);
+        }
+    };
+    return _jsxs("details", { className: "fv-trade-filter-controls", children: [_jsxs("summary", { children: ["\u4EA4\u6613\u8282\u594F\u4E0E\u4FE1\u53F7\u8FC7\u6EE4 ", _jsxs("span", { children: [settings.trade_period_minutes || 1, " \u5206\u949F\u51B3\u7B56 \u00B7 \u5F00\u4ED3\u786E\u8BA4 ", settings.signal_confirmations || 1, " \u6B21 \u00B7 \u5E73\u4ED3\u540E\u51B7\u5374 ", settings.reentry_cooldown_minutes || 0, " \u5206\u949F"] })] }), _jsx("p", { children: "\u56FE\u8868\u5468\u671F\u53EA\u6539\u53D8\u663E\u793A\u3002\u4EA4\u6613\u51B3\u7B56\u8BFB\u53D6 PandaData \u539F\u751F 1 \u6216 5 \u5206\u949F\u5468\u671F\u6700\u65B0 500 \u6839\u5DF2\u5B8C\u6210 K \u7EBF\u3002\u5207\u6362\u5468\u671F\u540E\u7B49\u5F85\u5BF9\u5E94\u6570\u636E\u5C31\u7EEA\u3002" }), _jsxs("div", { className: "fv-form-grid", children: [_jsxs("label", { children: ["\u4EA4\u6613\u51B3\u7B56\u5468\u671F", _jsx("select", { "aria-label": "\u4EA4\u6613\u51B3\u7B56\u5468\u671F", disabled: pending, value: draft.trade_period_minutes, onChange: e => setDraft({ ...draft, trade_period_minutes: Number(e.target.value) }), children: [1, 5].map(n => _jsxs("option", { value: n, children: [n, " \u5206\u949F"] }, n)) })] }), _jsxs("label", { children: ["\u8FDE\u7EED\u540C\u5411\u5F00\u4ED3\u786E\u8BA4", _jsx("select", { "aria-label": "\u8FDE\u7EED\u540C\u5411\u5F00\u4ED3\u786E\u8BA4", disabled: pending, value: draft.signal_confirmations, onChange: e => setDraft({ ...draft, signal_confirmations: Number(e.target.value) }), children: [1, 2, 3, 4, 5].map(n => _jsxs("option", { value: n, children: [n, " \u4E2A\u5B8C\u6574\u5468\u671F"] }, n)) })] }), _jsxs("label", { children: ["\u5F00\u4ED3\u795E\u7ECF\u5206\u6570\u6700\u5C0F\u9886\u5148", _jsx("input", { "aria-label": "\u5F00\u4ED3\u795E\u7ECF\u5206\u6570\u6700\u5C0F\u9886\u5148", type: "number", min: "0", max: "1", step: "0.01", disabled: pending, value: draft.min_signal_margin, onChange: e => setDraft({ ...draft, min_signal_margin: Number(e.target.value) }) })] }), _jsxs("label", { children: ["\u5E73\u4ED3\u540E\u5F00\u4ED3\u51B7\u5374\uFF08\u5206\u949F\uFF09", _jsx("input", { "aria-label": "\u5E73\u4ED3\u540E\u5F00\u4ED3\u51B7\u5374", type: "number", min: "0", max: "120", step: "1", disabled: pending, value: draft.reentry_cooldown_minutes, onChange: e => setDraft({ ...draft, reentry_cooldown_minutes: Number(e.target.value) }) })] }), _jsxs("label", { children: ["\u6210\u672C\u8FC7\u6EE4\uFF08\u7B49\u5F85\u67DC\u53F0\u8D39\u7528\u53C2\u6570\uFF09", _jsx("input", { "aria-label": "\u6CE2\u52A8\u7A7A\u95F4\u6210\u672C\u500D\u6570", type: "number", min: "0", max: "10", step: "0.5", disabled: true, value: draft.cost_filter_multiplier })] })] }), _jsx("p", { children: "\u5F00\u4ED3\u987B\u8FDE\u7EED\u540C\u5411\u4E14\u5206\u6570\u5DEE\u8DB3\u591F\uFF1B\u5E73\u4ED3\u540E\u7B49\u5F85\u51B7\u5374\u7ED3\u675F\uFF0C\u518D\u91CD\u65B0\u786E\u8BA4\u3002\u795E\u7ECF\u5E73\u4ED3\u9009\u62E9\u4E0D\u589E\u52A0\u8FD9\u4E9B\u5F00\u4ED3\u9650\u5236\u3002" }), _jsx("small", { children: "\u6BD4\u8D5B\u63A5\u53E3\u6682\u672A\u63D0\u4F9B\u5B8C\u6574\u8D39\u7528\u53C2\u6570\uFF0C\u6210\u672C\u8FC7\u6EE4\u4FDD\u6301\u5173\u95ED\u3002\u5B9E\u9645\u624B\u7EED\u8D39\u53EA\u4F7F\u7528\u67DC\u53F0\u8FD4\u56DE\u7684\u6570\u636E\u3002" }), _jsxs("div", { className: "fv-actions", children: [_jsx("button", { type: "button", disabled: pending, onClick: () => setDraft({ trade_period_minutes: 5, signal_confirmations: 2, min_signal_margin: 0.08, reentry_cooldown_minutes: 10, cost_filter_multiplier: 0 }), children: "\u586B\u5165\u4F4E\u9891\u9884\u8BBE" }), _jsx("button", { type: "button", disabled: pending, onClick: () => void apply(), children: pending ? '保存中…' : '应用交易过滤' })] }), message && _jsx("p", { role: "status", children: message })] });
+}
+//# sourceMappingURL=TradeFilterControls.js.map

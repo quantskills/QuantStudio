@@ -5192,6 +5192,24 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			array(lazy(() => JsonValueRemoteCodec$schema24)),
 			record(string(), lazy(() => JsonValueRemoteCodec$schema24))
 		]);
+		const JsonValueRemoteCodec$schema25 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema25)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema25))
+		]);
+		const JsonValueRemoteCodec$schema26 = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema26)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema26))
+		]);
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentCreate_parameter_0$schema = object({
 			"purpose": literal("authoring-helper").readonly().optional(),
 			"copyFrom": object({
@@ -6147,8 +6165,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema17)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema17))
+					array(lazy(() => JsonValueRemoteCodec$schema19)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema19))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
@@ -6170,8 +6188,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema17)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema17))
+					array(lazy(() => JsonValueRemoteCodec$schema19)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema19))
 				]))]).optional(),
 				"fills": union([_undefined(), array(object({
 					"id": string(),
@@ -6218,8 +6236,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema15)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema15))
+					array(lazy(() => JsonValueRemoteCodec$schema17)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema17))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
@@ -6241,8 +6259,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema15)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema15))
+					array(lazy(() => JsonValueRemoteCodec$schema17)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema17))
 				]))]).optional(),
 				"fills": union([_undefined(), array(object({
 					"id": string(),
@@ -6289,8 +6307,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema16)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema16))
+					array(lazy(() => JsonValueRemoteCodec$schema18)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema18))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
@@ -6312,8 +6330,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema16)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema16))
+					array(lazy(() => JsonValueRemoteCodec$schema18)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema18))
 				]))]).optional(),
 				"fills": union([_undefined(), array(object({
 					"id": string(),
@@ -6364,8 +6382,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema22)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
+					array(lazy(() => JsonValueRemoteCodec$schema24)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema24))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
@@ -6387,8 +6405,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema22)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
+					array(lazy(() => JsonValueRemoteCodec$schema24)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema24))
 				]))]).optional(),
 				"fills": union([_undefined(), array(object({
 					"id": string(),
@@ -6421,8 +6439,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema21)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema21))
+				array(lazy(() => JsonValueRemoteCodec$schema23)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema23))
 			])).readonly(),
 			"clientRequestId": string().readonly(),
 			"status": union([
@@ -6444,8 +6462,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema21)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema21))
+				array(lazy(() => JsonValueRemoteCodec$schema23)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema23))
 			]))]).optional(),
 			"fills": union([_undefined(), array(object({
 				"id": string(),
@@ -6470,8 +6488,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema20)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
+					array(lazy(() => JsonValueRemoteCodec$schema22)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
 				]).readonly(),
 				"meta": record(string(), union([
 					literal(null),
@@ -6479,8 +6497,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema20)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
+					array(lazy(() => JsonValueRemoteCodec$schema22)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
 				])).readonly().optional(),
 				"fetchedAt": number().readonly()
 			}).readonly(),
@@ -6491,8 +6509,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema20)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
+					array(lazy(() => JsonValueRemoteCodec$schema22)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
 				]).readonly(),
 				"meta": record(string(), union([
 					literal(null),
@@ -6500,8 +6518,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema20)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
+					array(lazy(() => JsonValueRemoteCodec$schema22)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
 				])).readonly().optional(),
 				"fetchedAt": number().readonly()
 			}).readonly(),
@@ -6512,8 +6530,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema20)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
+					array(lazy(() => JsonValueRemoteCodec$schema22)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
 				]).readonly(),
 				"meta": record(string(), union([
 					literal(null),
@@ -6521,8 +6539,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema20)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
+					array(lazy(() => JsonValueRemoteCodec$schema22)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
 				])).readonly().optional(),
 				"fetchedAt": number().readonly()
 			}).readonly(),
@@ -6543,8 +6561,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema20)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
+					array(lazy(() => JsonValueRemoteCodec$schema22)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
@@ -6566,8 +6584,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema20)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
+					array(lazy(() => JsonValueRemoteCodec$schema22)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema22))
 				]))]).optional(),
 				"fills": union([_undefined(), array(object({
 					"id": string(),
@@ -6681,8 +6699,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema14)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema14))
+					array(lazy(() => JsonValueRemoteCodec$schema16)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema16))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
@@ -6704,8 +6722,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema14)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema14))
+					array(lazy(() => JsonValueRemoteCodec$schema16)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema16))
 				]))]).optional(),
 				"fills": union([_undefined(), array(object({
 					"id": string(),
@@ -6742,8 +6760,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema19)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema19))
+				array(lazy(() => JsonValueRemoteCodec$schema21)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema21))
 			]).readonly(),
 			"meta": record(string(), union([
 				literal(null),
@@ -6751,8 +6769,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema19)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema19))
+				array(lazy(() => JsonValueRemoteCodec$schema21)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema21))
 			])).readonly().optional(),
 			"fetchedAt": number().readonly()
 		});
@@ -6777,8 +6795,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema23)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema23))
+				array(lazy(() => JsonValueRemoteCodec$schema25)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema25))
 			])).readonly(),
 			"clientRequestId": string().readonly(),
 			"status": union([
@@ -6800,8 +6818,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema23)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema23))
+				array(lazy(() => JsonValueRemoteCodec$schema25)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema25))
 			]))]).optional(),
 			"fills": union([_undefined(), array(object({
 				"id": string(),
@@ -6879,8 +6897,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema13)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema13))
+					array(lazy(() => JsonValueRemoteCodec$schema15)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema15))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
@@ -6902,8 +6920,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema13)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema13))
+					array(lazy(() => JsonValueRemoteCodec$schema15)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema15))
 				]))]).optional(),
 				"fills": union([_undefined(), array(object({
 					"id": string(),
@@ -6950,8 +6968,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema18)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema18))
+					array(lazy(() => JsonValueRemoteCodec$schema20)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
 				])).readonly(),
 				"clientRequestId": string().readonly(),
 				"status": union([
@@ -6973,8 +6991,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema18)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema18))
+					array(lazy(() => JsonValueRemoteCodec$schema20)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema20))
 				]))]).optional(),
 				"fills": union([_undefined(), array(object({
 					"id": string(),
@@ -8446,8 +8464,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+					array(lazy(() => JsonValueRemoteCodec$schema7$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
 				]),
 				"pool": union([
 					literal(null),
@@ -8455,8 +8473,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+					array(lazy(() => JsonValueRemoteCodec$schema7$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
 				])
 			}).optional(),
 			"plans": array(object({
@@ -8512,8 +8530,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+					array(lazy(() => JsonValueRemoteCodec$schema7$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
 				]),
 				"snapshotHash": string(),
 				"createdAt": number(),
@@ -8533,8 +8551,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+					array(lazy(() => JsonValueRemoteCodec$schema7$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
 				]).optional()
 			})),
 			"budgets": array(object({
@@ -8591,8 +8609,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
+					array(lazy(() => JsonValueRemoteCodec$schema7$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
 				]).optional()
 			}))
 		});
@@ -8653,8 +8671,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema10)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema10))
+				array(lazy(() => JsonValueRemoteCodec$schema12)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema12))
 			]),
 			"snapshotHash": string(),
 			"createdAt": number(),
@@ -8674,8 +8692,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema10)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema10))
+				array(lazy(() => JsonValueRemoteCodec$schema12)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema12))
 			]).optional()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConnect_parameter_0$schema = object({ "credentials": object({
@@ -8712,8 +8730,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
 				]),
 				"pool": union([
 					literal(null),
@@ -8721,8 +8739,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
 				])
 			}).optional(),
 			"plans": array(object({
@@ -8778,8 +8796,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
 				]),
 				"snapshotHash": string(),
 				"createdAt": number(),
@@ -8799,8 +8817,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
 				]).optional()
 			})),
 			"budgets": array(object({
@@ -8857,8 +8875,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
+					array(lazy(() => JsonValueRemoteCodec$schema5$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema5$1))
 				]).optional()
 			}))
 		});
@@ -8892,8 +8910,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
 				]),
 				"pool": union([
 					literal(null),
@@ -8901,8 +8919,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
 				])
 			}).optional(),
 			"plans": array(object({
@@ -8958,8 +8976,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
 				]),
 				"snapshotHash": string(),
 				"createdAt": number(),
@@ -8979,8 +8997,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
 				]).optional()
 			})),
 			"budgets": array(object({
@@ -9037,8 +9055,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
+					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
 				]).optional()
 			}))
 		});
@@ -9061,8 +9079,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema7$1)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
+				array(lazy(() => JsonValueRemoteCodec$schema9)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema9))
 			]),
 			"pool": union([
 				literal(null),
@@ -9070,8 +9088,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema7$1)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema7$1))
+				array(lazy(() => JsonValueRemoteCodec$schema9)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema9))
 			])
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorMode_parameter_0$schema = object({ "enabled": boolean() });
@@ -9105,8 +9123,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
 				]),
 				"pool": union([
 					literal(null),
@@ -9114,8 +9132,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
 				])
 			}).optional(),
 			"plans": array(object({
@@ -9171,8 +9189,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
 				]),
 				"snapshotHash": string(),
 				"createdAt": number(),
@@ -9192,8 +9210,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
 				]).optional()
 			})),
 			"budgets": array(object({
@@ -9250,8 +9268,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema2$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+					array(lazy(() => JsonValueRemoteCodec$schema4$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema4$1))
 				]).optional()
 			}))
 		});
@@ -9350,8 +9368,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema9)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema9))
+				array(lazy(() => JsonValueRemoteCodec$schema11)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema11))
 			]),
 			"snapshotHash": string(),
 			"createdAt": number(),
@@ -9371,8 +9389,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema9)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema9))
+				array(lazy(() => JsonValueRemoteCodec$schema11)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema11))
 			]).optional()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorQuery_parameter_0$schema = object({
@@ -9393,8 +9411,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			number(),
 			literal(false),
 			literal(true),
-			array(lazy(() => JsonValueRemoteCodec$schema8$1)),
-			record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
+			array(lazy(() => JsonValueRemoteCodec$schema10)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema10))
 		]);
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcilePlan_parameter_0$schema = object({ "planId": string() });
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcilePlan_result$schema = object({
@@ -9450,8 +9468,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema12)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema12))
+				array(lazy(() => JsonValueRemoteCodec$schema14)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema14))
 			]),
 			"snapshotHash": string(),
 			"createdAt": number(),
@@ -9471,8 +9489,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema12)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema12))
+				array(lazy(() => JsonValueRemoteCodec$schema14)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema14))
 			]).optional()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcileRun_parameter_0$schema = object({ "runId": string() });
@@ -9507,8 +9525,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				number(),
 				literal(false),
 				literal(true),
-				array(lazy(() => JsonValueRemoteCodec$schema11)),
-				record(string(), lazy(() => JsonValueRemoteCodec$schema11))
+				array(lazy(() => JsonValueRemoteCodec$schema13)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema13))
 			]).optional()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorSessionOpen_parameter_0$schema = object({
@@ -9573,8 +9591,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
 				]),
 				"pool": union([
 					literal(null),
@@ -9582,8 +9600,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
 				])
 			}).optional(),
 			"plans": array(object({
@@ -9639,8 +9657,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
 				]),
 				"snapshotHash": string(),
 				"createdAt": number(),
@@ -9660,8 +9678,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
 				]).optional()
 			})),
 			"budgets": array(object({
@@ -9718,8 +9736,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+					array(lazy(() => JsonValueRemoteCodec$schema3$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema3$1))
 				]).optional()
 			}))
 		});
@@ -9755,8 +9773,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
 				]),
 				"pool": union([
 					literal(null),
@@ -9764,8 +9782,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
 				])
 			}).optional(),
 			"plans": array(object({
@@ -9821,8 +9839,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
 				]),
 				"snapshotHash": string(),
 				"createdAt": number(),
@@ -9842,8 +9860,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
 				]).optional()
 			})),
 			"budgets": array(object({
@@ -9900,8 +9918,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema6$1)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema6$1))
+					array(lazy(() => JsonValueRemoteCodec$schema8$1)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema8$1))
 				]).optional()
 			}))
 		});
@@ -9993,6 +10011,42 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			}).readonly(),
 			"text": string().readonly(),
 			"truncated": boolean().readonly()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_parameter_0$schema = union([_undefined(), object({ "blenderPath": string().optional() })]);
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_result$schema = object({
+			"supported": boolean(),
+			"installed": boolean(),
+			"running": boolean(),
+			"installing": boolean(),
+			"message": string()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyRequest_parameter_0$schema = object({
+			"path": string(),
+			"body": union([
+				literal(null),
+				string(),
+				number(),
+				literal(false),
+				literal(true),
+				array(lazy(() => JsonValueRemoteCodec$schema$1)),
+				record(string(), lazy(() => JsonValueRemoteCodec$schema$1))
+			]).optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyRequest_result$schema = union([
+			literal(null),
+			string(),
+			number(),
+			literal(false),
+			literal(true),
+			array(lazy(() => JsonValueRemoteCodec$schema2$1)),
+			record(string(), lazy(() => JsonValueRemoteCodec$schema2$1))
+		]);
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyStatus_result$schema = object({
+			"supported": boolean(),
+			"installed": boolean(),
+			"running": boolean(),
+			"installing": boolean(),
+			"message": string()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_frequent_parameter_0$schema = object({
 			"limit": number().readonly().optional(),
@@ -10117,8 +10171,8 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					number(),
 					literal(false),
 					literal(true),
-					array(lazy(() => JsonValueRemoteCodec$schema24)),
-					record(string(), lazy(() => JsonValueRemoteCodec$schema24))
+					array(lazy(() => JsonValueRemoteCodec$schema26)),
+					record(string(), lazy(() => JsonValueRemoteCodec$schema26))
 				]))).optional()
 			}).optional()
 		});
@@ -10415,7 +10469,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1784,
+						"line": 1803,
 						"column": 9
 					}
 				},
@@ -10442,7 +10496,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1886,
+						"line": 1905,
 						"column": 9
 					}
 				},
@@ -10460,7 +10514,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1772,
+						"line": 1791,
 						"column": 9
 					}
 				},
@@ -10478,7 +10532,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1760,
+						"line": 1779,
 						"column": 3
 					}
 				},
@@ -10506,7 +10560,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1925,
+						"line": 1944,
 						"column": 9
 					}
 				},
@@ -10534,7 +10588,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2173,
+						"line": 2192,
 						"column": 9
 					}
 				},
@@ -10561,7 +10615,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2195,
+						"line": 2214,
 						"column": 9
 					}
 				},
@@ -10588,7 +10642,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2247,
+						"line": 2266,
 						"column": 9
 					}
 				},
@@ -10606,7 +10660,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2185,
+						"line": 2204,
 						"column": 3
 					}
 				},
@@ -10634,7 +10688,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2265,
+						"line": 2284,
 						"column": 9
 					}
 				},
@@ -10662,7 +10716,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2344,
+						"line": 2363,
 						"column": 9
 					}
 				},
@@ -10689,7 +10743,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2217,
+						"line": 2236,
 						"column": 9
 					}
 				},
@@ -10716,7 +10770,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1902,
+						"line": 1921,
 						"column": 9
 					}
 				},
@@ -10744,7 +10798,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1842,
+						"line": 1861,
 						"column": 9
 					}
 				},
@@ -10772,7 +10826,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1953,
+						"line": 1972,
 						"column": 3
 					}
 				},
@@ -10800,7 +10854,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1939,
+						"line": 1958,
 						"column": 9
 					}
 				},
@@ -10818,7 +10872,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1274,
+						"line": 1293,
 						"column": 3
 					}
 				},
@@ -10836,7 +10890,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1265,
+						"line": 1284,
 						"column": 3
 					}
 				},
@@ -10854,7 +10908,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1268,
+						"line": 1287,
 						"column": 9
 					}
 				},
@@ -10881,7 +10935,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1365,
+						"line": 1384,
 						"column": 3
 					}
 				},
@@ -10908,7 +10962,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1360,
+						"line": 1379,
 						"column": 3
 					}
 				},
@@ -10936,7 +10990,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1320,
+						"line": 1339,
 						"column": 9
 					}
 				},
@@ -10963,7 +11017,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1304,
+						"line": 1323,
 						"column": 3
 					}
 				},
@@ -10981,7 +11035,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1286,
+						"line": 1305,
 						"column": 3
 					}
 				},
@@ -10999,7 +11053,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1289,
+						"line": 1308,
 						"column": 3
 					}
 				},
@@ -11026,7 +11080,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1259,
+						"line": 1278,
 						"column": 9
 					}
 				},
@@ -11054,7 +11108,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1316,
+						"line": 1335,
 						"column": 3
 					}
 				},
@@ -11081,7 +11135,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1370,
+						"line": 1389,
 						"column": 3
 					}
 				},
@@ -11109,7 +11163,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1329,
+						"line": 1348,
 						"column": 3
 					}
 				},
@@ -11136,7 +11190,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1255,
+						"line": 1274,
 						"column": 3
 					}
 				},
@@ -11154,7 +11208,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1277,
+						"line": 1296,
 						"column": 9
 					}
 				},
@@ -11172,7 +11226,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1298,
+						"line": 1317,
 						"column": 3
 					}
 				},
@@ -11199,7 +11253,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1301,
+						"line": 1320,
 						"column": 3
 					}
 				},
@@ -11226,7 +11280,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1295,
+						"line": 1314,
 						"column": 3
 					}
 				},
@@ -11253,7 +11307,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1307,
+						"line": 1326,
 						"column": 3
 					}
 				},
@@ -11271,7 +11325,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1283,
+						"line": 1302,
 						"column": 3
 					}
 				},
@@ -11289,7 +11343,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1313,
+						"line": 1332,
 						"column": 3
 					}
 				},
@@ -11307,7 +11361,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1292,
+						"line": 1311,
 						"column": 3
 					}
 				},
@@ -11335,7 +11389,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1502,
+						"line": 1521,
 						"column": 9
 					}
 				},
@@ -11353,7 +11407,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1194,
+						"line": 1213,
 						"column": 3
 					}
 				},
@@ -11380,7 +11434,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1222,
+						"line": 1241,
 						"column": 3
 					}
 				},
@@ -11407,7 +11461,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1188,
+						"line": 1207,
 						"column": 3
 					}
 				},
@@ -11425,7 +11479,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1191,
+						"line": 1210,
 						"column": 3
 					}
 				},
@@ -11452,7 +11506,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1225,
+						"line": 1244,
 						"column": 3
 					}
 				},
@@ -11480,7 +11534,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1200,
+						"line": 1219,
 						"column": 9
 					}
 				},
@@ -11507,7 +11561,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1185,
+						"line": 1204,
 						"column": 3
 					}
 				},
@@ -11534,7 +11588,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1216,
+						"line": 1235,
 						"column": 9
 					}
 				},
@@ -11562,7 +11616,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1213,
+						"line": 1232,
 						"column": 9
 					}
 				},
@@ -11589,7 +11643,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1234,
+						"line": 1253,
 						"column": 3
 					}
 				},
@@ -11616,7 +11670,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1231,
+						"line": 1250,
 						"column": 3
 					}
 				},
@@ -11644,7 +11698,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1237,
+						"line": 1256,
 						"column": 3
 					}
 				},
@@ -11671,7 +11725,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1182,
+						"line": 1201,
 						"column": 3
 					}
 				},
@@ -11698,7 +11752,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1228,
+						"line": 1247,
 						"column": 3
 					}
 				},
@@ -11716,7 +11770,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1197,
+						"line": 1216,
 						"column": 3
 					}
 				},
@@ -11744,7 +11798,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2360,
+						"line": 2379,
 						"column": 9
 					}
 				},
@@ -11772,7 +11826,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2394,
+						"line": 2413,
 						"column": 9
 					}
 				},
@@ -11800,8 +11854,81 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2412,
+						"line": 2431,
 						"column": 9
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/flyInstall",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "flyInstall",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "input",
+						wire: "input",
+						source: "json",
+						acceptsUndefined: true,
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/flyInstall:input",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FlyRuntimeStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1193,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/flyRequest",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "flyRequest",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FlyRequest",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyRequest_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-util-values#JsonValue",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyRequest_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1197,
+						"column": 3
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/flyStatus",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "flyStatus",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#FlyRuntimeStatus",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyStatus_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1190,
+						"column": 3
 					}
 				},
 				{
@@ -11828,7 +11955,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1609,
+						"line": 1628,
 						"column": 9
 					}
 				},
@@ -11856,7 +11983,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1580,
+						"line": 1599,
 						"column": 9
 					}
 				},
@@ -11883,7 +12010,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 924,
+						"line": 926,
 						"column": 9
 					}
 				},
@@ -11911,7 +12038,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1423,
+						"line": 1442,
 						"column": 9
 					}
 				},
@@ -11939,7 +12066,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1595,
+						"line": 1614,
 						"column": 9
 					}
 				},
@@ -11967,7 +12094,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1716,
+						"line": 1735,
 						"column": 9
 					}
 				},
@@ -11995,7 +12122,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1735,
+						"line": 1754,
 						"column": 9
 					}
 				},
@@ -12023,7 +12150,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1644,
+						"line": 1663,
 						"column": 9
 					}
 				},
@@ -12050,7 +12177,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1689,
+						"line": 1708,
 						"column": 3
 					}
 				},
@@ -12078,7 +12205,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2474,
+						"line": 2493,
 						"column": 9
 					}
 				},
@@ -12106,7 +12233,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2429,
+						"line": 2448,
 						"column": 3
 					}
 				},
@@ -12134,7 +12261,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2493,
+						"line": 2512,
 						"column": 9
 					}
 				},
@@ -12162,7 +12289,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1381,
+						"line": 1400,
 						"column": 9
 					}
 				},
@@ -12189,7 +12316,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1176,
+						"line": 1184,
 						"column": 3
 					}
 				},
@@ -12216,7 +12343,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1166,
+						"line": 1174,
 						"column": 3
 					}
 				}

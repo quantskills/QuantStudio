@@ -1,4 +1,5 @@
 /** Exact-version QuantSkills session composition and log-backed archive remotes. */
+import type { FlyRequest, FlyRuntimeStatus } from './fly-runtime.ts';
 import type { ContestJevSettings, ContestJevUsage, ContestWatchConfig, ContestWatchDataset, ContestWatchTemplate, ContestWatchStatus } from './contest-watch-types.ts';
 import type { FactorContestStatus, FactorCredentials, FactorInspection, FactorPlan, FactorPlanAction, FactorQuery, FactorRun } from './factor-contest-types.ts';
 import type { ContestStatus, ContestData, ContestQuery, ContestPlan, ContestInspection } from './contest-types.ts';
@@ -226,6 +227,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private readonly teamForkProvider;
     private readonly workspaceResolver;
     private readonly contest;
+    private readonly fly;
     private readonly contestWatcher;
     private readonly factorContest;
     private factorSessionOpening;
@@ -246,6 +248,13 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
      * @returns the explicit Workspace target for a new Session.
      */
     workspaceResolve(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceResolveResult>;
+    /** Inspect the opt-in local fly controller without installing dependencies. */
+    flyStatus(): Promise<FlyRuntimeStatus>;
+    flyInstall(input?: {
+        blenderPath?: string;
+    }): Promise<FlyRuntimeStatus>;
+    /** Only the fixed fly controller routes are forwarded; execution stays in contestExecute. */
+    flyRequest(request: FlyRequest): Promise<JsonValue>;
     /** Read local contest status without starting processes or opening a browser. */
     factorStatus(request: {
         sessionId?: string;

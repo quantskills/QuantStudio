@@ -714,4 +714,5 @@ declare module '@deepseek-ai/dsh-session-projection/types' {
     }
 }
 export type { ModelAccessRequest, ModelAccessResponse, ModelConnection, ModelConnectionDraft, ModelRecommendationRole, ModelServiceDefinition, ModelServiceRecommendation, ModelVerification } from './model-access-types.ts';
+export type { FlyRuntimeStatus, FlyRequest } from './fly-runtime.ts';
 //# sourceMappingURL=types.d.ts.map

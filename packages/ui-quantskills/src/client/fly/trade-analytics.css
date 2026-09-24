@@ -1,0 +1,41 @@
+.fv-analysis { margin-top: 28px; }
+.fv-analysis-controls { padding: 16px; margin: 0 0 20px; background: #19291f; border: 1px solid #354a38; border-radius: 10px; display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: flex-end; }
+.fv-period-switch { display: flex; gap: 4px; flex-wrap: wrap; }.fv-period-switch button[aria-pressed="true"] { background: #465c39; border-color: #adc58b; color: #e3eccd; }
+.fv-date-range { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }.fv-date-range label { display: flex; flex-direction: column; gap: 5px; color: #9bb18f; font-size: 10px; }.fv-date-range input { color-scheme: dark; min-width: 128px; font-size: 11px; }.fv-date-range>span { padding-bottom: 9px; color: #829b79; }
+.fv-analysis-presets { width: 100%; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }.fv-analysis-presets button { font-size: 10px; padding: 5px 9px; }.fv-analysis-presets label { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 10px; color: #9bb18f; }
+.fv-analysis-gaps { margin: -6px 0 20px; border: 1px solid #6c6142; background: #302d1e; border-radius: 8px; padding: 12px 16px; color: #d4bc91; font-size: 11px; }.fv-analysis-gaps summary { cursor: pointer; }.fv-analysis-gaps p { margin: 10px 0; }.fv-analysis-gaps small { color: #b4aa8a; line-height: 1.8; }
+.fv-analysis-details + .fv-analysis-details { margin-top: 14px; }
+.fv-analysis-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 26px; }
+.fv-analysis-heading h2 { font-size: 23px; font-weight: 500; margin: 10px 0 8px; letter-spacing: -.5px; }
+.fv-analysis-heading p { margin: 0; font-size: 12px; color: #94aa91; }
+.fv-analysis-tools { display: flex; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+.fv-analysis-tools label { font-size: 10px; display: flex; flex-direction: column; gap: 6px; color: #9ab18f; }
+.fv-analysis-tools select { min-width: 138px; }
+.fv-analysis-tools button { white-space: nowrap; }
+.fv-analysis-metrics { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 1px; background: #354931; border: 1px solid #354931; border-radius: 12px; overflow: hidden; }
+.fv-analysis-metrics>div { min-width: 0; background: #1c2c20; padding: 24px 20px 20px; }
+.fv-analysis-metrics span { display: block; color: #a8bba0; font-size: 11px; margin-bottom: 14px; }
+.fv-analysis-metrics strong { display: block; font-size: clamp(18px, 1.65vw, 28px); font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.7px; color: #dfebcd; white-space: nowrap; }
+.fv-analysis-metrics strong em { font-size: 14px; font-style: normal; margin-left: 3px; }
+.fv-analysis-metrics small { display: block; color: #8ba282; font-size: 10px; margin-top: 12px; line-height: 1.6; }
+.fv-analysis .positive { color: #e8a390; }.fv-analysis .negative { color: #84c8b0; }
+.fv-analysis-coverage { display: flex; align-items: center; gap: 10px; margin: 20px 0; color: #a6b89d; font-size: 11px; }
+.fv-analysis-coverage p { flex: 1; margin: 0; line-height: 1.8; }.fv-analysis-coverage b { font-weight: 500; color: #d1dfbd; }
+.fv-analysis-coverage small { display: block; color: #81977b; }.fv-analysis-coverage>span:last-child { border: 1px solid #3c5038; border-radius: 20px; padding: 6px 12px; white-space: nowrap; }
+.fv-analysis-dot { flex: 0 0 6px; width: 6px; height: 6px; border-radius: 50%; background: #afc58d; }
+.fv-analysis-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+.fv-analysis-chart, .fv-analysis-reconcile { min-width: 0; border: 1px solid #354a38; border-radius: 12px; background: linear-gradient(145deg,#1c2c23,#17271f); overflow: hidden; }
+.fv-analysis-chart.wide { grid-column: 1 / -1; }.fv-analysis-chart header { padding: 21px 23px 0; }
+.fv-analysis-chart h3, .fv-analysis-reconcile h3 { margin: 0; color: #d5e2c6; font-size: 15px; font-weight: 500; }
+.fv-analysis-chart header p { margin: 7px 0 0; color: #8ea484; font-size: 10px; line-height: 1.6; }
+.fv-analysis-canvas { width: 100%; height: 280px; margin-top: 6px; }.fv-analysis-chart.wide .fv-analysis-canvas { height: 335px; }
+.fv-analysis-empty { display: grid; place-items: center; min-height: 280px; padding: 25px; color: #9cb58e; font-size: 12px; text-align: center; }
+.fv-analysis-reconcile { padding: 26px; }.fv-analysis-reconcile h3 { margin-top: 12px; }.fv-analysis-reconcile>p { color: #8ea484; font-size: 10px; }
+.fv-analysis-reconcile dl { margin: 22px 0 15px; }.fv-analysis-reconcile dl>div { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; font-size: 12px; color: #abc09f; }
+.fv-analysis-reconcile dd { margin: 0; font-variant-numeric: tabular-nums; }.fv-analysis-reconcile .total { margin-top: 10px; padding-top: 17px; border-top: 1px solid #3c5138; color: #d3dfc0; }
+.fv-analysis-reconcile .total dd { font-size: 22px; }.fv-analysis-reconcile>small { font-size: 10px; color: #8fa482; line-height: 1.8; display: block; }
+.fv-analysis-footnote { font-size: 10px; color: #8fa482; line-height: 1.9; padding: 4px 0; margin: 18px 0; }
+.fv-analysis-alert { border: 1px solid #756044; background: #3a3020; padding: 12px 15px; border-radius: 8px; color: #dfc49a; margin-bottom: 15px; font-size: 12px; }
+.fv-analysis-details { border: 1px solid #354a38; border-radius: 10px; padding: 18px 22px; background: #1a2a20; }.fv-analysis-details summary { cursor: pointer; color: #c1d3ad; font-size: 12px; }.fv-analysis-details[open] summary { margin-bottom: 20px; }
+@media(max-width:1200px) { .fv-analysis-heading { align-items: flex-start; flex-direction: column; }.fv-analysis-metrics { grid-template-columns: repeat(2,minmax(0,1fr)); }.fv-analysis-metrics strong { font-size: 25px; } }
+@media(max-width:750px) { .fv-analysis-grid { grid-template-columns: minmax(0,1fr); }.fv-analysis-heading h2 { font-size: 20px; }.fv-analysis-metrics>div { padding: 18px 14px; }.fv-analysis-metrics strong { font-size: 20px; }.fv-analysis-tools { flex-wrap: wrap; }.fv-analysis-coverage { align-items: flex-start; }.fv-analysis-dot { margin-top: 7px; }.fv-analysis-canvas { height: 265px; } }

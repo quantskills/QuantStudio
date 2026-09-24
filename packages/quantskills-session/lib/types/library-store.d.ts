@@ -6,8 +6,8 @@ declare const entrySchema: z.ZodObject<{
         "agent-team": "agent-team";
     }>;
     source: z.ZodEnum<{
-        personal: "personal";
         installed: "installed";
+        personal: "personal";
         internal: "internal";
     }>;
     method: z.ZodEnum<{

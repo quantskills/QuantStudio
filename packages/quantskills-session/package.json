@@ -46,6 +46,7 @@
     }
   },
   "files": [
+    "fly-runtime",
     "lib/index.js",
     "lib/invariant.js",
     "lib/types-*.js",
