@@ -317,7 +317,7 @@ export class ContestWatcher {
         try {
             const credential = await this.ctx.get('credentials')?.describe(credentialRef('TYPESAFE_API_KEY'));
             if (!credential?.configured)
-                throw new Error('请先配置 Jev 密钥。');
+                throw new Error('请在「设置 → 模型服务 → Jev」配置 API Key。');
             const identity = await this.contest.researchIdentity();
             const snapshot = await this.contest.inspect(identity, controller.signal), config = upgradeWatchStrategy(parsed.data);
             const account = watchAccount(snapshot, config);

@@ -1,0 +1,27 @@
+[
+  {
+    "url": "https://files.pythonhosted.org/packages/5a/87/b70ad306ebb6f9b585f114d0ac2137d792b48be34d732d60e597c2f8465a/pydantic-2.12.5-py3-none-any.whl",
+    "sha256": "e561593fccf61e8a20fc46dfc2dfe075b8be7d0188df33f221ad1f0139180f9d",
+    "name": "pydantic-2.12.5-py3-none-any.whl"
+  },
+  {
+    "url": "https://files.pythonhosted.org/packages/86/45/00173a033c801cacf67c190fef088789394feaf88a98a7035b0e40d53dc9/pydantic_core-2.41.5-cp312-cp312-win_amd64.whl",
+    "sha256": "1962293292865bca8e54702b08a4f26da73adc83dd1fcf26fbc875b35d81c815",
+    "name": "pydantic_core-2.41.5-cp312-cp312-win_amd64.whl"
+  },
+  {
+    "url": "https://files.pythonhosted.org/packages/78/b6/6307fbef88d9b5ee7421e68d78a9f162e0da4900bc5f5793f6d3d0e34fb8/annotated_types-0.7.0-py3-none-any.whl",
+    "sha256": "1f02e8b43a8fbbc3f3e0d4f0f4bfc8131bcb4eebe8849b8e5c773f3a1c582a53",
+    "name": "annotated_types-0.7.0-py3-none-any.whl"
+  },
+  {
+    "url": "https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl",
+    "sha256": "f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548",
+    "name": "typing_extensions-4.15.0-py3-none-any.whl"
+  },
+  {
+    "url": "https://files.pythonhosted.org/packages/dc/9b/47798a6c91d8bdb567fe2698fe81e0c6b7cb7ef4d13da4114b41d239f65d/typing_inspection-0.4.2-py3-none-any.whl",
+    "sha256": "4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7",
+    "name": "typing_inspection-0.4.2-py3-none-any.whl"
+  }
+]

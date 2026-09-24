@@ -6,6 +6,79 @@ import { MODEL_SERVICES } from '../../quantskills-session/src/model-service-cata
 afterEach(cleanup)
 
 describe('native model services', () => {
+  it('configures the shared Jev key only in model services and never echoes it', async () => {
+    const jevAccess = {
+      settings: vi.fn(async () => ({ configured: false, writable: true, model: 'jev-1.13.0' })),
+      configure: vi.fn(async () => ({ configured: true, writable: true, model: 'jev-1.13.0' })),
+    }
+    render(<QuantSkillsModelServices access={vi.fn(async () => ({ catalog: MODEL_SERVICES, connections: [] }))} jevAccess={jevAccess}/>)
+    await waitFor(() => expect(screen.getByRole('button', { name: '测试并保存密钥' }).matches(':disabled')).toBe(true))
+    await waitFor(() => expect(jevAccess.settings).toHaveBeenCalled())
+    expect(screen.getByText(/比赛页的 Jev 盯盘与果蝇的 Jev 辅助共用此密钥/)).toBeTruthy()
+    fireEvent.change(screen.getByLabelText('Jev API Key'), { target: { value: 'test-private-candidate' } })
+    await waitFor(() => expect(screen.getByRole('button', { name: '测试并保存密钥' }).matches(':disabled')).toBe(false))
+    fireEvent.click(screen.getByRole('button', { name: '测试并保存密钥' }))
+    await screen.findByText('密钥已配置')
+    expect(jevAccess.configure).toHaveBeenCalledExactlyOnceWith({ apiKey: 'test-private-candidate' })
+    expect((screen.getByLabelText('Jev API Key') as HTMLInputElement).value).toBe('')
+    expect(screen.getByLabelText('Jev API Key').getAttribute('type')).toBe('password')
+    expect(document.body.textContent).not.toContain('test-private-candidate')
+  })
+
+  it('keeps saved Jev state after a failed key test and honors read-only credentials', async () => {
+    const jevAccess = {
+      settings: vi.fn(async () => ({ configured: true, writable: true, model: 'jev-1.13.0' })),
+      configure: vi.fn(async () => { throw new Error('连接测试失败') }),
+    }
+    const view = render(<QuantSkillsModelServices jevAccess={jevAccess}/>)
+    await screen.findByText('密钥已配置')
+    fireEvent.click(screen.getByText('Jev · TypeSafe'))
+    fireEvent.change(screen.getByLabelText('Jev API Key'), { target: { value: 'invalid-test-candidate' } })
+    fireEvent.click(screen.getByRole('button', { name: '测试并保存密钥' }))
+    await screen.findByText('连接测试失败')
+    expect(screen.getByText('密钥已配置')).toBeTruthy()
+    expect((screen.getByLabelText('Jev API Key') as HTMLInputElement).value).toBe('')
+    const readonlyAccess = { ...jevAccess, settings: vi.fn(async () => ({ configured: true, writable: false, model: 'jev-1.13.0' })) }
+    view.rerender(<QuantSkillsModelServices jevAccess={readonlyAccess}/>)
+    await screen.findByText(/当前凭据只读/)
+    expect(screen.getByLabelText('Jev API Key').matches(':disabled')).toBe(true)
+  })
+
+  it('selects the Jev translator from connected models without replacing the shared key', async () => {
+    const translator = { provider: 'user-connected-route', model: 'user-model' }
+    const jevAccess = {
+      settings: vi.fn(async () => ({ configured: true, writable: true, model: 'jev-1.13.0', translationModels: [translator] })),
+      configure: vi.fn(async () => ({ configured: true, writable: true, model: 'jev-1.13.0', translator, translationModels: [translator] })),
+    }
+    render(<QuantSkillsModelServices jevAccess={jevAccess}/>)
+    await screen.findByText('密钥已配置')
+    fireEvent.click(screen.getByText('Jev · TypeSafe'))
+    fireEvent.change(screen.getByLabelText('中文专用翻译模型'), { target: { value: JSON.stringify(translator) } })
+    fireEvent.click(screen.getByRole('button', { name: '保存翻译模型' }))
+    await waitFor(() => expect(jevAccess.configure).toHaveBeenCalledExactlyOnceWith({ translator }))
+  })
+
+  it('refreshes Jev model choices after a connection is saved on the same page', async () => {
+    const translator = { provider: 'new-route', model: 'new-model' }
+    let saved = false
+    const access = vi.fn<ModelAccess>(async request => { if (request.action === 'save') saved = true; return { catalog: MODEL_SERVICES, connections: [] } })
+    const jevAccess = {
+      settings: vi.fn(async () => ({ configured: true, writable: true, model: 'jev-1.13.0', translationModels: saved ? [translator] : [] })),
+      configure: vi.fn(async () => ({ configured: true, writable: true, model: 'jev-1.13.0' })),
+    }
+    render(<QuantSkillsModelServices access={access} jevAccess={jevAccess}/>)
+    await screen.findByText('密钥已配置')
+    fireEvent.click(screen.getByText('Jev · TypeSafe'))
+    expect(screen.queryByRole('option', { name: 'new-model · new-route' })).toBeNull()
+    await waitFor(() => expect(screen.getByRole('button', { name: '添加模型服务' }).matches(':disabled')).toBe(false))
+    fireEvent.click(screen.getByRole('button', { name: '添加模型服务' }))
+    fireEvent.click(screen.getByRole('button', { name: /自定义兼容服务/ }))
+    fireEvent.change(screen.getByLabelText('服务地址'), { target: { value: 'https://example.com/v1' } })
+    fireEvent.change(screen.getByLabelText(/模型 ID/), { target: { value: 'new-model' } })
+    fireEvent.click(screen.getByRole('button', { name: '验证并保存' }))
+    await screen.findByRole('option', { name: 'new-model · new-route' })
+  })
+
   it('offers one searchable entry, preserves multiline manual IDs, and calls the typed service directly', async () => {
     const access = vi.fn<ModelAccess>(async () => ({ catalog: MODEL_SERVICES, connections: [] }))
     render(<QuantSkillsModelServices access={access}/>)

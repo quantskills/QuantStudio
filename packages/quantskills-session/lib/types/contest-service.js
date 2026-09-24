@@ -202,7 +202,7 @@ export class ContestService {
         this.currentRules = installed.rules;
         await this.save();
     }
-    async validateIdentity(expected, signal) {
+    async validateAccount(expected, signal) {
         const me = record((await this.run(['whoami'], signal)).data);
         const identity = { accountId: String(me.accountId ?? ''), contestId: String(me.contestId ?? '') };
         const scopes = String(me.scope ?? '').split(/\s+/);
@@ -223,6 +223,10 @@ export class ContestService {
                     plan.status = 'cancelled';
         }
         this.state.identity = identity;
+        return identity;
+    }
+    async validateIdentity(expected, signal) {
+        const identity = await this.validateAccount(expected, signal);
         const spec = record((await this.run(['agent', 'describe'], signal)).data);
         if (!this.state.version || typeof spec.minimumCliVersion !== 'string' || !versionAtLeast(this.state.version, spec.minimumCliVersion)) {
             this.ready = false;
@@ -266,6 +270,15 @@ export class ContestService {
     }
     isEnabled() { return this.state.enabled; }
     rulesText() { return this.currentRules; }
+    /** Read contract metadata for the account-bound fly adapter; never places an order. */
+    async contractSpec(symbol, identity, signal) {
+        if (!/^[a-zA-Z]{1,3}\d{3,4}$/.test(symbol))
+            throw new Error('请填写实际合约。');
+        return this.exclusive(async () => {
+            this.assertReady(identity);
+            return this.run(['contract-spec', symbol], signal);
+        });
+    }
     async query(input, expected, signal) {
         const args = contestQueryArgs(input);
         return this.exclusive(async () => {
@@ -294,9 +307,19 @@ export class ContestService {
         await this.recordFills((await this.run(['trades', '--count', '200'])).data);
     }
     async inspect(identity, signal) {
+        return this.inspectAccount(identity, signal, true);
+    }
+    /** Background observations still verify account ownership; order paths use full inspect(). */
+    async observe(identity, signal) {
+        return this.inspectAccount(identity, signal, false);
+    }
+    async inspectAccount(identity, signal, full) {
         return this.exclusive(async () => {
             this.assertReady(identity);
-            await this.validateIdentity(identity, signal);
+            if (full)
+                await this.validateIdentity(identity, signal);
+            else
+                await this.validateAccount(identity, signal);
             const account = await this.run(['account'], signal);
             const positions = await this.run(['positions'], signal);
             const openOrders = await this.run(['orders', '--status', 'open', '--count', '200'], signal);

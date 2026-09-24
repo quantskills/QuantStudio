@@ -188,7 +188,7 @@ export class ContestService {
     await this.save()
   }
 
-  private async validateIdentity(expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestIdentity> {
+  private async validateAccount(expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestIdentity> {
     const me = record((await this.run(['whoami'], signal)).data)
     const identity = { accountId: String(me.accountId ?? ''), contestId: String(me.contestId ?? '') }
     const scopes = String(me.scope ?? '').split(/\s+/)
@@ -205,6 +205,11 @@ export class ContestService {
       for (const plan of this.state.plans) if (plan.status === 'prepared') plan.status = 'cancelled'
     }
     this.state.identity = identity
+    return identity
+  }
+
+  private async validateIdentity(expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestIdentity> {
+    const identity = await this.validateAccount(expected, signal)
     const spec = record((await this.run(['agent', 'describe'], signal)).data)
     if (!this.state.version || typeof spec.minimumCliVersion !== 'string' || !versionAtLeast(this.state.version, spec.minimumCliVersion)) {
       this.ready = false
@@ -248,6 +253,15 @@ export class ContestService {
   isEnabled(): boolean { return this.state.enabled }
   rulesText(): string { return this.currentRules }
 
+  /** Read contract metadata for the account-bound fly adapter; never places an order. */
+  async contractSpec(symbol: string, identity: ContestIdentity, signal?: AbortSignal): Promise<ContestData> {
+    if (!/^[a-zA-Z]{1,3}\d{3,4}$/.test(symbol)) throw new Error('请填写实际合约。')
+    return this.exclusive(async () => {
+      this.assertReady(identity)
+      return this.run(['contract-spec', symbol], signal)
+    })
+  }
+
   async query(input: ContestQuery, expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestData> {
     const args = contestQueryArgs(input)
     return this.exclusive(async () => {
@@ -272,9 +286,19 @@ export class ContestService {
   }
 
   async inspect(identity: ContestIdentity, signal?: AbortSignal): Promise<ContestInspection> {
+    return this.inspectAccount(identity, signal, true)
+  }
+
+  /** Background observations still verify account ownership; order paths use full inspect(). */
+  async observe(identity: ContestIdentity, signal?: AbortSignal): Promise<ContestInspection> {
+    return this.inspectAccount(identity, signal, false)
+  }
+
+  private async inspectAccount(identity: ContestIdentity, signal: AbortSignal | undefined, full: boolean): Promise<ContestInspection> {
     return this.exclusive(async () => {
       this.assertReady(identity)
-      await this.validateIdentity(identity, signal)
+      if (full) await this.validateIdentity(identity, signal)
+      else await this.validateAccount(identity, signal)
       const account = await this.run(['account'], signal)
       const positions = await this.run(['positions'], signal)
       const openOrders = await this.run(['orders', '--status', 'open', '--count', '200'], signal)

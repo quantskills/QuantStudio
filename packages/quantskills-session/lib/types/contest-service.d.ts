@@ -29,16 +29,22 @@ export declare class ContestService {
     setEnabled(enabled: boolean): Promise<ContestStatus>;
     connect(): Promise<ContestStatus>;
     private install;
+    private validateAccount;
     private validateIdentity;
     researchIdentity(expected?: ContestIdentity): Promise<ContestIdentity>;
     private assertReady;
     rules(): Promise<string>;
     isEnabled(): boolean;
     rulesText(): string;
+    /** Read contract metadata for the account-bound fly adapter; never places an order. */
+    contractSpec(symbol: string, identity: ContestIdentity, signal?: AbortSignal): Promise<ContestData>;
     query(input: ContestQuery, expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestData>;
     private recordFills;
     private refreshFills;
     inspect(identity: ContestIdentity, signal?: AbortSignal): Promise<ContestInspection>;
+    /** Background observations still verify account ownership; order paths use full inspect(). */
+    observe(identity: ContestIdentity, signal?: AbortSignal): Promise<ContestInspection>;
+    private inspectAccount;
     inspection(identity: ContestIdentity): ContestInspection | undefined;
     checkUpdate(): Promise<ContestStatus>;
     update(): Promise<ContestStatus>;

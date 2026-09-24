@@ -42,8 +42,8 @@ export declare const quantSkillsAgentTeamDefinitionSchema: z.ZodPipe<z.ZodObject
         name: z.ZodString;
         role: z.ZodString;
         mode: z.ZodEnum<{
-            dynamic: "dynamic";
             fixed: "fixed";
+            dynamic: "dynamic";
         }>;
         model: z.ZodOptional<z.ZodObject<{
             provider: z.ZodString;
@@ -79,7 +79,7 @@ export declare const quantSkillsAgentTeamDefinitionSchema: z.ZodPipe<z.ZodObject
         revision: number;
         name: string;
         role: string;
-        mode: "dynamic" | "fixed";
+        mode: "fixed" | "dynamic";
         permission: "read-only" | "workspace-write" | "danger-full-access";
         skills: Readonly<{
             assetId: import("./types.ts").QuantSkillsAssetId;
@@ -132,8 +132,8 @@ export declare const quantSkillsAgentTeamDefinitionSchema: z.ZodPipe<z.ZodObject
             name: z.ZodString;
             role: z.ZodString;
             mode: z.ZodEnum<{
-                dynamic: "dynamic";
                 fixed: "fixed";
+                dynamic: "dynamic";
             }>;
             model: z.ZodOptional<z.ZodObject<{
                 provider: z.ZodString;
@@ -169,7 +169,7 @@ export declare const quantSkillsAgentTeamDefinitionSchema: z.ZodPipe<z.ZodObject
             revision: number;
             name: string;
             role: string;
-            mode: "dynamic" | "fixed";
+            mode: "fixed" | "dynamic";
             permission: "read-only" | "workspace-write" | "danger-full-access";
             skills: Readonly<{
                 assetId: import("./types.ts").QuantSkillsAssetId;
@@ -261,8 +261,8 @@ export declare const quantSkillsAgentTeamSessionSchema: z.ZodPipe<z.ZodObject<{
         name: z.ZodString;
         role: z.ZodString;
         mode: z.ZodEnum<{
-            dynamic: "dynamic";
             fixed: "fixed";
+            dynamic: "dynamic";
         }>;
         model: z.ZodOptional<z.ZodObject<{
             provider: z.ZodString;
@@ -298,7 +298,7 @@ export declare const quantSkillsAgentTeamSessionSchema: z.ZodPipe<z.ZodObject<{
         revision: number;
         name: string;
         role: string;
-        mode: "dynamic" | "fixed";
+        mode: "fixed" | "dynamic";
         permission: "read-only" | "workspace-write" | "danger-full-access";
         skills: Readonly<{
             assetId: import("./types.ts").QuantSkillsAssetId;
@@ -351,8 +351,8 @@ export declare const quantSkillsAgentTeamSessionSchema: z.ZodPipe<z.ZodObject<{
             name: z.ZodString;
             role: z.ZodString;
             mode: z.ZodEnum<{
-                dynamic: "dynamic";
                 fixed: "fixed";
+                dynamic: "dynamic";
             }>;
             model: z.ZodOptional<z.ZodObject<{
                 provider: z.ZodString;
@@ -388,7 +388,7 @@ export declare const quantSkillsAgentTeamSessionSchema: z.ZodPipe<z.ZodObject<{
             revision: number;
             name: string;
             role: string;
-            mode: "dynamic" | "fixed";
+            mode: "fixed" | "dynamic";
             permission: "read-only" | "workspace-write" | "danger-full-access";
             skills: Readonly<{
                 assetId: import("./types.ts").QuantSkillsAssetId;
@@ -479,8 +479,8 @@ export declare const quantSkillsAgentTeamMemberSessionSchema: z.ZodPipe<z.ZodObj
         name: z.ZodString;
         role: z.ZodString;
         mode: z.ZodEnum<{
-            dynamic: "dynamic";
             fixed: "fixed";
+            dynamic: "dynamic";
         }>;
         model: z.ZodOptional<z.ZodObject<{
             provider: z.ZodString;
@@ -516,7 +516,7 @@ export declare const quantSkillsAgentTeamMemberSessionSchema: z.ZodPipe<z.ZodObj
         revision: number;
         name: string;
         role: string;
-        mode: "dynamic" | "fixed";
+        mode: "fixed" | "dynamic";
         permission: "read-only" | "workspace-write" | "danger-full-access";
         skills: Readonly<{
             assetId: import("./types.ts").QuantSkillsAssetId;

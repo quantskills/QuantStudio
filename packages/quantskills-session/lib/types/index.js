@@ -35,6 +35,7 @@ var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, 
 };
 import { QuantSkillsLibraryStore } from "./library-store.js";
 import { ContestService, sameContest } from "./contest-service.js";
+import { FlyService } from "./fly-service.js";
 import { OfficialContestCli } from "./contest-cli.js";
 import { installContestTools } from "./contest-tools.js";
 import { ContestWatcher } from "./contest-watch.js";
@@ -653,6 +654,9 @@ let QuantSkillsSessionService = (() => {
     let _modelsAccess_decorators;
     let _workspaceStatus_decorators;
     let _workspaceResolve_decorators;
+    let _flyStatus_decorators;
+    let _flyInstall_decorators;
+    let _flyRequest_decorators;
     let _factorStatus_decorators;
     let _factorMode_decorators;
     let _factorConnect_decorators;
@@ -728,6 +732,9 @@ let QuantSkillsSessionService = (() => {
             _modelsAccess_decorators = [Remote('modelsAccess')];
             _workspaceStatus_decorators = [Remote('workspaceStatus')];
             _workspaceResolve_decorators = [Remote('workspaceResolve')];
+            _flyStatus_decorators = [Remote('flyStatus')];
+            _flyInstall_decorators = [Remote('flyInstall')];
+            _flyRequest_decorators = [Remote('flyRequest')];
             _factorStatus_decorators = [Remote('factorStatus')];
             _factorMode_decorators = [Remote('factorMode')];
             _factorConnect_decorators = [Remote('factorConnect')];
@@ -800,6 +807,9 @@ let QuantSkillsSessionService = (() => {
             __esDecorate(this, null, _modelsAccess_decorators, { kind: "method", name: "modelsAccess", static: false, private: false, access: { has: obj => "modelsAccess" in obj, get: obj => obj.modelsAccess }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _workspaceStatus_decorators, { kind: "method", name: "workspaceStatus", static: false, private: false, access: { has: obj => "workspaceStatus" in obj, get: obj => obj.workspaceStatus }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _workspaceResolve_decorators, { kind: "method", name: "workspaceResolve", static: false, private: false, access: { has: obj => "workspaceResolve" in obj, get: obj => obj.workspaceResolve }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _flyStatus_decorators, { kind: "method", name: "flyStatus", static: false, private: false, access: { has: obj => "flyStatus" in obj, get: obj => obj.flyStatus }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _flyInstall_decorators, { kind: "method", name: "flyInstall", static: false, private: false, access: { has: obj => "flyInstall" in obj, get: obj => obj.flyInstall }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _flyRequest_decorators, { kind: "method", name: "flyRequest", static: false, private: false, access: { has: obj => "flyRequest" in obj, get: obj => obj.flyRequest }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _factorStatus_decorators, { kind: "method", name: "factorStatus", static: false, private: false, access: { has: obj => "factorStatus" in obj, get: obj => obj.factorStatus }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _factorMode_decorators, { kind: "method", name: "factorMode", static: false, private: false, access: { has: obj => "factorMode" in obj, get: obj => obj.factorMode }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _factorConnect_decorators, { kind: "method", name: "factorConnect", static: false, private: false, access: { has: obj => "factorConnect" in obj, get: obj => obj.factorConnect }, metadata: _metadata }, null, _instanceExtraInitializers);
@@ -930,6 +940,7 @@ let QuantSkillsSessionService = (() => {
         teamForkProvider;
         workspaceResolver;
         contest;
+        fly;
         contestWatcher;
         factorContest;
         factorSessionOpening = Promise.resolve();
@@ -946,6 +957,8 @@ let QuantSkillsSessionService = (() => {
                 return processes;
             }, join(resolveDshHome(config.dshHome), 'quantskills', 'contest', 'auth')), config.dshHome);
             this.contestWatcher = new ContestWatcher(ctx, this.contest);
+            this.fly = new FlyService(ctx, this.contest, join(resolveDshHome(config.dshHome), 'quantskills', 'fly'), async () => (await this.contestWatcher.status()).running);
+            void this.fly.runtime.resume().catch(() => { });
             this.factorContest = new FactorContestService(new OfficialFactorRuntime(() => {
                 const processes = ctx.get('subprocess');
                 if (!processes)
@@ -1121,6 +1134,7 @@ let QuantSkillsSessionService = (() => {
                 this.lifetime.abort(new Error('quantskills-session: service disposed'));
                 this.contest.dispose();
                 this.contestWatcher.dispose();
+                const flyStopped = this.fly.runtime.dispose();
                 this.factorContest.dispose();
                 this.reservations.clear();
                 this.plainReservations.clear();
@@ -1133,6 +1147,7 @@ let QuantSkillsSessionService = (() => {
                 for (const runtime of this.residentSkillRuntimes.values())
                     disposeResidentRuntime(runtime);
                 this.residentSkillRuntimes.clear();
+                return flyStopped;
             }, 'quantskills-session.lifecycle');
         }
         /**
@@ -1151,6 +1166,11 @@ let QuantSkillsSessionService = (() => {
         workspaceResolve(request) {
             return this.workspaceResolver.resolve(request.preferredWorkspaceId);
         }
+        /** Inspect the opt-in local fly controller without installing dependencies. */
+        flyStatus() { return this.fly.runtime.status(); }
+        flyInstall(input) { return this.fly.runtime.install(input); }
+        /** Only the fixed fly controller routes are forwarded; execution stays in contestExecute. */
+        flyRequest(request) { return this.fly.request(request); }
         /** Read local contest status without starting processes or opening a browser. */
         factorStatus(request) { return this.factorContest.status(request.sessionId); }
         factorMode(request) { return this.factorContest.mode(request.enabled); }

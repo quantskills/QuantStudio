@@ -50,7 +50,7 @@ importers:
         version: link:packages/client-ui-layout
       '@deepseek-ai/dsh-client-ui-quantskills':
         specifier: workspace:^
-        version: file:packages/ui-quantskills(2a97729c7138e7f74f21c0243a8b1e7c)
+        version: file:packages/ui-quantskills(fc6a0ea3e6f5ffb5427055fc4d89d46f)
       '@deepseek-ai/dsh-panda-connector':
         specifier: workspace:^
         version: link:packages/panda-connector
@@ -794,6 +794,9 @@ importers:
 
   packages/ui-quantskills:
     dependencies:
+      '@deepseek-ai/dsh-client-remotes-quantskills':
+        specifier: workspace:^
+        version: link:../client-remotes-quantskills
       '@deepseek-ai/schemastery':
         specifier: 3.18.2
         version: 3.18.2
@@ -806,9 +809,15 @@ importers:
       d3-dsv:
         specifier: ^3.0.1
         version: 3.0.1
+      echarts:
+        specifier: 6.0.0
+        version: 6.0.0
       pdfjs-dist:
         specifier: 6.1.200
         version: 6.1.200
+      three:
+        specifier: 0.186.0
+        version: 0.186.0
     devDependencies:
       '@deepseek-ai/cordis':
         specifier: 4.0.2
@@ -909,6 +918,9 @@ importers:
       '@types/react':
         specifier: ~18.3.1
         version: 18.3.31
+      '@types/three':
+        specifier: 0.186.0
+        version: 0.186.0
       react:
         specifier: ^18.2.0
         version: 18.2.0
@@ -1499,6 +1511,13 @@ packages:
     peerDependencies:
       '@deepseek-ai/cordis': 4.0.2
 
+  '@deepseek-ai/dsh-client-remotes-quantskills@file:packages/client-remotes-quantskills':
+    resolution: {directory: packages/client-remotes-quantskills, type: directory}
+    peerDependencies:
+      '@deepseek-ai/cordis': 4.0.2
+      '@deepseek-ai/dsh-api-remotes': 0.1.2-alpha.2
+      '@deepseek-ai/dsh-typert-protocol': 0.1.2-alpha.2
+
   '@deepseek-ai/dsh-client-store@0.1.2-alpha.2':
     resolution: {integrity: sha512-tz94GO4b8m3PPe/knfNjHa/VeTJTDNgN1eZeQWHjb5kKxCCThlNk91y5z/kEC93oGVd0lphq5pG5aQCQr2364g==}
     peerDependencies:
@@ -1654,6 +1673,7 @@ packages:
       '@deepseek-ai/dsh-api-session-controller': 0.1.2-alpha.2
       '@deepseek-ai/dsh-api-workspace-controller': 0.1.2-alpha.2
       '@deepseek-ai/dsh-client-connection': 0.1.2-alpha.2
+      '@deepseek-ai/dsh-client-remotes-quantskills': workspace:^
       '@deepseek-ai/dsh-client-store': 0.1.2-alpha.2
       '@deepseek-ai/dsh-client-ui-chat': 0.1.19
       '@deepseek-ai/dsh-client-ui-conversation': 0.1.19
@@ -2336,6 +2356,7 @@ packages:
       '@deepseek-ai/dsh-invariants': 0.1.2-alpha.2
       '@deepseek-ai/dsh-llm': 0.1.2-alpha.2
       '@deepseek-ai/dsh-native-command': 0.1.2-alpha.2
+      '@deepseek-ai/dsh-panda-mcp': workspace:^
       '@deepseek-ai/dsh-quantskills-host': workspace:^
       '@deepseek-ai/dsh-scope': 0.1.2-alpha.2
       '@deepseek-ai/dsh-session': 0.1.2-alpha.2
@@ -3337,6 +3358,9 @@ packages:
 
   '@deepseek-ai/schemastery@3.18.2':
     resolution: {integrity: sha512-njDtZsznjYxok7KLLlHOPyuv2efdWVbSflAHgztSfbMsg+CVraEoRe2DjOCgClYv3ZCSm7WXoaUkbB/+RY7tWQ==}
+
+  '@dimforge/rapier3d-compat@0.12.0':
+    resolution: {integrity: sha512-uekIGetywIgopfD97oDL5PfeezkFpNhwlzlaEYNOA0N6ghdsOvh/HYjSMek5Q2O1PYvRSDFcqFVJl4r4ZBwOow==}
 
   '@earendil-works/pi-ai@0.84.4':
     resolution: {integrity: sha512-AClAZxf5+c4RRu44NJPS6wyQy+Nmq+Mzyyrdvm4ZVMNuixelO02RZX4G4Aq1F145Yzp43wnM5S+hLlSI7ypfVw==}
@@ -4566,6 +4590,9 @@ packages:
   '@tokenizer/token@0.3.0':
     resolution: {integrity: sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==}
 
+  '@tweenjs/tween.js@23.1.3':
+    resolution: {integrity: sha512-vJmvvwFxYuGnF2axRtPYocag6Clbb5YS7kLL+SO/TeVFzHqDIWrNKYtcsPMibjDx9O+bu+psAy9NKfWklassUA==}
+
   '@tybys/wasm-util@0.10.3':
     resolution: {integrity: sha512-F3fo1MYrRJYL3zER0OUOmkutjr1Vp23m7OsSgp7nq4SP6OqX6C/56XFIPAl5bt3zaBRjmW7SGz3u/6LwFpYcOg==}
 
@@ -4632,11 +4659,20 @@ packages:
   '@types/retry@0.12.0':
     resolution: {integrity: sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==}
 
+  '@types/stats.js@0.17.4':
+    resolution: {integrity: sha512-jIBvWWShCvlBqBNIZt0KAshWpvSjhkwkEu4ZUcASoAvhmrgAUI2t1dXrjSL4xXVLB4FznPrIsX3nKXFl/Dt4vA==}
+
+  '@types/three@0.186.0':
+    resolution: {integrity: sha512-mxYSBpDC+D0pLfSP6sW4WZTcT+nrtmZcimMqnVmy36Hte3XpeYSrvgg4TRdaM1GemGog1AWzI5qL2VoIfMXbJQ==}
+
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
 
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
+
+  '@types/webxr@0.5.24':
+    resolution: {integrity: sha512-h8fgEd/DpoS9CBrjEQXR+dIDraopAEfu4wYVNY2tEPwk60stPWhvZMf4Foo5FakuQ7HFZoa8WceaWFervK2Ovg==}
 
   '@types/whatwg-mimetype@3.0.2':
     resolution: {integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA==}
@@ -5066,6 +5102,9 @@ packages:
 
   ecdsa-sig-formatter@1.0.11:
     resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
+
+  echarts@6.0.0:
+    resolution: {integrity: sha512-Tte/grDQRiETQP4xz3iZWSvoHrkCQtwqd6hs+mifXcjrCuo2iKWbajFObuLJVBlDIJlOzgQPd1hsaKt/3+OMkQ==}
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
@@ -5557,6 +5596,9 @@ packages:
   merge-descriptors@2.0.0:
     resolution: {integrity: sha512-Snk314V5ayFLhp3fkUREub6WtjBfPdCPY1Ln8/8munuLuiYhsABgBVWsozAG+MWMbVEvcdcpbi9R7ww22l9Q3g==}
     engines: {node: '>=18'}
+
+  meshoptimizer@1.1.1:
+    resolution: {integrity: sha512-oRFNWJRDA/WTrVj7NWvqa5HqE1t9MYDj2VaWirQCzCCrAd2GHrqR/sQezCxiWATPNlKTcRaPRHPJwIRoPBAp5g==}
 
   micromark-core-commonmark@2.0.3:
     resolution: {integrity: sha512-RDBrHEMSxVFLg6xvnXmb1Ayr2WzLAWjeSATAoxwKYJV94TeNavgoIdA0a9ytzDSVzBy2YKFK+emCPOEibLeCrg==}
@@ -6101,6 +6143,9 @@ packages:
   tesseract.js@7.0.0:
     resolution: {integrity: sha512-exPBkd+z+wM1BuMkx/Bjv43OeLBxhL5kKWsz/9JY+DXcXdiBjiAch0V49QR3oAJqCaL5qURE0vx9Eo+G5YE7mA==}
 
+  three@0.186.0:
+    resolution: {integrity: sha512-cr/fIM2ddMSVbYVgkfD4jLJv7Fh/8ZTjvo+7gQeSVGUZHxpx9FDwoL5iC7hUz/LiRA8wMbqfnb90xKfm1/HHkQ==}
+
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
 
@@ -6185,6 +6230,9 @@ packages:
         optional: true
       unrun:
         optional: true
+
+  tslib@2.3.0:
+    resolution: {integrity: sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==}
 
   tslib@2.8.1:
     resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
@@ -6437,6 +6485,9 @@ packages:
 
   zod@4.4.3:
     resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
+
+  zrender@6.0.0:
+    resolution: {integrity: sha512-41dFXEEXuJpNecuUQq6JlbybmnHaqqpGlbH1yxnA5V9MMP4SbohSVZsJIwz+zdjQXSSlR1Vc34EgH1zxyTDvhg==}
 
   zustand@4.4.7:
     resolution: {integrity: sha512-QFJWJMdlETcI69paJwhSMJz7PPWjVP8Sjhclxmxmxv/RYI7ZOvR5BHX+ktH0we9gTWQMxcne8q1OY8xxz604gw==}
@@ -7295,6 +7346,46 @@ snapshots:
     dependencies:
       '@deepseek-ai/cordis': 4.0.2(@deepseek-ai/cordis-plugin-include@1.0.7)(@deepseek-ai/cordis-plugin-loader@1.0.3)
 
+  '@deepseek-ai/dsh-client-remotes-quantskills@file:packages/client-remotes-quantskills(06e85b3912b089bb9514c849a11143b9)':
+    dependencies:
+      '@deepseek-ai/cordis': 4.0.2(@deepseek-ai/cordis-plugin-include@1.0.7)(@deepseek-ai/cordis-plugin-loader@1.0.3)
+      '@deepseek-ai/dsh-api-remotes': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))
+      '@deepseek-ai/dsh-panda-mcp': file:packages/panda-mcp(1ab43c5bb9b3b205483380bc1039e02d)
+      '@deepseek-ai/dsh-quantskills-host': file:packages/quantskills-host(d538cdeb03983562421b79ffb8e95f8e)
+      '@deepseek-ai/dsh-quantskills-session': file:packages/quantskills-session(48f57ae5a85b70e3a8ab3567c70cd2fe)
+      '@deepseek-ai/dsh-typert-protocol': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))
+    transitivePeerDependencies:
+      - '@cfworker/json-schema'
+      - '@deepseek-ai/dsh-agent'
+      - '@deepseek-ai/dsh-agent-team'
+      - '@deepseek-ai/dsh-api-session-controller'
+      - '@deepseek-ai/dsh-attachment'
+      - '@deepseek-ai/dsh-brand'
+      - '@deepseek-ai/dsh-credentials'
+      - '@deepseek-ai/dsh-fs'
+      - '@deepseek-ai/dsh-home-paths'
+      - '@deepseek-ai/dsh-invariants'
+      - '@deepseek-ai/dsh-llm'
+      - '@deepseek-ai/dsh-native-command'
+      - '@deepseek-ai/dsh-scope'
+      - '@deepseek-ai/dsh-session'
+      - '@deepseek-ai/dsh-session-persistence'
+      - '@deepseek-ai/dsh-session-projection'
+      - '@deepseek-ai/dsh-session-projection-cache'
+      - '@deepseek-ai/dsh-settings'
+      - '@deepseek-ai/dsh-skill'
+      - '@deepseek-ai/dsh-subagent'
+      - '@deepseek-ai/dsh-subprocess'
+      - '@deepseek-ai/dsh-system-prompt'
+      - '@deepseek-ai/dsh-timeout'
+      - '@deepseek-ai/dsh-tools'
+      - '@deepseek-ai/dsh-user-approval'
+      - '@deepseek-ai/dsh-util-values'
+      - '@deepseek-ai/dsh-workspace'
+      - encoding
+      - puppeteer
+      - supports-color
+
   '@deepseek-ai/dsh-client-store@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@types/react@18.3.31)(react@18.2.0)':
     dependencies:
       '@deepseek-ai/cordis': 4.0.2(@deepseek-ai/cordis-plugin-include@1.0.7)(@deepseek-ai/cordis-plugin-loader@1.0.3)
@@ -7507,13 +7598,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@deepseek-ai/dsh-client-ui-quantskills@file:packages/ui-quantskills(2a97729c7138e7f74f21c0243a8b1e7c)':
+  '@deepseek-ai/dsh-client-ui-quantskills@file:packages/ui-quantskills(fc6a0ea3e6f5ffb5427055fc4d89d46f)':
     dependencies:
       '@deepseek-ai/cordis': 4.0.2(@deepseek-ai/cordis-plugin-include@1.0.7)(@deepseek-ai/cordis-plugin-loader@1.0.3)
       '@deepseek-ai/dsh-api-remotes': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))
       '@deepseek-ai/dsh-api-session-controller': 0.1.2-alpha.2(27f9c86387a2f40056a811357e76250d)
       '@deepseek-ai/dsh-api-workspace-controller': 0.1.2-alpha.2(5cea672c8b4e931a5d857c3ab4ac9651)
       '@deepseek-ai/dsh-client-connection': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))
+      '@deepseek-ai/dsh-client-remotes-quantskills': file:packages/client-remotes-quantskills(06e85b3912b089bb9514c849a11143b9)
       '@deepseek-ai/dsh-client-store': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@types/react@18.3.31)(react@18.2.0)
       '@deepseek-ai/dsh-client-ui-chat': file:packages/client-ui-chat(@deepseek-ai/cordis@4.0.2)
       '@deepseek-ai/dsh-client-ui-conversation': file:packages/client-ui-conversation(@deepseek-ai/cordis@4.0.2)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.9.2)
@@ -7530,7 +7622,7 @@ snapshots:
       '@deepseek-ai/dsh-panda-connector': file:packages/panda-connector(eabedeb2ad7519ac57c0c6d8350ecd5e)
       '@deepseek-ai/dsh-panda-mcp': file:packages/panda-mcp(1ab43c5bb9b3b205483380bc1039e02d)
       '@deepseek-ai/dsh-quantskills-host': file:packages/quantskills-host(d538cdeb03983562421b79ffb8e95f8e)
-      '@deepseek-ai/dsh-quantskills-session': file:packages/quantskills-session(c1840f55304aeff76f113faaa8e51695)
+      '@deepseek-ai/dsh-quantskills-session': file:packages/quantskills-session(48f57ae5a85b70e3a8ab3567c70cd2fe)
       '@deepseek-ai/dsh-session': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))
       '@deepseek-ai/dsh-settings': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-brand@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-session@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))))(@deepseek-ai/schemastery@3.18.2)
       '@deepseek-ai/dsh-typert-protocol': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))
@@ -7541,7 +7633,9 @@ snapshots:
       '@phosphor-icons/react': 2.1.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       clsx: 2.1.1
       d3-dsv: 3.0.1
+      echarts: 6.0.0
       pdfjs-dist: 6.1.200
+      three: 0.186.0
     transitivePeerDependencies:
       - react
       - react-dom
@@ -8222,7 +8316,7 @@ snapshots:
       yaml: 2.9.0
       zod: 4.4.3
 
-  '@deepseek-ai/dsh-quantskills-session@file:packages/quantskills-session(c1840f55304aeff76f113faaa8e51695)':
+  '@deepseek-ai/dsh-quantskills-session@file:packages/quantskills-session(48f57ae5a85b70e3a8ab3567c70cd2fe)':
     dependencies:
       '@deepseek-ai/cordis': 4.0.2(@deepseek-ai/cordis-plugin-include@1.0.7)(@deepseek-ai/cordis-plugin-loader@1.0.3)
       '@deepseek-ai/dsh-agent': 0.1.2-alpha.2(de969efc173e356795ed4d6dbfa9fb01)
@@ -8237,6 +8331,7 @@ snapshots:
       '@deepseek-ai/dsh-invariants': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)
       '@deepseek-ai/dsh-llm': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))
       '@deepseek-ai/dsh-native-command': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))
+      '@deepseek-ai/dsh-panda-mcp': file:packages/panda-mcp(1ab43c5bb9b3b205483380bc1039e02d)
       '@deepseek-ai/dsh-quantskills-host': file:packages/quantskills-host(d538cdeb03983562421b79ffb8e95f8e)
       '@deepseek-ai/dsh-scope': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))
       '@deepseek-ai/dsh-session': 0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2))(@deepseek-ai/dsh-scope@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)(@deepseek-ai/dsh-invariants@0.1.2-alpha.2(@deepseek-ai/cordis@4.0.2)))
@@ -9587,6 +9682,8 @@ snapshots:
       '@deepseek-ai/cosmokit': 1.8.3
       '@standard-schema/spec': 1.1.0
 
+  '@dimforge/rapier3d-compat@0.12.0': {}
+
   '@earendil-works/pi-ai@0.84.4(@modelcontextprotocol/sdk@1.30.0(zod@4.4.3))(ws@8.21.3)(zod@4.4.3)':
     dependencies:
       '@anthropic-ai/sdk': 0.91.1(zod@4.4.3)
@@ -10633,6 +10730,8 @@ snapshots:
 
   '@tokenizer/token@0.3.0': {}
 
+  '@tweenjs/tween.js@23.1.3': {}
+
   '@tybys/wasm-util@0.10.3':
     dependencies:
       tslib: 2.8.1
@@ -10703,9 +10802,22 @@ snapshots:
 
   '@types/retry@0.12.0': {}
 
+  '@types/stats.js@0.17.4': {}
+
+  '@types/three@0.186.0':
+    dependencies:
+      '@dimforge/rapier3d-compat': 0.12.0
+      '@tweenjs/tween.js': 23.1.3
+      '@types/stats.js': 0.17.4
+      '@types/webxr': 0.5.24
+      fflate: 0.8.3
+      meshoptimizer: 1.1.1
+
   '@types/trusted-types@2.0.7': {}
 
   '@types/unist@3.0.3': {}
+
+  '@types/webxr@0.5.24': {}
 
   '@types/whatwg-mimetype@3.0.2': {}
 
@@ -11094,6 +11206,11 @@ snapshots:
   ecdsa-sig-formatter@1.0.11:
     dependencies:
       safe-buffer: 5.2.1
+
+  echarts@6.0.0:
+    dependencies:
+      tslib: 2.3.0
+      zrender: 6.0.0
 
   ee-first@1.1.1: {}
 
@@ -11729,6 +11846,8 @@ snapshots:
   media-typer@1.1.1: {}
 
   merge-descriptors@2.0.0: {}
+
+  meshoptimizer@1.1.1: {}
 
   micromark-core-commonmark@2.0.3:
     dependencies:
@@ -12449,6 +12568,8 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
+  three@0.186.0: {}
+
   tinybench@2.9.0: {}
 
   tinyexec@1.3.0: {}
@@ -12514,6 +12635,8 @@ snapshots:
       - '@typescript/native-preview'
       - oxc-resolver
       - vue-tsc
+
+  tslib@2.3.0: {}
 
   tslib@2.8.1: {}
 
@@ -12745,6 +12868,10 @@ snapshots:
       zod: 4.4.3
 
   zod@4.4.3: {}
+
+  zrender@6.0.0:
+    dependencies:
+      tslib: 2.3.0
 
   zustand@4.4.7(@types/react@18.3.31)(immer@10.1.1)(react@18.2.0):
     dependencies:

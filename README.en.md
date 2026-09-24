@@ -69,7 +69,7 @@ Account connection, the AI trading assistant and Jev monitoring share one page. 
 | **Constraints and modes** | Set permitted directions, spread limits, opening cooldown, plan limits and an equity-drop stop. Autonomous mode lets Jev weigh strategy evidence; strict mode applies strategy gates first. Both retain account and data-validity checks. |
 | **Plans and receipts** | Generate a confirmation plan when conditions permit. Recheck the account and quotes before preparation, then track orders and fills after the user confirms submission. |
 
-Open **Competitions → Futures simulation → Jev monitoring**, configure your TypeSafe API key, connect the competition account and PandaData, then select a template and review its parameters before starting. Keys are stored in the local credential store. The interface shows request records and reported token usage. Custom Chinese strategy text can be translated with a selected, verified model while preserving the original; translation and Jev calls incur separate usage.
+Configure your TypeSafe API key in **Settings → Model Services → Jev**, then open **Competitions → Futures simulation → Jev monitoring**, connect the competition account and PandaData, and select a template and review its parameters before starting. Keys are stored in the local credential store. The interface shows request records and reported token usage. Custom Chinese strategy text can be translated with a selected, verified model while preserving the original; translation and Jev calls incur separate usage.
 
 Dedicated competition conversations can also ask Jev to assess a proposal's evidence, support and risk. **Monitoring analyzes data and prepares plans; every trade still requires user confirmation.** The equity-drop stop pauses monitoring without automatically closing positions. Action probabilities and confidence describe the model's judgment, not a trading win rate. The current futures CLI integration supports local Windows and macOS installations.
 
@@ -124,6 +124,7 @@ The result workbench previews HTML, Markdown, PDF, images, code and data files. 
 | Database | Search, preview and manage local data caches. |
 | Favorites | Keep frequently used capabilities within reach. |
 | Competitions | Open the futures simulation and factor competition workspaces. |
+| Fly Trader | Neural life, 3D homes, learning statistics and simulation trade suggestions requiring manual confirmation. |
 | QUBE / EVO | Explore and open the corresponding independent PandaAI services. |
 | Settings | Configure workspace, models, permissions, plugins, data connections, appearance and updates. |
 
@@ -146,6 +147,20 @@ For the Gitee mirror, use `https://gitee.com/quantskills/QuantStudio.git` as the
 The configuration directory defaults to `~/.dsh` and can be overridden with `DSH_HOME`. Select your workspace in Settings. Press `Ctrl+C` to stop the local service and run the same command to resume.
 
 Local conversations, configuration and files remain on the host; model and data services connect according to your settings. A shared deployment shares conversations and artifacts and **does not isolate data between members**. Concurrency depends on model quotas, workloads and server resources.
+
+### Fly Trader: first-time setup (Windows)
+
+The fly module and default 3D home ship with the app. Real neural life additionally requires a dedicated Python runtime, neural dependencies and MaleCNS connectome data. Environment setup downloads and verifies these automatically on first use, then reuses the local cache; manual Python or data installation is unnecessary.
+
+Blender generates or rebuilds homes; displaying the bundled home does not itself require it. The current full environment setup also provisions Blender. To reuse an installation, enter its directory or blender.exe path in the environment settings and verify it before preparing the environment. Blender on PATH is also detected; otherwise a dedicated version is downloaded. Blender MCP is not required: the app invokes the local executable in the background.
+
+1. Open Fly Trader from the sidebar or the competition card's preparation shortcut, then click Prepare Fly Trader in initial setup. The app prepares its controller, neural Python and MaleCNS in sequence and shows progress and retry options. Enter an existing Blender path first to reuse it; otherwise a dedicated copy is prepared.
+2. Neural life alone requires no model API. Configure models and the Jev API Key in Settings → Model Services. The Jev section manages one key shared by competition monitoring and Fly Trader; both pages provide directions and a shortcut. Fly Trader selects from your connected, verified QuantStudio models and reuses their connections and credentials. Set call budgets for conversation, Jev or home generation; they default to zero.
+3. Open Market Configuration, connect or reuse a competition account, select products and save actual contracts. Then click Connect Competition Market Data on the dashboard. Configuration saves do not reconnect; once connected, the dashboard shows connection status and the latest sync time. Temporary failures recover automatically; expired authorization requires reconnecting. For simulated trading suggestions, also connect PandaData, configure risk limits, disable life-only validation and wait for market data. The competition page shows account-matched fly plans, confirmed fills and fly-attributed gross P&L. Each trade plan requires manual confirmation.
+
+PandaData first supplies 500 completed bars, then fills gaps and updates the latest trading date on the selected 1- or 5-minute cadence, less often outside session hours. Local history survives restarts. The Fly Trader dashboard and expanded competition card share a Get History button and one background job, with per-contract bar counts, successful refresh times and errors. Requests cannot bypass an active job or rate-limit cooldown. Errors identify the competition API or PandaData and show a retry countdown, respecting a supplied retry delay or using exponential backoff while retaining cached bars. Both Jev and Fly Trader competition cards start collapsed and keep updating. Expand the fly card for market readiness, account positions and recent fills; installation and detailed configuration stay in Fly Trader.
+
+Dependencies, neural data, memory and homes are stored under `DSH_HOME/quantskills/fly` (default `~/.dsh/quantskills/fly`). Restarting restores memory and homes with trading suggestions stopped. See the [configuration and verification guide (Chinese)](docs/fly-integration.md).
 
 ## Updates and your own content
 

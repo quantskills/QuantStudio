@@ -81,6 +81,14 @@ describe('contest is opt-in and independent of ordinary sessions', () => {
     await expect(f.service.prepare({ operation: 'place_order', sessionId: 's1', order: { ...order, offset: 'close', direction: 'sell' } }, identity)).rejects.toThrow('合约或交易所与请求不符')
     expect(f.run.mock.calls.some(([, args]) => args[0] === 'plan')).toBe(false)
   })
+  it('observes an account without repeating doctor, but still rejects a changed CLI identity', async () => {
+    const f = await fixture(); await f.connect()
+    await f.service.observe(identity)
+    expect(f.run.mock.calls.map(([, args]) => args[0])).toEqual(['whoami', 'account', 'positions', 'orders'])
+    f.run.mockClear(); f.switchAccount()
+    await expect(f.service.observe(identity)).rejects.toThrow('账户')
+    expect(f.run.mock.calls.map(([, args]) => args[0])).toEqual(['whoami'])
+  })
   it('preserves transient doctor failures and permits a later fresh inspection', async () => {
     const f = await fixture(); await f.connect()
     const base = f.run.getMockImplementation()!

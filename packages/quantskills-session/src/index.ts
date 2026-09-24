@@ -2,6 +2,8 @@
 
 import { QuantSkillsLibraryStore } from './library-store.ts'
 import { ContestService, sameContest } from './contest-service.ts'
+import { FlyService } from './fly-service.ts'
+import type { FlyRequest, FlyRuntimeStatus } from './fly-runtime.ts'
 import { OfficialContestCli } from './contest-cli.ts'
 import { installContestTools } from './contest-tools.ts'
 import { ContestWatcher } from './contest-watch.ts'
@@ -950,6 +952,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   private readonly teamForkProvider: string
   private readonly workspaceResolver: QuantSkillsWorkspaceResolver
   private readonly contest: ContestService
+  private readonly fly: FlyService
   private readonly contestWatcher: ContestWatcher
   private readonly factorContest: FactorContestService
   private factorSessionOpening: Promise<unknown> = Promise.resolve()
@@ -967,6 +970,9 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     },
       join(resolveDshHome(config.dshHome), 'quantskills', 'contest', 'auth')), config.dshHome)
     this.contestWatcher = new ContestWatcher(ctx, this.contest)
+    this.fly = new FlyService(ctx, this.contest, join(resolveDshHome(config.dshHome), 'quantskills', 'fly'),
+      async () => (await this.contestWatcher.status()).running)
+    void this.fly.runtime.resume().catch(() => {})
     this.factorContest = new FactorContestService(new OfficialFactorRuntime(() => {
       const processes = ctx.get('subprocess')
       if (!processes) throw new Error('因子 CLI 进程服务未就绪。')
@@ -1143,6 +1149,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       this.lifetime.abort(new Error('quantskills-session: service disposed'))
       this.contest.dispose()
       this.contestWatcher.dispose()
+      const flyStopped = this.fly.runtime.dispose()
       this.factorContest.dispose()
       this.reservations.clear()
       this.plainReservations.clear()
@@ -1154,6 +1161,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       this.authoringCommitTails.clear()
       for (const runtime of this.residentSkillRuntimes.values()) disposeResidentRuntime(runtime)
       this.residentSkillRuntimes.clear()
+      return flyStopped
     }, 'quantskills-session.lifecycle')
   }
 
@@ -1176,6 +1184,17 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   workspaceResolve(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceResolveResult> {
     return this.workspaceResolver.resolve(request.preferredWorkspaceId)
   }
+
+  /** Inspect the opt-in local fly controller without installing dependencies. */
+  @Remote('flyStatus')
+  flyStatus(): Promise<FlyRuntimeStatus> { return this.fly.runtime.status() }
+
+  @Remote('flyInstall')
+  flyInstall(input?: { blenderPath?: string }): Promise<FlyRuntimeStatus> { return this.fly.runtime.install(input) }
+
+  /** Only the fixed fly controller routes are forwarded; execution stays in contestExecute. */
+  @Remote('flyRequest')
+  flyRequest(request: FlyRequest): Promise<JsonValue> { return this.fly.request(request) }
 
   /** Read local contest status without starting processes or opening a browser. */
   @Remote('factorStatus')

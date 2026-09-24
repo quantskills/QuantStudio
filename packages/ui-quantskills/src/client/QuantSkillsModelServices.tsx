@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { PlusIcon, ArrowLeftIcon, XIcon } from '@phosphor-icons/react'
 import type { ModelAccessRequest, ModelAccessResponse, ModelConnection, ModelConnectionDraft, ModelServiceDefinition } from '@deepseek-ai/dsh-quantskills-session/types'
 import css from './QuantSkillsModelServices.module.css'
+import { JevConnection } from './JevConnection.tsx'
+import type { ContestAccess } from './contest.ts'
 
 export type ModelAccess = (request: ModelAccessRequest) => Promise<ModelAccessResponse>
 const stateLabel: Record<string, string> = { saved: '已保存 · 待验证', verified: '验证通过', failed: '验证失败', 'discovery-unavailable': '已保存 · 需推理验证' }
@@ -36,8 +38,9 @@ function capabilityTemplate(modelIds: readonly string[], api: string): string {
   return JSON.stringify(profiles, null, 2)
 }
 /** QuantSkills owns this form and its typed Host API; no hidden Host forms are mounted. */
-export function QuantSkillsModelServices({ access, initialData, initialAdding = false, onSaved, onBusyChange }: {
+export function QuantSkillsModelServices({ access, jevAccess, initialData, initialAdding = false, onSaved, onBusyChange }: {
   access?: ModelAccess | undefined
+  jevAccess?: Pick<NonNullable<ContestAccess['watch']>, 'settings' | 'configure'> | undefined
   initialData?: ModelAccessResponse | undefined
   initialAdding?: boolean
   onSaved?: (result: ModelAccessResponse) => void
@@ -223,6 +226,7 @@ export function QuantSkillsModelServices({ access, initialData, initialAdding = 
           <button type="button" disabled={busy} onClick={() => { setDeleteRoute(undefined) }}>取消</button></div>}
       </section>)}
     </div>}
+    {jevAccess && <JevConnection access={jevAccess} models={data?.connections}/>}
     {testing && <section className={css.editor} aria-label="确认推理测试"><h3>测试 {testing.name}</h3>
       <p>将发送固定测试文本，不含会话或工作区内容。可能消耗 API 额度或订阅用量。</p>
       <select aria-label="测试模型" value={testModel} onChange={event => { setTestModel(event.target.value) }}>{testing.modelIds.map(id => <option key={id}>{id}</option>)}</select>

@@ -40,7 +40,7 @@ export async function evaluateContestWithJev(ctx: Context, contest: ContestServi
   let key: string | undefined
   try { key = (await ctx.get('credentials')?.resolve(credentialRef('TYPESAFE_API_KEY')))?.value }
   catch { throw new Error('无法读取 Jev 凭据，请检查本机凭据服务。') }
-  if (!key) throw new Error('尚未配置 Jev：请在 Host 凭据库中设置 TYPESAFE_API_KEY。')
+  if (!key) throw new Error('尚未配置 Jev：请在「设置 → 模型服务 → Jev」配置 API Key。')
   const snapshot = await contest.inspect(identity, signal)
   const state = { ...parsed.data, evaluatedAt: new Date().toISOString(), accountFetchedAt: new Date(snapshot.fetchedAt).toISOString(),
     account: snapshot.account.data, positions: snapshot.positions.data, openOrders: snapshot.openOrders.data }

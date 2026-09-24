@@ -1,6 +1,7 @@
 import { type DatabaseAccess } from './DatabasePage.tsx';
 import type { ContestAccess } from './contest.ts';
 import type { FactorContestAccess } from './factor-contest.ts';
+import type { FlyAccess } from './fly/transport.ts';
 import { type ManualSkillSave } from './ManualSkillEditor.tsx';
 import { type ReactNode, type RefObject } from 'react';
 import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store';
@@ -19,6 +20,7 @@ export interface QuantSkillsAppInjected {
     renderPluginMarket?: () => ReactNode;
     databaseAccess?: DatabaseAccess;
     contestAccess?: ContestAccess;
+    flyAccess?: FlyAccess;
     factorContestAccess?: FactorContestAccess;
     modelAccess?: ModelAccess;
     /** Whether new Sessions use the native plugin's managed-default Workspace policy. */
@@ -128,6 +130,7 @@ export interface QuantSkillsRailInjected {
 /** Injected state and actions for the native DSH application adapter. */
 export interface QuantSkillsPluginFrameInjected {
     modelAccess: ModelAccess;
+    flyAccess: FlyAccess;
     hooks: {
         view: ViewInstance['store'];
         layout: LayoutInstance['store'];
@@ -222,7 +225,7 @@ export type QuantSkillsAuthoringActionProps = QuantSkillsAuthoringActionInjected
 /** DSH-compatible root frame that keeps the stock conversation services while replacing the stock visual shell. */
 export declare function QuantSkillsFrame({ useStore, actions, useSessions, useView, useCatalog, useBoundSessions, useAgents, useNotifications, renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, startSession, startAuthoringSession, openAgentTeamBuilder, }: QuantSkillsFrameProps): import("react").JSX.Element;
 /** Full-screen QuantSkills application hosted by the stock DSH shell. */
-export declare function QuantSkillsPluginFrame({ useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications, renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions, startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails, claimConversationTextScale, openResults, closeResults, close, modelAccess, }: QuantSkillsPluginFrameProps): import("react").JSX.Element | null;
+export declare function QuantSkillsPluginFrame({ useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications, renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions, startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails, claimConversationTextScale, openResults, closeResults, close, modelAccess, flyAccess, }: QuantSkillsPluginFrameProps): import("react").JSX.Element | null;
 /** QuantSkills application launcher contributed to the stock Host sidebar. */
 export declare function QuantSkillsPluginLauncher({ wide, useNotifications, open }: QuantSkillsPluginLauncherProps): import("react").JSX.Element;
 /** Compact DSH-consistent application rail used by every QuantSkills screen. */

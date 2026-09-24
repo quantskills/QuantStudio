@@ -29,8 +29,8 @@ export declare const quantSkillsAgentDefinitionSchema: z.ZodPipe<z.ZodObject<{
     name: z.ZodString;
     role: z.ZodString;
     mode: z.ZodEnum<{
-        dynamic: "dynamic";
         fixed: "fixed";
+        dynamic: "dynamic";
     }>;
     model: z.ZodOptional<z.ZodObject<{
         provider: z.ZodString;
@@ -66,7 +66,7 @@ export declare const quantSkillsAgentDefinitionSchema: z.ZodPipe<z.ZodObject<{
     revision: number;
     name: string;
     role: string;
-    mode: "dynamic" | "fixed";
+    mode: "fixed" | "dynamic";
     permission: "read-only" | "workspace-write" | "danger-full-access";
     skills: Readonly<{
         assetId: QuantSkillsAssetId;

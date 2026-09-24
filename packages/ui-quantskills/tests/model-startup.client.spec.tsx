@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ModelStartup } from '../src/client/ModelStartup.tsx'
 import type { ModelAccess } from '../src/client/QuantSkillsModelServices.tsx'
+import type { FlyAccess } from '../src/client/fly/transport.ts'
 import { MODEL_SERVICES } from '../../quantskills-session/src/model-service-catalog.ts'
 const empty = { catalog: MODEL_SERVICES, connections: [] }
 const configured = { ...empty, connections: [{ route: 'custom-a', name: 'Local', service: 'custom', baseURL: 'http://localhost:1234/v1', api: 'openai-completions', configured: true, auto: false, modelIds: ['model-a'], modelsJson: '[]', state: 'saved', message: '' }] }
@@ -19,6 +20,14 @@ it('opens service selection on startup and dismisses only for this launch', asyn
   unmount()
   render(<ModelStartup access={access}/>)
   await screen.findByRole('dialog')
+})
+it('offers one-click fly preparation in the initial settings and passes the chosen Blender path', async () => {
+  const runtime = { supported: true, installed: false, running: false, installing: false, message: '首次使用需要准备果蝇运行环境。' }
+  const flyAccess: FlyAccess = { status: vi.fn(async () => runtime), install: vi.fn(async () => ({ ...runtime, installing: true })), request: vi.fn(async () => ({})) }
+  render(<ModelStartup access={async () => empty} flyAccess={flyAccess}/>)
+  fireEvent.change(await screen.findByRole('textbox', { name: '已有 Blender 安装路径（可选）' }), { target: { value: 'F:\\New Folder\\blender.exe' } })
+  fireEvent.click(screen.getByRole('button', { name: '一键准备果蝇 / 重试' }))
+  await waitFor(() => expect(flyAccess.install).toHaveBeenCalledExactlyOnceWith({ blenderPath: 'F:\\New Folder\\blender.exe' }))
 })
 it('recognizes legacy configured connections without demanding a fresh verification', async () => {
   const access = vi.fn<ModelAccess>(async () => configured)

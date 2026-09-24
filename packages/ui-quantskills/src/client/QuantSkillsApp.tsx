@@ -10,6 +10,8 @@ import { DatabasePage, type DatabaseAccess } from './DatabasePage.tsx'
 import type { ContestAccess } from './contest.ts'
 import type { FactorContestAccess } from './factor-contest.ts'
 import { CompetitionHub } from './CompetitionHub.tsx'
+import { FlyPage } from './FlyPage.tsx'
+import type { FlyAccess } from './fly/transport.ts'
 import { TrophyIcon } from '@phosphor-icons/react'
 import { ExpertPresets } from './ExpertPresets.tsx'
 import { TeamPresets } from './TeamPresets.tsx'
@@ -197,6 +199,7 @@ export interface QuantSkillsAppInjected {
   renderPluginMarket?: () => ReactNode
   databaseAccess?: DatabaseAccess
   contestAccess?: ContestAccess
+  flyAccess?: FlyAccess
   factorContestAccess?: FactorContestAccess
   modelAccess?: ModelAccess
 
@@ -315,6 +318,7 @@ export interface QuantSkillsRailInjected {
 /** Injected state and actions for the native DSH application adapter. */
 export interface QuantSkillsPluginFrameInjected {
   modelAccess: ModelAccess
+  flyAccess: FlyAccess
   hooks: {
     view: ViewInstance['store']
     layout: LayoutInstance['store']
@@ -1389,6 +1393,7 @@ const PRODUCT_NAV_ITEMS: typeof NAV_ITEMS = [
   { page: 'qube', label: 'QUBE', icon: <Cube size={24}/> },
   { page: 'evo', label: 'EVO', icon: <Dna size={24}/> },
   { page: 'contest', label: '比赛', icon: <TrophyIcon size={24}/> },
+  { page: 'fly', label: '果蝇交易员', icon: <Dna size={24}/> },
 ]
 
 const PLUGIN_NAV_WIDTH = 96
@@ -1429,7 +1434,7 @@ export function QuantSkillsPluginFrame({
   useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications,
   renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions,
   startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails,
-  claimConversationTextScale, openResults, closeResults, close, modelAccess,
+  claimConversationTextScale, openResults, closeResults, close, modelAccess, flyAccess,
 }: QuantSkillsPluginFrameProps) {
   const open = useView(state => state.pluginOpen)
   const page = useView(state => state.page)
@@ -1690,7 +1695,7 @@ export function QuantSkillsPluginFrame({
     data-qs-theme={colorScheme}
     data-qs-background={background.id}
   >
-    <ModelStartup access={modelAccess}/>
+    <ModelStartup access={modelAccess} flyAccess={flyAccess}/>
     {mobile && <header ref={mobileHeaderRef} className={css.mobileHeader} aria-label="移动端工具栏">
       <button type="button" aria-label={mobilePanel === 'navigation' ? '关闭导航' : '打开导航'} aria-expanded={mobilePanel === 'navigation'} aria-controls={mobileNavId}
         onClick={() => { closeResults(); setMobilePanel(current => current === 'navigation' ? undefined : 'navigation') }}>
@@ -1913,6 +1918,7 @@ export function QuantSkillsApp(props: QuantSkillsAppProps) {
   const boundSessions = props.useBoundSessions(snapshot => snapshot)
   const agents = props.useAgents(snapshot => snapshot)
   const pageProps = { ...props, catalog, boundSessions, agents }
+  const openModelSettings = () => { props.actions.setSettingsSection('models'); props.actions.navigate('settings') }
   return (
     <main className={css.app} data-page={page}>
       {page === 'home' && <HomePage {...pageProps} />}
@@ -1923,7 +1929,8 @@ export function QuantSkillsApp(props: QuantSkillsAppProps) {
       {(page === 'agents' || page === 'teams') && <AgentsPage {...pageProps} />}
       {page === 'settings' && <SettingsPage {...pageProps} />}
       {page === 'database' && <DatabasePage access={pageProps.databaseAccess} />}
-      {page === 'contest' && <CompetitionHub access={pageProps.contestAccess} factorAccess={pageProps.factorContestAccess} researchSessions={boundSessions.plainArchives} openResearch={props.openSession} />}
+      {page === 'contest' && <CompetitionHub access={pageProps.contestAccess} flyAccess={pageProps.flyAccess} openFly={() => props.actions.navigate('fly')} factorAccess={pageProps.factorContestAccess} researchSessions={boundSessions.plainArchives} openResearch={props.openSession} openModelSettings={openModelSettings} />}
+      {page === 'fly' && <FlyPage access={pageProps.flyAccess} contest={pageProps.contestAccess} openContest={() => props.actions.navigate('contest')} openModelSettings={openModelSettings} />}
       {(page === 'qube' || page === 'evo') && <ProductIntro product={page} navigate={props.actions.navigate} />}
     </main>
   )
@@ -4523,7 +4530,7 @@ function SettingsPage(props: PageProps) {
           <p>界面 {Math.round(interfaceScale * 100)}% · 对话文字 {Math.round(conversationScale * 100)}%</p>
         </aside>
         <section className={css.settingsContent}>
-          {section === 'plugins' ? <PluginSettings {...props}/> : section === 'models' ? <QuantSkillsModelServices access={props.modelAccess}/> : section === 'workspace' ? <WorkspaceSettings props={props}/> : section === 'appearance' ? <>
+          {section === 'plugins' ? <PluginSettings {...props}/> : section === 'models' ? <QuantSkillsModelServices access={props.modelAccess} jevAccess={props.contestAccess?.watch}/> : section === 'workspace' ? <WorkspaceSettings props={props}/> : section === 'appearance' ? <>
             <h2>外观</h2>
             <p>QuantSkills 的配色、界面比例和会话文字均可独立调整，并即时预览。</p>
             <QuantSkillsThemePicker

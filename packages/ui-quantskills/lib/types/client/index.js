@@ -19,6 +19,7 @@ import { resultPreviewRank } from "./result-data.js";
 import { QuantSkillsAttachmentControl, QuantSkillsAttachmentController, } from "./QuantSkillsAttachmentControl.js";
 import { QuantSkillsPandaMcpControl, QuantSkillsPandaMcpHeroControl, } from "./QuantSkillsPandaMcpControl.js";
 import { ContestReview } from "./ContestReview.js";
+import { connectFlyTransport } from "./fly/transport.js";
 import { FactorContestReview } from "./FactorContestReview.js";
 import { AuthoringReview } from "./AuthoringReview.js";
 import { SessionFavorite } from "./SessionFavorite.js";
@@ -673,6 +674,12 @@ export function mountQuantSkillsApplication(ctx, options) {
                 view.actions.showPluginConversationIndex();
         });
     };
+    const flyAccess = {
+        status: () => unwrapRemote(ctx.remote.quantSkillsSessions.flyStatus()),
+        install: input => unwrapRemote(ctx.remote.quantSkillsSessions.flyInstall(input)),
+        request: request => unwrapRemote(ctx.remote.quantSkillsSessions.flyRequest(request)),
+    };
+    connectFlyTransport(flyAccess);
     if (options.mode === 'standalone') {
         ctx.effect(() => {
             const disposeService = ctx.reflect.provide('layout', layout);
@@ -740,6 +747,7 @@ export function mountQuantSkillsApplication(ctx, options) {
                     },
                     actions: viewActions,
                     modelAccess: request => unwrapRemote(ctx.remote.quantSkillsSessions.modelsAccess(request)),
+                    flyAccess,
                     openSession,
                     acknowledgeNotification: (id) => { notifications.actions.acknowledge(id); },
                     renameSession: (id, title) => renameSession(id, title),
@@ -1821,6 +1829,7 @@ export function mountQuantSkillsApplication(ctx, options) {
                 categorize: (id, category) => unwrapRemote(ctx.remote.pandaMcp.databaseCategorize({ id, category })),
             },
             contestAccess,
+            flyAccess,
             factorContestAccess,
             modelAccess: request => unwrapRemote(ctx.remote.quantSkillsSessions.modelsAccess(request)),
             readAssetReadme,
