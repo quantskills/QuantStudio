@@ -16,7 +16,7 @@ for (const path of paths) {
   const source = readFileSync(path, 'utf8')
   const normalized = source
     .replace(/[\t ]+$/gm, '')
-    .replace(/^(\s*\/\/#region \\0dsh-(?:css|png|image):)(.+)$/gm, (_line, prefix, rawSpecifier) => {
+    .replace(/^(\s*\/\/#region \\0dsh-(?:css|global-css|png|image):)(.+)$/gm, (_line, prefix, rawSpecifier) => {
       const specifier = String(rawSpecifier).replaceAll('\\', '/')
       if (specifier.startsWith('packages/')) return `${prefix}${specifier}`
       const packagesIndex = specifier.lastIndexOf('/packages/')
