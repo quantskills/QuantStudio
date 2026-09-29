@@ -33,7 +33,7 @@ def dispatch(manager, path, body=None):
     if route == 'control' and body is not None:
         if body.get('action') not in ('start','pause','observe','trade','close_only','connect','history','checkpoint','restore'):
             raise ValueError('未知控制操作')
-        item.command(body['action'], body.get('version', ''))
+        item.command(body['action'], body.get('version', ''), body.get('execution_consent'))
         return {'control': item.control, 'history': dict(item.history_status), 'connection': dict(item.connection)}
     if route == 'trade-filters' and body is not None:
         filters = TradingFilters.model_validate(body)
@@ -100,7 +100,7 @@ def dispatch(manager, path, body=None):
         if file.stat().st_size > 50 * 1024 * 1024: raise ValueError('资产过大')
         mime = 'model/gltf-binary' if name.endswith('.glb') else 'image/png'
         return {'url': 'data:' + mime + ';base64,' + base64.b64encode(file.read_bytes()).decode()}
-    raise ValueError('未知果蝇接口')
+    raise ValueError('未知AI 交易员接口')
 
 
 def wait_for_host_shutdown():
@@ -139,7 +139,7 @@ def main():
                 result = dispatch(manager, request['path'], request.get('body'))
                 payload = json.dumps({'ok': True, 'data': result}, ensure_ascii=False, allow_nan=False).encode()
             except Exception as exc:
-                message = str(exc)[:500] if isinstance(exc, (ValueError, KeyError)) else '果蝇请求失败：' + type(exc).__name__
+                message = str(exc)[:500] if isinstance(exc, (ValueError, KeyError)) else 'AI 交易员请求失败：' + type(exc).__name__
                 payload = json.dumps({'ok': False, 'error': message}, ensure_ascii=False).encode()
             self.send_response(200); self.send_header('Content-Type', 'application/json'); self.send_header('Content-Length', str(len(payload)))
             self.end_headers()

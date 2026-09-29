@@ -6,7 +6,7 @@ import { resolveDshHome } from '@deepseek-ai/dsh-home-paths';
 import { z } from 'zod';
 import { record, safeData, versionAtLeast } from "./contest-cli.js";
 import { sameContest } from "./contest-service.js";
-import { FactorApiError } from "./factor-contest-cli.js";
+import { FactorApiError, FactorCliInputError } from "./factor-contest-cli.js";
 import { FACTOR_CONTEST_ID } from "./factor-contest-types.js";
 const id = z.string().min(1).max(100).regex(/^[A-Za-z0-9_-]+$/);
 const cycle = z.number().int().min(1).max(10);
@@ -151,12 +151,26 @@ export class FactorContestService {
     }
     arena(path, signal) { return this.call(s => this.runtime.arena(path, s), signal); }
     async verify(expected, signal) {
-        const accountId = await this.call(s => this.runtime.identity(s), signal);
+        let accountId;
+        try {
+            accountId = await this.call(s => this.runtime.identity(s), signal);
+        }
+        catch (error) {
+            if (error instanceof FactorApiError && error.code === 'LOGIN_REQUIRED') {
+                this.invalidate();
+                this.phase = 'error';
+                this.message = error.message;
+                await this.save();
+            }
+            throw error;
+        }
         const identity = { accountId, contestId: FACTOR_CONTEST_ID };
         if ((expected && !sameContest(identity, expected)) || (this.state.identity && !sameContest(identity, this.state.identity))) {
-            this.ready = false;
             this.invalidate();
-            throw new Error('因子登录账户已改变，请重新连接并进入新账户对话。');
+            this.phase = 'error';
+            this.message = '因子登录账户已改变，请重新连接并进入新账户对话。';
+            await this.save();
+            throw new Error(this.message);
         }
         return identity;
     }
@@ -304,7 +318,10 @@ export class FactorContestService {
             if (request.kind === 'workflows')
                 return this.arena(`/factorPool/workflows?page=${request.page ?? 1}&page_size=50`, signal);
             if (request.kind === 'scores') {
-                const poolId = id.parse(record(await this.pool(signal)).pool_id);
+                const pool = await this.pool(signal);
+                if (pool === null)
+                    return { scores: [], message: '创建因子池并参赛后，可在这里查看积分与成绩。' };
+                const poolId = id.parse(record(pool).pool_id);
                 return this.arena(`/factorPool/pools/${poolId}/scores`, signal);
             }
             if (request.kind === 'factors')
@@ -324,12 +341,14 @@ export class FactorContestService {
             return;
         }
         id.parse(p.pool_id);
-        if (!['draft', 'active'].includes(String(p.status)) || p.settling !== false)
+        // The platform changes an unsubmitted pool to validating after its first factor is added.
+        const building = p.status === 'draft' || (p.status === 'validating' && p.submitted_at === null && p.cycle_locked === false);
+        if ((!building && p.status !== 'active') || p.settling !== false)
             throw new Error('因子池当前不可修改，请等待提交或结算结束。');
         const factors = Array.isArray(p.factors) ? p.factors.map(record) : [];
         if (action.kind === 'update-pool' && action.cycle !== undefined && p.cycle_locked !== false && action.cycle !== p.rebalance_cycle_days)
             throw new Error('正式提交后的调仓周期已锁定。');
-        if (action.kind === 'submit-pool' && (p.status !== 'draft' || Number(p.ready_factor_count) < 5 || !Number.isFinite(Number(p.ready_factor_count))))
+        if (action.kind === 'submit-pool' && (!building || Number(p.ready_factor_count) < 5 || !Number.isFinite(Number(p.ready_factor_count))))
             throw new Error('至少需要 5 只就绪因子，且因子池尚未正式提交。');
         if (action.kind === 'add-factor' && factors.length >= 50)
             throw new Error('因子池已达 50 只上限。');
@@ -519,10 +538,17 @@ export class FactorContestService {
                 else if (b.status === 'active' && (b.runsUsed >= b.maxRuns || b.creditsUsed >= b.creditThreshold))
                     b.status = 'exhausted';
             }
-            catch {
-                r.status = 'unknown';
-                b.status = 'unknown';
-                r.result = { message: '创建或回测结果待核实。次数已保留，停止本批次；请核对记录，勿重发。' };
+            catch (error) {
+                if (error instanceof FactorCliInputError) {
+                    r.status = 'failed';
+                    b.status = 'stopped';
+                    r.result = { message: r.workflowId ? '工作流已创建，但回测参数解析失败，未启动回测。批次已停止。' : error.message };
+                }
+                else {
+                    r.status = 'unknown';
+                    b.status = 'unknown';
+                    r.result = { message: '创建或回测结果待核实。次数已保留，停止本批次；请核对记录，勿重发。' };
+                }
             }
             await this.save();
             return structuredClone(r);

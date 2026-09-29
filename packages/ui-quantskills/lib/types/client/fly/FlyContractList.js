@@ -1,0 +1,15 @@
+import { jsxs as _jsxs, jsx as _jsx } from "react/jsx-runtime";
+import { CaretRightIcon, PlusIcon } from '@phosphor-icons/react';
+import { products } from '@deepseek-ai/dsh-quantskills-session/contracts';
+const actions = { WAIT: '等待信号', LONG: '目标做多', SHORT: '目标做空', CLOSE: '平仓' };
+const readiness = { history_incomplete: '历史不足', history_gap: '分钟线缺口', quote_stale: '等待新报价', bars_stale: '分钟线过期' };
+export function FlyContractList({ markets, selected, trading, onSelect, onManage }) {
+    return _jsxs("section", { className: "qs-contract-overview", "aria-label": "\u4EA4\u6613\u5408\u7EA6", children: [_jsxs("header", { children: [_jsxs("h2", { children: ["\u4EA4\u6613\u5408\u7EA6 ", _jsxs("small", { children: [markets.length, " \u4E2A\u5DF2\u914D\u7F6E"] })] }), _jsxs("button", { type: "button", onClick: onManage, children: [_jsx(PlusIcon, { size: 15 }), "\u7BA1\u7406\u5408\u7EA6"] })] }), _jsxs("div", { className: "qs-contract-list", children: [markets.map(market => {
+                        const values = (market.chart ?? []).filter(Number.isFinite).slice(-36);
+                        const low = Math.min(...values), high = Math.max(...values), range = high - low || 1;
+                        const name = products.find(item => item.product.toLowerCase() === market.product.toLowerCase())?.name;
+                        const state = !trading ? '已暂停' : market.execution?.status === 'reconciling' ? '成交后核对持仓' : market.readiness !== 'ready' ? readiness[market.readiness] || '等待行情' : market.decision_status?.status === 'running' ? '模型分析中' : market.decision_status?.status === 'error' ? '模型调用未完成' : market.decision ? actions[market.decision.choice.action] || '等待决策' : '等待决策';
+                        return _jsxs("button", { type: "button", className: "qs-contract-row", "aria-label": `查看合约 ${market.symbol || market.product}`, "aria-pressed": selected === market.product, onClick: () => onSelect(market.product), children: [_jsxs("span", { children: [_jsx("strong", { children: name || market.product.toUpperCase() }), _jsx("small", { children: market.symbol || market.product })] }), _jsx("span", { className: "qs-contract-price", children: market.price != null && Number.isFinite(market.price) ? market.price.toLocaleString('zh-CN', { maximumFractionDigits: 4 }) : '—' }), _jsx("span", { className: "qs-contract-spark", children: values.length > 1 ? _jsx("svg", { viewBox: "0 0 100 30", "aria-hidden": "true", children: _jsx("polyline", { points: values.map((v, i) => `${i / (values.length - 1) * 100},${high === low ? 15 : 26 - (v - low) / range * 22}`).join(' ') }) }) : '行情待同步' }), _jsx("span", { className: "qs-contract-position", children: market.quote_at ? `多 ${market.long ?? 0} / 空 ${market.short ?? 0} 手` : '持仓待同步' }), _jsx("span", { className: "qs-contract-state", children: state }), _jsx(CaretRightIcon, { size: 14 })] }, market.product);
+                    }), !markets.length && _jsx("p", { children: "\u6DFB\u52A0\u5B9E\u9645\u5408\u7EA6\u540E\uFF0C\u5728\u8FD9\u91CC\u540C\u65F6\u67E5\u770B\u884C\u60C5\u4E0E\u8FD0\u884C\u72B6\u6001\u3002" })] })] });
+}
+//# sourceMappingURL=FlyContractList.js.map

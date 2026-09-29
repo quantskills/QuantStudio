@@ -1,0 +1,11 @@
+.root { min-width: 0; display: flex; align-items: center; justify-content: center; }
+.trigger { display: grid; place-items: center; width: 32px; height: 34px; padding: 0; border: 0; border-radius: 8px; color: var(--qs-muted); background: transparent; cursor: pointer; }
+.trigger:hover, .trigger[aria-expanded='true'] { color: var(--qs-blue); background: var(--dsw-alias-button-ghost-active-fill); }
+.trigger:focus-visible, .menu button:focus-visible { outline: 2px solid var(--qs-blue); outline-offset: -2px; }
+.menu { position: fixed; inset: auto; margin: 0; box-sizing: border-box; width: 180px; max-width: calc(100vw - 16px); padding: 6px; border: 1px solid var(--qs-border); border-radius: 12px; color: var(--dsw-alias-label-primary); background: var(--dsw-alias-bg-base, Canvas); box-shadow: 0 8px 28px rgb(20 30 50 / 16%); font: inherit; z-index: 80; }
+.menu button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 38px; padding: 9px 11px; border: 0; border-radius: 7px; color: inherit; background: transparent; font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+.menu button:hover:not(:disabled), .menu button:focus-visible { background: var(--dsw-alias-button-ghost-active-fill); }
+.menu button:disabled { opacity: .4; cursor: not-allowed; }
+.menu .danger { color: var(--dsw-static-red-600, #b42318); }
+.separator { height: 1px; margin: 5px 7px; background: var(--qs-border); }
+.menu small { display: block; padding: 7px 10px; color: var(--qs-muted); font-size: 11px; line-height: 1.5; }

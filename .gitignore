@@ -11,3 +11,8 @@ coverage/
 .env.*
 !.env.example
 *.log
+
+# Local development and test scratch files.
+/work/
+__pycache__/
+*.pyc

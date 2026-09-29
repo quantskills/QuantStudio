@@ -12,7 +12,8 @@ export interface ContestCli {
 }
 export declare class ContestCliError extends Error {
     readonly code: string;
-    constructor(code: string, message: string);
+    readonly retryAfterSeconds?: number | undefined;
+    constructor(code: string, message: string, retryAfterSeconds?: number | undefined);
 }
 export declare const transientContestCodes: Set<string>;
 export declare function record(value: unknown): Record<string, JsonValue>;

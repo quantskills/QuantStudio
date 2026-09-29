@@ -9,7 +9,7 @@ function isBackdrop(event) {
     return event.clientX < left || event.clientX > right || event.clientY < top || event.clientY > bottom;
 }
 /** Native modal: top-layer rendering, inert background and browser focus containment. */
-export function ActionDialog({ title, children, busy = false, error, wide = false, drawer = false, onClose }) {
+export function ActionDialog({ title, children, busy = false, error, wide = false, drawer = false, settings = false, dismissOnBackdrop = false, onClose }) {
     const ref = useRef(null);
     const backdropPress = useRef(false);
     const titleId = useId();
@@ -28,11 +28,11 @@ export function ActionDialog({ title, children, busy = false, error, wide = fals
                 trigger.focus();
         };
     }, []);
-    return _jsxs("dialog", { ref: ref, className: `${css.dialog}${drawer ? ' qs-trading-drawer' : ''}`, "data-wide": wide || undefined, "aria-labelledby": titleId, "aria-modal": "true", "aria-busy": busy, onPointerDown: event => {
-            backdropPress.current = drawer && !busy && event.button === 0 && isBackdrop(event);
+    return _jsxs("dialog", { ref: ref, className: `${css.dialog}${drawer ? ' qs-trading-drawer' : ''}${settings ? ' qs-settings-sheet' : ''}`, "data-wide": wide || undefined, "aria-labelledby": titleId, "aria-modal": "true", "aria-busy": busy, onPointerDown: event => {
+            backdropPress.current = (drawer || settings || dismissOnBackdrop) && !busy && event.button === 0 && isBackdrop(event);
         }, onPointerCancel: () => { backdropPress.current = false; }, onClick: event => {
             // Native backdrop events target the dialog too; ignore its padding and drags from inside.
-            const dismiss = backdropPress.current && drawer && !busy && event.button === 0 && isBackdrop(event);
+            const dismiss = backdropPress.current && (drawer || settings || dismissOnBackdrop) && !busy && event.button === 0 && isBackdrop(event);
             backdropPress.current = false;
             if (dismiss)
                 onClose();

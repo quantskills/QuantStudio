@@ -132,10 +132,8 @@ def prepare(root):
                     if process.wait()==0:break
                     if _cancel.is_set():raise ValueError('环境准备已停止')
                 else:raise ValueError('连接组准备失败，请重试；已下载部分会保留')
-            if not deps['blender_ready']:
-                item=manifest['blender'];progress('blender')
-                archive=download(item['url'],folder/'blender.zip',item['sha256'],lambda **kw:progress('blender',**kw));extract(archive,folder)
-                deps['blender']=str(folder/'blender-5.2.2-windows-x64'/'blender.exe')
+            # LifeGarden renders in the browser. Neural trading only needs Python
+            # and MaleCNS; keep an existing legacy Blender path without installing it.
             atomic_json(root/'environment.json',{k:deps[k] for k in ('python','data','blender')})
             atomic_json(root/'environment-progress.json',{'status':'ready','stage':'complete'})
         except Exception as exc:atomic_json(root/'environment-progress.json',{'status':'error','message':str(exc)[:350]})

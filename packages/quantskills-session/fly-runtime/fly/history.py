@@ -46,7 +46,9 @@ def readiness(bars, quote_at, now=None, minutes=1):
     now = datetime.now(timezone.utc).timestamp() if now is None else now
     if len(bars) != 500: return 'history_incomplete'
     if not quote_at or not 0 <= now-quote_at <= 10: return 'quote_stale'
-    if not 0 <= now-timestamp(bars[-1]['datetime']) <= max(180,minutes*120): return 'bars_stale'
+    # Bars carry their OPEN timestamp. A completed bar may arrive shortly after
+    # the next boundary; use this same bounded window for display and decisions.
+    if not minutes*60 <= now-timestamp(bars[-1]['datetime']) <= max(180,minutes*120): return 'bars_stale'
     return 'ready'
 
 
@@ -73,7 +75,9 @@ def history_delay(products, minutes, now):
     active=any(session_key(now,p) is not None for p in products)
     weekend=moment.weekday()==6 or (moment.weekday()==5 and moment.hour>=3)
     if not active or weekend:return 300
-    return minutes*60-now%(minutes*60)+2
+    # Retry publication lag without waiting another full bar. Cached, current
+    # datasets do not cause a provider request on every pass.
+    return min(30, minutes*60-now%(minutes*60)+2)
 
 
 def session_key(at, product):

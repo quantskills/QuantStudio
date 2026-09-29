@@ -130,7 +130,7 @@ class HistoryRefreshTests(unittest.TestCase):
         bars[-1]['datetime']='2026-09-24T09:33:00+08:00'
         self.assertEqual(history_since(bars,'IF'),bars[0]['datetime'])
         self.assertIsNone(history_since(bars[:499],'IF'))
-        self.assertEqual(history_delay(['IF'],5,timestamp('2026-09-24T10:01:00+08:00')),242)
+        self.assertEqual(history_delay(['IF'],5,timestamp('2026-09-24T10:01:00+08:00')),30)
         self.assertEqual(history_delay(['IF'],1,timestamp('2026-09-24T12:00:00+08:00')),300)
 
     def test_persisted_window_is_used_for_next_request(self):
@@ -142,6 +142,69 @@ class HistoryRefreshTests(unittest.TestCase):
             self.item.request_history();self.wait_history()
             self.assertEqual(call.call_args_list[0].args[1]['since'],last)
             self.assertNotIn('since',call.call_args_list[1].args[1])
+
+    def test_competition_rate_limit_stays_at_thirty_seconds(self):
+        state={}
+        now=100
+        for code in ('RATE_LIMIT','rate_limit_exceeded','http_429'):
+            state=bridge.retry_state(state,bridge.BridgeError('limit',source='competition',code=code),now,'competition')
+            self.assertEqual(state['retry_at'],now+30)
+            now+=30
+        state=bridge.retry_state(state,bridge.BridgeError('limit',source='competition',code='RATE_LIMIT',retry_after=90),now,'competition')
+        self.assertEqual(state['retry_at'],now+90)
+
+    def test_normal_account_poll_waits_thirty_seconds_after_completion(self):
+        with patch('fly.service.threading.Thread') as worker:
+            self.item.poll_counter(100)
+            self.item.poll_counter(105)
+            self.item.poll_counter(129)
+            self.assertEqual(worker.call_count, 1)
+            self.item.poll_counter(130)
+            self.assertEqual(worker.call_count, 2)
+        with patch('fly.service.sync_contest'), patch('fly.service.time.time', return_value=145):
+            self.item.sync_counter()
+        with patch('fly.service.threading.Thread') as worker:
+            self.item.poll_counter(174)
+            worker.assert_not_called()
+            self.item.poll_counter(175)
+            self.assertEqual(worker.call_count, 1)
+            self.item.counter_lock.acquire()
+            try: self.item.poll_counter(300)
+            finally: self.item.counter_lock.release()
+            self.assertEqual(worker.call_count, 1)
+
+    def test_slow_history_batch_does_not_wait_another_full_minute(self):
+        now=timestamp('2026-09-29T14:08:04+08:00')
+        self.item.last_history=now-45
+        self.item.history_lock.acquire()
+        with patch.object(self.item, 'backfill', return_value=''), patch('fly.service.time.time', return_value=now):
+            self.item.safe_backfill(self.item.settings, self.item.store.get('binding'))
+        self.assertEqual(self.item.next_history_at, now+2)
+
+    def test_new_decision_executes_without_an_extra_poll_and_shares_counter_lock(self):
+        with patch('fly.service.propose_contest') as propose, patch('fly.service.sync_contest') as sync:
+            self.item.execute_signals()
+            self.assertEqual(propose.call_count,1)
+            sync.assert_not_called()
+            self.item.counter_lock.acquire()
+            try:self.item.execute_signals()
+            finally:self.item.counter_lock.release()
+            self.assertEqual(propose.call_count,1)
+            self.item.connection_retry={'retry_at':time.time()+30}
+            self.item.execute_signals()
+            self.assertEqual(propose.call_count,1)
+
+    def test_history_rotates_first_contract_and_resumes_after_limited_contract(self):
+        with patch('fly.service.bridge.call', return_value={'bars': []}) as call:
+            self.item.backfill(self.item.settings, self.item.store.get('binding'))
+            self.item.backfill(self.item.settings, self.item.store.get('binding'))
+        self.assertEqual([c.args[1]['instrument']['product'] for c in call.call_args_list], ['rb','au','au','rb'])
+        with patch('fly.service.bridge.call', side_effect=bridge.BridgeError('limit', code='RATE_LIMIT')):
+            with self.assertRaises(bridge.BridgeError):
+                self.item.backfill(self.item.settings, self.item.store.get('binding'))
+        with patch('fly.service.bridge.call', return_value={'bars': []}) as call:
+            self.item.backfill(self.item.settings, self.item.store.get('binding'))
+        self.assertEqual(call.call_args_list[0].args[1]['instrument']['product'], 'au')
 
     def test_auth_failure_does_not_loop_and_rate_limit_backoff_increases(self):
         first=bridge.retry_state({},bridge.BridgeError('limit'),100,'pandadata')

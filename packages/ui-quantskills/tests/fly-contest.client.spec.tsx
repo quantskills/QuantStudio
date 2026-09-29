@@ -11,29 +11,55 @@ const contest: ContestStatus = { enabled: true, phase: 'connected', identity, pl
 const state = { name: '小果', binding: { identity }, settings: { instruments: [{ symbol: 'rb2610' }], life_validation: false },
   connection: { status: 'ready', message: '已连接' }, history: { status: 'idle' },
   markets: [{ product: 'rb', symbol: 'rb2610', count: 300, readiness: 'history_incomplete', long: 1, short: 0, quote_at: Date.now() / 1000 }],
-  control: { trading: false }, environment: { brain_ready: true, blender_ready: true, progress: { status: 'ready' } } }
+  control: { trading: false }, environment: { brain_ready: true, blender_ready: false, progress: { status: 'ready' } } }
 const runtime = { supported: true, installed: true, running: true, installing: false, message: '已就绪' }
 
 describe('fly module in the futures competition', () => {
+  it.each(['llm', 'neural'])('does not demand Blender for the %s entry', async engine => {
+    const request = vi.fn(async ({ path }: { path: string }) => path === 'state'
+      ? { ...state, binding: null, settings: { ...state.settings, decision_engine: engine },
+          environment: { brain_ready: engine === 'neural', blender_ready: false, progress: { status: 'idle' } } }
+      : { summary: {}, fills: [] })
+    const access = { status: vi.fn(async () => runtime), request, install: vi.fn() } as unknown as FlyAccess
+    render(<FlyContestPanel variant="entry" access={access} contest={contest} openFly={vi.fn()}/>)
+    await screen.findByText('交易账户待连接')
+    expect(screen.queryByText('交易环境待准备 · 生活可直接体验')).toBeNull()
+    expect(access.install).not.toHaveBeenCalled()
+  })
+
+  it('shows a paused trader honestly in the entry card and only navigates on click', async () => {
+    const request = vi.fn(async ({ path }: { path: string }) => path === 'state'
+      ? { ...state, control: { paused: true, trading: true } }
+      : { summary: { fill_count: 0, realized_gross: 0 }, fills: [], note: '' })
+    const access = { status: vi.fn(async () => runtime), request, install: vi.fn() } as unknown as FlyAccess
+    const openFly = vi.fn()
+    render(<FlyContestPanel variant="entry" access={access} contest={contest} openFly={openFly}/>)
+    await screen.findByText('已暂停')
+    fireEvent.click(screen.getByRole('button', { name: '进入 AI 交易员' }))
+    expect(openFly).toHaveBeenCalledOnce()
+    expect(access.install).not.toHaveBeenCalled()
+    expect(request.mock.calls.every(([input]) => ['state', 'statistics'].includes(input.path))).toBe(true)
+  })
+
   it('shows only its account-matched plans and confirmed fills, without executing an order', async () => {
     const plan = { id: 'fly-plan', sessionId: 'fly:decision', identity, operation: 'place_order' as const,
-      status: 'prepared' as const, createdAt: Date.now(), expiresAt: Date.now() + 60000, summary: '果蝇开多 1 手', details: {}, clientRequestId: 'r' }
+      status: 'prepared' as const, createdAt: Date.now(), expiresAt: Date.now() + 60000, summary: 'AI 交易员开多 1 手', details: {}, clientRequestId: 'r' }
     const other = { ...plan, id: 'other-plan', sessionId: 'chat', summary: '人工计划' }
     const request = vi.fn(async ({ path }: { path: string }) => path === 'state' ? state : {
       summary: { fill_count: 1, realized_gross: 120 }, fills: [{ seq: 1, time: '09:30:00', symbol: 'rb2610', direction: '0', offset: '0', volume: 1, price: 3300, trade_id: 'fly-fill' }], note: '' })
     const access = { status: vi.fn(async () => runtime), install: vi.fn(), request } as unknown as FlyAccess
     const openFly = vi.fn()
     render(<FlyContestPanel access={access} contest={{ ...contest, plans: [plan, other] }} openFly={openFly}/>)
-    const toggle = screen.getByRole('button', { name: /果蝇交易员.*展开/ })
+    const toggle = screen.getByRole('button', { name: /AI 交易员.*展开/ })
     expect(toggle.getAttribute('aria-expanded')).toBe('false')
     await screen.findByText('+120.00')
-    expect(screen.queryByRole('button', { name: '查看并确认计划' })).toBeNull()
+    expect(screen.queryByRole('button', { name: '查看交易记录' })).toBeNull()
     fireEvent.click(toggle)
     await screen.findByText('fly-fill')
-    expect(screen.getByText('果蝇开多 1 手', { exact: false })).toBeTruthy()
+    expect(screen.getByText('AI 交易员开多 1 手', { exact: false })).toBeTruthy()
     expect(screen.queryByText('人工计划')).toBeNull()
     expect(screen.getByText('+120.00')).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: '查看并确认计划' }))
+    fireEvent.click(screen.getByRole('button', { name: '查看交易记录' }))
     expect(openFly).toHaveBeenCalledOnce()
     expect(request.mock.calls.every(([input]) => input.path === 'state' || input.path === 'statistics')).toBe(true)
   })
@@ -42,7 +68,7 @@ describe('fly module in the futures competition', () => {
     const request = vi.fn(async () => ({ ...state, binding: { identity: { ...identity, accountId: 'account-b' } } }))
     const access = { status: vi.fn(async () => runtime), install: vi.fn(), request } as unknown as FlyAccess
     render(<FlyContestPanel access={access} contest={contest} openFly={() => {}} />)
-    await screen.findByText(/此果蝇属于另一个比赛账户/)
+    await screen.findByText(/此AI 交易员属于另一个比赛账户/)
     expect(screen.queryByText('当日柜台成交')).toBeNull()
     expect(screen.queryByRole('button', { name: '开始生成待确认计划' })).toBeNull()
     expect(request).not.toHaveBeenCalledWith({ path: 'statistics' })
@@ -53,7 +79,7 @@ describe('fly module in the futures competition', () => {
       install: vi.fn(async () => ({ ...runtime, installed: false, running: false, installing: true })), request: vi.fn() } as unknown as FlyAccess
     const openFly = vi.fn()
     render(<FlyContestPanel access={access} contest={contest} openFly={openFly} />)
-    const button = await screen.findByRole('button', { name: '准备果蝇交易员' })
+    const button = await screen.findByRole('button', { name: '进入 AI 交易员' })
     fireEvent.click(button)
     expect(openFly).toHaveBeenCalledOnce()
     expect(access.install).not.toHaveBeenCalled()
@@ -71,18 +97,18 @@ describe('fly module in the futures competition', () => {
     count = 2
     await act(async () => { await vi.advanceTimersByTimeAsync(3000) })
     expect(screen.getByText('+200.00')).toBeTruthy()
-    expect(screen.getByRole('button', { name: /果蝇交易员.*展开/ }).getAttribute('aria-expanded')).toBe('false')
+    expect(screen.getByRole('button', { name: /AI 交易员.*展开/ }).getAttribute('aria-expanded')).toBe('false')
     view.rerender(<FlyContestPanel access={access} contest={{ ...contest, identity: { ...identity, accountId: 'b' } }} openFly={() => {}} />)
     expect(screen.queryByText('+200.00')).toBeNull()
     await act(async () => { await vi.advanceTimersByTimeAsync(0) })
-    expect(screen.getByText(/此果蝇属于另一个比赛账户/)).toBeTruthy()
+    expect(screen.getByText(/此AI 交易员属于另一个比赛账户/)).toBeTruthy()
   })
 
   it.each(['ready', 'waiting'])('uses the shared history job when the quote connection is %s', async connection => {
     const request = vi.fn(async ({ path }: { path: string }) => path === 'state' ? { ...state, connection: { status: connection, message: '行情连接状态' } } : path === 'control' ? { history: { status: 'running' } } : { summary: { fill_count: 0, realized_gross: null }, fills: [], note: '' })
     const access = { status: vi.fn(async () => runtime), request } as unknown as FlyAccess
     render(<FlyContestPanel access={access} contest={contest} openFly={() => {}} />)
-    fireEvent.click(screen.getByRole('button', { name: /果蝇交易员.*展开/ }))
+    fireEvent.click(screen.getByRole('button', { name: /AI 交易员.*展开/ }))
     const button = await screen.findByRole('button', { name: '获取历史数据' })
     fireEvent.click(button)
     await waitFor(() => expect(request).toHaveBeenCalledWith({ path: 'control', body: { action: 'history' } }))

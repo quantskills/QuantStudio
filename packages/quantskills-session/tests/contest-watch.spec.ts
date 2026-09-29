@@ -5,6 +5,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ContestWatcher, decideWithJev, watchAccount, watchQuote, watchSpread } from '../src/contest-watch.ts'
 import { ContestCliError } from '../src/contest-cli.ts'
+import { ContestQuotaError } from '../src/contest-rate-budget.ts'
 import { watchAssessments } from '../src/contest-watch-evaluation.ts'
 import type { ContestService } from '../src/contest-service.ts'
 import type { ContestInspection, ContestPlan } from '../src/contest-types.ts'
@@ -35,7 +36,7 @@ async function fixture(gateway?: unknown) {
     data = { ...data, pendingPlans: [plan] }; return plan
   })
   const execute = vi.fn(), dismiss = vi.fn(async () => { data = { ...data, pendingPlans: [] }; return {} })
-  const contest = { root, status: vi.fn(async () => ({ plans: data.pendingPlans })), researchIdentity: vi.fn(async () => identity), inspect, query, prepare, execute, dismiss, reconcile: vi.fn(async () => ({})) } as unknown as ContestService
+  const contest = { root, status: vi.fn(async () => ({ identity, plans: data.pendingPlans })), researchIdentity: vi.fn(async () => identity), inspect, observe: inspect, query, prepare, execute, dismiss, reconcile: vi.fn(async () => ({})) } as unknown as ContestService
   const decide = vi.fn(async (): Promise<ContestWatchDecision> => ({ action: 'open_long', confidence: 0.9, probabilities: { hold: 0.05, open_long: 0.9, open_short: 0.05 }, model: 'jev-1.13.0', time: Date.now() }))
   const watcher = new ContestWatcher(ctx, contest, decide); watchers.push(watcher)
   const settle = () => (watcher as unknown as { decisionTask?: Promise<void> }).decisionTask
@@ -45,7 +46,208 @@ async function fixture(gateway?: unknown) {
     setSnapshot: (value: ContestInspection) => { data = value }, setQuote: (value: unknown) => { currentQuote = value } }
 }
 
-describe('Jev plan-only watcher', () => {
+describe('Jev execution modes', () => {
+  it('samples and decides for every selected market without mixing prices or price units', async () => {
+    const f = await fixture()
+    const rb = { product: 'rb', exchange: 'SHF' as const, tickSize: 1 }, au = { product: 'au', exchange: 'SHF' as const, tickSize: .02 }
+    const multi = { ...config, instrument: rb, maxSpread: 2, contracts: [{ symbol: 'rb2610', instrument: rb }, { symbol: 'au2612', instrument: au }] }
+    f.query.mockImplementation(async (request: any) => ({ data: { contractCode: request.symbol, latestPrice: request.symbol === 'rb2610' ? 3000 : 800, bidPrice1: request.symbol === 'rb2610' ? 3000 : 800, askPrice1: request.symbol === 'rb2610' ? 3001 : 800.02, quoteTime: new Date().toISOString() }, fetchedAt: Date.now() }))
+    f.decide.mockImplementation(async () => ({ action: 'hold', confidence: 1, probabilities: { hold: 1 }, model: 'jev-1.13.0', time: Date.now() }))
+    await f.watcher.start(multi)
+    await f.warm(16)
+    const calls = (f.decide.mock.calls as unknown[][]).map(call => ({ config: call[1] as ContestWatchConfig, samples: call[2] as { price: number }[] }))
+    expect(calls.map(call => call.config.symbol)).toEqual(['rb2610', 'au2612'])
+    expect(calls[0]!.samples.every(sample => sample.price === 3000)).toBe(true)
+    expect(calls[1]!.samples.every(sample => sample.price === 800)).toBe(true)
+    expect(calls[1]!.config.maxSpread).toBe(.04)
+    const state = await f.watcher.status()
+    expect(state.config?.contracts).toEqual(multi.contracts)
+    expect(state.markets?.map(market => [market.symbol, market.sampleCount, market.analyses?.length])).toEqual([['rb2610', 8, 1], ['au2612', 8, 1]])
+    const count = f.query.mock.calls.length
+    await f.watcher.stop(); await f.step()
+    expect(f.query).toHaveBeenCalledTimes(count)
+    expect(f.prepare).not.toHaveBeenCalled()
+    expect(f.execute).not.toHaveBeenCalled()
+  })
+  it('keeps delayed decisions attached to their market and discards a response after stopping all markets', async () => {
+    const f = await fixture(), rb = { product: 'rb', exchange: 'SHF' as const, tickSize: 1 }, ma = { product: 'ma', exchange: 'CZC' as const, tickSize: 1 }
+    f.query.mockImplementation(async (request: any) => ({ data: { contractCode: request.symbol, latestPrice: request.symbol === 'rb2610' ? 3000 : 2200, quoteTime: new Date().toISOString() }, fetchedAt: Date.now() }))
+    let respond!: (value: ContestWatchDecision) => void
+    f.decide.mockImplementation(() => new Promise(resolve => { respond = resolve }))
+    await f.watcher.start({ ...config, instrument: rb, contracts: [{ symbol: 'rb2610', instrument: rb }, { symbol: 'MA701', instrument: ma }] })
+    await f.warm(14)
+    vi.setSystemTime(Date.now() + 60000); await f.watcher.tick()
+    expect(f.decide).toHaveBeenCalledOnce()
+    for (let i = 0; i < 2; i++) { vi.setSystemTime(Date.now() + 3000); await f.watcher.tick() }
+    expect(f.decide).toHaveBeenCalledOnce()
+    expect((await f.watcher.status()).markets?.map(item => item.sampleCount)).toEqual([10, 7])
+    respond({ action: 'hold', confidence: 1, probabilities: { hold: 1 }, model: 'jev-1.13.0', time: Date.now() }); await f.settle()
+    vi.setSystemTime(Date.now() + 3000); await f.watcher.tick()
+    expect(f.decide).toHaveBeenCalledTimes(2)
+    expect((f.decide.mock.calls as unknown[][]).map(call => (call[1] as ContestWatchConfig).symbol)).toEqual(['rb2610', 'MA701'])
+    expect((f.decide.mock.calls as unknown[][])[1]![2]).toEqual(expect.arrayContaining([expect.objectContaining({ price: 2200 })]))
+    await f.watcher.stop()
+    respond({ action: 'open_long', confidence: 1, probabilities: { open_long: 1 }, model: 'jev-1.13.0', time: Date.now() }); await f.settle()
+    expect((await f.watcher.status()).running).toBe(false)
+    expect(f.prepare).not.toHaveBeenCalled()
+    expect(f.execute).not.toHaveBeenCalled()
+  })
+  it('submits each selected contract through automatic execution with separate positions', async () => {
+    const f = await fixture(), rb = { product: 'rb', exchange: 'SHF' as const, tickSize: 1 }, ma = { product: 'ma', exchange: 'CZC' as const, tickSize: 1 }
+    f.query.mockImplementation(async (request: any) => ({ data: { contractCode: request.symbol, latestPrice: request.symbol === 'rb2610' ? 3000 : 2200, quoteTime: new Date().toISOString() }, fetchedAt: Date.now() }))
+    f.decide.mockImplementation(async (...args: any[]) => {
+      const action = args[3].allowed.includes('open_long') ? 'open_long' : 'hold'
+      return { action, confidence: 1, probabilities: { [action]: 1 }, model: 'jev-1.13.0', time: Date.now() }
+    })
+    const positions: Record<string, unknown>[] = [], pending = new Map<string, any>(), submitted: string[] = []
+    f.prepare.mockImplementation(async (request: any) => {
+      const plan: ContestPlan = { id: `plan-${request.order.symbol}`, sessionId: request.sessionId, identity, operation: 'place_order', createdAt: Date.now(), expiresAt: Date.now() + 60000, summary: 'test automatic plan', details: { parameters: { contractCode: request.order.symbol } }, clientRequestId: request.order.symbol, status: 'prepared' }
+      pending.set(plan.id, request.order)
+      f.setSnapshot({ ...snapshot(), positions: { data: positions, fetchedAt: Date.now() }, pendingPlans: [plan] })
+      return plan
+    })
+    f.execute.mockImplementation(async (id, _session, beforeSubmit) => {
+      await beforeSubmit()
+      const order = pending.get(id)!
+      submitted.push(order.symbol)
+      positions.push({ contractCode: order.symbol, direction: 'long', position: 1, closable: 1, openPrice: order.symbol === 'rb2610' ? 3000 : 2200 })
+      f.setSnapshot({ ...snapshot(), positions: { data: [...positions], fetchedAt: Date.now() } })
+      return { status: 'submitted' }
+    })
+    await f.watcher.start({ ...config, executionMode: 'automatic', openingCooldownSeconds: 0, instrument: rb, contracts: [{ symbol: 'rb2610', instrument: rb }, { symbol: 'MA701', instrument: ma }] }, 'automatic-orders-v1')
+    await f.warm(18)
+    expect(submitted).toEqual(['rb2610', 'MA701'])
+    expect(f.execute).toHaveBeenCalledTimes(2)
+    expect((await f.watcher.status()).openingPlanCount).toBe(2)
+    await f.watcher.stop(); await f.step()
+    expect(submitted).toHaveLength(2)
+  })
+  it('keeps a market with missing quotes from starving another selected market', async () => {
+    const f = await fixture()
+    const rb = { product: 'rb', exchange: 'SHF' as const, tickSize: 1 }, au = { product: 'au', exchange: 'SHF' as const, tickSize: .02 }
+    f.query.mockImplementation(async (request: any) => ({ data: request.symbol === 'rb2610' ? { ready: false } : { contractCode: request.symbol, latestPrice: 800, quoteTime: new Date().toISOString() }, fetchedAt: Date.now() }))
+    f.decide.mockImplementation(async () => ({ action: 'hold', confidence: 1, probabilities: { hold: 1 }, model: 'jev-1.13.0', time: Date.now() }))
+    await f.watcher.start({ ...config, instrument: rb, contracts: [{ symbol: 'rb2610', instrument: rb }, { symbol: 'au2612', instrument: au }] })
+    await f.warm(16)
+    const state = await f.watcher.status()
+    expect(state.running).toBe(true)
+    expect(state.markets?.map(item => item.sampleCount)).toEqual([0, 8])
+    expect(f.decide).toHaveBeenCalledOnce()
+    expect((f.decide.mock.calls as unknown[][])[0]![1]).toMatchObject({ symbol: 'au2612' })
+  })
+  it('rejects duplicate or mismatched additional contracts before touching the account', async () => {
+    const f = await fixture(), instrument = { product: 'rb', exchange: 'SHF' as const, tickSize: 1 }
+    for (const symbol of ['RB2610', 'au2612', 'rb']) {
+      await expect(f.watcher.start({ ...config, instrument, contracts: [{ symbol: 'rb2610', instrument }, { symbol, instrument }] })).rejects.toThrow()
+    }
+    expect(f.inspect).not.toHaveBeenCalled()
+    expect(f.query).not.toHaveBeenCalled()
+  })
+  it('creates plans for different contracts under one shared opening limit and preserves configuration on restart', async () => {
+    const f = await fixture(), rb = { product: 'rb', exchange: 'SHF' as const, tickSize: 1 }, au = { product: 'au', exchange: 'SHF' as const, tickSize: .02 }
+    const multi = { ...config, instrument: rb, openingCooldownSeconds: 0, maxPlans: 2, contracts: [{ symbol: 'rb2610', instrument: rb }, { symbol: 'au2612', instrument: au }] }
+    f.query.mockImplementation(async (request: any) => ({ data: { contractCode: request.symbol, latestPrice: request.symbol === 'rb2610' ? 3000 : 800, quoteTime: new Date().toISOString() }, fetchedAt: Date.now() }))
+    let openedRb = false
+    f.decide.mockImplementation(async (...args: any[]) => {
+      const hold = args[1].symbol === 'rb2610' && openedRb
+      if (args[1].symbol === 'rb2610') openedRb = true
+      return { action: hold ? 'hold' : 'open_long', confidence: 1, probabilities: { hold: hold ? 1 : 0, open_long: hold ? 0 : 1 }, model: 'jev-1.13.0', time: Date.now() }
+    })
+    f.prepare.mockImplementation(async (request: any) => {
+      const plan = { id: `plan-${request.order.symbol}`, sessionId: request.sessionId, identity, operation: 'place_order' as const, createdAt: Date.now(), expiresAt: Date.now() + 60000, summary: 'test', details: { parameters: { contractCode: request.order.symbol } }, clientRequestId: request.order.symbol, status: 'prepared' as const }
+      f.setSnapshot({ ...snapshot(), pendingPlans: [plan] }); return plan
+    })
+    await f.watcher.start(multi); await f.warm(15)
+    expect(f.prepare).toHaveBeenCalledTimes(1)
+    f.setSnapshot(snapshot()); await f.warm(3)
+    expect(f.prepare.mock.calls.map(call => (call[0] as any).order.symbol)).toEqual(['rb2610', 'au2612'])
+    f.setSnapshot(snapshot()); await f.warm(4)
+    expect(f.prepare).toHaveBeenCalledTimes(2)
+    expect((await f.watcher.status()).openingPlanCount).toBe(2)
+    await f.watcher.stop()
+    const restored = new ContestWatcher(f.ctx, f.contest, f.decide); watchers.push(restored)
+    const status = await restored.status()
+    expect(status.running).toBe(false)
+    expect(status.config?.contracts).toEqual(multi.contracts)
+    expect(status.markets?.map(item => item.sampleCount)).toEqual([0, 0])
+    expect(f.execute).not.toHaveBeenCalled()
+  })
+  it('keeps watching when the local trading budget is full and re-evaluates after release', async () => {
+    const f = await fixture()
+    f.prepare.mockRejectedValueOnce(new ContestQuotaError('trade', 60))
+    await f.watcher.start(config)
+    await f.warm()
+    expect(await f.watcher.status()).toMatchObject({ running: true, nextDecisionAt: Date.now() + 60000, planCount: 0 })
+    expect((await f.watcher.status()).message).toContain('额度恢复后重新判断')
+    expect(f.execute).not.toHaveBeenCalled()
+    const count = f.decide.mock.calls.length
+    await f.step()
+    expect(f.decide).toHaveBeenCalledTimes(count + 1)
+    expect(await f.watcher.status()).toMatchObject({ running: true, planCount: 1 })
+  })
+  it('performs one full startup inspection and uses account observations while sampling', async () => {
+    const f = await fixture()
+    const observe = vi.fn(async () => snapshot())
+    f.contest.observe = observe
+    await f.watcher.start(config)
+    expect(f.contest.researchIdentity).not.toHaveBeenCalled()
+    expect(f.inspect).toHaveBeenCalledOnce()
+    await f.step()
+    expect(observe).toHaveBeenCalledOnce()
+    expect(f.inspect).toHaveBeenCalledOnce()
+  })
+
+  it('keeps a failed startup stopped and publishes the server cooldown', async () => {
+    const f = await fixture()
+    f.inspect.mockRejectedValueOnce(new ContestCliError('rate_limit_exceeded', '接口限流', 90))
+    await expect(f.watcher.start(config)).rejects.toThrow('接口限流')
+    expect(await f.watcher.status()).toMatchObject({ running: false, nextRetryAt: Date.now() + 90000 })
+    expect(f.decide).not.toHaveBeenCalled()
+    expect(f.execute).not.toHaveBeenCalled()
+  })
+  it('requires fresh risk consent to start automatic execution, including a saved template', async () => {
+    const f = await fixture()
+    const automatic = { ...config, executionMode: 'automatic' as const }
+    await expect(f.watcher.start(automatic)).rejects.toThrow('风险')
+    await expect(f.watcher.start(automatic, 'old-version')).rejects.toThrow('风险')
+    expect(f.prepare).not.toHaveBeenCalled()
+    expect(f.execute).not.toHaveBeenCalled()
+    expect((await f.watcher.start(config)).config?.executionMode).toBe('manual')
+  })
+
+  it('executes the frozen plan automatically only after run-scoped consent', async () => {
+    const f = await fixture()
+    f.execute.mockImplementation(async (_id, _session, beforeSubmit) => { await beforeSubmit(); return { status: 'submitted' } })
+    const state = await f.watcher.start({ ...config, executionMode: 'automatic' }, 'automatic-orders-v1')
+    expect(state.executionAuthorization).toMatchObject({ version: 'automatic-orders-v1', runId: state.runId })
+    await f.warm()
+    expect(f.prepare.mock.calls[0]?.[0]).toMatchObject({ order: { symbol: 'rb2610', volume: 1 } })
+    expect(f.execute).toHaveBeenCalledOnce()
+    expect((await f.watcher.status()).analyses?.at(-1)).toMatchObject({ planStatus: 'submitted' })
+    await f.watcher.tick(); await f.settle()
+    expect(f.execute).toHaveBeenCalledOnce()
+  })
+
+  it('stopping between plan preparation and submission prevents an automatic order', async () => {
+    const f = await fixture(), submitted = vi.fn()
+    f.execute.mockImplementation(async (_id, _session, beforeSubmit) => {
+      await f.watcher.stop(); await beforeSubmit(); submitted(); return { status: 'submitted' }
+    })
+    await f.watcher.start({ ...config, executionMode: 'automatic' }, 'automatic-orders-v1'); await f.warm()
+    expect(submitted).not.toHaveBeenCalled()
+    expect(f.dismiss).toHaveBeenCalled()
+    expect((await f.watcher.status()).running).toBe(false)
+  })
+
+  it('cannot reuse consent after stopping and restarting the same automatic configuration', async () => {
+    const f = await fixture(), automatic = { ...config, executionMode: 'automatic' as const }
+    await f.watcher.start(automatic, 'automatic-orders-v1'); await f.watcher.stop()
+    await expect(f.watcher.start(automatic)).rejects.toThrow('风险')
+    expect(f.execute).not.toHaveBeenCalled()
+  })
+})
+
+describe('Jev manual watcher', () => {
   it('accepts every futures product without a server whitelist and routes history to its exact contract', async () => {
     const databaseFetch = vi.fn(async () => ({ id: 'all-products-history' }))
     const f = await fixture({ databaseList: async () => [], databaseFetch })
@@ -301,6 +503,18 @@ describe('Jev plan-only watcher', () => {
     expect((await f.watcher.status()).running).toBe(false)
     await f.step(); expect(f.prepare).toHaveBeenCalledOnce(); expect(f.execute).not.toHaveBeenCalled()
   })
+  it('uses thirty seconds for repeated read rate limits and honors longer server waits', async () => {
+    const f = await fixture(); await f.watcher.start(config)
+    vi.setSystemTime(Date.now() + 30000)
+    for (const delay of [30, 30, 90]) {
+      f.inspect.mockRejectedValueOnce(new ContestCliError('rate_limit_exceeded', 'limited', delay))
+      await f.watcher.tick()
+      expect((await f.watcher.status()).nextRetryAt).toBe(Date.now() + delay * 1000)
+      vi.setSystemTime(Date.now() + delay * 1000)
+    }
+    expect(f.execute).not.toHaveBeenCalled()
+  })
+
   it('samples every three seconds without repeating account inspection each tick', async () => {
     const f = await fixture(); await f.watcher.start({ ...config, intervalSeconds: 3 })
     for (let i = 0; i < 7; i++) { vi.setSystemTime(Date.now() + 3000); await f.watcher.tick() }

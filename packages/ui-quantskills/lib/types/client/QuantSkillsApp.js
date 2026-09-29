@@ -1,4 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { ArchivedSessions, ArchiveSessionConfirmation, DeleteSessionConfirmation, SessionHistoryMenu } from "./ArchivedSessions.js";
+import { SessionActionsMenu } from "./SessionActionsMenu.js";
+import { ArchiveBoxIcon } from '@phosphor-icons/react';
 import { EXPERT_PRESETS } from "./expert-presets.js";
 import { TEAM_PRESETS } from "./team-presets.js";
 import { ProductIntro } from "./ProductIntro.js";
@@ -128,7 +131,7 @@ function useQuantSkillsDocumentAppearance(enabled, scheme, background, conversat
     }, [background, conversationBrightness, conversationOverlayOpacity, enabled, scheme, preset]);
 }
 /** DSH-compatible root frame that keeps the stock conversation services while replacing the stock visual shell. */
-export function QuantSkillsFrame({ useStore, actions, useSessions, useView, useCatalog, useBoundSessions, useAgents, useNotifications, renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, startSession, startAuthoringSession, openAgentTeamBuilder, }) {
+export function QuantSkillsFrame({ useStore, actions, useSessions, useView, useCatalog, useBoundSessions, useAgents, useNotifications, renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, }) {
     const sidebarOpen = useStore(state => state.sidebarOpen);
     const detailsOpen = useStore(state => state.detailsOpen);
     const currentSessionId = useSessions(state => state.current);
@@ -231,19 +234,20 @@ export function QuantSkillsFrame({ useStore, actions, useSessions, useView, useC
         '--dsh-conversation-text-base-size': `${String(16 * resolvedConversationScale)}px`,
     };
     return _jsxs("div", { className: css.rootFrame, style: style, "data-details-open": detailsVisible || undefined, "data-interface-scale": interfaceScale, "data-qs-theme": colorScheme, "data-qs-background": background.id, children: [_jsx("div", { className: css.rootSidebar, children: renderSlot('sidebar', { collapsed: !sidebarOpen, width: sidebarWidth }) }), _jsx("div", { className: css.rootConversation, style: conversationStyle, "data-conversation-scale": conversationScale, "data-stock-conversation": conversationVisible || undefined, children: conversationVisible
-                    ? _jsx(ConversationFrame, { currentPlain: currentPlainArchive, currentSkill: currentArchive, currentAgent: currentAgentArchive, currentTeam: currentTeamArchive, plainArchives: plainArchives, skillArchives: archives, agentArchives: agentArchives, teamArchives: teamArchives, catalog: catalog, unreadBySession: unreadBySession, archivesOpen: !resultsVisible, openSession: openNotifiedSession, renameSession: renameSession, removeSessions: removeSessions, startSession: startSession, startAuthoringSession: startAuthoringSession, openAgentTeamBuilder: openAgentTeamBuilder, children: renderSlot('conversation', {}) })
+                    ? _jsx(ConversationFrame, { currentPlain: currentPlainArchive, currentSkill: currentArchive, currentAgent: currentAgentArchive, currentTeam: currentTeamArchive, plainArchives: plainArchives, skillArchives: archives, agentArchives: agentArchives, teamArchives: teamArchives, catalog: catalog, unreadBySession: unreadBySession, archivesOpen: !resultsVisible, openSession: openNotifiedSession, renameSession: renameSession, removeSessions: removeSessions, archiveSessions: archiveSessions, sessionFiles: sessionFiles, startSession: startSession, startAuthoringSession: startAuthoringSession, openAgentTeamBuilder: openAgentTeamBuilder, children: renderSlot('conversation', {}) })
                     : renderSlot('quantskills.page', {}) }), _jsx("div", { className: css.rootDetails, children: renderSlot('details', {}) }), _jsx("div", { className: css.rootResults, "data-open": resultsVisible || undefined, onPointerDown: (event) => {
                     if (event.target === event.currentTarget)
                         actions.closeResults();
                 }, children: resultsVisible ? renderSlot('quantskills.results', {}) : null }), _jsx("div", { className: css.rootOverlay, children: renderSlot('shell.overlay', {}) })] });
 }
-function ConversationFrame({ currentPlain, currentSkill, currentAgent, currentTeam, plainArchives, skillArchives, agentArchives, teamArchives, catalog, archivesOpen, unreadBySession, openSession, renameSession, removeSessions, startSession, startAuthoringSession, openAgentTeamBuilder, sidebarOnly = false, drawerWidth: controlledDrawerWidth, onDrawerWidthChange, onCollapseDrawer, interfaceScale = 1, children, }) {
+function ConversationFrame({ currentPlain, currentSkill, currentAgent, currentTeam, plainArchives, skillArchives, agentArchives, teamArchives, catalog, archivesOpen, unreadBySession, openSession, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, sidebarOnly = false, drawerWidth: controlledDrawerWidth, onDrawerWidthChange, onCollapseDrawer, interfaceScale = 1, children, }) {
     const [error, setError] = useState();
     const [pendingRename, setPendingRename] = useState();
     const [renameDraft, setRenameDraft] = useState('');
     const [renameError, setRenameError] = useState();
     const [renaming, setRenaming] = useState(false);
     const [pendingRemoval, setPendingRemoval] = useState();
+    const [pendingArchive, setPendingArchive] = useState();
     const [removing, setRemoving] = useState(false);
     const [managing, setManaging] = useState(false);
     const [selectedSessionIds, setSelectedSessionIds] = useState(() => new Set());
@@ -264,7 +268,7 @@ function ConversationFrame({ currentPlain, currentSkill, currentAgent, currentTe
         ...skillArchives.map(archive => ({ kind: 'skill', archive })),
         ...agentArchives.map(archive => ({ kind: 'agent', archive })),
         ...teamArchives.map(archive => ({ kind: 'team', archive })),
-    ].sort((left, right) => right.archive.updatedAt - left.archive.updatedAt);
+    ].filter(row => !row.archive.archived).sort((left, right) => right.archive.updatedAt - left.archive.updatedAt);
     const normalizedSearch = sessionSearch.trim().toLocaleLowerCase('zh-CN');
     const matchesSearch = (row) => normalizedSearch === ''
         || conversationRowSearchText(row, catalog).includes(normalizedSearch);
@@ -383,6 +387,31 @@ function ConversationFrame({ currentPlain, currentSkill, currentAgent, currentTe
             setRemoving(false);
         }
     };
+    const confirmArchive = async () => {
+        if (!archiveSessions || !pendingArchive)
+            return;
+        const ids = pendingArchive.filter(row => !row.archive.running).map(row => row.archive.sessionId);
+        if (ids.length === 0)
+            return;
+        setRemoving(true);
+        setError(undefined);
+        try {
+            await archiveSessions(ids);
+            setPendingArchive(undefined);
+            setSelectedSessionIds(new Set());
+            setManaging(false);
+        }
+        catch (cause) {
+            setError(cause instanceof Error ? cause.message : String(cause));
+        }
+        finally {
+            setRemoving(false);
+        }
+    };
+    const requestArchive = archiveSessions ? (row) => {
+        setError(undefined);
+        setPendingArchive([row]);
+    } : undefined;
     const requestRename = (row) => {
         setPendingRename(row);
         setRenameDraft(conversationRowTitle(row, catalog));
@@ -428,7 +457,7 @@ function ConversationFrame({ currentPlain, currentSkill, currentAgent, currentTe
                                     openSession(latest.archive.sessionId);
                             }, children: [label, _jsx("mark", { children: count })] }, kind)) }), managing && _jsxs("div", { className: css.sessionBulkBar, role: "toolbar", "aria-label": "\u6279\u91CF\u7BA1\u7406\u4F1A\u8BDD", children: [_jsxs("label", { children: [_jsx("input", { type: "checkbox", "aria-label": "\u5168\u9009\u53EF\u5220\u9664\u4F1A\u8BDD", checked: allDeletableSelected, onChange: () => {
                                             setSelectedSessionIds(allDeletableSelected ? new Set() : new Set(deletableSessionIds));
-                                        } }), _jsx("span", { children: allDeletableSelected ? '取消全选' : '全选' })] }), _jsxs("small", { children: [selectedSessionIds.size, " \u5DF2\u9009"] }), _jsxs("button", { type: "button", disabled: selectedSessionIds.size === 0, onClick: () => {
+                                        } }), _jsx("span", { children: allDeletableSelected ? '取消全选' : '全选' })] }), _jsxs("small", { children: [selectedSessionIds.size, " \u5DF2\u9009"] }), archiveSessions && _jsxs("button", { type: "button", disabled: selectedSessionIds.size === 0 || removing, onClick: () => { setError(undefined); setPendingArchive(allRows.filter(row => selectedSessionIds.has(row.archive.sessionId) && !row.archive.running)); }, children: [_jsx(ArchiveBoxIcon, { size: 15 }), "\u5F52\u6863"] }), _jsxs("button", { type: "button", disabled: selectedSessionIds.size === 0, onClick: () => {
                                     setError(undefined);
                                     setPendingRemoval({
                                         kind: 'selected',
@@ -437,10 +466,10 @@ function ConversationFrame({ currentPlain, currentSkill, currentAgent, currentTe
                                 }, children: [_jsx(Trash, { size: 15 }), "\u5220\u9664"] }), _jsx("button", { type: "button", className: css.sessionClearButton, disabled: recent.length === 0, onClick: () => {
                                     setError(undefined);
                                     setPendingRemoval({ kind: 'clear', rows: recent });
-                                }, children: "\u6E05\u7A7A" })] }), _jsx(ConversationSwitchGroup, { title: "\u8FD0\u884C\u4E2D", rows: running, catalog: catalog, currentSessionId: currentSessionId, openSession: openSession, requestRename: requestRename, requestRemoval: (row) => {
+                                }, children: "\u6E05\u7A7A" })] }), _jsx(ConversationSwitchGroup, { title: "\u8FD0\u884C\u4E2D", rows: running, catalog: catalog, currentSessionId: currentSessionId, openSession: openSession, requestRename: requestRename, requestArchive: requestArchive, requestRemoval: (row) => {
                             setError(undefined);
                             setPendingRemoval({ kind: 'single', rows: [row] });
-                        }, managing: managing, selectedSessionIds: selectedSessionIds, toggleSelection: () => { } }), recentGroups.map(group => _jsx(ConversationSwitchGroup, { title: group.label, rows: group.rows, catalog: catalog, currentSessionId: currentSessionId, openSession: openSession, requestRename: requestRename, requestRemoval: (row) => {
+                        }, managing: managing, selectedSessionIds: selectedSessionIds, toggleSelection: () => { } }), recentGroups.map(group => _jsx(ConversationSwitchGroup, { title: group.label, rows: group.rows, catalog: catalog, currentSessionId: currentSessionId, openSession: openSession, requestRename: requestRename, requestArchive: requestArchive, requestRemoval: (row) => {
                             setError(undefined);
                             setPendingRemoval({ kind: 'single', rows: [row] });
                         }, managing: managing, selectedSessionIds: selectedSessionIds, toggleSelection: (id) => {
@@ -468,7 +497,8 @@ function ConversationFrame({ currentPlain, currentSkill, currentAgent, currentTe
                     setRenameDraft(draft);
                     setRenameError(undefined);
                 }, onCancel: () => { if (!renaming)
-                    setPendingRename(undefined); }, onConfirm: (title) => { void confirmRename(pendingRename, title); } }), pendingRemoval !== undefined && _jsx(RemoveSessionDialog, { request: pendingRemoval, catalog: catalog, retainedRunningCount: pendingRemoval.kind === 'clear' ? running.length : 0, busy: removing, error: error, onCancel: () => { if (!removing)
+                    setPendingRename(undefined); }, onConfirm: (title) => { void confirmRename(pendingRename, title); } }), pendingArchive !== undefined && _jsx(ArchiveSessionConfirmation, { title: pendingArchive.length === 1 ? `「${conversationRowTitle(pendingArchive[0], catalog)}」` : `选中的 ${pendingArchive.length} 个会话`, busy: removing, error: error, onClose: () => { if (!removing)
+                    setPendingArchive(undefined); }, onConfirm: () => { void confirmArchive(); } }), pendingRemoval !== undefined && _jsx(RemoveSessionDialog, { request: pendingRemoval, filesAccess: sessionFiles, onComplete: () => { setSelectedSessionIds(new Set()); setManaging(false); }, catalog: catalog, retainedRunningCount: pendingRemoval.kind === 'clear' ? running.length : 0, busy: removing, error: error, onCancel: () => { if (!removing)
                     setPendingRemoval(undefined); }, onConfirm: () => { void confirmRemoval(); } })] });
 }
 function ConversationKindEmpty({ kind }) {
@@ -540,7 +570,7 @@ function groupConversationRowsByDate(rows, now = Date.now()) {
         { key: 'last-seven-days', label: '最近7天', rows: [] },
         { key: 'history', label: '历史', rows: [] },
     ];
-    for (const row of [...rows].sort((left, right) => right.archive.updatedAt - left.archive.updatedAt)) {
+    for (const row of [...rows].filter(row => !row.archive.archived).sort((left, right) => right.archive.updatedAt - left.archive.updatedAt)) {
         const updatedAt = row.archive.updatedAt;
         const group = updatedAt >= hourStart
             ? groups[0]
@@ -572,25 +602,11 @@ function ConversationNotificationMenu({ rows, unreadCount, catalog, openSession 
                                 ? _jsx(SkillMark, { small: true })
                                 : _jsx("span", { className: css.agentMark, children: row.kind === 'plain' ? _jsx(ChatsCircle, {}) : _jsx(CapabilityIcon, { kind: row.kind === 'team' ? 'agent-team' : 'agent' }) }), _jsxs("span", { children: [_jsx("b", { children: conversationRowTitle(row, catalog) }), _jsxs("small", { children: [conversationNotificationLabel(row), " \u00B7 ", formatUpdated(row.archive.updatedAt)] })] }), _jsx(StatusDot, { status: conversationNotificationStatus(row) })] }, row.archive.sessionId)), rows.length === 0 && _jsx("p", { children: "\u5B8C\u6210\u6216\u5931\u8D25\u7684\u8FD0\u884C\u7ED3\u679C\u4F1A\u663E\u793A\u5728\u8FD9\u91CC\u3002" })] })] });
 }
-function RemoveSessionDialog({ request, catalog, retainedRunningCount, busy, error, onCancel, onConfirm }) {
-    const cancelRef = useRef(null);
-    useEffect(() => {
-        cancelRef.current?.focus();
-        const closeOnEscape = (event) => {
-            if (event.key === 'Escape' && !busy)
-                onCancel();
-        };
-        window.addEventListener('keydown', closeOnEscape);
-        return () => { window.removeEventListener('keydown', closeOnEscape); };
-    }, [busy, onCancel]);
+function RemoveSessionDialog({ request, catalog, retainedRunningCount, busy, error, onCancel, onConfirm, filesAccess, onComplete }) {
     const single = request.kind === 'single' ? request.rows[0] : undefined;
-    const heading = request.kind === 'single' && single !== undefined
-        ? `删除“${conversationRowTitle(single, catalog)}”会话？`
-        : request.kind === 'clear'
-            ? `清空 ${String(request.rows.length)} 个可删除会话？`
-            : `删除选中的 ${String(request.rows.length)} 个会话？`;
-    const confirmLabel = request.kind === 'clear' ? '清空会话' : '删除会话';
-    return _jsx("div", { className: css.dialogBackdrop, children: _jsxs("section", { className: css.removeDialog, role: "dialog", "aria-modal": "true", "aria-labelledby": "remove-session-title", children: [_jsx("span", { className: css.removeDialogIcon, children: _jsx(Trash, { size: 20 }) }), _jsxs("div", { children: [_jsx("h2", { id: "remove-session-title", children: heading }), _jsxs("p", { children: [request.kind === 'single' ? '该会话' : '这些会话', "\u4F1A\u4ECE QuantSkills \u5217\u8868\u4E2D\u79FB\u9664\uFF0C\u539F\u59CB\u8BB0\u5F55\u4ECD\u4FDD\u7559\u5728\u4F1A\u8BDD\u5F52\u6863\u4E2D\u3002"] }), retainedRunningCount > 0 && _jsxs("p", { children: [retainedRunningCount, " \u4E2A\u8FD0\u884C\u4E2D\u7684\u4F1A\u8BDD\u4F1A\u4FDD\u7559\u3002"] }), error !== undefined && _jsx("p", { className: css.removeDialogError, role: "alert", children: error })] }), _jsxs("footer", { children: [_jsx("button", { ref: cancelRef, type: "button", disabled: busy, onClick: onCancel, children: "\u53D6\u6D88" }), _jsx("button", { type: "button", disabled: busy, className: css.removeConfirmButton, onClick: onConfirm, children: busy ? '处理中…' : confirmLabel })] })] }) });
+    const heading = single ? `删除“${conversationRowTitle(single, catalog)}”会话？`
+        : request.kind === 'clear' ? `清空 ${request.rows.length} 个可删除会话？` : `删除选中的 ${request.rows.length} 个会话？`;
+    return _jsx(DeleteSessionConfirmation, { title: single ? conversationRowTitle(single, catalog) : `选中的 ${request.rows.length} 个会话`, heading: heading, retainedRunningCount: retainedRunningCount, busy: busy, error: error, ids: request.rows.filter(row => !row.archive.running).map(row => row.archive.sessionId), filesAccess: filesAccess, onClose: onCancel, onConfirm: onConfirm, onComplete: onComplete });
 }
 function RenameSessionDialog({ row, catalog, draft, busy, error, onDraftChange, onCancel, onConfirm }) {
     const inputRef = useRef(null);
@@ -615,7 +631,7 @@ function RenameSessionDialog({ row, catalog, draft, busy, error, onDraftChange, 
     };
     return _jsx("div", { className: css.dialogBackdrop, children: _jsxs("form", { className: css.renameDialog, role: "dialog", "aria-modal": "true", "aria-labelledby": titleId, onSubmit: submit, children: [_jsx("span", { className: css.renameDialogIcon, children: _jsx(PencilSimple, { size: 20 }) }), _jsxs("div", { children: [_jsx("h2", { id: titleId, children: "\u91CD\u547D\u540D\u4F1A\u8BDD" }), _jsxs("p", { children: ["\u4E3A\u201C", conversationRowTitle(row, catalog), "\u201D\u8BBE\u7F6E\u4FBF\u4E8E\u8BC6\u522B\u7684\u540D\u79F0\u3002\u65B0\u540D\u79F0\u4F1A\u4FDD\u5B58\u5230\u4F1A\u8BDD\u8BB0\u5F55\u4E2D\u3002"] })] }), _jsxs("label", { children: [_jsx("span", { children: "\u4F1A\u8BDD\u540D\u79F0" }), _jsx("input", { ref: inputRef, value: draft, "aria-label": "\u4F1A\u8BDD\u540D\u79F0", disabled: busy, onChange: (event) => { onDraftChange(event.currentTarget.value); } })] }), error !== undefined && _jsx("p", { className: css.renameDialogError, role: "alert", children: error }), _jsxs("footer", { children: [_jsx("button", { type: "button", disabled: busy, onClick: onCancel, children: "\u53D6\u6D88" }), _jsx("button", { type: "submit", disabled: busy || trimmed === '', className: css.renameConfirmButton, children: busy ? '保存中…' : '重命名' })] })] }) });
 }
-function ConversationSwitchGroup({ title, rows, catalog, currentSessionId, openSession, requestRename, requestRemoval, managing, selectedSessionIds, toggleSelection, }) {
+function ConversationSwitchGroup({ title, rows, catalog, currentSessionId, openSession, requestRename, requestRemoval, requestArchive, managing, selectedSessionIds, toggleSelection, }) {
     if (rows.length === 0)
         return null;
     return _jsxs("section", { className: css.sessionGroup, children: [_jsxs("h2", { children: [title, _jsx("mark", { children: rows.length })] }), _jsx("div", { className: css.sessionTabs, children: rows.map(row => _jsxs("div", { className: clsx(css.sessionTab, managing && css.sessionTabManaging, row.archive.sessionId === currentSessionId && css.selected), children: [managing && _jsx("label", { className: css.sessionSelect, title: row.archive.running ? '运行中的会话不能删除' : '选择会话', children: _jsx("input", { type: "checkbox", "aria-label": `选择会话 ${conversationRowTitle(row, catalog)}`, checked: selectedSessionIds.has(row.archive.sessionId), disabled: row.archive.running, onChange: () => { toggleSelection(row.archive.sessionId); } }) }), _jsxs("button", { type: "button", className: css.sessionOpen, "aria-current": row.archive.sessionId === currentSessionId ? 'page' : undefined, onClick: () => { openSession(row.archive.sessionId); }, children: [row.kind === 'skill'
@@ -624,7 +640,7 @@ function ConversationSwitchGroup({ title, rows, catalog, currentSessionId, openS
                                                     ? '普通会话'
                                                     : row.kind === 'skill'
                                                         ? `${assetTitle(catalog, row.archive.binding.assetId)} · 技能`
-                                                        : row.kind === 'agent' ? `专家 · ${row.archive.agent.name}` : `专家团 · ${row.archive.team.name}`, " \u00B7 ", formatUpdated(row.archive.updatedAt)] })] }), row.archive.running ? _jsx(StatusDot, { status: "running" }) : _jsx(CaretRight, {})] }), !managing && _jsxs("span", { className: css.sessionActions, children: [_jsx("button", { type: "button", className: clsx(css.sessionAction, css.sessionRename), "aria-label": `重命名会话 ${conversationRowTitle(row, catalog)}`, title: "\u91CD\u547D\u540D\u4F1A\u8BDD", onClick: () => { requestRename(row); }, children: _jsx(PencilSimple, { size: 16 }) }), _jsx("button", { type: "button", className: clsx(css.sessionAction, css.sessionRemove), "aria-label": `删除会话 ${conversationRowTitle(row, catalog)}`, title: row.archive.running ? '运行中的会话不能删除' : '删除会话', disabled: row.archive.running, onClick: () => { requestRemoval(row); }, children: _jsx(Trash, { size: 16 }) })] })] }, row.archive.sessionId)) })] });
+                                                        : row.kind === 'agent' ? `专家 · ${row.archive.agent.name}` : `专家团 · ${row.archive.team.name}`, " \u00B7 ", formatUpdated(row.archive.updatedAt)] })] }), row.archive.running && _jsx(StatusDot, { status: "running" })] }), !managing && _jsx(SessionActionsMenu, { title: conversationRowTitle(row, catalog), running: row.archive.running, onRename: () => requestRename(row), onArchive: requestArchive ? () => requestArchive(row) : undefined, onRemove: () => requestRemoval(row) })] }, row.archive.sessionId)) })] });
 }
 function SkillMark({ tone = 'blue', small = false }) {
     return _jsx("span", { className: clsx(css.skillMark, css[tone], small && css.skillMarkSmall), children: _jsx(CapabilityIcon, { kind: "skill", size: small ? 18 : 24 }) });
@@ -645,7 +661,6 @@ const PRODUCT_NAV_ITEMS = [
     { page: 'qube', label: 'QUBE', icon: _jsx(Cube, { size: 24 }) },
     { page: 'evo', label: 'EVO', icon: _jsx(Dna, { size: 24 }) },
     { page: 'contest', label: '比赛', icon: _jsx(TrophyIcon, { size: 24 }) },
-    { page: 'fly', label: '果蝇交易员', icon: _jsx(Dna, { size: 24 }) },
 ];
 const PLUGIN_NAV_WIDTH = 96;
 const PLUGIN_SESSION_DIVIDER_WIDTH = 9;
@@ -681,7 +696,7 @@ function writeResultWorkbenchWidth(width) {
     }
 }
 /** Full-screen QuantSkills application hosted by the stock DSH shell. */
-export function QuantSkillsPluginFrame({ useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications, renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions, startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails, claimConversationTextScale, openResults, closeResults, close, modelAccess, flyAccess, }) {
+export function QuantSkillsPluginFrame({ useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications, renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails, claimConversationTextScale, openResults, closeResults, close, modelAccess, }) {
     const open = useView(state => state.pluginOpen);
     const page = useView(state => state.page);
     const conversationOpen = useView(state => state.pluginConversationOpen);
@@ -962,7 +977,7 @@ export function QuantSkillsPluginFrame({ useView, useLayout, useCatalog, useBoun
             '--qs-interface-inverse-scale': 1 / frameScale,
             '--qs-background-image': background.gradient ?? (background.url === undefined ? 'none' : `url("${background.url}")`),
             '--qs-background-position': background.position,
-        }, "aria-label": "QuantSkills \u63D2\u4EF6\u5E94\u7528", "data-conversation-open": conversationOpen || undefined, "data-mobile-panel": mobile ? mobilePanel : undefined, "data-plugin-interface-scale": interfaceScale, "data-qs-theme": colorScheme, "data-qs-background": background.id, children: [_jsx(ModelStartup, { access: modelAccess, flyAccess: flyAccess }), mobile && _jsxs("header", { ref: mobileHeaderRef, className: css.mobileHeader, "aria-label": "\u79FB\u52A8\u7AEF\u5DE5\u5177\u680F", children: [_jsx("button", { type: "button", "aria-label": mobilePanel === 'navigation' ? '关闭导航' : '打开导航', "aria-expanded": mobilePanel === 'navigation', "aria-controls": mobileNavId, onClick: () => { closeResults(); setMobilePanel(current => current === 'navigation' ? undefined : 'navigation'); }, children: mobilePanel === 'navigation' ? _jsx(X, { size: 22 }) : _jsx(List, { size: 22 }) }), _jsxs("span", { className: css.mobileTitle, children: [_jsx(QuantSkillsBrandMark, { size: 20 }), _jsx("b", { children: conversationOpen ? '会话' : [...NAV_ITEMS, ...PRODUCT_NAV_ITEMS].find(item => item.page === page)?.label ?? (page === 'settings' ? '设置' : 'QuantSkills') })] }), conversationOpen && _jsx("button", { type: "button", "aria-label": mobilePanel === 'sessions' ? '关闭会话列表' : '打开会话列表', "aria-expanded": mobilePanel === 'sessions', "aria-controls": mobileSessionsId, onClick: () => { closeResults(); setMobilePanel(current => current === 'sessions' ? undefined : 'sessions'); }, children: _jsx(ChatsCircle, { size: 22 }) }), resultSurfaceVisible && _jsx("button", { type: "button", "aria-label": resultWorkbenchOpen ? '关闭结果预览' : '打开结果预览', "aria-expanded": resultWorkbenchOpen, "aria-controls": mobileResultsId, onClick: () => { setMobilePanel(undefined); if (resultWorkbenchOpen)
+        }, "aria-label": "QuantSkills \u63D2\u4EF6\u5E94\u7528", "data-conversation-open": conversationOpen || undefined, "data-mobile-panel": mobile ? mobilePanel : undefined, "data-plugin-interface-scale": interfaceScale, "data-qs-theme": colorScheme, "data-qs-background": background.id, children: [_jsx(ModelStartup, { access: modelAccess }), mobile && _jsxs("header", { ref: mobileHeaderRef, className: css.mobileHeader, "aria-label": "\u79FB\u52A8\u7AEF\u5DE5\u5177\u680F", children: [_jsx("button", { type: "button", "aria-label": mobilePanel === 'navigation' ? '关闭导航' : '打开导航', "aria-expanded": mobilePanel === 'navigation', "aria-controls": mobileNavId, onClick: () => { closeResults(); setMobilePanel(current => current === 'navigation' ? undefined : 'navigation'); }, children: mobilePanel === 'navigation' ? _jsx(X, { size: 22 }) : _jsx(List, { size: 22 }) }), _jsxs("span", { className: css.mobileTitle, children: [_jsx(QuantSkillsBrandMark, { size: 20 }), _jsx("b", { children: conversationOpen ? '会话' : [...NAV_ITEMS, ...PRODUCT_NAV_ITEMS].find(item => item.page === page)?.label ?? (page === 'settings' ? '设置' : page === 'fly' ? 'AI 交易员' : 'QuantSkills') })] }), conversationOpen && _jsx("button", { type: "button", "aria-label": mobilePanel === 'sessions' ? '关闭会话列表' : '打开会话列表', "aria-expanded": mobilePanel === 'sessions', "aria-controls": mobileSessionsId, onClick: () => { closeResults(); setMobilePanel(current => current === 'sessions' ? undefined : 'sessions'); }, children: _jsx(ChatsCircle, { size: 22 }) }), resultSurfaceVisible && _jsx("button", { type: "button", "aria-label": resultWorkbenchOpen ? '关闭结果预览' : '打开结果预览', "aria-expanded": resultWorkbenchOpen, "aria-controls": mobileResultsId, onClick: () => { setMobilePanel(undefined); if (resultWorkbenchOpen)
                             closeResults();
                         else
                             openResults(); }, children: _jsx(FolderOpen, { size: 22 }) })] }), workspaceRecoveryNotice !== undefined && _jsxs("div", { className: css.pluginNotice, role: "status", children: [_jsx("span", { children: workspaceRecoveryNotice }), _jsx("button", { type: "button", onClick: () => { actions.setWorkspaceRecoveryNotice(undefined); }, children: "\u77E5\u9053\u4E86" })] }), !conversationOpen && _jsx("header", { className: css.pluginHeader, children: _jsx("span", { className: css.pluginBrand, children: _jsx(QuantSkillsBrandLockup, {}) }) }), _jsxs("div", { className: css.pluginBody, children: [mobile && (mobilePanel || resultWorkbenchOpen) && _jsx("button", { type: "button", className: css.mobileScrim, "aria-label": "\u5173\u95ED\u5C55\u5F00\u9762\u677F", tabIndex: -1, onClick: () => { setMobilePanel(undefined); closeResults(); } }), _jsxs("nav", { ref: navigationRef, id: mobileNavId, className: css.pluginNav, "aria-label": "QuantSkills \u63D2\u4EF6\u5BFC\u822A", onClick: event => { if (mobile && event.target.closest('button'))
@@ -971,8 +986,8 @@ export function QuantSkillsPluginFrame({ useView, useLayout, useCatalog, useBoun
                                         actions.showPluginConversationIndex();
                                     else
                                         actions.navigate(item.page);
-                                }, children: [_jsxs("span", { className: css.railIcon, children: [item.icon, item.page === 'conversations' && unreadCount > 0 && _jsx("b", { className: css.badge, children: unreadCount })] }), _jsx("span", { children: item.label })] }, item.page)), _jsx("div", { className: css.productLinks, role: "group", "aria-label": "PandaAI \u4EA7\u54C1", children: PRODUCT_NAV_ITEMS.map(item => _jsxs("button", { type: "button", className: clsx(css.pluginNavItem, page === item.page && css.pluginNavItemActive), "aria-current": page === item.page ? 'page' : undefined, onClick: () => actions.navigate(item.page), title: `${item.label} · ${item.page === 'contest' ? 'AI 交易助手' : '产品介绍'}`, children: [item.icon, _jsx("span", { children: item.label })] }, item.page)) }), _jsxs("button", { type: "button", className: clsx(css.pluginNavItem, page === 'settings' && css.pluginNavItemActive), "aria-current": page === 'settings' ? 'page' : undefined, onClick: () => { actions.navigate('settings'); }, children: [_jsx(GearSix, { size: 24 }), _jsx("span", { children: "\u8BBE\u7F6E" })] })] }), _jsx("div", { ref: mobileSessionsRef, id: mobileSessionsId, className: css.pluginPage, children: _jsx("div", { className: css.pluginScaleViewport, "data-interface-scale-viewport": "page", children: conversationOpen
-                                ? _jsx(ConversationFrame, { currentPlain: currentPlain, currentSkill: currentSkill, currentAgent: currentAgent, currentTeam: currentTeam, plainArchives: plainArchives, skillArchives: skillArchives, agentArchives: agentArchives, teamArchives: teamArchives, catalog: catalog, archivesOpen: mobile ? mobilePanel === 'sessions' : sessionDrawerOpen, unreadBySession: unreadBySession, openSession: id => { setMobilePanel(undefined); openNotifiedSession(id); }, renameSession: renameSession, removeSessions: removeSessions, startSession: startSession, startAuthoringSession: startAuthoringSession, openAgentTeamBuilder: openAgentTeamBuilder, sidebarOnly: true, drawerWidth: drawerWidth, onDrawerWidthChange: setDrawerWidth, onCollapseDrawer: () => { setSessionDrawerOpen(false); }, interfaceScale: frameScale })
+                                }, children: [_jsxs("span", { className: css.railIcon, children: [item.icon, item.page === 'conversations' && unreadCount > 0 && _jsx("b", { className: css.badge, children: unreadCount })] }), _jsx("span", { children: item.label })] }, item.page)), _jsx("div", { className: css.productLinks, role: "group", "aria-label": "PandaAI \u4EA7\u54C1", children: PRODUCT_NAV_ITEMS.map(item => _jsxs("button", { type: "button", className: clsx(css.pluginNavItem, (page === item.page || (item.page === 'contest' && page === 'fly')) && css.pluginNavItemActive), "aria-current": page === item.page || (item.page === 'contest' && page === 'fly') ? 'page' : undefined, onClick: () => actions.navigate(item.page), title: `${item.label} · ${item.page === 'contest' ? 'AI 交易助手' : '产品介绍'}`, children: [item.icon, _jsx("span", { children: item.label })] }, item.page)) }), _jsxs("button", { type: "button", className: clsx(css.pluginNavItem, page === 'settings' && css.pluginNavItemActive), "aria-current": page === 'settings' ? 'page' : undefined, onClick: () => { actions.navigate('settings'); }, children: [_jsx(GearSix, { size: 24 }), _jsx("span", { children: "\u8BBE\u7F6E" })] })] }), _jsx("div", { ref: mobileSessionsRef, id: mobileSessionsId, className: css.pluginPage, children: _jsx("div", { className: css.pluginScaleViewport, "data-interface-scale-viewport": "page", children: conversationOpen
+                                ? _jsx(ConversationFrame, { currentPlain: currentPlain, currentSkill: currentSkill, currentAgent: currentAgent, currentTeam: currentTeam, plainArchives: plainArchives, skillArchives: skillArchives, agentArchives: agentArchives, teamArchives: teamArchives, catalog: catalog, archivesOpen: mobile ? mobilePanel === 'sessions' : sessionDrawerOpen, unreadBySession: unreadBySession, openSession: id => { setMobilePanel(undefined); openNotifiedSession(id); }, renameSession: renameSession, removeSessions: removeSessions, archiveSessions: archiveSessions, sessionFiles: sessionFiles, startSession: startSession, startAuthoringSession: startAuthoringSession, openAgentTeamBuilder: openAgentTeamBuilder, sidebarOnly: true, drawerWidth: drawerWidth, onDrawerWidthChange: setDrawerWidth, onCollapseDrawer: () => { setSessionDrawerOpen(false); }, interfaceScale: frameScale })
                                 : renderSlot('quantskills.page', {}) }) })] }), !mobile && conversationOpen && !sessionDrawerOpen && _jsx("button", { type: "button", className: `${css.sidebarToggle} ${css.sessionDrawerRestore}`, "aria-label": "\u663E\u793A\u4F1A\u8BDD\u4FA7\u680F", title: "\u663E\u793A\u4F1A\u8BDD\u4FA7\u680F", onClick: () => { setSessionDrawerOpen(true); }, children: _jsx(CaretRight, { size: 15 }) }), !mobile && resultSurfaceVisible && !resultWorkbenchOpen && _jsx("button", { type: "button", className: `${css.sidebarToggle} ${css.resultDrawerRestore}`, "aria-label": "\u663E\u793A\u7ED3\u679C\u4FA7\u680F", title: "\u663E\u793A\u7ED3\u679C\u4FA7\u680F", onClick: openResults, children: _jsx(CaretLeft, { size: 15 }) }), resultWorkbenchOpen && _jsxs("div", { ref: resultFrameRef, id: mobileResultsId, className: css.pluginResults, role: "complementary", "aria-label": "\u6587\u4EF6\u4E0E\u9884\u89C8", "data-floating": resultOverlay || undefined, "data-open": true, "data-expanded": true, "data-maximized": resultMaximized || undefined, style: {
                     '--qs-result-workbench-width': `${String(actualResultWidth)}px`,
                 }, children: [_jsx("div", { className: css.resultDivider, role: "separator", "aria-label": "\u8C03\u6574\u7ED3\u679C\u5DE5\u4F5C\u53F0\u5BBD\u5EA6", "aria-orientation": "vertical", "aria-valuemin": RESULT_WORKBENCH_MIN_WIDTH, "aria-valuemax": RESULT_WORKBENCH_MAX_WIDTH, "aria-valuenow": resultWidth, tabIndex: 0, title: "\u62D6\u62FD\u8C03\u6574\u7ED3\u679C\u5DE5\u4F5C\u53F0\u5BBD\u5EA6\uFF1B\u53CC\u51FB\u6062\u590D\u9ED8\u8BA4\u5BBD\u5EA6", onDoubleClick: () => { resizeResult(RESULT_WORKBENCH_DEFAULT_WIDTH, true); }, onKeyDown: resizeResultByKeyboard, onPointerDown: beginResultResize, onPointerMove: continueResultResize, onPointerUp: finishResultResize, onPointerCancel: cancelResultResize, onLostPointerCapture: cancelResultResize, children: _jsx("button", { type: "button", className: `${css.sidebarToggle} ${css.resultDividerButton}`, "aria-label": "\u9690\u85CF\u7ED3\u679C\u4FA7\u680F", title: "\u9690\u85CF\u7ED3\u679C\u4FA7\u680F", onPointerDown: (event) => { event.stopPropagation(); }, onClick: (event) => {
@@ -995,7 +1010,7 @@ export function QuantSkillsRail({ collapsed, useStore, useNotifications, actions
     const page = useStore(state => state.page);
     const unreadCount = useNotifications(state => Object.keys(state.unreadBySession).length);
     return (_jsxs("nav", { className: css.rail, "aria-label": "QuantSkills \u4E3B\u5BFC\u822A", children: [_jsx("div", { className: css.railLogo, children: _jsx(QuantSkillsBrandMark, { size: 38 }) }), _jsx("div", { className: css.railItems, children: [...NAV_ITEMS, ...PRODUCT_NAV_ITEMS].map((item) => {
-                    const active = page === item.page || (item.page === 'conversations' && page === 'parallel');
+                    const active = page === item.page || (item.page === 'conversations' && page === 'parallel') || (item.page === 'contest' && page === 'fly');
                     return _jsxs("button", { type: "button", className: clsx(css.railItem, active && css.railItemActive), "aria-current": active ? 'page' : undefined, "aria-label": item.page === 'conversations' ? item.label : undefined, onClick: () => { actions.navigate(item.page); }, children: [_jsxs("span", { className: css.railIcon, children: [item.icon, item.page === 'conversations' && unreadCount > 0
                                         && _jsx("b", { className: css.badge, children: unreadCount })] }), _jsx("span", { children: item.label })] }, item.page);
                 }) }), _jsx("div", { className: css.railFooterActions, children: renderSlot('sidebar.footer.action', { wide: false }) }), _jsxs("button", { type: "button", className: clsx(css.railItem, page === 'settings' && css.railItemActive), onClick: () => { actions.navigate('settings'); }, children: [_jsx(GearSix, { size: 25 }), _jsx("span", { children: "\u8BBE\u7F6E" })] }), collapsed && _jsx("button", { type: "button", className: css.railExpand, "aria-label": "\u5C55\u5F00\u5BFC\u822A", onClick: collapse, children: _jsx(CaretRight, {}) })] }));
@@ -1610,7 +1625,7 @@ function ConversationPage(props) {
         ...skillArchives.map(archive => ({ kind: 'skill', archive })),
         ...agentArchives.map(archive => ({ kind: 'agent', archive })),
         ...teamArchives.map(archive => ({ kind: 'team', archive })),
-    ].sort((left, right) => right.archive.updatedAt - left.archive.updatedAt);
+    ].filter(row => !row.archive.archived).sort((left, right) => right.archive.updatedAt - left.archive.updatedAt);
     const archiveCount = rows.length;
     const groups = groupConversationRowsByDate(rows);
     const open = (sessionId) => {
@@ -1632,9 +1647,9 @@ function ConversationPage(props) {
             setCreatingSession(false);
         }
     };
-    return _jsxs("div", { className: css.pageScroll, children: [_jsx(PageHeader, { title: "\u4F1A\u8BDD", subtitle: "\u666E\u901A\u3001\u6280\u80FD\u3001\u4E13\u5BB6 \u4E0E \u4E13\u5BB6\u56E2 \u4F1A\u8BDD\u90FD\u6709\u72EC\u7ACB\u4E0A\u4E0B\u6587\u548C\u771F\u5B9E\u5B58\u6863", action: _jsxs("div", { className: css.creationActions, children: [_jsxs("button", { type: "button", className: css.primaryButton, disabled: creatingSession, onClick: () => { void startSession(); }, children: [_jsx(Plus, {}), creatingSession ? '正在创建…' : '新建会话'] }), _jsx("button", { type: "button", className: css.outlineButton, onClick: () => {
+    return _jsxs("div", { className: css.pageScroll, children: [_jsx(PageHeader, { title: "\u4F1A\u8BDD", subtitle: "\u7BA1\u7406\u666E\u901A\u3001\u6280\u80FD\u3001\u4E13\u5BB6\u4E0E\u4E13\u5BB6\u56E2\u7684\u5BF9\u8BDD\uFF1B\u5F52\u6863\u4F1A\u8BDD\u53EF\u5728\u8BBE\u7F6E\u4E2D\u67E5\u770B", action: _jsxs("div", { className: css.creationActions, children: [_jsxs("button", { type: "button", className: css.primaryButton, disabled: creatingSession, onClick: () => { void startSession(); }, children: [_jsx(Plus, {}), creatingSession ? '正在创建…' : '新建会话'] }), _jsx("button", { type: "button", className: css.outlineButton, onClick: () => {
                                 void Promise.all([props.refreshBoundSessions(), props.refreshAgents()]);
-                            }, children: "\u5237\u65B0" })] }) }), props.boundSessions.error && _jsx("p", { className: css.notice, role: "status", children: props.boundSessions.error }), props.agents.error && _jsx("p", { className: css.notice, role: "status", children: props.agents.error }), createSessionError && _jsx("p", { className: css.notice, role: "alert", children: createSessionError }), archiveCount === 0
+                            }, children: "\u5237\u65B0" }), _jsxs("button", { type: "button", className: css.outlineButton, onClick: () => { props.actions.setSettingsSection('archives'); props.actions.navigate('settings'); }, children: [_jsx(ArchiveBoxIcon, {}), "\u5F52\u6863\u4F1A\u8BDD"] })] }) }), props.boundSessions.error && _jsx("p", { className: css.notice, role: "status", children: props.boundSessions.error }), props.agents.error && _jsx("p", { className: css.notice, role: "status", children: props.agents.error }), createSessionError && _jsx("p", { className: css.notice, role: "alert", children: createSessionError }), archiveCount === 0
                 ? _jsxs("div", { className: css.settingsPlaceholder, children: [_jsx(ChatsCircle, { size: 42 }), _jsx("h2", { children: "\u8FD8\u6CA1\u6709 QuantSkills \u4F1A\u8BDD" }), _jsx("p", { children: "\u666E\u901A\u4F1A\u8BDD\u53EF\u76F4\u63A5\u4F7F\u7528\uFF1B\u9700\u8981 Python \u6216 PandaData \u65F6\uFF0C\u4E13\u5BB6\u4F1A\u4F7F\u7528\u5F53\u524D\u5DE5\u4F5C\u533A\u548C\u7528\u6237\u73AF\u5883\uFF0C\u5E76\u5728\u7F3A\u5931\u65F6\u7ED9\u51FA\u4FEE\u590D\u5EFA\u8BAE\u3002" }), _jsxs("button", { type: "button", className: css.primaryButton, disabled: creatingSession, onClick: () => { void startSession(); }, children: [_jsx(Plus, {}), creatingSession ? '正在创建…' : '新建会话'] })] })
                 : _jsx("div", { className: css.archiveGroups, children: groups.map(group => _jsx(ConversationArchiveGroup, { title: group.label, rows: group.rows, props: props, open: open }, group.key)) })] });
 }
@@ -1645,13 +1660,13 @@ function ConversationArchiveGroup({ title, rows, props, open }) {
                     if (row.kind === 'plain') {
                         return _jsxs("article", { children: [_jsxs("button", { type: "button", className: css.archiveMain, onClick: () => { open(row.archive.sessionId); }, children: [_jsx(CapabilityIcon, { kind: "agent-team" }), _jsxs("span", { children: [_jsx("b", { children: row.archive.title ?? '新会话' }), _jsxs("small", { children: ["\u666E\u901A\u4F1A\u8BDD \u00B7 ", formatUpdated(row.archive.updatedAt)] })] }), row.archive.running ? _jsx(StatusDot, { status: "running" }) : _jsx(CaretRight, {})] }), _jsx("button", { type: "button", className: css.archiveNew, "aria-label": "\u65B0\u5EFA\u666E\u901A\u4F1A\u8BDD", onClick: () => {
                                         void props.startSession();
-                                    }, children: _jsx(Plus, {}) })] }, row.archive.sessionId);
+                                    }, children: _jsx(Plus, {}) }), _jsx(SessionHistoryMenu, { id: row.archive.sessionId, title: conversationRowTitle(row, props.catalog), running: row.archive.running, access: props.sessionHistory })] }, row.archive.sessionId);
                     }
                     if (row.kind === 'skill') {
                         const label = assetTitle(props.catalog, row.archive.binding.assetId);
                         return _jsxs("article", { children: [_jsxs("button", { type: "button", className: css.archiveMain, onClick: () => { open(row.archive.sessionId); }, children: [_jsx(SkillMark, { tone: ['blue', 'orange', 'green', 'purple'][index % 4] ?? 'blue' }), _jsxs("span", { children: [_jsx("b", { children: row.archive.title ?? label }), _jsxs("small", { children: [label, " \u00B7 ", formatUpdated(row.archive.updatedAt)] })] }), row.archive.running ? _jsx(StatusDot, { status: "running" }) : _jsx(CaretRight, {})] }), _jsx("button", { type: "button", className: css.archiveNew, "aria-label": `为 ${label} 新建会话`, onClick: () => {
                                         void props.startBoundSession(row.archive.binding, label);
-                                    }, children: _jsx(Plus, {}) })] }, row.archive.sessionId);
+                                    }, children: _jsx(Plus, {}) }), _jsx(SessionHistoryMenu, { id: row.archive.sessionId, title: conversationRowTitle(row, props.catalog), running: row.archive.running, access: props.sessionHistory })] }, row.archive.sessionId);
                     }
                     const definition = row.kind === 'agent'
                         ? props.agents.definitions.find(item => item.agentId === row.archive.agent.agentId)
@@ -1666,7 +1681,7 @@ function ConversationArchiveGroup({ title, rows, props, open }) {
                                         void props.startAgentSession(definition);
                                     else if (row.kind === 'team' && 'teamId' in definition)
                                         void props.startAgentTeamSession(definition);
-                                }, children: _jsx(Plus, {}) })] }, row.archive.sessionId);
+                                }, children: _jsx(Plus, {}) }), _jsx(SessionHistoryMenu, { id: row.archive.sessionId, title: conversationRowTitle(row, props.catalog), running: row.archive.running, access: props.sessionHistory })] }, row.archive.sessionId);
                 }) })] });
 }
 function ParallelPage(props) {
@@ -1694,7 +1709,7 @@ function ParallelPage(props) {
                     ? 'completed'
                     : archive.runState,
         })),
-    ].sort((left, right) => right.archive.updatedAt - left.archive.updatedAt);
+    ].filter(row => !row.archive.archived).sort((left, right) => right.archive.updatedAt - left.archive.updatedAt);
     const current = rows.find(row => row.archive.sessionId === currentSessionId);
     const loaded = rows.filter(row => row.state === 'running');
     const waiting = rows.filter(row => row.state === 'waiting');
@@ -2584,6 +2599,7 @@ function SettingsPage(props) {
     const preferencesReady = settingsStatus === 'ready' && settingsWritable;
     const sections = [
         ['workspace', _jsx(FolderOpen, {}), '工作区'],
+        ['archives', _jsx(ArchiveBoxIcon, {}), '归档会话'],
         ['updates', _jsx(Clock, {}), '自动更新'],
         ['permissions', _jsx(Shield, {}), '模型与权限'],
         ['models', _jsx(Wrench, {}), '模型服务'],
@@ -2592,7 +2608,7 @@ function SettingsPage(props) {
         ['panda-data', _jsx(Database, {}), 'PandaData'],
         ['brand-support', _jsx(Globe, {}), '品牌与支持'],
     ];
-    return _jsx("div", { className: css.pageWithDrawer, children: _jsxs("div", { className: css.pageScroll, children: [_jsx(PageHeader, { title: "\u8BBE\u7F6E", subtitle: "\u7BA1\u7406\u5DE5\u4F5C\u533A\u3001\u66F4\u65B0\u3001\u6A21\u578B\u6743\u9650\u4E0E\u663E\u793A" }), _jsxs("div", { className: css.settingsLayout, children: [_jsxs("aside", { className: css.settingsNav, children: [sections.map(([id, icon, label]) => (_jsxs("button", { className: section === id ? css.selected : undefined, "aria-current": section === id ? "page" : undefined, onClick: () => { props.actions.setSettingsSection(id); }, children: [icon, label] }, id))), _jsx("hr", {}), _jsxs("p", { children: ["\u754C\u9762 ", Math.round(interfaceScale * 100), "% \u00B7 \u5BF9\u8BDD\u6587\u5B57 ", Math.round(conversationScale * 100), "%"] })] }), _jsx("section", { className: css.settingsContent, children: section === 'plugins' ? _jsx(PluginSettings, { ...props }) : section === 'models' ? _jsx(QuantSkillsModelServices, { access: props.modelAccess, jevAccess: props.contestAccess?.watch }) : section === 'workspace' ? _jsx(WorkspaceSettings, { props: props }) : section === 'appearance' ? _jsxs(_Fragment, { children: [_jsx("h2", { children: "\u5916\u89C2" }), _jsx("p", { children: "QuantSkills \u7684\u914D\u8272\u3001\u754C\u9762\u6BD4\u4F8B\u548C\u4F1A\u8BDD\u6587\u5B57\u5747\u53EF\u72EC\u7ACB\u8C03\u6574\uFF0C\u5E76\u5373\u65F6\u9884\u89C8\u3002" }), _jsx(QuantSkillsThemePicker, { scheme: colorScheme, lightBackground: lightBackground, darkBackground: darkBackground, disabled: !preferencesReady, onChange: (scheme) => { props.actions.setColorScheme(scheme); }, onLightBackgroundChange: (background) => { props.actions.setLightBackground(background); }, onDarkBackgroundChange: (background) => { props.actions.setDarkBackground(background); } }), _jsxs("label", { className: css.scaleControl, children: ["\u754C\u9762\u6BD4\u4F8B", _jsx("input", { type: "range", min: MIN_QUANTSKILLS_SCALE, max: MAX_QUANTSKILLS_SCALE, step: "0.05", value: interfaceScale, disabled: !preferencesReady, onChange: (event) => { props.actions.setInterfaceScale(Number(event.target.value)); } }), _jsxs("b", { children: [Math.round(interfaceScale * 100), "%"] })] }), _jsxs("label", { className: css.scaleControl, children: ["\u4F1A\u8BDD\u6587\u5B57", _jsx("input", { type: "range", min: MIN_QUANTSKILLS_SCALE, max: MAX_QUANTSKILLS_SCALE, step: "0.05", value: conversationScale, disabled: !preferencesReady, onChange: (event) => { props.actions.setConversationScale(Number(event.target.value)); } }), _jsxs("b", { children: [Math.round(conversationScale * 100), "%"] })] }), _jsxs("label", { className: css.scaleControl, children: ["\u6587\u5B57\u4EAE\u5EA6", _jsx("input", { type: "range", min: MIN_QUANTSKILLS_CONVERSATION_BRIGHTNESS, max: MAX_QUANTSKILLS_CONVERSATION_BRIGHTNESS, step: "0.05", value: conversationBrightness, disabled: !preferencesReady, onChange: (event) => { props.actions.setConversationBrightness(Number(event.target.value)); } }), _jsxs("b", { children: [Math.round(conversationBrightness * 100), "%"] })] }), _jsxs("label", { className: css.scaleControl, children: ["\u5185\u5BB9\u8499\u5C42", _jsx("input", { "aria-label": "\u5185\u5BB9\u8499\u5C42", type: "range", min: MIN_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY, max: MAX_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY, step: "0.01", value: conversationOverlayOpacity, disabled: !preferencesReady, onChange: (event) => { props.actions.setConversationOverlayOpacity(Number(event.target.value)); } }), _jsxs("b", { children: [Math.round(conversationOverlayOpacity * 100), "%"] })] }), _jsx("small", { className: css.scaleHint, children: "\u9996\u9875\u4E0E\u4F1A\u8BDD\u5171\u7528\u6B64\u8BBE\u7F6E\u3002\u6570\u503C\u8D8A\u4F4E\uFF0C\u80CC\u666F\u8D8A\u6E05\u6670\uFF1B\u6570\u503C\u8D8A\u9AD8\uFF0C\u5185\u5BB9\u8D8A\u6613\u8BFB\u3002" }), _jsxs("div", { className: css.settingsActions, children: [_jsx("button", { type: "button", className: css.outlineButton, disabled: !preferencesReady || (interfaceScale === 1 && conversationScale === 1 && conversationBrightness === DEFAULT_QUANTSKILLS_CONVERSATION_BRIGHTNESS && conversationOverlayOpacity === DEFAULT_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY), onClick: () => { props.actions.setInterfaceScale(1); props.actions.setConversationScale(1); props.actions.setConversationBrightness(DEFAULT_QUANTSKILLS_CONVERSATION_BRIGHTNESS); props.actions.setConversationOverlayOpacity(DEFAULT_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY); }, children: "\u6062\u590D\u9ED8\u8BA4" }), _jsx(PreferenceSaveState, { status: settingsStatus, writable: settingsWritable, error: settingsError })] })] }) : section === 'brand-support' ? _jsx(QuantSkillsBrandSupportSettings, {})
+    return _jsx("div", { className: css.pageWithDrawer, children: _jsxs("div", { className: css.pageScroll, children: [_jsx(PageHeader, { title: "\u8BBE\u7F6E", subtitle: "\u7BA1\u7406\u5DE5\u4F5C\u533A\u3001\u66F4\u65B0\u3001\u6A21\u578B\u6743\u9650\u4E0E\u663E\u793A" }), _jsxs("div", { className: css.settingsLayout, children: [_jsxs("aside", { className: css.settingsNav, children: [sections.map(([id, icon, label]) => (_jsxs("button", { className: section === id ? css.selected : undefined, "aria-current": section === id ? "page" : undefined, onClick: () => { props.actions.setSettingsSection(id); }, children: [icon, label] }, id))), _jsx("hr", {}), _jsxs("p", { children: ["\u754C\u9762 ", Math.round(interfaceScale * 100), "% \u00B7 \u5BF9\u8BDD\u6587\u5B57 ", Math.round(conversationScale * 100), "%"] })] }), _jsx("section", { className: css.settingsContent, children: section === 'archives' ? _jsx(ArchivedSessions, { access: props.sessionHistory }) : section === 'plugins' ? _jsx(PluginSettings, { ...props }) : section === 'models' ? _jsx(QuantSkillsModelServices, { access: props.modelAccess, jevAccess: props.contestAccess?.watch }) : section === 'workspace' ? _jsx(WorkspaceSettings, { props: props }) : section === 'appearance' ? _jsxs(_Fragment, { children: [_jsx("h2", { children: "\u5916\u89C2" }), _jsx("p", { children: "QuantSkills \u7684\u914D\u8272\u3001\u754C\u9762\u6BD4\u4F8B\u548C\u4F1A\u8BDD\u6587\u5B57\u5747\u53EF\u72EC\u7ACB\u8C03\u6574\uFF0C\u5E76\u5373\u65F6\u9884\u89C8\u3002" }), _jsx(QuantSkillsThemePicker, { scheme: colorScheme, lightBackground: lightBackground, darkBackground: darkBackground, disabled: !preferencesReady, onChange: (scheme) => { props.actions.setColorScheme(scheme); }, onLightBackgroundChange: (background) => { props.actions.setLightBackground(background); }, onDarkBackgroundChange: (background) => { props.actions.setDarkBackground(background); } }), _jsxs("label", { className: css.scaleControl, children: ["\u754C\u9762\u6BD4\u4F8B", _jsx("input", { type: "range", min: MIN_QUANTSKILLS_SCALE, max: MAX_QUANTSKILLS_SCALE, step: "0.05", value: interfaceScale, disabled: !preferencesReady, onChange: (event) => { props.actions.setInterfaceScale(Number(event.target.value)); } }), _jsxs("b", { children: [Math.round(interfaceScale * 100), "%"] })] }), _jsxs("label", { className: css.scaleControl, children: ["\u4F1A\u8BDD\u6587\u5B57", _jsx("input", { type: "range", min: MIN_QUANTSKILLS_SCALE, max: MAX_QUANTSKILLS_SCALE, step: "0.05", value: conversationScale, disabled: !preferencesReady, onChange: (event) => { props.actions.setConversationScale(Number(event.target.value)); } }), _jsxs("b", { children: [Math.round(conversationScale * 100), "%"] })] }), _jsxs("label", { className: css.scaleControl, children: ["\u6587\u5B57\u4EAE\u5EA6", _jsx("input", { type: "range", min: MIN_QUANTSKILLS_CONVERSATION_BRIGHTNESS, max: MAX_QUANTSKILLS_CONVERSATION_BRIGHTNESS, step: "0.05", value: conversationBrightness, disabled: !preferencesReady, onChange: (event) => { props.actions.setConversationBrightness(Number(event.target.value)); } }), _jsxs("b", { children: [Math.round(conversationBrightness * 100), "%"] })] }), _jsxs("label", { className: css.scaleControl, children: ["\u5185\u5BB9\u8499\u5C42", _jsx("input", { "aria-label": "\u5185\u5BB9\u8499\u5C42", type: "range", min: MIN_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY, max: MAX_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY, step: "0.01", value: conversationOverlayOpacity, disabled: !preferencesReady, onChange: (event) => { props.actions.setConversationOverlayOpacity(Number(event.target.value)); } }), _jsxs("b", { children: [Math.round(conversationOverlayOpacity * 100), "%"] })] }), _jsx("small", { className: css.scaleHint, children: "\u9996\u9875\u4E0E\u4F1A\u8BDD\u5171\u7528\u6B64\u8BBE\u7F6E\u3002\u6570\u503C\u8D8A\u4F4E\uFF0C\u80CC\u666F\u8D8A\u6E05\u6670\uFF1B\u6570\u503C\u8D8A\u9AD8\uFF0C\u5185\u5BB9\u8D8A\u6613\u8BFB\u3002" }), _jsxs("div", { className: css.settingsActions, children: [_jsx("button", { type: "button", className: css.outlineButton, disabled: !preferencesReady || (interfaceScale === 1 && conversationScale === 1 && conversationBrightness === DEFAULT_QUANTSKILLS_CONVERSATION_BRIGHTNESS && conversationOverlayOpacity === DEFAULT_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY), onClick: () => { props.actions.setInterfaceScale(1); props.actions.setConversationScale(1); props.actions.setConversationBrightness(DEFAULT_QUANTSKILLS_CONVERSATION_BRIGHTNESS); props.actions.setConversationOverlayOpacity(DEFAULT_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY); }, children: "\u6062\u590D\u9ED8\u8BA4" }), _jsx(PreferenceSaveState, { status: settingsStatus, writable: settingsWritable, error: settingsError })] })] }) : section === 'brand-support' ? _jsx(QuantSkillsBrandSupportSettings, {})
                                 : section === 'updates' ? _jsx(UpdateSettings, { catalog: props.catalog, catalogEnabled: autoCheckCatalog, catalogWritable: preferencesReady, onCatalogChange: (enabled) => { props.actions.setAutoCheckCatalog(enabled); }, onRefresh: () => props.refreshCatalog() }) : section === 'panda-data' ? _jsx(PandaDataSettings, { status: props.pandaMcpStatus, authenticate: props.authenticatePandaMcp, refresh: props.refreshPandaMcp, logout: props.logoutPandaMcp }) : _jsx(PermissionSettings, { modelOptions: modelOptions, modelError: modelError, provider: defaultAgentProvider, model: defaultAgentModel, reasoningEffort: defaultAgentReasoningEffort, permission: defaultAgentPermission, writable: preferencesReady, status: settingsStatus, onModelChange: (provider, model, reasoningEffort) => { props.actions.setDefaultAgentModel(provider, model, reasoningEffort); }, onPermissionChange: (permission) => { props.actions.setDefaultAgentPermission(permission); } }) })] })] }) });
 }
 function PandaDataSettings({ status, authenticate, refresh, logout }) {

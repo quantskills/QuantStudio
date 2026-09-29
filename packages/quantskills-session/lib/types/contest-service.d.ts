@@ -1,6 +1,8 @@
 import { type ContestCli } from './contest-cli.ts';
 import type { ContestData, ContestIdentity, ContestInspection, ContestPlan, ContestPrepareRequest, ContestQuery, ContestStatus } from './contest-types.ts';
 export declare function sameContest(a: ContestIdentity | undefined, b: ContestIdentity | undefined): boolean;
+/** Known automatic orders on other contracts may coexist; uncertain submissions block the account. */
+export declare function blocksAutomaticOrder(plan: ContestPlan, symbol: string): boolean;
 export declare function contestQueryArgs(input: ContestQuery): string[];
 export declare class ContestService {
     private readonly cli;
@@ -18,12 +20,15 @@ export declare class ContestService {
     private currentRules;
     private lastInspection?;
     private checkingUpdate?;
+    private verified?;
     constructor(cli: ContestCli, dshHome?: string);
     private load;
     private save;
     private exclusive;
     private assertEnabled;
     private runtime;
+    private cooldownError;
+    private rateLimited;
     private run;
     status(sessionId?: string): Promise<ContestStatus>;
     setEnabled(enabled: boolean): Promise<ContestStatus>;
@@ -51,8 +56,8 @@ export declare class ContestService {
     checkUpdate(): Promise<ContestStatus>;
     update(): Promise<ContestStatus>;
     disconnect(): Promise<ContestStatus>;
-    prepare(input: ContestPrepareRequest, identity: ContestIdentity, signal?: AbortSignal): Promise<ContestPlan>;
-    execute(id: string, sessionId: string): Promise<ContestPlan>;
+    prepare(input: ContestPrepareRequest, identity: ContestIdentity, signal?: AbortSignal, executionMode?: 'manual' | 'automatic'): Promise<ContestPlan>;
+    execute(id: string, sessionId: string, beforeSubmit?: () => Promise<void>): Promise<ContestPlan>;
     dismiss(id: string, sessionId: string): Promise<ContestStatus>;
     private findPlan;
     reconcile(id: string, sessionId: string): Promise<ContestPlan>;

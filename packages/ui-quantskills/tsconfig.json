@@ -4,6 +4,7 @@
     "baseUrl": "../..",
     "rootDir": "src",
     "outDir": "lib/types",
+    "allowJs": true,
     "paths": {
       "@deepseek-ai/dsh-panda-connector/types": ["packages/panda-connector/lib/types/types.d.ts"],
       "@deepseek-ai/dsh-panda-mcp/types": ["packages/panda-mcp/lib/types/types.d.ts"],

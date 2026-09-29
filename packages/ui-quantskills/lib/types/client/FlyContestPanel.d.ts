@@ -14,8 +14,10 @@ type FlyState = {
             symbol: string;
         }[];
         life_validation: boolean;
+        decision_engine?: 'neural' | 'llm';
     };
     control: {
+        paused?: boolean;
         trading: boolean;
         close_only?: boolean;
     };
@@ -33,7 +35,6 @@ type FlyState = {
     })[];
     environment: {
         brain_ready: boolean;
-        blender_ready: boolean;
         progress: {
             status: string;
             message?: string;
@@ -41,7 +42,9 @@ type FlyState = {
     };
 };
 export declare function sameFlyContest(state: FlyState | undefined, contest: ContestStatus | undefined): boolean;
-export declare function FlyContestPanel({ access, contest, openFly }: {
+export declare function FlyContestPanel({ access, contest, openFly, variant, available }: {
+    variant?: 'detail' | 'entry';
+    available?: boolean;
     access?: FlyAccess | undefined;
     contest?: ContestStatus | undefined;
     openFly(): void;

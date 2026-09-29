@@ -6,7 +6,13 @@ export type TradeMarket = {
     readiness: string;
     long: number;
     short: number;
+    decision_status?: {
+        status: string;
+        message: string;
+        at: number;
+    } | null;
     decision?: {
+        engine?: string;
         decision_id: string;
         input_at: number;
         choice: {
@@ -50,8 +56,9 @@ export type TradeMarket = {
         message?: string;
     };
 };
-export declare function TradeLoop({ markets, observing }: {
+export declare function TradeLoop({ markets, observing, automatic }: {
     markets: TradeMarket[];
     observing: boolean;
+    automatic?: boolean;
 }): import("react").JSX.Element;
 //# sourceMappingURL=TradeLoop.d.ts.map

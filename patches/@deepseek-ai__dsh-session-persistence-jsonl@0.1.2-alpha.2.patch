@@ -1,0 +1,51 @@
+diff --git a/lib/index.js b/lib/index.js
+index d46769b6cb815e1a013eec2c34b73d9fbc6b5298..7968d41fc43423fdd077c4d1cad641589ba1a332 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -1,7 +1,7 @@
+ import z from "@deepseek-ai/schemastery";
+ import { readdirSync } from "node:fs";
+ import { link, mkdir, mkdtemp, open, readFile, readdir, realpath, rm, stat, truncate } from "node:fs/promises";
+-import { dirname, join, parse, resolve, toNamespacedPath } from "node:path";
++import { dirname, isAbsolute, join, parse, relative, resolve, toNamespacedPath } from "node:path";
+ import { performance } from "node:perf_hooks";
+ import { scheduler } from "node:timers/promises";
+ import { randomBytes } from "node:crypto";
+@@ -837,6 +837,25 @@ var JsonlSessionPersistence = class extends SessionPersistence {
+ 			path: logPath(this.root, meta.cwd, meta.id, this.compression)
+ 		};
+ 	}
++
++	/** Delete the actual log after teardown and the per-session write queue drain. */
++	async deleteSession(id) {
++		if (this.ctx.sessions.get(id)) throw new Error("cannot delete an attached session");
++		await this.coordinator.waitForRetirement(id);
++		return this.coordinator.serialize(id, async () => {
++			if (this.ctx.sessions.get(id)) throw new Error("session became attached during deletion");
++			this.coordinator.preparations.assertWritable(id);
++			const path = await this.findLog(id);
++			if (path !== undefined) {
++				const [root, target] = await Promise.all([realpath(this.root), realpath(path)]);
++				const inside = relative(root, target);
++				if (!inside || inside.startsWith("..") || isAbsolute(inside)) throw new Error("session log is outside persistence root");
++				await rm(path);
++			}
++			this.coordinator.preparations.invalidate(id);
++			this.coordinator.states.delete(id);
++		});
++	}
+ 	create(meta) {
+ 		return this.coordinator.create(meta);
+ 	}
+diff --git a/lib/types/index.d.ts b/lib/types/index.d.ts
+index 8626a8a7ab4834ec474a5d246364ae4fa6447af8..365a3d22cb3ce57d20624eecc471d07cd970929e 100644
+--- a/lib/types/index.d.ts
++++ b/lib/types/index.d.ts
+@@ -68,6 +68,7 @@ export declare class JsonlSessionPersistence extends SessionPersistence implemen
+     constructor(ctx: Context, config: Config);
+     /** Resolve the absolute target path without touching the filesystem. */
+     locate(meta: SessionHeader): SessionLocation;
++    deleteSession(id: SessionId): Promise<void>;
+     create(meta: SessionHeader): Promise<void>;
+     ensureMaterialized(session: Session): Promise<void>;
+     append(id: SessionId, events: readonly SessionEvent[]): Promise<void>;

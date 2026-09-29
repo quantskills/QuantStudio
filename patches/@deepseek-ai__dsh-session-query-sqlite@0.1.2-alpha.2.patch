@@ -1,0 +1,32 @@
+diff --git a/lib/index.js b/lib/index.js
+index b249a4f3b16123a856bfaa05fd7073a6ce372cbb..d70a93232d01bd27027986ab6d9dc61b4d5e214c 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -532,6 +532,15 @@ var SqliteSessionQueryEngine = class extends SessionQueryEngine {
+ 	async [Service.init]() {
+ 		if (this.config.openAt === "startup") await this._ensureReady(void 0);
+ 	}
++
++	async deleteSession(id) {
++		if (this.config.openAt === "never") return;
++		await this._ensureReady();
++		return this._serialized(undefined, async () => {
++			this._deleteSession("persisted", id);
++			this._deleteSession("live", id);
++		});
++	}
+ 	async searchSessions(request, exec) {
+ 		this._assertSearchEnabled();
+ 		const normalized = normalizeSessionRequest(request, this.config);
+diff --git a/lib/types/index.d.ts b/lib/types/index.d.ts
+index 1a8f09eadef9accb61576cfa156717ad60940e3c..de722b3c0665a7ef17b2fd2ebfd8d80aab49fed2 100644
+--- a/lib/types/index.d.ts
++++ b/lib/types/index.d.ts
+@@ -83,6 +83,7 @@ export declare class SqliteSessionQueryEngine extends SessionQueryEngine {
+     constructor(ctx: Context, config: Config);
+     /** Open eagerly only when activation owns the configured readiness boundary. */
+     protected [Service.init](): Promise<void>;
++    deleteSession(id: import("@deepseek-ai/dsh-session").SessionId): Promise<void>;
+     searchSessions(request: SessionSearchRequest, exec?: SessionSearchExecContext): Promise<SessionSearchPage<SessionSearchHit>>;
+     searchEvents(request: SessionEventSearchRequest, exec?: SessionSearchExecContext): Promise<SessionEventSearchPage>;
+     /** Close the database after every accepted operation reaches quiescence. */

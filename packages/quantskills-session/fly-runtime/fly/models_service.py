@@ -140,7 +140,7 @@ async def generate_report(organism):
             names={'daylight':'日光','breeze':'微风','quiet':'安静','dew':'露水','replenish':'补充果实'}
             status={'no_change':'没有新变化','not_applied':'未执行','applied':'已执行'}.get(p.get('status'),'已记录')
             additions.append(prefix+'Jev '+status+'：'+names.get(p.get('event'),p.get('event','')))
-        elif e['kind']=='decision':additions.append(prefix+'果蝇决定：'+str(p.get('product') or '生活')+' / '+p['choice']['action'])
+        elif e['kind']=='decision':additions.append(prefix+'AI 交易员决定：'+str(p.get('product') or '生活')+' / '+p['choice']['action'])
     if additions:result['text']+='\n'+'\n'.join(additions)
     result['evidence']=sorted(set(result['evidence']+[e['seq'] for e in chosen]))
     return result

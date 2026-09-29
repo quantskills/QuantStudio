@@ -81,4 +81,4 @@ def statistics(events, markets, account, day, end_day=None):
             'rows':list(rows.values()),'fills':list(reversed(details)),
             'summary':{k:total(k) for k in ('fill_count','opening_lots','closing_lots','realized_gross','floating_gross','total_gross')},
             'official':official,'account_updated_at':account.get('official_updated_at'),
-            'note':'已实现毛盈亏按果蝇成交配对计算；浮盈按开仓价与末次报价估算，未扣费用。手续费和柜台净盈亏属于整个账户，不向品种虚构分摊；持仓包含跨日延续仓位。'}
+            'note':'已实现毛盈亏按AI 交易员成交配对计算；浮盈按开仓价与末次报价估算，未扣费用。手续费和柜台净盈亏属于整个账户，不向品种虚构分摊；持仓包含跨日延续仓位。'}

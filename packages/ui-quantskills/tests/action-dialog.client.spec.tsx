@@ -5,7 +5,7 @@ import { ActionDialog } from '../src/client/ActionDialog.tsx'
 
 afterEach(cleanup)
 
-function setup(props: { drawer?: boolean; busy?: boolean } = { drawer: true }) {
+function setup(props: { drawer?: boolean; settings?: boolean; busy?: boolean; dismissOnBackdrop?: boolean } = { drawer: true }) {
   const onClose = vi.fn()
   render(<ActionDialog title="快速上手" onClose={onClose} {...props}><button>下一步</button></ActionDialog>)
   const dialog = screen.getByRole('dialog')
@@ -19,8 +19,8 @@ function press(target: Element, clientX: number, clientY = 300) {
   fireEvent(target, new MouseEvent('pointerdown', { bubbles: true, button: 0, clientX, clientY }))
 }
 
-it('closes a drawer when clicking its backdrop', () => {
-  const { dialog, onClose } = setup()
+it.each([{ drawer: true }, { settings: true }, { dismissOnBackdrop: true }])('closes settings or drawer on an outside click: %j', props => {
+  const { dialog, onClose } = setup(props)
   press(dialog, 250)
   fireEvent.click(dialog, { clientX: 250, clientY: 300 })
   expect(onClose).toHaveBeenCalledTimes(1)
@@ -45,7 +45,7 @@ it('does not dismiss when a drag starts inside or ends inside the drawer', () =>
   expect(onClose).not.toHaveBeenCalled()
 })
 
-it.each([{ drawer: true, busy: true }, { drawer: false }])('preserves busy and confirmation protection: %j', props => {
+it.each([{ dismissOnBackdrop: true, busy: true }, { drawer: true, busy: true }, { settings: true, busy: true }, { drawer: false }])('preserves busy and confirmation protection: %j', props => {
   const { dialog, onClose } = setup(props)
   press(dialog, 250)
   fireEvent.click(dialog, { clientX: 250, clientY: 300 })

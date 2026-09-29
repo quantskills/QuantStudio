@@ -5,7 +5,11 @@ import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { z } from 'zod';
+import { AUTOMATIC_TRADING_CONSENT } from "./trading-execution.js";
+import { blocksAutomaticOrder } from "./contest-service.js";
+import { planOrderId } from "./contest-fills.js";
 import { record, safeData } from "./contest-cli.js";
+import { ContestQuotaError } from "./contest-rate-budget.js";
 import { translationModels } from "./contest-jev-english.js";
 import { jevSettings } from "./contest-jev-settings.js";
 import { historyFailure } from "./contest-watch-history.js";
@@ -23,13 +27,28 @@ const amount = (value) => typeof value === 'number' && Number.isFinite(value) ? 
 function readFailure(error, source) {
     const { diagnostic } = historyFailure(error, source);
     const raw = error;
-    const auth = diagnostic.code === 'AUTH_REQUIRED' || /账户.*变化|账户.*切换|请先.*连接|授权|验证账户/.test(raw?.message ?? '');
+    const auth = diagnostic.code === 'AUTH_REQUIRED' || (diagnostic.code !== 'RATE_LIMIT' && /账户.*变化|账户.*切换|请先.*连接|授权|验证账户/.test(raw?.message ?? ''));
     const code = auth ? 'AUTH_REQUIRED' : diagnostic.code, label = source === 'competition' ? '比赛接口' : 'PandaData';
     const retry = Number(raw?.retryAfterSeconds ?? raw?.retry_after);
-    const message = auth ? `${label}需要重新连接或授权，请检查对应设置。`
+    const message = error instanceof ContestQuotaError ? error.message : auth ? `${label}需要重新连接或授权，请检查对应设置。`
         : code === 'RATE_LIMIT' ? `${label}限流，冷却后自动重试。` : `${label}读取失败（${code}），稍后重试。`;
     return Object.assign(new Error(message), { source, code, retryable: !auth && diagnostic.retryable,
         ...(Number.isFinite(retry) && retry > 0 ? { retryAfterSeconds: Math.min(86400, retry) } : {}) });
+}
+/** Only classify private provider details; never echo response bodies or URLs. */
+export function modelFailure(error) {
+    const value = error;
+    const text = `${value?.code ?? ''} ${value?.status ?? value?.statusCode ?? ''} ${value?.name ?? ''} ${value?.message ?? ''}`;
+    const [code, retryable, message] = /timeout|timed?out|ETIMEDOUT|超时/i.test(text)
+        ? ['MODEL_TIMEOUT', true, '模型响应超时（60 秒），下一轮行情重新判断。']
+        : /429|rate.limit|限流|频率/i.test(text) ? ['MODEL_RATE_LIMIT', true, '模型服务限流，下一轮行情重试。']
+            : /401|403|unauthori|forbidden|authentication|token.*expir/i.test(text) ? ['MODEL_AUTH', false, '模型服务拒绝访问，请检查模型密钥、权限与额度。']
+                : /OUTPUT_LIMIT|context.length|max.tokens/i.test(text) ? ['MODEL_OUTPUT_LIMIT', false, '模型输出不完整或超过长度限制，本轮不生成交易决策。']
+                    : /MODEL_CONFIG|已验证|JSON/.test(text) ? ['MODEL_CONFIG', false, '请选择已验证的 QuantStudio 模型。']
+                        : /AbortError|aborted|cancel/i.test(text) ? ['MODEL_CANCELLED', true, '模型请求已取消，等待下一轮行情。']
+                            : /network|fetch failed|ECONN|ENOTFOUND/i.test(text) ? ['MODEL_NETWORK', true, '模型服务连接失败，下一轮行情重试。']
+                                : ['MODEL_FAILED', true, '模型调用失败，请检查已验证模型配置与用量。'];
+    return Object.assign(new Error(message), { source: 'model', code, retryable });
 }
 export function flyQuoteTime(value) {
     let text = String(value ?? '').trim().replace(/^(\d{4}-\d{2}-\d{2})\s+(\d{2})(\d{2})(\d{2})$/, '$1T$2:$3:$4');
@@ -65,7 +84,7 @@ export class FlyService {
     }
     async request(input) {
         if (input.path === 'control' && ['trade', 'close_only'].includes(String(record(input.body).action)) && await this.watcherRunning()) {
-            throw new Error('请先停止 Jev 盯盘，再启动果蝇交易建议。');
+            throw new Error('请先停止 Jev 盯盘，再启动AI 交易员。');
         }
         if (input.path === 'control' && record(input.body).action === 'restore') {
             const state = record(await this.runtime.request({ path: 'state' })), binding = record(state.binding);
@@ -79,12 +98,18 @@ export class FlyService {
         }
         return this.runtime.request(input);
     }
+    async isTrading() {
+        if (!(await this.runtime.status()).installed)
+            return false;
+        const state = record(await this.runtime.request({ path: 'state' }));
+        return record(state.control).trading === true;
+    }
     async identity(expected, verify = true) {
         const status = await this.contest.status();
         if (!status.enabled || !status.identity)
             throw new Error('请先在比赛页连接自己的期货模拟赛账户。');
         if (expected && !same(identitySchema.parse(expected), status.identity))
-            throw new Error('比赛账户已变化，请切回果蝇绑定账户。');
+            throw new Error('比赛账户已变化，请切回 AI 交易员绑定账户。');
         if (status.phase !== 'connected') {
             if (!expected)
                 throw new Error('请先在比赛页连接自己的期货模拟赛账户。');
@@ -113,7 +138,7 @@ export class FlyService {
                 jev_providers: [{ id: 'typesafe', label: 'TypeSafe · 统一模型服务', model: jev.model, configured: jev.configured }] };
         }
         if (path === 'language')
-            return this.language(input, signal).catch(() => { throw new Error('模型调用失败，请检查已验证模型配置与用量。'); });
+            return this.language(input, signal).catch(error => { throw modelFailure(error); });
         if (path === 'jev')
             return this.jev(input, signal);
         if (path === 'market')
@@ -127,9 +152,14 @@ export class FlyService {
         if (path === 'prepare') {
             const job = this.proposalTail.catch(() => { }).then(() => this.prepare(input, signal));
             this.proposalTail = job;
+            return safeData(await job);
+        }
+        if (path === 'trade') {
+            const job = this.proposalTail.catch(() => { }).then(() => this.trade(input, signal));
+            this.proposalTail = job;
             return job;
         }
-        throw new Error('果蝇桥接不支持此操作。');
+        throw new Error('AI 交易员桥接不支持此操作。');
     }
     async market(input, signal) {
         const identity = await this.identity(input.identity, false), instruments = z.array(flyInstrumentSchema).max(1000).refine(items => new Set(items.map(i => i.product.toLowerCase())).size === items.length, '每个品种只能配置一个实际合约').parse(input.instruments);
@@ -144,7 +174,7 @@ export class FlyService {
             this.reconciled.set(pending.id, Date.now());
             await this.contest.reconcile(pending.id, pending.sessionId).catch(() => { });
         }
-        if (!this.observation || !same(this.observation.identity, identity) || Date.now() - this.observation.at >= 15000) {
+        if (!this.observation || !same(this.observation.identity, identity) || Date.now() - this.observation.at >= 30000) {
             const snapshot = await this.contest.observe(identity, signal);
             const trades = rows((await this.contest.query({ kind: 'trades', date: 'today' }, identity, signal)).data);
             this.observation = { identity, snapshot, trades, at: Date.now() };
@@ -174,7 +204,8 @@ export class FlyService {
                         ? Math.max(0, Math.min(500, quantity(side) + Math.floor(Math.max(0, available) * .9 / margin), Math.floor(equity * .9 / instruments.length / margin))) : null;
                     return [`${side}_capacity`, capacity];
                 })),
-                inflight: snapshot.pendingPlans.length > 0 || rows(snapshot.openOrders.data).length > 0 };
+                inflight: snapshot.pendingPlans.some(plan => !(plan.status === 'prepared' && plan.details.executionMode === 'automatic') && blocksAutomaticOrder(plan, instrument.symbol))
+                    || rows(snapshot.openOrders.data).some(order => !order.contractCode || contract(order.contractCode) === contract(instrument.symbol)) };
         }
         await this.identity(identity, false);
         const tradingDay = String(account.tradingDay ?? account.TradingDay ?? '').replaceAll('-', '');
@@ -208,13 +239,24 @@ export class FlyService {
         if (!id) {
             const params = { symbol, start_date: start, end_date: end,
                 frequency: `${minutes}m`, fields: ['symbol', 'trading_code', 'datetime', 'open', 'high', 'low', 'close', 'volume'] };
-            const existing = (await gateway.databaseList(signal)).find(item => item.name === `果蝇 ${key}` && item.source.kind === 'pandadata');
-            const dataset = existing ?? await gateway.databaseFetch({ name: `果蝇 ${key}`, kind: 'timeseries', category: 'market',
+            const existing = (await gateway.databaseList(signal)).find(item => (`AI 交易员 ${key}` === item.name || `果蝇 ${key}` === item.name) && item.source.kind === 'pandadata');
+            const dataset = existing ?? await gateway.databaseFetch({ name: `AI 交易员 ${key}`, kind: 'timeseries', category: 'market',
                 dateColumn: 'datetime', ttlSeconds: minutes * 60, source: { kind: 'pandadata', method: 'get_future_min', params } }, signal);
             id = dataset.id;
             this.history.set(key, id);
         }
         let result = await gateway.databaseQuery({ id, limit: 5000, refresh: true }, signal);
+        // refresh:true only refreshes expired datasets. A cache fetched just before
+        // publication can still omit the latest completed bar for an entire TTL.
+        // Probe at most every 30 seconds, without changing the native bar period.
+        const expectedClose = Math.floor(Date.now() / (minutes * 60000)) * minutes * 60000;
+        const latestClose = result.dataset.to ? flyQuoteTime(result.dataset.to) : Math.max(0, ...result.rows
+            .filter(row => contract(row.trading_code ?? row.symbol) === contract(instrument.symbol))
+            .map(row => flyQuoteTime(row.datetime)).filter(Number.isFinite));
+        if (result.status === 'hit' && Date.now() - Date.parse(result.dataset.fetchedAt) >= 30000 && latestClose < expectedClose) {
+            await gateway.databaseRefresh({ id }, signal);
+            result = await gateway.databaseQuery({ id, limit: 5000, refresh: false }, signal);
+        }
         if (result.status === 'insufficient')
             throw new Error('PandaData 历史尚未完整或已过期。');
         if (result.total > 50000)
@@ -244,17 +286,102 @@ export class FlyService {
         await this.identity(input.identity, false).catch(error => { throw readFailure(error, 'competition'); });
         return { bars: [...seen.entries()].sort((a, b) => a[0] - b[0]).slice(-500).map(([, bar]) => bar), fetched_at: Date.parse(result.dataset.fetchedAt) / 1000 };
     }
-    async prepare(input, signal) {
+    async tradingRun(input, mode) {
+        const state = record(await this.runtime.request({ path: 'state' })), control = record(state.control), settings = record(state.settings);
+        if (control.trading !== true || control.paused !== false || control.execution !== mode || (settings.execution_mode ?? 'automatic') !== mode || !input.run_id || control.run_id !== input.run_id) {
+            throw new Error('自动交易已暂停或本轮已结束，请在 AI 交易员中启动新一轮。');
+        }
+        if (mode === 'automatic' && (record(control.authorization).version !== AUTOMATIC_TRADING_CONSENT || record(control.authorization).run_id !== control.run_id))
+            throw new Error('本轮自动下单风险尚未确认。');
+        if (!same(identitySchema.parse(record(state.binding).identity), identitySchema.parse(input.identity)))
+            throw new Error('比赛账户已变化。');
+        const instrument = flyInstrumentSchema.parse(input.instrument);
+        if (!rows(settings.instruments).some(item => item.exchange === instrument.exchange && contract(item.symbol) === contract(instrument.symbol)))
+            throw new Error('合约未加入本轮自动交易。');
+        const limits = record(input.limits);
+        if (limits.target !== settings.target_notional || limits.total !== settings.total_notional || limits.loss !== settings.loss_limit)
+            throw new Error('交易额度已变化，等待新的决策。');
+        const decision = record(input.decision), engine = settings.decision_engine ?? 'neural';
+        const config = record(decision.engine_config);
+        if (engine !== (decision.engine ?? 'neural'))
+            throw new Error('决策引擎已变化，等待新的决策。');
+        if (engine === 'llm') {
+            if (decision.run_id !== control.run_id || record(decision.choice).readout !== 'llm-trade-1'
+                || ['decision_engine', 'trade_model', 'trade_instructions', 'llm_max_lots'].some(key => config[key] !== settings[key]))
+                throw new Error('模型或交易要求已变化，等待新的决策。');
+            const current = Number(record(decision.choice).current_position), target = Number(record(decision.choice).target_position);
+            const reducing = current * target >= 0 && Math.abs(target) < Math.abs(current);
+            if (!reducing && (!Number.isInteger(settings.llm_max_lots) || Math.abs(target) > Number(settings.llm_max_lots)))
+                throw new Error('超过大模型单合约持仓手数上限。');
+        }
+        else if (record(decision.choice).readout !== 'neural-trade-3')
+            throw new Error('决策来源与运行引擎不一致。');
+        const choice = record(record(input.decision).choice), current = Number(choice.current_position), target = Number(choice.target_position);
+        if (control.close_only && !(current && (current * target <= 0 || Math.abs(target) < Math.abs(current))))
+            throw new Error('当前仅允许自动平仓。');
+        if (await this.watcherRunning())
+            throw new Error('Jev 盯盘正在运行，请先停止。');
+    }
+    async trade(input, signal) {
+        const identity = await this.identity(input.identity);
+        const decisionId = z.string().regex(/^[a-f0-9]{32}$/).parse(record(input.decision).decision_id);
+        const sessionId = `fly:${decisionId}`;
+        const mode = z.enum(['manual', 'automatic']).parse(input.execution_mode ?? 'automatic');
+        // A repeated callback (including after a lost reply) returns the same receipt, never a new order.
+        const prior = (await this.contest.status()).plans.find(plan => plan.sessionId === sessionId && same(plan.identity, identity));
+        if (prior) {
+            if (prior.status === 'prepared' && prior.details.executionMode === 'automatic') {
+                await this.contest.dismiss(prior.id, sessionId);
+                return safeData({ ...prior, status: 'cancelled' });
+            }
+            return safeData(prior);
+        }
+        await this.tradingRun(input, mode);
+        // This callback queue has finished all earlier submissions. A leftover draft was never sent.
+        // Discard it instead of leaving a restarted trader blocked by an obsolete signal.
+        for (const draft of (await this.contest.status()).plans) {
+            if (draft.status === 'prepared' && draft.details.executionMode === 'automatic'
+                && draft.sessionId.startsWith('fly:') && same(draft.identity, identity))
+                await this.contest.dismiss(draft.id, draft.sessionId);
+        }
+        const plan = await this.prepare(input, signal, mode === 'automatic', true);
+        try {
+            signal.throwIfAborted();
+            await this.tradingRun(input, mode);
+            if (mode === 'manual')
+                return safeData(plan);
+            const result = await this.contest.execute(plan.id, plan.sessionId, async () => {
+                signal.throwIfAborted();
+                await this.tradingRun(input, mode);
+                if (Date.now() / 1000 - Number(record(input.decision).input_at) > (record(input.decision).engine === 'llm' ? 90 : 15))
+                    throw new Error('交易信号已过期，等待新的决策。');
+            });
+            return safeData(result);
+        }
+        catch (error) {
+            // Dismiss only an unsubmitted draft. Executing/unknown receipts remain available for recovery.
+            await this.contest.dismiss(plan.id, plan.sessionId).catch(() => { });
+            throw error;
+        }
+        finally {
+            delete this.observation;
+        }
+    }
+    async prepare(input, signal, automatic = false, validatedRun = false) {
         const identity = await this.identity(input.identity), instrument = flyInstrumentSchema.parse(input.instrument);
         if (await this.watcherRunning())
-            throw new Error('Jev 盯盘正在运行，请先停止再生成果蝇计划。');
+            throw new Error('Jev 盯盘正在运行，请先停止再生成 AI 交易员计划。');
         const decision = z.object({ decision_id: z.string().regex(/^[a-f0-9]{32}$/), input_at: z.number(), symbol: z.string(),
-            choice: z.object({ action: z.enum(['LONG', 'SHORT', 'CLOSE']), readout: z.literal('neural-trade-3'), sampling: z.literal(false), current_position: z.number().int(), target_position: z.number().int().min(-500).max(500) }) }).parse(input.decision);
-        if (contract(decision.symbol) !== contract(instrument.symbol) || Date.now() / 1000 - decision.input_at < 0 || Date.now() / 1000 - decision.input_at > 15)
+            choice: z.object({ action: z.enum(['LONG', 'SHORT', 'CLOSE']), readout: z.enum(['neural-trade-3', 'llm-trade-1']), sampling: z.literal(false), current_position: z.number().int(), target_position: z.number().int().min(-500).max(500) }) }).parse(input.decision);
+        const maxAge = decision.choice.readout === 'llm-trade-1' ? 90 : 15;
+        if (decision.choice.readout === 'llm-trade-1' && !validatedRun)
+            throw new Error('大模型交易需要有效的交易运行。');
+        if (contract(decision.symbol) !== contract(instrument.symbol) || Date.now() / 1000 - decision.input_at < 0 || Date.now() / 1000 - decision.input_at > maxAge)
             throw new Error('交易信号已过期或合约不一致。');
         const limits = z.object({ target: z.number().nonnegative().max(100000000), total: z.number().nonnegative().max(500000000), loss: z.number().nonnegative().max(100000000) }).parse(input.limits);
         const snapshot = await this.contest.inspect(identity, signal);
-        if (snapshot.pendingPlans.length || rows(snapshot.openOrders.data).length)
+        if (snapshot.pendingPlans.some(plan => !automatic || blocksAutomaticOrder(plan, instrument.symbol))
+            || rows(snapshot.openOrders.data).some(order => !automatic || !order.contractCode || contract(order.contractCode) === contract(instrument.symbol)))
             throw new Error('请先处理账户的待确认计划或活动委托。');
         const positions = rows(snapshot.positions.data), matching = positions.filter(p => contract(p.contractCode) === contract(instrument.symbol));
         if (matching.length > 1)
@@ -306,16 +433,37 @@ export class FlyService {
                         throw new Error('已有持仓名义占用不完整，不能追加开仓。');
                     occupied += value;
                 }
+                if (automatic) {
+                    // Reserve the whole outstanding opening order until its receipt is reconciled.
+                    // The next contract must not spend the same user-defined notional budget again.
+                    const pending = snapshot.pendingPlans.filter(plan => ['queued', 'submitted'].includes(plan.status));
+                    const pendingIds = new Set(pending.map(planOrderId).filter(Boolean));
+                    const reservations = [...pending.map(plan => record(plan.details.parameters)),
+                        ...rows(snapshot.openOrders.data).filter(order => !pendingIds.has(String(order.orderId ?? '')))];
+                    for (const order of reservations) {
+                        if (order.offset === 'close')
+                            continue;
+                        if (order.offset !== 'open' || !order.contractCode)
+                            throw new Error('活动委托的名义占用不完整，等待回执更新。');
+                        const symbol = contract(order.contractCode), volume = Number(order.volume);
+                        const pendingQuote = record((await this.contest.query({ kind: 'quote', symbol }, identity, signal)).data);
+                        const pendingSpec = await this.spec(symbol, identity, signal);
+                        const notional = Number(pendingQuote.latestPrice) * Number(pendingSpec.contractMultiplier) * volume;
+                        if (!Number.isFinite(notional) || notional <= 0 || !Number.isInteger(volume))
+                            throw new Error('活动委托的名义占用不完整，等待回执更新。');
+                        occupied += notional;
+                    }
+                }
                 if (occupied + price * multiplier * volume > limits.total)
                     throw new Error('超过总名义占用额度。');
             }
         }
-        if (Date.now() / 1000 - decision.input_at > 15)
-            throw new Error('核对耗时较长，等待新的神经信号。');
-        return safeData(await this.contest.prepare({ sessionId: `fly:${decision.decision_id}`, operation: 'place_order', order: {
+        if (Date.now() / 1000 - decision.input_at > maxAge)
+            throw new Error('核对耗时较长，等待新的交易决策。');
+        return this.contest.prepare({ sessionId: `fly:${decision.decision_id}`, operation: 'place_order', order: {
                 symbol: instrument.symbol, direction: delta > 0 ? 'buy' : 'sell',
                 offset: opening ? 'open' : 'close', volume
-            } }, identity, signal));
+            } }, identity, signal, automatic ? 'automatic' : 'manual');
     }
     equityPeak(identity, equity) {
         const job = this.riskTail.catch(() => { }).then(async () => {
@@ -344,10 +492,14 @@ export class FlyService {
         const active = AbortSignal.any([signal, AbortSignal.timeout(60000)]);
         let text = '';
         for await (const chunk of this.ctx.llm.stream({ ...selected, signal: active, messages: [createMessage({ role: 'user', source: { kind: 'user' }, content: [{ type: 'text', text: prompt }] })] })) {
+            active.throwIfAborted();
             if (chunk.type === 'text-delta')
                 text += chunk.text;
-            if (text.length > 32000 || (chunk.type === 'finish' && ['error', 'aborted'].includes(chunk.reason.kind)))
-                throw new Error('模型返回失败或超出长度。');
+            if (text.length > 32000 || (chunk.type === 'finish' && chunk.reason.kind === 'max-tokens'))
+                throw new Error('OUTPUT_LIMIT');
+            if (chunk.type === 'finish' && ['error', 'aborted'].includes(chunk.reason.kind)) {
+                throw ('failure' in chunk.reason ? chunk.reason.failure : undefined) ?? new Error(chunk.reason.kind);
+            }
         }
         active.throwIfAborted();
         return { text };

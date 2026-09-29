@@ -33,7 +33,7 @@ export function JevConnection({ access, models }: {
     <summary><span>Jev · TypeSafe</span><span className={css.jevBadge} data-ready={settings?.configured}>{settings?.configured ? '密钥已配置' : '等待配置'}</span></summary>
     <div className={css.jevConnectionBody}>
       <p>在 <a href="https://docs.typesafe.ai/introduction" target="_blank" rel="noreferrer">TypeSafe</a> 获取自己的 API Key，测试成功后保存。每位用户在自己的电脑上完成配置。</p>
-      <p>比赛页的 Jev 盯盘与果蝇的 Jev 辅助共用此密钥，修改后两处同时生效。盯盘运行时，请先停止再修改连接。</p>
+      <p>比赛页的 Jev 盯盘与AI 交易员的 Jev 辅助共用此密钥，修改后两处同时生效。盯盘运行时，请先停止再修改连接。</p>
       <form className={css.jevKeyForm} onSubmit={event => { event.preventDefault(); void test(true) }}>
         <label>Jev API Key<input type="password" autoComplete="new-password" spellCheck={false} required maxLength={4096} value={key}
           disabled={busy || settings?.writable === false} placeholder={settings?.configured ? '输入新密钥以替换，已保存密钥不回显' : '粘贴 TypeSafe API Key'}

@@ -14,7 +14,7 @@ describe('native model services', () => {
     render(<QuantSkillsModelServices access={vi.fn(async () => ({ catalog: MODEL_SERVICES, connections: [] }))} jevAccess={jevAccess}/>)
     await waitFor(() => expect(screen.getByRole('button', { name: '测试并保存密钥' }).matches(':disabled')).toBe(true))
     await waitFor(() => expect(jevAccess.settings).toHaveBeenCalled())
-    expect(screen.getByText(/比赛页的 Jev 盯盘与果蝇的 Jev 辅助共用此密钥/)).toBeTruthy()
+    expect(screen.getByText(/比赛页的 Jev 盯盘与\s*AI 交易员的 Jev 辅助共用此密钥/)).toBeTruthy()
     fireEvent.change(screen.getByLabelText('Jev API Key'), { target: { value: 'test-private-candidate' } })
     await waitFor(() => expect(screen.getByRole('button', { name: '测试并保存密钥' }).matches(':disabled')).toBe(false))
     fireEvent.click(screen.getByRole('button', { name: '测试并保存密钥' }))

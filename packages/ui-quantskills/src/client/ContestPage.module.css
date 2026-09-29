@@ -154,3 +154,52 @@ body[data-qs-plugin-theme='dark'] .page button[data-primary],body[data-qs-plugin
 .jevCatalogTools { display:flex;align-items:center;flex-wrap:wrap;gap:10px 16px;font-size:12px;color:var(--qs-muted);margin-bottom:16px;line-height:1.7; }
 .jevCatalogTools button { font-size:12px; }.jevInstrumentHint { flex-basis:100%;margin:0;color:var(--qs-muted);font-size:12px; }
 @media(max-width:600px) { .jevTemplateGrid { grid-template-columns:1fr; }.jevQuickStart { align-items:stretch;gap:14px; }.jevQuickStart label,.jevRunSummary,.jevQuickStart > button { width:100%;flex-basis:100%; }.jevQuickStart input { width:100%;box-sizing:border-box; } }
+
+/* Competition entry: choose a workflow before opening its controls. */
+.entrySection { margin:28px 0;container-type:inline-size; }
+.entryHeading { display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin:0 0 16px; }
+.entryHeading h2 { font-size:19px;letter-spacing:-.02em;margin:0; }
+.entryHeading > span { color:var(--qs-muted);font-size:12px; }
+.entryGrid { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:start; }
+.entryCard { position:relative;min-width:0;box-sizing:border-box;padding:24px;border:1px solid var(--qs-line);border-radius:18px;background:var(--qs-surface);box-shadow:0 5px 18px color-mix(in srgb,var(--qs-ink) 3%,transparent);transition:border-color .18s,box-shadow .18s; }
+.entryCard:hover,.entryCard[data-selected] { border-color:color-mix(in srgb,var(--qs-accent) 65%,var(--qs-line));box-shadow:0 8px 24px color-mix(in srgb,var(--qs-ink) 5%,transparent); }
+.entryTop { display:flex;align-items:center;gap:12px;font-size:11px;color:var(--qs-muted); }
+.entryIcon { width:44px;height:44px;flex-shrink:0;display:grid;place-items:center;border-radius:13px;color:var(--qs-accent);background:var(--qs-tint); }
+.entryCard h3 { margin:22px 0 10px;font-size:22px;line-height:1.3;letter-spacing:-.025em; }
+.entryDescription { margin:0;min-height:66px;color:var(--qs-muted);font-size:13px;line-height:1.8;text-wrap:pretty; }
+.entryStatus { min-height:20px;display:flex;align-items:center;gap:7px;margin:18px 0 14px;color:var(--qs-muted);font-size:11px;line-height:1.7;overflow-wrap:anywhere; }
+.entryStatus i { width:6px;height:6px;flex-shrink:0;border-radius:50%;background:var(--qs-muted); }
+.entryStatus[data-active=true] { color:var(--qs-accent); }.entryStatus[data-active=true] i { background:var(--qs-accent);box-shadow:0 0 0 3px var(--qs-tint); }
+.page .entryAction { width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:42px;padding:11px 13px;border-color:var(--qs-line);background:var(--qs-tint);border-radius:9px;text-align:left;font-size:13px;font-weight:600; }
+.page .entryAction:not(:disabled):hover { background:var(--qs-accent);color:var(--qs-buttonInk);border-color:transparent; }
+.entryHint { display:block;margin:13px 0 0;line-height:20px;color:var(--qs-muted);font-size:11px; }
+.entryMore { margin-top:13px;font-size:11px;line-height:20px;color:var(--qs-muted); }
+.entryMore summary { cursor:pointer;width:fit-content; }.entryMore summary:focus-visible,.methodGuide summary:focus-visible { outline:2px solid var(--qs-accent);outline-offset:4px;border-radius:4px; }
+.entryMore > div { display:grid;gap:8px;margin-top:12px; }.entryMore small { font-size:11px;overflow-wrap:anywhere; }
+.page .entryMore button { font-size:12px;text-align:left;padding:8px 10px; }
+.methodGuide { margin-top:18px;color:var(--qs-muted);font-size:12px; }
+.methodGuide > summary { cursor:pointer;width:fit-content;line-height:1.8; }
+.methodGuide > div { display:grid;grid-template-columns:1fr 1fr;gap:14px 28px;padding:18px 20px;margin-top:12px;border:1px solid var(--qs-line);border-radius:12px;background:var(--qs-surface); }
+.methodGuide p { margin:0;line-height:1.8; }.methodGuide p:last-child { grid-column:1/-1;border-top:1px solid var(--qs-line);padding-top:12px; }
+.methodGuide strong { color:var(--qs-ink);display:block;font-size:13px;margin-bottom:4px; }
+.connectionState { display:inline-flex;align-items:center;gap:8px;font-size:13px; }.connectionState::before { content:'';width:7px;height:7px;border-radius:50%;background:var(--qs-muted); }.connectionState[data-connected=true]::before { background:var(--qs-accent); }
+.connection .connectionTools { display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:10px; }
+.connectionTools .plans { margin:0; }.connectionTools button,.connectionTools summary { font-size:12px;padding:8px 11px; }
+.connectionTools .accountActions > div small { width:100%; }.connectionTools .accountActions > div { box-sizing:border-box;max-width:min(300px,80vw); }
+.watchArea { scroll-margin:18px;min-width:0;margin:24px 0;outline:none; }.watchArea[hidden] { display:none; }
+.workspaceBar { display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:var(--qs-muted);margin-bottom:12px; }
+.page .workspaceBar button { padding:6px 10px;font-size:12px; }.watchArea > .watchWorkbench { margin-top:0; }
+@container(max-width:780px) {
+  .entryGrid { grid-template-columns:1fr;gap:12px; }
+  .entryCard { display:grid;grid-template-columns:minmax(0,1fr) 190px;column-gap:24px;padding:20px; }
+  .entryTop { grid-column:1; }.entryCard h3 { grid-column:1;margin:14px 0 8px;font-size:20px; }.entryDescription { grid-column:1;min-height:0; }
+  .entryStatus { grid-column:2;grid-row:1/3;margin:0;align-self:end;padding-bottom:12px; }.page .entryAction { grid-column:2;grid-row:3;align-self:start; }
+  .entryHint,.entryMore { grid-column:2;margin-top:8px; }.entryMore { grid-row:4; }
+}
+@container(max-width:480px) {
+  .entryCard { display:block;padding:20px; }.entryCard h3 { margin-top:15px; }.entryDescription { min-height:0; }.entryStatus { margin:12px 0;padding:0; }
+  .methodGuide > div { grid-template-columns:1fr; }.methodGuide p:last-child { grid-column:auto; }
+}
+@media(max-width:900px) { .connection[data-compact] { flex-direction:row;align-items:center;flex-wrap:wrap; }.connectionTools { margin-left:auto; } }
+@media(max-width:600px) { .connectionTools { margin-left:0; }.connection .connectionTools { justify-content:flex-start; }.connection[data-compact] .accountActions > div { left:0;right:auto; }.entryHeading > span { font-size:11px; }.entrySection { margin:22px 0; }.contestDetails { padding:18px; }.contestDetails > summary h2 { font-size:17px; }.header h1 { font-size:24px; } }
+@media(prefers-reduced-motion:reduce) { .entryCard { transition:none; } }

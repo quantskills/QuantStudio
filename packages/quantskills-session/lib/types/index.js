@@ -34,6 +34,7 @@ var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, 
     done = true;
 };
 import { QuantSkillsLibraryStore } from "./library-store.js";
+import { SessionLifecycle } from "./session-lifecycle.js";
 import { ContestService, sameContest } from "./contest-service.js";
 import { FlyService } from "./fly-service.js";
 import { OfficialContestCli } from "./contest-cli.js";
@@ -699,6 +700,9 @@ let QuantSkillsSessionService = (() => {
     let _create_decorators;
     let _list_decorators;
     let _plainSessionList_decorators;
+    let _previewSessionDeletion_decorators;
+    let _changeSessionLifecycle_decorators;
+    let _archivedConversations_decorators;
     let _frequent_decorators;
     let _residentSkillAttach_decorators;
     let _residentSkillDetach_decorators;
@@ -777,6 +781,9 @@ let QuantSkillsSessionService = (() => {
             _create_decorators = [Remote('create')];
             _list_decorators = [Remote('list')];
             _plainSessionList_decorators = [Remote('plainSessionList')];
+            _previewSessionDeletion_decorators = [Remote('deletionPreview')];
+            _changeSessionLifecycle_decorators = [Remote('sessionLifecycle')];
+            _archivedConversations_decorators = [Remote('archivedConversations')];
             _frequent_decorators = [Remote('frequent')];
             _residentSkillAttach_decorators = [Remote('residentSkillAttach')];
             _residentSkillDetach_decorators = [Remote('residentSkillDetach')];
@@ -852,6 +859,9 @@ let QuantSkillsSessionService = (() => {
             __esDecorate(this, null, _create_decorators, { kind: "method", name: "create", static: false, private: false, access: { has: obj => "create" in obj, get: obj => obj.create }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _list_decorators, { kind: "method", name: "list", static: false, private: false, access: { has: obj => "list" in obj, get: obj => obj.list }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _plainSessionList_decorators, { kind: "method", name: "plainSessionList", static: false, private: false, access: { has: obj => "plainSessionList" in obj, get: obj => obj.plainSessionList }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _previewSessionDeletion_decorators, { kind: "method", name: "previewSessionDeletion", static: false, private: false, access: { has: obj => "previewSessionDeletion" in obj, get: obj => obj.previewSessionDeletion }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _changeSessionLifecycle_decorators, { kind: "method", name: "changeSessionLifecycle", static: false, private: false, access: { has: obj => "changeSessionLifecycle" in obj, get: obj => obj.changeSessionLifecycle }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _archivedConversations_decorators, { kind: "method", name: "archivedConversations", static: false, private: false, access: { has: obj => "archivedConversations" in obj, get: obj => obj.archivedConversations }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _frequent_decorators, { kind: "method", name: "frequent", static: false, private: false, access: { has: obj => "frequent" in obj, get: obj => obj.frequent }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _residentSkillAttach_decorators, { kind: "method", name: "residentSkillAttach", static: false, private: false, access: { has: obj => "residentSkillAttach" in obj, get: obj => obj.residentSkillAttach }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _residentSkillDetach_decorators, { kind: "method", name: "residentSkillDetach", static: false, private: false, access: { has: obj => "residentSkillDetach" in obj, get: obj => obj.residentSkillDetach }, metadata: _metadata }, null, _instanceExtraInitializers);
@@ -910,6 +920,7 @@ let QuantSkillsSessionService = (() => {
             teamForkProvider: s.string().default('fork'),
         });
         libraryStore = __runInitializers(this, _instanceExtraInitializers);
+        sessionLifecycle;
         modelAccess;
         /** Manage model providers through the Host settings and credential services. */
         async modelsAccess(request) {
@@ -950,13 +961,14 @@ let QuantSkillsSessionService = (() => {
          */
         constructor(ctx, config) {
             super(ctx, 'quantSkillsSessions', { namespace: 'quantSkillsSessions' });
+            this.sessionLifecycle = new SessionLifecycle(ctx, resolveDshHome(config.dshHome));
             this.contest = new ContestService(new OfficialContestCli(() => {
                 const processes = ctx.get('subprocess');
                 if (!processes)
                     throw new Error('比赛 CLI 进程服务未就绪，请重新启动应用。');
                 return processes;
             }, join(resolveDshHome(config.dshHome), 'quantskills', 'contest', 'auth')), config.dshHome);
-            this.contestWatcher = new ContestWatcher(ctx, this.contest);
+            this.contestWatcher = new ContestWatcher(ctx, this.contest, undefined, async () => this.fly.isTrading());
             this.fly = new FlyService(ctx, this.contest, join(resolveDshHome(config.dshHome), 'quantskills', 'fly'), async () => (await this.contestWatcher.status()).running);
             void this.fly.runtime.resume().catch(() => { });
             this.factorContest = new FactorContestService(new OfficialFactorRuntime(() => {
@@ -1249,8 +1261,8 @@ let QuantSkillsSessionService = (() => {
         contestJevConfigure(request) { return this.contestWatcher.configure(request); }
         contestWatchStart(request) {
             if (request.confirmed !== true)
-                throw new Error('请先在比赛页确认盯盘范围；生成的计划仍需逐笔确认。');
-            return this.contestWatcher.start(request.config);
+                throw new Error('请先在比赛页确认盯盘范围与执行方式。');
+            return this.contestWatcher.start(request.config, request.executionConsent);
         }
         contestWatchStop() { return this.contestWatcher.stop(); }
         contestQuery(request, signal) { return this.contest.query(request, undefined, signal); }
@@ -1494,6 +1506,47 @@ let QuantSkillsSessionService = (() => {
          */
         async plainSessionList(request, signal) {
             return this.listPlainArchives(request, this.operationSignal(signal));
+        }
+        /** Separate reversible archive/restore from permanent conversation erasure. */
+        async previewSessionDeletion(request) {
+            return this.sessionLifecycle.preview(request.sessionId, async () => {
+                const existing = await this.inspectExisting(request.sessionId, this.lifetime.signal);
+                if (!existing || existing.header.origin === 'subagent' || !existing.events.some(event => [PLAIN_SESSION_EVENT, BINDING_EVENT, AGENT_SESSION_EVENT, AGENT_TEAM_SESSION_EVENT].includes(event.type))) {
+                    throw new Error('找不到此 QuantStudio 会话。');
+                }
+            });
+        }
+        async changeSessionLifecycle(request) {
+            if (!['archive', 'restore', 'delete'].includes(request.action))
+                throw new Error('无效的会话操作。');
+            await this.sessionLifecycle.run(request, async () => {
+                const existing = await this.inspectExisting(request.sessionId, this.lifetime.signal);
+                if (!existing || existing.header.origin === 'subagent' || !existing.events.some(event => [PLAIN_SESSION_EVENT, BINDING_EVENT, AGENT_SESSION_EVENT, AGENT_TEAM_SESSION_EVENT].includes(event.type))) {
+                    throw new Error('找不到此 QuantStudio 会话。');
+                }
+            });
+            if (request.action === 'delete') {
+                const id = request.sessionId;
+                this.reservations.delete(id);
+                this.plainReservations.delete(id);
+                this.agentReservations.delete(id);
+                this.teamReservations.delete(id);
+                this.teamRuntimes.delete(id);
+            }
+        }
+        /** List archived conversations of all four product types, without resuming them. */
+        async archivedConversations() {
+            await this.sessionLifecycle.ready;
+            const options = { includeArchived: true };
+            const [plain, skill, agent, team] = await Promise.all([
+                this.listPlainArchives(options, this.lifetime.signal), this.listArchives(options, this.lifetime.signal),
+                this.listAgentArchives(options, this.lifetime.signal), this.listTeamArchives(options, this.lifetime.signal),
+            ]);
+            const groups = [['plain', plain], ['skill', skill], ['agent', agent], ['team', team]];
+            return groups.flatMap(([kind, rows]) => rows.filter(row => row.archived).map(row => ({
+                sessionId: row.sessionId, title: row.title || '未命名会话', kind,
+                updatedAt: row.updatedAt, running: row.running,
+            }))).sort((a, b) => b.updatedAt - a.updatedAt);
         }
         /**
          * Aggregate frequently used Skills from real bound conversation archives.
@@ -3936,6 +3989,7 @@ let QuantSkillsSessionService = (() => {
             return { header: inspected.meta, events: inspected.events };
         }
         async listArchives(request, signal) {
+            await this.sessionLifecycle.ready;
             const headers = new Map();
             for (const header of await this.ctx.sessionPersistence.list(signal))
                 headers.set(header.id, header);
@@ -3976,6 +4030,7 @@ let QuantSkillsSessionService = (() => {
             return Object.freeze(items);
         }
         async listPlainArchives(request, signal) {
+            await this.sessionLifecycle.ready;
             const headers = new Map();
             for (const header of await this.ctx.sessionPersistence.list(signal))
                 headers.set(header.id, header);
@@ -4016,6 +4071,7 @@ let QuantSkillsSessionService = (() => {
             return Object.freeze(items);
         }
         async listAgentArchives(request, signal) {
+            await this.sessionLifecycle.ready;
             const headers = new Map();
             for (const header of await this.ctx.sessionPersistence.list(signal))
                 headers.set(header.id, header);
@@ -4056,6 +4112,7 @@ let QuantSkillsSessionService = (() => {
             return Object.freeze(items);
         }
         async listTeamArchives(request, signal) {
+            await this.sessionLifecycle.ready;
             const headers = new Map();
             for (const header of await this.ctx.sessionPersistence.list(signal))
                 headers.set(header.id, header);

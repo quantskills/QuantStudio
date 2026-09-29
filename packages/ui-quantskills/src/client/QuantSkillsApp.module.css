@@ -753,7 +753,7 @@ body[data-qs-plugin-theme='dark'] .brandAsset,
 .sessionGroup h2 { display: flex; align-items: center; gap: 7px; margin: 0 8px 6px; color: var(--qs-muted); font-size: 12px; font-weight: 600; }
 .sessionGroup h2 mark { padding: 1px 6px; color: var(--qs-blue); border-radius: 999px; background: var(--dsw-alias-button-ghost-active-fill); }
 .sessionTabs { display: flex; flex-direction: column; }
-.sessionTab { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 60px; align-items: center; border-bottom: 1px solid var(--qs-border); border-radius: 8px; }
+.sessionTab { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; border-bottom: 1px solid var(--qs-border); border-radius: 8px; }
 .sessionTabManaging { grid-template-columns: 32px minmax(0, 1fr); }
 .sessionSelect { width: 32px; height: 100%; display: grid; place-items: center; cursor: pointer; }
 .sessionSelect:has(input:disabled) { cursor: not-allowed; opacity: .42; }
@@ -761,12 +761,6 @@ body[data-qs-plugin-theme='dark'] .brandAsset,
 .sessionOpen > span:nth-child(2) { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
 .sessionTabs button b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sessionTabs .selected { color: var(--qs-blue); background: var(--dsw-alias-button-ghost-active-fill); box-shadow: inset 3px 0 var(--qs-blue); }
-.sessionActions { width: 60px; display: flex; align-items: center; justify-content: flex-end; }
-.sessionAction { width: 28px; height: 28px; display: grid; place-items: center; color: var(--qs-muted) !important; border: 0; border-radius: 6px; background: transparent; opacity: 0; cursor: pointer; }
-.sessionRename:hover { color: var(--qs-blue) !important; background: var(--dsw-alias-button-ghost-active-fill); }
-.sessionRemove:hover { color: var(--dsw-static-red-600, #b42318) !important; background: color-mix(in srgb, var(--dsw-static-red-500, #d92d20) 9%, transparent); }
-.sessionTab:hover .sessionAction, .sessionTab:focus-within .sessionAction { opacity: 1; }
-.sessionRemove:disabled { cursor: not-allowed; color: var(--qs-muted) !important; opacity: .35; background: transparent; }
 .sessionDrawer small { color: var(--qs-muted); }
 .sessionDrawer em { color: var(--qs-blue); font-style: normal; }
 .sessionEmpty { display: flex; flex-direction: column; align-items: center; gap: 7px; margin: 34px 8px; padding: 24px 14px; color: var(--qs-muted); text-align: center; border: 1px dashed var(--qs-border); border-radius: 10px; }
@@ -802,7 +796,7 @@ body[data-qs-plugin-theme='dark'] .brandAsset,
 .archiveGroup > h2 { display: flex; align-items: center; gap: 8px; font-size: 18px; }
 .archiveGroup > h2 mark { padding: 2px 8px; color: var(--qs-blue); border-radius: 999px; background: var(--dsw-alias-button-ghost-active-fill); }
 .archiveOverview { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
-.archiveOverview article { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; border: 1px solid var(--qs-border); border-radius: 10px; }
+.archiveOverview article { min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; border: 1px solid var(--qs-border); border-radius: 10px; }
 .archiveMain { min-width: 0; display: flex; align-items: center; gap: 12px; padding: 16px; text-align: left; }
 .archiveMain > span:nth-child(2) { min-width: 0; display: flex; flex: 1; flex-direction: column; gap: 4px; }
 .archiveMain small { color: var(--qs-muted); }
@@ -2089,7 +2083,6 @@ body[data-qs-plugin-theme='dark'] .pandaMcpPopover > header img,
 }
 
 @media (hover: none) {
-  .sessionAction:not(:disabled) { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -9,7 +9,7 @@ import type { SessionListState } from '@deepseek-ai/dsh-api-session-controller/c
 import { bindSnapshotSelector } from './bind-snapshot.ts'
 import type { ContestAccess } from '../src/client/contest.ts'
 import type { ContestData, ContestPlan, ContestStatus, QuantSkillsPlainSessionArchiveItem } from '../src/client/plugin-types.ts'
-afterEach(() => { cleanup(); vi.useRealTimers() })
+afterEach(() => { cleanup(); sessionStorage.clear(); vi.useRealTimers() })
 
 const identity = { accountId: 'account-1', contestId: 'contest-1' }
 function plan(): ContestPlan { return { id: 'plan-1', sessionId: 'session-1', identity, operation: 'place_order', createdAt: Date.now(), expiresAt: Date.now() + 60_000,
@@ -31,6 +31,51 @@ function api(initial: Partial<ContestStatus> = {}) {
 }
 
 describe('contest mode interaction', () => {
+  it('opens independent workspaces and preserves drafts without starting trading', async () => {
+    const f = api({ enabled: true, phase: 'connected', identity, plans: [plan()] })
+    const watch = {
+      status: vi.fn(async () => ({ running: false, message: '尚未启动', sampleCount: 0, planCount: 0, events: [] })),
+      templates: vi.fn(async () => []), settings: vi.fn(async () => ({ configured: true, writable: true, model: 'jev-1.13.0' })),
+      start: vi.fn(), stop: vi.fn(), datasets: vi.fn(async () => []), saveTemplate: vi.fn(), prepareHistory: vi.fn(), configure: vi.fn(),
+      usage: vi.fn(async () => ({ since: 0, requests: 0, responsesOk: 0, unknownUsage: 0, inputTokens: 0, outputTokens: 0, records: [] })),
+    }
+    const openFly = vi.fn()
+    const flyAccess = {
+      status: vi.fn(async () => ({ supported: true, installed: false, installing: false, running: false, message: '' })),
+      install: vi.fn(), request: vi.fn(),
+    }
+    const workspaceChanged = vi.fn()
+    render(<ContestPage access={{ ...f.access, watch }} flyAccess={flyAccess} openFly={openFly} onWorkspaceChange={workspaceChanged}/>)
+    fireEvent.click(await screen.findByRole('button', { name: /JEV 盯盘.*按你的策略/ }))
+    const jev = await screen.findByRole('region', { name: 'Jev 持续盯盘' })
+    expect(jev.closest('[hidden]')).toBeNull()
+    expect(screen.queryByRole('button', { name: '准备交易环境' })).toBeNull()
+    expect(workspaceChanged).toHaveBeenLastCalledWith(true)
+    fireEvent.click(screen.getByRole('button', { name: 'Jev 运行设置' }))
+    fireEvent.change(screen.getByLabelText('实际合约'), { target: { value: 'rb2610' } })
+    fireEvent.click(screen.getByRole('button', { name: '模板、额度与高级设置 ↗' }))
+    fireEvent.change(screen.getByLabelText('运行模板'), { target: { value: 'trend' } })
+    fireEvent.click(screen.getByRole('button', { name: '应用本次配置' }))
+    fireEvent.click(screen.getByRole('button', { name: '返回比赛首页' }))
+    expect(workspaceChanged).toHaveBeenLastCalledWith(false)
+    fireEvent.click(screen.getByRole('button', { name: /AI 交易员.*同时跟踪/ }))
+    await screen.findByRole('button', { name: '准备交易环境' })
+    expect(screen.queryByRole('region', { name: 'Jev 持续盯盘' })).toBeNull()
+    expect(screen.getAllByRole('button', { name: /比赛计划.*1 笔待确认/ })).toHaveLength(1)
+    fireEvent.click(screen.getByRole('button', { name: '返回比赛首页' }))
+    fireEvent.click(screen.getByRole('button', { name: /JEV 盯盘.*按你的策略/ }))
+    expect(screen.getByRole('button', { name: /趋势回调/ })).toBeTruthy()
+    expect(screen.getByRole('button', { name: '选择实际合约' }).textContent).toContain('rb2610')
+    expect(screen.queryByRole('button', { name: '准备交易环境' })).toBeNull()
+    expect(screen.getAllByRole('button', { name: /比赛计划.*1 笔待确认/ })).toHaveLength(1)
+    fireEvent.click(screen.getByRole('button', { name: '返回比赛首页' }))
+    fireEvent.click(screen.getByRole('button', { name: /AI 交易员.*同时跟踪/ }))
+    expect(openFly).not.toHaveBeenCalled()
+    expect(flyAccess.install).not.toHaveBeenCalled(); expect(flyAccess.request).not.toHaveBeenCalled()
+    expect(watch.start).not.toHaveBeenCalled(); expect(watch.stop).not.toHaveBeenCalled()
+    expect(f.access.execute).not.toHaveBeenCalled()
+  })
+
   it('shows volume-weighted opening fills in history and never uses the quote as an execution price', async () => {
     const completed: ContestPlan = { ...plan(), status: 'completed', operationId: 'op-1', details: { ...plan().details, parameters: { contractCode: 'rb2610', side: 'buy', offset: 'open', volume: 3 } },
       fills: [{ id: 'f1', tradeId: 't1', orderId: 'o1', volume: 1, price: 3200, time: new Date().toISOString() }, { id: 'f2', tradeId: 't2', orderId: 'o1', volume: 2, price: 3203, time: new Date().toISOString() }] }
@@ -155,8 +200,9 @@ describe('contest mode interaction', () => {
     fireEvent.click(entry); fireEvent.click(entry)
     expect(f.access.startResearch).toHaveBeenCalledTimes(1)
     expect(f.access.execute).not.toHaveBeenCalled()
-    expect(screen.getByRole('list', { name: 'AI 交易步骤' })).toBeTruthy()
+    expect(screen.getByRole('article', { name: 'Ai辅助' })).toBeTruthy()
     await act(async () => finish())
+    fireEvent.click(screen.getByRole('button', { name: '更多对话选项' }))
     fireEvent.click(screen.getByRole('button', { name: '新建专题对话' }))
     expect(f.access.startResearch).toHaveBeenLastCalledWith(true, expect.any(AbortSignal))
     await act(async () => finish())
@@ -179,11 +225,29 @@ describe('contest mode interaction', () => {
       archive('ordinary', 60, { purpose: 'ordinary' }), archive('other-account', 70, { ...owned, contest: { ...identity, accountId: 'other' } }),
       archive('other-contest', 80, { ...owned, contest: { ...identity, contestId: 'other' } })]
     const view = render(<ContestPage access={f.access} researchSessions={sessions} openResearch={openResearch}/>)
+    fireEvent.click(await screen.findByRole('button', { name: '更多对话选项' }))
     fireEvent.click(await screen.findByRole('button', { name: '继续最近对话' }))
     expect(openResearch).toHaveBeenCalledExactlyOnceWith('latest')
     expect(f.access.startResearch).not.toHaveBeenCalled()
     view.rerender(<ContestPage access={f.access} researchSessions={sessions.slice(2)} openResearch={openResearch}/>)
+    fireEvent.click(screen.getByRole('button', { name: '更多对话选项' }))
     expect(screen.queryByRole('button', { name: '继续最近对话' })).toBeNull()
+  })
+  it('dismisses research options outside and with Escape without starting a conversation', async () => {
+    const f = api({ enabled: true, phase: 'connected', identity })
+    render(<ContestPage access={f.access}/>)
+    const more = await screen.findByRole('button', { name: '更多对话选项' })
+    expect(screen.queryByRole('button', { name: '新建专题对话' })).toBeNull()
+    fireEvent.click(more)
+    fireEvent.pointerDown(screen.getByRole('button', { name: '新建专题对话' }))
+    expect(more.getAttribute('aria-expanded')).toBe('true')
+    fireEvent.pointerDown(document.body)
+    expect(screen.queryByRole('button', { name: '新建专题对话' })).toBeNull()
+    fireEvent.click(more)
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(more.getAttribute('aria-expanded')).toBe('false')
+    expect(document.activeElement).toBe(more)
+    expect(f.access.startResearch).not.toHaveBeenCalled()
   })
   it('presents the reported account fields in Chinese and omits empty trading-mode arrays', async () => {
     const f = api({ enabled: true, phase: 'connected', identity })

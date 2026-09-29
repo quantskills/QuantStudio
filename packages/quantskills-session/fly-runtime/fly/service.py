@@ -11,14 +11,16 @@ import uuid
 
 from .history import readiness, missing_minutes, bars_key, history_since, history_delay, timestamp
 from .scheduling import next_turn
+from .llm_trading import ModelTrader
 from .models import Settings, DEFAULT_LAYOUT
 from .store import Store, atomic_json
 from .durability import Retry, backup
 from .world import World, DEFAULT_HOME
 from . import bridge
-from .contest import sync as sync_contest
+from .contest import sync as sync_contest, propose as propose_contest
 
 ACTIVE_SERVICE = None
+COUNTER_POLL_SECONDS = 30
 
 
 class Organism:
@@ -49,12 +51,20 @@ class Organism:
             accounts=manager.accounts
             if accounts:self.settings.account=accounts[0]['name']
         self.control=self.store.get('control',{'paused':True,'trading':False})
-        if self.control['paused'] or not self.settings.trading_configured():
+        # Upgrading a suggestion-only run must not silently grant order execution.
+        if (self.control.get('execution') != self.settings.execution_mode or self.control['paused'] or not self.settings.trading_configured()
+                or (self.settings.execution_mode == 'automatic' and (
+                    (self.control.get('authorization') or {}).get('version') != 'automatic-orders-v1'
+                    or (self.control.get('authorization') or {}).get('run_id') != self.control.get('run_id')))):
             self.control['trading']=False;self.store.put('control',self.control)
         # A restart may resume the preference, but never an old signal.
         for item in self.settings.instruments:
             signal=self.store.get('signal:'+item.product)
             if signal:self.store.put('consumed:'+item.product,signal['decision_id'])
+            status=self.store.get('model_status:'+item.product)
+            if status and status.get('status') == 'running':
+                self.store.put('model_status:'+item.product,{'status':'discarded',
+                    'message':'上次分析随服务重启结束，等待新行情重新判断','at':time.time()})
         self.store.put('settings',self.settings.model_dump())
         home_version=self.store.get('home_version','default')
         body=self.store.get('world')
@@ -71,7 +81,7 @@ class Organism:
         self.lock=threading.RLock();self.process=None;self.mailbox=queue.Queue();self.busy=None
         self.neural={'status':'stopped'};self.closed=False;self.checkpointing=False
         self.last_life=0;self.last_save=0;self.last_history=0;self.last_checkpoint=time.time();self.seen={};self.trade_cursor=0;self.trade_streak=0
-        self.history_lock=threading.Lock();self.last_connection=0
+        self.history_lock=threading.Lock();self.last_connection=0;self.history_cursor=0
         self.history_status={'status':'idle','last_success_at':self.store.get('history_success_at')}
         self.history_retry=self.store.get('history_retry',{})
         self.next_history_at=0
@@ -83,6 +93,7 @@ class Organism:
         self.backup_lock=threading.Lock();self.last_backup=0
         self.connection={'status':'idle','message':'尚未连接比赛账户'}
         self.connection_retry=self.store.get('connection_retry',{})
+        self.model_trader=ModelTrader(self)
         self.thread=threading.Thread(target=self.loop,name='fly-organism',daemon=True);self.thread.start()
 
     def dependencies(self):
@@ -95,6 +106,16 @@ class Organism:
 
     def start(self):
         with self.lock:
+            if self.settings.decision_engine == 'llm':
+                try:
+                    route=json.loads(self.settings.trade_model)
+                    if not isinstance(route.get('provider'),str) or not route['provider'] or not isinstance(route.get('model'),str) or not route['model']: raise ValueError()
+                except (ValueError, TypeError, AttributeError):
+                    raise ValueError('请在决策引擎中选择 QS 已配置的大模型') from None
+                if not self.settings.trade_instructions.strip(): raise ValueError('请填写交易要求')
+                self.manager.claim(self.owner)
+                self.control['paused']=False;self.store.put('control',self.control)
+                return
             if self.process and self.process.poll() is None:
                 self.control['paused']=False;self.store.put('control',self.control);return
             self.manager.claim(self.owner)
@@ -122,9 +143,18 @@ class Organism:
     def configure(self, settings):
         with self.lock:
             old=self.settings
-            if self.control.get('trading') and any(getattr(old,k)!=getattr(settings,k) for k in ('account','instruments','target_notional','total_notional','loss_limit')):
-                raise ValueError('先停止交易建议，再修改账户与额度')
+            if self.control.get('trading') and any(getattr(old,k)!=getattr(settings,k) for k in ('account','instruments','target_notional','total_notional','loss_limit','execution_mode','decision_engine','trade_model','trade_instructions','llm_max_lots','trade_daily_calls')):
+                raise ValueError('先暂停自动交易，再修改交易设置')
             if self.store.get('binding') and settings.account!=old.account: raise ValueError('已有交易绑定，不能静默更换账户归属')
+            if old != settings:
+                self.seen.clear()
+                for item in old.instruments:
+                    signal=self.store.get('signal:'+item.product)
+                    if signal:self.store.put('consumed:'+item.product,signal['decision_id'])
+                    self.store.put('trade_filter:'+item.product,{})
+                    if any(getattr(old,key)!=getattr(settings,key) for key in ('decision_engine','trade_model','trade_instructions','llm_max_lots')):
+                        self.store.put('signal:'+item.product,None)
+                        self.store.put('model_status:'+item.product,None)
             self.settings=settings;self.store.put('settings',settings.model_dump())
             if old.trade_period_minutes!=settings.trade_period_minutes or old.instruments!=settings.instruments:
                 self.last_history=0
@@ -135,7 +165,7 @@ class Organism:
                 self.control['trading']=False;self.store.put('control',self.control)
             self.store.event('settings_changed',settings.model_dump(),actor='user')
 
-    def command(self, action, version=''):
+    def command(self, action, version='', execution_consent=None):
         with self.lock:
             if action=='start':self.start()
             elif action=='pause':
@@ -145,11 +175,24 @@ class Organism:
                 self.world.state['motor_remaining']=0.
             elif action=='observe':self.control['trading']=False
             elif action in ('trade','close_only'):
+                if self.settings.execution_mode == 'automatic' and execution_consent != 'automatic-orders-v1':
+                    raise ValueError('请先阅读并确认自动下单的执行范围与风险')
                 if self.settings.life_validation:raise ValueError('当前仅验证生活，请先在设置中关闭仅验证生活')
                 if not self.settings.instruments:raise ValueError('请先选择品种并填写实际合约')
                 if self.settings.total_notional and self.settings.target_notional>self.settings.total_notional:raise ValueError('总名义占用上限不能小于每品种目标名义金额')
                 if action=='trade' and (self.store.get('risk') or {}).get('halted'):raise ValueError('损失上限已触发；请在实盘监控核对账户，本轮不能继续开仓')
-                self.start();self.request_connection();self.control.update(trading=True,close_only=action=='close_only')
+                self.start();self.request_connection()
+                if not self.control.get('trading') or self.control.get('execution') != self.settings.execution_mode:
+                    self.control['run_id']=uuid.uuid4().hex
+                    self.seen.clear()
+                    for item in self.settings.instruments:
+                        signal=self.store.get('signal:'+item.product)
+                        if signal:self.store.put('consumed:'+item.product,signal['decision_id'])
+                self.control.update(trading=True,close_only=action=='close_only',execution=self.settings.execution_mode)
+                self.control['authorization'] = ({'version': execution_consent, 'run_id': self.control['run_id'], 'accepted_at': time.time()}
+                    if self.settings.execution_mode == 'automatic' else None)
+                self.store.event('execution_mode_confirmed', {'mode': self.settings.execution_mode, 'run_id': self.control['run_id'],
+                    'authorization': self.control['authorization'], 'instruments': [i.model_dump() for i in self.settings.instruments]}, actor='user')
             elif action=='connect': self.request_connection()
             elif action=='history': self.request_history()
             elif action=='checkpoint': self.checkpoint()
@@ -195,7 +238,7 @@ class Organism:
     def request_history(self, manual=True):
         with self.lock:
             binding=self.store.get('binding')
-            if not binding:raise ValueError('请先在果蝇设置中连接比赛账户与行情')
+            if not binding:raise ValueError('请先在AI 交易员设置中连接比赛账户与行情')
             if not self.settings.instruments:raise ValueError('请先选择品种并保存实际合约')
             retry_at=self.history_retry.get('retry_at') or 0
             if time.time()<retry_at:
@@ -215,7 +258,14 @@ class Organism:
     def backfill(self, settings, binding):
         minutes=settings.trade_period_minutes
         errors=[]
-        for item in settings.instruments:
+        instruments=settings.instruments
+        start=self.history_cursor%len(instruments) if instruments else 0
+        for index in range(len(instruments)):
+            position=(start+index)%len(instruments)
+            item=instruments[position]
+            # Advance even on a rate limit so one slow contract cannot always
+            # monopolize the first request after cooldown.
+            self.history_cursor=(position+1)%len(instruments)
             if self.closed:return
             error='';failure=None
             key=bars_key(item.product,minutes)
@@ -240,6 +290,7 @@ class Organism:
                                     'at':previous.get('at') if error else result.get('fetched_at',time.time()),'error':error})
                 if error:errors.append(item.symbol+'：'+error)
             if failure and (getattr(failure,'code','')=='RATE_LIMIT' or not getattr(failure,'retryable',True)):raise failure
+        self.history_cursor=(start+1)%len(instruments) if instruments else 0
         return '；'.join(errors)
 
     def reward(self, head, decision_id, reward, evidence):
@@ -285,8 +336,10 @@ class Organism:
                 self.last_life=time.time()
                 self.manager.jev_assist(self,message)
             else:
+                if self.settings.decision_engine != 'neural':return
                 self.store.event('decision',message,actor='fly',decision_id=message['decision_id'])
                 product=message['product'];self.store.put('signal:'+product,message)
+                self.request_execution()
                 # WAIT has no invented P&L reward. Filled decisions are settled
                 # later from confirmed counter/account evidence.
 
@@ -299,7 +352,7 @@ class Organism:
                     while not self.mailbox.empty():self.consume(self.mailbox.get_nowait())
                     if self.process and self.process.poll() is not None:
                         self.neural.update(status='error',message='神经进程已退出，等待检查点恢复；交易信号暂不可用')
-                        if not self.control['paused'] and self.neural_retry.due(now):
+                        if self.settings.decision_engine == 'neural' and not self.control['paused'] and self.neural_retry.due(now):
                             self.neural_retry.attempted(now)
                             self.store.event('neural_recovery',{'attempt':self.neural_retry.failures,'offline_replay':False})
                             self.start()
@@ -314,9 +367,8 @@ class Organism:
                     if now>=self.next_history_at:
                         self.next_history_at=now+5
                         if self.store.get('binding') and self.settings.instruments:self.request_history(manual=False)
-                    if now-self.last_connection>5:
-                        self.last_connection=now
-                        threading.Thread(target=self.sync_counter,daemon=True).start()
+                    self.poll_counter(now)
+                    self.model_trader.tick(now)
                     if self.neural.get('status')=='ready' and not self.control['paused'] and not self.checkpointing:
                         result=self.world.tick(dt)
                         if result:
@@ -331,7 +383,7 @@ class Organism:
                             # body. Otherwise its relative motor direction would
                             # be applied to a different pose after neural latency.
                             life_ready=not world.get('life_episode') and ((neural_motor and now-self.last_life>.5) or (not world['decision_id'] and now-self.last_life>2))
-                            request,self.trade_cursor,self.trade_streak=next_turn(self.store,() if self.settings.life_validation else tuple(i.product for i in self.settings.instruments),
+                            request,self.trade_cursor,self.trade_streak=next_turn(self.store,() if self.settings.life_validation or self.settings.decision_engine != 'neural' else tuple(i.product for i in self.settings.instruments),
                                 self.seen,self.trade_cursor,self.trade_streak,now,life_ready)
                             if request and request['head']=='life':
                                 request={'head':'life','world':world,'home':self.world.home,'internal':internal,
@@ -376,10 +428,34 @@ class Organism:
                         if not error:self.store.put('history_success_at',time.time())
                         self.history_retry=bridge.retry_state(self.history_retry,failure,time.time(),'pandadata') if failure else {}
                         self.store.put('history_retry',self.history_retry)
-                        self.next_history_at=(self.history_retry.get('retry_at') or time.time()+history_delay([i.product for i in settings.instruments],settings.trade_period_minutes,time.time()))
+                        now=time.time()
+                        delay=history_delay([i.product for i in settings.instruments],settings.trade_period_minutes,now)
+                        # Count the normal interval from batch START. A slow
+                        # seven-contract pass must not incur a second full wait.
+                        next_pass=max(now+2,min(now+delay,self.last_history+30)) if delay<=30 else now+delay
+                        self.next_history_at=self.history_retry.get('retry_at') or next_pass
                         self.history_status={'status':('error' if self.history_retry.get('blocked') else 'cooldown') if error else 'complete',**self.history_retry,
                                              'finished_at':time.time(),'last_success_at':self.store.get('history_success_at')}
             finally:self.history_lock.release()
+
+    def poll_counter(self,now):
+        if self.counter_lock.locked() or now-self.last_connection<COUNTER_POLL_SECONDS:return
+        self.last_connection=now
+        threading.Thread(target=self.sync_counter,daemon=True).start()
+
+    def request_execution(self):
+        # A new decision need not wait for the next 30-second account poll.
+        # Use the same lock as receipt/account sync; execution still validates
+        # fresh quotes and the authorized run in the host before any CLI order.
+        threading.Thread(target=self.execute_signals,name='fly-execution',daemon=True).start()
+
+    def execute_signals(self):
+        if self.closed or self.connection_retry.get('blocked') or time.time()<(self.connection_retry.get('retry_at') or 0):return
+        if not self.counter_lock.acquire(blocking=False):return
+        try:
+            binding=self.store.get('binding')
+            if binding and not self.closed:propose_contest(self,binding['identity'])
+        finally:self.counter_lock.release()
 
     def sync_counter(self,wait=False):
         if self.connection_retry.get('blocked') or time.time()<(self.connection_retry.get('retry_at') or 0):return
@@ -394,7 +470,9 @@ class Organism:
             self.store.put('connection_retry',self.connection_retry)
             self.connection={'status':'needs_auth' if self.connection_retry['blocked'] else 'waiting',**self.connection_retry,
                              'message':str(exc) if isinstance(exc,ValueError) else '比赛账户暂不可用'}
-        finally:self.counter_lock.release()
+        finally:
+            self.last_connection=time.time()
+            self.counter_lock.release()
 
     def status(self):
         with self.lock:
@@ -412,7 +490,7 @@ class Organism:
                                 'readiness':'history_gap' if missing_minutes(bars,product,minutes) else readiness(bars,feed.get('quote_at',0),minutes=minutes), 'last_bar':bars[-1]['datetime'] if bars else None,
                                 'chart':[b['close'] for b in bars], 'long':feed.get('long',0),'short':feed.get('short',0),
                                 'quote_at':feed.get('quote_at'),
-                                'decision':self.store.get('signal:'+product), 'execution':self.store.get('execution_status:'+product),
+                                'decision':self.store.get('signal:'+product), 'decision_status':self.store.get('model_status:'+product) if self.settings.decision_engine == 'llm' else None, 'execution':self.store.get('execution_status:'+product),
                                 'signal_filter':self.store.get('trade_filter_status:'+product),
                                 'pending':(self.store.get('execution:'+product) or {}).get('pending')})
                 source=self.store.get('history_source:'+product+f':{minutes}m',{})
@@ -482,7 +560,7 @@ class FlyManager:
 
     def claim(self,owner):
         with self.lock:
-            if self.active_owner and self.active_owner!=owner:raise ValueError('本桌面已有一个运行中的果蝇个体')
+            if self.active_owner and self.active_owner!=owner:raise ValueError('本桌面已有一个运行中的AI 交易员个体')
             self.active_owner=owner;atomic_json(self.root/'owner.json',{'owner':owner})
 
     def resume(self):

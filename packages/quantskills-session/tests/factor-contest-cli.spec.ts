@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import { afterEach, expect, it, vi } from 'vitest'
 import type { SubprocessRuntime, SubprocessSpawnSpec } from '@deepseek-ai/dsh-subprocess'
-import { factorRuntimeDirectory, OfficialFactorRuntime } from '../src/factor-contest-cli.ts'
+import { FactorCliInputError, factorRuntimeDirectory, OfficialFactorRuntime } from '../src/factor-contest-cli.ts'
 
 const roots: string[] = []
 afterEach(async () => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }) })
@@ -57,6 +57,27 @@ it('passes config and JSON flags before the CLI command and filters sensitive ou
   expect(result).toMatchObject({ success: true, balance: { computingPower: 20 }, nested: {} })
   expect(f.spawn.mock.calls[0]?.[0].argv).toEqual([expect.stringMatching(/python(?:\.exe)?$/), '-m', 'cli', '--config', join(f.root, 'config.json'), '--json', 'balance'])
   expect(f.spawn.mock.calls[0]?.[0].env).toMatchObject({ PYTHONPATH: undefined, PYTHONHOME: undefined })
+})
+it.each(['--formula', '--code'])('passes negative expressions and multiline values as one %s argument', async flag => {
+  const f = await fixture(), value = flag === '--formula' ? '-RETURNS(CLOSE,5)' : '-1\n# parameter-like text: --json'
+  await f.runtime.cli(f.root, ['factor_create', flag, value, '--name', '-反转', '--factor-direction', '1'], new AbortController().signal)
+  expect(f.spawn.mock.calls[0]![0].argv.slice(-4)).toEqual(['factor_create', `${flag}=${value}`, '--name=-反转', '--factor-direction=1'])
+})
+it.each([0, 2])('identifies local argparse rejection even when upstream swallows exit status (%i)', async exitCode => {
+  const f = await fixture()
+  const spawn = vi.fn(() => ({ done: Promise.resolve({ exitCode }), terminate: vi.fn(), waitForExit: async () => {},
+    collected: { stdout: { readFrom: () => ({ lossy: false, text: '' }) },
+      stderr: { readFrom: () => ({ lossy: false, text: 'usage: cli factor_create ...\ncli factor_create: error: argument --formula: expected one argument\n' }) } } }))
+  const runtime = new OfficialFactorRuntime(() => ({ spawn } as unknown as SubprocessRuntime), f.root)
+  await expect(runtime.cli(f.root, ['factor_create'], new AbortController().signal)).rejects.toBeInstanceOf(FactorCliInputError)
+})
+it('does not classify a crash after possible dispatch as a local parameter rejection', async () => {
+  const f = await fixture()
+  const spawn = vi.fn(() => ({ done: Promise.resolve({ exitCode: 1 }), terminate: vi.fn(), waitForExit: async () => {},
+    collected: { stdout: { readFrom: () => ({ lossy: false, text: '' }) },
+      stderr: { readFrom: () => ({ lossy: false, text: 'Network timeout after submit' }) } } }))
+  const runtime = new OfficialFactorRuntime(() => ({ spawn } as unknown as SubprocessRuntime), f.root)
+  await expect(runtime.cli(f.root, ['factor_create'], new AbortController().signal)).rejects.not.toBeInstanceOf(FactorCliInputError)
 })
 it('sends authenticated arena mutations only to the official origin with their stable idempotency key', async () => {
   const f = await fixture()

@@ -1,0 +1,52 @@
+
+  <header class="topbar">
+    <span class="brand-section">生命花园</span>
+    <div class="top-actions"><button class="icon-button" id="capture" aria-label="拍一张照片" data-icon="camera"></button><button class="icon-button" id="fullscreen" aria-label="全屏观赏" data-icon="expand"></button></div>
+  </header>
+  <section class="world" aria-label="可交互的连续生命场">
+    <div id="viewport"><canvas id="life-canvas" aria-label="生命正在连续生长。选择养分后点击生命附近，选择水流后拖动。可使用下方按钮在生命附近添加养分。"></canvas></div>
+    <div class="world-heading"><div class="eyebrow">A LITTLE WORLD OF ITS OWN</div><h1 id="life-name">澄光</h1><p>慢慢生长，自在游弋。</p><div class="live-label"><span></span><span id="live-status">正在醒来</span></div></div>
+    <div class="identity"><span class="identity-line"></span><span>LENIA / <span id="species-id">3GH2s</span><small>一个持续计算的小生命</small></span></div>
+    <div class="view-controls"><button class="icon-button" id="zoom-in" data-icon="plus" aria-label="靠近观察"></button><button class="icon-button" id="zoom-out" data-icon="minus" aria-label="拉远观察"></button><span></span><button class="icon-button" id="recenter" data-icon="focus" aria-label="回到生命中央"></button></div>
+    <div id="loading" class="loading"><span></span>正在唤醒这个小世界…</div>
+    <div id="empty-state" hidden><h2>这段生命暂时消散了</h2><p>环境留下了变化，你可以从出生时再看看。</p><button id="restore-birth">回到出生时</button></div>
+    <div class="interaction-hint" id="hint"><span class="hint-key">轻点</span><span id="hint-text">在它身旁，撒一点养分。</span></div>
+    <div class="dock-wrap">
+      <div class="popover" id="environment-pop" hidden>
+        <div class="popover-heading">换一种栖境<button data-close-pop aria-label="关闭环境选择" data-icon="close"></button></div>
+        <button data-env="still" class="environment-option selected"><span class="env-art still"></span><span><strong>静水</strong><small>让它按照自己的节奏生长</small></span><i data-icon="check"></i></button>
+        <button data-env="current" class="environment-option"><span class="env-art current"></span><span><strong>缓流</strong><small>轻微水流，新的生长轨迹</small></span><i data-icon="check"></i></button>
+        <button id="clear-environment" class="quiet-action">清除养分与石头</button>
+      </div>
+      <div class="popover interaction-pop" id="interaction-pop" hidden>
+        <div class="popover-heading">和它玩一会儿<button data-close-pop aria-label="关闭互动选择" data-icon="close"></button></div>
+        <div class="tool-options">
+          <button data-tool="food" aria-pressed="true"><i data-icon="sparkle"></i><b>养分</b><small>轻点撒下</small></button>
+          <button data-tool="flow" aria-pressed="false"><i data-icon="wind"></i><b>水流</b><small>拖动划过</small></button>
+          <button data-tool="rock" aria-pressed="false"><i data-icon="stone"></i><b>石头</b><small>改变空间</small></button>
+          <button data-tool="look" aria-pressed="false"><i data-icon="hand"></i><b>观察</b><small>拖动视角</small></button>
+        </div>
+        <button class="quiet-action" id="feed-near">在生命附近撒一点养分</button>
+      </div>
+      <div class="dock" aria-label="生命花园工具栏">
+        <button id="interaction-toggle" class="dock-button selected" aria-expanded="false"><i id="tool-icon" data-icon="sparkle"></i><span id="tool-label">互动</span><i class="tiny" data-icon="chevron"></i></button>
+        <button id="environment-toggle" class="dock-button" aria-expanded="false"><i data-icon="waves"></i><span>环境</span></button>
+        <button id="my-life" class="dock-button"><i data-icon="orbit"></i><span>我的生命</span></button>
+        <span class="dock-divider"></span>
+        <button class="icon-button" id="pause" aria-label="暂停生长" data-icon="pause"></button>
+        <button id="speed" class="speed-button" aria-label="切换生长速度">1×</button>
+      </div>
+    </div>
+    <div class="world-footer"><span id="environment-label">静水 · 珠光</span><span id="save-status">自动保存于此设备</span></div>
+  </section>
+  <div id="scrim" hidden></div>
+  <aside id="life-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title" hidden>
+    <header><div><span class="eyebrow">YOUR LITTLE WORLD</span><h2 id="drawer-title">我的生命</h2></div><button id="close-drawer" class="icon-button" aria-label="关闭我的生命" data-icon="close"></button></header>
+    <div class="drawer-content">
+      <section class="name-section"><label for="name-input">给它一个名字</label><div><input id="name-input" maxlength="16" value="澄光"><button id="save-name">保存</button></div></section>
+      <section><div class="section-heading"><h3>选择生命</h3><span>各自保留生长进度</span></div><div id="specimen-list"></div></section>
+      <section><div class="section-heading"><h3>留下这一刻</h3><button id="save-moment" class="text-button">＋ 保存快照</button></div><div id="moments"><p class="empty-copy">喜欢的形态，可以留在这里。</p></div></section>
+      <details><summary>它怎样生长</summary><p>身体由 Lenia 连续细胞自动机实时计算。养分会影响局部生长，水流改变位置与形状。这里先体验生长和互动，跨代遗传演化尚未接入。退出此页会保存并暂停生长。</p><dl><div><dt>模拟步数</dt><dd id="step-value">0</dd></div><div><dt>生命密度总量</dt><dd id="mass-value">—</dd></div><div><dt>互动次数</dt><dd id="interaction-value">0</dd></div></dl><button class="text-button" id="restart">回到这个种子的出生时</button><p class="credits">生命种子：<a href="https://github.com/Chakazul/Lenia" target="_blank" rel="noreferrer">Bert Chan / Lenia</a>（MIT）<br>呈现：Three.js · 本地模拟，无需账户</p></details>
+    </div>
+  </aside>
+  <div id="toast" role="status" aria-live="polite"></div>

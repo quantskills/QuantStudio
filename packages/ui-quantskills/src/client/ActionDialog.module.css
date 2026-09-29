@@ -1,4 +1,6 @@
 .dialog {
+  /* Dialogs can be mounted inside click-through sidebar layout wrappers. */
+  pointer-events: auto;
   box-sizing: border-box; width: min(480px, calc(100vw - 32px)); max-width: none;
   max-height: calc(100dvh - 32px); margin: auto; padding: 0; overflow: auto;
   border: 1px solid var(--qs-line, #8883); border-radius: 18px; box-shadow: 0 20px 80px #0003;

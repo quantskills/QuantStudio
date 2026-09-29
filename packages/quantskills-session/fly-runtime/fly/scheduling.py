@@ -1,21 +1,21 @@
 """Fair selection of fresh per-instrument neural observations."""
-from .history import readiness, missing_minutes, timestamp, bars_key
+from .history import readiness, missing_minutes, bars_key
 from .trade_filters import filter_config, config_key
 
 
-def next_trade(store, products, seen, cursor, now):
+def next_trade(store, products, seen, cursor, now, busy=()):
     settings = store.get('settings', {})
     cfg = filter_config(settings)
     minutes=cfg['trade_period_minutes']
     for offset in range(len(products)):
         index=(cursor+offset)%len(products);product=products[index]
+        if product in busy:continue
         feed=store.get('feed:'+product,{})
         bars=store.get(bars_key(product,minutes),[])
         if readiness(bars,feed.get('quote_at',0),now,minutes)!='ready' or now-feed.get('at',0)>10:continue
         if feed.get('inflight') or (feed.get('long') and feed.get('short')):continue
         if missing_minutes(bars,product,minutes):continue
         bar=bars[-1]['datetime']
-        if not 0<=now-timestamp(bar)-cfg['trade_period_minutes']*60<cfg['trade_period_minutes']*60:continue
         key=str(feed.get('symbol'))+':'+bar+':'+config_key(cfg)
         if key==seen.get(product):continue
         seen[product]=key

@@ -45,7 +45,7 @@ export function FlyInstruments({ instruments, contest, accountKey, invalid, onCh
     {instruments.map(item => <div className="fv-instrument" key={item.product}>
       <div><strong>{labelFor(item)} · {item.product}</strong><small>{futuresExchanges[item.exchange as FuturesExchange]}</small></div>
       <FlyInstrumentContract product={item.product} label={labelFor(item)} symbol={item.symbol} invalid={invalid && (!futuresContractPattern.test(item.symbol) || futuresProduct(item.symbol) !== item.product.toLowerCase())} contest={contest} accountKey={accountKey} onSymbolChange={(symbol, onlyIfEmpty) => onChange(current => current.map(i => i.product === item.product && (!onlyIfEmpty || !i.symbol.trim()) ? { ...i, symbol } : i))} />
-      <button type="button" aria-label={`移除${labelFor(item)}`} onClick={() => onChange(instruments.filter(i => i.product !== item.product))}>移除</button>
+      <button type="button" aria-label={`移除${labelFor(item)}`} title={`移除${labelFor(item)}`} onClick={() => onChange(instruments.filter(i => i.product !== item.product))}>×</button>
     </div>)}
     <p className="fv-note">可选择全部品种或手动添加。能否取得行情及参赛交易，以比赛账户和柜台实际开放情况为准；每个品种配置一个实际合约。</p>
   </div>

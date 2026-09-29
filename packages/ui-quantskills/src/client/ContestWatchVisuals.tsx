@@ -1,7 +1,9 @@
-import type { ContestWatchStatus } from './plugin-types.ts'
+import type { ContestWatchStatus, ContestWatchConfig } from './plugin-types.ts'
+import { useState } from 'react'
 import { contestTime } from './contest.ts'
 import css from './ContestPage.module.css'
 import { JevEvidence } from './JevEvidence.tsx'
+import { TradingPriceChart } from './TradingPriceChart.tsx'
 
 export const watchActions: Record<string, string> = { hold: '观望', open_long: '开多', open_short: '开空', close_long: '平多', close_short: '平空' }
 const clockTime = (time: number) => new Date(time).toLocaleTimeString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false })
@@ -12,43 +14,43 @@ const restrictionReason = (analysis?: Analysis) => analysis?.evidence?.checks.fi
 const outcomeText = (analysis: Analysis) => restrictedHold(analysis.decision) && /^Jev 观望 · 置信度 [\d.]+%；未生成交易计划。$/.test(analysis.outcome)
   ? `受限观望 · 置信度不适用：${restrictionReason(analysis)}` : analysis.outcome
 
-export function ContestWatchVisuals({ status, active }: { status: ContestWatchStatus | undefined; active: boolean }) {
+export function ContestWatchVisuals({ status: overall, active, config }: { status: ContestWatchStatus | undefined; active: boolean; config?: ContestWatchConfig }) {
+  const [selected, setSelected] = useState('')
+  const markets = overall?.markets ?? []
+  const market = markets.find(item => item.symbol === selected) ?? markets[0]
+  const status = market && overall ? { ...overall, ...market, config: { ...overall.config!, symbol: market.symbol } } : overall
   const samples = status?.samples ?? [], last = samples.at(-1), decision = status?.lastDecision
   const analyses = status?.analyses ?? [], current = analyses.at(-1)
   const restricted = restrictedHold(decision), decisionAnalysis = decision && analyses.find(item => item.decision?.time === decision.time)
   const minSamples = status?.config?.minSamples ?? 8
   const low = samples.length ? Math.min(...samples.map(item => item.price)) : 0
   const high = samples.length ? Math.max(...samples.map(item => item.price)) : 0
-  const range = high - low || Math.max(high * .0001, 1)
-  const points = samples.map(sample => ({ x: 12 + (sample.time - samples[0]!.time) / Math.max(last!.time - samples[0]!.time, 1) * 616, y: 150 - (sample.price - low + (high === low ? range / 2 : 0)) / range * 120, ...sample }))
   return <>
-    <div className={css.jevDashboard}>
-      <section className={css.jevPanel} aria-label="行情采样曲线">
-        <div className={css.jevPanelHeading}><div><span className={css.jevCaption}>行情采样</span><h3>{status?.config?.symbol || '待选择合约'}</h3></div>
+    {markets.length > 1 && <div className="qs-jev-market-tabs" aria-label="各合约盯盘状态">{markets.map(item => <button type="button" key={item.symbol} aria-pressed={item.symbol === market?.symbol} onClick={() => setSelected(item.symbol)}><strong>{item.symbol}</strong><small>{item.sampleCount} 个快照 · {!active ? '未运行' : item.phase === 'deciding' ? '分析中' : item.phase === 'waiting_quote' ? '等待行情' : '跟踪中'}</small></button>)}</div>}
+    {market && <p className="qs-settings-note" role="status">{market.symbol} · {market.message}</p>}
+    <div className={`${css.jevDashboard} qs-jev-dashboard`}>
+      <section className={`${css.jevPanel} qs-quote-panel`} aria-label="行情采样曲线">
+        <div className={css.jevPanelHeading}><div><span className={css.jevCaption}>行情采样</span><h3>{status?.config?.symbol || config?.symbol || '待选择合约'}</h3></div>
           <div className={css.jevPrice}>{last ? last.price.toLocaleString('zh-CN', { maximumFractionDigits: 4 }) : '—'}<small>最新采样价</small></div>
         </div>
         {samples.length ? <>
-          <svg viewBox="0 0 640 180" className={css.jevChart} role="img" aria-label={`${samples.length} 个行情快照，最低 ${low}，最高 ${high}，最新 ${last!.price}`}>
-            {[30, 90, 150].map(y => <line key={y} x1="12" y1={y} x2="628" y2={y} className={css.jevGridLine}/>)}
-            <polyline points={points.map(p => `${p.x},${p.y}`).join(' ')} fill="none" className={css.jevPriceLine}/>
-            {points.map(point => <circle key={point.time} cx={point.x} cy={point.y} r="2.5" className={css.jevQuoteDot}><title>{clockTime(point.time)} · {point.price}</title></circle>)}
-          </svg>
+          <TradingPriceChart prices={samples.map(sample => sample.price)} times={samples.map(sample => sample.time)} label={`${samples.length} 个行情快照，最低 ${low}，最高 ${high}，最新 ${last!.price}`}/>
           <div className={css.jevChartAxis}><span>{clockTime(samples[0]!.time)}</span><span>低 {low} / 高 {high}</span><span>{clockTime(last!.time)}</span></div>
-        </> : <div className={css.jevChartEmpty}><span aria-hidden="true">⌁</span><strong>等待有效行情</strong><p>启动后逐步绘制真实采样价格。</p></div>}
+        </> : <div className={css.jevChartEmpty}><span aria-hidden="true">⌁</span><strong>{!active ? status?.config?.symbol || config?.symbol ? '盯盘尚未启动' : '请选择实际合约' : '等待有效行情'}</strong><p>{!active ? '选择合约并点击「开始盯盘」后开始采样。' : '正在等待柜台有效报价，收到后逐步绘制价格曲线。'}</p></div>}
         <div className={css.jevSampling}><span>有效快照 <b>{status?.sampleCount ?? 0}</b> / {minSamples}</span><progress aria-label="决策所需采样进度" max={minSamples} value={Math.min(status?.sampleCount ?? 0, minSamples)}/></div>
       </section>
-      <section className={css.jevPanel} aria-label="Jev 决策输出" aria-busy={active && status?.phase === 'deciding'}>
+      <section className={`${css.jevPanel} qs-decision-panel`} aria-label="Jev 决策输出" aria-busy={active && status?.phase === 'deciding'}>
         <div className={css.jevPanelHeading}><div><span className={css.jevCaption}>最近一次输出</span><h3>{decision ? restricted ? '受限观望' : watchActions[decision.action] : '等待 Jev 判断'}</h3></div>
           <span className={css.jevModel}>jev-1.13.0</span></div>
         {decision ? <>
           <p className={css.jevConfidence}>置信度 <strong>{restricted ? '不适用' : <>{(decision.confidence * 100).toFixed(1)}<small>%</small></>}</strong></p>
           {restricted && decisionAnalysis !== current && <p className={css.jevFine}>{restrictionReason(decisionAnalysis)}</p>}
-          {!restricted && <div className={css.jevProbabilities} aria-label="各动作概率">
+          {!restricted && <details className="qs-probability-details"><summary>各动作概率</summary><div className={css.jevProbabilities} aria-label="各动作概率">
             {Object.entries(decision.probabilities).map(([action, probability]) => <div key={action} data-selected={decision.action === action}>
               <span>{watchActions[action] ?? action}</span><div className={css.jevProbabilityTrack} aria-hidden="true"><i style={{ width: `${probability * 100}%` }}/></div>
               <b>{(probability * 100).toFixed(1)}%</b>
             </div>)}
-          </div>}
+          </div></details>}
           <p className={css.jevFine}>输出时间 {contestTime(decision.time)} · 置信度和动作概率均不是交易胜率。</p>
         </> : <div className={css.jevDecisionEmpty}><p>采样完成后，Jev 根据当前持仓和约束选择允许的动作。</p><p>结果返回后展示实际概率分布。</p></div>}
         {current && <div className={css.jevOutcome}><span>{current.responseAt ? `Jev 响应 ${((current.responseAt - current.startedAt) / 1000).toFixed(1)} 秒` : current.finishedAt ? '本轮已结束' : '正在等待 Jev 响应'}</span><p>{outcomeText(current)}</p></div>}

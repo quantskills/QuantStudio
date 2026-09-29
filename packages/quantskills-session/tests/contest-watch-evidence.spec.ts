@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { normalizeWatchBars, watchEvidence } from '../src/contest-watch-evidence.ts'
 import { parseAssessments, watchAssessments } from '../src/contest-watch-evaluation.ts'
+import { englishEvidence } from '../src/contest-watch-input.ts'
 import type { ContestWatchConfig, ContestWatchHistory } from '../src/contest-watch-types.ts'
 import { makeTemplate, rangeTemplate } from '../../ui-quantskills/src/client/jev-templates.ts'
 
@@ -10,6 +11,16 @@ const config: ContestWatchConfig = { symbol: 'rb2610', volume: 1, intervalSecond
 const account = { allowed: ['hold', 'open_long', 'open_short'] as const, direction: 'flat' }
 const history: ContestWatchHistory = { source: 'synthetic test bars', barSeconds: 60, bars: Array.from({ length: 20 }, (_, i) => ({ time: now - (20 - i) * 60000, open: 110, high: i % 4 === 2 ? 120 : 112, low: i % 4 === 0 ? 100 : 108, close: 110 })) }
 const evidence = (prices: number[], patch: Partial<ContestWatchConfig> = {}, bars = history) => watchEvidence({ ...config, ...patch }, prices.map((price, i) => ({ time: now - (prices.length - i) * 3000, price, bid: price - 1, ask: price })), { ...account, allowed: [...account.allowed] }, bars, now)
+
+it.each(['range','trend','breakout'] as const)('uses the configured execution mode for %s exits in both UI and model facts', kind => {
+  const template=makeTemplate(kind,rangeTemplate('rb2610'))
+  for(const executionMode of ['automatic','manual'] as const) {
+    const result=watchEvidence({...template,executionMode},[{time:now,price:100}],{direction:'long',entryPrice:120,allowed:['hold','close_long']},{...history,bars:[]},now)
+    const detail=result.checks.find(x=>x.id==='exit')!.detail
+    expect(detail).toContain(executionMode==='automatic'?'自动执行':'逐笔确认')
+    expect(englishEvidence(result).checks.find(x=>x.id==='exit')!.definition).not.toContain('human-confirmed')
+  }
+})
 
 describe('paired range conditions', () => {
   it('handles decimal ticks at exact thresholds without losing a qualifying rebound', () => {

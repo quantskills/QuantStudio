@@ -5,7 +5,8 @@ export type TradeFilterSettings = {
     reentry_cooldown_minutes: number;
     cost_filter_multiplier: number;
 };
-export declare function TradeFilterControls({ settings, onApply, onDraftChange }: {
+export declare function TradeFilterControls({ settings, onApply, onDraftChange, decisionEngine }: {
+    decisionEngine?: 'neural' | 'llm' | undefined;
     settings: TradeFilterSettings;
     onApply: (value: TradeFilterSettings) => Promise<unknown>;
     onDraftChange?: (value: TradeFilterSettings) => void;

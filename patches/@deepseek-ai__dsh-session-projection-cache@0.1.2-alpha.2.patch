@@ -1,0 +1,40 @@
+diff --git a/lib/index.js b/lib/index.js
+index 1bc651f9c071e9a2bc8ec8bd235fd77fa4e16089..bbdf0e52d5f44d43674c1c5d055a389d216fae5f 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -186,6 +186,15 @@ var SessionProjectionCache = class extends Service {
+ 	* @param session - the live session to checkpoint.
+ 	* @returns resolution after durability and event emission.
+ 	*/
++
++	deletedSessions = new Set();
++	async deleteSession(id) {
++		this.deletedSessions.add(id);
++		for (const session of this.dirty.keys()) {
++			if (session.id === id) { this.markClean(session); this.dirty.delete(session); }
++		}
++		await this.requireTable().delete(id);
++	}
+ 	async write(session) {
+ 		const rows = this.ctx.sessionProjections.checkpoint(session);
+ 		this.markClean(session);
+@@ -268,6 +277,7 @@ var SessionProjectionCache = class extends Service {
+ 	}
+ 	/** Replace one session's stored record with its log identity and a detached snapshot of `rows`. */
+ 	async put(id, identity, rows) {
++		if (this.deletedSessions.has(id)) return;
+ 		const detached = snapshotJsonValue(rows);
+ 		if (detached === void 0) throw new TypeError("projection checkpoint is not losslessly JSON-serializable (a unit state violates the plain-JSON contract)");
+ 		await this.requireTable().put(id, {
+diff --git a/lib/types/index.d.ts b/lib/types/index.d.ts
+index 33aa602e9004c6e2936f202c1f4862eb93eccb63..cfa388cc6f29abc1474263579e789e4131bea9fb 100644
+--- a/lib/types/index.d.ts
++++ b/lib/types/index.d.ts
+@@ -105,6 +105,7 @@ export declare class SessionProjectionCache extends Service {
+      * @param session - the live session to checkpoint.
+      * @returns resolution after durability and event emission.
+      */
++    deleteSession(id: SessionId): Promise<void>;
+     write(session: Session): Promise<void>;
+     /**
+      * Cold-read one session's projections from its complete log. Each unit is

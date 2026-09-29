@@ -14,7 +14,7 @@ export interface ContestCli {
 }
 
 export class ContestCliError extends Error {
-  constructor(readonly code: string, message: string) { super(message) }
+  constructor(readonly code: string, message: string, readonly retryAfterSeconds?: number) { super(message) }
 }
 
 export const transientContestCodes = new Set(['rate_limit_exceeded', 'timeout', 'network_error', 'http_429', 'http_502', 'http_503', 'http_504'])
@@ -46,7 +46,10 @@ export function parseCliOutput(text: string): ContestData {
       variety_ambiguous: '品种简称不明确，请填写完整品种名或实际合约。',
       no_browser: '比赛登录需要在 Windows 或 macOS 本机打开浏览器。',
     }
-    throw new ContestCliError(code, messages[code] ?? `比赛 CLI 操作未完成（${code}）。请检查连接和账户状态。`)
+    const error = record(body.error), details = record(error.detail ?? error.details), meta = record(body.meta)
+    const retry = Number(error.retryAfterSeconds ?? error.retryAfter ?? error.retry_after ?? details.retryAfterSeconds ?? details.retryAfter ?? details.retry_after ?? meta.retryAfterSeconds ?? meta.retryAfter ?? meta.retry_after)
+    throw new ContestCliError(code, messages[code] ?? `比赛 CLI 操作未完成（${code}）。请检查连接和账户状态。`,
+      Number.isFinite(retry) && retry > 0 ? Math.min(86400, retry) : undefined)
   }
   return { data: safeData(body.data), ...(body.meta === undefined ? {} : { meta: record(safeData(body.meta)) }), fetchedAt: Date.now() }
 }

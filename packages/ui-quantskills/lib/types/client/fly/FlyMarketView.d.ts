@@ -6,7 +6,8 @@ export type MarketView = TradeMarket & {
     last_bar?: string;
 };
 /** A view of received market data only; an empty or stale feed is never animated as live. */
-export declare function FlyMarketView({ market, observing, onDetails }: {
+export declare function FlyMarketView({ market, observing, onDetails, automatic }: {
+    automatic?: boolean;
     market?: MarketView | undefined;
     observing: boolean;
     onDetails(): void;

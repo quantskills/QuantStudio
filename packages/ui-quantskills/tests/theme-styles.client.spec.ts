@@ -7,6 +7,10 @@ const css = readFileSync(
   fileURLToPath(new URL('../src/client/QuantSkillsApp.module.css', import.meta.url)),
   'utf8',
 )
+const pickerCss = readFileSync(
+  fileURLToPath(new URL('../src/client/CapabilityLibraryPicker.module.css', import.meta.url)),
+  'utf8',
+)
 
 const compatibilityTokens = [
   '--dsw-alias-bg-base',
@@ -67,8 +71,11 @@ describe('QuantSkills theme styles', () => {
     expect(css).toMatch(
       /\.promptFormDrawer > footer button:last-child \{[^}]*color: var\(--dsw-alias-label-inverted-primary\);/,
     )
-    expect(css).toMatch(
-      /\.capabilityPickerError \{[^}]*background: color-mix\([^;]*var\(--dsw-alias-bg-base\)\);[^}]*color: var\(--dsw-alias-state-error-primary\);/,
+    expect(pickerCss).toMatch(
+      /\.dialog\s*\{[^}]*background:\s*var\(--dsw-alias-bg-base\);/,
+    )
+    expect(pickerCss).toMatch(
+      /\.error\s*\{[^}]*color:\s*var\(--dsw-alias-state-error-primary\);/,
     )
   })
 })

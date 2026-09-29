@@ -12,7 +12,7 @@ function fixture() {
   const dataset = { id: 'minute-bars', name: 'Panda minutes', kind: 'timeseries', category: 'market', columns: Object.values(columns), fetchedAt: new Date().toISOString(), source: { kind: 'pandadata', method: 'get_future_min', params: { frequency: '1m' } } }
   const row = { symbol: 'RB2610.SHF', datetime: '2026-09-18 10:59:00', open: 3000, high: 3002, low: 2999, close: 3001 }
   const result = { status: 'ok', dataset, rows: [row, { ...row, symbol: 'AU2612.SHF' }, { ...row, datetime: '2026-09-18 11:00:00' }], total: 3 }
-  const gateway = { databaseList: vi.fn(async () => [dataset]), databaseQuery: vi.fn(async () => result), databaseFetch: vi.fn(async () => dataset) }
+  const gateway = { databaseList: vi.fn(async () => [dataset]), databaseQuery: vi.fn(async () => result), databaseFetch: vi.fn(async () => dataset), databaseRefresh: vi.fn(async () => dataset) }
   return { dataset, result, gateway, ctx: { get: () => gateway } as unknown as Context }
 }
 it.each(['m2701.DCE', 'MA701.CZC', 'IF2612.CFE', 'sc2611.INE', 'lc2611.GFE', 'l2610F.DCE'])('prepares exact exchange-qualified history for %s', async symbol => {
@@ -77,4 +77,34 @@ it('does not leak provider errors and propagates cancellation', async () => {
   expect((await watchHistory(f.ctx, config, controller.signal)).diagnostic).toEqual({ stage: 'query', code: 'AUTH_REQUIRED', retryable: false })
   controller.abort()
   await expect(watchHistory(f.ctx, config, controller.signal)).rejects.toThrow()
+})
+
+it('catches up a lagging unexpired live cache once and honours disabled refresh', async () => {
+  const f=fixture(), signal=new AbortController().signal
+  const current={...config, autoHistory:{exchange:'SHF' as const,barSeconds:60 as const}}
+  f.result.status='hit'
+  f.dataset.fetchedAt=new Date(Date.now()-35000).toISOString()
+  const stale={...f.result,rows:[f.result.rows[0]!]}
+  f.gateway.databaseQuery.mockResolvedValueOnce(stale)
+  const refreshed=await watchHistory(f.ctx,current,signal)
+  expect(refreshed.bars.at(-1)?.time).toBe(Date.now())
+  expect(f.gateway.databaseRefresh).toHaveBeenCalledExactlyOnceWith({id:'minute-bars'},signal)
+  // A recent fetch must not start another request even if publication still lags.
+  f.dataset.fetchedAt=new Date().toISOString()
+  f.gateway.databaseQuery.mockResolvedValue(stale)
+  await watchHistory(f.ctx,current,signal)
+  expect(f.gateway.databaseRefresh).toHaveBeenCalledOnce()
+  f.dataset.fetchedAt=new Date(Date.now()-35000).toISOString()
+  await watchHistory(f.ctx,{...current,history:{...config.history!,refresh:false}},signal)
+  expect(f.gateway.databaseRefresh).toHaveBeenCalledOnce()
+})
+
+it('reports cooldown when the live refresh is rate limited without accepting stale bars', async () => {
+  const f=fixture()
+  f.result.status='hit';f.result.rows=[f.result.rows[0]!]
+  f.dataset.fetchedAt=new Date(Date.now()-35000).toISOString()
+  f.gateway.databaseRefresh.mockRejectedValue(new Error('429 private provider message'))
+  const result=await watchHistory(f.ctx,{...config,autoHistory:{exchange:'SHF',barSeconds:60}},new AbortController().signal)
+  expect(result).toMatchObject({bars:[],diagnostic:{stage:'refresh',code:'RATE_LIMIT',retryable:true}})
+  expect(result.issue).not.toContain('private')
 })

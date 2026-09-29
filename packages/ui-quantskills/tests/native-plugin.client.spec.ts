@@ -266,8 +266,25 @@ describe('QuantSkills native application composition', () => {
       ['layout', { claimSidebar, claimDetails, claimConversationTextScale }],
     ])
     const openSession = vi.fn()
-    const settingsSet = vi.fn(async () => {})
-    const settingsUnset = vi.fn(async () => {})
+    const settingsSet = vi.fn(async (_key: string, _value: unknown) => {})
+    const settingsUnset = vi.fn(async (_key: string) => {})
+    let settingsRevision = 1
+    const settingsValue: Record<string, unknown> = { interfaceScale: 1, conversationScale: 1, conversationBrightness: 1,
+      colorScheme: 'light', lightBackground: 'none', darkBackground: 'none', autoCheckCatalog: false, autoCheckPanda: false,
+      resumeAfterPandaLogin: false, favoriteAssetIds: [], assetDisplayNameOverrides: [], defaultAgentProvider: '', defaultAgentModel: '',
+      defaultAgentReasoningEffort: '', defaultAgentPermission: 'workspace-write' }
+    const settingsView = () => ({ ns: 'ui-quantskills', schema: {}, value: { ...settingsValue }, revision: settingsRevision })
+    const settingsRemote = {
+      describe: vi.fn(async () => ({ ok: true, value: { writable: true, namespaces: [settingsView()] } })),
+      mutate: vi.fn(async (_ns: string, ops: { op: string; path: string[]; value?: unknown }[]) => {
+        for (const op of ops) {
+          if (op.op === 'set') { settingsValue[op.path[0]!] = op.value; await settingsSet(op.path[0]!, op.value) }
+          else { delete settingsValue[op.path[0]!]; await settingsUnset(op.path[0]!) }
+        }
+        settingsRevision++
+        return { ok: true, value: settingsView() }
+      }),
+    }
     const sessionSummary = {
       sessionId: 'session-1',
       projectionValues: {
@@ -281,7 +298,9 @@ describe('QuantSkills native application composition', () => {
       }),
       inject: vi.fn(),
       slots,
-      remote,
+      remote: { ...remote, settings: settingsRemote, $on: () => () => {} },
+      on: () => () => {},
+      settingsSchema: { rehydrate: (schema: unknown) => schema, validate: () => undefined },
       settingsScope: {
         bind: () => ({
           getSnapshot: () => ({ status: 'loading' as const, writable: false }),
@@ -309,6 +328,10 @@ describe('QuantSkills native application composition', () => {
     } as unknown as ClientContext
 
     apply(ctx)
+
+    // Exercise the authenticated Host preferences lifecycle used by the current runtime.
+    const stopPreferences = effects.find(effect => effect.description === 'ui-quantskills: authenticated preferences lifecycle')!.apply()
+    const stopMirror = effects.find(effect => effect.description === 'ui-quantskills: mirror Host preferences into application behavior')!.apply()
 
     expect(registrations).toEqual(expect.arrayContaining([
       expect.objectContaining({ name: 'shell.overlay', id: 'quantskills-application' }),
@@ -339,6 +362,7 @@ describe('QuantSkills native application composition', () => {
     const resultPanel = registrations.find(registration => registration.name === 'quantskills.results')
     const pageFace = page?.inject?.() as QuantSkillsAppInjected
     const overlayFace = overlay?.inject?.() as QuantSkillsPluginFrameInjected
+    await vi.waitFor(() => expect(overlayFace.hooks.view.getSnapshot().settingsWritable).toBe(true))
     const resultActionFace = resultAction?.inject?.() as QuantSkillsResultActionInjected
     const resultPanelFace = (resultPanel?.inject as unknown as (
       sessionId: import('@deepseek-ai/dsh-client-runtime/client').SessionId,
@@ -431,5 +455,7 @@ describe('QuantSkills native application composition', () => {
     await startTeam({ ...fixedTeam, revision: 2, leadModel: { kind: 'default' } }, '继续团队任务')
     expect(selectModel).not.toHaveBeenCalled()
     expect(prompt).toHaveBeenCalledOnce()
+    if (typeof stopMirror === 'function') stopMirror()
+    if (typeof stopPreferences === 'function') stopPreferences()
   })
 })

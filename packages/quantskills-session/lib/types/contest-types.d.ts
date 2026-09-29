@@ -55,6 +55,7 @@ export interface ContestStatus {
     readonly updateAvailable: boolean;
     readonly identity?: ContestIdentity;
     readonly message: string;
+    readonly retryAt?: number;
     readonly plans: readonly ContestPlan[];
 }
 /** A fresh, read-only account view; never inferred from conversation history. */

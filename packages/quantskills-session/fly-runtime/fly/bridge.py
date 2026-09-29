@@ -1,4 +1,4 @@
-"""Authenticated loopback access to the QuantStudio host. No order execution API."""
+"""Authenticated loopback access; automatic contest orders are executed by the host CLI."""
 import json
 import os
 import urllib.error
@@ -14,7 +14,9 @@ class BridgeError(ValueError):
 
 def retry_state(previous, error, now, source):
     failures=previous.get('failures',0)+1
-    delay=min(300,30*2**min(failures-1,4))
+    competition_limit=(getattr(error,'source',source)=='competition'
+                       and getattr(error,'code','') in ('RATE_LIMIT','rate_limit_exceeded','http_429'))
+    delay=30 if competition_limit else min(300,30*2**min(failures-1,4))
     specified=getattr(error,'retry_after',None)
     if isinstance(specified,(int,float)) and math.isfinite(specified) and specified>0:delay=max(delay,specified)
     blocked=not getattr(error,'retryable',True)

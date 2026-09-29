@@ -5935,6 +5935,18 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			"createdAt": number().readonly(),
 			"updatedAt": number().readonly()
 		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_archivedConversations_result$schema = array(object({
+			"sessionId": intersection(string(), unknown()).readonly(),
+			"title": string().readonly(),
+			"kind": union([
+				literal("skill"),
+				literal("agent"),
+				literal("plain"),
+				literal("team")
+			]).readonly(),
+			"updatedAt": number().readonly(),
+			"running": boolean().readonly()
+		}));
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringCommit_parameter_0$schema = object({
 			"sessionId": intersection(string(), unknown()).readonly(),
 			"toolCallId": string().readonly(),
@@ -6148,6 +6160,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"contestId": string().readonly()
 			}).readonly().optional(),
 			"message": string().readonly(),
+			"retryAt": number().readonly().optional(),
 			"plans": array(object({
 				"id": string().readonly(),
 				"sessionId": string().readonly(),
@@ -6219,6 +6232,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"contestId": string().readonly()
 			}).readonly().optional(),
 			"message": string().readonly(),
+			"retryAt": number().readonly().optional(),
 			"plans": array(object({
 				"id": string().readonly(),
 				"sessionId": string().readonly(),
@@ -6290,6 +6304,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"contestId": string().readonly()
 			}).readonly().optional(),
 			"message": string().readonly(),
+			"retryAt": number().readonly().optional(),
 			"plans": array(object({
 				"id": string().readonly(),
 				"sessionId": string().readonly(),
@@ -6365,6 +6380,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"contestId": string().readonly()
 			}).readonly().optional(),
 			"message": string().readonly(),
+			"retryAt": number().readonly().optional(),
 			"plans": array(object({
 				"id": string().readonly(),
 				"sessionId": string().readonly(),
@@ -6682,6 +6698,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"contestId": string().readonly()
 			}).readonly().optional(),
 			"message": string().readonly(),
+			"retryAt": number().readonly().optional(),
 			"plans": array(object({
 				"id": string().readonly(),
 				"sessionId": string().readonly(),
@@ -6880,6 +6897,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"contestId": string().readonly()
 			}).readonly().optional(),
 			"message": string().readonly(),
+			"retryAt": number().readonly().optional(),
 			"plans": array(object({
 				"id": string().readonly(),
 				"sessionId": string().readonly(),
@@ -6951,6 +6969,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"contestId": string().readonly()
 			}).readonly().optional(),
 			"message": string().readonly(),
+			"retryAt": number().readonly().optional(),
 			"plans": array(object({
 				"id": string().readonly(),
 				"sessionId": string().readonly(),
@@ -7032,7 +7051,27 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_parameter_0$schema = object({
 			"name": string(),
 			"config": object({
+				"executionMode": union([
+					_undefined(),
+					literal("manual"),
+					literal("automatic")
+				]).optional(),
 				"symbol": string(),
+				"contracts": union([_undefined(), array(object({
+					"symbol": string(),
+					"instrument": object({
+						"product": string(),
+						"exchange": union([
+							literal("SHF"),
+							literal("DCE"),
+							literal("CZC"),
+							literal("CFE"),
+							literal("INE"),
+							literal("GFE")
+						]),
+						"tickSize": number()
+					})
+				}))]).optional(),
 				"volume": number(),
 				"intervalSeconds": number(),
 				"decisionIntervalSeconds": number().optional(),
@@ -7145,7 +7184,27 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_result$schema = array(object({
 			"name": string(),
 			"config": object({
+				"executionMode": union([
+					_undefined(),
+					literal("manual"),
+					literal("automatic")
+				]).optional(),
 				"symbol": string(),
+				"contracts": union([_undefined(), array(object({
+					"symbol": string(),
+					"instrument": object({
+						"product": string(),
+						"exchange": union([
+							literal("SHF"),
+							literal("DCE"),
+							literal("CZC"),
+							literal("CFE"),
+							literal("INE"),
+							literal("GFE")
+						]),
+						"tickSize": number()
+					})
+				}))]).optional(),
 				"volume": number(),
 				"intervalSeconds": number(),
 				"decisionIntervalSeconds": number().optional(),
@@ -7257,7 +7316,27 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		}));
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_parameter_0$schema = object({
 			"config": object({
+				"executionMode": union([
+					_undefined(),
+					literal("manual"),
+					literal("automatic")
+				]).optional(),
 				"symbol": string(),
+				"contracts": union([_undefined(), array(object({
+					"symbol": string(),
+					"instrument": object({
+						"product": string(),
+						"exchange": union([
+							literal("SHF"),
+							literal("DCE"),
+							literal("CZC"),
+							literal("CFE"),
+							literal("INE"),
+							literal("GFE")
+						]),
+						"tickSize": number()
+					})
+				}))]).optional(),
 				"volume": number(),
 				"intervalSeconds": number(),
 				"decisionIntervalSeconds": number().optional(),
@@ -7366,9 +7445,198 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					"takeProfitTicks": number()
 				})]).optional()
 			}),
-			"confirmed": boolean()
+			"confirmed": boolean(),
+			"executionConsent": string().optional()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_result$schema = object({
+			"markets": array(intersection(object({
+				"phase": union([
+					literal("checking"),
+					literal("sampling"),
+					literal("waiting_quote"),
+					literal("deciding"),
+					literal("waiting_plan")
+				]).optional(),
+				"message": string(),
+				"sampleCount": number(),
+				"samples": array(object({
+					"time": number(),
+					"price": number(),
+					"bid": number().optional(),
+					"ask": number().optional()
+				})).optional(),
+				"analyses": array(object({
+					"id": string(),
+					"startedAt": number(),
+					"responseAt": number().optional(),
+					"finishedAt": number().optional(),
+					"sampleCount": number(),
+					"fromTime": number(),
+					"toTime": number(),
+					"price": number(),
+					"allowedActions": array(union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					])),
+					"decision": object({
+						"action": union([
+							literal("hold"),
+							literal("open_long"),
+							literal("open_short"),
+							literal("close_long"),
+							literal("close_short")
+						]),
+						"confidence": number(),
+						"probabilities": record(string(), number()),
+						"model": string(),
+						"time": number(),
+						"usage": object({
+							"input_tokens": number(),
+							"output_tokens": number()
+						}).optional(),
+						"assessments": object({
+							"regime": object({
+								"choice": string(),
+								"confidence": number(),
+								"probabilities": record(string(), number())
+							}),
+							"fit": object({
+								"choice": string(),
+								"confidence": number(),
+								"probabilities": record(string(), number())
+							}),
+							"blocker": object({
+								"choice": string(),
+								"confidence": number(),
+								"probabilities": record(string(), number())
+							})
+						}).optional()
+					}).optional(),
+					"outcome": string(),
+					"planId": string().optional(),
+					"strategyName": string().optional(),
+					"strategyVersion": string().optional(),
+					"evidence": object({
+						"evaluatedAt": number(),
+						"decisionMode": union([literal("jev"), literal("strict")]).optional(),
+						"history": object({
+							"source": string(),
+							"barSeconds": number(),
+							"count": number(),
+							"from": number().optional(),
+							"to": number().optional(),
+							"fetchedAt": number().optional(),
+							"issue": string().optional(),
+							"warning": string().optional(),
+							"diagnostic": object({
+								"stage": string(),
+								"code": string(),
+								"retryable": boolean()
+							}).optional()
+						}),
+						"features": object({
+							"quoteWindowSeconds": number(),
+							"quoteCount": number(),
+							"lower": union([literal(null), number()]),
+							"upper": union([literal(null), number()]),
+							"widthTicks": union([literal(null), number()]),
+							"lowerTouches": number(),
+							"upperTouches": number(),
+							"location": union([literal(null), number()]),
+							"reboundTicks": union([literal(null), number()]),
+							"pullbackTicks": union([literal(null), number()]),
+							"spreadTicks": union([literal(null), number()]),
+							"longRewardCostRatio": union([literal(null), number()]),
+							"shortRewardCostRatio": union([literal(null), number()])
+						}),
+						"checks": array(object({
+							"id": string(),
+							"label": string(),
+							"state": union([
+								literal("unknown"),
+								literal("pass"),
+								literal("fail")
+							]),
+							"detail": string(),
+							"actions": array(union([
+								literal("hold"),
+								literal("open_long"),
+								literal("open_short"),
+								literal("close_long"),
+								literal("close_short")
+							])),
+							"enforcement": union([literal("hard"), literal("reference")]).optional(),
+							"facts": record(string(), union([
+								literal(null),
+								string(),
+								number(),
+								literal(false),
+								literal(true)
+							])).optional()
+						})),
+						"allowedActions": array(union([
+							literal("hold"),
+							literal("open_long"),
+							literal("open_short"),
+							literal("close_long"),
+							literal("close_short")
+						]))
+					}).optional(),
+					"planStatus": union([
+						literal("blocked"),
+						literal("prepared"),
+						literal("submitted"),
+						literal("hold"),
+						literal("restricted"),
+						literal("candidate")
+					]).optional(),
+					"reviewNotes": array(string()).optional()
+				})).optional(),
+				"lastDecision": object({
+					"action": union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					]),
+					"confidence": number(),
+					"probabilities": record(string(), number()),
+					"model": string(),
+					"time": number(),
+					"usage": object({
+						"input_tokens": number(),
+						"output_tokens": number()
+					}).optional(),
+					"assessments": object({
+						"regime": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"fit": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"blocker": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						})
+					}).optional()
+				}).optional(),
+				"lastQuoteCheckedAt": number().optional(),
+				"nextDecisionAt": number().optional()
+			}), object({ "symbol": string() }))).optional(),
+			"executionAuthorization": object({
+				"version": string(),
+				"acceptedAt": number(),
+				"runId": string()
+			}).optional(),
 			"running": boolean(),
 			"message": string(),
 			"strategyNotices": array(string()).optional(),
@@ -7513,6 +7781,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"planStatus": union([
 					literal("blocked"),
 					literal("prepared"),
+					literal("submitted"),
 					literal("hold"),
 					literal("restricted"),
 					literal("candidate")
@@ -7520,7 +7789,27 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"reviewNotes": array(string()).optional()
 			})).optional(),
 			"config": object({
+				"executionMode": union([
+					_undefined(),
+					literal("manual"),
+					literal("automatic")
+				]).optional(),
 				"symbol": string(),
+				"contracts": union([_undefined(), array(object({
+					"symbol": string(),
+					"instrument": object({
+						"product": string(),
+						"exchange": union([
+							literal("SHF"),
+							literal("DCE"),
+							literal("CZC"),
+							literal("CFE"),
+							literal("INE"),
+							literal("GFE")
+						]),
+						"tickSize": number()
+					})
+				}))]).optional(),
 				"volume": number(),
 				"intervalSeconds": number(),
 				"decisionIntervalSeconds": number().optional(),
@@ -7681,6 +7970,194 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			}))
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatus_result$schema = object({
+			"markets": array(intersection(object({
+				"phase": union([
+					literal("checking"),
+					literal("sampling"),
+					literal("waiting_quote"),
+					literal("deciding"),
+					literal("waiting_plan")
+				]).optional(),
+				"message": string(),
+				"sampleCount": number(),
+				"samples": array(object({
+					"time": number(),
+					"price": number(),
+					"bid": number().optional(),
+					"ask": number().optional()
+				})).optional(),
+				"analyses": array(object({
+					"id": string(),
+					"startedAt": number(),
+					"responseAt": number().optional(),
+					"finishedAt": number().optional(),
+					"sampleCount": number(),
+					"fromTime": number(),
+					"toTime": number(),
+					"price": number(),
+					"allowedActions": array(union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					])),
+					"decision": object({
+						"action": union([
+							literal("hold"),
+							literal("open_long"),
+							literal("open_short"),
+							literal("close_long"),
+							literal("close_short")
+						]),
+						"confidence": number(),
+						"probabilities": record(string(), number()),
+						"model": string(),
+						"time": number(),
+						"usage": object({
+							"input_tokens": number(),
+							"output_tokens": number()
+						}).optional(),
+						"assessments": object({
+							"regime": object({
+								"choice": string(),
+								"confidence": number(),
+								"probabilities": record(string(), number())
+							}),
+							"fit": object({
+								"choice": string(),
+								"confidence": number(),
+								"probabilities": record(string(), number())
+							}),
+							"blocker": object({
+								"choice": string(),
+								"confidence": number(),
+								"probabilities": record(string(), number())
+							})
+						}).optional()
+					}).optional(),
+					"outcome": string(),
+					"planId": string().optional(),
+					"strategyName": string().optional(),
+					"strategyVersion": string().optional(),
+					"evidence": object({
+						"evaluatedAt": number(),
+						"decisionMode": union([literal("jev"), literal("strict")]).optional(),
+						"history": object({
+							"source": string(),
+							"barSeconds": number(),
+							"count": number(),
+							"from": number().optional(),
+							"to": number().optional(),
+							"fetchedAt": number().optional(),
+							"issue": string().optional(),
+							"warning": string().optional(),
+							"diagnostic": object({
+								"stage": string(),
+								"code": string(),
+								"retryable": boolean()
+							}).optional()
+						}),
+						"features": object({
+							"quoteWindowSeconds": number(),
+							"quoteCount": number(),
+							"lower": union([literal(null), number()]),
+							"upper": union([literal(null), number()]),
+							"widthTicks": union([literal(null), number()]),
+							"lowerTouches": number(),
+							"upperTouches": number(),
+							"location": union([literal(null), number()]),
+							"reboundTicks": union([literal(null), number()]),
+							"pullbackTicks": union([literal(null), number()]),
+							"spreadTicks": union([literal(null), number()]),
+							"longRewardCostRatio": union([literal(null), number()]),
+							"shortRewardCostRatio": union([literal(null), number()])
+						}),
+						"checks": array(object({
+							"id": string(),
+							"label": string(),
+							"state": union([
+								literal("unknown"),
+								literal("pass"),
+								literal("fail")
+							]),
+							"detail": string(),
+							"actions": array(union([
+								literal("hold"),
+								literal("open_long"),
+								literal("open_short"),
+								literal("close_long"),
+								literal("close_short")
+							])),
+							"enforcement": union([literal("hard"), literal("reference")]).optional(),
+							"facts": record(string(), union([
+								literal(null),
+								string(),
+								number(),
+								literal(false),
+								literal(true)
+							])).optional()
+						})),
+						"allowedActions": array(union([
+							literal("hold"),
+							literal("open_long"),
+							literal("open_short"),
+							literal("close_long"),
+							literal("close_short")
+						]))
+					}).optional(),
+					"planStatus": union([
+						literal("blocked"),
+						literal("prepared"),
+						literal("submitted"),
+						literal("hold"),
+						literal("restricted"),
+						literal("candidate")
+					]).optional(),
+					"reviewNotes": array(string()).optional()
+				})).optional(),
+				"lastDecision": object({
+					"action": union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					]),
+					"confidence": number(),
+					"probabilities": record(string(), number()),
+					"model": string(),
+					"time": number(),
+					"usage": object({
+						"input_tokens": number(),
+						"output_tokens": number()
+					}).optional(),
+					"assessments": object({
+						"regime": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"fit": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"blocker": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						})
+					}).optional()
+				}).optional(),
+				"lastQuoteCheckedAt": number().optional(),
+				"nextDecisionAt": number().optional()
+			}), object({ "symbol": string() }))).optional(),
+			"executionAuthorization": object({
+				"version": string(),
+				"acceptedAt": number(),
+				"runId": string()
+			}).optional(),
 			"running": boolean(),
 			"message": string(),
 			"strategyNotices": array(string()).optional(),
@@ -7825,6 +8302,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"planStatus": union([
 					literal("blocked"),
 					literal("prepared"),
+					literal("submitted"),
 					literal("hold"),
 					literal("restricted"),
 					literal("candidate")
@@ -7832,7 +8310,27 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"reviewNotes": array(string()).optional()
 			})).optional(),
 			"config": object({
+				"executionMode": union([
+					_undefined(),
+					literal("manual"),
+					literal("automatic")
+				]).optional(),
 				"symbol": string(),
+				"contracts": union([_undefined(), array(object({
+					"symbol": string(),
+					"instrument": object({
+						"product": string(),
+						"exchange": union([
+							literal("SHF"),
+							literal("DCE"),
+							literal("CZC"),
+							literal("CFE"),
+							literal("INE"),
+							literal("GFE")
+						]),
+						"tickSize": number()
+					})
+				}))]).optional(),
 				"volume": number(),
 				"intervalSeconds": number(),
 				"decisionIntervalSeconds": number().optional(),
@@ -7993,6 +8491,194 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			}))
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_result$schema = object({
+			"markets": array(intersection(object({
+				"phase": union([
+					literal("checking"),
+					literal("sampling"),
+					literal("waiting_quote"),
+					literal("deciding"),
+					literal("waiting_plan")
+				]).optional(),
+				"message": string(),
+				"sampleCount": number(),
+				"samples": array(object({
+					"time": number(),
+					"price": number(),
+					"bid": number().optional(),
+					"ask": number().optional()
+				})).optional(),
+				"analyses": array(object({
+					"id": string(),
+					"startedAt": number(),
+					"responseAt": number().optional(),
+					"finishedAt": number().optional(),
+					"sampleCount": number(),
+					"fromTime": number(),
+					"toTime": number(),
+					"price": number(),
+					"allowedActions": array(union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					])),
+					"decision": object({
+						"action": union([
+							literal("hold"),
+							literal("open_long"),
+							literal("open_short"),
+							literal("close_long"),
+							literal("close_short")
+						]),
+						"confidence": number(),
+						"probabilities": record(string(), number()),
+						"model": string(),
+						"time": number(),
+						"usage": object({
+							"input_tokens": number(),
+							"output_tokens": number()
+						}).optional(),
+						"assessments": object({
+							"regime": object({
+								"choice": string(),
+								"confidence": number(),
+								"probabilities": record(string(), number())
+							}),
+							"fit": object({
+								"choice": string(),
+								"confidence": number(),
+								"probabilities": record(string(), number())
+							}),
+							"blocker": object({
+								"choice": string(),
+								"confidence": number(),
+								"probabilities": record(string(), number())
+							})
+						}).optional()
+					}).optional(),
+					"outcome": string(),
+					"planId": string().optional(),
+					"strategyName": string().optional(),
+					"strategyVersion": string().optional(),
+					"evidence": object({
+						"evaluatedAt": number(),
+						"decisionMode": union([literal("jev"), literal("strict")]).optional(),
+						"history": object({
+							"source": string(),
+							"barSeconds": number(),
+							"count": number(),
+							"from": number().optional(),
+							"to": number().optional(),
+							"fetchedAt": number().optional(),
+							"issue": string().optional(),
+							"warning": string().optional(),
+							"diagnostic": object({
+								"stage": string(),
+								"code": string(),
+								"retryable": boolean()
+							}).optional()
+						}),
+						"features": object({
+							"quoteWindowSeconds": number(),
+							"quoteCount": number(),
+							"lower": union([literal(null), number()]),
+							"upper": union([literal(null), number()]),
+							"widthTicks": union([literal(null), number()]),
+							"lowerTouches": number(),
+							"upperTouches": number(),
+							"location": union([literal(null), number()]),
+							"reboundTicks": union([literal(null), number()]),
+							"pullbackTicks": union([literal(null), number()]),
+							"spreadTicks": union([literal(null), number()]),
+							"longRewardCostRatio": union([literal(null), number()]),
+							"shortRewardCostRatio": union([literal(null), number()])
+						}),
+						"checks": array(object({
+							"id": string(),
+							"label": string(),
+							"state": union([
+								literal("unknown"),
+								literal("pass"),
+								literal("fail")
+							]),
+							"detail": string(),
+							"actions": array(union([
+								literal("hold"),
+								literal("open_long"),
+								literal("open_short"),
+								literal("close_long"),
+								literal("close_short")
+							])),
+							"enforcement": union([literal("hard"), literal("reference")]).optional(),
+							"facts": record(string(), union([
+								literal(null),
+								string(),
+								number(),
+								literal(false),
+								literal(true)
+							])).optional()
+						})),
+						"allowedActions": array(union([
+							literal("hold"),
+							literal("open_long"),
+							literal("open_short"),
+							literal("close_long"),
+							literal("close_short")
+						]))
+					}).optional(),
+					"planStatus": union([
+						literal("blocked"),
+						literal("prepared"),
+						literal("submitted"),
+						literal("hold"),
+						literal("restricted"),
+						literal("candidate")
+					]).optional(),
+					"reviewNotes": array(string()).optional()
+				})).optional(),
+				"lastDecision": object({
+					"action": union([
+						literal("hold"),
+						literal("open_long"),
+						literal("open_short"),
+						literal("close_long"),
+						literal("close_short")
+					]),
+					"confidence": number(),
+					"probabilities": record(string(), number()),
+					"model": string(),
+					"time": number(),
+					"usage": object({
+						"input_tokens": number(),
+						"output_tokens": number()
+					}).optional(),
+					"assessments": object({
+						"regime": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"fit": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						}),
+						"blocker": object({
+							"choice": string(),
+							"confidence": number(),
+							"probabilities": record(string(), number())
+						})
+					}).optional()
+				}).optional(),
+				"lastQuoteCheckedAt": number().optional(),
+				"nextDecisionAt": number().optional()
+			}), object({ "symbol": string() }))).optional(),
+			"executionAuthorization": object({
+				"version": string(),
+				"acceptedAt": number(),
+				"runId": string()
+			}).optional(),
 			"running": boolean(),
 			"message": string(),
 			"strategyNotices": array(string()).optional(),
@@ -8137,6 +8823,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"planStatus": union([
 					literal("blocked"),
 					literal("prepared"),
+					literal("submitted"),
 					literal("hold"),
 					literal("restricted"),
 					literal("candidate")
@@ -8144,7 +8831,27 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"reviewNotes": array(string()).optional()
 			})).optional(),
 			"config": object({
+				"executionMode": union([
+					_undefined(),
+					literal("manual"),
+					literal("automatic")
+				]).optional(),
 				"symbol": string(),
+				"contracts": union([_undefined(), array(object({
+					"symbol": string(),
+					"instrument": object({
+						"product": string(),
+						"exchange": union([
+							literal("SHF"),
+							literal("DCE"),
+							literal("CZC"),
+							literal("CFE"),
+							literal("INE"),
+							literal("GFE")
+						]),
+						"tickSize": number()
+					})
+				}))]).optional(),
 				"volume": number(),
 				"intervalSeconds": number(),
 				"decisionIntervalSeconds": number().optional(),
@@ -8307,7 +9014,27 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchTemplates_result$schema = array(object({
 			"name": string(),
 			"config": object({
+				"executionMode": union([
+					_undefined(),
+					literal("manual"),
+					literal("automatic")
+				]).optional(),
 				"symbol": string(),
+				"contracts": union([_undefined(), array(object({
+					"symbol": string(),
+					"instrument": object({
+						"product": string(),
+						"exchange": union([
+							literal("SHF"),
+							literal("DCE"),
+							literal("CZC"),
+							literal("CFE"),
+							literal("INE"),
+							literal("GFE")
+						]),
+						"tickSize": number()
+					})
+				}))]).optional(),
 				"volume": number(),
 				"intervalSeconds": number(),
 				"decisionIntervalSeconds": number().optional(),
@@ -8433,6 +9160,19 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 				"treeDigest": intersection(string(), unknown()).readonly()
 			}).readonly(),
 			"agentPreset": string().readonly().optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_parameter_0$schema = object({ "sessionId": intersection(string(), unknown()).readonly() });
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_result$schema = object({
+			"sessionId": intersection(string(), unknown()).readonly(),
+			"token": string().readonly(),
+			"files": array(object({
+				"path": string().readonly(),
+				"bytes": number().readonly()
+			})).readonly(),
+			"retained": array(object({
+				"path": string().readonly(),
+				"reason": string().readonly()
+			})).readonly()
 		});
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorCheckUpdate_result$schema = object({
 			"enabled": boolean(),
@@ -10012,7 +10752,10 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 			"text": string().readonly(),
 			"truncated": boolean().readonly()
 		});
-		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_parameter_0$schema = union([_undefined(), object({ "blenderPath": string().optional() })]);
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_parameter_0$schema = union([_undefined(), object({
+			"blenderPath": string().optional(),
+			"neural": boolean().optional()
+		})]);
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_result$schema = object({
 			"supported": boolean(),
 			"installed": boolean(),
@@ -10417,6 +11160,16 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 		]);
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionEnsure_parameter_0$schema = object({ "sessionId": intersection(string(), unknown()).readonly() });
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionEnsure_result$schema = object({ "sessionId": intersection(string(), unknown()).readonly() });
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_parameter_0$schema = object({
+			"sessionId": intersection(string(), unknown()).readonly(),
+			"action": union([
+				literal("archive"),
+				literal("restore"),
+				literal("delete")
+			]).readonly(),
+			"filesToken": string().readonly().optional()
+		});
+		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_result$schema = _void();
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_workspaceResolve_parameter_0$schema = object({ "preferredWorkspaceId": intersection(string(), unknown()).readonly().optional() });
 		const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_workspaceResolve_result$schema = object({
 			"workspace": object({
@@ -10469,7 +11222,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1803,
+						"line": 1855,
 						"column": 9
 					}
 				},
@@ -10496,7 +11249,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1905,
+						"line": 1957,
 						"column": 9
 					}
 				},
@@ -10514,7 +11267,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1791,
+						"line": 1843,
 						"column": 9
 					}
 				},
@@ -10532,7 +11285,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1779,
+						"line": 1831,
 						"column": 3
 					}
 				},
@@ -10560,7 +11313,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1944,
+						"line": 1996,
 						"column": 9
 					}
 				},
@@ -10588,7 +11341,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2192,
+						"line": 2244,
 						"column": 9
 					}
 				},
@@ -10615,7 +11368,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2214,
+						"line": 2266,
 						"column": 9
 					}
 				},
@@ -10642,7 +11395,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2266,
+						"line": 2318,
 						"column": 9
 					}
 				},
@@ -10660,7 +11413,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2204,
+						"line": 2256,
 						"column": 3
 					}
 				},
@@ -10688,7 +11441,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2284,
+						"line": 2336,
 						"column": 9
 					}
 				},
@@ -10716,7 +11469,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2363,
+						"line": 2415,
 						"column": 9
 					}
 				},
@@ -10743,7 +11496,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2236,
+						"line": 2288,
 						"column": 9
 					}
 				},
@@ -10770,7 +11523,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1921,
+						"line": 1973,
 						"column": 9
 					}
 				},
@@ -10798,7 +11551,25 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1861,
+						"line": 1913,
+						"column": 9
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/archivedConversations",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "archivedConversations",
+					invocation: { kind: "direct" },
+					parameters: [],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/archivedConversations:result",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_archivedConversations_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1659,
 						"column": 9
 					}
 				},
@@ -10826,7 +11597,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1972,
+						"line": 2024,
 						"column": 3
 					}
 				},
@@ -10854,7 +11625,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1958,
+						"line": 2010,
 						"column": 9
 					}
 				},
@@ -10872,7 +11643,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1293,
+						"line": 1297,
 						"column": 3
 					}
 				},
@@ -10890,7 +11661,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1284,
+						"line": 1288,
 						"column": 3
 					}
 				},
@@ -10908,7 +11679,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1287,
+						"line": 1291,
 						"column": 9
 					}
 				},
@@ -10935,7 +11706,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1384,
+						"line": 1388,
 						"column": 3
 					}
 				},
@@ -10962,7 +11733,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1379,
+						"line": 1383,
 						"column": 3
 					}
 				},
@@ -10990,7 +11761,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1339,
+						"line": 1343,
 						"column": 9
 					}
 				},
@@ -11017,7 +11788,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1323,
+						"line": 1327,
 						"column": 3
 					}
 				},
@@ -11035,7 +11806,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1305,
+						"line": 1309,
 						"column": 3
 					}
 				},
@@ -11053,7 +11824,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1308,
+						"line": 1312,
 						"column": 3
 					}
 				},
@@ -11080,7 +11851,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1278,
+						"line": 1282,
 						"column": 9
 					}
 				},
@@ -11108,7 +11879,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1335,
+						"line": 1339,
 						"column": 3
 					}
 				},
@@ -11135,7 +11906,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1389,
+						"line": 1393,
 						"column": 3
 					}
 				},
@@ -11163,7 +11934,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1348,
+						"line": 1352,
 						"column": 3
 					}
 				},
@@ -11190,7 +11961,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1274,
+						"line": 1278,
 						"column": 3
 					}
 				},
@@ -11208,7 +11979,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1296,
+						"line": 1300,
 						"column": 9
 					}
 				},
@@ -11226,7 +11997,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1317,
+						"line": 1321,
 						"column": 3
 					}
 				},
@@ -11253,7 +12024,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1320,
+						"line": 1324,
 						"column": 3
 					}
 				},
@@ -11280,7 +12051,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1314,
+						"line": 1318,
 						"column": 3
 					}
 				},
@@ -11307,7 +12078,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1326,
+						"line": 1330,
 						"column": 3
 					}
 				},
@@ -11325,7 +12096,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1302,
+						"line": 1306,
 						"column": 3
 					}
 				},
@@ -11343,7 +12114,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1332,
+						"line": 1336,
 						"column": 3
 					}
 				},
@@ -11361,7 +12132,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1311,
+						"line": 1315,
 						"column": 3
 					}
 				},
@@ -11389,7 +12160,35 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1521,
+						"line": 1525,
+						"column": 9
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/deletionPreview",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "deletionPreview",
+					implementation: "previewSessionDeletion",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/deletionPreview:request",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#SessionDeletionPreview",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1627,
 						"column": 9
 					}
 				},
@@ -11407,7 +12206,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1213,
+						"line": 1217,
 						"column": 3
 					}
 				},
@@ -11434,7 +12233,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1241,
+						"line": 1245,
 						"column": 3
 					}
 				},
@@ -11461,7 +12260,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1207,
+						"line": 1211,
 						"column": 3
 					}
 				},
@@ -11479,7 +12278,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1210,
+						"line": 1214,
 						"column": 3
 					}
 				},
@@ -11506,7 +12305,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1244,
+						"line": 1248,
 						"column": 3
 					}
 				},
@@ -11534,7 +12333,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1219,
+						"line": 1223,
 						"column": 9
 					}
 				},
@@ -11561,7 +12360,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1204,
+						"line": 1208,
 						"column": 3
 					}
 				},
@@ -11588,7 +12387,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1235,
+						"line": 1239,
 						"column": 9
 					}
 				},
@@ -11616,7 +12415,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1232,
+						"line": 1236,
 						"column": 9
 					}
 				},
@@ -11643,7 +12442,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1253,
+						"line": 1257,
 						"column": 3
 					}
 				},
@@ -11670,7 +12469,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1250,
+						"line": 1254,
 						"column": 3
 					}
 				},
@@ -11698,7 +12497,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1256,
+						"line": 1260,
 						"column": 3
 					}
 				},
@@ -11725,7 +12524,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1201,
+						"line": 1205,
 						"column": 3
 					}
 				},
@@ -11752,7 +12551,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1247,
+						"line": 1251,
 						"column": 3
 					}
 				},
@@ -11770,7 +12569,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1216,
+						"line": 1220,
 						"column": 3
 					}
 				},
@@ -11798,7 +12597,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2379,
+						"line": 2431,
 						"column": 9
 					}
 				},
@@ -11826,7 +12625,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2413,
+						"line": 2465,
 						"column": 9
 					}
 				},
@@ -11854,7 +12653,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2431,
+						"line": 2483,
 						"column": 9
 					}
 				},
@@ -11882,7 +12681,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1193,
+						"line": 1197,
 						"column": 3
 					}
 				},
@@ -11909,7 +12708,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1197,
+						"line": 1201,
 						"column": 3
 					}
 				},
@@ -11927,7 +12726,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1190,
+						"line": 1194,
 						"column": 3
 					}
 				},
@@ -11955,7 +12754,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1628,
+						"line": 1680,
 						"column": 9
 					}
 				},
@@ -11983,7 +12782,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1599,
+						"line": 1603,
 						"column": 9
 					}
 				},
@@ -12010,7 +12809,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 926,
+						"line": 929,
 						"column": 9
 					}
 				},
@@ -12038,7 +12837,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1442,
+						"line": 1446,
 						"column": 9
 					}
 				},
@@ -12066,7 +12865,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1614,
+						"line": 1618,
 						"column": 9
 					}
 				},
@@ -12094,7 +12893,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1735,
+						"line": 1787,
 						"column": 9
 					}
 				},
@@ -12122,7 +12921,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1754,
+						"line": 1806,
 						"column": 9
 					}
 				},
@@ -12150,7 +12949,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1663,
+						"line": 1715,
 						"column": 9
 					}
 				},
@@ -12177,7 +12976,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1708,
+						"line": 1760,
 						"column": 3
 					}
 				},
@@ -12205,7 +13004,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2493,
+						"line": 2545,
 						"column": 9
 					}
 				},
@@ -12233,7 +13032,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2448,
+						"line": 2500,
 						"column": 3
 					}
 				},
@@ -12261,7 +13060,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2512,
+						"line": 2564,
 						"column": 9
 					}
 				},
@@ -12289,7 +13088,35 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1400,
+						"line": 1404,
+						"column": 9
+					}
+				},
+				{
+					id: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/sessionLifecycle",
+					service: "quantSkillsSessions",
+					namespace: "quantSkillsSessions",
+					method: "sessionLifecycle",
+					implementation: "changeSessionLifecycle",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "request",
+						wire: "request",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-quantskills-session/types#SessionLifecycleRequest",
+							schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_parameter_0$schema
+						}
+					}],
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/sessionLifecycle:result",
+						schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_result$schema
+					},
+					sourceLocation: {
+						"file": "packages/quantskills-session/src/index.ts",
+						"line": 1638,
 						"column": 9
 					}
 				},
@@ -12316,7 +13143,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1184,
+						"line": 1188,
 						"column": 3
 					}
 				},
@@ -12343,7 +13170,7 @@ Set the \`cycles\` parameter to \`"ref"\` to resolve cyclical schemas with defs.
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 1174,
+						"line": 1178,
 						"column": 3
 					}
 				}

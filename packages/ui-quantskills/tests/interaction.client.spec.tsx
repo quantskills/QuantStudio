@@ -627,7 +627,7 @@ describe('QuantSkills navigation and display scale', () => {
     }
     const mounted = render(<QuantSkillsPluginFrame {...props}/>)
     const frame = screen.getByRole('region', { name: 'QuantSkills 插件应用' })
-    expect([...screen.getByRole('group', { name: 'PandaAI 产品' }).querySelectorAll('button')].map(button => button.textContent)).toEqual(['QUBE', 'EVO', '比赛', '果蝇交易员'])
+    expect([...screen.getByRole('group', { name: 'PandaAI 产品' }).querySelectorAll('button')].map(button => button.textContent)).toEqual(['QUBE', 'EVO', '比赛'])
 
     expect(frame.getAttribute('data-conversation-open')).toBe('true')
     expect(frame.getAttribute('data-plugin-interface-scale')).toBe('1.25')
@@ -793,10 +793,13 @@ describe('QuantSkills navigation and display scale', () => {
     expect(screen.getByRole('button', { name: '附件清理' })).toBeTruthy()
     expect(footerWide).toBe(false)
     const destinations = [...screen.getByRole('navigation', { name: 'QuantSkills 主导航' }).querySelectorAll('button')].map(button => button.textContent)
-    expect(destinations.slice(destinations.indexOf('QUBE'), destinations.indexOf('QUBE') + 4)).toEqual(['QUBE', 'EVO', '比赛', '果蝇交易员'])
+    expect(destinations.slice(destinations.indexOf('QUBE'), destinations.indexOf('QUBE') + 3)).toEqual(['QUBE', 'EVO', '比赛'])
     fireEvent.click(screen.getByRole('button', { name: '比赛', exact: true }))
     expect(view.store.getSnapshot().page).toBe('contest')
     expect(screen.getByRole('button', { name: '比赛', exact: true }).getAttribute('aria-current')).toBe('page')
+    act(() => view.actions.navigate('fly'))
+    expect(screen.getByRole('button', { name: '比赛', exact: true }).getAttribute('aria-current')).toBe('page')
+    expect(screen.queryByRole('button', { name: 'AI 交易员', exact: true })).toBeNull()
   })
 
   it.each([0.6, 0.75, 0.9, 1, 1.1, 1.25, 1.5])(
@@ -1156,7 +1159,8 @@ describe('QuantSkills navigation and display scale', () => {
       SessionProvider={({ empty }) => empty?.()}
     />)
 
-    fireEvent.click(screen.getByRole('button', { name: '重命名会话 五日动量复盘' }))
+    fireEvent.click(screen.getByRole('button', { name: '会话操作 五日动量复盘' }))
+    fireEvent.click(screen.getByRole('menuitem', { name: '重命名会话 五日动量复盘' }))
     const dialog = screen.getByRole('dialog', { name: '重命名会话' })
     const input = screen.getByRole<HTMLInputElement>('textbox', { name: '会话名称' })
     expect(input.value).toBe('五日动量复盘')
@@ -1201,7 +1205,8 @@ describe('QuantSkills navigation and display scale', () => {
       SessionProvider={({ empty }) => empty?.()}
     />)
 
-    const renameRunning = screen.getByRole<HTMLButtonElement>('button', { name: '重命名会话 五日动量研究' })
+    fireEvent.click(screen.getByRole('button', { name: '会话操作 五日动量研究' }))
+    const renameRunning = screen.getByRole<HTMLButtonElement>('menuitem', { name: '重命名会话 五日动量研究' })
     expect(renameRunning.disabled).toBe(false)
     fireEvent.click(renameRunning)
     const input = screen.getByRole('textbox', { name: '会话名称' })
@@ -1217,9 +1222,10 @@ describe('QuantSkills navigation and display scale', () => {
     expect(screen.queryByRole('dialog', { name: '重命名会话' })).toBeNull()
   })
 
-  it('confirms removal of an idle conversation and describes the recoverable Host archive', async () => {
+  it('confirms sidebar archive and deletion separately, including batch archive', async () => {
     const view = createQuantSkillsViewStore().create()
     const layout = createQuantSkillsLayoutStore().create()
+    const archiveSessions = vi.fn(async (_ids: readonly SessionId[]) => {})
     const removeSessions = vi.fn(async (_ids: readonly SessionId[]) => {})
     view.actions.navigate('conversations')
     render(<QuantSkillsFrame
@@ -1235,6 +1241,7 @@ describe('QuantSkills navigation and display scale', () => {
       openSession={() => {}}
       renameSession={async () => {}}
       removeSessions={removeSessions}
+      archiveSessions={archiveSessions}
       startSession={async () => {}}
       startAuthoringSession={async () => {}}
       openAgentTeamBuilder={() => {}}
@@ -1242,9 +1249,30 @@ describe('QuantSkills navigation and display scale', () => {
       SessionProvider={({ empty }) => empty?.()}
     />)
 
-    fireEvent.click(screen.getByRole('button', { name: '删除会话 五日动量复盘' }))
-    expect(screen.getByRole('dialog').textContent).toContain('原始记录仍保留在会话归档中')
-    fireEvent.click(screen.getByRole('button', { name: '删除会话' }))
+    fireEvent.click(screen.getByRole('button', { name: '会话操作 五日动量复盘' }))
+    fireEvent.click(screen.getByRole('menuitem', { name: '归档会话 五日动量复盘' }))
+    expect(archiveSessions).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: '取消', exact: true }))
+    expect(archiveSessions).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: '会话操作 五日动量复盘' }))
+    fireEvent.click(screen.getByRole('menuitem', { name: '归档会话 五日动量复盘' }))
+    fireEvent.click(screen.getByRole('button', { name: '确认归档' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(archiveSessions).toHaveBeenCalledWith([SECOND_BOUND_SESSION_ID])
+    expect(removeSessions).not.toHaveBeenCalled()
+    archiveSessions.mockClear()
+    fireEvent.click(screen.getByRole('button', { name: '批量管理' }))
+    fireEvent.click(screen.getByRole('checkbox', { name: '全选可删除会话' }))
+    fireEvent.click(screen.getByRole('button', { name: '归档', exact: true }))
+    expect(archiveSessions).not.toHaveBeenCalled()
+    fireEvent.click(screen.getByRole('button', { name: '确认归档' }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(archiveSessions).toHaveBeenCalledWith([SECOND_BOUND_SESSION_ID])
+
+    fireEvent.click(screen.getByRole('button', { name: '会话操作 五日动量复盘' }))
+    fireEvent.click(screen.getByRole('menuitem', { name: '删除会话 五日动量复盘' }))
+    expect(screen.getByRole('dialog').textContent).toContain('将被永久删除，无法恢复')
+    fireEvent.click(screen.getByRole('button', { name: '会话删除' }))
 
     await waitFor(() => {
       expect(removeSessions).toHaveBeenCalledWith([SECOND_BOUND_SESSION_ID])
@@ -1285,7 +1313,7 @@ describe('QuantSkills navigation and display scale', () => {
     expect(screen.getByText('1 已选')).toBeTruthy()
     fireEvent.click(screen.getByRole('button', { name: '删除' }))
     expect(screen.getByRole('heading', { name: '删除选中的 1 个会话？' })).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: '删除会话' }))
+    fireEvent.click(screen.getByRole('button', { name: '会话删除' }))
 
     await waitFor(() => {
       expect(removeSessions).toHaveBeenCalledOnce()
@@ -1297,7 +1325,7 @@ describe('QuantSkills navigation and display scale', () => {
     fireEvent.click(screen.getByRole('button', { name: '清空' }))
     expect(screen.getByRole('heading', { name: '清空 1 个可删除会话？' })).toBeTruthy()
     expect(screen.getByText('1 个运行中的会话会保留。')).toBeTruthy()
-    fireEvent.click(screen.getByRole('button', { name: '清空会话' }))
+    fireEvent.click(screen.getByRole('button', { name: '会话删除' }))
     await waitFor(() => {
       expect(removeSessions).toHaveBeenCalledOnce()
       expect(removeSessions.mock.calls[0]?.[0]).toEqual([SECOND_BOUND_SESSION_ID])

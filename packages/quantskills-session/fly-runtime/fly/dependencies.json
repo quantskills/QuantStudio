@@ -7,10 +7,6 @@
     "url": "https://codeload.github.com/marketcalls/openfly/zip/fd4b06ba0d32fa76965672777e5811da7d9171eb",
     "sha256": "096f23cdf4ac3721f697e6261d6d7f26212e18d453cb32c0aeb8a67ccb07dd81"
   },
-  "blender": {
-    "url": "https://download.blender.org/release/Blender5.2/blender-5.2.2-windows-x64.zip",
-    "sha256": "3849d17a682cba006075aaa3f3597ecb5c9c30ec31035b2e092c53e40679b535"
-  },
   "wheels": [
     {
       "name": "numpy-2.4.6-cp312-cp312-win_amd64.whl",

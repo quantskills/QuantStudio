@@ -60,7 +60,7 @@ class Settlement:
             return []
         if occupied(positions):return []
         if any(str(t.get('runtime_id') or '') not in owned_runtime_ids for t in new) or state['deposit']!=baseline['deposit'] or state['withdraw']!=baseline['withdraw']:
-            self.store.event('learning_deferred',{'reason':'账户存在其他交易归属或资金变动，不能将收益归给果蝇'})
+            self.store.event('learning_deferred',{'reason':'账户存在其他交易归属或资金变动，不能将收益归给AI 交易员'})
             self.store.put('settlement_baseline',state);return []
         events=self.store.fills_since(baseline['at'])
         fills={trade_key(e['payload']):e for e in events if e['kind']=='trade' and e['at']>=baseline['at']}

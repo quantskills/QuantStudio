@@ -64,7 +64,7 @@ export async function watchHistory(ctx, config, signal) {
         // Get all relevant rows (up to a bounded 5000) so source ordering cannot hide the newest bar.
         const today = new Date(Date.now() + 8 * 3600000).toISOString().slice(0, 10);
         stage = 'query';
-        const result = await gateway.databaseQuery({ id: source.datasetId, limit: 5000, refresh: source.refresh,
+        let result = await gateway.databaseQuery({ id: source.datasetId, limit: 5000, refresh: source.refresh,
             ...(dataset.source.kind === 'pandadata' && dataset.source.method === 'get_future_min' ? { to: today } : {}) }, signal);
         signal.throwIfAborted();
         if (result.status === 'insufficient')
@@ -80,6 +80,25 @@ export async function watchHistory(ctx, config, signal) {
         }
         catch (error) {
             return { ...empty, issue: error instanceof Error ? error.message : '历史 K 线校验失败。' };
+        }
+        // An unexpired PandaData cache can predate publication of the newest bar.
+        // Honour explicit no-refresh/manual sources; only catch up live minute data.
+        const expectedClose = Math.floor(Date.now() / (source.barSeconds * 1000)) * source.barSeconds * 1000;
+        if (source.refresh && dataset.source.kind === 'pandadata' && dataset.source.method === 'get_future_min'
+            && result.status === 'hit' && Date.now() - Date.parse(result.dataset.fetchedAt) >= 30000
+            && (bars.at(-1)?.time ?? 0) < expectedClose) {
+            stage = 'refresh';
+            await gateway.databaseRefresh({ id: source.datasetId }, signal);
+            result = await gateway.databaseQuery({ id: source.datasetId, limit: 5000, refresh: false }, signal);
+            signal.throwIfAborted();
+            if (result.status === 'insufficient' || result.total > 5000)
+                return { ...empty, issue: '刷新后的历史数据不完整或超过 5000 行，请检查数据源。' };
+            try {
+                bars = normalizeWatchBars(result.rows, mapping, config.symbol).slice(-240);
+            }
+            catch (error) {
+                return { ...empty, issue: error instanceof Error ? error.message : '历史 K 线校验失败。' };
+            }
         }
         return { source: `${result.dataset.name} (${result.dataset.id})`, fetchedAt: Date.parse(result.dataset.fetchedAt), barSeconds: source.barSeconds, bars };
     }

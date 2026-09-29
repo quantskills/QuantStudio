@@ -27,6 +27,7 @@ export declare class FlyRuntime {
     resume(): Promise<void>;
     install(input?: {
         blenderPath?: string;
+        neural?: boolean;
     }): Promise<FlyRuntimeStatus>;
     private process;
     private prepare;

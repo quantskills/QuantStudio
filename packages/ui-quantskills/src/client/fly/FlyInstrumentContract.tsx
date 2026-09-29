@@ -20,8 +20,9 @@ export function deliveryMonths(product: string, main: string): string[] {
     return `${match[1]}${String(date.getUTCFullYear() % (10 ** width)).padStart(width, '0')}${String(date.getUTCMonth() + 1).padStart(2, '0')}${match[3]}`
   })
 }
-export function FlyInstrumentContract({ product, label, symbol, invalid, contest, accountKey, onSymbolChange }: {
+export function FlyInstrumentContract({ product, label, inputLabel, symbol, invalid, contest, accountKey, onSymbolChange }: {
   product: string; label: string; symbol: string; invalid: boolean; contest?: Pick<ContestAccess, 'query'> | undefined; accountKey: string
+  inputLabel?: string
   onSymbolChange: (value: string, onlyIfEmpty?: boolean) => void
 }) {
   const [main, setMain] = useState(''), [message, setMessage] = useState(''), [checking, setChecking] = useState(false)
@@ -54,5 +55,5 @@ export function FlyInstrumentContract({ product, label, symbol, invalid, contest
     finally { if (id === request.current) setChecking(false) }
   }
   const months = main ? deliveryMonths(product, main) : []
-  return <div className="fv-contract-choice"><input aria-label={`${label}实际合约`} aria-invalid={invalid} placeholder="填写实际合约代码" value={symbol} onChange={e => { request.current++; setChecking(false); onSymbolChange(e.target.value.trim()); setMessage('手动填写的合约将在交易前核对。') }} /><select aria-label={`${label}合约月份`} value={[main, ...months].includes(symbol) ? symbol : ''} disabled={!main || checking} onChange={e => void selectMonth(e.target.value)}><option value="">选择合约月份</option>{main && <option value={main}>主力 · {main}</option>}{months.map(code => <option key={code} value={code}>{code} · 候选月份</option>)}</select><small role="status">{message || '选择品种后查询主力合约'}</small></div>
+  return <div className="fv-contract-choice"><input aria-label={inputLabel ?? `${label}实际合约`} aria-invalid={invalid} placeholder="填写实际合约代码" value={symbol} onChange={e => { request.current++; setChecking(false); onSymbolChange(e.target.value.trim()); setMessage('手动填写的合约将在交易前核对。') }} /><select aria-label={`${label}合约月份`} value={[main, ...months].includes(symbol) ? symbol : ''} disabled={!main || checking} onChange={e => void selectMonth(e.target.value)}><option value="">选择合约月份</option>{main && <option value={main}>主力 · {main}</option>}{months.map(code => <option key={code} value={code}>{code} · 候选月份</option>)}</select><small role="status">{message || '选择品种后查询主力合约'}</small></div>
 }

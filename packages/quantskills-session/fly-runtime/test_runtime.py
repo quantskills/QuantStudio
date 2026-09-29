@@ -8,7 +8,7 @@ from fly.models import Settings
 from fly.service import FlyManager, Organism
 from fly.settlement import Settlement
 from fly.analytics import record_account_sample
-from fly.contest import sync
+from fly.contest import sync, propose, receipt_message
 from unittest.mock import patch
 from fly.history import merge_bars, timestamp
 from fly.bridge import equal_notional_lots
@@ -16,30 +16,105 @@ from server import dispatch
 
 
 class RuntimeTests(unittest.TestCase):
+    def test_counter_rejection_keeps_the_actual_readiness_reason(self):
+        message=receipt_message('failed',{'result':{'code':'order_rejected',
+            'message':'柜台拒绝：position_data_not_ready: 交易会话或完整持仓尚未就绪'}})
+        self.assertIn('position_data_not_ready',message)
+        self.assertIn('完整持仓',message)
+
+    def test_receipt_message_handles_missing_failure_details(self):
+        for detail in (None,{}, {'result':None}, {'result':{'message':42}}):
+            self.assertEqual(receipt_message('failed',detail),'委托提交失败')
+        self.assertEqual(receipt_message('submitted',{'result':{'message':'not a failure'}}),'委托已提交，等待成交')
+
     def test_new_settings_enable_trade_choices(self):
         self.assertFalse(Settings().life_validation)
 
-    def test_restart_preserves_enabled_plans_and_manual_stop(self):
+    def test_restart_preserves_automatic_run_and_manual_stop(self):
         item = self.manager.get('local')
         item.configure(Settings(instruments=[{'product':'rb','symbol':'rb2610','exchange':'SHF'}],
                                 target_notional=100000,total_notional=200000,loss_limit=10000,
                                 life_validation=False,onboarding_complete=True))
         item.store.put('binding',{'identity':{'accountId':'a','contestId':'c'}})
-        item.control.update(paused=False,trading=True)
+        item.control.update(paused=False,trading=True,execution='automatic',run_id='test-run')
+        item.control['authorization']={'version':'automatic-orders-v1','run_id':'test-run'}
         item.store.put('control',item.control)
         item.store.put('signal:rb',{'decision_id':'before-restart'})
+        item.store.put('model_status:rb',{'status':'running','at':1})
         item.close()
         with patch.object(Organism,'loop'):
             reopened=Organism(self.manager,'local')
         self.manager.instances['local']=reopened
         self.assertTrue(reopened.control['trading'])
         self.assertEqual(reopened.store.get('consumed:rb'),'before-restart')
+        self.assertEqual(reopened.store.get('model_status:rb')['status'],'discarded')
+        self.assertIn('重启',reopened.store.get('model_status:rb')['message'])
         reopened.command('observe')
         reopened.close()
         with patch.object(Organism,'loop'):
             stopped=Organism(self.manager,'local')
         self.manager.instances['local']=stopped
         self.assertFalse(stopped.control['trading'])
+
+    def test_upgrade_does_not_turn_old_suggestions_into_orders(self):
+        item = self.manager.get('local')
+        item.configure(Settings(instruments=[{'product':'rb','symbol':'rb2610','exchange':'SHF'}]))
+        item.control.update(paused=False, trading=True)
+        item.store.put('control',item.control)
+        item.close()
+        with patch.object(Organism,'loop'):
+            reopened=Organism(self.manager,'local')
+        self.manager.instances['local']=reopened
+        self.assertFalse(reopened.control['trading'])
+
+    def test_signal_submits_each_contract_once_and_keeps_receipt_status(self):
+        import time
+        item=self.manager.get('local')
+        item.configure(Settings(instruments=[{'product':'rb','symbol':'rb2610','exchange':'SHF'},
+                                             {'product':'cu','symbol':'cu2611','exchange':'SHF'}]))
+        item.control.update(paused=False,trading=True,execution='automatic',run_id='run-test')
+        for i in item.settings.instruments:
+            item.store.put('signal:'+i.product, {'decision_id':i.product,'symbol':i.symbol,'input_at':time.time(),
+                'choice':{'action':'LONG','current_position':0,'target_position':1}})
+            item.store.put('feed:'+i.product, {'quote_at':time.time(),'inflight':False})
+        with patch('fly.contest.readiness',return_value='ready'), patch('fly.contest.missing_minutes',return_value=[]), \
+             patch('fly.contest.opening_filter',return_value=({}, {'allowed':True})), \
+             patch('fly.contest.bridge.call',side_effect=lambda path,body:{'id':body['instrument']['product'],'status':'submitted'}) as call:
+            propose(item,{'accountId':'a','contestId':'c'})
+            propose(item,{'accountId':'a','contestId':'c'})
+        self.assertEqual(call.call_count,2)
+        self.assertTrue(all(c.args[0]=='trade' and c.args[1]['run_id']=='run-test' for c in call.call_args_list))
+        self.assertEqual(item.store.get('execution_status:rb')['status'],'submitted')
+        self.assertEqual(item.store.get('contest_plans'),{'rb':'rb','cu':'cu'})
+
+    def test_paused_loop_does_not_consume_or_submit_signals(self):
+        item=self.manager.get('local')
+        item.configure(Settings(instruments=[{'product':'rb','symbol':'rb2610','exchange':'SHF'}]))
+        item.store.put('signal:rb',{'decision_id':'pending'})
+        with patch('fly.contest.bridge.call') as call:
+            propose(item,{'accountId':'a','contestId':'c'})
+        call.assert_not_called()
+        self.assertIsNone(item.store.get('consumed:rb'))
+
+    def test_decision_waits_for_fresh_quote_without_being_lost_or_duplicated(self):
+        import time
+        item=self.manager.get('local')
+        item.configure(Settings(instruments=[{'product':'rb','symbol':'rb2610','exchange':'SHF'}]))
+        item.control.update(paused=False,trading=True,execution='automatic',run_id='run-test')
+        item.store.put('signal:rb', {'decision_id':'pending-quote','symbol':'rb2610','input_at':time.time(),
+            'choice':{'action':'LONG','current_position':0,'target_position':1}})
+        item.store.put('feed:rb', {'quote_at':time.time()-11,'inflight':False})
+        identity={'accountId':'a','contestId':'c'}
+        with patch('fly.contest.bridge.call',return_value={'id':'plan','status':'submitted'}) as call, \
+             patch('fly.contest.readiness',return_value='ready'), patch('fly.contest.missing_minutes',return_value=0), \
+             patch('fly.contest.opening_filter',return_value=({}, {'allowed':True})):
+            propose(item,identity)
+            call.assert_not_called()
+            self.assertIsNone(item.store.get('consumed:rb'))
+            item.store.put('feed:rb', {'quote_at':time.time(),'inflight':False})
+            propose(item,identity)
+            propose(item,identity)
+            self.assertEqual(call.call_count,1)
 
     def test_nominal_limits_are_optional(self):
         self.assertTrue(Settings(instruments=[{'product':'rb','symbol':'rb2610','exchange':'SHF'}]).trading_configured())
@@ -51,7 +126,7 @@ class RuntimeTests(unittest.TestCase):
         self.addCleanup(self.manager.close)
 
     def test_no_execution_route(self):
-        with self.assertRaisesRegex(ValueError, '未知果蝇接口'):
+        with self.assertRaisesRegex(ValueError, '未知AI 交易员接口'):
             dispatch(self.manager, 'execute', {'plan_id': 'fake'})
 
     def test_blender_configuration_rejects_other_programs(self):

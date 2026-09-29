@@ -694,6 +694,13 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUpdate_resul
   'createdAt': z.number().readonly(),
   'updatedAt': z.number().readonly(),
 })
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_archivedConversations_result$schema = z.array(z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
+  'title': z.string().readonly(),
+  'kind': z.union([z.literal("skill"), z.literal("agent"), z.literal("plain"), z.literal("team")]).readonly(),
+  'updatedAt': z.number().readonly(),
+  'running': z.boolean().readonly(),
+}))
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringCommit_parameter_0$schema = z.object({
   'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
   'toolCallId': z.string().readonly(),
@@ -880,6 +887,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestCheckUpdat
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -917,6 +925,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestConnect_re
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -954,6 +963,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDisconnect
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -995,6 +1005,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_re
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -1175,6 +1186,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_resul
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -1278,6 +1290,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestStatus_res
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -1315,6 +1328,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestUpdate_res
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -1369,7 +1383,16 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchPrepa
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_parameter_0$schema = z.object({
   'name': z.string(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -1449,7 +1472,16 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveT
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_result$schema = z.array(z.object({
   'name': z.string(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -1528,7 +1560,16 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveT
 }))
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_parameter_0$schema = z.object({
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -1605,8 +1646,146 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart
 })]).optional(),
 }),
   'confirmed': z.boolean(),
+  'executionConsent': z.string().optional(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_result$schema = z.object({
+  'markets': z.array(z.intersection(z.object({
+  'phase': z.union([z.literal("checking"), z.literal("sampling"), z.literal("waiting_quote"), z.literal("deciding"), z.literal("waiting_plan")]).optional(),
+  'message': z.string(),
+  'sampleCount': z.number(),
+  'samples': z.array(z.object({
+  'time': z.number(),
+  'price': z.number(),
+  'bid': z.number().optional(),
+  'ask': z.number().optional(),
+})).optional(),
+  'analyses': z.array(z.object({
+  'id': z.string(),
+  'startedAt': z.number(),
+  'responseAt': z.number().optional(),
+  'finishedAt': z.number().optional(),
+  'sampleCount': z.number(),
+  'fromTime': z.number(),
+  'toTime': z.number(),
+  'price': z.number(),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'decision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'outcome': z.string(),
+  'planId': z.string().optional(),
+  'strategyName': z.string().optional(),
+  'strategyVersion': z.string().optional(),
+  'evidence': z.object({
+  'evaluatedAt': z.number(),
+  'decisionMode': z.union([z.literal("jev"), z.literal("strict")]).optional(),
+  'history': z.object({
+  'source': z.string(),
+  'barSeconds': z.number(),
+  'count': z.number(),
+  'from': z.number().optional(),
+  'to': z.number().optional(),
+  'fetchedAt': z.number().optional(),
+  'issue': z.string().optional(),
+  'warning': z.string().optional(),
+  'diagnostic': z.object({
+  'stage': z.string(),
+  'code': z.string(),
+  'retryable': z.boolean(),
+}).optional(),
+}),
+  'features': z.object({
+  'quoteWindowSeconds': z.number(),
+  'quoteCount': z.number(),
+  'lower': z.union([z.literal(null), z.number()]),
+  'upper': z.union([z.literal(null), z.number()]),
+  'widthTicks': z.union([z.literal(null), z.number()]),
+  'lowerTouches': z.number(),
+  'upperTouches': z.number(),
+  'location': z.union([z.literal(null), z.number()]),
+  'reboundTicks': z.union([z.literal(null), z.number()]),
+  'pullbackTicks': z.union([z.literal(null), z.number()]),
+  'spreadTicks': z.union([z.literal(null), z.number()]),
+  'longRewardCostRatio': z.union([z.literal(null), z.number()]),
+  'shortRewardCostRatio': z.union([z.literal(null), z.number()]),
+}),
+  'checks': z.array(z.object({
+  'id': z.string(),
+  'label': z.string(),
+  'state': z.union([z.literal("unknown"), z.literal("pass"), z.literal("fail")]),
+  'detail': z.string(),
+  'actions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'enforcement': z.union([z.literal("hard"), z.literal("reference")]).optional(),
+  'facts': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true)])).optional(),
+})),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+}).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'reviewNotes': z.array(z.string()).optional(),
+})).optional(),
+  'lastDecision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'lastQuoteCheckedAt': z.number().optional(),
+  'nextDecisionAt': z.number().optional(),
+}), z.object({
+  'symbol': z.string(),
+}))).optional(),
+  'executionAuthorization': z.object({
+  'version': z.string(),
+  'acceptedAt': z.number(),
+  'runId': z.string(),
+}).optional(),
   'running': z.boolean(),
   'message': z.string(),
   'strategyNotices': z.array(z.string()).optional(),
@@ -1708,11 +1887,20 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart
 })),
   'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
 }).optional(),
-  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
   'reviewNotes': z.array(z.string()).optional(),
 })).optional(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -1834,6 +2022,143 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart
 })),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatus_result$schema = z.object({
+  'markets': z.array(z.intersection(z.object({
+  'phase': z.union([z.literal("checking"), z.literal("sampling"), z.literal("waiting_quote"), z.literal("deciding"), z.literal("waiting_plan")]).optional(),
+  'message': z.string(),
+  'sampleCount': z.number(),
+  'samples': z.array(z.object({
+  'time': z.number(),
+  'price': z.number(),
+  'bid': z.number().optional(),
+  'ask': z.number().optional(),
+})).optional(),
+  'analyses': z.array(z.object({
+  'id': z.string(),
+  'startedAt': z.number(),
+  'responseAt': z.number().optional(),
+  'finishedAt': z.number().optional(),
+  'sampleCount': z.number(),
+  'fromTime': z.number(),
+  'toTime': z.number(),
+  'price': z.number(),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'decision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'outcome': z.string(),
+  'planId': z.string().optional(),
+  'strategyName': z.string().optional(),
+  'strategyVersion': z.string().optional(),
+  'evidence': z.object({
+  'evaluatedAt': z.number(),
+  'decisionMode': z.union([z.literal("jev"), z.literal("strict")]).optional(),
+  'history': z.object({
+  'source': z.string(),
+  'barSeconds': z.number(),
+  'count': z.number(),
+  'from': z.number().optional(),
+  'to': z.number().optional(),
+  'fetchedAt': z.number().optional(),
+  'issue': z.string().optional(),
+  'warning': z.string().optional(),
+  'diagnostic': z.object({
+  'stage': z.string(),
+  'code': z.string(),
+  'retryable': z.boolean(),
+}).optional(),
+}),
+  'features': z.object({
+  'quoteWindowSeconds': z.number(),
+  'quoteCount': z.number(),
+  'lower': z.union([z.literal(null), z.number()]),
+  'upper': z.union([z.literal(null), z.number()]),
+  'widthTicks': z.union([z.literal(null), z.number()]),
+  'lowerTouches': z.number(),
+  'upperTouches': z.number(),
+  'location': z.union([z.literal(null), z.number()]),
+  'reboundTicks': z.union([z.literal(null), z.number()]),
+  'pullbackTicks': z.union([z.literal(null), z.number()]),
+  'spreadTicks': z.union([z.literal(null), z.number()]),
+  'longRewardCostRatio': z.union([z.literal(null), z.number()]),
+  'shortRewardCostRatio': z.union([z.literal(null), z.number()]),
+}),
+  'checks': z.array(z.object({
+  'id': z.string(),
+  'label': z.string(),
+  'state': z.union([z.literal("unknown"), z.literal("pass"), z.literal("fail")]),
+  'detail': z.string(),
+  'actions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'enforcement': z.union([z.literal("hard"), z.literal("reference")]).optional(),
+  'facts': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true)])).optional(),
+})),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+}).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'reviewNotes': z.array(z.string()).optional(),
+})).optional(),
+  'lastDecision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'lastQuoteCheckedAt': z.number().optional(),
+  'nextDecisionAt': z.number().optional(),
+}), z.object({
+  'symbol': z.string(),
+}))).optional(),
+  'executionAuthorization': z.object({
+  'version': z.string(),
+  'acceptedAt': z.number(),
+  'runId': z.string(),
+}).optional(),
   'running': z.boolean(),
   'message': z.string(),
   'strategyNotices': z.array(z.string()).optional(),
@@ -1935,11 +2260,20 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatu
 })),
   'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
 }).optional(),
-  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
   'reviewNotes': z.array(z.string()).optional(),
 })).optional(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -2061,6 +2395,143 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatu
 })),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_result$schema = z.object({
+  'markets': z.array(z.intersection(z.object({
+  'phase': z.union([z.literal("checking"), z.literal("sampling"), z.literal("waiting_quote"), z.literal("deciding"), z.literal("waiting_plan")]).optional(),
+  'message': z.string(),
+  'sampleCount': z.number(),
+  'samples': z.array(z.object({
+  'time': z.number(),
+  'price': z.number(),
+  'bid': z.number().optional(),
+  'ask': z.number().optional(),
+})).optional(),
+  'analyses': z.array(z.object({
+  'id': z.string(),
+  'startedAt': z.number(),
+  'responseAt': z.number().optional(),
+  'finishedAt': z.number().optional(),
+  'sampleCount': z.number(),
+  'fromTime': z.number(),
+  'toTime': z.number(),
+  'price': z.number(),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'decision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'outcome': z.string(),
+  'planId': z.string().optional(),
+  'strategyName': z.string().optional(),
+  'strategyVersion': z.string().optional(),
+  'evidence': z.object({
+  'evaluatedAt': z.number(),
+  'decisionMode': z.union([z.literal("jev"), z.literal("strict")]).optional(),
+  'history': z.object({
+  'source': z.string(),
+  'barSeconds': z.number(),
+  'count': z.number(),
+  'from': z.number().optional(),
+  'to': z.number().optional(),
+  'fetchedAt': z.number().optional(),
+  'issue': z.string().optional(),
+  'warning': z.string().optional(),
+  'diagnostic': z.object({
+  'stage': z.string(),
+  'code': z.string(),
+  'retryable': z.boolean(),
+}).optional(),
+}),
+  'features': z.object({
+  'quoteWindowSeconds': z.number(),
+  'quoteCount': z.number(),
+  'lower': z.union([z.literal(null), z.number()]),
+  'upper': z.union([z.literal(null), z.number()]),
+  'widthTicks': z.union([z.literal(null), z.number()]),
+  'lowerTouches': z.number(),
+  'upperTouches': z.number(),
+  'location': z.union([z.literal(null), z.number()]),
+  'reboundTicks': z.union([z.literal(null), z.number()]),
+  'pullbackTicks': z.union([z.literal(null), z.number()]),
+  'spreadTicks': z.union([z.literal(null), z.number()]),
+  'longRewardCostRatio': z.union([z.literal(null), z.number()]),
+  'shortRewardCostRatio': z.union([z.literal(null), z.number()]),
+}),
+  'checks': z.array(z.object({
+  'id': z.string(),
+  'label': z.string(),
+  'state': z.union([z.literal("unknown"), z.literal("pass"), z.literal("fail")]),
+  'detail': z.string(),
+  'actions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'enforcement': z.union([z.literal("hard"), z.literal("reference")]).optional(),
+  'facts': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true)])).optional(),
+})),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+}).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'reviewNotes': z.array(z.string()).optional(),
+})).optional(),
+  'lastDecision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'lastQuoteCheckedAt': z.number().optional(),
+  'nextDecisionAt': z.number().optional(),
+}), z.object({
+  'symbol': z.string(),
+}))).optional(),
+  'executionAuthorization': z.object({
+  'version': z.string(),
+  'acceptedAt': z.number(),
+  'runId': z.string(),
+}).optional(),
   'running': z.boolean(),
   'message': z.string(),
   'strategyNotices': z.array(z.string()).optional(),
@@ -2162,11 +2633,20 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_
 })),
   'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
 }).optional(),
-  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
   'reviewNotes': z.array(z.string()).optional(),
 })).optional(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -2290,7 +2770,16 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchTemplates_result$schema = z.array(z.object({
   'name': z.string(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -2383,6 +2872,21 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_create_result$sch
   'treeDigest': z.intersection(z.string(), z.unknown()).readonly(),
 }).readonly(),
   'agentPreset': z.string().readonly().optional(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_parameter_0$schema = z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_result$schema = z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
+  'token': z.string().readonly(),
+  'files': z.array(z.object({
+  'path': z.string().readonly(),
+  'bytes': z.number().readonly(),
+})).readonly(),
+  'retained': z.array(z.object({
+  'path': z.string().readonly(),
+  'reason': z.string().readonly(),
+})).readonly(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorCheckUpdate_result$schema = z.object({
   'enabled': z.boolean(),
@@ -3386,6 +3890,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileRead_result$s
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_parameter_0$schema = z.union([z.undefined(), z.object({
   'blenderPath': z.string().optional(),
+  'neural': z.boolean().optional(),
 })])
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_result$schema = z.object({
   'supported': z.boolean(),
@@ -3707,6 +4212,12 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionEnsure_par
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionEnsure_result$schema = z.object({
   'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
 })
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_parameter_0$schema = z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
+  'action': z.union([z.literal("archive"), z.literal("restore"), z.literal("delete")]).readonly(),
+  'filesToken': z.string().readonly().optional(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_result$schema = z.void()
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_workspaceResolve_parameter_0$schema = z.object({
   'preferredWorkspaceId': z.intersection(z.string(), z.unknown()).readonly().optional(),
 })
@@ -3764,7 +4275,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1803,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1855,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentDelete',
@@ -3789,7 +4300,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentDelete:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentDelete_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1905,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1957,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentLibrarySources',
@@ -3804,7 +4315,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentLibrarySources:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentLibrarySources_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1791,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1843,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentList',
@@ -3819,7 +4330,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1779,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1831,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionCreate',
@@ -3845,7 +4356,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1944,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1996,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionList',
@@ -3871,7 +4382,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2192,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2244,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamCreate',
@@ -3896,7 +4407,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2214,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2266,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamDelete',
@@ -3921,7 +4432,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamDelete:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamDelete_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2266,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2318,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamList',
@@ -3936,7 +4447,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2204,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2256,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionCreate',
@@ -3962,7 +4473,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2284,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2336,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionList',
@@ -3988,7 +4499,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2363,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2415,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamUpdate',
@@ -4013,7 +4524,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2236,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2288,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUninstall',
@@ -4038,7 +4549,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUninstall:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUninstall_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1921,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1973,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUpdate',
@@ -4064,7 +4575,22 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1861,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1913,"column":9},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/archivedConversations',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'archivedConversations',
+      invocation: { kind: 'direct' },
+      parameters: [
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/archivedConversations:result',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_archivedConversations_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1659,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/authoringCommit',
@@ -4090,7 +4616,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAuthoringCommitResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringCommit_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1972,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2024,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/authoringSessionCreate',
@@ -4116,7 +4642,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1958,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2010,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestCheckUpdate',
@@ -4131,7 +4657,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestCheckUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1293,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1297,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestConnect',
@@ -4146,7 +4672,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestConnect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1284,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1288,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestDisconnect',
@@ -4161,7 +4687,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDisconnect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1287,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1291,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestDismiss',
@@ -4186,7 +4712,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1384,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1388,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestExecute',
@@ -4211,7 +4737,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestPlan',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestExecute_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1379,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1383,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestInspect',
@@ -4237,7 +4763,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestInspection',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1339,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1343,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestJevConfigure',
@@ -4262,7 +4788,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestJevSettings',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevConfigure_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1323,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1327,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestJevSettings',
@@ -4277,7 +4803,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestJevSettings',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevSettings_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1305,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1309,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestJevUsage',
@@ -4292,7 +4818,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestJevUsage',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevUsage_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1308,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1312,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestMode',
@@ -4317,7 +4843,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1278,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1282,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestQuery',
@@ -4343,7 +4869,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestData',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1335,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1339,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestReconcile',
@@ -4368,7 +4894,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestPlan',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestReconcile_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1389,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1393,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestSessionOpen',
@@ -4394,7 +4920,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestSessionOpenResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestSessionOpen_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1348,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1352,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestStatus',
@@ -4419,7 +4945,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1274,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1278,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestUpdate',
@@ -4434,7 +4960,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1296,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1300,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchDatasets',
@@ -4449,7 +4975,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchDatasets:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchDatasets_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1317,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1321,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchPrepareHistory',
@@ -4474,7 +5000,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchPrepareHistory:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchPrepareHistory_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1320,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1324,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchSaveTemplate',
@@ -4499,7 +5025,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchSaveTemplate:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1314,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1318,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchStart',
@@ -4524,7 +5050,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestWatchStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1326,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1330,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchStatus',
@@ -4539,7 +5065,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestWatchStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1302,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1306,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchStop',
@@ -4554,7 +5080,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestWatchStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1332,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1336,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchTemplates',
@@ -4569,7 +5095,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchTemplates:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchTemplates_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1311,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1315,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/create',
@@ -4595,7 +5121,33 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_create_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1521,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1525,"column":9},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/deletionPreview',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'deletionPreview',
+      implementation: 'previewSessionDeletion',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/deletionPreview:request',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_parameter_0$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#SessionDeletionPreview',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1627,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorCheckUpdate',
@@ -4610,7 +5162,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorCheckUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1213,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1217,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorConfirm',
@@ -4635,7 +5187,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorPlan',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConfirm_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1241,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1245,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorConnect',
@@ -4660,7 +5212,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConnect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1207,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1211,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorDisconnect',
@@ -4675,7 +5227,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDisconnect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1210,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1214,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorDismiss',
@@ -4700,7 +5252,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorDismiss:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDismiss_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1244,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1248,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorInspect',
@@ -4726,7 +5278,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorInspection',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorInspect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1219,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1223,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorMode',
@@ -4751,7 +5303,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorMode_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1204,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1208,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorPrepare',
@@ -4776,7 +5328,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorPlan',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorPrepare_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1235,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1239,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorQuery',
@@ -4802,7 +5354,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-util-values#JsonValue',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorQuery_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1232,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1236,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorReconcilePlan',
@@ -4827,7 +5379,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorPlan',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcilePlan_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1253,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1257,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorReconcileRun',
@@ -4852,7 +5404,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorRun',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcileRun_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1250,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1254,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorSessionOpen',
@@ -4878,7 +5430,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestSessionOpenResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorSessionOpen_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1256,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1260,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStatus',
@@ -4903,7 +5455,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1201,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1205,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStopBudget',
@@ -4928,7 +5480,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStopBudget:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStopBudget_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1247,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1251,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorUpdate',
@@ -4943,7 +5495,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1216,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1220,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileAttach',
@@ -4969,7 +5521,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsSessionFileAttachment',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileAttach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2379,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2431,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileList',
@@ -4995,7 +5547,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsFileListResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2413,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2465,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileRead',
@@ -5021,7 +5573,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsFileReadResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileRead_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2431,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2483,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/flyInstall',
@@ -5047,7 +5599,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FlyRuntimeStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1193,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1197,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/flyRequest',
@@ -5072,7 +5624,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-util-values#JsonValue',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyRequest_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1197,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1201,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/flyStatus',
@@ -5087,7 +5639,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FlyRuntimeStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1190,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1194,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/frequent',
@@ -5113,7 +5665,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/frequent:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_frequent_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1628,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1680,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/list',
@@ -5139,7 +5691,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/list:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_list_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1599,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1603,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/modelsAccess',
@@ -5164,7 +5716,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ModelAccessResponse',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_modelsAccess_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":926,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":929,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/plainSessionCreate',
@@ -5190,7 +5742,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPlainSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1442,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1446,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/plainSessionList',
@@ -5216,7 +5768,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/plainSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1614,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1618,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/promptFormList',
@@ -5242,7 +5794,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPromptFormListResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_promptFormList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1735,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1787,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/promptFormRender',
@@ -5268,7 +5820,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPromptFormRenderResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_promptFormRender_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1754,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1806,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/residentSkillAttach',
@@ -5294,7 +5846,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResidentSkillResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_residentSkillAttach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1663,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1715,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/residentSkillDetach',
@@ -5319,7 +5871,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResidentSkillResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_residentSkillDetach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1708,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1760,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultList',
@@ -5345,7 +5897,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPrepareResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2493,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2545,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultPrepare',
@@ -5371,7 +5923,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPrepareResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultPrepare_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2448,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2500,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultPreview',
@@ -5397,7 +5949,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPreview',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultPreview_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2512,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2564,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/sessionEnsure',
@@ -5423,7 +5975,33 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsSessionEnsureResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionEnsure_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1400,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1404,"column":9},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/sessionLifecycle',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'sessionLifecycle',
+      implementation: 'changeSessionLifecycle',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#SessionLifecycleRequest',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_parameter_0$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/sessionLifecycle:result',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1638,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/workspaceResolve',
@@ -5448,7 +6026,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsWorkspaceResolveResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_workspaceResolve_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1184,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1188,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/workspaceStatus',
@@ -5473,7 +6051,7 @@ export const TYPERT_REMOTE = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsWorkspaceStatusResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_workspaceStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1174,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1178,"column":3},
     },
   ],
 }

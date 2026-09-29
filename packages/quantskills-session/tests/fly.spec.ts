@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import type { ContestService } from '../src/contest-service.ts'
-import { FlyService, flyInstrumentSchema, flyQuoteTime } from '../src/fly-service.ts'
+import { FlyService, flyInstrumentSchema, flyQuoteTime, modelFailure } from '../src/fly-service.ts'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 
 const active: { root: string; service: FlyService }[] = []
@@ -71,6 +71,38 @@ describe('fly contest bridge', () => {
     f.ctx.get.mockReturnValue({ databaseList: async () => [], databaseFetch: async () => { throw Object.assign(new Error('HTTP 429'), { retryAfterSeconds: 120 }) } })
     await expect(f.call('history', { identity: f.input.identity, instrument: f.input.instrument, minutes: 1 })).rejects.toMatchObject({ source: 'pandadata', code: 'RATE_LIMIT', retryAfterSeconds: 120 })
   })
+
+  it('refreshes a still-cached bar window after publication lag without fetching twice', async () => {
+    const f = await fixture(), now = Date.now(), latest = Math.floor(now / 60000) * 60000
+    const result = (close: number, fetchedAt: number) => ({ status: 'hit', total: 1,
+      dataset: { fetchedAt: new Date(fetchedAt).toISOString(), to: new Date(close).toISOString() },
+      rows: [{ symbol: 'RB2610.SHF', datetime: new Date(close).toISOString(), open: 3300, high: 3310, low: 3290, close: 3305, volume: 10 }] })
+    const old = result(latest - 60000, now - 35000), fresh = result(latest, now)
+    const gateway = { databaseList: vi.fn(async () => []), databaseFetch: vi.fn(async () => ({ id: 'h' })),
+      databaseRefresh: vi.fn(async () => ({})), databaseQuery: vi.fn(async () => fresh).mockResolvedValueOnce(old) }
+    f.ctx.get.mockReturnValue(gateway)
+    const input = { identity: f.input.identity, instrument: f.input.instrument, minutes: 1 }
+    expect(await f.call('history', input)).toMatchObject({ bars: [{ datetime: new Date(latest - 60000).toISOString() }] })
+    expect(gateway.databaseRefresh).toHaveBeenCalledOnce()
+    expect(gateway.databaseQuery).toHaveBeenLastCalledWith({ id: 'h', limit: 5000, refresh: false }, expect.any(AbortSignal))
+    // Current data and a recently fetched stale window do not cause extra calls.
+    await f.call('history', input)
+    gateway.databaseQuery.mockResolvedValueOnce(result(latest - 60000, now))
+    await f.call('history', input)
+    expect(gateway.databaseRefresh).toHaveBeenCalledOnce()
+    // databaseQuery already refreshed an expired dataset: do not refresh again.
+    gateway.databaseQuery.mockResolvedValueOnce({ ...old, status: 'refreshed' })
+    await f.call('history', input)
+    expect(gateway.databaseRefresh).toHaveBeenCalledOnce()
+    expect(f.execute).not.toHaveBeenCalled()
+  })
+  it('does not mistake the shared rate-limit notice for revoked authorization', async () => {
+    const f = await fixture()
+    f.mock.observe.mockRejectedValueOnce(Object.assign(new Error('比赛接口请求过于频繁；请在 30 秒后重试。冷却期间不会重复请求，无需重新授权。'), { code: 'rate_limit_exceeded', retryAfterSeconds: 30 }))
+    await expect(f.call('market', { identity: f.input.identity, instruments: [f.input.instrument] })).rejects.toMatchObject({ source: 'competition', code: 'RATE_LIMIT', retryable: true, retryAfterSeconds: 30 })
+    expect(f.execute).not.toHaveBeenCalled()
+  })
+
   it('lists and calls the user-connected verified QuantStudio model through the existing provider', async () => {
     const f = await fixture(), route = { provider: 'my-provider', model: 'my-model' }
     const stream = vi.fn(async function* () { yield { type: 'text-delta', text: 'ready' } })
@@ -82,8 +114,32 @@ describe('fly contest bridge', () => {
     expect(await f.call('models', {})).toMatchObject({ profiles: [{ provider_id: JSON.stringify(route), label: 'my-provider / my-model' }], jev_configured: true })
     expect(await f.call('language', { route: JSON.stringify(route), system: 'Test', payload: {} })).toEqual({ text: 'ready' })
     expect(stream).toHaveBeenCalledWith(expect.objectContaining(route))
-    await expect(f.call('language', { route: JSON.stringify({ provider: 'pending-provider', model: 'pending-model' }) })).rejects.toThrow('模型调用失败')
+    await expect(f.call('language', { route: JSON.stringify({ provider: 'pending-provider', model: 'pending-model' }) })).rejects.toThrow('已验证')
     expect(stream).toHaveBeenCalledTimes(1)
+  })
+
+  it.each([
+    [{ name: 'TimeoutError', message: 'private endpoint' }, 'MODEL_TIMEOUT'],
+    [{ code: 'rate_limit_exceeded', message: 'secret provider token' }, 'MODEL_RATE_LIMIT'],
+    [{ status: 403, message: 'secret provider token' }, 'MODEL_AUTH'],
+    [{ message: 'fetch failed: secret provider token' }, 'MODEL_NETWORK'],
+    [{ message: 'OUTPUT_LIMIT' }, 'MODEL_OUTPUT_LIMIT'],
+    [{ name: 'AbortError' }, 'MODEL_CANCELLED'],
+  ])('classifies private model failures without leaking provider data: %j', (error, code) => {
+    const failure = modelFailure(error)
+    expect(failure).toMatchObject({ source: 'model', code })
+    expect(failure.message).not.toMatch(/secret|private|token|endpoint/)
+  })
+
+  it('preserves a terminal model failure instead of turning every error into configuration failure', async () => {
+    const f = await fixture(), route = { provider: 'verified', model: 'model' }
+    f.ctx.get.mockReturnValue({ get: () => ({ connections: { verified: { state: 'verified', verifiedModels: ['model'] } } }) })
+    Object.assign(f.ctx, { llm: { stream: async function* () {
+      yield { type: 'finish', reason: { kind: 'error', failure: { code: 'timeout', message: 'private endpoint secret' } } }
+    } } })
+    await expect(f.call('language', { route: JSON.stringify(route), system: 'test', payload: {} }))
+      .rejects.toMatchObject({ source: 'model', code: 'MODEL_TIMEOUT', retryable: true })
+    expect(f.execute).not.toHaveBeenCalled()
   })
 
   it('directs missing Jev credentials to the unified settings page', async () => {
@@ -95,7 +151,7 @@ describe('fly contest bridge', () => {
     const f = await fixture()
     expect(await f.call('prepare', f.input)).toMatchObject({ id: 'plan-1', status: 'prepared' })
     expect(f.prepare).toHaveBeenCalledWith(expect.objectContaining({ sessionId: `fly:${'a'.repeat(32)}`,
-      order: { symbol: 'rb2610', direction: 'buy', offset: 'open', volume: 1 } }), f.input.identity, expect.any(AbortSignal))
+      order: { symbol: 'rb2610', direction: 'buy', offset: 'open', volume: 1 } }), f.input.identity, expect.any(AbortSignal), 'manual')
     expect(f.execute).not.toHaveBeenCalled()
   })
   it('reads dynamic equity from the actual competition totalProfit field', async () => {
@@ -152,7 +208,7 @@ describe('fly contest bridge', () => {
     f.snapshot.positions.data.push({ contractCode: 'rb2610', direction: current > 0 ? 'long' : 'short', volume: Math.abs(current), closable: Math.abs(current) })
     Object.assign(f.input.decision.choice, { current_position: current, target_position: target, action: target > 0 ? 'LONG' : 'SHORT' })
     await f.call('prepare', f.input)
-    expect(f.prepare).toHaveBeenCalledWith(expect.objectContaining({ order: { symbol: 'rb2610', direction, offset, volume } }), f.input.identity, expect.any(AbortSignal))
+    expect(f.prepare).toHaveBeenCalledWith(expect.objectContaining({ order: { symbol: 'rb2610', direction, offset, volume } }), f.input.identity, expect.any(AbortSignal), 'manual')
     expect(f.execute).not.toHaveBeenCalled()
   })
   it('rejects a position changed since the decision', async () => {

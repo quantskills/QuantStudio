@@ -276,4 +276,9 @@ minimumReleaseAgeExclude:
   - '@deepseek-ai/schemastery@3.18.2'
 
 patchedDependencies:
+  '@deepseek-ai/dsh-agent@0.1.2-alpha.2': patches/@deepseek-ai__dsh-agent@0.1.2-alpha.2.patch
+  '@deepseek-ai/dsh-session-persistence-jsonl@0.1.2-alpha.2': patches/@deepseek-ai__dsh-session-persistence-jsonl@0.1.2-alpha.2.patch
+  '@deepseek-ai/dsh-session-projection-cache@0.1.2-alpha.2': patches/@deepseek-ai__dsh-session-projection-cache@0.1.2-alpha.2.patch
+  '@deepseek-ai/dsh-session-query-sqlite@0.1.2-alpha.2': patches/@deepseek-ai__dsh-session-query-sqlite@0.1.2-alpha.2.patch
   '@deepseek-ai/dsh-subprocess-local@0.1.2-alpha.2': patches/@deepseek-ai__dsh-subprocess-local@0.1.2-alpha.2.patch
+  '@deepseek-ai/dsh-workspace@0.1.2-alpha.2': patches/@deepseek-ai__dsh-workspace@0.1.2-alpha.2.patch

@@ -4,9 +4,9 @@ import css from './ContestPage.module.css';
 import styles from './FactorContestPage.module.css';
 const labels = {
     success: '查询成功', status: '状态', name: '名称', factor_name: '因子名称', workflow_id: '工作流编号', _id: '编号', factor_id: '因子编号', factor_run_id: '回测编号',
-    total: '总数', count: '本页数量', page: '页码', limit: '每页数量', factors: '研究因子', items: '明细', last_run_id: '最近回测', create_at: '创建时间',
+    total: '总数', count: '本页数量', page: '页码', limit: '每页数量', message: '说明', factors: '研究因子', items: '明细', last_run_id: '最近回测', create_at: '创建时间',
     name_zh: '名称', pool_id: '因子池', pool_name: '因子池名称', rankings: '各榜排名', ranking_key: '榜单', rank: '名次', score: '得分', scores: '成绩',
-    total_score: '总分', total_points: '累计积分', cumulative_points: '累计积分', monthly_points: '月度积分', monthly_score: '月度得分', points: '积分',
+    total_score: '总分', total_points: '累计积分', cumulative_points: '累计积分', monthly_points: '月度积分', monthly_score: '月度得分', points: '积分', estimate: '预估成绩', history: '历史成绩',
     period: '周期', settlement_month: '结算月', data_date: '数据日期', updated_at: '更新时间', rebalance_cycle_days: '统一调仓周期',
     IC_mean: '平均 IC', Rank_IC: 'Rank IC', IC_IR: 'ICIR', rank_ic: 'Rank IC', ic: 'IC', ic_ir: 'ICIR', ic_mean: '平均 IC', ic_win_rate: 'IC 胜率',
     p_value: 'p 值', t_statistic: 't 统计量', monotonicity: '单调性', annualized_ratio: '年化收益', return_ratio: '收益率', sharpe_ratio: '夏普比率',
@@ -15,6 +15,10 @@ const labels = {
     billing: '算力统计', balance: '余额', deducted: '观测消耗', output: '输出', content: '公式或代码', mode: '定义方式', direction: '方向',
     adjustment_cycle: '调仓周期', group_number: '分组数', factor_direction: '因子方向', start_date: '开始日期', end_date: '结束日期', stock_pool: '股票池',
     query_factor_analysis_data: '因子分析指标', query_one_group_data: '分组表现', candidate: '候选定义', formula: '公式', code: 'Python 定义', result: '结果',
+    task_id: '分析任务编号', query_group_return_analysis: '分组收益分析', query_last_date_top_factor: '最近一期因子排序', query_return_chart: '累计收益序列',
+    query_ic_decay_chart: 'IC 衰减', query_ic_density_chart: 'IC 分布', query_ic_sequence_chart: 'IC 时间序列', query_ic_self_correlation_chart: 'IC 自相关',
+    query_rank_ic_decay_chart: 'Rank IC 衰减', query_rank_ic_density_chart: 'Rank IC 分布', query_rank_ic_sequence_chart: 'Rank IC 时间序列',
+    query_rank_ic_self_correlation_chart: 'Rank IC 自相关', query_factor_excess_chart: '因子超额收益',
 };
 /** Show platform metrics as readable tables; large nested raw results remain expandable. */
 export function FactorDataView({ value, depth = 0 }) {
@@ -27,12 +31,13 @@ export function FactorDataView({ value, depth = 0 }) {
     if (Array.isArray(value)) {
         if (!value.length)
             return _jsx("p", { className: css.muted, children: "\u6682\u65E0\u8BB0\u5F55\u3002" });
-        const rows = value.slice(0, 50).map(asRecord), keys = [...new Set(rows.flatMap(row => Object.keys(row)))].slice(0, 12);
+        const rows = value.slice(0, 50).map(asRecord), allKeys = [...new Set(rows.flatMap(row => Object.keys(row)))], keys = allKeys.slice(0, 12);
         if (!keys.length)
             return _jsx("p", { children: value.map(display).join('、') });
-        return _jsx("div", { className: css.tableWrap, children: _jsxs("table", { children: [_jsx("thead", { children: _jsx("tr", { children: keys.map(k => _jsx("th", { children: labels[k] ?? k }, k)) }) }), _jsx("tbody", { children: rows.map((row, i) => _jsx("tr", { children: keys.map(k => _jsx("td", { children: row[k] !== null && typeof row[k] === 'object' ? _jsxs("details", { children: [_jsx("summary", { children: "\u67E5\u770B" }), _jsx(FactorDataView, { value: row[k], depth: depth + 1 })] }) : display(row[k]) }, k)) }, i)) })] }) });
+        return _jsxs("div", { children: [_jsx("div", { className: css.tableWrap, children: _jsxs("table", { children: [_jsx("thead", { children: _jsx("tr", { children: keys.map(k => _jsx("th", { children: labels[k] ?? k }, k)) }) }), _jsx("tbody", { children: rows.map((row, i) => _jsx("tr", { children: keys.map(k => _jsx("td", { children: row[k] !== null && typeof row[k] === 'object' ? _jsxs("details", { children: [_jsx("summary", { children: "\u67E5\u770B" }), _jsx(FactorDataView, { value: row[k], depth: depth + 1 })] }) : display(row[k]) }, k)) }, i)) })] }) }), (value.length > rows.length || allKeys.length > keys.length) && _jsxs("details", { children: [_jsxs("summary", { children: ["\u8868\u683C\u9884\u89C8 ", rows.length, " / ", value.length, " \u6761 \u00B7 \u67E5\u770B\u5B8C\u6574\u6570\u636E"] }), _jsx("pre", { className: styles.json, children: JSON.stringify(value, null, 2) })] })] });
     }
-    const entries = Object.entries(asRecord(value)), simple = entries.filter(([, v]) => v == null || typeof v !== 'object'), nested = entries.filter(([, v]) => v != null && typeof v === 'object');
-    return _jsxs("div", { children: [simple.length > 0 && _jsx("dl", { className: css.metrics, children: simple.map(([k, v]) => _jsxs("div", { children: [_jsx("dt", { children: labels[k] ?? k }), _jsx("dd", { children: typeof v === 'boolean' ? v ? '是' : '否' : display(v) })] }, k)) }), nested.map(([k, v]) => _jsxs("details", { open: depth === 0 && ['factors', 'rankings', 'scores', 'items', 'factor_analysis', 'results'].includes(k), children: [_jsx("summary", { children: labels[k] ?? k }), _jsx(FactorDataView, { value: v, depth: depth + 1 })] }, k))] });
+    const object = asRecord(value), entries = Object.entries(object), simple = entries.filter(([, v]) => v == null || typeof v !== 'object'), nested = entries.filter(([, v]) => v != null && typeof v === 'object');
+    const runStatus = object.factor_analysis || object.nodes ? { 2: '已完成', 3: '运行失败', 6: '算力不足，已停止' }[String(object.status)] : undefined;
+    return _jsxs("div", { children: [simple.length > 0 && _jsx("dl", { className: css.metrics, children: simple.map(([k, v]) => _jsxs("div", { children: [_jsx("dt", { children: labels[k] ?? k }), _jsx("dd", { children: k === 'status' && runStatus ? runStatus : typeof v === 'boolean' ? v ? '是' : '否' : display(v) })] }, k)) }), nested.map(([k, v]) => _jsxs("details", { open: depth === 0 && ['factors', 'rankings', 'scores', 'items', 'factor_analysis', 'results'].includes(k), children: [_jsx("summary", { children: labels[k] ?? k }), _jsx(FactorDataView, { value: v, depth: depth + 1 })] }, k))] });
 }
 //# sourceMappingURL=FactorDataView.js.map

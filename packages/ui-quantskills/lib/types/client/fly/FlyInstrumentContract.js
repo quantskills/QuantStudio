@@ -23,7 +23,7 @@ export function deliveryMonths(product, main) {
         return `${match[1]}${String(date.getUTCFullYear() % (10 ** width)).padStart(width, '0')}${String(date.getUTCMonth() + 1).padStart(2, '0')}${match[3]}`;
     });
 }
-export function FlyInstrumentContract({ product, label, symbol, invalid, contest, accountKey, onSymbolChange }) {
+export function FlyInstrumentContract({ product, label, inputLabel, symbol, invalid, contest, accountKey, onSymbolChange }) {
     const [main, setMain] = useState(''), [message, setMessage] = useState(''), [checking, setChecking] = useState(false);
     const request = useRef(0), updateSymbol = useRef(onSymbolChange);
     updateSymbol.current = onSymbolChange;
@@ -82,6 +82,6 @@ export function FlyInstrumentContract({ product, label, symbol, invalid, contest
         }
     }
     const months = main ? deliveryMonths(product, main) : [];
-    return _jsxs("div", { className: "fv-contract-choice", children: [_jsx("input", { "aria-label": `${label}实际合约`, "aria-invalid": invalid, placeholder: "\u586B\u5199\u5B9E\u9645\u5408\u7EA6\u4EE3\u7801", value: symbol, onChange: e => { request.current++; setChecking(false); onSymbolChange(e.target.value.trim()); setMessage('手动填写的合约将在交易前核对。'); } }), _jsxs("select", { "aria-label": `${label}合约月份`, value: [main, ...months].includes(symbol) ? symbol : '', disabled: !main || checking, onChange: e => void selectMonth(e.target.value), children: [_jsx("option", { value: "", children: "\u9009\u62E9\u5408\u7EA6\u6708\u4EFD" }), main && _jsxs("option", { value: main, children: ["\u4E3B\u529B \u00B7 ", main] }), months.map(code => _jsxs("option", { value: code, children: [code, " \u00B7 \u5019\u9009\u6708\u4EFD"] }, code))] }), _jsx("small", { role: "status", children: message || '选择品种后查询主力合约' })] });
+    return _jsxs("div", { className: "fv-contract-choice", children: [_jsx("input", { "aria-label": inputLabel ?? `${label}实际合约`, "aria-invalid": invalid, placeholder: "\u586B\u5199\u5B9E\u9645\u5408\u7EA6\u4EE3\u7801", value: symbol, onChange: e => { request.current++; setChecking(false); onSymbolChange(e.target.value.trim()); setMessage('手动填写的合约将在交易前核对。'); } }), _jsxs("select", { "aria-label": `${label}合约月份`, value: [main, ...months].includes(symbol) ? symbol : '', disabled: !main || checking, onChange: e => void selectMonth(e.target.value), children: [_jsx("option", { value: "", children: "\u9009\u62E9\u5408\u7EA6\u6708\u4EFD" }), main && _jsxs("option", { value: main, children: ["\u4E3B\u529B \u00B7 ", main] }), months.map(code => _jsxs("option", { value: code, children: [code, " \u00B7 \u5019\u9009\u6708\u4EFD"] }, code))] }), _jsx("small", { role: "status", children: message || '选择品种后查询主力合约' })] });
 }
 //# sourceMappingURL=FlyInstrumentContract.js.map

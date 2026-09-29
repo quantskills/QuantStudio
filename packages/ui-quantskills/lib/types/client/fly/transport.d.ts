@@ -3,7 +3,7 @@ import type { FlyRequest, FlyRuntimeStatus } from '@deepseek-ai/dsh-quantskills-
 export interface FlyAccess {
     status(): Promise<FlyRuntimeStatus>;
     install(input?: {
-        blenderPath?: string;
+        neural?: boolean;
     }): Promise<FlyRuntimeStatus>;
     request(input: FlyRequest): Promise<JsonValue>;
 }

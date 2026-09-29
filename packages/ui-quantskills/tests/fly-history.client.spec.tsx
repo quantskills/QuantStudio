@@ -11,7 +11,7 @@ vi.mock('../src/client/fly/TradeFilterControls.tsx', () => ({ TradeFilterControl
 vi.mock('../src/client/fly/TradeLoop.tsx', () => ({ TradeLoop: () => null }))
 vi.mock('../src/client/fly/TradeStatistics.tsx', () => ({ TradeStatistics: () => null }))
 vi.mock('../src/client/fly/TradeLearning.tsx', () => ({ TradeLearning: () => null }))
-vi.mock('../src/client/fly/FlyHomeV2.tsx', () => ({ default: () => null }))
+vi.mock('../src/client/fly/LifeGarden.tsx', () => ({ LifeGarden: () => null }))
 afterEach(() => { cleanup(); vi.useRealTimers() })
 
 it('shows counts, successful refresh times and per-contract failures without inventing missing data', () => {

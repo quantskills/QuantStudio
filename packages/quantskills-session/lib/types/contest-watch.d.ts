@@ -2,6 +2,8 @@ import type { Context } from '@deepseek-ai/cordis';
 import type { ContestService } from './contest-service.ts';
 import type { ContestInspection } from './contest-types.ts';
 import type { ContestWatchAction, ContestWatchConfig, ContestWatchDecision, ContestWatchEvidence, ContestWatchHistory, ContestWatchQuote, ContestWatchStatus, ContestWatchTemplate } from './contest-watch-types.ts';
+/** Shared strategy with each market's own units and historical data. */
+export declare function watchContractConfig(config: ContestWatchConfig, contract: NonNullable<ContestWatchConfig['contracts']>[number]): ContestWatchConfig;
 type Quote = ContestWatchQuote;
 /** Quotes without an explicit timezone are exchange-local Shanghai timestamps. */
 export declare function watchQuote(value: unknown, symbol: string, now?: number, exchange?: string): {
@@ -34,6 +36,7 @@ export declare class ContestWatcher {
     private readonly ctx;
     private readonly contest;
     private readonly decide;
+    private readonly traderRunning;
     private templateWriting;
     private readTemplates;
     templates(): Promise<ContestWatchTemplate[]>;
@@ -56,7 +59,13 @@ export declare class ContestWatcher {
     private accountCheckedAt;
     private retryCount;
     private historyCache;
-    constructor(ctx: Context, contest: ContestService, decide?: typeof decideWithJev);
+    private runConfig;
+    private markets;
+    private marketIndex;
+    private captureMarket;
+    private snapshot;
+    private selectNextMarket;
+    constructor(ctx: Context, contest: ContestService, decide?: typeof decideWithJev, traderRunning?: () => Promise<boolean>);
     private load;
     private save;
     private note;
@@ -68,7 +77,7 @@ export declare class ContestWatcher {
             model: string;
         };
     }): Promise<import("./contest-watch-types.ts").ContestJevSettings>;
-    start(input: ContestWatchConfig): Promise<ContestWatchStatus>;
+    start(input: ContestWatchConfig, executionConsent?: string): Promise<ContestWatchStatus>;
     private schedule;
     stop(reason?: string): Promise<ContestWatchStatus>;
     private finishStop;

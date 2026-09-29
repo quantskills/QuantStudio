@@ -3,18 +3,18 @@ import type { FlyRequest, FlyRuntimeStatus } from '@deepseek-ai/dsh-quantskills-
 
 export interface FlyAccess {
   status(): Promise<FlyRuntimeStatus>
-  install(input?: { blenderPath?: string }): Promise<FlyRuntimeStatus>
+  install(input?: { neural?: boolean }): Promise<FlyRuntimeStatus>
   request(input: FlyRequest): Promise<JsonValue>
 }
 let access: FlyAccess | undefined
 export function connectFlyTransport(value: FlyAccess) { access = value }
 export async function flyApi<T>(path: string, body?: unknown): Promise<T> {
-  if (!access) throw new Error('果蝇服务尚未连接')
+  if (!access) throw new Error('AI 交易员服务尚未连接')
   return await access.request({ path, ...(body === undefined ? {} : { body: body as JsonValue }) }) as T
 }
 export async function flyFetch(url: string, init?: RequestInit): Promise<Response> {
   const prefix = '/api/fly/v2/'
-  if (!url.startsWith(prefix)) throw new Error('果蝇接口路径无效')
+  if (!url.startsWith(prefix)) throw new Error('AI 交易员接口路径无效')
   init?.signal?.throwIfAborted()
   const result = await flyApi(url.slice(prefix.length), typeof init?.body === 'string' ? JSON.parse(init.body) : undefined)
   init?.signal?.throwIfAborted()

@@ -3,7 +3,7 @@ import type {
   RemoteResult,
   TypertRemoteContribution,
 } from '@deepseek-ai/dsh-typert-protocol'
-import type { ContestData, ContestInspection, ContestJevSettings, ContestJevUsage, ContestPlan, ContestQuery, ContestSessionOpenRequest, ContestSessionOpenResult, ContestStatus, ContestWatchConfig, ContestWatchDataset, ContestWatchStatus, ContestWatchTemplate, FactorContestStatus, FactorCredentials, FactorInspection, FactorPlan, FactorPlanAction, FactorQuery, FactorRun, FlyRequest, FlyRuntimeStatus, ModelAccessRequest, ModelAccessResponse, QuantSkillsAgentCreateRequest, QuantSkillsAgentDefinition, QuantSkillsAgentDeleteRequest, QuantSkillsAgentSessionArchiveItem, QuantSkillsAgentSessionCreateRequest, QuantSkillsAgentSessionCreateResult, QuantSkillsAgentTeamCreateRequest, QuantSkillsAgentTeamDefinition, QuantSkillsAgentTeamDeleteRequest, QuantSkillsAgentTeamSessionArchiveItem, QuantSkillsAgentTeamSessionCreateRequest, QuantSkillsAgentTeamSessionCreateResult, QuantSkillsAgentTeamUpdateRequest, QuantSkillsAgentUpdateRequest, QuantSkillsAuthoringCommitRequest, QuantSkillsAuthoringCommitResult, QuantSkillsAuthoringSessionCreateRequest, QuantSkillsFileAttachRequest, QuantSkillsFileListRequest, QuantSkillsFileListResult, QuantSkillsFileReadRequest, QuantSkillsFileReadResult, QuantSkillsFrequentRequest, QuantSkillsFrequentSkill, QuantSkillsLibrarySourceRecord, QuantSkillsPlainSessionArchiveItem, QuantSkillsPlainSessionCreateRequest, QuantSkillsPlainSessionCreateResult, QuantSkillsPromptFormListRequest, QuantSkillsPromptFormListResult, QuantSkillsPromptFormRenderRequest, QuantSkillsPromptFormRenderResult, QuantSkillsResidentSkillAttachRequest, QuantSkillsResidentSkillDetachRequest, QuantSkillsResidentSkillResult, QuantSkillsResultPrepareRequest, QuantSkillsResultPrepareResult, QuantSkillsResultPreview, QuantSkillsResultPreviewRequest, QuantSkillsSessionArchiveItem, QuantSkillsSessionCreateRequest, QuantSkillsSessionCreateResult, QuantSkillsSessionEnsureRequest, QuantSkillsSessionEnsureResult, QuantSkillsSessionFileAttachment, QuantSkillsSessionListRequest, QuantSkillsWorkspaceRequest, QuantSkillsWorkspaceResolveResult, QuantSkillsWorkspaceStatusResult } from '@deepseek-ai/dsh-quantskills-session/types'
+import type { ArchivedConversation, ContestData, ContestInspection, ContestJevSettings, ContestJevUsage, ContestPlan, ContestQuery, ContestSessionOpenRequest, ContestSessionOpenResult, ContestStatus, ContestWatchConfig, ContestWatchDataset, ContestWatchStatus, ContestWatchTemplate, FactorContestStatus, FactorCredentials, FactorInspection, FactorPlan, FactorPlanAction, FactorQuery, FactorRun, FlyRequest, FlyRuntimeStatus, ModelAccessRequest, ModelAccessResponse, QuantSkillsAgentCreateRequest, QuantSkillsAgentDefinition, QuantSkillsAgentDeleteRequest, QuantSkillsAgentSessionArchiveItem, QuantSkillsAgentSessionCreateRequest, QuantSkillsAgentSessionCreateResult, QuantSkillsAgentTeamCreateRequest, QuantSkillsAgentTeamDefinition, QuantSkillsAgentTeamDeleteRequest, QuantSkillsAgentTeamSessionArchiveItem, QuantSkillsAgentTeamSessionCreateRequest, QuantSkillsAgentTeamSessionCreateResult, QuantSkillsAgentTeamUpdateRequest, QuantSkillsAgentUpdateRequest, QuantSkillsAuthoringCommitRequest, QuantSkillsAuthoringCommitResult, QuantSkillsAuthoringSessionCreateRequest, QuantSkillsFileAttachRequest, QuantSkillsFileListRequest, QuantSkillsFileListResult, QuantSkillsFileReadRequest, QuantSkillsFileReadResult, QuantSkillsFrequentRequest, QuantSkillsFrequentSkill, QuantSkillsLibrarySourceRecord, QuantSkillsPlainSessionArchiveItem, QuantSkillsPlainSessionCreateRequest, QuantSkillsPlainSessionCreateResult, QuantSkillsPromptFormListRequest, QuantSkillsPromptFormListResult, QuantSkillsPromptFormRenderRequest, QuantSkillsPromptFormRenderResult, QuantSkillsResidentSkillAttachRequest, QuantSkillsResidentSkillDetachRequest, QuantSkillsResidentSkillResult, QuantSkillsResultPrepareRequest, QuantSkillsResultPrepareResult, QuantSkillsResultPreview, QuantSkillsResultPreviewRequest, QuantSkillsSessionArchiveItem, QuantSkillsSessionCreateRequest, QuantSkillsSessionCreateResult, QuantSkillsSessionEnsureRequest, QuantSkillsSessionEnsureResult, QuantSkillsSessionFileAttachment, QuantSkillsSessionListRequest, QuantSkillsWorkspaceRequest, QuantSkillsWorkspaceResolveResult, QuantSkillsWorkspaceStatusResult, SessionDeletionPreview, SessionLifecycleRequest } from '@deepseek-ai/dsh-quantskills-session/types'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
@@ -22,6 +22,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     agentTeamUpdate: (request: QuantSkillsAgentTeamUpdateRequest) => Promise<RemoteResult<QuantSkillsAgentTeamDefinition>>
     agentUninstall: (request: QuantSkillsAgentDeleteRequest) => Promise<RemoteResult<void>>
     agentUpdate: (request: QuantSkillsAgentUpdateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAgentDefinition>>
+    archivedConversations: () => Promise<RemoteResult<readonly ArchivedConversation[]>>
     authoringCommit: (request: QuantSkillsAuthoringCommitRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAuthoringCommitResult>>
     authoringSessionCreate: (request: QuantSkillsAuthoringSessionCreateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAgentSessionCreateResult>>
     contestCheckUpdate: () => Promise<RemoteResult<ContestStatus>>
@@ -42,11 +43,12 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     contestWatchDatasets: () => Promise<RemoteResult<ContestWatchDataset[]>>
     contestWatchPrepareHistory: (request: { symbol: string; barSeconds: number; }) => Promise<RemoteResult<NonNullable<ContestWatchConfig['history']>>>
     contestWatchSaveTemplate: (request: ContestWatchTemplate) => Promise<RemoteResult<ContestWatchTemplate[]>>
-    contestWatchStart: (request: { config: ContestWatchConfig; confirmed: boolean; }) => Promise<RemoteResult<ContestWatchStatus>>
+    contestWatchStart: (request: { config: ContestWatchConfig; confirmed: boolean; executionConsent?: string; }) => Promise<RemoteResult<ContestWatchStatus>>
     contestWatchStatus: () => Promise<RemoteResult<ContestWatchStatus>>
     contestWatchStop: () => Promise<RemoteResult<ContestWatchStatus>>
     contestWatchTemplates: () => Promise<RemoteResult<ContestWatchTemplate[]>>
     create: (request: QuantSkillsSessionCreateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsSessionCreateResult>>
+    deletionPreview: (request: { readonly sessionId: SessionId; }) => Promise<RemoteResult<SessionDeletionPreview>>
     factorCheckUpdate: () => Promise<RemoteResult<FactorContestStatus>>
     factorConfirm: (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<FactorPlan>>
     factorConnect: (request: { credentials?: FactorCredentials; }) => Promise<RemoteResult<FactorContestStatus>>
@@ -65,7 +67,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     fileAttach: (request: QuantSkillsFileAttachRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsSessionFileAttachment>>
     fileList: (request: QuantSkillsFileListRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsFileListResult>>
     fileRead: (request: QuantSkillsFileReadRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsFileReadResult>>
-    flyInstall: (input?: { blenderPath?: string; }) => Promise<RemoteResult<FlyRuntimeStatus>>
+    flyInstall: (input?: { blenderPath?: string; neural?: boolean; }) => Promise<RemoteResult<FlyRuntimeStatus>>
     flyRequest: (request: FlyRequest) => Promise<RemoteResult<JsonValue>>
     flyStatus: () => Promise<RemoteResult<FlyRuntimeStatus>>
     frequent: (request: QuantSkillsFrequentRequest, signal?: AbortSignal) => Promise<RemoteResult<readonly QuantSkillsFrequentSkill[]>>
@@ -81,6 +83,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     resultPrepare: (request: QuantSkillsResultPrepareRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsResultPrepareResult>>
     resultPreview: (request: QuantSkillsResultPreviewRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsResultPreview>>
     sessionEnsure: (request: QuantSkillsSessionEnsureRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsSessionEnsureResult>>
+    sessionLifecycle: (request: SessionLifecycleRequest) => Promise<RemoteResult<void>>
     workspaceResolve: (request: QuantSkillsWorkspaceRequest) => Promise<RemoteResult<QuantSkillsWorkspaceResolveResult>>
     workspaceStatus: (request: QuantSkillsWorkspaceRequest) => Promise<RemoteResult<QuantSkillsWorkspaceStatusResult>>
   }
@@ -99,6 +102,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'quantSkillsSessions/agentTeamUpdate': (request: QuantSkillsAgentTeamUpdateRequest) => Promise<RemoteResult<QuantSkillsAgentTeamDefinition>>
     'quantSkillsSessions/agentUninstall': (request: QuantSkillsAgentDeleteRequest) => Promise<RemoteResult<void>>
     'quantSkillsSessions/agentUpdate': (request: QuantSkillsAgentUpdateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAgentDefinition>>
+    'quantSkillsSessions/archivedConversations': () => Promise<RemoteResult<readonly ArchivedConversation[]>>
     'quantSkillsSessions/authoringCommit': (request: QuantSkillsAuthoringCommitRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAuthoringCommitResult>>
     'quantSkillsSessions/authoringSessionCreate': (request: QuantSkillsAuthoringSessionCreateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsAgentSessionCreateResult>>
     'quantSkillsSessions/contestCheckUpdate': () => Promise<RemoteResult<ContestStatus>>
@@ -119,11 +123,12 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'quantSkillsSessions/contestWatchDatasets': () => Promise<RemoteResult<ContestWatchDataset[]>>
     'quantSkillsSessions/contestWatchPrepareHistory': (request: { symbol: string; barSeconds: number; }) => Promise<RemoteResult<NonNullable<ContestWatchConfig['history']>>>
     'quantSkillsSessions/contestWatchSaveTemplate': (request: ContestWatchTemplate) => Promise<RemoteResult<ContestWatchTemplate[]>>
-    'quantSkillsSessions/contestWatchStart': (request: { config: ContestWatchConfig; confirmed: boolean; }) => Promise<RemoteResult<ContestWatchStatus>>
+    'quantSkillsSessions/contestWatchStart': (request: { config: ContestWatchConfig; confirmed: boolean; executionConsent?: string; }) => Promise<RemoteResult<ContestWatchStatus>>
     'quantSkillsSessions/contestWatchStatus': () => Promise<RemoteResult<ContestWatchStatus>>
     'quantSkillsSessions/contestWatchStop': () => Promise<RemoteResult<ContestWatchStatus>>
     'quantSkillsSessions/contestWatchTemplates': () => Promise<RemoteResult<ContestWatchTemplate[]>>
     'quantSkillsSessions/create': (request: QuantSkillsSessionCreateRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsSessionCreateResult>>
+    'quantSkillsSessions/deletionPreview': (request: { readonly sessionId: SessionId; }) => Promise<RemoteResult<SessionDeletionPreview>>
     'quantSkillsSessions/factorCheckUpdate': () => Promise<RemoteResult<FactorContestStatus>>
     'quantSkillsSessions/factorConfirm': (request: { planId: string; sessionId: string; }) => Promise<RemoteResult<FactorPlan>>
     'quantSkillsSessions/factorConnect': (request: { credentials?: FactorCredentials; }) => Promise<RemoteResult<FactorContestStatus>>
@@ -142,7 +147,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'quantSkillsSessions/fileAttach': (request: QuantSkillsFileAttachRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsSessionFileAttachment>>
     'quantSkillsSessions/fileList': (request: QuantSkillsFileListRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsFileListResult>>
     'quantSkillsSessions/fileRead': (request: QuantSkillsFileReadRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsFileReadResult>>
-    'quantSkillsSessions/flyInstall': (input?: { blenderPath?: string; }) => Promise<RemoteResult<FlyRuntimeStatus>>
+    'quantSkillsSessions/flyInstall': (input?: { blenderPath?: string; neural?: boolean; }) => Promise<RemoteResult<FlyRuntimeStatus>>
     'quantSkillsSessions/flyRequest': (request: FlyRequest) => Promise<RemoteResult<JsonValue>>
     'quantSkillsSessions/flyStatus': () => Promise<RemoteResult<FlyRuntimeStatus>>
     'quantSkillsSessions/frequent': (request: QuantSkillsFrequentRequest, signal?: AbortSignal) => Promise<RemoteResult<readonly QuantSkillsFrequentSkill[]>>
@@ -158,6 +163,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'quantSkillsSessions/resultPrepare': (request: QuantSkillsResultPrepareRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsResultPrepareResult>>
     'quantSkillsSessions/resultPreview': (request: QuantSkillsResultPreviewRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsResultPreview>>
     'quantSkillsSessions/sessionEnsure': (request: QuantSkillsSessionEnsureRequest, signal?: AbortSignal) => Promise<RemoteResult<QuantSkillsSessionEnsureResult>>
+    'quantSkillsSessions/sessionLifecycle': (request: SessionLifecycleRequest) => Promise<RemoteResult<void>>
     'quantSkillsSessions/workspaceResolve': (request: QuantSkillsWorkspaceRequest) => Promise<RemoteResult<QuantSkillsWorkspaceResolveResult>>
     'quantSkillsSessions/workspaceStatus': (request: QuantSkillsWorkspaceRequest) => Promise<RemoteResult<QuantSkillsWorkspaceStatusResult>>
   }

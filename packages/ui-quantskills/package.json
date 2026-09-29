@@ -147,6 +147,7 @@
   },
   "files": [
     "LICENSE-PDFJS.txt",
+    "LICENSE-LENIA.txt",
     "NOTICE-PDFJS.txt",
     "lib/index.js",
     "lib/invariant.js",

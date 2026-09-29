@@ -24,6 +24,9 @@ export declare const templates: readonly [{
 }];
 export type TemplateKind = typeof templates[number]['id'] | 'blank';
 export type Instrument = NonNullable<ContestWatchConfig['instrument']>;
+export type WatchContract = NonNullable<ContestWatchConfig['contracts']>[number];
+export declare function selectedContracts(config: ContestWatchConfig, catalog?: readonly FuturesProduct[]): WatchContract[];
+export declare function withContracts(config: ContestWatchConfig, contracts: WatchContract[]): ContestWatchConfig;
 export declare function instrumentFor(symbol: string, catalog?: readonly FuturesProduct[]): Instrument;
 export declare function configuredInstrument(config: ContestWatchConfig, catalog?: readonly FuturesProduct[]): Instrument;
 export declare function withInstrument(config: ContestWatchConfig, instrument: Instrument): ContestWatchConfig;

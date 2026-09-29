@@ -8,7 +8,7 @@ import type { ContestData } from '../src/contest-types.ts'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 
 const roots: string[] = []
-afterEach(async () => { for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }) })
+afterEach(async () => { vi.useRealTimers(); for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }) })
 const identity = { accountId: 'acct-1', contestId: 'contest-1' }
 const order = { symbol: 'rb2610', direction: 'buy' as const, offset: 'open' as const, volume: 1 }
 const data = (value: JsonValue): ContestData => ({ data: value, fetchedAt: Date.now() })
@@ -37,6 +37,59 @@ async function fixture() {
 }
 
 describe('contest is opt-in and independent of ordinary sessions', () => {
+  it('reuses a recent doctor check during plan preparation and execution but still checks identity', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    const f = await fixture(); await f.connect()
+    await f.service.researchIdentity(identity)
+    const plan = await f.service.prepare({ operation: 'place_order', sessionId: 's', order }, identity)
+    await f.service.execute(plan.id, 's')
+    expect(f.run.mock.calls.filter(([, args]) => args[0] === 'whoami')).toHaveLength(3)
+    expect(f.run.mock.calls.filter(([, args]) => args[0] === 'doctor')).toHaveLength(0)
+    vi.setSystemTime(Date.now() + 30000)
+    await f.service.inspect(identity)
+    expect(f.run.mock.calls.filter(([, args]) => args[0] === 'doctor')).toHaveLength(1)
+  })
+  it('never marks locally throttled execution as submitted or unknown, and keeps reads available', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    const f = await fixture(); await f.connect()
+    const plans = []
+    // Each preflight + plan create consumes two trading requests.
+    for (let i = 0; i < 5; i++) plans.push(await f.service.prepare({ operation: 'place_order', sessionId: `s${i}`, order }, identity))
+    const beforeSubmit = vi.fn(async () => {})
+    await expect(f.service.execute(plans[0]!.id, 's0', beforeSubmit)).rejects.toThrow('本次未发送至柜台')
+    expect(beforeSubmit).not.toHaveBeenCalled()
+    expect(f.run.mock.calls.some(([, args]) => args[0] === 'plan' && args[1] === 'execute')).toBe(false)
+    expect((await f.service.status('s0')).plans[0]!.status).toBe('prepared')
+    await expect(f.service.query({ kind: 'account' })).resolves.toMatchObject({ data: { equity: 1000000 } })
+    vi.setSystemTime(Date.now() + 60000)
+    await expect(f.service.execute(plans[0]!.id, 's0', beforeSubmit)).rejects.toThrow('已过期')
+    expect(beforeSubmit).not.toHaveBeenCalled()
+  })
+  it('persists request usage across restart and rejects before calling the CLI', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    const f = await fixture(); await f.connect()
+    const persisted = JSON.parse(await readFile(join(f.service.root, 'state.json'), 'utf8'))
+    for (let i = persisted.requestHistory.query.length; i < 60; i++) await f.service.query({ kind: 'account' })
+    const calls = f.run.mock.calls.length
+    const resumed = new ContestService(f.cli, f.home)
+    await expect(resumed.resume(identity)).rejects.toThrow('60 次/分钟')
+    expect(f.run).toHaveBeenCalledTimes(calls)
+    vi.setSystemTime(Date.now() + 60000)
+    await expect(resumed.resume(identity)).resolves.toBeUndefined()
+  })
+  it('upstream trading throttling does not freeze read-only account queries', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    const f = await fixture(); await f.connect()
+    const plan = await f.service.prepare({ operation: 'place_order', sessionId: 's', order }, identity)
+    const base = f.run.getMockImplementation()!
+    f.run.mockImplementation((runtime, args, signal) => args[0] === 'plan' && args[1] === 'execute'
+      ? Promise.reject(new ContestCliError('rate_limit_exceeded', 'limited', 45)) : base(runtime, args, signal))
+    await expect(f.service.execute(plan.id, 's')).resolves.toMatchObject({ status: 'unknown' })
+    const persisted = JSON.parse(await readFile(join(f.service.root, 'state.json'), 'utf8'))
+    expect(persisted.tradeRetryAt).toBe(Date.now() + 45000)
+    expect((await f.service.status()).retryAt).toBeUndefined()
+    await expect(f.service.query({ kind: 'account' })).resolves.toMatchObject({ data: { equity: 1000000 } })
+  })
   it('resumes only an already enabled bound account without installing or logging in', async () => {
     const f = await fixture(); await f.connect()
     const resumed = new ContestService(f.cli, f.home)
@@ -103,11 +156,18 @@ describe('contest is opt-in and independent of ordinary sessions', () => {
     expect(f.run.mock.calls.map(([, args]) => args[0])).toEqual(['whoami'])
   })
   it('preserves transient doctor failures and permits a later fresh inspection', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
     const f = await fixture(); await f.connect()
     const base = f.run.getMockImplementation()!
     f.run.mockImplementation((runtime, args, signal) => args[0] === 'doctor'
       ? Promise.resolve(data({ allOk: false, checks: [{ name: '交易通道', ok: false, detail: 'rate_limit_exceeded: upstream secret' }] })) : base(runtime, args, signal))
-    await expect(f.service.inspect(identity)).rejects.toMatchObject({ code: 'rate_limit_exceeded' })
+    await expect(f.service.inspect(identity)).rejects.toMatchObject({ code: 'rate_limit_exceeded', retryAfterSeconds: 30 })
+    const calls = f.run.mock.calls.length
+    await expect(f.service.observe(identity)).rejects.toMatchObject({ code: 'rate_limit_exceeded' })
+    await expect(f.service.query({ kind: 'quote', symbol: 'rb2610' }, identity)).rejects.toMatchObject({ code: 'rate_limit_exceeded' })
+    expect(f.run).toHaveBeenCalledTimes(calls)
+    expect((await f.service.status()).phase).toBe('connected')
+    vi.setSystemTime(Date.now() + 30001)
     f.run.mockImplementation(base)
     await expect(f.service.inspect(identity)).resolves.toMatchObject({ identity })
   })
@@ -118,6 +178,63 @@ describe('contest is opt-in and independent of ordinary sessions', () => {
       ? Promise.resolve(data({ allOk: false, checks: [{ name: '交易通道', ok: false, detail: 'rate_limit_exceeded: secret' }, { name: '交易授权', ok: false, detail: '已到期' }] })) : base(runtime, args, signal))
     await expect(f.service.inspect(identity)).rejects.toThrow('交易授权')
     await expect(f.service.query({ kind: 'account' })).rejects.toThrow('连接并验证')
+  })
+
+  it('shares and persists the server retry window across callers without retrying the CLI', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    const f = await fixture(); await f.connect()
+    f.run.mockRejectedValueOnce(new ContestCliError('http_429', 'limited', 90))
+    await expect(f.service.query({ kind: 'quote', symbol: 'rb2610' })).rejects.toMatchObject({ retryAfterSeconds: 90 })
+    const calls = f.run.mock.calls.length
+    await expect(f.service.researchIdentity(identity)).rejects.toMatchObject({ retryAfterSeconds: 90 })
+    await expect(f.service.query({ kind: 'account' })).rejects.toMatchObject({ retryAfterSeconds: 90 })
+    expect(f.run).toHaveBeenCalledTimes(calls)
+    const persisted = JSON.parse(await readFile(join(f.service.root, 'state.json'), 'utf8'))
+    expect(persisted.retryAt).toBe(Date.now() + 90000)
+    expect((await f.service.status()).retryAt).toBe(persisted.retryAt)
+    vi.setSystemTime(Date.now() + 90001)
+    await expect(f.service.query({ kind: 'account' })).resolves.toMatchObject({ data: { equity: 1000000 } })
+    expect((await f.service.status()).retryAt).toBeUndefined()
+  })
+
+  it('keeps repeated competition rate limits at thirty seconds', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    const f = await fixture(); await f.connect()
+    for (const code of ['rate_limit_exceeded', 'http_429', 'rate_limit_exceeded']) {
+      f.run.mockRejectedValueOnce(new ContestCliError(code, 'limited'))
+      await expect(f.service.query({ kind: 'account' })).rejects.toMatchObject({ retryAfterSeconds: 30 })
+      expect((await f.service.status()).retryAt).toBe(Date.now() + 30000)
+      vi.setSystemTime(Date.now() + 30000)
+    }
+  })
+
+  it('preserves the cooldown across restart and permits reads exactly at thirty seconds', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    const f = await fixture(); await f.connect()
+    f.run.mockRejectedValueOnce(new ContestCliError('rate_limit_exceeded', 'limited'))
+    await expect(f.service.query({ kind: 'account' })).rejects.toMatchObject({ retryAfterSeconds: 30 })
+    const resumed = new ContestService(f.cli, f.home)
+    const calls = f.run.mock.calls.length
+    await expect(resumed.resume(identity)).rejects.toMatchObject({ retryAfterSeconds: 30 })
+    vi.setSystemTime(Date.now() + 29999)
+    await expect(f.service.query({ kind: 'account' })).rejects.toMatchObject({ retryAfterSeconds: 1 })
+    await expect(resumed.resume(identity)).rejects.toMatchObject({ retryAfterSeconds: 1 })
+    expect(f.run).toHaveBeenCalledTimes(calls)
+    vi.setSystemTime(Date.now() + 1)
+    await resumed.resume(identity)
+    await expect(resumed.query({ kind: 'account' })).resolves.toMatchObject({ data: { equity: 1000000 } })
+    expect((await resumed.status()).retryAt).toBeUndefined()
+    expect(f.run.mock.calls.slice(calls).map(([, args]) => args[0])).toEqual(['whoami', 'agent', 'doctor', 'account'])
+  })
+
+  it('keeps structured retry hints without leaking server error text', () => {
+    try { parseCliOutput('{"ok":false,"error":{"code":"http_429","message":"private secret","detail":{"retryAfter":75}}}') }
+    catch (error) {
+      expect(error).toMatchObject({ code: 'http_429', retryAfterSeconds: 75 })
+      expect((error as Error).message).not.toContain('private secret')
+      return
+    }
+    throw new Error('expected a rate-limit failure')
   })
   it('cancels an obsolete data read so a foreground connection can leave the queue', async () => {
     const f = await fixture(); await f.connect()
@@ -299,7 +416,7 @@ describe('frozen plan execution', () => {
     const base = f.run.getMockImplementation()!
     f.run.mockImplementation(async (...args) => {
       const result = await base(...args)
-      if (args[1][0] === 'doctor') Date.now = () => plan.expiresAt + 1
+      if (args[1][0] === 'whoami') Date.now = () => plan.expiresAt + 1
       return result
     })
     try { await expect(f.service.execute(plan.id, 's1')).rejects.toThrow('失效') } finally { Date.now = original }

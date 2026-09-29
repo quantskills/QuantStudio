@@ -2,13 +2,13 @@ let access;
 export function connectFlyTransport(value) { access = value; }
 export async function flyApi(path, body) {
     if (!access)
-        throw new Error('果蝇服务尚未连接');
+        throw new Error('AI 交易员服务尚未连接');
     return await access.request({ path, ...(body === undefined ? {} : { body: body }) });
 }
 export async function flyFetch(url, init) {
     const prefix = '/api/fly/v2/';
     if (!url.startsWith(prefix))
-        throw new Error('果蝇接口路径无效');
+        throw new Error('AI 交易员接口路径无效');
     init?.signal?.throwIfAborted();
     const result = await flyApi(url.slice(prefix.length), typeof init?.body === 'string' ? JSON.parse(init.body) : undefined);
     init?.signal?.throwIfAborted();

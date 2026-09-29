@@ -56,6 +56,7 @@ export declare function clampWidth(px: number, min: number, max: number): number
  * @param details - details width preference in px (0 = closed).
  * @param sidebarReservation - transient minimum width requested by mounted overlays.
  * @param detailsReservation - transient minimum right-column width requested by mounted workbenches.
+ * @param sidebarExclusive - an overlay replaces the native rail; only its reservation consumes width.
  * @returns resolved widths; details 0 means visually closed (never unmounted), while a closed sidebar keeps its compact rail.
  */
 export declare function computeColumns(viewport: number, sidebar: number, details: number, sidebarReservation?: number, detailsReservation?: number, sidebarExclusive?: boolean): Columns;

@@ -1,0 +1,42 @@
+diff --git a/lib/index.js b/lib/index.js
+index 881df45e4a86aa1a5d75ee74c19612f9244d6b5c..f3a6d9e91672a57ef4e07daf6fc62396901e1cfd 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -419,6 +419,24 @@ var WorkspaceRegistry = class extends Service {
+ 	* @param sessionId - The session to archive.
+ 	* @returns resolution after durability.
+ 	*/
++
++	restoreSession(sessionId) {
++		return this.enqueueOperation(async () => {
++			if (!await this.sessionKnown(sessionId)) throw new WorkspaceUnknownSessionError(sessionId);
++			const state = this.requireState();
++			await this.setState({...state, archivedSessionIds: state.archivedSessionIds.filter(id => id !== sessionId)});
++		});
++	}
++	forgetSession(sessionId) {
++		return this.enqueueOperation(async () => {
++			for (const workspace of this.list()) await workspace.detachSession(sessionId);
++			const state = this.requireState();
++			await this.setState({...state, archivedSessionIds: state.archivedSessionIds.filter(id => id !== sessionId)});
++			this.headers.delete(sessionId);
++			this.sessionPaths.delete(sessionId);
++			this.invalidSessionPaths.delete(sessionId);
++		});
++	}
+ 	archiveSession(sessionId) {
+ 		return this.enqueueOperation(async () => {
+ 			if (this.requireState().archivedSessionIds.includes(sessionId)) return;
+diff --git a/lib/types/index.d.ts b/lib/types/index.d.ts
+index 8b389ad7beb3dee6d96b07be45365bed18896f2b..93c2a9819bc04f7f2eae745675f2ffde7cb2ef8d 100644
+--- a/lib/types/index.d.ts
++++ b/lib/types/index.d.ts
+@@ -121,6 +121,8 @@ export declare class WorkspaceRegistry extends Service {
+      * @param sessionId - The session to archive.
+      * @returns resolution after durability.
+      */
++    restoreSession(sessionId: SessionId): Promise<void>;
++    forgetSession(sessionId: SessionId): Promise<void>;
+     archiveSession(sessionId: SessionId): Promise<void>;
+     /**
+      * Whether a session is live, header-indexed, or present in a fresh

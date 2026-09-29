@@ -1,4 +1,5 @@
 /** Exact-version QuantSkills session composition and log-backed archive remotes. */
+import type { SessionLifecycleRequest, SessionDeletionPreview, ArchivedConversation } from './types.ts';
 import type { FlyRequest, FlyRuntimeStatus } from './fly-runtime.ts';
 import type { ContestJevSettings, ContestJevUsage, ContestWatchConfig, ContestWatchDataset, ContestWatchTemplate, ContestWatchStatus } from './contest-watch-types.ts';
 import type { FactorContestStatus, FactorCredentials, FactorInspection, FactorPlan, FactorPlanAction, FactorQuery, FactorRun } from './factor-contest-types.ts';
@@ -199,6 +200,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     static inject: string[];
     static Config: s<Config>;
     private readonly libraryStore;
+    private readonly sessionLifecycle;
     private readonly modelAccess;
     /** Manage model providers through the Host settings and credential services. */
     modelsAccess(request: ModelAccessRequest): Promise<ModelAccessResponse>;
@@ -252,6 +254,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     flyStatus(): Promise<FlyRuntimeStatus>;
     flyInstall(input?: {
         blenderPath?: string;
+        neural?: boolean;
     }): Promise<FlyRuntimeStatus>;
     /** Only the fixed fly controller routes are forwarded; execution stays in contestExecute. */
     flyRequest(request: FlyRequest): Promise<JsonValue>;
@@ -326,6 +329,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     contestWatchStart(request: {
         config: ContestWatchConfig;
         confirmed: boolean;
+        executionConsent?: string;
     }): Promise<ContestWatchStatus>;
     contestWatchStop(): Promise<ContestWatchStatus>;
     contestQuery(request: ContestQuery, signal?: AbortSignal): Promise<ContestData>;
@@ -383,6 +387,13 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
      * @returns ordinary product-owned Sessions ordered by most recent activity.
      */
     plainSessionList(request: QuantSkillsSessionListRequest, signal?: AbortSignal): Promise<readonly QuantSkillsPlainSessionArchiveItem[]>;
+    /** Separate reversible archive/restore from permanent conversation erasure. */
+    previewSessionDeletion(request: {
+        readonly sessionId: SessionId;
+    }): Promise<SessionDeletionPreview>;
+    changeSessionLifecycle(request: SessionLifecycleRequest): Promise<void>;
+    /** List archived conversations of all four product types, without resuming them. */
+    archivedConversations(): Promise<readonly ArchivedConversation[]>;
     /**
      * Aggregate frequently used Skills from real bound conversation archives.
      * @param request - archive visibility and bounded result count.

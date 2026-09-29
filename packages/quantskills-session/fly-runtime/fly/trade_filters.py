@@ -93,17 +93,18 @@ def opening_filter(previous, decision, settings, product, now, last_close_at=0, 
         return result('神经平仓选择不受开仓确认、冷却和成本过滤限制', True)
     if action == 'WAIT':
         return result('神经选择等待，连续开仓确认已重置')
-    scores = choice.get('scores', {})
-    try:
-        values = [float(scores[k]) for k in ('LONG', 'SHORT', 'CLOSE', 'WAIT')]
-        if not all(math.isfinite(v) for v in values):
-            raise ValueError()
-        margin = float(scores[action]) - max(float(v) for k, v in scores.items() if k != action)
-    except (KeyError, TypeError, ValueError):
-        return result('神经分数证据缺失，暂不开仓')
-    trace['margin'] = margin
-    if margin < cfg['min_signal_margin']:
-        return result(f'神经分数领先 {margin:.3f}，低于 {cfg["min_signal_margin"]:.3f}')
+    if decision.get('engine') != 'llm':
+        scores = choice.get('scores', {})
+        try:
+            values = [float(scores[k]) for k in ('LONG', 'SHORT', 'CLOSE', 'WAIT')]
+            if not all(math.isfinite(v) for v in values):
+                raise ValueError()
+            margin = float(scores[action]) - max(float(v) for k, v in scores.items() if k != action)
+        except (KeyError, TypeError, ValueError):
+            return result('神经分数证据缺失，暂不开仓')
+        trace['margin'] = margin
+        if margin < cfg['min_signal_margin']:
+            return result(f'神经分数领先 {margin:.3f}，低于 {cfg["min_signal_margin"]:.3f}')
     same = previous.get('config') == key and previous.get('symbol') == decision.get('symbol')
     if same and previous.get('bar') == bar:
         state = dict(previous)
@@ -126,4 +127,4 @@ def opening_filter(previous, decision, settings, product, now, last_close_at=0, 
             return result(f'近期波动空间/估算成本 {cost["room_cost_ratio"]:.2f}，低于 {cfg["cost_filter_multiplier"]:.2f}')
     if state['count'] < cfg['signal_confirmations']:
         return result(f'同向开仓信号确认 {state["count"]}/{cfg["signal_confirmations"]}，等待下一个完整周期')
-    return result('同向确认、神经分差、开仓冷却和成本过滤通过', True)
+    return result('开仓确认与过滤通过', True)

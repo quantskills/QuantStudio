@@ -1,6 +1,8 @@
 /** Exact-version QuantSkills session composition and log-backed archive remotes. */
 
 import { QuantSkillsLibraryStore } from './library-store.ts'
+import { SessionLifecycle } from './session-lifecycle.ts'
+import type { SessionLifecycleRequest, SessionDeletionPreview, ArchivedConversation } from './types.ts'
 import { ContestService, sameContest } from './contest-service.ts'
 import { FlyService } from './fly-service.ts'
 import type { FlyRequest, FlyRuntimeStatus } from './fly-runtime.ts'
@@ -919,6 +921,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   })
 
   private readonly libraryStore: QuantSkillsLibraryStore
+  private readonly sessionLifecycle: SessionLifecycle
   private readonly modelAccess: QuantSkillsModelAccess
 
   /** Manage model providers through the Host settings and credential services. */
@@ -963,13 +966,14 @@ export class QuantSkillsSessionService extends TypertRemoteService {
    */
   constructor(ctx: Context, config: Config) {
     super(ctx, 'quantSkillsSessions', { namespace: 'quantSkillsSessions' })
+    this.sessionLifecycle = new SessionLifecycle(ctx, resolveDshHome(config.dshHome))
     this.contest = new ContestService(new OfficialContestCli(() => {
       const processes = ctx.get('subprocess')
       if (!processes) throw new Error('比赛 CLI 进程服务未就绪，请重新启动应用。')
       return processes
     },
       join(resolveDshHome(config.dshHome), 'quantskills', 'contest', 'auth')), config.dshHome)
-    this.contestWatcher = new ContestWatcher(ctx, this.contest)
+    this.contestWatcher = new ContestWatcher(ctx, this.contest, undefined, async () => this.fly.isTrading())
     this.fly = new FlyService(ctx, this.contest, join(resolveDshHome(config.dshHome), 'quantskills', 'fly'),
       async () => (await this.contestWatcher.status()).running)
     void this.fly.runtime.resume().catch(() => {})
@@ -1190,7 +1194,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   flyStatus(): Promise<FlyRuntimeStatus> { return this.fly.runtime.status() }
 
   @Remote('flyInstall')
-  flyInstall(input?: { blenderPath?: string }): Promise<FlyRuntimeStatus> { return this.fly.runtime.install(input) }
+  flyInstall(input?: { blenderPath?: string; neural?: boolean }): Promise<FlyRuntimeStatus> { return this.fly.runtime.install(input) }
 
   /** Only the fixed fly controller routes are forwarded; execution stays in contestExecute. */
   @Remote('flyRequest')
@@ -1323,9 +1327,9 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   contestJevConfigure(request: { apiKey?: string; translator?: { provider: string; model: string } }): Promise<ContestJevSettings> { return this.contestWatcher.configure(request) }
 
   @Remote('contestWatchStart')
-  contestWatchStart(request: { config: ContestWatchConfig; confirmed: boolean }): Promise<ContestWatchStatus> {
-    if (request.confirmed !== true) throw new Error('请先在比赛页确认盯盘范围；生成的计划仍需逐笔确认。')
-    return this.contestWatcher.start(request.config)
+  contestWatchStart(request: { config: ContestWatchConfig; confirmed: boolean; executionConsent?: string }): Promise<ContestWatchStatus> {
+    if (request.confirmed !== true) throw new Error('请先在比赛页确认盯盘范围与执行方式。')
+    return this.contestWatcher.start(request.config, request.executionConsent)
   }
 
   @Remote('contestWatchStop')
@@ -1616,6 +1620,54 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     signal?: AbortSignal,
   ): Promise<readonly QuantSkillsPlainSessionArchiveItem[]> {
     return this.listPlainArchives(request, this.operationSignal(signal))
+  }
+
+  /** Separate reversible archive/restore from permanent conversation erasure. */
+  @Remote('deletionPreview')
+  async previewSessionDeletion(request: { readonly sessionId: SessionId }): Promise<SessionDeletionPreview> {
+    return this.sessionLifecycle.preview(request.sessionId, async () => {
+      const existing = await this.inspectExisting(request.sessionId, this.lifetime.signal)
+      if (!existing || existing.header.origin === 'subagent' || !existing.events.some(event =>
+        [PLAIN_SESSION_EVENT, BINDING_EVENT, AGENT_SESSION_EVENT, AGENT_TEAM_SESSION_EVENT].includes(event.type))) {
+        throw new Error('找不到此 QuantStudio 会话。')
+      }
+    })
+  }
+
+  @Remote('sessionLifecycle')
+  async changeSessionLifecycle(request: SessionLifecycleRequest): Promise<void> {
+    if (!['archive', 'restore', 'delete'].includes(request.action)) throw new Error('无效的会话操作。')
+    await this.sessionLifecycle.run(request, async () => {
+      const existing = await this.inspectExisting(request.sessionId, this.lifetime.signal)
+      if (!existing || existing.header.origin === 'subagent' || !existing.events.some(event =>
+        [PLAIN_SESSION_EVENT, BINDING_EVENT, AGENT_SESSION_EVENT, AGENT_TEAM_SESSION_EVENT].includes(event.type))) {
+        throw new Error('找不到此 QuantStudio 会话。')
+      }
+    })
+    if (request.action === 'delete') {
+      const id = request.sessionId
+      this.reservations.delete(id)
+      this.plainReservations.delete(id)
+      this.agentReservations.delete(id)
+      this.teamReservations.delete(id)
+      this.teamRuntimes.delete(id)
+    }
+  }
+
+  /** List archived conversations of all four product types, without resuming them. */
+  @Remote('archivedConversations')
+  async archivedConversations(): Promise<readonly ArchivedConversation[]> {
+    await this.sessionLifecycle.ready
+    const options = { includeArchived: true }
+    const [plain, skill, agent, team] = await Promise.all([
+      this.listPlainArchives(options, this.lifetime.signal), this.listArchives(options, this.lifetime.signal),
+      this.listAgentArchives(options, this.lifetime.signal), this.listTeamArchives(options, this.lifetime.signal),
+    ])
+    const groups = [['plain', plain], ['skill', skill], ['agent', agent], ['team', team]] as const
+    return groups.flatMap(([kind, rows]) => rows.filter(row => row.archived).map(row => ({
+      sessionId: row.sessionId, title: row.title || '未命名会话', kind,
+      updatedAt: row.updatedAt, running: row.running,
+    }))).sort((a, b) => b.updatedAt - a.updatedAt)
   }
 
   /**
@@ -4222,6 +4274,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     request: QuantSkillsSessionListRequest,
     signal: AbortSignal,
   ): Promise<readonly QuantSkillsSessionArchiveItem[]> {
+    await this.sessionLifecycle.ready
     const headers = new Map<SessionId, SessionHeader>()
     for (const header of await this.ctx.sessionPersistence.list(signal)) headers.set(header.id, header)
     for (const session of this.ctx.sessions.list()) headers.set(session.id, session.header)
@@ -4262,6 +4315,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     request: QuantSkillsSessionListRequest,
     signal: AbortSignal,
   ): Promise<readonly QuantSkillsPlainSessionArchiveItem[]> {
+    await this.sessionLifecycle.ready
     const headers = new Map<SessionId, SessionHeader>()
     for (const header of await this.ctx.sessionPersistence.list(signal)) headers.set(header.id, header)
     for (const session of this.ctx.sessions.list()) headers.set(session.id, session.header)
@@ -4302,6 +4356,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     request: QuantSkillsSessionListRequest,
     signal: AbortSignal,
   ): Promise<readonly QuantSkillsAgentSessionArchiveItem[]> {
+    await this.sessionLifecycle.ready
     const headers = new Map<SessionId, SessionHeader>()
     for (const header of await this.ctx.sessionPersistence.list(signal)) headers.set(header.id, header)
     for (const session of this.ctx.sessions.list()) headers.set(session.id, session.header)
@@ -4342,6 +4397,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     request: QuantSkillsSessionListRequest,
     signal: AbortSignal,
   ): Promise<readonly QuantSkillsAgentTeamSessionArchiveItem[]> {
+    await this.sessionLifecycle.ready
     const headers = new Map<SessionId, SessionHeader>()
     for (const header of await this.ctx.sessionPersistence.list(signal)) headers.set(header.id, header)
     for (const session of this.ctx.sessions.list()) headers.set(session.id, session.header)

@@ -15,8 +15,8 @@ function executionPrice(plan: ContestPlan): string {
   return `${label}：${average.toLocaleString('zh-CN', { maximumFractionDigits: 6 })} · 已记录成交 ${volume}/${display(parameters.volume)} 手`
 }
 
-export function ContestPlans({ status, access, refresh, compact = false, autoOpen = false }: {
-  status: ContestStatus; access: ContestAccess; refresh(): Promise<void>; compact?: boolean; autoOpen?: boolean
+export function ContestPlans({ status, access, refresh, compact = false, autoOpen = false, automatic = false }: {
+  status: ContestStatus; access: ContestAccess; refresh(): Promise<void>; compact?: boolean; autoOpen?: boolean; automatic?: boolean
 }) {
   const [selected, setSelected] = useState<string>()
   const [historyOpen, setHistoryOpen] = useState(false)
@@ -35,7 +35,7 @@ export function ContestPlans({ status, access, refresh, compact = false, autoOpe
   const original = status.plans.find(plan => plan.id === selected)
   const plan = returned?.value.id === original?.id && (original === returned?.source || original?.status === 'prepared') ? returned?.value : original
   const ready = status.enabled && status.phase === 'connected'
-  const pending = status.plans.filter(plan => plan.status === 'prepared' && plan.expiresAt > now)
+  const pending = status.plans.filter(plan => !automatic && plan.details.executionMode !== 'automatic' && plan.status === 'prepared' && plan.expiresAt > now)
   const newest = pending.at(-1)?.id
   useEffect(() => {
     if (!autoOpen || !ready || !newest || seen.current.has(newest)) return
@@ -67,26 +67,26 @@ export function ContestPlans({ status, access, refresh, compact = false, autoOpe
     }
   }
   const list = <>
-    {status.plans.length === 0 ? <p className={css.muted}>研究方案经你选择后，预演计划会出现在这里。</p>
+    {status.plans.length === 0 ? <p className={css.muted}>{automatic ? '暂无自动委托。信号触发后，提交记录与柜台回执会出现在这里。' : '研究方案经你选择后，预演计划会出现在这里。'}</p>
       : [...status.plans].reverse().slice(0, 30).map(item => <button className={css.planRow} type="button" key={item.id} disabled={busy}
         onClick={() => { setSelected(item.id); setError(undefined) }}>
         <span><strong>{item.summary}</strong><small>{contestTime(item.createdAt)}</small>{item.operation === 'place_order' && <small>{executionPrice(item)}</small>}</span>
-        <span>{item.status === 'prepared' && item.expiresAt <= now ? '已过期' : planStates[item.status]}</span>
+        <span>{item.status === 'prepared' && item.expiresAt <= now ? '已过期' : item.status === 'prepared' && (automatic || item.details.executionMode === 'automatic') ? '尚未提交' : planStates[item.status]}</span>
       </button>)}
   </>
   return <section className={css.plans} data-compact={compact || undefined} aria-label="比赛交易计划">
     {compact ? <button type="button" onClick={() => { if (newest) setSelected(newest); else setHistoryOpen(true) }}>比赛计划{pending.length ? ` · ${pending.length} 笔待确认` : ''}</button>
       : <><h2>交易计划与回执</h2>{list}</>}
     {compact && historyOpen && !plan && status.enabled && <ActionDialog title="比赛计划与回执" onClose={() => setHistoryOpen(false)}>{list}</ActionDialog>}
-    {plan && status.enabled && <ActionDialog title="确认比赛交易计划" busy={busy} error={error} onClose={() => setSelected(undefined)}>
+    {plan && status.enabled && <ActionDialog title={automatic || plan.details.executionMode === 'automatic' ? '自动交易回执' : '确认比赛交易计划'} busy={busy} error={error} onClose={() => setSelected(undefined)}>
       <PlanDetails plan={plan}/>
-      <p role="status">{plan.status === 'prepared' && plan.expiresAt <= now ? '计划已过期，请回到研究会话重新预演。' : planStates[plan.status]}</p>
+      <p role="status">{plan.status === 'prepared' && plan.expiresAt <= now ? '计划已过期。' : plan.status === 'prepared' && (automatic || plan.details.executionMode === 'automatic') ? '尚未提交' : planStates[plan.status]}</p>
       {plan.result && <p className={css.muted}>柜台回报：{display(plan.result.message ?? plan.result.status)}{plan.operationId ? ` · 操作号 ${plan.operationId}` : ''}</p>}
       <footer className={css.actions}>
         {plan.status === 'prepared' && <>
           <button type="button" disabled={busy || submitted.current.has(plan.id)} onClick={() => { void work(async () => { await access.dismiss(plan); return { ...plan, status: 'cancelled' } }) }}>取消计划</button>
-          <button type="button" data-primary disabled={busy || !ready || plan.expiresAt <= now || submitted.current.has(plan.id)}
-            onClick={() => { void work(() => access.execute(plan), plan) }}>{busy ? '正在提交…' : '确认执行这笔交易'}</button>
+          {!automatic && plan.details.executionMode !== 'automatic' && <button type="button" data-primary disabled={busy || !ready || plan.expiresAt <= now || submitted.current.has(plan.id)}
+            onClick={() => { void work(() => access.execute(plan), plan) }}>{busy ? '正在提交…' : '确认执行这笔交易'}</button>}
           {submitted.current.has(plan.id) && !busy && <button type="button" onClick={() => { void work(() => access.reconcile(plan), undefined, plan.id) }}>只读核对确认结果</button>}
         </>}
         {['executing', 'queued', 'submitted', 'unknown', 'partial'].includes(plan.status) && <button type="button" data-primary disabled={busy || !ready}

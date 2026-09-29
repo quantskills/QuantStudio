@@ -4,6 +4,7 @@ import type { ContestData, ContestPlan, ContestQuery, ContestStatus, ContestInsp
 
 export interface ContestAccess {
   watch?: {
+    quote?(query: ContestQuery, signal?: AbortSignal): Promise<ContestData>
     varieties?(signal?: AbortSignal): Promise<ContestData>
     settings(): Promise<ContestJevSettings>
     usage(): Promise<ContestJevUsage>
@@ -13,7 +14,7 @@ export interface ContestAccess {
     prepareHistory(request: { symbol: string; barSeconds: number }): Promise<NonNullable<ContestWatchConfig['history']>>
     configure(request: { apiKey?: string; translator?: { provider: string; model: string } }): Promise<ContestJevSettings>
     status(): Promise<ContestWatchStatus>
-    start(config: ContestWatchConfig): Promise<ContestWatchStatus>
+    start(config: ContestWatchConfig, executionConsent?: string): Promise<ContestWatchStatus>
     stop(): Promise<ContestWatchStatus>
   }
   status(sessionId?: string): Promise<ContestStatus>

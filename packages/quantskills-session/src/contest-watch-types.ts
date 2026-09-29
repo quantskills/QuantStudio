@@ -1,8 +1,11 @@
-/** Client-safe configuration and audit status for Jev's plan-only watcher. */
+/** Client-safe configuration and audit status for Jev's watcher. */
 import type { ContestIdentity } from './contest-types.ts'
 
 export interface ContestWatchConfig {
+  executionMode?: 'manual' | 'automatic' | undefined
   symbol: string
+  /** Selected actual contracts; omitted for older single-contract configurations. */
+  contracts?: { symbol: string; instrument: NonNullable<ContestWatchConfig['instrument']> }[] | undefined
   volume: number
   intervalSeconds: number
   decisionIntervalSeconds?: number
@@ -90,7 +93,7 @@ export interface ContestWatchAnalysis {
   strategyName?: string
   strategyVersion?: string
   evidence?: ContestWatchEvidence
-  planStatus?: 'restricted' | 'hold' | 'candidate' | 'prepared' | 'blocked'
+  planStatus?: 'restricted' | 'hold' | 'candidate' | 'prepared' | 'blocked' | 'submitted'
   reviewNotes?: string[]
 }
 export interface ContestJevSettings {
@@ -104,6 +107,8 @@ export interface ContestJevSettings {
   translationModels?: { provider: string; model: string }[]
 }
 export interface ContestWatchStatus {
+  markets?: ContestWatchMarketStatus[]
+  executionAuthorization?: { version: string; acceptedAt: number; runId: string }
   running: boolean
   message: string
   strategyNotices?: string[]
@@ -128,3 +133,4 @@ export interface ContestWatchStatus {
   lastDecision?: ContestWatchDecision
   events: { time: number; message: string }[]
 }
+export type ContestWatchMarketStatus = Pick<ContestWatchStatus, 'phase' | 'message' | 'sampleCount' | 'samples' | 'analyses' | 'lastDecision' | 'lastQuoteCheckedAt' | 'nextDecisionAt'> & { symbol: string }

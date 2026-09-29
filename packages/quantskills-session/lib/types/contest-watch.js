@@ -1,11 +1,13 @@
-/** A Host-owned watcher that prepares plans; it never submits a trade. */
+/** Host-owned watcher with explicit manual/automatic execution per run. */
 import { createHash, randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write';
 import { credentialRef } from '@deepseek-ai/dsh-credentials';
 import { z } from 'zod';
+import { AUTOMATIC_TRADING_CONSENT } from "./trading-execution.js";
 import { ContestCliError, record, transientContestCodes } from "./contest-cli.js";
+import { ContestQuotaError } from "./contest-rate-budget.js";
 import { contestContractParts as contractParts, sameContestContract as sameSymbol, futuresContractPattern, futuresProductPattern, futuresProduct } from "./contest-contract.js";
 import { configureJev } from "./contest-jev-settings.js";
 import { auditedJevFetch, jevUsageSchema } from "./contest-jev-audit.js";
@@ -15,8 +17,11 @@ import { parseAssessments, watchAssessments } from "./contest-watch-evaluation.j
 import { defaultActionCriteria, upgradeWatchStrategy, watchStrategyWarnings } from "./contest-watch-strategy.js";
 import { englishJevBody, englishJevInput } from "./contest-jev-english.js";
 import { englishEvidence } from "./contest-watch-input.js";
+const instrumentSchema = z.object({ product: z.string().regex(futuresProductPattern), exchange: z.enum(['SHF', 'DCE', 'CZC', 'CFE', 'INE', 'GFE']), tickSize: z.number().finite().positive() }).strict();
 const configObject = z.object({
+    executionMode: z.enum(['manual', 'automatic']).default('manual'),
     symbol: z.string().trim().regex(futuresContractPattern), volume: z.number().int().min(1).max(100),
+    contracts: z.array(z.object({ symbol: z.string().trim().regex(futuresContractPattern), instrument: instrumentSchema }).strict()).min(1).optional(),
     intervalSeconds: z.number().int().min(3).max(86400), decisionIntervalSeconds: z.number().int().min(3).max(86400).default(30),
     openingCooldownSeconds: z.number().int().min(0).max(3600).default(300),
     decisionMode: z.enum(['jev', 'strict']).optional(),
@@ -34,6 +39,19 @@ const configObject = z.object({
     autoHistory: z.object({ exchange: z.enum(['SHF', 'DCE', 'CZC', 'CFE', 'INE', 'GFE']), barSeconds: z.union([z.literal(60), z.literal(300)]) }).strict().optional(),
 }).strict();
 const consistentConfig = (config) => {
+    if (config.contracts) {
+        if (!sameSymbol(config.contracts[0]?.symbol, config.symbol))
+            return false;
+        const seen = [];
+        for (const item of config.contracts) {
+            if (futuresProduct(item.symbol) !== item.instrument.product.toLowerCase() || seen.some(symbol => sameSymbol(symbol, item.symbol)))
+                return false;
+            seen.push(item.symbol);
+        }
+        const first = config.contracts[0].instrument;
+        if (first.product !== config.instrument?.product || first.exchange !== config.instrument.exchange || first.tickSize !== config.instrument.tickSize)
+            return false;
+    }
     if (config.rangeRules && config.signalRules)
         return false;
     if (config.builtInTemplate === 'range' && !config.rangeRules)
@@ -49,6 +67,17 @@ const consistentConfig = (config) => {
 const configSchema = configObject.refine(consistentConfig);
 const templateConfigSchema = configObject.extend({ symbol: z.string().trim().refine(value => !value || futuresContractPattern.test(value)) }).refine(consistentConfig);
 const actions = ['hold', 'open_long', 'open_short', 'close_long', 'close_short'];
+/** Shared strategy with each market's own units and historical data. */
+export function watchContractConfig(config, contract) {
+    const { contracts: _contracts, ...base } = config;
+    const tick = contract.instrument.tickSize, previousTick = config.instrument?.tickSize ?? config.rangeRules?.tickSize ?? config.signalRules?.tickSize ?? tick;
+    return { ...base, symbol: contract.symbol, instrument: contract.instrument,
+        history: !config.autoHistory || sameSymbol(config.symbol, contract.symbol) ? config.history : undefined,
+        autoHistory: config.autoHistory ? { ...config.autoHistory, exchange: contract.instrument.exchange } : undefined,
+        maxSpread: config.maxSpread === undefined ? undefined : Number((config.maxSpread / previousTick * tick).toPrecision(12)),
+        rangeRules: config.rangeRules ? { ...config.rangeRules, tickSize: tick } : undefined,
+        signalRules: config.signalRules ? { ...config.signalRules, tickSize: tick } : undefined };
+}
 const labels = { hold: '观望', open_long: '开多', open_short: '开空', close_long: '平多', close_short: '平空' };
 const numeric = (value) => typeof value === 'number' ? value : NaN;
 /** Quotes without an explicit timezone are exchange-local Shanghai timestamps. */
@@ -144,15 +173,15 @@ export async function decideWithJev(ctx, config, samples, account, signal, reque
                 version: createHash('sha256').update(JSON.stringify(config)).digest('hex').slice(0, 12) },
             hardLimits: { allowedActions: allowed, allowedSide: config.allowedSide ?? 'both', lotLimit: config.volume, maxSpread: config.maxSpread ?? 0,
                 equityDropStop: config.maxEquityDrop,
-                missingHistoryBlocksNewPositions: evidence.checks.some(check => check.id === 'history' && check.enforcement === 'hard'), humanConfirmationRequired: true },
-            planPolicy: { minConfidence: config.minConfidence, humanConfirmationRequired: true, instruction: 'Select the best permitted action; the host applies this confidence threshold after your judgment.' },
+                missingHistoryBlocksNewPositions: evidence.checks.some(check => check.id === 'history' && check.enforcement === 'hard'), humanConfirmationRequired: config.executionMode !== 'automatic' },
+            planPolicy: { minConfidence: config.minConfidence, humanConfirmationRequired: config.executionMode !== 'automatic', instruction: 'Select the best permitted action; the host applies this confidence threshold after your judgment.' },
             dataSummary: { barSeconds: history.barSeconds, barTimeMeaning: 'close', completedBars: evidence.history.count,
                 historyValid: evidence.checks.find(check => check.id === 'history')?.state === 'pass', snapshotCount: samples.length,
                 quoteWindowSeconds: evidence.features.quoteWindowSeconds, latestQuote: samples.at(-1) ?? null },
             evidence: englishEvidence(evidence, config.history?.datasetId), historicalBars: history.bars.filter(bar => bar.time <= evidence.evaluatedAt).slice(-(config.rangeRules?.lookbackBars ?? config.signalRules?.lookbackBars ?? 60)),
             lotLimit: config.volume, equityDropStop: config.maxEquityDrop, account, observedQuoteSnapshots: samples,
             evaluatedAt: Date.now(), dataLimit: 'Quote snapshots are NOT historical bars. Only historicalBars contains supplied completed bars; an empty array means unavailable. No external news is supplied. Use only observed evidence. Cost inputs are user assumptions, not guaranteed fills.' },
-        questions: { ...watchAssessments, action: { type: 'choice', instructions: 'Choose ONE permitted futures simulation action using `strategy`, raw historicalBars, observedQuoteSnapshots, `evidence` and `account`. In jev mode, judge the opportunity yourself: numeric thresholds and reference checks are advisory, and an unmet reference alone must not preempt your assessment. In strict mode, hard strategy checks must pass. Always obey hardLimits and enforcement=hard checks. With incomplete history, evaluate the data gap and any permitted position exit; never open a new position. If only hold is permitted, return hold while independently assessing market, fit and blocker from the available data. Never invent observations or future returns. Questions are independent. A human must confirm each plan. User strategy: ' + english.instructions, criteria } } });
+        questions: { ...watchAssessments, action: { type: 'choice', instructions: 'Choose ONE permitted futures simulation action using `strategy`, raw historicalBars, observedQuoteSnapshots, `evidence` and `account`. In jev mode, judge the opportunity yourself: numeric thresholds and reference checks are advisory, and an unmet reference alone must not preempt your assessment. In strict mode, hard strategy checks must pass. Always obey hardLimits and enforcement=hard checks. With incomplete history, evaluate the data gap and any permitted position exit; never open a new position. If only hold is permitted, return hold while independently assessing market, fit and blocker from the available data. Never invent observations or future returns. Questions are independent. Execution mode: ' + (config.executionMode === 'automatic' ? 'host automatic submission authorized for this run. ' : 'human confirmation required for each plan. ') + 'User strategy: ' + english.instructions, criteria } } });
     let response;
     try {
         response = await request('https://api.typesafe.ai/v1/systemone', { method: 'POST', redirect: 'error', signal: active,
@@ -191,6 +220,7 @@ export class ContestWatcher {
     ctx;
     contest;
     decide;
+    traderRunning;
     templateWriting = Promise.resolve();
     async readTemplates() {
         try {
@@ -243,16 +273,51 @@ export class ContestWatcher {
     accountCheckedAt = 0;
     retryCount = 0;
     historyCache;
-    constructor(ctx, contest, decide = decideWithJev) {
+    runConfig;
+    markets = [];
+    marketIndex = -1;
+    captureMarket() {
+        const current = this.markets[this.marketIndex];
+        if (!current)
+            return;
+        const { phase, message, sampleCount, samples, analyses, lastDecision, lastQuoteCheckedAt, nextDecisionAt } = this.state;
+        current.status = { symbol: current.config.symbol, message, sampleCount,
+            ...(phase ? { phase } : {}), ...(samples ? { samples } : {}), ...(analyses ? { analyses } : {}),
+            ...(lastDecision ? { lastDecision } : {}), ...(lastQuoteCheckedAt ? { lastQuoteCheckedAt } : {}), ...(nextDecisionAt ? { nextDecisionAt } : {}) };
+        current.historyCache = this.historyCache;
+    }
+    snapshot() {
+        this.captureMarket();
+        return structuredClone({ ...this.state, ...(this.runConfig ? { config: this.runConfig } : {}),
+            ...(this.markets.length > 1 ? { markets: this.markets.map(item => item.status) } : {}) });
+    }
+    selectNextMarket() {
+        if (this.markets.length < 2 || this.decisionTask)
+            return;
+        this.captureMarket();
+        this.marketIndex = (this.marketIndex + 1) % this.markets.length;
+        const current = this.markets[this.marketIndex];
+        delete this.state.lastDecision;
+        delete this.state.nextDecisionAt;
+        delete this.state.lastQuoteCheckedAt;
+        delete this.state.phase;
+        const { symbol: _symbol, ...view } = current.status;
+        Object.assign(this.state, view);
+        this.state.config = current.config;
+        this.samples = current.status.samples ?? [];
+        this.historyCache = current.historyCache;
+    }
+    constructor(ctx, contest, decide = decideWithJev, traderRunning = async () => false) {
         this.ctx = ctx;
         this.contest = contest;
         this.decide = decide;
+        this.traderRunning = traderRunning;
     }
     async load() {
         await (this.loading ??= (async () => {
             try {
                 const text = await readFile(join(this.contest.root, 'jev-watch.json'), 'utf8');
-                if (text.length > 512000)
+                if (text.length > 16000000)
                     throw new Error('盯盘记录过大。');
                 const saved = JSON.parse(text);
                 if (!saved || !Array.isArray(saved.events))
@@ -266,6 +331,14 @@ export class ContestWatcher {
                 delete this.state.nextDecisionAt;
                 delete this.state.openingCooldownUntil;
                 delete this.state.nextRetryAt;
+                for (const market of this.state.markets ?? []) {
+                    market.samples = [];
+                    market.sampleCount = 0;
+                    market.message = this.state.message;
+                    delete market.nextDecisionAt;
+                    delete market.phase;
+                    market.analyses = (market.analyses ?? []).slice(-20).map(item => item.finishedAt ? item : { ...item, finishedAt: Date.now(), outcome: '服务已重启，本轮分析已中断。' });
+                }
             }
             catch (error) {
                 if (record(error).code !== 'ENOENT')
@@ -274,17 +347,23 @@ export class ContestWatcher {
         })());
     }
     save() {
-        const text = JSON.stringify(this.state);
+        const text = JSON.stringify(this.snapshot());
         const next = this.writing.catch(() => { }).then(() => writeFileAtomic(join(this.contest.root, 'jev-watch.json'), text, { mode: 0o600, dirMode: 0o700 }));
         this.writing = next;
         return next;
     }
     note(message) {
         this.state.message = message;
-        if (this.state.events.at(-1)?.message !== message)
-            this.state.events = [...this.state.events, { time: Date.now(), message }].slice(-100);
+        const eventMessage = this.markets.length > 1 ? `${this.state.config?.symbol} · ${message}` : message;
+        if (this.state.events.at(-1)?.message !== eventMessage)
+            this.state.events = [...this.state.events, { time: Date.now(), message: eventMessage }].slice(-100);
     }
-    async status() { await this.load(); return structuredClone(this.state); }
+    async status() {
+        await this.load();
+        const shared = (await this.contest.status()).retryAt ?? 0;
+        const nextRetryAt = Math.max(this.state.nextRetryAt ?? 0, shared);
+        return { ...this.snapshot(), ...(nextRetryAt > Date.now() ? { nextRetryAt } : {}) };
+    }
     async configure(input) {
         await this.load();
         if (this.state.running || this.starting || this.stopping || this.decisionTask || this.configuring)
@@ -297,7 +376,7 @@ export class ContestWatcher {
             this.configuring = false;
         }
     }
-    async start(input) {
+    async start(input, executionConsent) {
         await this.load();
         if (this.state.running || this.starting || this.stopping || this.working || this.decisionTask || this.configuring)
             throw new Error('盯盘或配置操作仍在运行，请勿重复启动。');
@@ -307,6 +386,8 @@ export class ContestWatcher {
         if (tick !== undefined && (!Number.isFinite(tick) || tick <= 0))
             throw new Error('请填写该合约的最小价格变动（tick），必须大于 0；品种目录未提供参数时请按合约规格填写。');
         const parsed = configSchema.safeParse(input);
+        if (input.executionMode === 'automatic' && executionConsent !== AUTOMATIC_TRADING_CONSENT)
+            throw new Error('请先阅读并确认自动下单的执行范围与风险。');
         if (!parsed.success)
             throw new Error('请检查实际合约、品种交易所及 tick、3–86400 秒的采样及决策间隔、0–3600 秒的开仓冷却、风控和策略条件；空白策略须填写目标及五种动作标准。');
         if (parsed.data.builtInTemplate === 'rb-range' && (!/^rb\d{4}$/i.test(parsed.data.symbol) || (parsed.data.autoHistory && parsed.data.autoHistory.exchange !== 'SHF')))
@@ -315,11 +396,21 @@ export class ContestWatcher {
         const controller = new AbortController();
         this.controller = controller;
         try {
+            if (await this.traderRunning())
+                throw new Error('请先暂停 AI 交易员，再启动 JEV 盯盘。');
             const credential = await this.ctx.get('credentials')?.describe(credentialRef('TYPESAFE_API_KEY'));
             if (!credential?.configured)
                 throw new Error('请在「设置 → 模型服务 → Jev」配置 API Key。');
-            const identity = await this.contest.researchIdentity();
-            const snapshot = await this.contest.inspect(identity, controller.signal), config = upgradeWatchStrategy(parsed.data);
+            const identity = (await this.contest.status()).identity;
+            if (!identity)
+                throw new Error('请先在比赛页连接并验证账户。');
+            const snapshot = await this.contest.inspect(identity, controller.signal), portfolio = upgradeWatchStrategy(parsed.data);
+            const configs = portfolio.contracts ? portfolio.contracts.map(item => watchContractConfig(portfolio, item)) : [portfolio];
+            for (const item of configs) {
+                configSchema.parse(item);
+                watchAccount(snapshot, item);
+            }
+            const config = configs[0];
             const account = watchAccount(snapshot, config);
             if (snapshot.pendingPlans.length || account.hasOpenOrders)
                 throw new Error('请先处理待确认计划、未完成回执和活动委托。');
@@ -338,8 +429,13 @@ export class ContestWatcher {
             }
             controller.signal.throwIfAborted();
             const now = Date.now();
+            this.runConfig = portfolio;
+            this.markets = configs.length > 1 ? configs.map(item => ({ config: item, status: { symbol: item.symbol, message: '等待采样', sampleCount: 0, samples: [], analyses: [] } })) : [];
+            this.marketIndex = -1;
             this.state = { running: true, message: '', config, strategyNotices: watchStrategyWarnings(config), identity, runId: `jev-watch-${randomUUID()}`, startedAt: now,
                 expiresAt: now + config.durationMinutes * 60000, equityBaseline: account.equity, sampleCount: 0, planCount: 0, openingPlanCount: 0, phase: 'sampling', samples: [], analyses: [], events: [] };
+            if (config.executionMode === 'automatic')
+                this.state.executionAuthorization = { version: AUTOMATIC_TRADING_CONSENT, acceptedAt: now, runId: this.state.runId };
             this.samples = [];
             this.lastPlanAt = 0;
             this.pendingPlanObserved = false;
@@ -349,7 +445,7 @@ export class ContestWatcher {
             this.accountCheckedAt = now;
             this.state.accountCheckedAt = now;
             this.retryCount = 0;
-            this.note(`已启动；先积累 ${config.minSamples ?? 8} 个有效行情快照，再由 Jev 决策。所有计划均需逐笔确认。`);
+            this.note(`已启动；先积累 ${config.minSamples ?? 8} 个有效行情快照，再由 Jev 决策。${config.executionMode === 'automatic' ? '已确认本轮自动下单，符合条件后通过 CLI 提交。' : '所有计划均需逐笔确认。'}`);
             if (historyIssue)
                 this.note(`${historyIssue} 已进入 Jev 分析模式，历史恢复前禁止新开仓；继续采样并定期重试历史数据。`);
             await this.save();
@@ -357,7 +453,15 @@ export class ContestWatcher {
                 this.state.running = false;
             else
                 this.schedule(0);
-            return structuredClone(this.state);
+            return this.snapshot();
+        }
+        catch (error) {
+            if (!controller.signal.aborted && error instanceof ContestCliError && transientContestCodes.has(error.code)) {
+                this.retryRead(error);
+                this.state.running = false;
+                await this.save();
+            }
+            throw error;
         }
         finally {
             this.starting = false;
@@ -382,6 +486,10 @@ export class ContestWatcher {
         delete this.state.openingCooldownUntil;
         this.note(reason);
         const { lastPlanId, runId } = this.state;
+        for (const market of this.markets) {
+            delete market.status.nextDecisionAt;
+            market.status.message = reason;
+        }
         await this.save();
         if (lastPlanId && runId) {
             try {
@@ -392,15 +500,22 @@ export class ContestWatcher {
                 await this.save();
             }
         }
-        return structuredClone(this.state);
+        for (const market of this.markets)
+            delete market.status.nextDecisionAt;
+        return this.snapshot();
     }
     retryRead(error) {
         if (!(error instanceof ContestCliError) || !transientContestCodes.has(error.code))
             return false;
-        const seconds = Math.min(300, 30 * 2 ** Math.min(this.retryCount++, 4));
+        const delay = ['rate_limit_exceeded', 'http_429'].includes(error.code) ? 30 : Math.min(300, 30 * 2 ** Math.min(this.retryCount++, 4));
+        const seconds = Math.max(delay, error.retryAfterSeconds ?? 0);
         this.accountSnapshot = undefined;
         this.samples = [];
         this.sampleGeneration++;
+        for (const market of this.markets) {
+            market.status.samples = [];
+            market.status.sampleCount = 0;
+        }
         this.state.samples = [];
         this.state.sampleCount = 0;
         this.state.phase = 'waiting_quote';
@@ -413,6 +528,7 @@ export class ContestWatcher {
             return;
         clearTimeout(this.timer);
         this.working = true;
+        this.selectNextMarket();
         const started = Date.now(), signal = this.controller.signal, config = this.state.config, identity = this.state.identity, runId = this.state.runId;
         const check = () => { signal.throwIfAborted(); if (!this.state.running || this.state.runId !== runId)
             throw new Error('盯盘已停止。'); };
@@ -430,7 +546,7 @@ export class ContestWatcher {
             const plansResolved = this.pendingPlanObserved && pendingPlans.length === 0;
             this.pendingPlanObserved = pendingPlans.length > 0;
             if (!this.accountSnapshot || plansResolved || Date.now() - this.accountCheckedAt >= 30000) {
-                this.accountSnapshot = await this.contest.inspect(identity, signal);
+                this.accountSnapshot = await this.contest.observe(identity, signal);
                 check();
                 this.accountCheckedAt = Date.now();
                 this.state.accountCheckedAt = this.accountCheckedAt;
@@ -484,7 +600,7 @@ export class ContestWatcher {
                 }
                 return;
             }
-            if (previous && quote.time - previous.time > (config.intervalSeconds * 3 + 90) * 1000) {
+            if (previous && quote.time - previous.time > (config.intervalSeconds * Math.max(1, this.markets.length) * 3 + 90) * 1000) {
                 this.samples = [];
                 this.sampleGeneration++;
             }
@@ -549,7 +665,7 @@ export class ContestWatcher {
         const finish = (message) => { analysis.outcome = message; this.note(message); };
         let preparing = false;
         try {
-            if (!this.historyCache || Date.now() - this.historyCache.at >= (this.historyCache.value.issue ? 30000 : 60000)) {
+            if (!this.historyCache || Date.now() - this.historyCache.at >= 30000) {
                 let value;
                 try {
                     if (config.autoHistory && !config.history)
@@ -655,7 +771,7 @@ export class ContestWatcher {
             const order = { symbol: config.symbol, volume: opening ? config.volume : Math.min(config.volume, current.closable),
                 direction: ['open_long', 'close_short'].includes(decision.action) ? 'buy' : 'sell', offset: opening ? 'open' : 'close' };
             preparing = true;
-            const plan = await this.contest.prepare({ sessionId: runId, operation: 'place_order', order }, identity, signal);
+            const plan = await this.contest.prepare({ sessionId: runId, operation: 'place_order', order }, identity, signal, config.executionMode ?? 'manual');
             if (signal.aborted || !this.state.running || this.state.runId !== runId || generation !== this.sampleGeneration || Date.now() >= this.state.expiresAt) {
                 await this.contest.dismiss(plan.id, runId);
                 analysis.outcome = '生成期间运行状态发生变化，计划已取消。';
@@ -675,11 +791,40 @@ export class ContestWatcher {
             analysis.planId = plan.id;
             analysis.planStatus = 'prepared';
             this.state.phase = 'waiting_plan';
-            finish(`Jev ${labels[decision.action]}，已生成计划 ${plan.id}；请在比赛计划中核对并确认。`);
+            // Record the prepared plan before submitting. Stop/restart cannot replay a decision.
+            await this.save();
+            if (config.executionMode === 'automatic') {
+                try {
+                    const result = await this.contest.execute(plan.id, runId, async () => {
+                        check();
+                        if (await this.traderRunning())
+                            throw new Error('AI 交易员已启动，本轮 JEV 自动提交已取消。');
+                        check();
+                        const authorization = this.state.executionAuthorization;
+                        if (this.state.config?.executionMode !== 'automatic' || authorization?.version !== AUTOMATIC_TRADING_CONSENT
+                            || authorization.runId !== runId || Date.now() >= this.state.expiresAt || generation !== this.sampleGeneration
+                            || Date.now() - decision.time > 60000)
+                            throw new Error('自动下单授权或本轮决策已失效。');
+                    });
+                    analysis.planStatus = 'submitted';
+                    finish(`Jev ${labels[decision.action]}，自动提交结果：${result.status}；委托和成交以比赛柜台回执为准。`);
+                }
+                catch (error) {
+                    await this.contest.dismiss(plan.id, runId).catch(() => { });
+                    throw error;
+                }
+            }
+            else
+                finish(`Jev ${labels[decision.action]}，已生成计划 ${plan.id}；请在比赛计划中核对并确认。`);
         }
         catch (error) {
             analysis.outcome = signal.aborted ? '盯盘已停止，本轮分析已取消。' : error instanceof Error ? error.message : 'Jev 分析失败，已暂停。';
-            if (!signal.aborted && !preparing && this.retryRead(error))
+            if (!signal.aborted && error instanceof ContestQuotaError && error.bucket === 'trade') {
+                this.state.nextDecisionAt = Date.now() + (error.retryAfterSeconds ?? 60) * 1000;
+                this.note(`${error.message} 期间继续采集行情，额度恢复后重新判断。`);
+                analysis.outcome = this.state.message;
+            }
+            else if (!signal.aborted && (!preparing || error instanceof ContestQuotaError) && this.retryRead(error))
                 analysis.outcome = this.state.message;
             else if (!signal.aborted) {
                 this.state.running = false;

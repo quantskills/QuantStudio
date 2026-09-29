@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import { FactorContestService } from '../src/factor-contest-service.ts'
-import { FactorApiError, type FactorRuntime } from '../src/factor-contest-cli.ts'
+import { FactorApiError, FactorCliInputError, type FactorRuntime } from '../src/factor-contest-cli.ts'
 import { FACTOR_CONTEST_ID, type FactorPlanAction } from '../src/factor-contest-types.ts'
 
 const homes: string[] = []
@@ -41,6 +41,56 @@ async function fixture() {
     setBalance: (v: number) => { balance = v }, setContent: (v: string) => { content = v }, mutations: () => arena.mock.calls.filter(([, , mutation]) => mutation) }
 }
 describe('factor contest lifecycle and isolation', () => {
+  it.each(['factor_create', 'factor_run'])('records a known local %s rejection as failed without sending another run', async command => {
+    const f = await fixture(); await f.connect(); const budgetId = await f.authorize()
+    const base = f.cli.getMockImplementation()!
+    f.cli.mockImplementation((runtime, args, signal) => args[0] === command ? Promise.reject(new FactorCliInputError()) : base(runtime, args, signal))
+    const run = await f.service.runCandidate('session1', budgetId, candidate, identity)
+    expect(run.status).toBe('failed')
+    expect(run.workflowId).toBe(command === 'factor_run' ? 'created1' : undefined)
+    expect((await f.service.status()).budgets[0]?.status).toBe('stopped')
+    await expect(f.service.runCandidate('session1', budgetId, { ...candidate, requestId: 'another' }, identity)).rejects.toThrow('授权')
+    expect(f.cli.mock.calls.filter(([, args]) => args[0] === 'factor_run')).toHaveLength(command === 'factor_run' ? 1 : 0)
+  })
+  it('allows the real unsubmitted validating state through pool edits, candidate changes and submission preparation', async () => {
+    const f = await fixture(); await f.connect(); f.setPool({ ...draft(), status: 'validating' })
+    for (const action of [
+      { kind: 'update-pool', name: '测试池修改', style: '反转' },
+      { kind: 'add-factor', workflowId: 'w6' },
+      { kind: 'replace-factor', factorId: 'f0', workflowId: 'w6' },
+      { kind: 'remove-factor', factorId: 'f0' },
+      { kind: 'submit-pool' },
+    ] as FactorPlanAction[]) {
+      const p = await f.service.prepare('session1', action, identity)
+      await expect(f.service.confirm(p.id, 'session1')).resolves.toMatchObject({ status: 'completed' })
+    }
+    expect(f.mutations()).toHaveLength(5)
+  })
+  it.each([
+    { status: 'validating', submitted_at: '2026-09-29' },
+    { status: 'validating', cycle_locked: true },
+    { status: 'validating', settling: true },
+    { status: 'submitting' },
+  ])('still blocks pool mutations during submission or settlement: %j', async change => {
+    const f = await fixture(); await f.connect(); f.setPool({ ...draft(), ...change })
+    await expect(f.service.prepare('session1', { kind: 'remove-factor', factorId: 'f0' }, identity)).rejects.toThrow('当前不可修改')
+    expect(f.mutations()).toHaveLength(0)
+  })
+  it('drops connected state, stale inspection and active authorizations when login expires', async () => {
+    const f = await fixture(); await f.connect(); await f.authorize(); await f.service.inspect()
+    vi.mocked(f.runtime.identity).mockRejectedValue(new FactorApiError('LOGIN_REQUIRED'))
+    await expect(f.service.query({ kind: 'workflows' })).rejects.toThrow('登录已失效')
+    const state = await f.service.status()
+    expect(state.phase).toBe('error'); expect(state.inspection).toBeUndefined()
+    expect(state.budgets[0]!.status).toBe('stopped')
+    expect(state.message).toContain('重新连接')
+    await expect(f.service.runCandidate('session1', state.budgets[0]!.id, candidate, identity)).rejects.toThrow('连接并验证')
+  })
+  it('returns an actionable empty scores state before a pool exists', async () => {
+    const f = await fixture(); await f.connect(); f.setPool(null)
+    await expect(f.service.query({ kind: 'scores' })).resolves.toEqual({ scores: [], message: expect.stringContaining('创建因子池') })
+    expect(f.arena.mock.calls.some(([path]) => path.endsWith('/scores'))).toBe(false)
+  })
   it('aborts a slow account inspection and releases the queue for the next tab', async () => {
     const f = await fixture(); await f.connect()
     const base = f.cli.getMockImplementation()!, controller = new AbortController()

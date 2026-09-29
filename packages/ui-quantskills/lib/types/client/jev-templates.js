@@ -7,6 +7,17 @@ export const templates = [
     { id: 'trend', name: '趋势回调', description: '确认均线方向，等待回踩后恢复' },
     { id: 'breakout', name: '突破跟随', description: '等待收盘突破前高或前低，限制追价' },
 ];
+export function selectedContracts(config, catalog = products) {
+    return config.contracts ?? (config.symbol ? [{ symbol: config.symbol, instrument: configuredInstrument(config, catalog) }] : []);
+}
+export function withContracts(config, contracts) {
+    const first = contracts[0];
+    const { contracts: _previous, ...base } = config;
+    if (!first)
+        return { ...base, symbol: '', history: undefined, contracts: [] };
+    return { ...withInstrument(base, first.instrument), symbol: first.symbol, contracts,
+        history: first.symbol === config.symbol ? config.history : undefined };
+}
 export function instrumentFor(symbol, catalog = products) {
     const product = futuresProduct(symbol) ?? (symbol ? '' : 'rb');
     const preset = catalog.find(item => item.product === product);
@@ -21,7 +32,8 @@ export function withInstrument(config, instrument) {
     const oldTick = config.instrument?.tickSize ?? config.rangeRules?.tickSize ?? config.signalRules?.tickSize;
     const oldProduct = config.instrument?.product ?? futuresProduct(config.symbol);
     const sameMarket = oldProduct === instrument.product && (config.instrument?.exchange ?? config.autoHistory?.exchange ?? instrument.exchange) === instrument.exchange;
-    return { ...config, instrument, builtInTemplate: config.builtInTemplate === 'rb-range' && config.rangeRules ? 'range' : config.builtInTemplate,
+    const symbol = futuresProduct(config.symbol) === instrument.product.toLowerCase() ? config.symbol : '';
+    return { ...config, instrument, ...(config.contracts ? { contracts: [{ symbol, instrument }, ...config.contracts.slice(1)] } : {}), builtInTemplate: config.builtInTemplate === 'rb-range' && config.rangeRules ? 'range' : config.builtInTemplate,
         symbol: futuresProduct(config.symbol) === instrument.product.toLowerCase() ? config.symbol : '', history: sameMarket ? config.history : undefined,
         autoHistory: config.autoHistory ? { ...config.autoHistory, exchange: instrument.exchange } : undefined,
         maxSpread: Number(((oldTick ? (config.maxSpread ?? oldTick * 2) / oldTick : 2) * instrument.tickSize).toPrecision(12)),
@@ -29,6 +41,11 @@ export function withInstrument(config, instrument) {
         ...(config.signalRules ? { signalRules: { ...config.signalRules, tickSize: instrument.tickSize } } : {}) };
 }
 export function withSymbol(config, symbol, catalog = products) {
+    if (config.contracts) {
+        const { contracts, ...single } = config;
+        const changed = withSymbol(single, symbol, catalog);
+        return { ...changed, contracts: [{ symbol, instrument: configuredInstrument(changed, catalog) }, ...contracts.slice(1)] };
+    }
     // Do not select a different market for intermediate keystrokes (e.g. I -> IF -> IF2612).
     const product = futuresProduct(symbol);
     if (!product || product === config.instrument?.product.toLowerCase())
@@ -41,6 +58,21 @@ export function withSymbol(config, symbol, catalog = products) {
     return { ...withInstrument(config, instrument), symbol };
 }
 export function instrumentIssue(config, catalog = products) {
+    if (config.contracts) {
+        if (!config.contracts.length)
+            return '请勾选至少一个品种并填写实际合约。';
+        const symbols = new Set();
+        for (const item of config.contracts) {
+            const { contracts: _contracts, ...single } = config;
+            const issue = instrumentIssue({ ...single, symbol: item.symbol, instrument: item.instrument }, catalog);
+            if (issue)
+                return `${catalog.find(p => p.product === item.instrument.product)?.name ?? item.instrument.product.toUpperCase()}：${issue}`;
+            if (symbols.has(item.symbol.toLowerCase()))
+                return `合约 ${item.symbol} 重复，请保留一项。`;
+            symbols.add(item.symbol.toLowerCase());
+        }
+        return undefined;
+    }
     if (!futuresContractPattern.test(config.symbol))
         return '请输入实际交割合约，例如 m2701、MA701、IF2612 或 l2610F。';
     const product = futuresProduct(config.symbol), instrument = configuredInstrument(config, catalog), known = catalog.find(item => item.product === product);
@@ -67,7 +99,7 @@ export function rangeTemplate(symbol = '') {
             roundTripCostTicks: 2, minRewardCostRatio: 2, stopLossTicks: 8, takeProfitTicks: 12 } };
 }
 export function makeTemplate(kind, current) {
-    const base = { ...withInstrument(rangeTemplate(current.symbol), current.instrument ?? instrumentFor(current.symbol)), decisionMode: current.decisionMode ?? 'jev' };
+    const base = { ...withInstrument(rangeTemplate(current.symbol), current.instrument ?? instrumentFor(current.symbol)), contracts: current.contracts, executionMode: current.executionMode, decisionMode: current.decisionMode ?? 'jev' };
     if (kind === 'range')
         return base;
     const common = { ...base, rangeRules: undefined, builtInTemplate: undefined };

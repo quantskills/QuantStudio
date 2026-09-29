@@ -1,0 +1,80 @@
+diff --git a/lib/index.js b/lib/index.js
+index 58230af95e3649f5960371e6ce4ccb8f5727c9ae..1ab4920f737008511526942842c1c5cd562b3e72 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -541,11 +541,44 @@ var AgentRegistry = class extends Service {
+ 	* @param options - shared identity, session seed/metadata, and agent options.
+ 	* @returns the handle after setup, rollback-covered publication, and loop start complete.
+ 	*/
++
++	sessionLifecycles = new Map();
++	removedSessions = new Set();
++	async trackSessionLifecycle(id, start) {
++		if (this.removedSessions.has(id)) throw new Error("session is being deleted");
++		if (this.sessionLifecycles.has(id)) throw new Error("session lifecycle already exists");
++		const pending = Promise.resolve().then(start);
++		this.sessionLifecycles.set(id, pending);
++		try {
++			const handle = await pending;
++			this.sessionLifecycles.set(id, handle);
++			return handle;
++		} catch (error) {
++			if (this.sessionLifecycles.get(id) === pending) this.sessionLifecycles.delete(id);
++			throw error;
++		}
++	}
++	/** Product-owned deletion: fence activation, then drain the exact idle handle. */
++	async retireSession(id) {
++		this.removedSessions.add(id);
++		try {
++			const handle = await this.sessionLifecycles.get(id);
++			const agent = this.get(id);
++			if (agent?.status === "running") throw new Error("会话正在运行，请停止后再删除。");
++			if (agent && handle?.agent !== agent) throw new Error("无法安全关闭此会话，请重启应用后重试。");
++			await handle?.dispose();
++			this.sessionLifecycles.delete(id);
++		} catch (error) {
++			this.removedSessions.delete(id);
++			throw error;
++		}
++	}
++	releaseSessionRemoval(id) { this.removedSessions.delete(id); }
+ 	async create(options) {
+ 		const ownerCtx = this.ctx;
+ 		const { target } = this.requireFactory();
+ 		const receiver = getTraceable(ownerCtx, target);
+-		return Reflect.apply(target.createAgent, receiver, [ownerCtx, options]);
++		return this.trackSessionLifecycle(options.sessionId, () => Reflect.apply(target.createAgent, receiver, [ownerCtx, options]));
+ 	}
+ 	/**
+ 	* Load a persisted session and resume an agent on it through the registered
+@@ -558,7 +591,7 @@ var AgentRegistry = class extends Service {
+ 		const ownerCtx = this.ctx;
+ 		const { target } = this.requireFactory();
+ 		const receiver = getTraceable(ownerCtx, target);
+-		return Reflect.apply(target.resume, receiver, [ownerCtx, options]);
++		return this.trackSessionLifecycle(options.resumeSessionId, () => Reflect.apply(target.resume, receiver, [ownerCtx, options]));
+ 	}
+ 	/**
+ 	* Register a live agent. Throws if an agent with the same id is already
+@@ -632,6 +665,7 @@ var AgentRegistry = class extends Service {
+ 		/* v8 ignore next -- enter() rejects replacement while this single-shot detach capability is live. */
+ 		if (this.store.get(entry.id) !== entry) return;
+ 		this.store.delete(entry.id);
++		if (this.sessionLifecycles.get(entry.id)?.agent === entry.agent) this.sessionLifecycles.delete(entry.id);
+ 		if (!entry.announced) return;
+ 		this.emitDisposed(entry);
+ 	}
+diff --git a/lib/types/index.d.ts b/lib/types/index.d.ts
+index 1c93076fce74cbbc408a81bb9e2f3dac74af62e5..595e5dbe39066833bf2c026c181bc334978da556 100644
+--- a/lib/types/index.d.ts
++++ b/lib/types/index.d.ts
+@@ -200,6 +200,8 @@ export interface AgentFactory {
+  * nested lineage that starts an owning-fiber unload is excluded from its own drain.
+  */
+ export declare class AgentRegistry extends Service {
++    retireSession(id: SessionId): Promise<void>;
++    releaseSessionRemoval(id: SessionId): void;
+     private store;
+     private factory;
+     private readonly initiators;

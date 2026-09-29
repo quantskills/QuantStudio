@@ -9,8 +9,8 @@ function isBackdrop(event: { target: EventTarget; currentTarget: HTMLDialogEleme
 }
 
 /** Native modal: top-layer rendering, inert background and browser focus containment. */
-export function ActionDialog({ title, children, busy = false, error, wide = false, drawer = false, onClose }: {
-  title: string; children: ReactNode; busy?: boolean; error?: string | undefined; wide?: boolean; drawer?: boolean; onClose(): void
+export function ActionDialog({ title, children, busy = false, error, wide = false, drawer = false, settings = false, dismissOnBackdrop = false, onClose }: {
+  title: string; children: ReactNode; busy?: boolean; error?: string | undefined; wide?: boolean; drawer?: boolean; settings?: boolean; dismissOnBackdrop?: boolean; onClose(): void
 }) {
   const ref = useRef<HTMLDialogElement>(null)
   const backdropPress = useRef(false)
@@ -26,14 +26,14 @@ export function ActionDialog({ title, children, busy = false, error, wide = fals
       if (trigger?.isConnected) trigger.focus()
     }
   }, [])
-  return <dialog ref={ref} className={`${css.dialog}${drawer ? ' qs-trading-drawer' : ''}`} data-wide={wide || undefined} aria-labelledby={titleId} aria-modal="true" aria-busy={busy}
+  return <dialog ref={ref} className={`${css.dialog}${drawer ? ' qs-trading-drawer' : ''}${settings ? ' qs-settings-sheet' : ''}`} data-wide={wide || undefined} aria-labelledby={titleId} aria-modal="true" aria-busy={busy}
     onPointerDown={event => {
-      backdropPress.current = drawer && !busy && event.button === 0 && isBackdrop(event)
+      backdropPress.current = (drawer || settings || dismissOnBackdrop) && !busy && event.button === 0 && isBackdrop(event)
     }}
     onPointerCancel={() => { backdropPress.current = false }}
     onClick={event => {
       // Native backdrop events target the dialog too; ignore its padding and drags from inside.
-      const dismiss = backdropPress.current && drawer && !busy && event.button === 0 && isBackdrop(event)
+      const dismiss = backdropPress.current && (drawer || settings || dismissOnBackdrop) && !busy && event.button === 0 && isBackdrop(event)
       backdropPress.current = false
       if (dismiss) onClose()
     }}

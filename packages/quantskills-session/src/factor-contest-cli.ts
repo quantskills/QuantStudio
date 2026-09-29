@@ -12,6 +12,22 @@ import type { FactorCredentials } from './factor-contest-types.ts'
 const GATEWAY = 'https://www.pandaaiquant.com/pandaApi'
 const ARENA = 'https://api.pandaaiquant.com'
 
+export class FactorCliInputError extends Error {
+  constructor() { super('因子 CLI 参数解析失败，尚未向平台发起本次操作；请检查公式与参数。') }
+}
+
+/** Bind option values explicitly: argparse treats a formula starting with '-' as another option. */
+function bindCliValues(args: readonly string[]): string[] {
+  const values = new Set(['--formula', '--code', '--name', '--start-date', '--end-date',
+    '--adjustment-cycle', '--group-number', '--factor-direction', '--timeout', '--limit', '--page'])
+  const result: string[] = []
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i]!
+    result.push(values.has(arg) && i + 1 < args.length ? `${arg}=${args[++i]}` : arg)
+  }
+  return result
+}
+
 /** Keep Python's deeply nested dependencies below Windows' legacy path limit.
  * The complete logical runtime path (including its UUID) keeps homes and updates isolated.
  * Credentials and persisted competition state remain in the original DSH home.
@@ -26,6 +42,7 @@ export class FactorApiError extends Error {
   constructor(readonly code: string, readonly rejected = false) {
     super(({ LOGIN_REQUIRED: '因子账户登录已失效，请重新连接。', POOL_NOT_FOUND: '尚未创建比赛因子池。',
       MODIFICATION_WINDOW_CLOSED: '当前不在赛事修改窗口内。', DUPLICATE_FACTOR: '赛事已存在相同因子，请核对池内工作流。',
+      WORKFLOW_VERSION_INVALID: '请选择当前因子可更新的新版本；其他工作流请通过移除原因子后重新添加。',
       INSUFFICIENT_BALANCE: '算力余额不足。', LOGIN_FAILED: '登录失败，请核对手机号和密码。',
     } as Record<string, string>)[code] ?? `因子平台操作未完成（${code}），请刷新状态后核对。`)
   }
@@ -56,6 +73,12 @@ export class OfficialFactorRuntime implements FactorRuntime {
       active.throwIfAborted()
       const output = handle.collected.stdout?.readFrom(0)
       if (!output || output.lossy) throw new Error('因子 CLI 输出超过限制，请缩小查询范围。')
+      const stderr = handle.collected.stderr?.readFrom(0)
+      // pandaai-cli 0.1.7 swallows argparse's SystemExit, so a parse failure can exit with code 0.
+      if (argv.includes('cli') && !output.text.trim() && stderr && !stderr.lossy
+        && /^usage: /m.test(stderr.text) && /^.*: error: (argument |unrecognized arguments:|the following arguments are required:)/m.test(stderr.text)) {
+        throw new FactorCliInputError()
+      }
       if (result.exitCode !== 0 && !output.text.trim().startsWith('{')) throw new Error('因子 CLI 运行失败，请检查 Python、网络和安装状态。')
       return output.text.trim()
     } finally { handle.terminate(); await handle.waitForExit(AbortSignal.timeout(5000)) }
@@ -131,7 +154,7 @@ export class OfficialFactorRuntime implements FactorRuntime {
       // Previously installed versions may still live in the original directory.
       try { await access(this.python(compact)); runtime = compact } catch { /* retain the legacy runtime */ }
     }
-    const text = await this.process([this.python(runtime), '-m', 'cli', '--config', this.configPath(), '--json', ...args], runtime, signal, args[0] === 'factor_run' ? 720_000 : 90_000)
+    const text = await this.process([this.python(runtime), '-m', 'cli', '--config', this.configPath(), '--json', ...bindCliValues(args)], runtime, signal, args[0] === 'factor_run' ? 720_000 : 90_000)
     let body: Record<string, JsonValue>
     try { body = record(JSON.parse(text)) } catch { throw new Error('因子 CLI 返回格式异常，请核对运行记录，勿重复启动。') }
     if (body.success !== true && args[0] !== 'factor_run') throw new FactorApiError(String(record(body.error).type ?? 'CLI_FAILED').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 60))

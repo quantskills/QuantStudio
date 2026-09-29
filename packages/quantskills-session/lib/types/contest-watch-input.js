@@ -13,7 +13,7 @@ const definitions = {
     short_pullback: 'One of the last 3 bar highs touches the fast SMA within pullbackTicks; all highs stay below slow SMA plus tolerance; last close and current price fall below fast SMA, with current price within tolerance.',
     long_breakout: 'Last close and current price exceed the preceding bars high by bufferTicks.', short_breakout: 'Last close and current price fall below the preceding bars low by bufferTicks.',
     long_chase: 'Current price is no more than maxChaseTicks above the preceding high.', short_chase: 'Current price is no more than maxChaseTicks below the preceding low.',
-    exit: 'Assess unrealized P/L before costs against stopLossTicks and takeProfitTicks, or strategy invalidation. Exits require a human-confirmed plan.',
+    exit: 'Assess unrealized P/L before costs against stopLossTicks and takeProfitTicks, or strategy invalidation. The host applies the execution mode configured for this run.',
 };
 /** UI labels are replaced with English definitions and typed facts, never model-translated on every tick. */
 export function englishEvidence(evidence, datasetId) {

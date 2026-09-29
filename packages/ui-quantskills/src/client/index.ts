@@ -1,3 +1,4 @@
+import type { SessionHistoryAccess, SessionFileDeletionAccess } from './ArchivedSessions.tsx'
 import { createElement, type ComponentType } from 'react'
 import { artifactDownload } from './artifact-resource.ts'
 import { retryHostRead } from './remote-read.ts'
@@ -899,6 +900,8 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
             acknowledgeNotification: (id) => { notifications.actions.acknowledge(id) },
             renameSession: (id, title) => renameSession(id, title),
             removeSessions: ids => removeSessions(ids),
+          sessionFiles,
+          archiveSessions: ids => archiveSessions(ids),
             startSession: () => startPlainSession(),
             startAuthoringSession: kind => startAuthoringSession(kind),
             openAgentTeamBuilder: (seed) => { view.actions.requestAgentTeamCreation(seed) },
@@ -940,6 +943,8 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
           acknowledgeNotification: (id) => { notifications.actions.acknowledge(id) },
           renameSession: (id, title) => renameSession(id, title),
           removeSessions: ids => removeSessions(ids),
+          sessionFiles,
+          archiveSessions: ids => archiveSessions(ids),
           startSession: () => startPlainSession(),
           startAuthoringSession: kind => startAuthoringSession(kind),
           openAgentTeamBuilder: (seed) => { view.actions.requestAgentTeamCreation(seed) },
@@ -1123,6 +1128,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
   }
   const contestAccess: ContestAccess = {
     watch: {
+      quote: (query, signal) => unwrapRemote(ctx.remote.quantSkillsSessions.contestQuery(query, signal)),
       varieties: signal => unwrapRemote(ctx.remote.quantSkillsSessions.contestQuery({ kind: 'varieties' }, signal)),
       settings: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestJevSettings()),
       usage: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestJevUsage()),
@@ -1132,7 +1138,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       prepareHistory: request => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchPrepareHistory(request)),
       configure: request => unwrapRemote(ctx.remote.quantSkillsSessions.contestJevConfigure(request)),
       status: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchStatus()),
-      start: config => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchStart({ config, confirmed: true })),
+      start: (config, executionConsent) => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchStart({ config, confirmed: true, ...(executionConsent ? { executionConsent } : {}) })),
       stop: () => unwrapRemote(ctx.remote.quantSkillsSessions.contestWatchStop()),
     },
     status: sessionId => unwrapRemote(ctx.remote.quantSkillsSessions.contestStatus(sessionId ? { sessionId } : {})),
@@ -1218,41 +1224,43 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       openSession(created.sessionId, false); void boundSessions.refresh(lifetime.signal).catch(() => {})
     },
   }
-  const removeSessions = async (ids: readonly SessionId[]): Promise<void> => {
-    const uniqueIds = [...new Set(ids)]
-    if (uniqueIds.length === 0) return
+  const changeSessions = async (ids: readonly SessionId[], action: 'archive' | 'delete', fileTokens?: ReadonlyMap<SessionId, string>): Promise<void> => {
     const current = ctx.sessions.list.getSnapshot().current
-    const archived = new Set<SessionId>()
-    let failure: unknown
-    for (const id of uniqueIds) {
-      try {
-        await ctx.workspaces.archiveSession(id)
-        archived.add(id)
-      } catch (cause: unknown) {
-        failure = cause
-        break
+    const completed = new Set<SessionId>()
+    try {
+      for (const sessionId of new Set(ids)) {
+        await unwrapRemote(ctx.remote.quantSkillsSessions.sessionLifecycle({ sessionId, action, ...(fileTokens?.has(sessionId) ? { filesToken: fileTokens.get(sessionId)! } : {}) }))
+        completed.add(sessionId)
+      }
+    } finally {
+      await Promise.all([boundSessions.refresh(lifetime.signal), agents.refresh()])
+      if (current !== undefined && completed.has(current)) {
+        ++sessionOpenGeneration
+        suppressedPluginSessionId = current
+        view.actions.showPluginConversationIndex()
+        viewActions.navigate('conversations')
       }
     }
-    await Promise.all([boundSessions.refresh(lifetime.signal), agents.refresh()])
-    const error = failure === undefined
-      ? undefined
-      : failure instanceof Error
-        ? failure
-        : new Error('archive session failed', { cause: failure })
-    if (current === undefined || !archived.has(current)) {
-      if (error !== undefined) throw error
-      return
-    }
-    const next = [
-      ...boundSessions.source.getSnapshot().archives,
-      ...agents.source.getSnapshot().archives,
-      ...agents.source.getSnapshot().teamArchives,
-    ].filter(archive => !archived.has(archive.sessionId))
-      .sort((left, right) => right.updatedAt - left.updatedAt)[0]
-    viewActions.navigate('conversations')
-    if (next === undefined) await startPlainSession()
-    else openSession(next.sessionId)
-    if (error !== undefined) throw error
+  }
+  const removeSessions = (ids: readonly SessionId[]) => changeSessions(ids, 'delete')
+  const archiveSessions = (ids: readonly SessionId[]) => changeSessions(ids, 'archive')
+  const sessionFiles: SessionFileDeletionAccess = {
+    preview: async ids => {
+      const result = []
+      for (const sessionId of new Set(ids)) result.push(await unwrapRemote(ctx.remote.quantSkillsSessions.deletionPreview({ sessionId })))
+      return result
+    },
+    remove: previews => changeSessions(previews.map(item => item.sessionId), 'delete', new Map(previews.map(item => [item.sessionId, item.token]))),
+  }
+  const sessionHistory: SessionHistoryAccess = {
+    files: sessionFiles,
+    list: () => unwrapRemote(ctx.remote.quantSkillsSessions.archivedConversations()),
+    archive: archiveSessions,
+    remove: removeSessions,
+    restore: async sessionId => {
+      await unwrapRemote(ctx.remote.quantSkillsSessions.sessionLifecycle({ sessionId, action: 'restore' }))
+      await Promise.all([boundSessions.refresh(lifetime.signal), agents.refresh()])
+    },
   }
   let conversation: IConversation | undefined
   ctx.inject(['conversation'], (scope: ClientContext) => {
@@ -2044,6 +2052,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
     () => ctx.slots.register({
       name: 'quantskills.page',
       inject: (): QuantSkillsAppInjected => ({
+        sessionHistory,
         managedWorkspace: options.mode === 'native-plugin',
         hooks: {
           store: view.store,

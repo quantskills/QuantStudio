@@ -53,10 +53,11 @@ export function clampWidth(px, min, max) {
  * @param details - details width preference in px (0 = closed).
  * @param sidebarReservation - transient minimum width requested by mounted overlays.
  * @param detailsReservation - transient minimum right-column width requested by mounted workbenches.
+ * @param sidebarExclusive - an overlay replaces the native rail; only its reservation consumes width.
  * @returns resolved widths; details 0 means visually closed (never unmounted), while a closed sidebar keeps its compact rail.
  */
 export function computeColumns(viewport, sidebar, details, sidebarReservation = 0, detailsReservation = 0, sidebarExclusive = false) {
-    // The sidebar is fixed at its preference (or the rail) — it never concedes.
+    // Exclusive overlays own their entire width, including zero for mobile drawers.
     const preferredSidebar = sidebarExclusive ? 0 : sidebar === 0
         ? SIDEBAR_COLLAPSED
         : clampWidth(sidebar, SIDEBAR_MIN, SIDEBAR_MAX);

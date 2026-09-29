@@ -1,3 +1,6 @@
+import { ArchivedSessions, ArchiveSessionConfirmation, DeleteSessionConfirmation, SessionHistoryMenu, type SessionHistoryAccess, type SessionFileDeletionAccess } from './ArchivedSessions.tsx'
+import { SessionActionsMenu } from './SessionActionsMenu.tsx'
+import { ArchiveBoxIcon } from '@phosphor-icons/react'
 import { EXPERT_PRESETS } from './expert-presets.ts'
 import { TEAM_PRESETS } from './team-presets.ts'
 import { ProductIntro } from './ProductIntro.tsx'
@@ -193,6 +196,7 @@ function useQuantSkillsDocumentAppearance(
 
 /** Registration-time injected application services and observable controllers. */
 export interface QuantSkillsAppInjected {
+  sessionHistory?: SessionHistoryAccess
   manualSkillSave?: ManualSkillSave
   readSkillDeclaration: (versionId: string, signal: AbortSignal) => Promise<string>
 
@@ -331,6 +335,8 @@ export interface QuantSkillsPluginFrameInjected {
   openSession: (id: SessionId) => void
   acknowledgeNotification: (id: SessionId) => void
   renameSession: (id: SessionId, title: string) => Promise<void>
+  sessionFiles?: SessionFileDeletionAccess | undefined
+  archiveSessions?: ((ids: readonly SessionId[]) => Promise<void>) | undefined
   removeSessions: (ids: readonly SessionId[]) => Promise<void>
   startSession: () => Promise<void>
   startAuthoringSession: (kind: QuantSkillsAuthoringKind, initialRequest?: string) => Promise<void>
@@ -401,6 +407,8 @@ export interface QuantSkillsFrameInjected {
   syncNotifications: (observations: readonly QuantSkillsNotificationObservation[]) => void
   acknowledgeNotification: (id: SessionId) => void
   renameSession: (id: SessionId, title: string) => Promise<void>
+  sessionFiles?: SessionFileDeletionAccess | undefined
+  archiveSessions?: ((ids: readonly SessionId[]) => Promise<void>) | undefined
   removeSessions: (ids: readonly SessionId[]) => Promise<void>
   startSession: () => Promise<void>
   startAuthoringSession: (kind: QuantSkillsAuthoringKind, initialRequest?: string) => Promise<void>
@@ -435,7 +443,7 @@ type PageProps = QuantSkillsAppProps & {
 /** DSH-compatible root frame that keeps the stock conversation services while replacing the stock visual shell. */
 export function QuantSkillsFrame({
   useStore, actions, useSessions, useView, useCatalog, useBoundSessions, useAgents, useNotifications,
-  renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, startSession,
+  renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession,
   startAuthoringSession, openAgentTeamBuilder,
 }: QuantSkillsFrameProps) {
   const sidebarOpen = useStore(state => state.sidebarOpen)
@@ -581,6 +589,8 @@ export function QuantSkillsFrame({
           openSession={openNotifiedSession}
           renameSession={renameSession}
           removeSessions={removeSessions}
+        archiveSessions={archiveSessions}
+        sessionFiles={sessionFiles}
           startSession={startSession}
           startAuthoringSession={startAuthoringSession}
           openAgentTeamBuilder={openAgentTeamBuilder}
@@ -605,7 +615,7 @@ export function QuantSkillsFrame({
 
 function ConversationFrame({
   currentPlain, currentSkill, currentAgent, currentTeam, plainArchives, skillArchives, agentArchives, teamArchives,
-  catalog, archivesOpen, unreadBySession, openSession, renameSession, removeSessions, startSession,
+  catalog, archivesOpen, unreadBySession, openSession, renameSession, removeSessions, archiveSessions, sessionFiles, startSession,
   startAuthoringSession, openAgentTeamBuilder, sidebarOnly = false,
   drawerWidth: controlledDrawerWidth, onDrawerWidthChange, onCollapseDrawer, interfaceScale = 1, children,
 }: {
@@ -622,6 +632,8 @@ function ConversationFrame({
   unreadBySession: Readonly<Record<string, { readonly updatedAt: number; readonly runState: 'failed' | 'completed' }>>
   openSession: (id: SessionId) => void
   renameSession: (id: SessionId, title: string) => Promise<void>
+  sessionFiles?: SessionFileDeletionAccess | undefined
+  archiveSessions?: ((ids: readonly SessionId[]) => Promise<void>) | undefined
   removeSessions: (ids: readonly SessionId[]) => Promise<void>
   startSession: () => Promise<void>
   startAuthoringSession: (kind: QuantSkillsAuthoringKind, initialRequest?: string) => Promise<void>
@@ -639,6 +651,7 @@ function ConversationFrame({
   const [renameError, setRenameError] = useState<string>()
   const [renaming, setRenaming] = useState(false)
   const [pendingRemoval, setPendingRemoval] = useState<ConversationRemovalRequest>()
+  const [pendingArchive, setPendingArchive] = useState<readonly ConversationRow[]>()
   const [removing, setRemoving] = useState(false)
   const [managing, setManaging] = useState(false)
   const [selectedSessionIds, setSelectedSessionIds] = useState<ReadonlySet<SessionId>>(() => new Set())
@@ -661,7 +674,7 @@ function ConversationFrame({
     ...skillArchives.map(archive => ({ kind: 'skill' as const, archive })),
     ...agentArchives.map(archive => ({ kind: 'agent' as const, archive })),
     ...teamArchives.map(archive => ({ kind: 'team' as const, archive })),
-  ].sort((left, right) => right.archive.updatedAt - left.archive.updatedAt)
+  ].filter(row => !row.archive.archived).sort((left, right) => right.archive.updatedAt - left.archive.updatedAt)
   const normalizedSearch = sessionSearch.trim().toLocaleLowerCase('zh-CN')
   const matchesSearch = (row: ConversationRow): boolean => normalizedSearch === ''
     || conversationRowSearchText(row, catalog).includes(normalizedSearch)
@@ -764,6 +777,27 @@ function ConversationFrame({
       setRemoving(false)
     }
   }
+  const confirmArchive = async (): Promise<void> => {
+    if (!archiveSessions || !pendingArchive) return
+    const ids = pendingArchive.filter(row => !row.archive.running).map(row => row.archive.sessionId)
+    if (ids.length === 0) return
+    setRemoving(true)
+    setError(undefined)
+    try {
+      await archiveSessions(ids)
+      setPendingArchive(undefined)
+      setSelectedSessionIds(new Set())
+      setManaging(false)
+    } catch (cause: unknown) {
+      setError(cause instanceof Error ? cause.message : String(cause))
+    } finally {
+      setRemoving(false)
+    }
+  }
+  const requestArchive = archiveSessions ? (row: ConversationRow) => {
+    setError(undefined)
+    setPendingArchive([row])
+  } : undefined
   const requestRename = (row: ConversationRow): void => {
     setPendingRename(row)
     setRenameDraft(conversationRowTitle(row, catalog))
@@ -889,6 +923,8 @@ function ConversationFrame({
           <span>{allDeletableSelected ? '取消全选' : '全选'}</span>
         </label>
         <small>{selectedSessionIds.size} 已选</small>
+        {archiveSessions && <button type="button" disabled={selectedSessionIds.size === 0 || removing}
+          onClick={() => { setError(undefined); setPendingArchive(allRows.filter(row => selectedSessionIds.has(row.archive.sessionId) && !row.archive.running)) }}><ArchiveBoxIcon size={15}/>归档</button>}
         <button
           type="button"
           disabled={selectedSessionIds.size === 0}
@@ -917,6 +953,7 @@ function ConversationFrame({
         currentSessionId={currentSessionId}
         openSession={openSession}
         requestRename={requestRename}
+        requestArchive={requestArchive}
         requestRemoval={(row) => {
           setError(undefined)
           setPendingRemoval({ kind: 'single', rows: [row] })
@@ -933,6 +970,7 @@ function ConversationFrame({
         currentSessionId={currentSessionId}
         openSession={openSession}
         requestRename={requestRename}
+        requestArchive={requestArchive}
         requestRemoval={(row) => {
           setError(undefined)
           setPendingRemoval({ kind: 'single', rows: [row] })
@@ -1017,8 +1055,17 @@ function ConversationFrame({
       onCancel={() => { if (!renaming) setPendingRename(undefined) }}
       onConfirm={(title) => { void confirmRename(pendingRename, title) }}
     />}
+    {pendingArchive !== undefined && <ArchiveSessionConfirmation
+      title={pendingArchive.length === 1 ? `「${conversationRowTitle(pendingArchive[0]!, catalog)}」` : `选中的 ${pendingArchive.length} 个会话`}
+      busy={removing}
+      error={error}
+      onClose={() => { if (!removing) setPendingArchive(undefined) }}
+      onConfirm={() => { void confirmArchive() }}
+    />}
     {pendingRemoval !== undefined && <RemoveSessionDialog
       request={pendingRemoval}
+      filesAccess={sessionFiles}
+      onComplete={() => { setSelectedSessionIds(new Set()); setManaging(false) }}
       catalog={catalog}
       retainedRunningCount={pendingRemoval.kind === 'clear' ? running.length : 0}
       busy={removing}
@@ -1124,7 +1171,7 @@ function groupConversationRowsByDate(
     { key: 'last-seven-days', label: '最近7天', rows: [] },
     { key: 'history', label: '历史', rows: [] },
   ]
-  for (const row of [...rows].sort((left, right) => right.archive.updatedAt - left.archive.updatedAt)) {
+  for (const row of [...rows].filter(row => !row.archive.archived).sort((left, right) => right.archive.updatedAt - left.archive.updatedAt)) {
     const updatedAt = row.archive.updatedAt
     const group = updatedAt >= hourStart
       ? groups[0]
@@ -1183,7 +1230,7 @@ function ConversationNotificationMenu({ rows, unreadCount, catalog, openSession 
   </section>
 }
 
-function RemoveSessionDialog({ request, catalog, retainedRunningCount, busy, error, onCancel, onConfirm }: {
+function RemoveSessionDialog({ request, catalog, retainedRunningCount, busy, error, onCancel, onConfirm, filesAccess, onComplete }: {
   request: ConversationRemovalRequest
   catalog: QuantSkillsCatalogSnapshot
   retainedRunningCount: number
@@ -1191,40 +1238,18 @@ function RemoveSessionDialog({ request, catalog, retainedRunningCount, busy, err
   error: string | undefined
   onCancel: () => void
   onConfirm: () => void
+  filesAccess?: SessionFileDeletionAccess | undefined
+  onComplete(): void
 }) {
-  const cancelRef = useRef<HTMLButtonElement>(null)
-  useEffect(() => {
-    cancelRef.current?.focus()
-    const closeOnEscape = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape' && !busy) onCancel()
-    }
-    window.addEventListener('keydown', closeOnEscape)
-    return () => { window.removeEventListener('keydown', closeOnEscape) }
-  }, [busy, onCancel])
   const single = request.kind === 'single' ? request.rows[0] : undefined
-  const heading = request.kind === 'single' && single !== undefined
-    ? `删除“${conversationRowTitle(single, catalog)}”会话？`
-    : request.kind === 'clear'
-      ? `清空 ${String(request.rows.length)} 个可删除会话？`
-      : `删除选中的 ${String(request.rows.length)} 个会话？`
-  const confirmLabel = request.kind === 'clear' ? '清空会话' : '删除会话'
-  return <div className={css.dialogBackdrop}>
-    <section className={css.removeDialog} role="dialog" aria-modal="true" aria-labelledby="remove-session-title">
-      <span className={css.removeDialogIcon}><Trash size={20}/></span>
-      <div>
-        <h2 id="remove-session-title">{heading}</h2>
-        <p>{request.kind === 'single' ? '该会话' : '这些会话'}会从 QuantSkills 列表中移除，原始记录仍保留在会话归档中。</p>
-        {retainedRunningCount > 0 && <p>{retainedRunningCount} 个运行中的会话会保留。</p>}
-        {error !== undefined && <p className={css.removeDialogError} role="alert">{error}</p>}
-      </div>
-      <footer>
-        <button ref={cancelRef} type="button" disabled={busy} onClick={onCancel}>取消</button>
-        <button type="button" disabled={busy} className={css.removeConfirmButton} onClick={onConfirm}>
-          {busy ? '处理中…' : confirmLabel}
-        </button>
-      </footer>
-    </section>
-  </div>
+  const heading = single ? `删除“${conversationRowTitle(single, catalog)}”会话？`
+    : request.kind === 'clear' ? `清空 ${request.rows.length} 个可删除会话？` : `删除选中的 ${request.rows.length} 个会话？`
+  return <DeleteSessionConfirmation
+    title={single ? conversationRowTitle(single, catalog) : `选中的 ${request.rows.length} 个会话`}
+    heading={heading}
+    retainedRunningCount={retainedRunningCount} busy={busy} error={error}
+    ids={request.rows.filter(row => !row.archive.running).map(row => row.archive.sessionId)}
+    filesAccess={filesAccess} onClose={onCancel} onConfirm={onConfirm} onComplete={onComplete}/>
 }
 
 function RenameSessionDialog({ row, catalog, draft, busy, error, onDraftChange, onCancel, onConfirm }: {
@@ -1290,7 +1315,7 @@ function RenameSessionDialog({ row, catalog, draft, busy, error, onDraftChange, 
 }
 
 function ConversationSwitchGroup({
-  title, rows, catalog, currentSessionId, openSession, requestRename, requestRemoval,
+  title, rows, catalog, currentSessionId, openSession, requestRename, requestRemoval, requestArchive,
   managing, selectedSessionIds, toggleSelection,
 }: {
   title: string
@@ -1299,6 +1324,7 @@ function ConversationSwitchGroup({
   currentSessionId: SessionId | undefined
   openSession: (id: SessionId) => void
   requestRename: (row: ConversationRow) => void
+  requestArchive?: ((row: ConversationRow) => void) | undefined
   requestRemoval: (row: ConversationRow) => void
   managing: boolean
   selectedSessionIds: ReadonlySet<SessionId>
@@ -1345,25 +1371,13 @@ function ConversationSwitchGroup({
               ? `${assetTitle(catalog, row.archive.binding.assetId)} · 技能`
               : row.kind === 'agent' ? `专家 · ${row.archive.agent.name}` : `专家团 · ${row.archive.team.name}`} · {formatUpdated(row.archive.updatedAt)}</small>
           </span>
-          {row.archive.running ? <StatusDot status="running"/> : <CaretRight/>}
+          {row.archive.running && <StatusDot status="running"/>}
         </button>
-        {!managing && <span className={css.sessionActions}>
-          <button
-            type="button"
-            className={clsx(css.sessionAction, css.sessionRename)}
-            aria-label={`重命名会话 ${conversationRowTitle(row, catalog)}`}
-            title="重命名会话"
-            onClick={() => { requestRename(row) }}
-          ><PencilSimple size={16}/></button>
-          <button
-            type="button"
-            className={clsx(css.sessionAction, css.sessionRemove)}
-            aria-label={`删除会话 ${conversationRowTitle(row, catalog)}`}
-            title={row.archive.running ? '运行中的会话不能删除' : '删除会话'}
-            disabled={row.archive.running}
-            onClick={() => { requestRemoval(row) }}
-          ><Trash size={16}/></button>
-        </span>}
+        {!managing && <SessionActionsMenu
+          title={conversationRowTitle(row, catalog)} running={row.archive.running}
+          onRename={() => requestRename(row)}
+          onArchive={requestArchive ? () => requestArchive(row) : undefined}
+          onRemove={() => requestRemoval(row)}/>}
       </div>)}
     </div>
   </section>
@@ -1393,7 +1407,6 @@ const PRODUCT_NAV_ITEMS: typeof NAV_ITEMS = [
   { page: 'qube', label: 'QUBE', icon: <Cube size={24}/> },
   { page: 'evo', label: 'EVO', icon: <Dna size={24}/> },
   { page: 'contest', label: '比赛', icon: <TrophyIcon size={24}/> },
-  { page: 'fly', label: '果蝇交易员', icon: <Dna size={24}/> },
 ]
 
 const PLUGIN_NAV_WIDTH = 96
@@ -1432,9 +1445,9 @@ function writeResultWorkbenchWidth(width: number): void {
 /** Full-screen QuantSkills application hosted by the stock DSH shell. */
 export function QuantSkillsPluginFrame({
   useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications,
-  renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions,
+  renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles,
   startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails,
-  claimConversationTextScale, openResults, closeResults, close, modelAccess, flyAccess,
+  claimConversationTextScale, openResults, closeResults, close, modelAccess,
 }: QuantSkillsPluginFrameProps) {
   const open = useView(state => state.pluginOpen)
   const page = useView(state => state.page)
@@ -1695,13 +1708,13 @@ export function QuantSkillsPluginFrame({
     data-qs-theme={colorScheme}
     data-qs-background={background.id}
   >
-    <ModelStartup access={modelAccess} flyAccess={flyAccess}/>
+    <ModelStartup access={modelAccess}/>
     {mobile && <header ref={mobileHeaderRef} className={css.mobileHeader} aria-label="移动端工具栏">
       <button type="button" aria-label={mobilePanel === 'navigation' ? '关闭导航' : '打开导航'} aria-expanded={mobilePanel === 'navigation'} aria-controls={mobileNavId}
         onClick={() => { closeResults(); setMobilePanel(current => current === 'navigation' ? undefined : 'navigation') }}>
         {mobilePanel === 'navigation' ? <X size={22}/> : <List size={22}/>}
       </button>
-      <span className={css.mobileTitle}><QuantSkillsBrandMark size={20}/><b>{conversationOpen ? '会话' : [...NAV_ITEMS, ...PRODUCT_NAV_ITEMS].find(item => item.page === page)?.label ?? (page === 'settings' ? '设置' : 'QuantSkills')}</b></span>
+      <span className={css.mobileTitle}><QuantSkillsBrandMark size={20}/><b>{conversationOpen ? '会话' : [...NAV_ITEMS, ...PRODUCT_NAV_ITEMS].find(item => item.page === page)?.label ?? (page === 'settings' ? '设置' : page === 'fly' ? 'AI 交易员' : 'QuantSkills')}</b></span>
       {conversationOpen && <button type="button" aria-label={mobilePanel === 'sessions' ? '关闭会话列表' : '打开会话列表'} aria-expanded={mobilePanel === 'sessions'} aria-controls={mobileSessionsId}
         onClick={() => { closeResults(); setMobilePanel(current => current === 'sessions' ? undefined : 'sessions') }}><ChatsCircle size={22}/></button>}
       {resultSurfaceVisible && <button type="button" aria-label={resultWorkbenchOpen ? '关闭结果预览' : '打开结果预览'} aria-expanded={resultWorkbenchOpen} aria-controls={mobileResultsId}
@@ -1733,8 +1746,8 @@ export function QuantSkillsPluginFrame({
           <span>{item.label}</span>
         </button>)}
         <div className={css.productLinks} role="group" aria-label="PandaAI 产品">
-          {PRODUCT_NAV_ITEMS.map(item => <button key={item.page} type="button" className={clsx(css.pluginNavItem, page === item.page && css.pluginNavItemActive)}
-            aria-current={page === item.page ? 'page' : undefined} onClick={() => actions.navigate(item.page)} title={`${item.label} · ${item.page === 'contest' ? 'AI 交易助手' : '产品介绍'}`}>
+          {PRODUCT_NAV_ITEMS.map(item => <button key={item.page} type="button" className={clsx(css.pluginNavItem, (page === item.page || (item.page === 'contest' && page === 'fly')) && css.pluginNavItemActive)}
+            aria-current={page === item.page || (item.page === 'contest' && page === 'fly') ? 'page' : undefined} onClick={() => actions.navigate(item.page)} title={`${item.label} · ${item.page === 'contest' ? 'AI 交易助手' : '产品介绍'}`}>
             {item.icon}<span>{item.label}</span>
           </button>)}
         </div>
@@ -1763,6 +1776,8 @@ export function QuantSkillsPluginFrame({
               openSession={id => { setMobilePanel(undefined); openNotifiedSession(id) }}
               renameSession={renameSession}
               removeSessions={removeSessions}
+        archiveSessions={archiveSessions}
+        sessionFiles={sessionFiles}
               startSession={startSession}
               startAuthoringSession={startAuthoringSession}
               openAgentTeamBuilder={openAgentTeamBuilder}
@@ -1877,7 +1892,7 @@ export function QuantSkillsRail({
       <div className={css.railLogo}><QuantSkillsBrandMark size={38} /></div>
       <div className={css.railItems}>
         {[...NAV_ITEMS, ...PRODUCT_NAV_ITEMS].map((item) => {
-          const active = page === item.page || (item.page === 'conversations' && page === 'parallel')
+          const active = page === item.page || (item.page === 'conversations' && page === 'parallel') || (item.page === 'contest' && page === 'fly')
           return <button
             key={item.page}
             type="button"
@@ -2994,7 +3009,7 @@ function ConversationPage(props: PageProps) {
     ...skillArchives.map(archive => ({ kind: 'skill' as const, archive })),
     ...agentArchives.map(archive => ({ kind: 'agent' as const, archive })),
     ...teamArchives.map(archive => ({ kind: 'team' as const, archive })),
-  ].sort((left, right) => right.archive.updatedAt - left.archive.updatedAt)
+  ].filter(row => !row.archive.archived).sort((left, right) => right.archive.updatedAt - left.archive.updatedAt)
   const archiveCount = rows.length
   const groups = groupConversationRowsByDate(rows)
   const open = (sessionId: SessionId): void => {
@@ -3016,7 +3031,7 @@ function ConversationPage(props: PageProps) {
   return <div className={css.pageScroll}>
     <PageHeader
       title="会话"
-      subtitle="普通、技能、专家 与 专家团 会话都有独立上下文和真实存档"
+      subtitle="管理普通、技能、专家与专家团的对话；归档会话可在设置中查看"
       action={<div className={css.creationActions}>
         <button type="button" className={css.primaryButton} disabled={creatingSession} onClick={() => { void startSession() }}>
           <Plus/>{creatingSession ? '正在创建…' : '新建会话'}
@@ -3024,6 +3039,7 @@ function ConversationPage(props: PageProps) {
         <button type="button" className={css.outlineButton} onClick={() => {
           void Promise.all([props.refreshBoundSessions(), props.refreshAgents()])
         }}>刷新</button>
+        <button type="button" className={css.outlineButton} onClick={() => { props.actions.setSettingsSection('archives'); props.actions.navigate('settings') }}><ArchiveBoxIcon/>归档会话</button>
       </div>}
     />
     {props.boundSessions.error && <p className={css.notice} role="status">{props.boundSessions.error}</p>}
@@ -3073,6 +3089,7 @@ function ConversationArchiveGroup({ title, rows, props, open }: {
             <button type="button" className={css.archiveNew} aria-label="新建普通会话" onClick={() => {
               void props.startSession()
             }}><Plus/></button>
+          <SessionHistoryMenu id={row.archive.sessionId} title={conversationRowTitle(row, props.catalog)} running={row.archive.running} access={props.sessionHistory}/>
           </article>
         }
         if (row.kind === 'skill') {
@@ -3086,6 +3103,7 @@ function ConversationArchiveGroup({ title, rows, props, open }: {
             <button type="button" className={css.archiveNew} aria-label={`为 ${label} 新建会话`} onClick={() => {
               void props.startBoundSession(row.archive.binding, label)
             }}><Plus/></button>
+          <SessionHistoryMenu id={row.archive.sessionId} title={conversationRowTitle(row, props.catalog)} running={row.archive.running} access={props.sessionHistory}/>
           </article>
         }
         const definition = row.kind === 'agent'
@@ -3115,7 +3133,8 @@ function ConversationArchiveGroup({ title, rows, props, open }: {
               else if (row.kind === 'team' && 'teamId' in definition) void props.startAgentTeamSession(definition)
             }}
           ><Plus/></button>
-        </article>
+        <SessionHistoryMenu id={row.archive.sessionId} title={conversationRowTitle(row, props.catalog)} running={row.archive.running} access={props.sessionHistory}/>
+          </article>
       })}
     </div>
   </section>
@@ -3146,7 +3165,7 @@ function ParallelPage(props: PageProps) {
           ? 'completed' as const
           : archive.runState,
     })),
-  ].sort((left, right) => right.archive.updatedAt - left.archive.updatedAt)
+  ].filter(row => !row.archive.archived).sort((left, right) => right.archive.updatedAt - left.archive.updatedAt)
   const current = rows.find(row => row.archive.sessionId === currentSessionId)
   const loaded = rows.filter(row => row.state === 'running')
   const waiting = rows.filter(row => row.state === 'waiting')
@@ -4503,6 +4522,7 @@ function SettingsPage(props: PageProps) {
   const preferencesReady = settingsStatus === 'ready' && settingsWritable
   const sections: readonly [typeof section, ReactNode, string][] = [
     ['workspace', <FolderOpen/>, '工作区'],
+    ['archives', <ArchiveBoxIcon/>, '归档会话'],
     ['updates', <Clock/>, '自动更新'],
     ['permissions', <Shield/>, '模型与权限'],
     ['models', <Wrench/>, '模型服务'],
@@ -4530,7 +4550,7 @@ function SettingsPage(props: PageProps) {
           <p>界面 {Math.round(interfaceScale * 100)}% · 对话文字 {Math.round(conversationScale * 100)}%</p>
         </aside>
         <section className={css.settingsContent}>
-          {section === 'plugins' ? <PluginSettings {...props}/> : section === 'models' ? <QuantSkillsModelServices access={props.modelAccess} jevAccess={props.contestAccess?.watch}/> : section === 'workspace' ? <WorkspaceSettings props={props}/> : section === 'appearance' ? <>
+          {section === 'archives' ? <ArchivedSessions access={props.sessionHistory}/> : section === 'plugins' ? <PluginSettings {...props}/> : section === 'models' ? <QuantSkillsModelServices access={props.modelAccess} jevAccess={props.contestAccess?.watch}/> : section === 'workspace' ? <WorkspaceSettings props={props}/> : section === 'appearance' ? <>
             <h2>外观</h2>
             <p>QuantSkills 的配色、界面比例和会话文字均可独立调整，并即时预览。</p>
             <QuantSkillsThemePicker

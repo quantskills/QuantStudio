@@ -56,6 +56,12 @@ class Settings(TradingFilters):
     ai_daily_calls: int = Field(default=0, ge=0, le=1000)
     scenes_daily: int = Field(default=0, ge=0, le=30)
     model_calls_unlimited: bool = False
+    execution_mode: Literal['manual', 'automatic'] = 'automatic'
+    decision_engine: Literal['neural', 'llm'] = 'neural'
+    trade_model: str = Field(default='', max_length=1000)
+    trade_instructions: str = Field(default='根据最近行情和当前持仓判断趋势。证据不足时等待，不追逐短暂波动；趋势失效时减仓或平仓。', max_length=4000)
+    llm_max_lots: int = Field(default=1, ge=1, le=500)
+    trade_daily_calls: int = Field(default=0, ge=0, le=100000)
     ai_provider: str = Field(default='',max_length=1000)
     jev_provider: Literal['typesafe'] = 'typesafe'
     jev_enabled: bool = False

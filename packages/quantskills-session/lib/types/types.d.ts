@@ -715,4 +715,29 @@ declare module '@deepseek-ai/dsh-session-projection/types' {
 }
 export type { ModelAccessRequest, ModelAccessResponse, ModelConnection, ModelConnectionDraft, ModelRecommendationRole, ModelServiceDefinition, ModelServiceRecommendation, ModelVerification } from './model-access-types.ts';
 export type { FlyRuntimeStatus, FlyRequest } from './fly-runtime.ts';
+export interface SessionLifecycleRequest {
+    readonly sessionId: SessionId;
+    readonly action: 'archive' | 'restore' | 'delete';
+    /** Issued by deletionPreview; scopes file erasure to the exact reviewed file versions. */
+    readonly filesToken?: string;
+}
+export interface SessionDeletionPreview {
+    readonly sessionId: SessionId;
+    readonly token: string;
+    readonly files: readonly {
+        readonly path: string;
+        readonly bytes: number;
+    }[];
+    readonly retained: readonly {
+        readonly path: string;
+        readonly reason: string;
+    }[];
+}
+export interface ArchivedConversation {
+    readonly sessionId: SessionId;
+    readonly title: string;
+    readonly kind: 'plain' | 'skill' | 'agent' | 'team';
+    readonly updatedAt: number;
+    readonly running: boolean;
+}
 //# sourceMappingURL=types.d.ts.map

@@ -54,6 +54,7 @@ export interface ContestStatus {
   readonly updateAvailable: boolean
   readonly identity?: ContestIdentity
   readonly message: string
+  readonly retryAt?: number
   readonly plans: readonly ContestPlan[]
 }
 

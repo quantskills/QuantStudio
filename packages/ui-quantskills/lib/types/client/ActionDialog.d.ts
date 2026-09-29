@@ -1,13 +1,15 @@
 import { type ReactNode } from 'react';
 import './TradingWorkspace.css';
 /** Native modal: top-layer rendering, inert background and browser focus containment. */
-export declare function ActionDialog({ title, children, busy, error, wide, drawer, onClose }: {
+export declare function ActionDialog({ title, children, busy, error, wide, drawer, settings, dismissOnBackdrop, onClose }: {
     title: string;
     children: ReactNode;
     busy?: boolean;
     error?: string | undefined;
     wide?: boolean;
     drawer?: boolean;
+    settings?: boolean;
+    dismissOnBackdrop?: boolean;
     onClose(): void;
 }): import("react").JSX.Element;
 //# sourceMappingURL=ActionDialog.d.ts.map

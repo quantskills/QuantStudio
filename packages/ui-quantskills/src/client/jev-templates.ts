@@ -11,6 +11,17 @@ export const templates = [
 ] as const
 export type TemplateKind = typeof templates[number]['id'] | 'blank'
 export type Instrument = NonNullable<ContestWatchConfig['instrument']>
+export type WatchContract = NonNullable<ContestWatchConfig['contracts']>[number]
+export function selectedContracts(config: ContestWatchConfig, catalog: readonly FuturesProduct[] = products): WatchContract[] {
+  return config.contracts ?? (config.symbol ? [{ symbol: config.symbol, instrument: configuredInstrument(config, catalog) }] : [])
+}
+export function withContracts(config: ContestWatchConfig, contracts: WatchContract[]): ContestWatchConfig {
+  const first = contracts[0]
+  const { contracts: _previous, ...base } = config
+  if (!first) return { ...base, symbol: '', history: undefined, contracts: [] }
+  return { ...withInstrument(base, first.instrument), symbol: first.symbol, contracts,
+    history: first.symbol === config.symbol ? config.history : undefined }
+}
 export function instrumentFor(symbol: string, catalog: readonly FuturesProduct[] = products): Instrument {
   const product = futuresProduct(symbol) ?? (symbol ? '' : 'rb')
   const preset = catalog.find(item => item.product === product)
@@ -25,7 +36,8 @@ export function withInstrument(config: ContestWatchConfig, instrument: Instrumen
   const oldTick = config.instrument?.tickSize ?? config.rangeRules?.tickSize ?? config.signalRules?.tickSize
   const oldProduct = config.instrument?.product ?? futuresProduct(config.symbol)
   const sameMarket = oldProduct === instrument.product && (config.instrument?.exchange ?? config.autoHistory?.exchange ?? instrument.exchange) === instrument.exchange
-  return { ...config, instrument, builtInTemplate: config.builtInTemplate === 'rb-range' && config.rangeRules ? 'range' : config.builtInTemplate,
+  const symbol = futuresProduct(config.symbol) === instrument.product.toLowerCase() ? config.symbol : ''
+  return { ...config, instrument, ...(config.contracts ? { contracts: [{ symbol, instrument }, ...config.contracts.slice(1)] } : {}), builtInTemplate: config.builtInTemplate === 'rb-range' && config.rangeRules ? 'range' : config.builtInTemplate,
     symbol: futuresProduct(config.symbol) === instrument.product.toLowerCase() ? config.symbol : '', history: sameMarket ? config.history : undefined,
     autoHistory: config.autoHistory ? { ...config.autoHistory, exchange: instrument.exchange } : undefined,
     maxSpread: Number(((oldTick ? (config.maxSpread ?? oldTick * 2) / oldTick : 2) * instrument.tickSize).toPrecision(12)),
@@ -33,6 +45,11 @@ export function withInstrument(config: ContestWatchConfig, instrument: Instrumen
     ...(config.signalRules ? { signalRules: { ...config.signalRules, tickSize: instrument.tickSize } } : {}) }
 }
 export function withSymbol(config: ContestWatchConfig, symbol: string, catalog: readonly FuturesProduct[] = products): ContestWatchConfig {
+  if (config.contracts) {
+    const { contracts, ...single } = config
+    const changed = withSymbol(single, symbol, catalog)
+    return { ...changed, contracts: [{ symbol, instrument: configuredInstrument(changed, catalog) }, ...contracts.slice(1)] }
+  }
   // Do not select a different market for intermediate keystrokes (e.g. I -> IF -> IF2612).
   const product = futuresProduct(symbol)
   if (!product || product === config.instrument?.product.toLowerCase()) return { ...config, symbol, history: undefined }
@@ -45,6 +62,18 @@ export function withSymbol(config: ContestWatchConfig, symbol: string, catalog: 
 }
 
 export function instrumentIssue(config: ContestWatchConfig, catalog: readonly FuturesProduct[] = products): string | undefined {
+  if (config.contracts) {
+    if (!config.contracts.length) return '请勾选至少一个品种并填写实际合约。'
+    const symbols = new Set<string>()
+    for (const item of config.contracts) {
+      const { contracts: _contracts, ...single } = config
+      const issue = instrumentIssue({ ...single, symbol: item.symbol, instrument: item.instrument }, catalog)
+      if (issue) return `${catalog.find(p => p.product === item.instrument.product)?.name ?? item.instrument.product.toUpperCase()}：${issue}`
+      if (symbols.has(item.symbol.toLowerCase())) return `合约 ${item.symbol} 重复，请保留一项。`
+      symbols.add(item.symbol.toLowerCase())
+    }
+    return undefined
+  }
   if (!futuresContractPattern.test(config.symbol)) return '请输入实际交割合约，例如 m2701、MA701、IF2612 或 l2610F。'
   const product = futuresProduct(config.symbol), instrument = configuredInstrument(config, catalog), known = catalog.find(item => item.product === product)
   if (known && !known.enabled) return `${known.name}（${known.product.toUpperCase()}）在柜台品种目录中未启用，请先同步目录或联系比赛服务。`
@@ -68,7 +97,7 @@ export function rangeTemplate(symbol = ''): ContestWatchConfig {
 }
 
 export function makeTemplate(kind: TemplateKind, current: ContestWatchConfig): ContestWatchConfig {
-  const base = { ...withInstrument(rangeTemplate(current.symbol), current.instrument ?? instrumentFor(current.symbol)), decisionMode: current.decisionMode ?? 'jev' as const }
+  const base = { ...withInstrument(rangeTemplate(current.symbol), current.instrument ?? instrumentFor(current.symbol)), contracts: current.contracts, executionMode: current.executionMode, decisionMode: current.decisionMode ?? 'jev' as const }
   if (kind === 'range') return base
   const common = { ...base, rangeRules: undefined, builtInTemplate: undefined }
   if (kind === 'blank') return { ...common, customStrategy: true, strategyName: '我的策略', instructions: '',

@@ -694,6 +694,13 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUpdate_resul
   'createdAt': z.number().readonly(),
   'updatedAt': z.number().readonly(),
 })
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_archivedConversations_result$schema = z.array(z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
+  'title': z.string().readonly(),
+  'kind': z.union([z.literal("skill"), z.literal("agent"), z.literal("plain"), z.literal("team")]).readonly(),
+  'updatedAt': z.number().readonly(),
+  'running': z.boolean().readonly(),
+}))
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringCommit_parameter_0$schema = z.object({
   'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
   'toolCallId': z.string().readonly(),
@@ -880,6 +887,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestCheckUpdat
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -917,6 +925,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestConnect_re
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -954,6 +963,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDisconnect
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -995,6 +1005,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_re
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -1175,6 +1186,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_resul
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -1278,6 +1290,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestStatus_res
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -1315,6 +1328,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestUpdate_res
   'contestId': z.string().readonly(),
 }).readonly().optional(),
   'message': z.string().readonly(),
+  'retryAt': z.number().readonly().optional(),
   'plans': z.array(z.object({
   'id': z.string().readonly(),
   'sessionId': z.string().readonly(),
@@ -1369,7 +1383,16 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchPrepa
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_parameter_0$schema = z.object({
   'name': z.string(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -1449,7 +1472,16 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveT
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_result$schema = z.array(z.object({
   'name': z.string(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -1528,7 +1560,16 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveT
 }))
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_parameter_0$schema = z.object({
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -1605,8 +1646,146 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart
 })]).optional(),
 }),
   'confirmed': z.boolean(),
+  'executionConsent': z.string().optional(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_result$schema = z.object({
+  'markets': z.array(z.intersection(z.object({
+  'phase': z.union([z.literal("checking"), z.literal("sampling"), z.literal("waiting_quote"), z.literal("deciding"), z.literal("waiting_plan")]).optional(),
+  'message': z.string(),
+  'sampleCount': z.number(),
+  'samples': z.array(z.object({
+  'time': z.number(),
+  'price': z.number(),
+  'bid': z.number().optional(),
+  'ask': z.number().optional(),
+})).optional(),
+  'analyses': z.array(z.object({
+  'id': z.string(),
+  'startedAt': z.number(),
+  'responseAt': z.number().optional(),
+  'finishedAt': z.number().optional(),
+  'sampleCount': z.number(),
+  'fromTime': z.number(),
+  'toTime': z.number(),
+  'price': z.number(),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'decision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'outcome': z.string(),
+  'planId': z.string().optional(),
+  'strategyName': z.string().optional(),
+  'strategyVersion': z.string().optional(),
+  'evidence': z.object({
+  'evaluatedAt': z.number(),
+  'decisionMode': z.union([z.literal("jev"), z.literal("strict")]).optional(),
+  'history': z.object({
+  'source': z.string(),
+  'barSeconds': z.number(),
+  'count': z.number(),
+  'from': z.number().optional(),
+  'to': z.number().optional(),
+  'fetchedAt': z.number().optional(),
+  'issue': z.string().optional(),
+  'warning': z.string().optional(),
+  'diagnostic': z.object({
+  'stage': z.string(),
+  'code': z.string(),
+  'retryable': z.boolean(),
+}).optional(),
+}),
+  'features': z.object({
+  'quoteWindowSeconds': z.number(),
+  'quoteCount': z.number(),
+  'lower': z.union([z.literal(null), z.number()]),
+  'upper': z.union([z.literal(null), z.number()]),
+  'widthTicks': z.union([z.literal(null), z.number()]),
+  'lowerTouches': z.number(),
+  'upperTouches': z.number(),
+  'location': z.union([z.literal(null), z.number()]),
+  'reboundTicks': z.union([z.literal(null), z.number()]),
+  'pullbackTicks': z.union([z.literal(null), z.number()]),
+  'spreadTicks': z.union([z.literal(null), z.number()]),
+  'longRewardCostRatio': z.union([z.literal(null), z.number()]),
+  'shortRewardCostRatio': z.union([z.literal(null), z.number()]),
+}),
+  'checks': z.array(z.object({
+  'id': z.string(),
+  'label': z.string(),
+  'state': z.union([z.literal("unknown"), z.literal("pass"), z.literal("fail")]),
+  'detail': z.string(),
+  'actions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'enforcement': z.union([z.literal("hard"), z.literal("reference")]).optional(),
+  'facts': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true)])).optional(),
+})),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+}).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'reviewNotes': z.array(z.string()).optional(),
+})).optional(),
+  'lastDecision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'lastQuoteCheckedAt': z.number().optional(),
+  'nextDecisionAt': z.number().optional(),
+}), z.object({
+  'symbol': z.string(),
+}))).optional(),
+  'executionAuthorization': z.object({
+  'version': z.string(),
+  'acceptedAt': z.number(),
+  'runId': z.string(),
+}).optional(),
   'running': z.boolean(),
   'message': z.string(),
   'strategyNotices': z.array(z.string()).optional(),
@@ -1708,11 +1887,20 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart
 })),
   'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
 }).optional(),
-  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
   'reviewNotes': z.array(z.string()).optional(),
 })).optional(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -1834,6 +2022,143 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart
 })),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatus_result$schema = z.object({
+  'markets': z.array(z.intersection(z.object({
+  'phase': z.union([z.literal("checking"), z.literal("sampling"), z.literal("waiting_quote"), z.literal("deciding"), z.literal("waiting_plan")]).optional(),
+  'message': z.string(),
+  'sampleCount': z.number(),
+  'samples': z.array(z.object({
+  'time': z.number(),
+  'price': z.number(),
+  'bid': z.number().optional(),
+  'ask': z.number().optional(),
+})).optional(),
+  'analyses': z.array(z.object({
+  'id': z.string(),
+  'startedAt': z.number(),
+  'responseAt': z.number().optional(),
+  'finishedAt': z.number().optional(),
+  'sampleCount': z.number(),
+  'fromTime': z.number(),
+  'toTime': z.number(),
+  'price': z.number(),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'decision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'outcome': z.string(),
+  'planId': z.string().optional(),
+  'strategyName': z.string().optional(),
+  'strategyVersion': z.string().optional(),
+  'evidence': z.object({
+  'evaluatedAt': z.number(),
+  'decisionMode': z.union([z.literal("jev"), z.literal("strict")]).optional(),
+  'history': z.object({
+  'source': z.string(),
+  'barSeconds': z.number(),
+  'count': z.number(),
+  'from': z.number().optional(),
+  'to': z.number().optional(),
+  'fetchedAt': z.number().optional(),
+  'issue': z.string().optional(),
+  'warning': z.string().optional(),
+  'diagnostic': z.object({
+  'stage': z.string(),
+  'code': z.string(),
+  'retryable': z.boolean(),
+}).optional(),
+}),
+  'features': z.object({
+  'quoteWindowSeconds': z.number(),
+  'quoteCount': z.number(),
+  'lower': z.union([z.literal(null), z.number()]),
+  'upper': z.union([z.literal(null), z.number()]),
+  'widthTicks': z.union([z.literal(null), z.number()]),
+  'lowerTouches': z.number(),
+  'upperTouches': z.number(),
+  'location': z.union([z.literal(null), z.number()]),
+  'reboundTicks': z.union([z.literal(null), z.number()]),
+  'pullbackTicks': z.union([z.literal(null), z.number()]),
+  'spreadTicks': z.union([z.literal(null), z.number()]),
+  'longRewardCostRatio': z.union([z.literal(null), z.number()]),
+  'shortRewardCostRatio': z.union([z.literal(null), z.number()]),
+}),
+  'checks': z.array(z.object({
+  'id': z.string(),
+  'label': z.string(),
+  'state': z.union([z.literal("unknown"), z.literal("pass"), z.literal("fail")]),
+  'detail': z.string(),
+  'actions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'enforcement': z.union([z.literal("hard"), z.literal("reference")]).optional(),
+  'facts': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true)])).optional(),
+})),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+}).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'reviewNotes': z.array(z.string()).optional(),
+})).optional(),
+  'lastDecision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'lastQuoteCheckedAt': z.number().optional(),
+  'nextDecisionAt': z.number().optional(),
+}), z.object({
+  'symbol': z.string(),
+}))).optional(),
+  'executionAuthorization': z.object({
+  'version': z.string(),
+  'acceptedAt': z.number(),
+  'runId': z.string(),
+}).optional(),
   'running': z.boolean(),
   'message': z.string(),
   'strategyNotices': z.array(z.string()).optional(),
@@ -1935,11 +2260,20 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatu
 })),
   'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
 }).optional(),
-  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
   'reviewNotes': z.array(z.string()).optional(),
 })).optional(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -2061,6 +2395,143 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatu
 })),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_result$schema = z.object({
+  'markets': z.array(z.intersection(z.object({
+  'phase': z.union([z.literal("checking"), z.literal("sampling"), z.literal("waiting_quote"), z.literal("deciding"), z.literal("waiting_plan")]).optional(),
+  'message': z.string(),
+  'sampleCount': z.number(),
+  'samples': z.array(z.object({
+  'time': z.number(),
+  'price': z.number(),
+  'bid': z.number().optional(),
+  'ask': z.number().optional(),
+})).optional(),
+  'analyses': z.array(z.object({
+  'id': z.string(),
+  'startedAt': z.number(),
+  'responseAt': z.number().optional(),
+  'finishedAt': z.number().optional(),
+  'sampleCount': z.number(),
+  'fromTime': z.number(),
+  'toTime': z.number(),
+  'price': z.number(),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'decision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'outcome': z.string(),
+  'planId': z.string().optional(),
+  'strategyName': z.string().optional(),
+  'strategyVersion': z.string().optional(),
+  'evidence': z.object({
+  'evaluatedAt': z.number(),
+  'decisionMode': z.union([z.literal("jev"), z.literal("strict")]).optional(),
+  'history': z.object({
+  'source': z.string(),
+  'barSeconds': z.number(),
+  'count': z.number(),
+  'from': z.number().optional(),
+  'to': z.number().optional(),
+  'fetchedAt': z.number().optional(),
+  'issue': z.string().optional(),
+  'warning': z.string().optional(),
+  'diagnostic': z.object({
+  'stage': z.string(),
+  'code': z.string(),
+  'retryable': z.boolean(),
+}).optional(),
+}),
+  'features': z.object({
+  'quoteWindowSeconds': z.number(),
+  'quoteCount': z.number(),
+  'lower': z.union([z.literal(null), z.number()]),
+  'upper': z.union([z.literal(null), z.number()]),
+  'widthTicks': z.union([z.literal(null), z.number()]),
+  'lowerTouches': z.number(),
+  'upperTouches': z.number(),
+  'location': z.union([z.literal(null), z.number()]),
+  'reboundTicks': z.union([z.literal(null), z.number()]),
+  'pullbackTicks': z.union([z.literal(null), z.number()]),
+  'spreadTicks': z.union([z.literal(null), z.number()]),
+  'longRewardCostRatio': z.union([z.literal(null), z.number()]),
+  'shortRewardCostRatio': z.union([z.literal(null), z.number()]),
+}),
+  'checks': z.array(z.object({
+  'id': z.string(),
+  'label': z.string(),
+  'state': z.union([z.literal("unknown"), z.literal("pass"), z.literal("fail")]),
+  'detail': z.string(),
+  'actions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+  'enforcement': z.union([z.literal("hard"), z.literal("reference")]).optional(),
+  'facts': z.record(z.string(), z.union([z.literal(null), z.string(), z.number(), z.literal(false), z.literal(true)])).optional(),
+})),
+  'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
+}).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'reviewNotes': z.array(z.string()).optional(),
+})).optional(),
+  'lastDecision': z.object({
+  'action': z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")]),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+  'model': z.string(),
+  'time': z.number(),
+  'usage': z.object({
+  'input_tokens': z.number(),
+  'output_tokens': z.number(),
+}).optional(),
+  'assessments': z.object({
+  'regime': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'fit': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+  'blocker': z.object({
+  'choice': z.string(),
+  'confidence': z.number(),
+  'probabilities': z.record(z.string(), z.number()),
+}),
+}).optional(),
+}).optional(),
+  'lastQuoteCheckedAt': z.number().optional(),
+  'nextDecisionAt': z.number().optional(),
+}), z.object({
+  'symbol': z.string(),
+}))).optional(),
+  'executionAuthorization': z.object({
+  'version': z.string(),
+  'acceptedAt': z.number(),
+  'runId': z.string(),
+}).optional(),
   'running': z.boolean(),
   'message': z.string(),
   'strategyNotices': z.array(z.string()).optional(),
@@ -2162,11 +2633,20 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_
 })),
   'allowedActions': z.array(z.union([z.literal("hold"), z.literal("open_long"), z.literal("open_short"), z.literal("close_long"), z.literal("close_short")])),
 }).optional(),
-  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
+  'planStatus': z.union([z.literal("blocked"), z.literal("prepared"), z.literal("submitted"), z.literal("hold"), z.literal("restricted"), z.literal("candidate")]).optional(),
   'reviewNotes': z.array(z.string()).optional(),
 })).optional(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -2290,7 +2770,16 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchTemplates_result$schema = z.array(z.object({
   'name': z.string(),
   'config': z.object({
+  'executionMode': z.union([z.undefined(), z.literal("manual"), z.literal("automatic")]).optional(),
   'symbol': z.string(),
+  'contracts': z.union([z.undefined(), z.array(z.object({
+  'symbol': z.string(),
+  'instrument': z.object({
+  'product': z.string(),
+  'exchange': z.union([z.literal("SHF"), z.literal("DCE"), z.literal("CZC"), z.literal("CFE"), z.literal("INE"), z.literal("GFE")]),
+  'tickSize': z.number(),
+}),
+}))]).optional(),
   'volume': z.number(),
   'intervalSeconds': z.number(),
   'decisionIntervalSeconds': z.number().optional(),
@@ -2383,6 +2872,21 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_create_result$sch
   'treeDigest': z.intersection(z.string(), z.unknown()).readonly(),
 }).readonly(),
   'agentPreset': z.string().readonly().optional(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_parameter_0$schema = z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_result$schema = z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
+  'token': z.string().readonly(),
+  'files': z.array(z.object({
+  'path': z.string().readonly(),
+  'bytes': z.number().readonly(),
+})).readonly(),
+  'retained': z.array(z.object({
+  'path': z.string().readonly(),
+  'reason': z.string().readonly(),
+})).readonly(),
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorCheckUpdate_result$schema = z.object({
   'enabled': z.boolean(),
@@ -3386,6 +3890,7 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileRead_result$s
 })
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_parameter_0$schema = z.union([z.undefined(), z.object({
   'blenderPath': z.string().optional(),
+  'neural': z.boolean().optional(),
 })])
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_result$schema = z.object({
   'supported': z.boolean(),
@@ -3707,6 +4212,12 @@ const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionEnsure_par
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionEnsure_result$schema = z.object({
   'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
 })
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_parameter_0$schema = z.object({
+  'sessionId': z.intersection(z.string(), z.unknown()).readonly(),
+  'action': z.union([z.literal("archive"), z.literal("restore"), z.literal("delete")]).readonly(),
+  'filesToken': z.string().readonly().optional(),
+})
+const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_result$schema = z.void()
 const _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_workspaceResolve_parameter_0$schema = z.object({
   'preferredWorkspaceId': z.intersection(z.string(), z.unknown()).readonly().optional(),
 })
@@ -3767,7 +4278,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1803,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1855,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentDelete',
@@ -3792,7 +4303,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentDelete:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentDelete_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1905,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1957,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentLibrarySources',
@@ -3807,7 +4318,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentLibrarySources:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentLibrarySources_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1791,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1843,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentList',
@@ -3822,7 +4333,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1779,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1831,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionCreate',
@@ -3848,7 +4359,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1944,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1996,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionList',
@@ -3874,7 +4385,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2192,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2244,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamCreate',
@@ -3899,7 +4410,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2214,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2266,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamDelete',
@@ -3924,7 +4435,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamDelete:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamDelete_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2266,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2318,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamList',
@@ -3939,7 +4450,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2204,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2256,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionCreate',
@@ -3965,7 +4476,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2284,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2336,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionList',
@@ -3991,7 +4502,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2363,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2415,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentTeamUpdate',
@@ -4016,7 +4527,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentTeamDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2236,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2288,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUninstall',
@@ -4041,7 +4552,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUninstall:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUninstall_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1921,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1973,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/agentUpdate',
@@ -4067,7 +4578,22 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentDefinition',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1861,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1913,"column":9},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/archivedConversations',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'archivedConversations',
+      invocation: { kind: 'direct' },
+      parameters: [
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/archivedConversations:result',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_archivedConversations_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1659,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/authoringCommit',
@@ -4093,7 +4619,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAuthoringCommitResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringCommit_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1972,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2024,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/authoringSessionCreate',
@@ -4119,7 +4645,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsAgentSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_authoringSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1958,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2010,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestCheckUpdate',
@@ -4134,7 +4660,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestCheckUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1293,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1297,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestConnect',
@@ -4149,7 +4675,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestConnect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1284,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1288,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestDisconnect',
@@ -4164,7 +4690,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDisconnect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1287,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1291,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestDismiss',
@@ -4189,7 +4715,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1384,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1388,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestExecute',
@@ -4214,7 +4740,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestPlan',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestExecute_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1379,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1383,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestInspect',
@@ -4240,7 +4766,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestInspection',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1339,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1343,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestJevConfigure',
@@ -4265,7 +4791,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestJevSettings',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevConfigure_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1323,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1327,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestJevSettings',
@@ -4280,7 +4806,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestJevSettings',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevSettings_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1305,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1309,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestJevUsage',
@@ -4295,7 +4821,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestJevUsage',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevUsage_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1308,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1312,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestMode',
@@ -4320,7 +4846,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1278,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1282,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestQuery',
@@ -4346,7 +4872,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestData',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1335,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1339,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestReconcile',
@@ -4371,7 +4897,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestPlan',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestReconcile_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1389,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1393,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestSessionOpen',
@@ -4397,7 +4923,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestSessionOpenResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestSessionOpen_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1348,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1352,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestStatus',
@@ -4422,7 +4948,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1274,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1278,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestUpdate',
@@ -4437,7 +4963,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1296,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1300,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchDatasets',
@@ -4452,7 +4978,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchDatasets:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchDatasets_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1317,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1321,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchPrepareHistory',
@@ -4477,7 +5003,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchPrepareHistory:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchPrepareHistory_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1320,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1324,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchSaveTemplate',
@@ -4502,7 +5028,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchSaveTemplate:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1314,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1318,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchStart',
@@ -4527,7 +5053,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestWatchStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1326,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1330,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchStatus',
@@ -4542,7 +5068,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestWatchStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1302,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1306,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchStop',
@@ -4557,7 +5083,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestWatchStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1332,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1336,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchTemplates',
@@ -4572,7 +5098,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/contestWatchTemplates:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchTemplates_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1311,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1315,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/create',
@@ -4598,7 +5124,33 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_create_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1521,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1525,"column":9},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/deletionPreview',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'deletionPreview',
+      implementation: 'previewSessionDeletion',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/deletionPreview:request',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_parameter_0$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#SessionDeletionPreview',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1627,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorCheckUpdate',
@@ -4613,7 +5165,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorCheckUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1213,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1217,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorConfirm',
@@ -4638,7 +5190,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorPlan',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConfirm_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1241,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1245,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorConnect',
@@ -4663,7 +5215,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConnect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1207,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1211,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorDisconnect',
@@ -4678,7 +5230,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDisconnect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1210,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1214,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorDismiss',
@@ -4703,7 +5255,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorDismiss:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDismiss_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1244,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1248,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorInspect',
@@ -4729,7 +5281,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorInspection',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorInspect_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1219,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1223,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorMode',
@@ -4754,7 +5306,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorMode_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1204,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1208,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorPrepare',
@@ -4779,7 +5331,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorPlan',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorPrepare_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1235,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1239,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorQuery',
@@ -4805,7 +5357,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-util-values#JsonValue',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorQuery_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1232,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1236,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorReconcilePlan',
@@ -4830,7 +5382,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorPlan',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcilePlan_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1253,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1257,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorReconcileRun',
@@ -4855,7 +5407,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorRun',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcileRun_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1250,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1254,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorSessionOpen',
@@ -4881,7 +5433,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ContestSessionOpenResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorSessionOpen_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1256,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1260,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStatus',
@@ -4906,7 +5458,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1201,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1205,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStopBudget',
@@ -4931,7 +5483,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorStopBudget:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStopBudget_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1247,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1251,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/factorUpdate',
@@ -4946,7 +5498,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FactorContestStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorUpdate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1216,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1220,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileAttach',
@@ -4972,7 +5524,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsSessionFileAttachment',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileAttach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2379,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2431,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileList',
@@ -4998,7 +5550,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsFileListResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2413,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2465,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/fileRead',
@@ -5024,7 +5576,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsFileReadResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_fileRead_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2431,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2483,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/flyInstall',
@@ -5050,7 +5602,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FlyRuntimeStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1193,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1197,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/flyRequest',
@@ -5075,7 +5627,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-util-values#JsonValue',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyRequest_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1197,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1201,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/flyStatus',
@@ -5090,7 +5642,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#FlyRuntimeStatus',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1190,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1194,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/frequent',
@@ -5116,7 +5668,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/frequent:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_frequent_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1628,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1680,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/list',
@@ -5142,7 +5694,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/list:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_list_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1599,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1603,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/modelsAccess',
@@ -5167,7 +5719,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#ModelAccessResponse',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_modelsAccess_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":926,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":929,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/plainSessionCreate',
@@ -5193,7 +5745,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPlainSessionCreateResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionCreate_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1442,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1446,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/plainSessionList',
@@ -5219,7 +5771,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/plainSessionList:result',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_plainSessionList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1614,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1618,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/promptFormList',
@@ -5245,7 +5797,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPromptFormListResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_promptFormList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1735,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1787,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/promptFormRender',
@@ -5271,7 +5823,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsPromptFormRenderResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_promptFormRender_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1754,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1806,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/residentSkillAttach',
@@ -5297,7 +5849,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResidentSkillResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_residentSkillAttach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1663,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1715,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/residentSkillDetach',
@@ -5322,7 +5874,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResidentSkillResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_residentSkillDetach_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1708,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1760,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultList',
@@ -5348,7 +5900,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPrepareResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultList_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2493,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2545,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultPrepare',
@@ -5374,7 +5926,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPrepareResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultPrepare_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2448,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2500,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/resultPreview',
@@ -5400,7 +5952,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsResultPreview',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_resultPreview_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2512,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2564,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/sessionEnsure',
@@ -5426,7 +5978,33 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsSessionEnsureResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionEnsure_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1400,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1404,"column":9},
+    },
+    {
+      id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/sessionLifecycle',
+      service: 'quantSkillsSessions',
+      namespace: 'quantSkillsSessions',
+      method: 'sessionLifecycle',
+      implementation: 'changeSessionLifecycle',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'request',
+          wire: 'request',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#SessionLifecycleRequest',
+            schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_parameter_0$schema,
+          },
+        },
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/sessionLifecycle:result',
+        schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_result$schema,
+      },
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1638,"column":9},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/workspaceResolve',
@@ -5451,7 +6029,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsWorkspaceResolveResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_workspaceResolve_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1184,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1188,"column":3},
     },
     {
       id: '@deepseek-ai/dsh-quantskills-session#quantSkillsSessions/workspaceStatus',
@@ -5476,7 +6054,7 @@ export const TYPERT = {
         typeSymbol: '@deepseek-ai/dsh-quantskills-session/types#QuantSkillsWorkspaceStatusResult',
         schema: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_workspaceStatus_result$schema,
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1174,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1178,"column":3},
     },
   ],
   model: {
@@ -5501,14 +6079,14 @@ export const TYPERT = {
             "name": "workspaceStatus",
             "signature": "@Remote('workspaceStatus') workspaceStatus(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceStatusResult>",
             "summary": "Inspect the optional preferred and managed QuantSkills Workspace without creating it.",
-            "jsDoc": "/**\n * Inspect the optional preferred and managed QuantSkills Workspace without creating it.\n * @param request - optional user-selected Workspace.\n * @returns current Workspace targets and preference health.\n */"
+            "jsDoc": "/**\r\n * Inspect the optional preferred and managed QuantSkills Workspace without creating it.\r\n * @param request - optional user-selected Workspace.\r\n * @returns current Workspace targets and preference health.\r\n */"
           },
           {
             "kind": "method",
             "name": "workspaceResolve",
             "signature": "@Remote('workspaceResolve') workspaceResolve(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceResolveResult>",
             "summary": "Select the preferred Workspace or create and register the managed fallback.",
-            "jsDoc": "/**\n * Select the preferred Workspace or create and register the managed fallback.\n * @param request - optional user-selected Workspace.\n * @returns the explicit Workspace target for a new Session.\n */"
+            "jsDoc": "/**\r\n * Select the preferred Workspace or create and register the managed fallback.\r\n * @param request - optional user-selected Workspace.\r\n * @returns the explicit Workspace target for a new Session.\r\n */"
           },
           {
             "kind": "method",
@@ -5520,7 +6098,7 @@ export const TYPERT = {
           {
             "kind": "method",
             "name": "flyInstall",
-            "signature": "@Remote('flyInstall') flyInstall(input?: { blenderPath?: string }): Promise<FlyRuntimeStatus>"
+            "signature": "@Remote('flyInstall') flyInstall(input?: { blenderPath?: string; neural?: boolean }): Promise<FlyRuntimeStatus>"
           },
           {
             "kind": "method",
@@ -5681,7 +6259,7 @@ export const TYPERT = {
           {
             "kind": "method",
             "name": "contestWatchStart",
-            "signature": "@Remote('contestWatchStart') contestWatchStart(request: { config: ContestWatchConfig; confirmed: boolean }): Promise<ContestWatchStatus>"
+            "signature": "@Remote('contestWatchStart') contestWatchStart(request: { config: ContestWatchConfig; confirmed: boolean; executionConsent?: string }): Promise<ContestWatchStatus>"
           },
           {
             "kind": "method",
@@ -5729,77 +6307,96 @@ export const TYPERT = {
             "name": "sessionEnsure",
             "signature": "@Remote('sessionEnsure') async sessionEnsure( request: QuantSkillsSessionEnsureRequest, signal?: AbortSignal, ): Promise<QuantSkillsSessionEnsureResult>",
             "summary": "Resume one persisted QuantSkills Session and restore its plugin-owned composition.",
-            "jsDoc": "/**\n * Resume one persisted QuantSkills Session and restore its plugin-owned composition.\n * @param request - existing QuantSkills Session identity.\n * @param signal - optional caller cancellation.\n * @returns the live Session identity after setup completes.\n */"
+            "jsDoc": "/**\r\n * Resume one persisted QuantSkills Session and restore its plugin-owned composition.\r\n * @param request - existing QuantSkills Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns the live Session identity after setup completes.\r\n */"
           },
           {
             "kind": "method",
             "name": "plainSessionCreate",
             "signature": "@Remote('plainSessionCreate') async plainSessionCreate( request: QuantSkillsPlainSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsPlainSessionCreateResult>",
             "summary": "Create or idempotently adopt one product-owned QuantSkills Session without an asset composition.",
-            "jsDoc": "/**\n * Create or idempotently adopt one product-owned QuantSkills Session without an asset composition.\n * @param request - preallocated SessionId, explicit purpose, and ordinary create options.\n * @param signal - optional caller cancellation.\n * @returns the published Session identity and durable QuantSkills ownership marker.\n */"
+            "jsDoc": "/**\r\n * Create or idempotently adopt one product-owned QuantSkills Session without an asset composition.\r\n * @param request - preallocated SessionId, explicit purpose, and ordinary create options.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Session identity and durable QuantSkills ownership marker.\r\n */"
           },
           {
             "kind": "method",
             "name": "create",
             "signature": "@Remote('create') async create( request: QuantSkillsSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsSessionCreateResult>",
             "summary": "Create or idempotently adopt one session under an exact installed Skill version.",
-            "jsDoc": "/**\n * Create or idempotently adopt one session under an exact installed Skill version.\n * @param request - preallocated SessionId, exact installed version, and ordinary create options.\n * @param signal - optional caller cancellation.\n * @returns the published session identity and durable binding.\n */"
+            "jsDoc": "/**\r\n * Create or idempotently adopt one session under an exact installed Skill version.\r\n * @param request - preallocated SessionId, exact installed version, and ordinary create options.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published session identity and durable binding.\r\n */"
           },
           {
             "kind": "method",
             "name": "list",
             "signature": "@Remote('list') async list( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsSessionArchiveItem[]>",
             "summary": "List real QuantSkills conversation archives from live and persisted session truth.",
-            "jsDoc": "/**\n * List real QuantSkills conversation archives from live and persisted session truth.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns Skill-bound ordinary sessions ordered by most recent activity.\n */"
+            "jsDoc": "/**\r\n * List real QuantSkills conversation archives from live and persisted session truth.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns Skill-bound ordinary sessions ordered by most recent activity.\r\n */"
           },
           {
             "kind": "method",
             "name": "plainSessionList",
             "signature": "@Remote('plainSessionList') async plainSessionList( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsPlainSessionArchiveItem[]>",
             "summary": "List ordinary QuantSkills conversations that do not yet load a Skill, Agent, or Team.",
-            "jsDoc": "/**\n * List ordinary QuantSkills conversations that do not yet load a Skill, Agent, or Team.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns ordinary product-owned Sessions ordered by most recent activity.\n */"
+            "jsDoc": "/**\r\n * List ordinary QuantSkills conversations that do not yet load a Skill, Agent, or Team.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns ordinary product-owned Sessions ordered by most recent activity.\r\n */"
+          },
+          {
+            "kind": "method",
+            "name": "previewSessionDeletion",
+            "signature": "@Remote('deletionPreview') async previewSessionDeletion(request: { readonly sessionId: SessionId }): Promise<SessionDeletionPreview>",
+            "summary": "Separate reversible archive/restore from permanent conversation erasure.",
+            "jsDoc": "/** Separate reversible archive/restore from permanent conversation erasure. */"
+          },
+          {
+            "kind": "method",
+            "name": "changeSessionLifecycle",
+            "signature": "@Remote('sessionLifecycle') async changeSessionLifecycle(request: SessionLifecycleRequest): Promise<void>"
+          },
+          {
+            "kind": "method",
+            "name": "archivedConversations",
+            "signature": "@Remote('archivedConversations') async archivedConversations(): Promise<readonly ArchivedConversation[]>",
+            "summary": "List archived conversations of all four product types, without resuming them.",
+            "jsDoc": "/** List archived conversations of all four product types, without resuming them. */"
           },
           {
             "kind": "method",
             "name": "frequent",
             "signature": "@Remote('frequent') async frequent( request: QuantSkillsFrequentRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsFrequentSkill[]>",
             "summary": "Aggregate frequently used Skills from real bound conversation archives.",
-            "jsDoc": "/**\n * Aggregate frequently used Skills from real bound conversation archives.\n * @param request - archive visibility and bounded result count.\n * @param signal - optional caller cancellation.\n * @returns usage rows ordered by session count and recency.\n */"
+            "jsDoc": "/**\r\n * Aggregate frequently used Skills from real bound conversation archives.\r\n * @param request - archive visibility and bounded result count.\r\n * @param signal - optional caller cancellation.\r\n * @returns usage rows ordered by session count and recency.\r\n */"
           },
           {
             "kind": "method",
             "name": "residentSkillAttach",
             "signature": "@Remote('residentSkillAttach') async residentSkillAttach( request: QuantSkillsResidentSkillAttachRequest, signal?: AbortSignal, ): Promise<QuantSkillsResidentSkillResult>",
             "summary": "Attach one exact installed Skill as resident Session context without creating a user message.",
-            "jsDoc": "/**\n * Attach one exact installed Skill as resident Session context without creating a user message.\n * @param request - live conversation and exact installed version; an ordinary workspace conversation is adopted on explicit attachment.\n * @param signal - optional caller cancellation.\n * @returns the authoritative resident Skill set after the append.\n */"
+            "jsDoc": "/**\r\n * Attach one exact installed Skill as resident Session context without creating a user message.\r\n * @param request - live conversation and exact installed version; an ordinary workspace conversation is adopted on explicit attachment.\n * @param signal - optional caller cancellation.\r\n * @returns the authoritative resident Skill set after the append.\r\n */"
           },
           {
             "kind": "method",
             "name": "residentSkillDetach",
             "signature": "@Remote('residentSkillDetach') residentSkillDetach(request: QuantSkillsResidentSkillDetachRequest): Promise<QuantSkillsResidentSkillResult>",
             "summary": "Detach one resident Skill by stable asset identity without rewriting conversation history.",
-            "jsDoc": "/**\n * Detach one resident Skill by stable asset identity without rewriting conversation history.\n * @param request - live QuantSkills Session and resident asset identity.\n * @returns the authoritative resident Skill set after the append.\n */"
+            "jsDoc": "/**\r\n * Detach one resident Skill by stable asset identity without rewriting conversation history.\r\n * @param request - live QuantSkills Session and resident asset identity.\r\n * @returns the authoritative resident Skill set after the append.\r\n */"
           },
           {
             "kind": "method",
             "name": "promptFormList",
             "signature": "@Remote('promptFormList') async promptFormList( request: QuantSkillsPromptFormListRequest, signal?: AbortSignal, ): Promise<QuantSkillsPromptFormListResult>",
             "summary": "List optional parameter forms reachable from the live Session composition.",
-            "jsDoc": "/**\n * List optional parameter forms reachable from the live Session composition.\n * @param request - live QuantSkills Session identity.\n * @param signal - optional caller cancellation.\n * @returns exact-version forms for resident Skills and declared Agent sources.\n */"
+            "jsDoc": "/**\r\n * List optional parameter forms reachable from the live Session composition.\r\n * @param request - live QuantSkills Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns exact-version forms for resident Skills and declared Agent sources.\r\n */"
           },
           {
             "kind": "method",
             "name": "promptFormRender",
             "signature": "@Remote('promptFormRender') async promptFormRender( request: QuantSkillsPromptFormRenderRequest, signal?: AbortSignal, ): Promise<QuantSkillsPromptFormRenderResult>",
             "summary": "Render a parameter form only when its exact version belongs to the live Session.",
-            "jsDoc": "/**\n * Render a parameter form only when its exact version belongs to the live Session.\n * @param request - Session, exact version, task, and declared field values.\n * @param signal - optional caller cancellation.\n * @returns plain text suitable for an ordinary logged user message.\n */"
+            "jsDoc": "/**\r\n * Render a parameter form only when its exact version belongs to the live Session.\r\n * @param request - Session, exact version, task, and declared field values.\r\n * @param signal - optional caller cancellation.\r\n * @returns plain text suitable for an ordinary logged user message.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentList",
             "signature": "@Remote('agentList') agentList(): Promise<readonly QuantSkillsAgentDefinition[]>",
             "summary": "Read durable user Agent definitions ordered by most recent update.",
-            "jsDoc": "/**\n * Read durable user Agent definitions ordered by most recent update.\n * @returns immutable validated definitions.\n */"
+            "jsDoc": "/**\r\n * Read durable user Agent definitions ordered by most recent update.\r\n * @returns immutable validated definitions.\r\n */"
           },
           {
             "kind": "method",
@@ -5818,14 +6415,14 @@ export const TYPERT = {
             "name": "agentUpdate",
             "signature": "@Remote('agentUpdate') async agentUpdate( request: QuantSkillsAgentUpdateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentDefinition>",
             "summary": "Replace one durable user Agent through optimistic revision matching.",
-            "jsDoc": "/**\n * Replace one durable user Agent through optimistic revision matching.\n * @param request - identity, expected revision, and complete editable fields.\n * @param signal - optional caller cancellation.\n * @returns the committed next revision.\n */"
+            "jsDoc": "/**\r\n * Replace one durable user Agent through optimistic revision matching.\r\n * @param request - identity, expected revision, and complete editable fields.\r\n * @param signal - optional caller cancellation.\r\n * @returns the committed next revision.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentDelete",
             "signature": "@Remote('agentDelete') async agentDelete(request: QuantSkillsAgentDeleteRequest): Promise<void>",
             "summary": "Delete one durable user Agent through optimistic revision matching.",
-            "jsDoc": "/**\n * Delete one durable user Agent through optimistic revision matching.\n * Existing Agent Sessions remain reconstructable from their logs.\n * @param request - identity and expected revision.\n */"
+            "jsDoc": "/**\r\n * Delete one durable user Agent through optimistic revision matching.\r\n * Existing Agent Sessions remain reconstructable from their logs.\r\n * @param request - identity and expected revision.\r\n */"
           },
           {
             "kind": "method",
@@ -5839,115 +6436,119 @@ export const TYPERT = {
             "name": "agentSessionCreate",
             "signature": "@Remote('agentSessionCreate') async agentSessionCreate( request: QuantSkillsAgentSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentSessionCreateResult>",
             "summary": "Atomically create or adopt one Session under an immutable user Agent composition.",
-            "jsDoc": "/**\n * Atomically create or adopt one Session under an immutable user Agent composition.\n * @param request - fresh Session id, exact Agent revision, and ordinary create options.\n * @param signal - optional caller cancellation.\n * @returns the published Session and logged Agent composition.\n */"
+            "jsDoc": "/**\r\n * Atomically create or adopt one Session under an immutable user Agent composition.\r\n * @param request - fresh Session id, exact Agent revision, and ordinary create options.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Session and logged Agent composition.\r\n */"
           },
           {
             "kind": "method",
             "name": "authoringSessionCreate",
             "signature": "@Remote('authoringSessionCreate') async authoringSessionCreate( request: QuantSkillsAuthoringSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentSessionCreateResult>",
             "summary": "Atomically create one Agent Session whose authoring purpose is durable before its tools are exposed.",
-            "jsDoc": "/**\n * Atomically create one Agent Session whose authoring purpose is durable before its tools are exposed.\n * @param request - fresh Session identity, exact Agent revision, Workspace, and authoring kind.\n * @param signal - optional caller cancellation.\n * @returns the published Agent Session and exact composition.\n */"
+            "jsDoc": "/**\r\n * Atomically create one Agent Session whose authoring purpose is durable before its tools are exposed.\r\n * @param request - fresh Session identity, exact Agent revision, Workspace, and authoring kind.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Agent Session and exact composition.\r\n */"
           },
           {
             "kind": "method",
             "name": "authoringCommit",
             "signature": "@Remote('authoringCommit') authoringCommit( request: QuantSkillsAuthoringCommitRequest, signal?: AbortSignal, ): Promise<QuantSkillsAuthoringCommitResult>",
             "summary": "Commit one successful logged draft after an explicit Client confirmation.",
-            "jsDoc": "/**\n * Commit one successful logged draft after an explicit Client confirmation.\n * @param request - Session-owned Tool call identity and observed content digest.\n * @param signal - optional caller cancellation.\n * @returns the immutable local asset, Agent, or Team publication.\n */"
+            "jsDoc": "/**\r\n * Commit one successful logged draft after an explicit Client confirmation.\r\n * @param request - Session-owned Tool call identity and observed content digest.\r\n * @param signal - optional caller cancellation.\r\n * @returns the immutable local asset, Agent, or Team publication.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentSessionList",
             "signature": "@Remote('agentSessionList') async agentSessionList( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsAgentSessionArchiveItem[]>",
             "summary": "List real user Agent conversation archives from live and persisted Session truth.",
-            "jsDoc": "/**\n * List real user Agent conversation archives from live and persisted Session truth.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns Agent-bound Sessions ordered by most recent activity.\n */"
+            "jsDoc": "/**\r\n * List real user Agent conversation archives from live and persisted Session truth.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns Agent-bound Sessions ordered by most recent activity.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamList",
             "signature": "@Remote('agentTeamList') agentTeamList(): Promise<readonly QuantSkillsAgentTeamDefinition[]>",
             "summary": "Read saved Agent Team definitions ordered by most recent update.",
-            "jsDoc": "/**\n * Read saved Agent Team definitions ordered by most recent update.\n * @returns immutable Agent Team definitions.\n */"
+            "jsDoc": "/**\r\n * Read saved Agent Team definitions ordered by most recent update.\r\n * @returns immutable Agent Team definitions.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamCreate",
             "signature": "@Remote('agentTeamCreate') async agentTeamCreate(request: QuantSkillsAgentTeamCreateRequest): Promise<QuantSkillsAgentTeamDefinition>",
             "summary": "Resolve Agent references and create one immutable saved Agent Team.",
-            "jsDoc": "/**\n * Resolve Agent references and create one immutable saved Agent Team.\n * @param request - Team name, goal, Lead revision, and member revisions.\n * @returns the saved exact Team definition.\n */"
+            "jsDoc": "/**\r\n * Resolve Agent references and create one immutable saved Agent Team.\r\n * @param request - Team name, goal, Lead revision, and member revisions.\r\n * @returns the saved exact Team definition.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamUpdate",
             "signature": "@Remote('agentTeamUpdate') async agentTeamUpdate(request: QuantSkillsAgentTeamUpdateRequest): Promise<QuantSkillsAgentTeamDefinition>",
             "summary": "Replace one saved Agent Team through optimistic revision matching.",
-            "jsDoc": "/**\n * Replace one saved Agent Team through optimistic revision matching.\n * @param request - replacement composition and observed Team revision.\n * @returns the updated exact Team definition.\n */"
+            "jsDoc": "/**\r\n * Replace one saved Agent Team through optimistic revision matching.\r\n * @param request - replacement composition and observed Team revision.\r\n * @returns the updated exact Team definition.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamDelete",
             "signature": "@Remote('agentTeamDelete') async agentTeamDelete(request: QuantSkillsAgentTeamDeleteRequest): Promise<void>",
             "summary": "Delete one saved Agent Team while preserving every existing Team Session log.",
-            "jsDoc": "/**\n * Delete one saved Agent Team while preserving every existing Team Session log.\n * @param request - Team identity and observed revision.\n */"
+            "jsDoc": "/**\r\n * Delete one saved Agent Team while preserving every existing Team Session log.\r\n * @param request - Team identity and observed revision.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamSessionCreate",
             "signature": "@Remote('agentTeamSessionCreate') async agentTeamSessionCreate( request: QuantSkillsAgentTeamSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentTeamSessionCreateResult>",
             "summary": "Atomically create or adopt one Team Lead Session under an exact Team revision.",
-            "jsDoc": "/**\n * Atomically create or adopt one Team Lead Session under an exact Team revision.\n * @param request - Session identity, exact Team revision, and optional Workspace selection.\n * @param signal - optional caller cancellation.\n * @returns the published Lead Session and its immutable Team binding.\n */"
+            "jsDoc": "/**\r\n * Atomically create or adopt one Team Lead Session under an exact Team revision.\r\n * @param request - Session identity, exact Team revision, and optional Workspace selection.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Lead Session and its immutable Team binding.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamSessionList",
             "signature": "@Remote('agentTeamSessionList') async agentTeamSessionList( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsAgentTeamSessionArchiveItem[]>",
             "summary": "List real Agent Team Lead conversation archives from live and persisted Session truth.",
-            "jsDoc": "/**\n * List real Agent Team Lead conversation archives from live and persisted Session truth.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns Team Lead Sessions ordered by most recent activity.\n */"
+            "jsDoc": "/**\r\n * List real Agent Team Lead conversation archives from live and persisted Session truth.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns Team Lead Sessions ordered by most recent activity.\r\n */"
           },
           {
             "kind": "method",
             "name": "fileAttach",
             "signature": "@Remote('fileAttach') async fileAttach( request: QuantSkillsFileAttachRequest, signal?: AbortSignal, ): Promise<QuantSkillsSessionFileAttachment>",
             "summary": "Attach one immutable generic file to a live QuantSkills Session.",
-            "jsDoc": "/**\n * Attach one immutable generic file to a live QuantSkills Session.\n * Per-Session serialization makes the aggregate byte check authoritative\n * even when browser uploads overlap.\n * @param request - Session identity, canonical base64 bytes, and display metadata.\n * @param signal - optional caller cancellation.\n * @returns the durable ownership record appended to the Session log.\n */"
+            "jsDoc": "/**\r\n * Attach one immutable generic file to a live QuantSkills Session.\r\n * Per-Session serialization makes the aggregate byte check authoritative\r\n * even when browser uploads overlap.\r\n * @param request - Session identity, canonical base64 bytes, and display metadata.\r\n * @param signal - optional caller cancellation.\r\n * @returns the durable ownership record appended to the Session log.\r\n */"
           },
           {
             "kind": "method",
             "name": "fileList",
             "signature": "@Remote('fileList') async fileList( request: QuantSkillsFileListRequest, signal?: AbortSignal, ): Promise<QuantSkillsFileListResult>",
             "summary": "List immutable generic files already owned by one QuantSkills Session.",
-            "jsDoc": "/**\n * List immutable generic files already owned by one QuantSkills Session.\n * @param request - Session identity.\n * @param signal - optional caller cancellation.\n * @returns durable file records plus Host-enforced limits.\n */"
+            "jsDoc": "/**\r\n * List immutable generic files already owned by one QuantSkills Session.\r\n * @param request - Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns durable file records plus Host-enforced limits.\r\n */"
           },
           {
             "kind": "method",
             "name": "fileRead",
             "signature": "@Remote('fileRead') async fileRead( request: QuantSkillsFileReadRequest, signal?: AbortSignal, ): Promise<QuantSkillsFileReadResult>",
             "summary": "Read bounded text extracted from a supported attachment owned by a QuantSkills Session.",
-            "jsDoc": "/**\n * Read bounded text extracted from a supported attachment owned by a QuantSkills Session.\n * @param request - Session identity and opaque attachment id.\n * @param signal - optional caller cancellation.\n * @returns verified metadata and decoded text.\n */"
+            "jsDoc": "/**\r\n * Read bounded text extracted from a supported attachment owned by a QuantSkills Session.\r\n * @param request - Session identity and opaque attachment id.\r\n * @param signal - optional caller cancellation.\r\n * @returns verified metadata and decoded text.\r\n */"
           },
           {
             "kind": "method",
             "name": "resultPrepare",
             "signature": "@Remote('resultPrepare') resultPrepare( request: QuantSkillsResultPrepareRequest, signal?: AbortSignal, ): Promise<QuantSkillsResultPrepareResult>",
             "summary": "Normalize discovered result paths to one Session workspace.",
-            "jsDoc": "/**\n * Normalize discovered result paths to one Session workspace. Authorized legacy Skill output\n * and successful external mutation results are copied into the Session workspace first.\n * @param request - Session identity and bounded candidate path list.\n * @param signal - optional caller cancellation.\n * @returns one ordered readiness or diagnostic result per candidate.\n */"
+            "jsDoc": "/**\r\n * Normalize discovered result paths to one Session workspace. Authorized legacy Skill output\r\n * and successful external mutation results are copied into the Session workspace first.\r\n * @param request - Session identity and bounded candidate path list.\r\n * @param signal - optional caller cancellation.\r\n * @returns one ordered readiness or diagnostic result per candidate.\r\n */"
           },
           {
             "kind": "method",
             "name": "resultList",
             "signature": "@Remote('resultList') async resultList( request: { readonly sessionId: SessionId }, signal?: AbortSignal, ): Promise<QuantSkillsResultPrepareResult>",
             "summary": "Restore every previewable result referenced by the complete durable Session log.",
-            "jsDoc": "/**\n * Restore every previewable result referenced by the complete durable Session log.\n * The returned paths pass through the same workspace and installed-version checks as\n * candidates discovered in the currently loaded browser window.\n * @param request - QuantSkills Session identity.\n * @param signal - optional caller cancellation.\n * @returns newest-reference-first verified results from the full Session history.\n */"
+            "jsDoc": "/**\r\n * Restore every previewable result referenced by the complete durable Session log.\r\n * The returned paths pass through the same workspace and installed-version checks as\r\n * candidates discovered in the currently loaded browser window.\r\n * @param request - QuantSkills Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns newest-reference-first verified results from the full Session history.\r\n */"
           },
           {
             "kind": "method",
             "name": "resultPreview",
             "signature": "@Remote('resultPreview') async resultPreview( request: QuantSkillsResultPreviewRequest, signal?: AbortSignal, ): Promise<QuantSkillsResultPreview>",
             "summary": "Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.",
-            "jsDoc": "/**\n * Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.\n * Supported text is returned as UTF-8, Office documents as bounded extracted text,\n * and verified image/PDF bytes as canonical base64.\n * @param request - Session identity and workspace-relative produced path.\n * @param signal - optional caller cancellation.\n * @returns evidence-backed preview or an explicit unsupported result.\n */"
+            "jsDoc": "/**\r\n * Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.\r\n * Supported text is returned as UTF-8, Office documents as bounded extracted text,\r\n * and verified image/PDF bytes as canonical base64.\r\n * @param request - Session identity and workspace-relative produced path.\r\n * @param signal - optional caller cancellation.\r\n * @returns evidence-backed preview or an explicit unsupported result.\r\n */"
           }
         ],
         "types": [
+          {
+            "name": "ArchivedConversation",
+            "declaration": "export interface ArchivedConversation {\n    readonly sessionId: SessionId;\n    readonly title: string;\n    readonly kind: 'plain' | 'skill' | 'agent' | 'team';\n    readonly updatedAt: number;\n    readonly running: boolean;\n}"
+          },
           {
             "name": "ContestData",
             "declaration": "export interface ContestData {\n    readonly data: JsonValue;\n    readonly meta?: Record<string, JsonValue>;\n    readonly fetchedAt: number;\n}"
@@ -5994,7 +6595,7 @@ export const TYPERT = {
           },
           {
             "name": "ContestStatus",
-            "declaration": "export interface ContestStatus {\n    readonly enabled: boolean;\n    readonly phase: 'off' | 'disconnected' | 'installing' | 'authenticating' | 'connected' | 'error';\n    readonly cliVersion?: string;\n    readonly latestVersion?: string;\n    readonly updateAvailable: boolean;\n    readonly identity?: ContestIdentity;\n    readonly message: string;\n    readonly plans: readonly ContestPlan[];\n}"
+            "declaration": "export interface ContestStatus {\n    readonly enabled: boolean;\n    readonly phase: 'off' | 'disconnected' | 'installing' | 'authenticating' | 'connected' | 'error';\n    readonly cliVersion?: string;\n    readonly latestVersion?: string;\n    readonly updateAvailable: boolean;\n    readonly identity?: ContestIdentity;\n    readonly message: string;\n    readonly retryAt?: number;\n    readonly plans: readonly ContestPlan[];\n}"
           },
           {
             "name": "ContestWatchAction",
@@ -6002,7 +6603,7 @@ export const TYPERT = {
           },
           {
             "name": "ContestWatchAnalysis",
-            "declaration": "export interface ContestWatchAnalysis {\n    id: string;\n    startedAt: number;\n    responseAt?: number;\n    finishedAt?: number;\n    sampleCount: number;\n    fromTime: number;\n    toTime: number;\n    price: number;\n    allowedActions: ContestWatchAction[];\n    decision?: ContestWatchDecision;\n    outcome: string;\n    planId?: string;\n    strategyName?: string;\n    strategyVersion?: string;\n    evidence?: ContestWatchEvidence;\n    planStatus?: 'restricted' | 'hold' | 'candidate' | 'prepared' | 'blocked';\n    reviewNotes?: string[];\n}"
+            "declaration": "export interface ContestWatchAnalysis {\n    id: string;\n    startedAt: number;\n    responseAt?: number;\n    finishedAt?: number;\n    sampleCount: number;\n    fromTime: number;\n    toTime: number;\n    price: number;\n    allowedActions: ContestWatchAction[];\n    decision?: ContestWatchDecision;\n    outcome: string;\n    planId?: string;\n    strategyName?: string;\n    strategyVersion?: string;\n    evidence?: ContestWatchEvidence;\n    planStatus?: 'restricted' | 'hold' | 'candidate' | 'prepared' | 'blocked' | 'submitted';\n    reviewNotes?: string[];\n}"
           },
           {
             "name": "ContestWatchCheck",
@@ -6010,7 +6611,7 @@ export const TYPERT = {
           },
           {
             "name": "ContestWatchConfig",
-            "declaration": "export interface ContestWatchConfig {\n    symbol: string;\n    volume: number;\n    intervalSeconds: number;\n    decisionIntervalSeconds?: number;\n    openingCooldownSeconds?: number;\n    decisionMode?: 'jev' | 'strict' | undefined;\n    durationMinutes: number;\n    minConfidence: number;\n    maxEquityDrop: number;\n    maxPlans: number;\n    instructions: string;\n    strategyName?: string | undefined;\n    actionCriteria?: Partial<Record<ContestWatchAction, string | undefined>> | undefined;\n    referenceMaterial?: string | undefined;\n    allowedSide?: 'both' | 'long_only' | 'short_only' | undefined;\n    minSamples?: number | undefined;\n    maxSpread?: number | undefined;\n    builtInTemplate?: 'rb-range' | 'range' | 'trend' | 'breakout' | undefined;\n    customStrategy?: boolean | undefined;\n    instrument?: { product: string; exchange: 'SHF' | 'DCE' | 'CZC' | 'CFE' | 'INE' | 'GFE'; tickSize: number; } | undefined;\n    signalRules?: ContestWatchSignalRules | undefined;\n    autoHistory?: { exchange: 'SHF' | 'DCE' | 'CZC' | 'CFE' | 'INE' | 'GFE'; barSeconds: 60 | 300; } | undefined;\n    history?: { datasetId: string; barSeconds: 60 | 300; timeMeaning: 'open' | 'close'; refresh: boolean; columns: { time: string; symbol: string; open: string; high: string; low: string; close: string; }; } | undefined;\n    rangeRules?: { lookbackBars: number; tickSize: number; minWidthTicks: number; minTouches: number; edgeFraction: number; reboundTicks: number; roundTripCostTicks: number; minRewardCostRatio: number; stopLossTicks: number; takeProfitTicks: number; } | undefined;\n}"
+            "declaration": "export interface ContestWatchConfig {\n    executionMode?: 'manual' | 'automatic' | undefined;\n    symbol: string;\n    contracts?: { symbol: string; instrument: NonNullable<ContestWatchConfig['instrument']>; }[] | undefined;\n    volume: number;\n    intervalSeconds: number;\n    decisionIntervalSeconds?: number;\n    openingCooldownSeconds?: number;\n    decisionMode?: 'jev' | 'strict' | undefined;\n    durationMinutes: number;\n    minConfidence: number;\n    maxEquityDrop: number;\n    maxPlans: number;\n    instructions: string;\n    strategyName?: string | undefined;\n    actionCriteria?: Partial<Record<ContestWatchAction, string | undefined>> | undefined;\n    referenceMaterial?: string | undefined;\n    allowedSide?: 'both' | 'long_only' | 'short_only' | undefined;\n    minSamples?: number | undefined;\n    maxSpread?: number | undefined;\n    builtInTemplate?: 'rb-range' | 'range' | 'trend' | 'breakout' | undefined;\n    customStrategy?: boolean | undefined;\n    instrument?: { product: string; exchange: 'SHF' | 'DCE' | 'CZC' | 'CFE' | 'INE' | 'GFE'; tickSize: number; } | undefined;\n    signalRules?: ContestWatchSignalRules | undefined;\n    autoHistory?: { exchange: 'SHF' | 'DCE' | 'CZC' | 'CFE' | 'INE' | 'GFE'; barSeconds: 60 | 300; } | undefined;\n    history?: { datasetId: string; barSeconds: 60 | 300; timeMeaning: 'open' | 'close'; refresh: boolean; columns: { time: string; symbol: string; open: string; high: string; low: string; close: string; }; } | undefined;\n    rangeRules?: { lookbackBars: number; tickSize: number; minWidthTicks: number; minTouches: number; edgeFraction: number; reboundTicks: number; roundTripCostTicks: number; minRewardCostRatio: number; stopLossTicks: number; takeProfitTicks: number; } | undefined;\n}"
           },
           {
             "name": "ContestWatchDataset",
@@ -6025,6 +6626,10 @@ export const TYPERT = {
             "declaration": "export interface ContestWatchEvidence {\n    evaluatedAt: number;\n    decisionMode?: 'jev' | 'strict';\n    history: { source: string; barSeconds: number; count: number; from?: number; to?: number; fetchedAt?: number; issue?: string; warning?: string; diagnostic?: { stage: string; code: string; retryable: boolean; }; };\n    features: { quoteWindowSeconds: number; quoteCount: number; lower: number | null; upper: number | null; widthTicks: number | null; lowerTouches: number; upperTouches: number; location: number | null; reboundTicks: number | null; pullbackTicks: number | null; spreadTicks: number | null; longRewardCostRatio: number | null; shortRewardCostRatio: number | null; };\n    checks: ContestWatchCheck[];\n    allowedActions: ContestWatchAction[];\n}"
           },
           {
+            "name": "ContestWatchMarketStatus",
+            "declaration": "export type ContestWatchMarketStatus = Pick<ContestWatchStatus, 'phase' | 'message' | 'sampleCount' | 'samples' | 'analyses' | 'lastDecision' | 'lastQuoteCheckedAt' | 'nextDecisionAt'> & { symbol: string; };"
+          },
+          {
             "name": "ContestWatchQuote",
             "declaration": "export interface ContestWatchQuote {\n    time: number;\n    price: number;\n    bid?: number;\n    ask?: number;\n}"
           },
@@ -6034,7 +6639,7 @@ export const TYPERT = {
           },
           {
             "name": "ContestWatchStatus",
-            "declaration": "export interface ContestWatchStatus {\n    running: boolean;\n    message: string;\n    strategyNotices?: string[];\n    phase?: 'sampling' | 'waiting_quote' | 'deciding' | 'checking' | 'waiting_plan';\n    lastQuoteCheckedAt?: number;\n    nextDecisionAt?: number;\n    openingCooldownUntil?: number;\n    nextRetryAt?: number;\n    accountCheckedAt?: number;\n    samples?: ContestWatchQuote[];\n    analyses?: ContestWatchAnalysis[];\n    config?: ContestWatchConfig;\n    identity?: ContestIdentity;\n    runId?: string;\n    startedAt?: number;\n    expiresAt?: number;\n    equityBaseline?: number;\n    sampleCount: number;\n    planCount: number;\n    openingPlanCount?: number;\n    lastPlanId?: string;\n    lastDecision?: ContestWatchDecision;\n    events: { time: number; message: string; }[];\n}"
+            "declaration": "export interface ContestWatchStatus {\n    markets?: ContestWatchMarketStatus[];\n    executionAuthorization?: { version: string; acceptedAt: number; runId: string; };\n    running: boolean;\n    message: string;\n    strategyNotices?: string[];\n    phase?: 'sampling' | 'waiting_quote' | 'deciding' | 'checking' | 'waiting_plan';\n    lastQuoteCheckedAt?: number;\n    nextDecisionAt?: number;\n    openingCooldownUntil?: number;\n    nextRetryAt?: number;\n    accountCheckedAt?: number;\n    samples?: ContestWatchQuote[];\n    analyses?: ContestWatchAnalysis[];\n    config?: ContestWatchConfig;\n    identity?: ContestIdentity;\n    runId?: string;\n    startedAt?: number;\n    expiresAt?: number;\n    equityBaseline?: number;\n    sampleCount: number;\n    planCount: number;\n    openingPlanCount?: number;\n    lastPlanId?: string;\n    lastDecision?: ContestWatchDecision;\n    events: { time: number; message: string; }[];\n}"
           },
           {
             "name": "ContestWatchTemplate",
@@ -6467,6 +7072,14 @@ export const TYPERT = {
           {
             "name": "QuantSkillsWorkspaceTarget",
             "declaration": "export interface QuantSkillsWorkspaceTarget {\n    readonly workspaceId: WorkspaceId;\n    readonly path: string;\n    readonly title: string;\n}"
+          },
+          {
+            "name": "SessionDeletionPreview",
+            "declaration": "export interface SessionDeletionPreview {\n    readonly sessionId: SessionId;\n    readonly token: string;\n    readonly files: readonly { readonly path: string; readonly bytes: number; }[];\n    readonly retained: readonly { readonly path: string; readonly reason: string; }[];\n}"
+          },
+          {
+            "name": "SessionLifecycleRequest",
+            "declaration": "export interface SessionLifecycleRequest {\n    readonly sessionId: SessionId;\n    readonly action: 'archive' | 'restore' | 'delete';\n    readonly filesToken?: string;\n}"
           }
         ]
       }

@@ -11,8 +11,8 @@ declare const entrySchema: z.ZodObject<{
         internal: "internal";
     }>;
     method: z.ZodEnum<{
-        internal: "internal";
         manual: "manual";
+        internal: "internal";
         ai: "ai";
         installation: "installation";
         recovered: "recovered";

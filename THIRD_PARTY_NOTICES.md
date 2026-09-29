@@ -198,3 +198,7 @@ Direct dependencies of the `pyproject.toml` manifests, plus `uv` as the developm
 ## First-party native packages
 
 `@deepseek-ai/node-addon-landlock-run` (and its platform packages) is built and released from this repository under BSD 3-Clause. It is listed here for completeness; it is first-party, not third-party.
+
+## Life garden
+
+The AI trader life garden uses Lenia continuous cellular automata and seed patterns from [Bert Chan / Lenia](https://github.com/Chakazul/Lenia), MIT licensed. The original copyright and license are included in `packages/ui-quantskills/LICENSE-LENIA.txt`. Rendering uses the existing Three.js dependency. The garden is a local simulation, separate from the trading runtime.

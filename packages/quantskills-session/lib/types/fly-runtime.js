@@ -16,7 +16,7 @@ export class FlyRuntime {
     port;
     starting;
     installing = false;
-    message = '首次使用需要准备果蝇运行环境。';
+    message = '首次使用需要准备AI 交易员运行环境。';
     lifetime = new AbortController();
     token = randomBytes(32).toString('hex');
     python;
@@ -33,27 +33,28 @@ export class FlyRuntime {
         if (process.platform === 'win32' && await exists(join(this.root, 'controller', '.ready')))
             await this.start();
     }
+    // Legacy blenderPath is accepted but ignored; browser life has no native renderer.
     async install(input) {
         if (process.platform !== 'win32')
-            throw new Error('果蝇首版支持 Windows。');
-        if (input?.blenderPath && input.blenderPath.length > 1000)
-            throw new Error('Blender 路径过长。');
+            throw new Error('AI 交易员首版支持 Windows。');
         if (!this.installing) {
             this.installing = true;
-            this.message = '正在准备果蝇控制器与神经环境…';
+            this.message = '正在准备 AI 交易员运行环境…';
             void (async () => {
                 if (!await exists(join(this.root, 'controller', '.ready')))
                     await this.prepare();
                 else
                     await this.start();
-                if (input?.blenderPath?.trim())
-                    await this.request({ path: 'environment/config', body: { blender_path: input.blenderPath.trim() } });
+                if (input?.neural === false) {
+                    this.message = '基础运行环境已就绪，可选择 QS 大模型交易。';
+                    return;
+                }
                 await this.request({ path: 'environment/prepare', body: {} });
                 while (!this.lifetime.signal.aborted) {
                     const state = await this.request({ path: 'state' });
                     const environment = state.environment;
-                    if (environment?.brain_ready && environment.blender_ready) {
-                        this.message = '神经环境与 Blender 已就绪。';
+                    if (environment?.brain_ready) {
+                        this.message = '神经环境已就绪。';
                         return;
                     }
                     if (environment?.progress?.status === 'error')
@@ -105,7 +106,7 @@ export class FlyRuntime {
     async open() {
         this.lifetime.signal.throwIfAborted();
         if (!await exists(join(this.root, 'controller', '.ready')))
-            throw new Error('请先准备果蝇运行环境。');
+            throw new Error('请先准备AI 交易员运行环境。');
         const server = createServer(async (request, response) => {
             if (request.method !== 'POST' || request.headers.authorization !== `Bearer ${this.token}`) {
                 response.writeHead(403).end();
@@ -124,7 +125,7 @@ export class FlyRuntime {
             catch (error) {
                 const detail = error;
                 response.writeHead(400, { 'Content-Type': 'application/json' }).end(JSON.stringify({ error: error instanceof Error ? error.message.slice(0, 400) : '宿主请求失败',
-                    ...(detail.source === 'competition' || detail.source === 'pandadata' ? { source: detail.source, code: detail.code, retryable: detail.retryable, retry_after: detail.retryAfterSeconds } : {}) }));
+                    ...(detail.source === 'competition' || detail.source === 'pandadata' || detail.source === 'model' ? { source: detail.source, code: detail.code, retryable: detail.retryable, retry_after: detail.retryAfterSeconds } : {}) }));
             }
         });
         this.bridge = server;
@@ -138,11 +139,11 @@ export class FlyRuntime {
         this.child = child;
         child.stdin.on('error', () => { });
         child.stderr.on('data', () => { });
-        child.on('error', () => { this.port = undefined; this.message = '果蝇进程启动失败，请重新准备运行环境。'; });
+        child.on('error', () => { this.port = undefined; this.message = 'AI 交易员进程启动失败，请重新准备运行环境。'; });
         child.once('exit', () => { this.port = undefined; this.child = undefined; server.close(); if (!this.lifetime.signal.aborted)
-            this.message = '果蝇进程已退出，重新打开可恢复记忆；交易建议保持停止。'; });
+            this.message = 'AI 交易员进程已退出，重新打开可恢复记忆；交易建议保持停止。'; });
         await new Promise((resolve, reject) => {
-            const timer = setTimeout(() => { child.kill(); reject(new Error('果蝇控制器启动超时')); }, 30000);
+            const timer = setTimeout(() => { child.kill(); reject(new Error('AI 交易员控制器启动超时')); }, 30000);
             let output = '';
             child.stdout.on('data', chunk => {
                 output += String(chunk);
@@ -159,24 +160,24 @@ export class FlyRuntime {
                 catch {
                     clearTimeout(timer);
                     child.kill();
-                    reject(new Error('果蝇启动结果无效'));
+                    reject(new Error('AI 交易员启动结果无效'));
                 }
             });
-            child.once('error', () => { clearTimeout(timer); reject(new Error('果蝇启动失败')); });
-            child.once('exit', () => { clearTimeout(timer); reject(new Error('果蝇已退出')); });
+            child.once('error', () => { clearTimeout(timer); reject(new Error('AI 交易员启动失败')); });
+            child.once('exit', () => { clearTimeout(timer); reject(new Error('AI 交易员已退出')); });
         }).catch(error => { server.close(); throw error; });
-        this.message = '果蝇后台已连接。';
+        this.message = 'AI 交易员后台已连接。';
     }
     async request(input) {
         if (!routes.test(input.path) || JSON.stringify(input).length > 240000)
-            throw new Error('果蝇请求无效。');
+            throw new Error('AI 交易员请求无效。');
         await this.start();
         const response = await fetch(`http://127.0.0.1:${this.port}`, { method: 'POST',
             headers: { Authorization: `Bearer ${this.token}`, 'Content-Type': 'application/json' }, body: JSON.stringify(input),
             signal: AbortSignal.any([this.lifetime.signal, AbortSignal.timeout(130000)]) });
         const result = await response.json();
         if (!result.ok)
-            throw new Error(result.error ?? '果蝇请求失败');
+            throw new Error(result.error ?? 'AI 交易员请求失败');
         return result.data;
     }
     dispose() {

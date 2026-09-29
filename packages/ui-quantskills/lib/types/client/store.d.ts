@@ -19,7 +19,7 @@ export interface QuantSkillsViewState {
     catalogSort: 'recommended' | 'name' | 'category';
     skillDrawerOpen: boolean;
     conversationsPinned: boolean;
-    settingsSection: 'plugins' | 'models' | 'workspace' | 'updates' | 'permissions' | 'appearance' | 'panda-data' | 'brand-support';
+    settingsSection: 'archives' | 'plugins' | 'models' | 'workspace' | 'updates' | 'permissions' | 'appearance' | 'panda-data' | 'brand-support';
     interfaceScale: number;
     conversationScale: number;
     conversationBrightness: number;

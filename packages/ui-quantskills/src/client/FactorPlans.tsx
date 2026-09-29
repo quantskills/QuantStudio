@@ -8,12 +8,13 @@ import factorCss from './FactorContestPage.module.css'
 import { FactorDataView } from './FactorDataView.tsx'
 import { waitForCompetition } from './competition-async.ts'
 
-export function FactorPlans({ status, access, refresh, compact = false }: { status: FactorContestStatus; access: FactorContestAccess; refresh(): Promise<void>; compact?: boolean }) {
+export function FactorPlans({ status, access, refresh, compact = false, hideHeading = false, openPlanId }: { status: FactorContestStatus; access: FactorContestAccess; refresh(): Promise<void>; compact?: boolean; hideHeading?: boolean; openPlanId?: string | undefined }) {
   const [selected, select] = useState<string>(), [open, setOpen] = useState(false), [busy, setBusy] = useState(false), [error, setError] = useState('')
   const active = useRef(false), generation = useRef(0)
   const controller = useRef<AbortController | undefined>(undefined), submitted = useRef(new Set<string>())
   const [returned, setReturned] = useState<{ source: FactorPlan | undefined; value: FactorPlan }>()
   useEffect(() => () => { generation.current++; controller.current?.abort() }, [])
+  useEffect(() => { if (openPlanId) { select(openPlanId); setError('') } }, [openPlanId])
   const original = status.plans.find(p => p.id === selected)
   const plan = returned?.value.id === original?.id && (original === returned?.source || original?.status === 'prepared') ? returned?.value : original
   const ready = status.enabled && status.phase === 'connected'
@@ -32,7 +33,7 @@ export function FactorPlans({ status, access, refresh, compact = false }: { stat
         if (result.id === verificationId && result.status === 'prepared') submitted.current.delete(result.id)
         setReturned({ source: original, value: result })
       }
-    } catch (e) { if (current === generation.current) setError(`${e instanceof Error ? e.message : '操作未完成。'}${submission ? '本次确认结果待核实，请勿重复提交。' : ''}`) }
+    } catch (e) { if (current === generation.current) setError(e instanceof Error ? e.message : '操作未完成。') }
     finally {
       if (current === generation.current) {
         active.current = false; setBusy(false)
@@ -43,14 +44,14 @@ export function FactorPlans({ status, access, refresh, compact = false }: { stat
     }
   }
   const list = <div className={css.plans}>
-    {status.plans.length === 0 ? <p className={css.muted}>暂无计划。向 AI 提出研究目标，或在因子池选择参赛操作。</p> : [...status.plans].reverse().slice(0, 50).map(p =>
+    {status.plans.length === 0 ? <div className={factorCss.emptyState}><h3>当前没有待确认操作</h3><p>研究预算、因子入池和参赛提交，都会在这里留下确认记录。</p></div> : [...status.plans].reverse().slice(0, 50).map(p =>
       <button key={p.id} className={css.planRow} type="button" disabled={busy} onClick={() => { select(p.id); setError('') }}>
         <span><strong>{p.summary}</strong><small>{contestTime(p.createdAt)}</small></span><span>{factorStates[p.status]}</span>
       </button>)}
   </div>
   const action = plan?.action, pool = asRecord(asRecord(plan?.snapshot).pool)
   return <div className={css.plans} data-compact={compact}>
-    {compact ? <button type="button" onClick={() => setOpen(true)}>因子计划（{status.plans.filter(p => p.status === 'prepared').length}）</button> : <><h2>操作计划与确认</h2>{list}</>}
+    {compact ? <button type="button" onClick={() => setOpen(true)}>因子计划（{status.plans.filter(p => p.status === 'prepared').length}）</button> : <>{!hideHeading && <h2>操作计划与确认</h2>}{list}</>}
     {compact && open && !plan && <ActionDialog title="因子计划" wide onClose={() => setOpen(false)}>{list}</ActionDialog>}
     {plan && action && <ActionDialog title="确认因子比赛操作" wide busy={busy} onClose={() => select(undefined)}>
       <div className={css.planDetails}>
@@ -75,8 +76,8 @@ export function FactorPlans({ status, access, refresh, compact = false }: { stat
           {action.kind === 'remove-factor' && <p className={css.error}>删除后有效因子不足 5 只，可能影响当月计分。已产生的历史数据按赛事规则处理。</p>}
           <details><summary>核对因子池与工作流快照</summary><pre className={factorCss.json}>{JSON.stringify(plan.snapshot, null, 2)}</pre></details>
         </>}
-        {plan.result !== undefined && <pre className={factorCss.json}>{JSON.stringify(plan.result, null, 2)}</pre>}
-        {error && <p role="alert" className={css.error}>{error}</p>}
+        {plan.result !== undefined && <details><summary>查看平台回执</summary><FactorDataView value={plan.result}/></details>}
+        {error && <p role="alert" className={css.error}>{error}{submitted.current.has(plan.id) && ['prepared', 'unknown'].includes(plan.status) ? '本次确认结果待核实，请勿重复提交。' : ''}</p>}
         <div className={css.actions}>
           {plan.status === 'prepared' && <><button type="button" data-primary disabled={busy || !ready || plan.expiresAt <= Date.now() || submitted.current.has(plan.id)
             || plan.identity.accountId !== status.identity?.accountId || plan.identity.contestId !== status.identity?.contestId}

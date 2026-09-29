@@ -107,7 +107,7 @@ export function watchEvidence(config: ContestWatchConfig, samples: ContestWatchQ
     if (account.direction !== 'flat') {
       const pnl = quote && account.entryPrice !== undefined ? (quote.price - account.entryPrice) / rules.tickSize * (account.direction === 'long' ? 1 : -1) : null
       add('exit', '持仓退出条件', pnl === null ? null : pnl <= -rules.stopLossTicks || pnl >= rules.takeProfitTicks || (historyReady && location !== null && (location < 0 || location > 1)),
-        `未计成本浮动 ${show(pnl)} tick；止损 ${rules.stopLossTicks} / 目标 ${rules.takeProfitTicks} tick，或区间突破；仅提示待确认平仓`, [])
+        `未计成本浮动 ${show(pnl)} tick；止损 ${rules.stopLossTicks} / 目标 ${rules.takeProfitTicks} tick，或区间突破；${config.executionMode === 'automatic' ? '按本次自动执行设置处理' : '逐笔确认后平仓'}`, [])
     }
   }
   if (signal) {
@@ -141,7 +141,7 @@ export function watchEvidence(config: ContestWatchConfig, samples: ContestWatchQ
     if (account.direction !== 'flat') {
       const pnl = quote && account.entryPrice !== undefined ? (quote.price - account.entryPrice) / signal.tickSize * (account.direction === 'long' ? 1 : -1) : null
       add('exit', '持仓退出条件', pnl === null ? null : pnl <= -signal.stopLossTicks || pnl >= signal.takeProfitTicks || (historyReady && (account.direction === 'long' ? invalidLong : invalidShort)),
-        `未计成本浮动 ${show(pnl)} tick；止损 ${signal.stopLossTicks} / 目标 ${signal.takeProfitTicks} tick，或趋势/突破失效；仅提示待确认平仓`, [])
+        `未计成本浮动 ${show(pnl)} tick；止损 ${signal.stopLossTicks} / 目标 ${signal.takeProfitTicks} tick，或趋势/突破失效；${config.executionMode === 'automatic' ? '按本次自动执行设置处理' : '逐笔确认后平仓'}`, [])
     }
   }
   for (const check of checks) check.enforcement = check.actions.length && (['history', 'spread'].includes(check.id) || config.decisionMode !== 'jev') ? 'hard' : 'reference'

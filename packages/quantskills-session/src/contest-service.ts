@@ -9,6 +9,7 @@ import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import { ContestCliError, record, transientContestCodes, type ContestCli, versionAtLeast } from './contest-cli.ts'
 import { contestFillSchema, mergePlanFills, planOrderId } from './contest-fills.ts'
 import { contestContractParts, futuresContractPattern, sameContestContract } from './contest-contract.ts'
+import { contestRequestCost, reserveContestRequests, type ContestRequestBucket } from './contest-rate-budget.ts'
 import type { ContestData, ContestIdentity, ContestInspection, ContestOrder, ContestPlan, ContestPrepareRequest, ContestQuery, ContestStatus } from './contest-types.ts'
 
 const identitySchema = z.object({ accountId: z.string().min(1), contestId: z.string().min(1) })
@@ -23,6 +24,9 @@ const planSchema = z.object({
 const stateSchema = z.object({
   enabled: z.boolean(), runtime: z.string().uuid().optional(), version: z.string().optional(),
   identity: identitySchema.optional(), plans: z.array(planSchema).max(1000),
+  retryAt: z.number().nonnegative().optional(),
+  tradeRetryAt: z.number().nonnegative().optional(),
+  requestHistory: z.object({ query: z.array(z.number().nonnegative()).max(60), trade: z.array(z.number().nonnegative()).max(10) }).optional(),
 })
 type State = z.infer<typeof stateSchema>
 const openStates = new Set(['executing', 'queued', 'submitted', 'unknown'])
@@ -35,6 +39,15 @@ const orderSchema = z.object({
 
 export function sameContest(a: ContestIdentity | undefined, b: ContestIdentity | undefined): boolean {
   return a !== undefined && b !== undefined && a.accountId === b.accountId && a.contestId === b.contestId
+}
+
+/** Known automatic orders on other contracts may coexist; uncertain submissions block the account. */
+export function blocksAutomaticOrder(plan: ContestPlan, symbol: string): boolean {
+  if (plan.status === 'prepared' && plan.expiresAt <= Date.now()) return false
+  if (!['prepared', 'executing', 'queued', 'submitted', 'unknown'].includes(plan.status)) return false
+  return plan.details.executionMode !== 'automatic' || ['prepared', 'executing', 'unknown'].includes(plan.status)
+    || !contestContractParts(record(plan.details.parameters).contractCode)
+    || sameContestContract(record(plan.details.parameters).contractCode, symbol)
 }
 
 export function contestQueryArgs(input: ContestQuery): string[] {
@@ -72,6 +85,7 @@ export class ContestService {
   private currentRules = ''
   private lastInspection?: ContestInspection
   private checkingUpdate?: Promise<ContestStatus>
+  private verified?: { identity: ContestIdentity; version: string; at: number }
 
   constructor(private readonly cli: ContestCli, dshHome?: string) {
     this.root = join(resolveDshHome(dshHome), 'quantskills', 'contest')
@@ -110,12 +124,45 @@ export class ContestService {
     return join(this.root, 'runtimes', this.state.runtime)
   }
 
-  private async run(args: readonly string[], signal?: AbortSignal): Promise<ContestData> {
+  private cooldownError(bucket: ContestRequestBucket = 'query'): ContestCliError {
+    const until = bucket === 'trade' ? this.state.tradeRetryAt : this.state.retryAt
+    const seconds = Math.max(1, Math.ceil(((until ?? 0) - Date.now()) / 1000))
+    return new ContestCliError('rate_limit_exceeded', `比赛${bucket === 'trade' ? '交易' : '查询'}接口请求过于频繁；请在 ${seconds} 秒后重试。冷却期间不会重复请求，无需重新授权。`, seconds)
+  }
+
+  private async rateLimited(error: ContestCliError, bucket: ContestRequestBucket = 'query'): Promise<ContestCliError> {
+    const now = Date.now()
+    const seconds = Math.max(30, error.retryAfterSeconds ?? 0)
+    if (bucket === 'trade') this.state.tradeRetryAt = now + seconds * 1000
+    else this.state.retryAt = now + seconds * 1000
+    delete this.lastInspection
+    await this.save()
+    return this.cooldownError(bucket)
+  }
+
+  private async run(args: readonly string[], signal?: AbortSignal, beforeDispatch?: () => Promise<void>): Promise<ContestData> {
     this.assertEnabled()
     const generation = this.generation
     const active = signal ? AbortSignal.any([this.controller.signal, signal]) : this.controller.signal
     active.throwIfAborted()
-    const result = await this.cli.run(this.runtime(), args, active)
+    const cost = contestRequestCost(args)
+    if (cost && Date.now() < ((cost.bucket === 'trade' ? this.state.tradeRetryAt : this.state.retryAt) ?? 0)) throw this.cooldownError(cost.bucket)
+    if (cost) {
+      // Persist before sending so restart cannot reset the rolling window.
+      // Local exhaustion stays outside the upstream-error catch and cannot
+      // freeze the other request category or imply an order was submitted.
+      reserveContestRequests(this.state.requestHistory ??= { query: [], trade: [] }, args)
+      await this.save()
+    }
+    active.throwIfAborted()
+    await beforeDispatch?.()
+    active.throwIfAborted()
+    let result: ContestData
+    try { result = await this.cli.run(this.runtime(), args, active) }
+    catch (error) {
+      if (error instanceof ContestCliError && ['rate_limit_exceeded', 'http_429'].includes(error.code)) throw await this.rateLimited(error, cost?.bucket ?? 'query')
+      throw error
+    }
     if (generation !== this.generation) throw new Error('比赛模式已切换，本次操作已中止。')
     active.throwIfAborted()
     this.assertEnabled()
@@ -129,7 +176,7 @@ export class ContestService {
     return structuredClone({ enabled: this.state.enabled, phase: this.state.enabled ? this.phase : 'off',
       ...(this.state.version ? { cliVersion: this.state.version } : {}), ...(this.latestVersion ? { latestVersion: this.latestVersion } : {}),
       updateAvailable: Boolean(this.latestVersion && this.state.version && !versionAtLeast(this.state.version, this.latestVersion)),
-      ...(this.state.identity ? { identity: this.state.identity } : {}), message: this.message, plans })
+      ...(this.state.identity ? { identity: this.state.identity } : {}), message: this.message, plans, ...(this.state.retryAt && Date.now() < this.state.retryAt ? { retryAt: this.state.retryAt } : {}) })
   }
 
   async setEnabled(enabled: boolean): Promise<ContestStatus> {
@@ -139,6 +186,7 @@ export class ContestService {
     this.state.enabled = enabled
     this.generation++
     this.ready = false
+    delete this.verified
     delete this.lastInspection
     this.controller.abort()
     this.controller = new AbortController()
@@ -208,8 +256,14 @@ export class ContestService {
     return identity
   }
 
-  private async validateIdentity(expected?: ContestIdentity, signal?: AbortSignal): Promise<ContestIdentity> {
+  private async validateIdentity(expected?: ContestIdentity, signal?: AbortSignal, reuseRecent = false): Promise<ContestIdentity> {
     const identity = await this.validateAccount(expected, signal)
+    // Reuse only the recent doctor/version check within one trading flow.
+    // whoami still verifies the active identity/scopes every time, and the
+    // server independently authorizes each submitted operation.
+    const verified = this.verified
+    if (reuseRecent && this.ready && verified && verified.version === this.state.version
+      && sameContest(verified.identity, identity) && Date.now() >= verified.at && Date.now() - verified.at < 30000) return identity
     const spec = record((await this.run(['agent', 'describe'], signal)).data)
     if (!this.state.version || typeof spec.minimumCliVersion !== 'string' || !versionAtLeast(this.state.version, spec.minimumCliVersion)) {
       this.ready = false
@@ -222,19 +276,22 @@ export class ContestService {
       const codes = failed.map(check => typeof check.detail === 'string' ? /^([a-z_0-9]+):/.exec(check.detail)?.[1] ?? '' : '')
       if (codes.length && codes.every(code => transientContestCodes.has(code))) {
         const code = codes.find(value => value === 'rate_limit_exceeded' || value === 'http_429') ?? codes[0]!
-        throw new ContestCliError(code, `比赛自检暂不可用（${code}）；稍后重试，不代表账户失效。`)
+        const error = new ContestCliError(code, `比赛自检暂不可用（${code}）；稍后重试，不代表账户失效。`)
+        if (code === 'rate_limit_exceeded' || code === 'http_429') throw await this.rateLimited(error)
+        throw error
       }
       this.ready = false
       const names = [...new Set(failed.map(check => ['本地凭证', '交易通道', '交易授权'].includes(String(check.name)) ? String(check.name) : '未知检查项'))]
       throw new Error(`比赛自检未通过：${names.join('、') || '未返回完整检查结果'}。请检查官网授权及账户状态后重新连接。`)
     }
     this.assertEnabled(); this.ready = true; this.phase = 'connected'
+    this.verified = { identity, version: this.state.version!, at: Date.now() }
     await this.save()
     return identity
   }
 
   async researchIdentity(expected?: ContestIdentity): Promise<ContestIdentity> {
-    return this.exclusive(async () => { this.assertReady(expected); return this.validateIdentity(expected ?? this.state.identity) })
+    return this.exclusive(async () => { this.assertReady(expected); return this.validateIdentity(expected ?? this.state.identity, undefined, true) })
   }
 
   /** Restore an existing binding after a host restart; never installs or starts login. */
@@ -386,11 +443,12 @@ export class ContestService {
     })
   }
 
-  async prepare(input: ContestPrepareRequest, identity: ContestIdentity, signal?: AbortSignal): Promise<ContestPlan> {
+  async prepare(input: ContestPrepareRequest, identity: ContestIdentity, signal?: AbortSignal, executionMode: 'manual' | 'automatic' = 'manual'): Promise<ContestPlan> {
     return this.exclusive(async () => {
       this.assertReady(identity)
-      await this.validateIdentity(identity)
-      if (this.state.plans.some(plan => openStates.has(plan.status))) throw new Error('请先查询未完成的交易回执，再生成新计划。')
+      await this.validateIdentity(identity, signal, true)
+      if (this.state.plans.some(plan => executionMode === 'automatic' && input.order
+        ? blocksAutomaticOrder(plan, input.order.symbol) : openStates.has(plan.status))) throw new Error('请先查询未完成的交易回执，再生成新计划。')
       let parameters: Record<string, JsonValue>
       let summary: string
       let quote: Record<string, JsonValue> = {}
@@ -439,29 +497,35 @@ export class ContestService {
       // Old cards become unexecutable when a replacement is prepared in this session.
       for (const plan of this.state.plans) if (plan.sessionId === input.sessionId && plan.status === 'prepared') plan.status = 'cancelled'
       const plan: ContestPlan = { id: response.planId, sessionId: input.sessionId, identity, operation: input.operation,
-        createdAt: Date.now(), expiresAt, summary, details: { ...response, parameters, marketQuote: quote }, clientRequestId: randomUUID(), status: 'prepared' }
+        createdAt: Date.now(), expiresAt, summary, details: { ...response, parameters, marketQuote: quote, ...(executionMode === 'automatic' ? { executionMode } : {}) }, clientRequestId: randomUUID(), status: 'prepared' }
       this.state.plans = this.state.plans.filter(plan => openStates.has(plan.status) || plan.status === 'prepared' || plan.createdAt > Date.now() - 30 * 86400_000).slice(-899)
       this.state.plans.push(plan); await this.save()
       return structuredClone(plan)
     })
   }
 
-  async execute(id: string, sessionId: string): Promise<ContestPlan> {
+  async execute(id: string, sessionId: string, beforeSubmit?: () => Promise<void>): Promise<ContestPlan> {
     return this.exclusive(async () => {
       const plan = this.findPlan(id, sessionId)
       this.assertReady(plan.identity)
       if (plan.status !== 'prepared') return structuredClone(plan)
+      if (plan.details.executionMode === 'automatic' && !beforeSubmit) throw new Error('自动计划须由已授权运行提交，不能通过逐笔确认接口执行。')
       if (plan.expiresAt <= Date.now()) { plan.status = 'expired'; await this.save(); throw new Error('计划已过期，请重新预演并确认。') }
-      await this.validateIdentity(plan.identity)
-      if (plan.status !== 'prepared' || plan.expiresAt <= Date.now()) throw new Error('计划已失效，请重新预演。')
-      // Persist intent BEFORE submission. A crash or lost reply must never cause a second order.
-      plan.status = 'executing'; await this.save()
+      await this.validateIdentity(plan.identity, undefined, true)
       try {
-        const result = record((await this.run(['plan', 'execute', plan.id, '--client-request-id', plan.clientRequestId, '--yes'])).data)
+        const result = record((await this.run(['plan', 'execute', plan.id, '--client-request-id', plan.clientRequestId, '--yes'], undefined, async () => {
+          await beforeSubmit?.()
+          if (plan.status !== 'prepared' || plan.expiresAt <= Date.now()) throw new Error('计划已失效，请重新预演。')
+          // Reserve quota and recheck freshness before persisting submission.
+          plan.status = 'executing'; await this.save()
+        })).data)
         plan.result = result
         if (typeof result.operationId === 'string') plan.operationId = result.operationId
         plan.status = operationStates.has(String(result.status)) ? result.status as ContestPlan['status'] : 'unknown'
-      } catch { plan.status = 'unknown' }
+      } catch (error) {
+        if (plan.status === 'prepared') throw error // No CLI submission was attempted.
+        plan.status = 'unknown'
+      }
       await this.save()
       // Optional price lookup must never downgrade a successful submission or replay it.
       await this.refreshFills(plan).catch(() => {})
