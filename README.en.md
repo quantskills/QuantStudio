@@ -8,7 +8,7 @@
 
 From QuantSkills, an open-source community under PandaAI
 
-[Get started](#get-started) · [QUANT](#quant-research) · [Work](#work-everyday-tasks) · [Trade](#trade-research-monitoring-and-execution) · [简体中文](README.md) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
+[Get started](#get-started) · [Agent setup](#agent-install) · [QUANT](#quant-research) · [Work](#work-everyday-tasks) · [Trade](#trade-research-monitoring-and-execution) · [简体中文](README.md) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
 
 ![QuantStudio: describe a task and choose skills, specialists or teams](docs/images/launch-white/hero.png)
 
@@ -60,7 +60,7 @@ The current futures integration uses the PandaAI competition CLI for **simulated
 
 ### Positions and recent decisions
 
-The Trading page opens with closed net P&L, estimated floating P&L and the daily fill count. Current positions and recent actions sit below, with detailed reasoning available in work records.
+The Trading page opens with closed net P&L, estimated floating P&L and the daily fill count. Current positions and recent actions sit below. Expand the market connection, trade plans and account sections when needed.
 
 ![AI Trader positions, sizes and recent decisions](docs/images/trade/positions-and-decisions.png)
 
@@ -78,7 +78,17 @@ Partial closes allocate opening fees by matched quantity; opening costs are reta
 
 ![Fills with commissions and closed net P&L after opening and closing fees](docs/images/trade/fills-net-pnl.png)
 
-These three screenshots show the actual futures simulation interface at specific times. They illustrate features, not future returns.
+### Performance: returns, fees and their sources
+
+The Performance page supports a single day, the past 7 or 30 days, and custom dates. Change the sampling period, inspect data gaps or export CSV. Account net closing P&L, range net return, maximum drawdown and the trader's closing win rate sit above the P&L curve, return breakdown, product contributions and win/loss distribution.
+
+![Actual performance view: account net P&L after fees, return breakdown and trade analysis](docs/images/trade/trading-performance.png)
+
+**Check the scope before comparing numbers.** Account returns on the Performance page cover the whole competition account; closed net P&L on the Trading page uses AI Trader's matched fills. They cover different scopes. The breakdown lists opening and closing fees separately, while gross metrics such as product contributions and closing win rate are labeled before fees. Missing values remain unknown instead of becoming zero.
+
+The Records page shows **20 entries per page**, with source filters, selected deletion and delete all. Deletion requires confirmation and clears the displayed journal while retaining execution receipts, P&L records and strategy audit evidence.
+
+Screenshots in this section show the actual futures simulation interface at different times. They illustrate features, not future returns.
 
 ### First run
 
@@ -112,20 +122,161 @@ You can use the Gitee mirror instead:
 git clone -c core.longpaths=true https://gitee.com/quantskills/QuantStudio.git
 ```
 
-### macOS: have a local agent install it
+<a id="agent-install"></a>
 
-macOS users can give their local agent the repository URL and the following instructions so it can install, verify and start QuantStudio:
+### Install with a local agent: complete macOS / Windows prompts
 
-Repository URL: <https://github.com/quantskills/QuantStudio>
+Copy the appropriate prompt into an agent **with terminal and file access on the target computer**. It will check prerequisites, install dependencies, run checks and start the app, explaining any system authorization or manual steps it needs. Each prompt includes the repository URLs and can be copied on its own.
+
+<details>
+<summary><strong>macOS: expand and copy the complete installation prompt</strong></summary>
 
 ```text
-Install and start QuantStudio on this Mac:
-1. Read the repository README and package.json first. Check that Git, Node.js (22.19+ in the 22.x line, or 24+), and pnpm 11.7.0 are available; install missing prerequisites using the normal method for this system, and report specific steps only if automatic installation is not possible.
-2. Clone https://github.com/quantskills/QuantStudio into a suitable local directory. If the directory already exists, verify that it is this repository before updating it or choosing a new clean directory.
-3. In the repository, run corepack enable and confirm that corepack pnpm --version is 11.7.0; then use corepack pnpm install --frozen-lockfile. Use the new ~/.dsh-quantstudio data directory by default. Do not delete or overwrite ~/.dsh, ~/.dsh-quantstudio, or other personal data unless I explicitly ask you to.
-4. Run corepack pnpm run check, corepack pnpm run test, and corepack pnpm run test:update. If anything fails, locate the cause and report it instead of skipping the check.
-5. Run corepack pnpm run web. Once the local service is healthy, send me the URL printed by the terminal. Keep the service running and report the actual directory, Node/pnpm versions, test results, and URL.
+Install, verify and start QuantStudio on this Mac. Leave a working local service running when finished.
+Official repository: https://github.com/quantskills/QuantStudio.git
+Mirror: https://gitee.com/quantskills/QuantStudio.git
+
+1.
+   Inspect the system and tools.
+   Identify Apple Silicon or Intel and record macOS, Git, Node.js, npm and Corepack versions and paths.
+   Read README.md, engines/packageManager in package.json, and the installation scripts.
+   Current requirements are Node.js 22.19+ in the 22.x line or 24+, and pnpm 11.7.0.
+   Install missing tools through official installers or an existing package manager, matching the architecture.
+   Preserve runtimes used by other projects.
+   Explain any required system authorization.
+
+2.
+   Prepare the source in a writable directory such as ~/QuantStudio.
+   Run git clone -c core.longpaths=true --branch main https://github.com/quantskills/QuantStudio.git.
+   Use the Gitee mirror if GitHub is unreachable and report that choice.
+   If the directory exists, inspect its remote, branch and git status; update only a clean checkout that can fast-forward.
+   Otherwise preserve it and choose a new directory without force-resetting or cleaning files.
+
+3.
+   Pin the package manager.
+   In the repository, run corepack enable and corepack pnpm --version.
+   Verify the version matches package.json (currently 11.7.0).
+   If Corepack is missing or reports an outdated entry point/signature error, follow https://github.com/nodejs/corepack to install or update it, then retry.
+   Do not switch to pnpm@latest or change packageManager/the lockfile to bypass errors.
+   Do not run an unpinned pnpm installation outside the repository.
+
+4.
+   Run corepack pnpm install --frozen-lockfile from the repository root.
+   Check the exit code.
+   Diagnose network, Node, permissions or dependency errors before continuing; retain the lockfile and do not report a failed installation as complete.
+
+5.
+   Run corepack pnpm run check, corepack pnpm run test, and corepack pnpm run test:update in sequence.
+   Report each result.
+   Investigate failures instead of skipping or weakening checks.
+   Keep installation logs and scratch files outside the repository so untracked files do not cause first launch to select development mode.
+
+6.
+   Preserve existing data.
+   Let the app resolve its data directory: a new installation defaults to ~/.dsh-quantstudio with the quantstudio profile; a recognized older QuantStudio installation may retain ~/.dsh.
+   Inspect and report existing DSH_HOME/QUANTSKILLS_PROFILE overrides before changing them.
+   Do not delete sessions, keys or plugins, or manually rewrite ordinary DSH's web profile.
+
+7.
+   Start from the repository using corepack pnpm run web through the normal launcher.
+   Do not bypass installation by invoking dsh directly.
+   Inspect existing services and occupied ports; do not terminate unrelated processes.
+   Select an available port if needed and record it.
+   Use a persistent terminal or managed background process, keeping logs and a documented stop procedure.
+
+8.
+   Verify the address actually printed in the startup log rather than assuming a port.
+   Check HTTP, then open the QuantStudio home and Settings in a browser and check for startup errors.
+   Without browser access, explicitly report HTTP-only verification and give manual UI checks.
+   If it runs from a development checkout, report that rather than claiming managed installation.
+   Resolve actual filesystem paths when troubleshooting /tmp versus /private/tmp.
+
+9.
+   Report the source directory, commit, actual runtime directory, DSH_HOME, profile, Node/pnpm versions, check results, URL, logs, and commands to stop and start next time.
+   Leave the service running.
+   I will enter model keys in Settings → Model services; do not expose credentials in logs or replies.
+   Do not connect trading accounts or start trading as part of installation.
+   A working macOS workspace does not establish that every trading runtime is supported or prepared; report module-specific requirements separately.
 ```
+
+</details>
+
+<details>
+<summary><strong>Windows: expand and copy the complete installation prompt</strong></summary>
+
+```text
+Use PowerShell to install, verify and start QuantStudio on this Windows computer. Leave a working local service running when finished.
+Official repository: https://github.com/quantskills/QuantStudio.git
+Mirror: https://gitee.com/quantskills/QuantStudio.git
+
+1.
+   Inspect Windows version, x64/ARM64 architecture, and Git, Node.js, npm and Corepack versions and paths.
+   Use Get-Command/where.exe to detect competing PATH entries.
+   Read README.md, engines/packageManager in package.json, and installation scripts.
+   Current requirements are Node.js 22.19+ in the 22.x line or 24+, and pnpm 11.7.0.
+   Install missing tools through official installers or an existing package manager, refresh the process PATH and verify again.
+   Do not require the whole app to run as administrator by default.
+
+2.
+   Choose a short writable source path, for example C:\QuantStudio; use another suitable location if it is occupied or not writable.
+   Avoid OneDrive and deeply nested directories.
+   Run git clone -c core.longpaths=true --branch main https://github.com/quantskills/QuantStudio.git <chosen-directory>.
+   Use Gitee if GitHub is unreachable and report that choice.
+   Inspect an existing directory's remote, branch and git status before using it.
+   Only update a clean checkout that can fast-forward; otherwise preserve it and choose a new directory without force-resetting or cleaning files.
+
+3.
+   Pin the package manager.
+   In the repository root run corepack.cmd enable and corepack.cmd pnpm --version.
+   Verify the package.json version (currently 11.7.0).
+   Use .cmd entry points to avoid PowerShell .ps1 execution-policy conflicts.
+   If Corepack is missing, outdated or conflicts with the Node Windows installer, follow the Windows instructions at https://github.com/nodejs/corepack.
+   Explain any required administrator step without disabling system security policy.
+   Do not switch to pnpm@latest or change packageManager/the lockfile to bypass errors.
+
+4.
+   Run corepack.cmd pnpm install --frozen-lockfile.
+   Check $LASTEXITCODE after each external command and stop dependent steps on failure.
+   Prefer a shorter path for path-length failures and diagnose connectivity before changing network settings.
+   Retain the lockfile and fixed dependency versions.
+
+5.
+   Run corepack.cmd pnpm run check, corepack.cmd pnpm run test, and corepack.cmd pnpm run test:update in sequence, recording each exit code and result.
+   Diagnose failures rather than skipping or weakening checks.
+   Store logs and scratch files outside the repository so they do not cause first launch to select development mode.
+
+6.
+   Preserve existing data.
+   New installations default to %USERPROFILE%\.dsh-quantstudio and the quantstudio profile; a recognized older QuantStudio installation may retain %USERPROFILE%\.dsh.
+   Inspect DSH_HOME/QUANTSKILLS_PROFILE before changing them.
+   Do not remove existing sessions, keys or plugins, or manually rewrite ordinary DSH's web profile.
+   Record source and data directories separately.
+
+7.
+   Run corepack.cmd pnpm run web through the normal launcher.
+   Do not invoke dsh directly to bypass preparation.
+   Inspect existing services and ports without terminating unrelated processes.
+   If changing the port, check the supported launcher arguments first.
+   Prefer a persistent terminal; when using Start-Process for a background service, include -WindowStyle Hidden, handle paths containing spaces correctly, retain logs and record the PID and stop procedure.
+
+8.
+   Use the URL printed in the startup log, not a hard-coded port such as 3198.
+   Check HTTP with Invoke-WebRequest, then verify the QuantStudio home and Settings in a browser and inspect startup errors.
+   Without browser access, report HTTP-only verification and provide manual UI checks.
+   Confirm the actual runtime directory and distinguish a development checkout from managed installation.
+   If a desktop shortcut was created, inspect its target rather than assuming it works.
+
+9.
+   Report source directory, commit, actual runtime directory, DSH_HOME, profile, Node/pnpm versions, check results, URL, logs, PID, and commands to stop and start next time.
+   Leave the service running.
+   I will enter model keys in Settings → Model services; do not expose credentials in logs or replies.
+   Do not connect trading accounts or start trading as part of installation.
+   Prepare AI Trader's Python environment separately through its UI when needed; the base workspace does not require Blender.
+```
+
+</details>
+
+**Corepack problems?** First verify the pinned pnpm version inside the repository. See the [official Corepack instructions](https://github.com/nodejs/corepack#how-to-install) for installation, updates and Windows installer conflicts. This project uses pnpm 11.7.0 rather than whichever major version the [general installation page](https://pnpm.io/installation) currently defaults to. In PowerShell, use `corepack.cmd` in place of `corepack` in the manual commands above.
 
 Open the URL printed in the terminal, such as `http://127.0.0.1:3198/`. Configure a model in Settings and start a conversation. Tasks using existing materials do not require a market-data connection.
 

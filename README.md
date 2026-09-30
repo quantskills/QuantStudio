@@ -8,7 +8,7 @@
 
 来自 PandaAI 旗下的 QuantSkills 开源社区
 
-[开始使用](#开始使用) · [QUANT](#quant量化研究) · [Work](#work日常工作) · [Trade](#trade研究盯盘与交易) · [English](README.en.md) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
+[开始使用](#开始使用) · [Agent 安装](#agent-install) · [QUANT](#quant量化研究) · [Work](#work日常工作) · [Trade](#trade研究盯盘与交易) · [English](README.en.md) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
 
 ![QuantStudio 首页：描述任务，选择技能、专家或专家团](docs/images/launch-white/hero.png)
 
@@ -70,7 +70,7 @@ QuantStudio 把研究市场、处理材料和执行交易放在同一个工作�
 
 ### 持仓与判断，打开就能看到
 
-AI 交易员的「交易」页先显示平仓净盈亏、持仓浮盈与当日成交，再展示当前持仓和最近动作。每个合约做了什么、为什么继续等待，可以从这里查看；详细过程保留在工作记录中。
+AI 交易员的「交易」页先显示平仓净盈亏、持仓浮盈与当日成交，再展示当前持仓和最近动作。每个合约做了什么、为什么继续等待，可以从这里查看；行情连接、交易计划与账户信息在下方按需展开。
 
 ![AI 交易员：当前持仓、合约手数与最近决策](docs/images/trade/positions-and-decisions.png)
 
@@ -88,7 +88,17 @@ AI 交易员的「交易」页先显示平仓净盈亏、持仓浮盈与当日�
 
 ![成交明细：按日期和合约筛选，查看手续费与扣费后的平仓净盈亏](docs/images/trade/fills-net-pnl.png)
 
-以上三张图为期货模拟赛实际界面，数字仅对应截图时点，用于说明功能，不代表未来收益。
+### 交易表现：收益从哪里来，费用扣了多少
+
+「表现」页按单日、近 7 日、近 30 日或自定义日期查看收益与成交，支持切换采样周期、检查采样缺口和导出 CSV。账户平仓净盈亏、区间净收益、最大回撤与交易员平仓胜率集中展示；下方展开净盈亏曲线、收益拆解、品种贡献和胜负分布。
+
+![交易表现实拍：扣费后的账户净盈亏、收益拆解、品种贡献与平仓胜负分布](docs/images/trade/trading-performance.png)
+
+**先看统计范围，再比较数字。**「表现」页的账户收益统计整个比赛账户；「交易」页的平仓净盈亏按 AI 交易员的配对成交计算，两者范围不同。收益拆解单列开仓与平仓手续费；品种贡献、平仓胜率等毛收益指标也明确标注「未扣手续费」。缺失数据保留为空，不用零代替。
+
+「记录」页保留运行过程，**每页 20 条**，支持按来源筛选、删除所选或删除全部。删除前确认范围，清理列表后仍保留成交回执、盈亏统计与策略审计底账。
+
+本节截图均来自期货模拟赛实际界面，包含不同时间的运行状态；数字仅对应截图时点，用于说明功能，不代表未来收益。
 
 ### 第一次运行
 
@@ -122,20 +132,135 @@ corepack pnpm run web
 git clone -c core.longpaths=true https://gitee.com/quantskills/QuantStudio.git
 ```
 
-### macOS：让本地 Agent 安装
+<a id="agent-install"></a>
 
-macOS 用户可以把项目地址和下面这段话交给本机的 Agent，让它代为完成安装、检查和启动：
+### 让本地 Agent 安装：macOS / Windows 完整提示词
 
-项目地址：<https://github.com/quantskills/QuantStudio>
+在**目标电脑上能操作终端和文件的 Agent** 中，复制对应平台下方的完整提示词。Agent 会检查环境、安装依赖、运行检查并启动页面；需要系统授权或人工操作时会说明具体步骤。两个提示词都自带仓库地址，可以单独复制使用。
+
+<details>
+<summary><strong>macOS：展开并复制完整安装提示词</strong></summary>
 
 ```text
-请在这台 macOS 电脑上安装并启动 QuantStudio：
-1. 先阅读仓库 README 和 package.json，检查 Git、Node.js（22.19+ 的 22.x，或 24+）以及 pnpm 11.7.0 是否可用；缺少依赖时按当前系统方式安装，无法自动安装时再报告具体原因和步骤。
-2. 将 https://github.com/quantskills/QuantStudio 克隆到合适的本地目录；如果目录已存在，先检查它是否为该仓库，再决定更新或使用新的干净目录。
-3. 在仓库目录执行 corepack enable，并确认 corepack pnpm --version 为 11.7.0；之后使用 corepack pnpm install --frozen-lockfile。默认使用新的 ~/.dsh-quantstudio 数据目录，不要删除或覆盖 ~/.dsh、~/.dsh-quantstudio 或其他个人数据，除非我明确要求。
-4. 使用 corepack pnpm run check、corepack pnpm run test 和 corepack pnpm run test:update；遇到失败时先定位原因并报告，不要跳过检查。
-5. 使用 corepack pnpm run web，确认本地服务成功启动后，把终端显示的访问地址发给我。保持服务运行，并汇报实际使用的目录、Node/pnpm 版本、测试结果和启动地址。
+请在这台 macOS 电脑上安装、验证并启动 QuantStudio，完成后保留可用的本地服务。
+官方仓库：https://github.com/quantskills/QuantStudio.git
+国内镜像：https://gitee.com/quantskills/QuantStudio.git
+
+1. 检查系统与工具。
+   确认是 Apple Silicon 还是 Intel，记录 macOS、Git、Node.js、npm、Corepack 的版本和实际路径。
+   阅读仓库 README.md、package.json 的 engines/packageManager 及相关安装脚本。
+   当前要求 Node.js 22.19+ 的 22.x，或 24+；pnpm 固定 11.7.0。
+   缺少工具时使用官方安装包或本机已有的包管理器，匹配机器架构，不替换仍被其他项目使用的运行环境。
+   需要系统授权时说明原因和具体操作。
+
+2. 准备源码。
+   选择当前用户可写目录，例如 ~/QuantStudio，执行 git clone -c core.longpaths=true --branch main https://github.com/quantskills/QuantStudio.git。
+   GitHub 不可达时可改用上面的 Gitee 镜像并说明。
+   已有目录先检查 remote、分支和 git status；干净且可快进时才更新，否则保留它，另选新目录，不强制重置或清理文件。
+
+3. 固定包管理器。
+   在仓库目录执行 corepack enable，再执行 corepack pnpm --version，确认等于 package.json 的固定版本（当前 11.7.0）。
+   Corepack 缺失或出现旧版本入口/签名错误时，按 https://github.com/nodejs/corepack 的官方说明安装或更新 Corepack，再重试；不要改用 pnpm@latest，不修改 packageManager 或锁文件来绕过问题。
+   不要在仓库外执行无版本约束的 pnpm 安装。
+
+4. 安装依赖。
+   在仓库根目录执行 corepack pnpm install --frozen-lockfile，每一步检查退出码。
+   若失败，定位网络、Node 版本、权限或依赖错误后修复同一问题；不要删除锁文件，也不要把失败当成安装完成。
+
+5. 验证安装。
+   依次执行 corepack pnpm run check、corepack pnpm run test、corepack pnpm run test:update。
+   汇报每组结果；失败时先定位并报告，不跳过或改测试以宣称通过。
+   安装日志和临时文件放在仓库之外，避免普通未跟踪文件使首次启动进入开发模式。
+
+6. 保留已有数据。
+   让应用选择数据目录：新安装默认 ~/.dsh-quantstudio，profile 默认 quantstudio；检测到旧 QuantStudio 时可能沿用 ~/.dsh。
+   已有 DSH_HOME 或 QUANTSKILLS_PROFILE 先核对并汇报，不盲目覆盖。
+   不删除或覆盖这些目录中的会话、密钥和第三方插件，也不手工改写普通 DSH 的 web profile。
+
+7. 启动并保留服务。
+   在仓库目录执行 corepack pnpm run web，使用正常启动器，不直接绕过安装器运行 dsh。
+   先检查已有服务和端口占用，不结束无关进程；端口冲突时选择空闲端口并记录。
+   通过 Agent 的持久终端或受控后台进程保留服务，记录日志位置和停止方法。
+
+8. 验收页面。
+   使用启动日志实际给出的地址，不假定固定端口；检查 HTTP 响应，再用浏览器确认 QuantStudio 首页及设置页正常打开、无启动错误。
+   若 Agent 没有浏览器能力，明确仅完成 HTTP 验证，并给我人工验收步骤。
+   显示源码开发模式时说明原因，不把它说成托管安装成功。
+   涉及 /tmp 路径时注意它可能解析为 /private/tmp，以实际路径定位问题。
+
+9. 交付结果。
+   列出源码目录、提交号、实际运行目录、DSH_HOME、profile、Node/pnpm 版本、检查结果、访问地址、日志位置，以及停止和下次启动的命令。
+   保留服务供我使用。
+   模型密钥由我在“设置 → 模型服务”填写，不在日志或回复中输出凭据；本次安装不自动连接交易账户或启动交易。
+   macOS 的基础工作台启动成功不等于所有交易运行环境已经就绪；按各模块的平台支持另行说明。
 ```
+
+</details>
+
+<details>
+<summary><strong>Windows：展开并复制完整安装提示词</strong></summary>
+
+```text
+请在这台 Windows 电脑上使用 PowerShell 安装、验证并启动 QuantStudio，完成后保留可用的本地服务。
+官方仓库：https://github.com/quantskills/QuantStudio.git
+国内镜像：https://gitee.com/quantskills/QuantStudio.git
+
+1. 检查系统与工具。
+   记录 Windows 版本、x64/ARM64 架构，以及 Git、Node.js、npm、Corepack 的版本和实际路径；可以使用 Get-Command、where.exe 检查多版本 PATH。
+   阅读仓库 README.md、package.json 的 engines/packageManager 及安装脚本。
+   当前要求 Node.js 22.19+ 的 22.x，或 24+；pnpm 固定 11.7.0。
+   缺少工具时使用官方安装包或本机已有包管理器，安装后刷新当前进程 PATH 并重新核验；不要默认要求整套应用以管理员身份运行。
+
+2. 准备源码。
+   选当前用户可写的短路径，例如 C:\QuantStudio；该路径不可写或已占用时另选合适目录，避免 OneDrive 同步目录和多层长路径。
+   执行 git clone -c core.longpaths=true --branch main https://github.com/quantskills/QuantStudio.git <选定目录>。
+   GitHub 不可达时可使用 Gitee 镜像并说明。
+   已有目录先检查 remote、分支和 git status；仅在干净且可快进时更新，否则保留原目录另选新目录，不强制重置或清理文件。
+
+3. 固定包管理器。
+   在仓库根目录执行 corepack.cmd enable，再执行 corepack.cmd pnpm --version，确认等于 package.json 的固定版本（当前 11.7.0）。
+   使用 .cmd 入口避免 PowerShell 的 .ps1 执行策略冲突。
+   Corepack 缺失、过旧或与 Node 安装器自带版本冲突时，按 https://github.com/nodejs/corepack 的 Windows 官方说明处理，再重试；需要管理员授权时说明具体步骤，不关闭系统安全策略。
+   不使用 pnpm@latest，不修改 packageManager 或锁文件绕过错误。
+
+4. 安装依赖。
+   在仓库根目录执行 corepack.cmd pnpm install --frozen-lockfile。
+   每条外部命令后检查 $LASTEXITCODE，失败就停止后续步骤并定位原因。
+   遇到路径过长，优先使用更短的目录；遇到网络问题先核对连通性，不删除锁文件或随意替换依赖版本。
+
+5. 验证安装。
+   依次执行 corepack.cmd pnpm run check、corepack.cmd pnpm run test、corepack.cmd pnpm run test:update，逐项记录退出码和测试结果。
+   失败时定位并报告，不跳过或改测试以宣称通过。
+   日志与临时文件放在仓库之外，避免普通未跟踪文件使首次启动进入开发模式。
+
+6. 保留已有数据。
+   新安装默认使用 %USERPROFILE%\.dsh-quantstudio 和 quantstudio profile；检测到旧 QuantStudio 时可能沿用 %USERPROFILE%\.dsh。
+   先核对已有 DSH_HOME、QUANTSKILLS_PROFILE，不盲目覆盖。
+   不删除现有会话、密钥或插件，不手工改写普通 DSH 的 web profile。
+   仓库目录和数据目录应分别记录。
+
+7. 启动并保留服务。
+   在仓库根目录执行 corepack.cmd pnpm run web，使用正常启动器，不直接运行 dsh 绕过准备流程。
+   检查已有服务与端口占用，不结束无关进程；如需换端口，先确认启动器参数并选空闲端口。
+   优先使用持久终端；如用 Start-Process 在后台启动，使用 -WindowStyle Hidden 并保留日志，正确处理含空格的路径。
+   记录 PID、日志与停止方法。
+
+8. 验收页面。
+   以启动日志实际给出的地址为准，不写死 3198；使用 Invoke-WebRequest 检查响应，并在浏览器确认 QuantStudio 首页与设置页正常打开、无启动错误。
+   如果 Agent 没有浏览器能力，明确仅完成 HTTP 验证并给我人工验收步骤。
+   核对实际运行目录和托管状态；源码开发模式与托管安装需如实区分。
+   若生成桌面快捷方式，核对目标而不是假设它已可用。
+
+9. 交付结果。
+   汇报源码目录、提交号、实际运行目录、DSH_HOME、profile、Node/pnpm 版本、检查结果、访问地址、日志和 PID，以及停止和下次启动的命令。
+   保留服务供我使用。
+   模型密钥由我在“设置 → 模型服务”填写，不在日志或回复中输出凭据；本次安装不自动连接交易账户或启动交易。
+   AI 交易员的 Python 等运行环境按页面引导另行准备，基础工作台安装不要求 Blender。
+```
+
+</details>
+
+**安装遇到 Corepack 问题？** 先在仓库内核对固定的 pnpm 版本。Corepack 的安装、更新与 Windows 安装器冲突处理见[官方说明](https://github.com/nodejs/corepack#how-to-install)；本项目使用 pnpm 11.7.0，不跟随[通用安装页](https://pnpm.io/installation)默认安装其他主版本。PowerShell 可将上方手动命令中的 `corepack` 换成 `corepack.cmd`。
 
 打开终端显示的地址，例如 `http://127.0.0.1:3198/`。在「设置 → 模型服务」配置模型，再新建会话开始任务。处理已有材料不要求先连接行情服务。
 
