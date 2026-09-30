@@ -46,6 +46,15 @@ class Store:
                 CREATE TABLE IF NOT EXISTS events(seq INTEGER PRIMARY KEY AUTOINCREMENT,at REAL NOT NULL,
                     kind TEXT NOT NULL,actor TEXT NOT NULL,decision_id TEXT NOT NULL,payload TEXT NOT NULL,
                     dedupe TEXT UNIQUE);
+                CREATE TABLE IF NOT EXISTS journal_entries(seq INTEGER PRIMARY KEY,actor TEXT NOT NULL);
+                CREATE INDEX IF NOT EXISTS journal_actor_seq ON journal_entries(actor,seq);
+                CREATE TABLE IF NOT EXISTS journal_metadata(key TEXT PRIMARY KEY,value TEXT NOT NULL);
+                INSERT OR IGNORE INTO journal_entries(seq,actor)
+                    SELECT seq,actor FROM events WHERE NOT EXISTS
+                    (SELECT 1 FROM journal_metadata WHERE key='initialized');
+                INSERT OR IGNORE INTO journal_metadata VALUES('initialized','1');
+                CREATE TRIGGER IF NOT EXISTS append_journal_entry AFTER INSERT ON events
+                    BEGIN INSERT INTO journal_entries(seq,actor) VALUES(NEW.seq,NEW.actor); END;
                 CREATE TABLE IF NOT EXISTS usage(day TEXT NOT NULL,kind TEXT NOT NULL,calls INTEGER NOT NULL DEFAULT 0,
                     PRIMARY KEY(day,kind));
                 CREATE TABLE IF NOT EXISTS reservations(product TEXT PRIMARY KEY,notional REAL NOT NULL,
@@ -160,6 +169,52 @@ class Store:
         with self.connect() as db:
             rows = db.execute('SELECT * FROM events ORDER BY seq DESC LIMIT ?', (min(500, limit),)).fetchall()
             return [{**dict(row), 'payload': json.loads(row['payload'])} for row in reversed(rows)]
+
+    @staticmethod
+    def journal_filter(actor, snapshot):
+        if not isinstance(actor, str) or not actor or len(actor) > 80:
+            raise ValueError('记录来源无效')
+        if type(snapshot) is not int or snapshot < 0:
+            raise ValueError('记录范围无效，请刷新后重试')
+        return ('j.seq<=?' + (' AND j.actor=?' if actor != 'all' else ''),
+                (snapshot, actor) if actor != 'all' else (snapshot,))
+
+    def journal_page(self, actor='all', page=1, snapshot=None):
+        if type(page) is not int or page < 1:
+            raise ValueError('页码无效')
+        with self.connect() as db:
+            # Count and page belong to one read snapshot, even during trading.
+            db.execute('BEGIN')
+            latest = db.execute('SELECT COALESCE(MAX(seq),0) FROM events').fetchone()[0]
+            snapshot = latest if snapshot is None else snapshot
+            where, args = self.journal_filter(actor, snapshot)
+            total = db.execute(f'SELECT COUNT(*) FROM journal_entries j WHERE {where}', args).fetchone()[0]
+            pages = max(1, (total + 19) // 20)
+            page = min(page, pages)
+            rows = db.execute(f'''SELECT e.* FROM journal_entries j JOIN events e ON e.seq=j.seq
+                WHERE {where} ORDER BY j.seq DESC LIMIT 20 OFFSET ?''', (*args, (page-1)*20)).fetchall()
+            new_where = 'seq>?' + (' AND actor=?' if actor != 'all' else '')
+            has_new = db.execute(f'SELECT 1 FROM journal_entries WHERE {new_where} LIMIT 1', args).fetchone() is not None
+            return {'events': [{**dict(row), 'payload': json.loads(row['payload'])} for row in rows],
+                    'total': total, 'page': page, 'pages': pages, 'page_size': 20,
+                    'snapshot': snapshot, 'has_new': has_new}
+
+    def delete_journal(self, request):
+        """Delete journal membership; execution, replay and P&L evidence stay intact."""
+        if not isinstance(request, dict) or request.get('confirm') is not True:
+            raise ValueError('请确认删除记录')
+        where, args = self.journal_filter(request.get('actor'), request.get('snapshot'))
+        seqs = request.get('seqs')
+        if request.get('all_matching') is True:
+            if seqs is not None: raise ValueError('删除范围不能重复指定')
+        else:
+            if not isinstance(seqs, list) or not 1 <= len(seqs) <= 20 or any(type(seq) is not int or seq <= 0 for seq in seqs):
+                raise ValueError('请选择 1 至 20 条记录')
+            where += ' AND j.seq IN (' + ','.join('?' for _ in seqs) + ')'
+            args += tuple(seqs)
+        with self.connect() as db:
+            result = db.execute(f'DELETE FROM journal_entries AS j WHERE {where}', args)
+            return {'deleted': result.rowcount}
 
     def decision(self, decision_id):
         with self.connect() as db:

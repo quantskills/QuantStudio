@@ -5,7 +5,7 @@ import { createServer } from 'node:http';
 import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
-const routes = /^(?:state|settings|control|trade-filters|events(?:\?after=\d+)?|statistics(?:\?[^#]*)?|analytics(?:\?[^#]*)?|learning(?:\?[^#]*)?|oracle|report|models|models\/test|jev\/test|layout|layout\/reset|environment\/(?:prepare|config)|homes|homes\/restore|asset\/(?:default|[a-zA-Z0-9]+)\/(?:home\.glb|preview\.png))$/;
+const routes = /^(?:state|settings|control|trade-filters|events(?:\?after=\d+)?|journal(?:\?[^#]*|\/delete)?|statistics(?:\?[^#]*)?|analytics(?:\?[^#]*)?|learning(?:\?[^#]*)?|oracle|report|models|models\/test|jev\/test|layout|layout\/reset|environment\/(?:prepare|config)|homes|homes\/restore|asset\/(?:default|[a-zA-Z0-9]+)\/(?:home\.glb|preview\.png))$/;
 const source = join(dirname(createRequire(import.meta.url).resolve('@deepseek-ai/dsh-quantskills-session/package.json')), 'fly-runtime');
 const exists = (path) => access(path).then(() => true, () => false);
 export class FlyRuntime {

@@ -2,6 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useEffect, useState } from 'react';
 import { useContest } from "./contest.js";
 import { ContestPlans } from "./ContestPlans.js";
+import { TraderDisclosure } from "./fly/TraderDisclosure.js";
 import { waitForCompetition } from "./competition-async.js";
 import './TradingWorkspace.css';
 import FlyV2Page from "./fly/FlyV2Page.js";
@@ -53,6 +54,6 @@ function FlyPlans({ access }) {
     const filtered = { ...state.status, plans: state.status.plans.filter(plan => plan.sessionId.startsWith('fly:')
             && plan.identity.accountId === identity?.accountId && plan.identity.contestId === identity?.contestId) };
     const pending = filtered.plans.filter(plan => ['prepared', 'executing', 'queued', 'submitted', 'unknown', 'partial'].includes(plan.status)).length;
-    return _jsxs("details", { id: "fly-contest-plans", className: "fv-contest-plans", open: pending > 0, children: [_jsxs("summary", { children: ["\u4EA4\u6613\u8BA1\u5212\u4E0E\u56DE\u6267 \u00B7 ", pending, " \u7B14\u5F85\u5904\u7406"] }), _jsx("p", { children: "\u9010\u7B14\u786E\u8BA4\u7684\u8BA1\u5212\u9700\u8981\u6838\u5BF9\u540E\u63D0\u4EA4\uFF1B\u81EA\u52A8\u59D4\u6258\u76F4\u63A5\u5C55\u793A\u56DE\u6267\u3002\u6210\u4EA4\u4EE5\u67DC\u53F0\u8BB0\u5F55\u4E3A\u51C6\u3002" }), _jsx(ContestPlans, { status: filtered, access: access, refresh: state.refresh })] });
+    return _jsxs(TraderDisclosure, { id: "fly-contest-plans", kind: "plans", title: "\u4EA4\u6613\u8BA1\u5212\u4E0E\u56DE\u6267", description: "\u6838\u5BF9\u4EA4\u6613\u8BA1\u5212\uFF0C\u67E5\u770B\u59D4\u6258\u4E0E\u6210\u4EA4\u56DE\u6267", status: pending ? `${pending} 笔待处理` : '暂无待处理', tone: pending ? 'attention' : 'neutral', open: pending > 0, children: [_jsx("p", { children: "\u9010\u7B14\u786E\u8BA4\u7684\u8BA1\u5212\u9700\u8981\u6838\u5BF9\u540E\u63D0\u4EA4\uFF1B\u81EA\u52A8\u59D4\u6258\u76F4\u63A5\u5C55\u793A\u56DE\u6267\u3002\u6210\u4EA4\u4EE5\u67DC\u53F0\u8BB0\u5F55\u4E3A\u51C6\u3002" }), _jsx(ContestPlans, { status: filtered, access: access, refresh: state.refresh })] });
 }
 //# sourceMappingURL=FlyPage.js.map

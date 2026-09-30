@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import './TradingGuide.css';
 export type GuideStep = {
     title: string;
@@ -11,7 +12,7 @@ export type GuideStep = {
     } | undefined;
 };
 /** Navigation and explanation only: opening a guide never starts a trading operation. */
-export declare function TradingGuide({ name, steps, troubleshooting, compact }: {
+export declare function TradingGuide({ name, steps, troubleshooting, compact, triggerIcon, inDrawer }: {
     name: string;
     steps: GuideStep[];
     troubleshooting: {
@@ -19,5 +20,7 @@ export declare function TradingGuide({ name, steps, troubleshooting, compact }: 
         body: string;
     }[];
     compact?: boolean;
+    triggerIcon?: ReactNode;
+    inDrawer?: boolean;
 }): import("react").JSX.Element;
 //# sourceMappingURL=TradingGuide.d.ts.map

@@ -4,6 +4,7 @@ import type { FlyAccess } from './fly/transport.ts'
 import type { ContestAccess } from './contest.ts'
 import { useContest } from './contest.ts'
 import { ContestPlans } from './ContestPlans.tsx'
+import { TraderDisclosure } from './fly/TraderDisclosure.tsx'
 import { waitForCompetition } from './competition-async.ts'
 import './TradingWorkspace.css'
 import FlyV2Page from './fly/FlyV2Page.tsx'
@@ -47,5 +48,5 @@ function FlyPlans({ access }: { access: ContestAccess }) {
   const filtered = { ...state.status, plans: state.status.plans.filter(plan => plan.sessionId.startsWith('fly:')
     && plan.identity.accountId === identity?.accountId && plan.identity.contestId === identity?.contestId) }
   const pending = filtered.plans.filter(plan => ['prepared', 'executing', 'queued', 'submitted', 'unknown', 'partial'].includes(plan.status)).length
-  return <details id="fly-contest-plans" className="fv-contest-plans" open={pending > 0}><summary>交易计划与回执 · {pending} 笔待处理</summary><p>逐笔确认的计划需要核对后提交；自动委托直接展示回执。成交以柜台记录为准。</p><ContestPlans status={filtered} access={access} refresh={state.refresh} /></details>
+  return <TraderDisclosure id="fly-contest-plans" kind="plans" title="交易计划与回执" description="核对交易计划，查看委托与成交回执" status={pending ? `${pending} 笔待处理` : '暂无待处理'} tone={pending ? 'attention' : 'neutral'} open={pending > 0}><p>逐笔确认的计划需要核对后提交；自动委托直接展示回执。成交以柜台记录为准。</p><ContestPlans status={filtered} access={access} refresh={state.refresh} /></TraderDisclosure>
 }

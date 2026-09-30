@@ -27,6 +27,7 @@ def save_sample(store, account_id, official, at, *, observed_at, source, sample_
     if source not in ('counter', 'acceptance_observation') or not sample_key:
         return False
     values['provenance'] = provenance
+    values['pnl_source'] = str(official.get('PnlSource') or '')
     with store.connect() as db:
         result = db.execute('INSERT OR IGNORE INTO equity_samples VALUES(?,?,?,?,?,?,?)',
                             (account_id, day, at, observed_at, source, sample_key, encode(values)))
@@ -171,8 +172,12 @@ def trading_analytics(store, markets, account, account_id, day, *, period='raw',
         previous_day = sample['day']
     # A fixed baseline makes the realized-equity chart independent of later
     # floating P&L and cash flows. It is a derived curve, not live account equity.
-    first = equity[0] if equity else None
-    baseline = first['Balance'] - first['day_net'] if first and first['day_net'] is not None else None
+    # Earlier versions saved balances without the competition's P&L fields.
+    # A later complete observation of the SAME first day can establish its
+    # baseline; it cannot reconstruct old missing points or missing prior days.
+    first_day = equity[0]['day'] if equity else None
+    first = next((p for p in equity if p['day'] == first_day and p['day_net'] is not None), None)
+    baseline = first['Balance'] - first['day_net'] if first else None
     for point in equity:
         point['realized_equity'] = baseline + point['cumulative_net'] if baseline is not None and point['cumulative_net'] is not None else None
     # Receipt order is retained: TradingDay is not the calendar date of night-session trades.
@@ -225,7 +230,7 @@ def trading_analytics(store, markets, account, account_id, day, *, period='raw',
         'periods': aggregate_periods(equity, fills, period) if period != 'raw' else [],
         'period_summary': period_summary, 'gaps': gaps,
         'equity_baseline': {'value': baseline, 'at': first['at'] if first else None,
-                            'method': '首条柜台权益减去该条当日净收益反推固定基准；不叠加后续出入金'},
+                            'method': '首个交易日内首条完整快照的权益减去当日净收益；缺失历史分项不回填，不叠加后续出入金'},
         'products': sorted(products.values(), key=lambda p: PRODUCTS.index(p['product']) if p['product'] in PRODUCTS else len(PRODUCTS)),
         'summary': {
             'fills': len(fills), 'closing_fills': len(closed), 'matched_closes': len(known),
@@ -240,6 +245,8 @@ def trading_analytics(store, markets, account, account_id, day, *, period='raw',
         'coverage': {'samples': len(samples), 'first_at': equity[0]['at'] if equity else None,
                      'last_at': account_at, 'gaps': sum(p['gap_before'] for p in equity),
                      'observation_samples': sum(p['source'] == 'acceptance_observation' for p in equity),
+                     'pnl_samples': sum(p['day_net'] is not None for p in equity),
+                     'pnl_first_at': next((p['at'] for p in equity if p['day_net'] is not None), None),
                      'cash_flow_unknown': cash_flow_unknown, 'cash_flow_changed': len(cash_flows) > 1},
         'note': '累计平仓净盈亏＝柜台平仓盈亏－已发生手续费（含开仓和平仓费用），不含持仓浮盈亏；'
                 '平仓权益曲线＝首条快照反推的固定基准＋累计平仓净盈亏，不含后续浮盈变化或出入金，非实时账户总权益。'

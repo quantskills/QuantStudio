@@ -1,4 +1,4 @@
-import { GearSixIcon, WaveformIcon, PencilSimpleIcon } from '@phosphor-icons/react'
+import { GearSixIcon, WaveformIcon, PencilSimpleIcon, CaretDownIcon, CaretRightIcon, StackIcon, SlidersHorizontalIcon, TimerIcon, QuestionIcon, ListBulletsIcon, ArrowUpRightIcon, InfoIcon, ArrowsClockwiseIcon, FloppyDiskIcon, BrainIcon, PlugsConnectedIcon } from '@phosphor-icons/react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { ContestWatchConfig, ContestWatchStatus, ContestWatchTemplate } from './plugin-types.ts'
 import type { ContestAccess } from './contest.ts'
@@ -11,11 +11,13 @@ import { ContestWatchVisuals } from './ContestWatchVisuals.tsx'
 import { instrumentIssue, makeTemplate, rangeTemplate, templates as builtIns, withInstrument, selectedContracts, type TemplateKind } from './jev-templates.ts'
 import { useJevProducts } from './jev-catalog.ts'
 import { JevInstrument } from './JevInstrument.tsx'
+import { JevSettingsDisclosure } from './JevSettingsDisclosure.tsx'
 import { TradingSettingsNavigation } from './TradingNavigation.tsx'
 import { ExecutionModeChoice, ExecutionDisclosure, AUTOMATIC_TRADING_CONSENT } from './TradingExecution.tsx'
 import { ActionDialog } from './ActionDialog.tsx'
 import { TradingGuide } from './TradingGuide.tsx'
 import css from './ContestPage.module.css'
+import './JevWorkspace.css'
 
 const initial = rangeTemplate()
 const phases = { sampling: '正在盯盘 · 采样中', waiting_quote: '正在盯盘 · 等待行情', deciding: '正在盯盘 · Jev 分析中', checking: '正在盯盘 · 风控检查', waiting_plan: '正在盯盘 · 等待计划处理' }
@@ -44,6 +46,8 @@ export function ContestWatch({ access, connected = true, openModelSettings, plan
   const [historyBusy, setHistoryBusy] = useState(false)
   const [refreshingSettings, setRefreshingSettings] = useState(false)
   const [settingsSection, setSettingsSection] = useState<'contract' | 'strategy' | 'limits' | 'advanced' | 'connection'>('contract')
+  const settingsContent = useRef<HTMLDivElement>(null)
+  useEffect(() => { if (settingsOpen) settingsContent.current?.scrollTo?.({ top: 0 }) }, [settingsOpen, settingsSection])
   function openSettings(target: 'connection' | 'launcher' | 'review' | 'strategy' = 'launcher') {
     savedDraft.current = structuredClone(config)
     setSettingsSection(target === 'connection' ? 'connection' : target === 'review' ? 'limits' : target === 'strategy' ? 'strategy' : 'contract')
@@ -132,7 +136,7 @@ export function ContestWatch({ access, connected = true, openModelSettings, plan
   const label = statusError ? '连接中断 · 状态待确认' : busy === 'stop' ? '正在停止盯盘' : busy === 'start' ? '正在启动盯盘'
     : !status ? '正在读取盯盘状态' : status.running ? phases[status.phase ?? 'sampling'] : '盯盘未运行'
   useEffect(() => { onSummary?.({ label, active }) }, [onSummary, label, active])
-  const guide = <TradingGuide compact name="JEV" steps={[
+  const guide = <TradingGuide compact triggerIcon={<QuestionIcon size={17} aria-hidden="true"/>} name="JEV" steps={[
       { title: '连接账户与模型', status: !connected ? '比赛账户待连接' : configured ? '账户已连接 · 密钥已配置' : '模型配置待核验', ready: connected && configured === true,
         body: '先在本页上方连接期货模拟赛账户，再到「设置 → 模型服务 → Jev」填写 TypeSafe API Key，点击测试并保存。比赛账户授权、Jev 密钥、PandaData 历史数据授权是三项独立配置。',
         note: 'Jev 连接测试会产生一次小型 API 请求。使用自定义中文策略时，还需要在同一设置页选择已验证的中文翻译模型；内置模板可先直接体验。', action: { label: '查看模型配置入口', run: () => reveal('connection') } },
@@ -165,28 +169,39 @@ export function ContestWatch({ access, connected = true, openModelSettings, plan
       <div><small>我的盯盘要求</small><p>{config.instructions || '用自己的话描述想观察的行情、入场与退出条件。'}</p></div>
       <button type="button" onClick={openQuickSettings}>修改<PencilSimpleIcon size={15}/></button>
     </div>
-    <div className={`${css.watchStatus} qs-watch-status-inline`} role="status" data-phase={phase} data-active={active}>
-      <span className={css.watchIndicator} aria-hidden="true"/>
-      <div><strong>{label}</strong><span className="qs-watch-meta">{contractsLabel || '待选择合约'} · 每 {config.decisionIntervalSeconds ?? 30} 秒判断</span>
-        <details><summary>状态详情</summary><p>{statusError ? '暂时无法确认盯盘状态，正在重试连接。' : status?.message ?? '读取盯盘状态…'}</p>{phase === 'waiting_quote' && <p>实时报价来自比赛柜台，PandaData 用于历史 K 线；PandaData 已授权不代表柜台已返回有效报价。请在比赛页「最新行情」核对{status?.config?.symbol ? ` ${status.config.symbol} ` : '同一合约'}的价格与时间。</p>}
+    <details className="qs-jev-status" aria-label="盯盘状态" data-phase={phase} data-active={active}>
+      <summary>
+        <span className="qs-jev-status-label" role="status"><i aria-hidden="true"/>{label}</span>
+        <span className="qs-jev-status-meta"><span>{contractsLabel || '待选择合约'}</span><span>每 {config.decisionIntervalSeconds ?? 30} 秒判断</span></span>
+        <span className="qs-jev-status-toggle">状态详情<CaretDownIcon size={15} aria-hidden="true"/></span>
+      </summary>
+      <div className="qs-jev-status-body"><p>{statusError ? '暂时无法确认盯盘状态，正在重试连接。' : status?.message ?? '读取盯盘状态…'}</p>{phase === 'waiting_quote' && <p>实时报价来自比赛柜台，PandaData 用于历史 K 线；PandaData 已授权不代表柜台已返回有效报价。请在比赛页「最新行情」核对{status?.config?.symbol ? ` ${status.config.symbol} ` : '同一合约'}的价格与时间。</p>}
         {status?.lastQuoteCheckedAt && <small>最近行情检查：{contestTime(status.lastQuoteCheckedAt)}{status.running && status.config ? ` · 采样间隔 ${status.config.intervalSeconds} 秒` : ''}</small>}
         {status?.nextRetryAt && status.running && <p>柜台重试时间：{contestTime(status.nextRetryAt)}，等待期间不请求 Jev。</p>}
         {status?.accountCheckedAt && <small>最近账户巡检：{contestTime(status.accountCheckedAt)}</small>}
-        </details>
       </div>
-    </div>
+    </details>
 
     <ContestWatchVisuals status={status} active={active} config={config}/>
-    <div className="qs-workspace-facts"><button type="button" aria-label="选择实际合约" onClick={() => openSettings()}>实际合约 <strong>{contractsLabel || '待选择'}</strong></button><button type="button" onClick={() => openSettings('strategy')}>策略 <strong>{config.strategyName || '自定义'}</strong></button><button type="button" onClick={() => openSettings('review')}>单笔上限 <strong>{config.volume} 手</strong> · 运行 {config.durationMinutes} 分钟</button></div>
+    <section className="qs-jev-run-panel" aria-label="本次运行配置">
+      <header><h3>本次运行</h3><div className="qs-jev-plan-counts" aria-label="计划统计">
+        <span>开仓计划 <strong>{status ? status.openingPlanCount ?? status.planCount : '—'}<small> / {status?.config?.maxPlans ?? config.maxPlans}</small></strong></span>
+        <span>总计划 <strong>{status?.planCount ?? '—'}</strong></span>
+      </div></header>
+      <div className="qs-jev-run-settings">
+        <button type="button" aria-label="选择实际合约" onClick={() => openSettings()}><StackIcon size={19} aria-hidden="true"/><span><small>实际合约</small><strong>{contractsLabel || '选择交易合约'}</strong></span><CaretRightIcon size={14} aria-hidden="true"/></button>
+        <button type="button" onClick={() => openSettings('strategy')}><SlidersHorizontalIcon size={19} aria-hidden="true"/><span><small>交易策略</small><strong>{config.strategyName || '自定义'}</strong></span><CaretRightIcon size={14} aria-hidden="true"/></button>
+        <button type="button" onClick={() => openSettings('review')}><TimerIcon size={19} aria-hidden="true"/><span><small>额度与时长</small><strong>单笔 {config.volume} 手<span className="qs-jev-setting-separator">·</span>{config.durationMinutes} 分钟</strong></span><CaretRightIcon size={14} aria-hidden="true"/></button>
+        <button type="button" onClick={openQuickSettings}><GearSixIcon size={19} aria-hidden="true"/><span><small>执行方式</small><strong>{config.executionMode === 'automatic' ? '自动下单' : '逐笔确认'}</strong></span><CaretRightIcon size={14} aria-hidden="true"/></button>
+      </div>
+      {status?.running && ((status.openingCooldownUntil && status.openingCooldownUntil > Date.now()) || status.nextDecisionAt) ? <div className="qs-jev-run-timing" role="status">
+        {status.openingCooldownUntil && status.openingCooldownUntil > Date.now() && <span>开仓冷却至 {contestTime(status.openingCooldownUntil)}（不影响平仓判断）</span>}
+        {status.nextDecisionAt && <span>下次决策最早 {contestTime(status.nextDecisionAt)}（需有效样本、无待处理计划）</span>}
+      </div> : null}
+      <footer><div className="qs-jev-support-actions">{guide}<button type="button" onClick={() => setDiagnostics(true)}><ListBulletsIcon size={17} aria-hidden="true"/>运行记录与诊断<ArrowUpRightIcon size={13} aria-hidden="true"/></button></div><span className="qs-jev-stop-note"><InfoIcon size={15} aria-hidden="true"/>停止盯盘不撤单、不平仓</span></footer>
+    </section>
     {plans && <div className="qs-watch-plans">{plans}</div>}
     {status?.strategyNotices?.map(note => <p key={note} className={css.jevFine}>{note}</p>)}
-    {status && <div className={css.watchSummary}>
-      <span>本次开仓计划 {status.openingPlanCount ?? status.planCount}/{status.config?.maxPlans ?? '—'} · 总计划 {status.planCount}</span>
-      {status.running && status.openingCooldownUntil && status.openingCooldownUntil > Date.now() && <span>开仓冷却至 {contestTime(status.openingCooldownUntil)}（不影响平仓判断）</span>}
-      {status.running && status.nextDecisionAt && <span>下次决策最早 {contestTime(status.nextDecisionAt)}（需有效样本、无待处理计划）</span>}
-    </div>}
-
-    <div className={`${css.watchSummary} qs-workspace-footer`}>{guide}<button type="button" onClick={() => setDiagnostics(true)}>运行记录与诊断 ↗</button><button type="button" onClick={openQuickSettings}>执行方式：{config.executionMode === 'automatic' ? '自动下单' : '逐笔确认'} ›</button><span>停止盯盘不撤单、不平仓</span></div>
     {quickSettings && <ActionDialog title="Jev 运行设置" dismissOnBackdrop busy={!!busy} onClose={cancelSettings}>
       <form className="qs-quick-config" onSubmit={event => {
         event.preventDefault()
@@ -208,7 +223,7 @@ export function ContestWatch({ access, connected = true, openModelSettings, plan
       </form>
     </ActionDialog>}
     {settingsOpen && <ActionDialog settings title="Jev 运行设置" busy={!!busy || historyBusy || saving} onClose={cancelSettings}>
-      <form noValidate className="qs-settings-form" onSubmit={event => {
+      <form noValidate className="qs-settings-form qs-jev-settings-form" onSubmit={event => {
         event.preventDefault()
         if (!locked) { const issue = instrumentIssue(config, catalog); if (issue) { setError(issue); setSettingsSection('contract') } else { setSettingsOpen(false); setError('') } }
       }}>
@@ -220,11 +235,13 @@ export function ContestWatch({ access, connected = true, openModelSettings, plan
             { id: 'advanced', title: '高级设置', detail: '行情与判断参数' },
             { id: 'connection', title: '模型连接', detail: configured ? 'Jev 已配置' : '检查连接状态' },
           ]}/>
-          <div className="qs-settings-content">
+          <div className="qs-settings-content" ref={settingsContent}>
             {status?.running && <p className="qs-settings-notice">正在运行，停止盯盘后可修改参数。</p>}
             <section hidden={settingsSection !== 'connection'} aria-label="模型连接">
               <div className="qs-settings-intro"><h3>模型连接</h3><p>统一使用 QuantStudio 中配置的 Jev 服务。</p></div>
+      <div className="qs-jev-connection-card"><header><span className="qs-jev-disclosure-icon"><PlugsConnectedIcon size={22} aria-hidden="true"/></span><div><strong>Jev</strong><small>jev-1.13.0</small></div><span className="qs-jev-connection-state" data-ready={configured === true}>{configured === undefined ? '待核验' : configured ? '密钥已配置' : '待配置'}</span></header>
       <p>Jev · {configured === undefined ? '配置状态待确认' : configured ? 'API Key 已配置' : 'API Key 未配置'}。API Key 请在「设置 → 模型服务 → Jev」中配置，与 AI 交易员的模型辅助共用。</p>
+      <div className="qs-jev-connection-actions">
       {openModelSettings && <button type="button" onClick={() => { cancelSettings(); openModelSettings() }}>前往模型服务配置 Jev</button>}
       <button type="button" disabled={refreshingSettings} onClick={async () => {
         setRefreshingSettings(true); setConnectionError('')
@@ -232,21 +249,22 @@ export function ContestWatch({ access, connected = true, openModelSettings, plan
         catch (failure) { setConnectionError(failure instanceof Error ? failure.message : '配置读取失败，请重试。') }
         finally { setRefreshingSettings(false) }
       }}>刷新配置状态</button>
+      </div>
       {connectionError && <p className={css.error} role="alert">{connectionError}</p>}
-
+      </div>
             </section>
             <fieldset className="qs-settings-fields" disabled={locked}>
               <section hidden={settingsSection !== 'contract'} aria-label="交易合约设置">
                 <div className="qs-settings-intro"><h3>选择盯盘品种</h3><p>可勾选多个品种，为每个品种选择实际月份合约。</p></div>
-                <div className="qs-settings-group"><JevInstrument compact config={config} onChange={setConfig} catalog={catalog} quote={access.quote} accountKey={connected ? accountId || status?.identity?.accountId || 'connected' : ''}/></div>
-                <details className="qs-settings-disclosure"><summary>品种目录与同步</summary><p>{catalogMessage}</p>
+                <div className="qs-jev-contract-editor"><JevInstrument compact config={config} onChange={setConfig} catalog={catalog} quote={access.quote} accountKey={connected ? accountId || status?.identity?.accountId || 'connected' : ''}/></div>
+                <JevSettingsDisclosure title="品种目录与同步" description="查看目录状态，从比赛柜台同步可交易品种" icon={<ArrowsClockwiseIcon size={19}/>}><p>{catalogMessage}</p>
                   {access.varieties && <button type="button" disabled={!connected || catalogLoading} onClick={() => { void refreshCatalog() }}>{catalogLoading ? '正在同步…' : '同步柜台品种'}</button>}
                   <p>支持全部期货品种，也可填写自定义合约。实际可交易月份以柜台为准。</p>
-                </details>
+                </JevSettingsDisclosure>
               </section>
               <section hidden={settingsSection !== 'strategy'} aria-label="交易策略设置">
                 <div className="qs-settings-intro"><h3>告诉 JEV 怎么盯盘</h3><p>选择模板，或用自己的话描述入场、退出和等待条件。</p></div>
-                <div className="qs-settings-group">
+                <div className="qs-jev-strategy-editor">
         <div className="qs-template-picker"><label>运行模板<select aria-label="运行模板" value={config.builtInTemplate === 'rb-range' ? 'range' : config.builtInTemplate || `saved:${config.strategyName}`} onChange={event => chooseTemplate(event.target.value)}>
           {builtIns.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
           {templates.map(item => <option key={item.name} value={`saved:${item.name}`}>{item.name}</option>)}
@@ -268,16 +286,16 @@ export function ContestWatch({ access, connected = true, openModelSettings, plan
         {previousConfig && <button type="button" className={css.jevReuse} onClick={() => { setConfig(structuredClone(previousConfig)); setTemplateName('') }}>载入上次运行配置</button>}
 
                   <JevStrategy config={config} onChange={setConfig}/>
-                  <details><summary>判断方式 · {config.decisionMode === 'jev' ? 'Jev 自主决策' : '严格规则'}</summary>
+                  <JevSettingsDisclosure title="判断方式" description="选择由 JEV 综合判断，或先按程序规则筛选" badge={config.decisionMode === 'jev' ? 'Jev 自主决策' : '严格规则'} icon={<BrainIcon size={19}/>}>
                   <label>决策方式<select value={config.decisionMode ?? 'strict'} onChange={event => setConfig({ ...config, decisionMode: event.target.value as 'jev' | 'strict' })}><option value="jev">Jev 自主决策（推荐）</option><option value="strict">严格规则模式</option></select></label>
                   <p className="qs-settings-note">{config.decisionMode === 'jev' ? '历史不足也会请求分析并产生用量，但不允许新开仓。策略作为参考，由 Jev 判断机会。' : '严格规则模式：程序条件先筛选，全部可交易动作被拦截时不请求 Jev。'}</p>
-                  </details>
+                  </JevSettingsDisclosure>
                 </div>
-                <details className="qs-settings-disclosure"><summary>另存为我的模板</summary>
+                <JevSettingsDisclosure title="另存为我的模板" description="将当前策略与运行参数保存到本机，方便下次使用" icon={<FloppyDiskIcon size={19}/>}>
           <div className={css.jevSaveTemplate}><label>保存模板名称<input maxLength={80} placeholder="例如 我的午后区间" value={templateName} onChange={event => setTemplateName(event.target.value)}/></label>
             <button type="button" onClick={() => { void saveTemplate() }}>{saving ? '保存中…' : '保存为我的模板'}</button></div>
           <p className={css.jevFine}>同名保存会更新已有模板，可不填实际合约先保存。换品种时核对交易所、tick 与成本；启动前必须填写柜台支持的实际合约。</p>
-                </details>
+                </JevSettingsDisclosure>
               </section>
               <section hidden={settingsSection !== 'limits'} aria-label="运行与额度设置">
                 <div className="qs-settings-intro"><h3>运行与额度</h3><p>设置本次盯盘的范围与执行方式。</p></div><ExecutionModeChoice value={config.executionMode ?? 'manual'} disabled={locked} onChange={executionMode => setConfig({ ...config, executionMode })}/>
@@ -302,12 +320,7 @@ export function ContestWatch({ access, connected = true, openModelSettings, plan
         <div className="qs-settings-footer"><span>仅应用配置，不会启动盯盘</span><button type="button" disabled={!!busy || historyBusy || saving} onClick={cancelSettings}>取消</button><button type="submit" data-primary disabled={locked}>应用本次配置</button></div>
       </form>
     </ActionDialog>}
-    {diagnostics && <ActionDialog drawer title="Jev 运行记录与诊断" onClose={() => setDiagnostics(false)}><JevUsage access={access}/>
-    {status?.events.length ? <details><summary>运行记录（{status.events.length}）</summary><ol className={css.watchLog}>
-      {[...status.events].reverse().map((entry, index) => <li key={`${entry.time}-${index}`}><time>{contestTime(entry.time)}</time> {entry.message}</li>)}
-    </ol></details> : null}
-
-    </ActionDialog>}
+    {diagnostics && <ActionDialog drawer className="qs-support-drawer" title="Jev 运行记录与诊断" onClose={() => setDiagnostics(false)}><JevUsage access={access} events={status?.events}/></ActionDialog>}
     {review && <ActionDialog title="核对本次盯盘" busy={!!busy} onClose={() => setReview(false)}>
       <p><strong>{contractsLabel} · {config.strategyName}</strong></p><p>账户 {accountId || status?.identity?.accountId || '当前已连接模拟赛账户'} · {config.executionMode === 'automatic' ? '自动下单' : '逐笔确认'}</p><p>每笔最多 {config.volume} 手 · {config.durationMinutes} 分钟 · 最多 {config.maxPlans} 个开仓计划</p>
       <p>所选合约共用策略、开仓计划总上限与权益停止线；行情轮询，分别判断。</p><p>权益回落 {config.maxEquityDrop} 元暂停。调用 TypeSafe 会产生 API 用量；停止不撤单、不平仓。</p>

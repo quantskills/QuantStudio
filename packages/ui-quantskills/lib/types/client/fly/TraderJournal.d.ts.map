@@ -1,0 +1,1 @@
+{"version":3,"file":"TraderJournal.d.ts","sourceRoot":"","sources":["../../../../src/client/fly/TraderJournal.tsx"],"names":[],"mappings":"AAIA,OAAO,KAAK,EAAE,YAAY,EAAE,MAAM,iBAAiB,CAAA;AACnD,OAAO,sBAAsB,CAAA;AAK7B,wBAAgB,aAAa,CAAC,EAAE,MAAM,EAAE,WAAW,EAAE,EAAE;IAAE,MAAM,EAAE,MAAM,CAAC,MAAM,EAAE,MAAM,CAAC,CAAC;IAAC,WAAW,CAAC,KAAK,EAAE,YAAY,GAAG,MAAM,CAAA;CAAE,+BAuGlI"}

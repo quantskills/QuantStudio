@@ -9,8 +9,8 @@ function isBackdrop(event: { target: EventTarget; currentTarget: HTMLDialogEleme
 }
 
 /** Native modal: top-layer rendering, inert background and browser focus containment. */
-export function ActionDialog({ title, children, busy = false, error, wide = false, drawer = false, settings = false, dismissOnBackdrop = false, onClose }: {
-  title: string; children: ReactNode; busy?: boolean; error?: string | undefined; wide?: boolean; drawer?: boolean; settings?: boolean; dismissOnBackdrop?: boolean; onClose(): void
+export function ActionDialog({ title, children, busy = false, error, wide = false, drawer = false, settings = false, dismissOnBackdrop = false, className = '', onClose }: {
+  title: string; children: ReactNode; busy?: boolean; error?: string | undefined; wide?: boolean; drawer?: boolean; settings?: boolean; dismissOnBackdrop?: boolean; className?: string; onClose(): void
 }) {
   const ref = useRef<HTMLDialogElement>(null)
   const backdropPress = useRef(false)
@@ -26,7 +26,7 @@ export function ActionDialog({ title, children, busy = false, error, wide = fals
       if (trigger?.isConnected) trigger.focus()
     }
   }, [])
-  return <dialog ref={ref} className={`${css.dialog}${drawer ? ' qs-trading-drawer' : ''}${settings ? ' qs-settings-sheet' : ''}`} data-wide={wide || undefined} aria-labelledby={titleId} aria-modal="true" aria-busy={busy}
+  return <dialog ref={ref} className={`${css.dialog}${drawer ? ' qs-trading-drawer' : ''}${settings ? ' qs-settings-sheet' : ''} ${className}`} data-wide={wide || undefined} aria-labelledby={titleId} aria-modal="true" aria-busy={busy}
     onPointerDown={event => {
       backdropPress.current = (drawer || settings || dismissOnBackdrop) && !busy && event.button === 0 && isBackdrop(event)
     }}
@@ -40,7 +40,7 @@ export function ActionDialog({ title, children, busy = false, error, wide = fals
     onKeyDown={event => {
       if (event.key === 'Escape') { event.stopPropagation(); return }
       if (event.key !== 'Tab') return
-      const items = [...event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex="0"]')]
+      const items = [...event.currentTarget.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], summary, [tabindex="0"]')]
         .filter(element => element.getClientRects().length > 0 && !element.closest('[hidden]'))
       const first = items[0], last = items.at(-1)
       if (!first || !last) { event.preventDefault(); return }

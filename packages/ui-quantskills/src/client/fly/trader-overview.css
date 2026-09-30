@@ -14,7 +14,15 @@
 .qs-workspace-refined .qs-trader-subtitle { margin: 9px 0 0; color: var(--qs-muted); font-size: 13px; }
 .qs-trader-dashboard .fv-header-actions>button:first-child { background: transparent; border-color: transparent; color: var(--qs-accent); }
 .fv-page.qs-workspace-refined .qs-trader-identity-header .fv-pause { background: var(--qs-accent); border-color: var(--qs-accent); color: var(--qs-accent-ink, #fff); }
-.qs-trader-dashboard .qs-trader-navigation { margin-bottom: 0; }
+.fv-page.qs-trader-dashboard .qs-trader-navigation { margin: 0 0 22px; padding: 0; border: 0; gap: 12px 20px; }
+.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections { display: inline-grid; grid-template-columns: repeat(3, minmax(0, 1fr)); flex: 0 1 auto; gap: 3px; margin: 0; padding: 4px; border: 1px solid color-mix(in srgb, var(--qs-line) 45%, transparent); border-radius: 13px; background: color-mix(in srgb, var(--qs-line) 36%, var(--qs-surface)); }
+.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 96px; min-height: 36px; padding: 7px 18px; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--qs-muted); font-size: 13px; font-weight: 500; line-height: 1.4; white-space: nowrap; transition: background .15s ease, color .15s ease, box-shadow .15s ease; }
+.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button:not(.selected):hover { color: var(--qs-ink); background: color-mix(in srgb, var(--qs-surface) 60%, transparent); }
+.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button.selected { color: var(--qs-ink); background: var(--qs-surface); border-color: color-mix(in srgb, var(--qs-line) 50%, transparent); box-shadow: 0 1px 3px #0000000d; font-weight: 600; }
+.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button.selected svg { color: var(--qs-accent); }
+.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button:focus-visible { outline: 2px solid var(--qs-accent); outline-offset: 2px; }
+.fv-page.qs-trader-dashboard .qs-trader-navigation>.qs-quick-help { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; padding: 7px 12px; margin-left: auto; border: 1px solid var(--qs-line); border-radius: 10px; color: var(--qs-muted); background: var(--qs-surface); font-size: 12px; line-height: 1.4; }
+.fv-page.qs-trader-dashboard .qs-trader-navigation>.qs-quick-help:hover { color: var(--qs-accent); border-color: color-mix(in srgb, var(--qs-accent) 25%, var(--qs-line)); background: var(--qs-tint); }
 .qs-trader-overview-anchor { outline: none; }
 .qs-trader-metrics { display: grid; grid-template-columns: 1.12fr 1.12fr .88fr; margin: 0; padding: 28px 0 30px; border-bottom: 1px solid var(--qs-line); }
 .qs-trader-metrics>div { min-width: 0; padding: 0 26px; border-left: 1px solid var(--qs-line); }
@@ -57,16 +65,47 @@
 .qs-trader-activity strong { font-size: 14px; font-weight: 500; line-height: 1.6; }
 .qs-trader-activity p { color: var(--qs-muted); font-size: 13px; line-height: 1.8; margin: 7px 0 0; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .qs-trader-activity .qs-activity-empty { margin: 12px 0 36px; display: block; }
-.qs-trader-market-fold,.qs-trader-account-fold { border-top: 1px solid var(--qs-line); font-size: 12px; }
-.qs-trader-market-fold>summary,.qs-trader-account-fold>summary { cursor: pointer; padding: 19px 0; color: var(--qs-muted); }
-.qs-trader-market-fold>summary span,.qs-trader-account-fold>summary span { margin-left: 4px; }
-.qs-trader-market-fold .qs-contracts { margin-top: 0; }
+.qs-trader-support { border: 1px solid var(--qs-line); border-radius: 16px; background: var(--qs-surface); margin-top: 4px; }
+.qs-trader-support .qs-trader-disclosure { margin: 0; padding: 0; border: 0; font-size: 13px; scroll-margin-top: 24px; }
+.qs-trader-disclosure+.qs-trader-disclosure { border-top: 1px solid var(--qs-line); }
+.qs-trader-support .qs-trader-disclosure>summary { display: grid; grid-template-columns: 38px minmax(0, 1fr) auto 16px; align-items: center; gap: 16px; padding: 18px 20px; margin: 0; list-style: none; cursor: pointer; border-radius: 12px; transition: background .15s ease; }
+.qs-trader-disclosure>summary::-webkit-details-marker { display: none; }
+.qs-trader-disclosure>summary:hover { background: color-mix(in srgb, var(--qs-tint) 45%, var(--qs-surface)); }
+.qs-trader-support .qs-trader-disclosure>summary:focus-visible { outline: 2px solid var(--qs-accent); outline-offset: -3px; }
+.qs-trader-disclosure-icon { width: 38px; height: 38px; display: grid; place-items: center; color: var(--qs-accent); background: var(--qs-tint); border-radius: 12px; }
+.qs-trader-disclosure-copy { display: grid; gap: 5px; min-width: 0; }
+.qs-trader-disclosure-copy strong { font-size: 14px; font-weight: 600; line-height: 1.4; color: var(--qs-ink); }
+.qs-trader-disclosure-copy>span { color: var(--qs-muted); font-size: 12px; line-height: 1.5; }
+.qs-trader-disclosure-status { padding: 6px 10px; border-radius: 7px; background: color-mix(in srgb, var(--qs-line) 26%, var(--qs-surface)); color: var(--qs-muted); font-size: 12px; line-height: 1.5; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.qs-trader-disclosure-status[data-tone=ready] { color: var(--fv-success); background: color-mix(in srgb, var(--fv-success) 8%, var(--qs-surface)); }
+.qs-trader-disclosure-status[data-tone=attention] { color: var(--qs-accent); background: var(--qs-tint); }
+.qs-trader-disclosure[data-kind=account] .qs-trader-disclosure-status { color: var(--qs-ink); background: transparent; font-size: 15px; font-weight: 550; letter-spacing: -.015em; padding-inline: 0; }
+.qs-trader-disclosure-status small { color: var(--qs-muted); font-weight: 400; }
+.qs-trader-disclosure-chevron { color: var(--qs-muted); transition: transform .18s ease; }
+.qs-trader-disclosure[open]>summary .qs-trader-disclosure-chevron { transform: rotate(90deg); }
+.qs-trader-disclosure-content { margin: 0 20px; padding: 18px 0 20px; border-top: 1px solid var(--qs-line); min-width: 0; }
+.qs-trader-disclosure-content>p { margin: 0 0 16px; font-size: 12px; line-height: 1.7; }
+.qs-trader-disclosure-content .qs-contracts { margin-top: 0; }
+.qs-trader-disclosure[data-kind=plans] .qs-trader-disclosure-content>section { max-height: 420px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.qs-trader-disclosure[data-kind=plans] .qs-trader-disclosure-content>section>h2 { display: none; }
+.qs-trader-disclosure-content>section>button { margin: 0; padding: 14px 12px; border: 0; border-bottom: 1px solid var(--qs-line); border-radius: 0; }
+.qs-trader-disclosure-content>section>button:last-of-type { border-bottom: 0; }
+.qs-workspace-refined .qs-trader-disclosure-content .fv-account-strip { padding: 2px 0; margin: 0; border: 0; }
 .qs-trader-connection-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; color: var(--qs-muted); }
 .qs-trader-connection-actions button { border: 0; background: transparent; color: var(--qs-accent); padding: 6px 0; }
-.qs-trader-dashboard .fv-plans-focus { font-size: 12px; padding-block: 18px; }
 .qs-workspace-refined .qs-trading-drawer .fv-focus-grid { grid-template-columns: minmax(0, 1fr); }
 .qs-workspace-refined .qs-trading-drawer .fv-focus-grid>aside { border-left: 0; border-top: 1px solid var(--qs-line); }
 @media(max-width: 680px) {
+  .fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button { min-width: 72px; padding-inline: 12px; }
+  .qs-trader-support .qs-trader-disclosure>summary { grid-template-columns: 34px minmax(0, 1fr) 16px; gap: 6px 12px; padding: 16px; }
+  .qs-trader-disclosure-icon { width: 34px; height: 34px; grid-row: 1 / 3; border-radius: 10px; }
+  .qs-trader-disclosure-copy { grid-column: 2; }
+  .qs-trader-disclosure-status { grid-column: 2; justify-self: start; padding: 2px 7px; }
+  .qs-trader-disclosure-chevron { grid-column: 3; grid-row: 1 / 3; }
+  .qs-trader-disclosure-content { margin-inline: 16px; }
+  .qs-trader-disclosure-content>section>button { flex-direction: column; align-items: flex-start; gap: 8px; padding-inline: 4px; }
+  .qs-trader-disclosure-content .fv-account-strip { grid-template-columns: 1fr; gap: 16px; }
+  .qs-trader-disclosure-content .fv-account-strip>div { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
   .fv-page.qs-workspace-refined.qs-trader-dashboard { padding: 20px; }
   .qs-trader-metrics { grid-template-columns: 1fr 1fr; row-gap: 22px; }
   .qs-trader-metrics>div { padding-inline: 18px; }
@@ -80,6 +119,7 @@
   .qs-trader-metrics dd { font-size: 24px; }
 }
 @media(max-width: 400px) {
+  .fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections { flex: 1 1 100%; }
   .fv-page.qs-workspace-refined.qs-trader-dashboard { padding: 15px; }
   .qs-trader-metrics>div { padding-inline: 12px; }
   .qs-trader-metrics dd { font-size: 21px; }

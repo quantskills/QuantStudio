@@ -85,7 +85,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowClockwise.es.js
-		const a$35 = /* @__PURE__ */ new Map([
+		const a$39 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M244,56v48a12,12,0,0,1-12,12H184a12,12,0,1,1,0-24H201.1l-19-17.38c-.13-.12-.26-.24-.38-.37A76,76,0,1,0,127,204h1a75.53,75.53,0,0,0,52.15-20.72,12,12,0,0,1,16.49,17.45A99.45,99.45,0,0,1,128,228h-1.37A100,100,0,1,1,198.51,57.06L220,76.72V56a12,12,0,0,1,24,0Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,128a88,88,0,1,1-88-88A88,88,0,0,1,216,128Z",
@@ -98,7 +98,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowCounterClockwise.es.js
-		const e$76 = /* @__PURE__ */ new Map([
+		const e$89 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M228,128a100,100,0,0,1-98.66,100H128a99.39,99.39,0,0,1-68.62-27.29,12,12,0,0,1,16.48-17.45,76,76,0,1,0-1.57-109c-.13.13-.25.25-.39.37L54.89,92H72a12,12,0,0,1,0,24H24a12,12,0,0,1-12-12V56a12,12,0,0,1,24,0V76.72L57.48,57.06A100,100,0,0,1,228,128Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,128a88,88,0,1,1-88-88A88,88,0,0,1,216,128Z",
@@ -111,7 +111,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowDown.es.js
-		const a$34 = /* @__PURE__ */ new Map([
+		const a$38 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208.49,152.49l-72,72a12,12,0,0,1-17,0l-72-72a12,12,0,0,1,17-17L116,187V40a12,12,0,0,1,24,0V187l51.51-51.52a12,12,0,0,1,17,17Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M200,144l-72,72L56,144Z",
@@ -124,7 +124,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowLeft.es.js
-		const a$33 = /* @__PURE__ */ new Map([
+		const a$37 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M228,128a12,12,0,0,1-12,12H69l51.52,51.51a12,12,0,0,1-17,17l-72-72a12,12,0,0,1,0-17l72-72a12,12,0,0,1,17,17L69,116H216A12,12,0,0,1,228,128Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M112,56V200L40,128Z",
@@ -137,7 +137,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowRight.es.js
-		const a$32 = /* @__PURE__ */ new Map([
+		const a$36 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M224.49,136.49l-72,72a12,12,0,0,1-17-17L187,140H40a12,12,0,0,1,0-24H187L135.51,64.48a12,12,0,0,1,17-17l72,72A12,12,0,0,1,224.49,136.49Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,128l-72,72V56Z",
@@ -150,7 +150,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowSquareOut.es.js
-		const e$75 = /* @__PURE__ */ new Map([
+		const e$88 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M228,104a12,12,0,0,1-24,0V69l-59.51,59.51a12,12,0,0,1-17-17L187,52H152a12,12,0,0,1,0-24h64a12,12,0,0,1,12,12Zm-44,24a12,12,0,0,0-12,12v64H52V84h64a12,12,0,0,0,0-24H48A20,20,0,0,0,28,80V208a20,20,0,0,0,20,20H176a20,20,0,0,0,20-20V140A12,12,0,0,0,184,128Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M184,80V208a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H176A8,8,0,0,1,184,80Z",
@@ -163,7 +163,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowUp.es.js
-		const a$31 = /* @__PURE__ */ new Map([
+		const a$35 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208.49,120.49a12,12,0,0,1-17,0L140,69V216a12,12,0,0,1-24,0V69L64.49,120.49a12,12,0,0,1-17-17l72-72a12,12,0,0,1,17,0l72,72A12,12,0,0,1,208.49,120.49Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M200,112H56l72-72Z",
@@ -176,7 +176,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowUpRight.es.js
-		const a$30 = /* @__PURE__ */ new Map([
+		const a$34 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M204,64V168a12,12,0,0,1-24,0V93L72.49,200.49a12,12,0,0,1-17-17L163,76H88a12,12,0,0,1,0-24H192A12,12,0,0,1,204,64Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M192,64V168L88,64Z",
@@ -189,7 +189,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowsClockwise.es.js
-		const e$74 = /* @__PURE__ */ new Map([
+		const e$87 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M228,48V96a12,12,0,0,1-12,12H168a12,12,0,0,1,0-24h19l-7.8-7.8a75.55,75.55,0,0,0-53.32-22.26h-.43A75.49,75.49,0,0,0,72.39,75.57,12,12,0,1,1,55.61,58.41a99.38,99.38,0,0,1,69.87-28.47H126A99.42,99.42,0,0,1,196.2,59.23L204,67V48a12,12,0,0,1,24,0ZM183.61,180.43a75.49,75.49,0,0,1-53.09,21.63h-.43A75.55,75.55,0,0,1,76.77,179.8L69,172H88a12,12,0,0,0,0-24H40a12,12,0,0,0-12,12v48a12,12,0,0,0,24,0V189l7.8,7.8A99.42,99.42,0,0,0,130,226.06h.56a99.38,99.38,0,0,0,69.87-28.47,12,12,0,0,0-16.78-17.16Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,128a88,88,0,1,1-88-88A88,88,0,0,1,216,128Z",
@@ -202,7 +202,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowsInSimple.es.js
-		const e$73 = /* @__PURE__ */ new Map([
+		const e$86 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216.49,56.48,177,96h19a12,12,0,0,1,0,24H148a12,12,0,0,1-12-12V60a12,12,0,0,1,24,0V79l39.51-39.52a12,12,0,0,1,17,17ZM108,136H60a12,12,0,0,0,0,24H79L39.51,199.51a12,12,0,0,0,17,17L96,177v19a12,12,0,0,0,24,0V148A12,12,0,0,0,108,136Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,48V208a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32H208A16,16,0,0,1,224,48Z",
@@ -215,7 +215,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ArrowsOutSimple.es.js
-		const e$72 = /* @__PURE__ */ new Map([
+		const e$85 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M220,48V96a12,12,0,0,1-24,0V77l-39.51,39.52a12,12,0,0,1-17-17L179,60H160a12,12,0,0,1,0-24h48A12,12,0,0,1,220,48ZM99.51,139.51,60,179V160a12,12,0,0,0-24,0v48a12,12,0,0,0,12,12H96a12,12,0,0,0,0-24H77l39.52-39.51a12,12,0,0,0-17-17Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,48V208a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V48A16,16,0,0,1,48,32H208A16,16,0,0,1,224,48Z",
@@ -228,7 +228,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Bell.es.js
-		const e$71 = /* @__PURE__ */ new Map([
+		const e$84 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M225.29,165.93C216.61,151,212,129.57,212,104a84,84,0,0,0-168,0c0,25.58-4.59,47-13.27,61.93A20.08,20.08,0,0,0,30.66,186,19.77,19.77,0,0,0,48,196H84.18a44,44,0,0,0,87.64,0H208a19.77,19.77,0,0,0,17.31-10A20.08,20.08,0,0,0,225.29,165.93ZM128,212a20,20,0,0,1-19.6-16h39.2A20,20,0,0,1,128,212ZM54.66,172C63.51,154,68,131.14,68,104a60,60,0,0,1,120,0c0,27.13,4.48,50,13.33,68Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,192H48a8,8,0,0,1-6.88-12C47.71,168.6,56,139.81,56,104a72,72,0,0,1,144,0c0,35.82,8.3,64.6,14.9,76A8,8,0,0,1,208,192Z",
@@ -241,7 +241,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/BellRinging.es.js
-		const e$70 = /* @__PURE__ */ new Map([
+		const e$83 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M225.81,74.65A11.86,11.86,0,0,1,220.3,76a12,12,0,0,1-10.67-6.47,90.1,90.1,0,0,0-32-35.38,12,12,0,1,1,12.8-20.29,115.25,115.25,0,0,1,40.54,44.62A12,12,0,0,1,225.81,74.65ZM46.37,69.53a90.1,90.1,0,0,1,32-35.38A12,12,0,1,0,65.6,13.86,115.25,115.25,0,0,0,25.06,58.48a12,12,0,0,0,5.13,16.17A11.86,11.86,0,0,0,35.7,76,12,12,0,0,0,46.37,69.53Zm173.51,98.35A20,20,0,0,1,204,200H171.81a44,44,0,0,1-87.62,0H52a20,20,0,0,1-15.91-32.12c7.17-9.33,15.73-26.62,15.88-55.94A76,76,0,0,1,204,112C204.15,141.26,212.71,158.55,219.88,167.88ZM147.6,200H108.4a20,20,0,0,0,39.2,0Zm48.74-24c-8.16-13-16.19-33.57-16.34-63.94A52,52,0,1,0,76,112c-.15,30.42-8.18,51-16.34,64Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,192H48a8,8,0,0,1-6.88-12C47.71,168.6,56,147.81,56,112a72,72,0,0,1,144,0c0,35.82,8.3,56.6,14.9,68A8,8,0,0,1,208,192Z",
@@ -254,7 +254,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/BoxArrowDown.es.js
-		const l$8 = /* @__PURE__ */ new Map([
+		const l$11 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M226.73,66.63l-16-32A12,12,0,0,0,200,28H56a12,12,0,0,0-10.73,6.63l-16,32A12,12,0,0,0,28,72V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V72A12,12,0,0,0,226.73,66.63ZM192.58,52l6,12H57.42l6-12ZM52,204V88H204V204Zm116.49-64.49a12,12,0,0,1,0,17l-32,32a12,12,0,0,1-17,0l-32-32a12,12,0,0,1,17-17L116,151V112a12,12,0,0,1,24,0v39l11.51-11.52A12,12,0,0,1,168.49,139.51Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,72V208a8,8,0,0,1-8,8H48a8,8,0,0,1-8-8V72Z",
@@ -266,8 +266,21 @@ window.__ModuleLoader__.load({
 			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M219.58,70.21l-16-32A4,4,0,0,0,200,36H56a4,4,0,0,0-3.58,2.21l-16,32A4,4,0,0,0,36,72V208a12,12,0,0,0,12,12H208a12,12,0,0,0,12-12V72A4,4,0,0,0,219.58,70.21ZM58.47,44H197.53l12,24H46.47ZM208,212H48a4,4,0,0,1-4-4V76H212V208A4,4,0,0,1,208,212Zm-45.17-62.83a4,4,0,0,1,0,5.66l-32,32a4,4,0,0,1-5.66,0l-32-32a4,4,0,0,1,5.66-5.66L124,174.34V104a4,4,0,0,1,8,0v70.34l25.17-25.17A4,4,0,0,1,162.83,149.17Z" }))]
 		]);
 		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Brain.es.js
+		const e$82 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M252,124a60.14,60.14,0,0,0-32-53.08,52,52,0,0,0-92-32.11A52,52,0,0,0,36,70.92a60,60,0,0,0,0,106.14,52,52,0,0,0,92,32.13,52,52,0,0,0,92-32.13A60.05,60.05,0,0,0,252,124ZM88,204a28,28,0,0,1-26.85-20.07c1,0,1.89.07,2.85.07h8a12,12,0,0,0,0-24H64A36,36,0,0,1,52,90.05a12,12,0,0,0,8-11.32V72a28,28,0,0,1,56,0v60.18a51.61,51.61,0,0,0-7.2-3.85,12,12,0,1,0-9.6,22A28,28,0,0,1,88,204Zm104-44h-8a12,12,0,0,0,0,24h8c1,0,1.9,0,2.85-.07a28,28,0,1,1-38-33.61,12,12,0,1,0-9.6-22,51.61,51.61,0,0,0-7.2,3.85V72a28,28,0,0,1,56,0v6.73a12,12,0,0,0,8,11.32,36,36,0,0,1-12,70Zm16-44a12,12,0,0,1-12,12,40,40,0,0,1-40-40V84a12,12,0,0,1,24,0v4a16,16,0,0,0,16,16A12,12,0,0,1,208,116ZM100,88a40,40,0,0,1-40,40,12,12,0,0,1,0-24A16,16,0,0,0,76,88V84a12,12,0,0,1,24,0Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M240,124a48,48,0,0,1-32,45.27h0V176a40,40,0,0,1-80,0,40,40,0,0,1-80,0v-6.73h0a48,48,0,0,1,0-90.54V72a40,40,0,0,1,80,0,40,40,0,0,1,80,0v6.73A48,48,0,0,1,240,124Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M248,124a56.11,56.11,0,0,0-32-50.61V72a48,48,0,0,0-88-26.49A48,48,0,0,0,40,72v1.39a56,56,0,0,0,0,101.2V176a48,48,0,0,0,88,26.49A48,48,0,0,0,216,176v-1.41A56.09,56.09,0,0,0,248,124ZM88,208a32,32,0,0,1-31.81-28.56A55.87,55.87,0,0,0,64,180h8a8,8,0,0,0,0-16H64A40,40,0,0,1,50.67,86.27,8,8,0,0,0,56,78.73V72a32,32,0,0,1,64,0v68.26A47.8,47.8,0,0,0,88,128a8,8,0,0,0,0,16,32,32,0,0,1,0,64Zm104-44h-8a8,8,0,0,0,0,16h8a55.87,55.87,0,0,0,7.81-.56A32,32,0,1,1,168,144a8,8,0,0,0,0-16,47.8,47.8,0,0,0-32,12.26V72a32,32,0,0,1,64,0v6.73a8,8,0,0,0,5.33,7.54A40,40,0,0,1,192,164Zm16-52a8,8,0,0,1-8,8h-4a36,36,0,0,1-36-36V80a8,8,0,0,1,16,0v4a20,20,0,0,0,20,20h4A8,8,0,0,1,208,112ZM60,120H56a8,8,0,0,1,0-16h4A20,20,0,0,0,80,84V80a8,8,0,0,1,16,0v4A36,36,0,0,1,60,120Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M212,76V72a44,44,0,0,0-74.86-31.31,3.93,3.93,0,0,0-1.14,2.8v88.72a4,4,0,0,0,6.2,3.33A47.67,47.67,0,0,1,167.68,128a8.18,8.18,0,0,1,8.31,7.58,8,8,0,0,1-8,8.42,32,32,0,0,0-32,32v33.88a4,4,0,0,0,1.49,3.12,47.92,47.92,0,0,0,74.21-17.16,4,4,0,0,0-4.49-5.56A68.06,68.06,0,0,1,192,192h-7.73a8.18,8.18,0,0,1-8.25-7.47,8,8,0,0,1,8-8.53h8a51.6,51.6,0,0,0,24-5.88v0A52,52,0,0,0,212,76Zm-12,36h-4a36,36,0,0,1-36-36V72a8,8,0,0,1,16,0v4a20,20,0,0,0,20,20h4a8,8,0,0,1,0,16ZM88,28A44.05,44.05,0,0,0,44,72v4a52,52,0,0,0-4,94.12h0A51.6,51.6,0,0,0,64,176h7.73A8.18,8.18,0,0,1,80,183.47,8,8,0,0,1,72,192H64a67.48,67.48,0,0,1-15.21-1.73,4,4,0,0,0-4.5,5.55A47.93,47.93,0,0,0,118.51,213a4,4,0,0,0,1.49-3.12V176a32,32,0,0,0-32-32,8,8,0,0,1-8-8.42A8.18,8.18,0,0,1,88.32,128a47.67,47.67,0,0,1,25.48,7.54,4,4,0,0,0,6.2-3.33V43.49a4,4,0,0,0-1.14-2.81A43.85,43.85,0,0,0,88,28Zm8,48a36,36,0,0,1-36,36H56a8,8,0,0,1,0-16h4A20,20,0,0,0,80,76V72a8,8,0,0,1,16,0Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M246,124a54.13,54.13,0,0,0-32-49.33V72a46,46,0,0,0-86-22.67A46,46,0,0,0,42,72v2.67a54,54,0,0,0,0,98.63V176a46,46,0,0,0,86,22.67A46,46,0,0,0,214,176v-2.7A54.07,54.07,0,0,0,246,124ZM88,210a34,34,0,0,1-34-32.94A53.67,53.67,0,0,0,64,178h8a6,6,0,0,0,0-12H64A42,42,0,0,1,50,84.39a6,6,0,0,0,4-5.66V72a34,34,0,0,1,68,0v73.05A45.89,45.89,0,0,0,88,130a6,6,0,0,0,0,12,34,34,0,0,1,0,68Zm104-44h-8a6,6,0,0,0,0,12h8a53.67,53.67,0,0,0,10-.94A34,34,0,1,1,168,142a6,6,0,0,0,0-12,45.89,45.89,0,0,0-34,15.05V72a34,34,0,0,1,68,0v6.73a6,6,0,0,0,4,5.66A42,42,0,0,1,192,166Zm14-54a6,6,0,0,1-6,6h-4a34,34,0,0,1-34-34V80a6,6,0,0,1,12,0v4a22,22,0,0,0,22,22h4A6,6,0,0,1,206,112ZM60,118H56a6,6,0,0,1,0-12h4A22,22,0,0,0,82,84V80a6,6,0,0,1,12,0v4A34,34,0,0,1,60,118Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M248,124a56.11,56.11,0,0,0-32-50.61V72a48,48,0,0,0-88-26.49A48,48,0,0,0,40,72v1.39a56,56,0,0,0,0,101.2V176a48,48,0,0,0,88,26.49A48,48,0,0,0,216,176v-1.41A56.09,56.09,0,0,0,248,124ZM88,208a32,32,0,0,1-31.81-28.56A55.87,55.87,0,0,0,64,180h8a8,8,0,0,0,0-16H64A40,40,0,0,1,50.67,86.27,8,8,0,0,0,56,78.73V72a32,32,0,0,1,64,0v68.26A47.8,47.8,0,0,0,88,128a8,8,0,0,0,0,16,32,32,0,0,1,0,64Zm104-44h-8a8,8,0,0,0,0,16h8a55.87,55.87,0,0,0,7.81-.56A32,32,0,1,1,168,144a8,8,0,0,0,0-16,47.8,47.8,0,0,0-32,12.26V72a32,32,0,0,1,64,0v6.73a8,8,0,0,0,5.33,7.54A40,40,0,0,1,192,164Zm16-52a8,8,0,0,1-8,8h-4a36,36,0,0,1-36-36V80a8,8,0,0,1,16,0v4a20,20,0,0,0,20,20h4A8,8,0,0,1,208,112ZM60,120H56a8,8,0,0,1,0-16h4A20,20,0,0,0,80,84V80a8,8,0,0,1,16,0v4A36,36,0,0,1,60,120Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M244,124a52.1,52.1,0,0,0-32-48V72a44,44,0,0,0-84-18.3A44,44,0,0,0,44,72v4a52,52,0,0,0,0,96v4a44,44,0,0,0,84,18.3A44,44,0,0,0,212,176v-4A52.07,52.07,0,0,0,244,124ZM88,212a36,36,0,0,1-36-36v-1.41A52.13,52.13,0,0,0,64,176h8a4,4,0,0,0,0-8H64A44,44,0,0,1,49.33,82.5,4,4,0,0,0,52,78.73V72a36,36,0,0,1,72,0v78.75A44,44,0,0,0,88,132a4,4,0,0,0,0,8,36,36,0,0,1,0,72Zm104-44h-8a4,4,0,0,0,0,8h8a52.13,52.13,0,0,0,12-1.41V176a36,36,0,1,1-36-36,4,4,0,0,0,0-8,44,44,0,0,0-36,18.75V72a36,36,0,0,1,72,0v6.73a4,4,0,0,0,2.67,3.77A44,44,0,0,1,192,168Zm12-56a4,4,0,0,1-4,4h-4a32,32,0,0,1-32-32V80a4,4,0,0,1,8,0v4a24,24,0,0,0,24,24h4A4,4,0,0,1,204,112ZM92,84a32,32,0,0,1-32,32H56a4,4,0,0,1,0-8h4A24,24,0,0,0,84,84V80a4,4,0,0,1,8,0Z" }))]
+		]);
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Broadcast.es.js
-		const e$69 = /* @__PURE__ */ new Map([
+		const e$81 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,84a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,84Zm0,64a20,20,0,1,1,20-20A20,20,0,0,1,128,148Zm77.39,12.7A83.94,83.94,0,0,1,190.61,184a12,12,0,0,1-17.89-16,59.92,59.92,0,0,0,0-80,12,12,0,0,1,17.89-16,84.07,84.07,0,0,1,14.78,88.7ZM83.28,168a12,12,0,0,1-17.89,16,83.94,83.94,0,0,1,0-112A12,12,0,0,1,83.28,88a59.92,59.92,0,0,0,0,80ZM252,128a123.63,123.63,0,0,1-35.43,86.78A12,12,0,1,1,199.43,198a99.88,99.88,0,0,0,0-140,12,12,0,0,1,17.14-16.8A123.63,123.63,0,0,1,252,128ZM56.57,198a12,12,0,0,1-17.14,16.8,123.89,123.89,0,0,1,0-173.56A12,12,0,0,1,56.57,58a99.88,99.88,0,0,0,0,140Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M160,128a32,32,0,1,1-32-32A32,32,0,0,1,160,128Z",
@@ -280,7 +293,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Buildings.es.js
-		const e$68 = /* @__PURE__ */ new Map([
+		const e$80 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M240,204H228V96a20,20,0,0,0-20-20H172V32a20,20,0,0,0-28.45-18.12l-104,48.54A20.06,20.06,0,0,0,28,80.55V204H16a12,12,0,0,0,0,24H240a12,12,0,0,0,0-24ZM204,100V204H172V100ZM52,83.09,148,38.3V204H52ZM132,112v12a12,12,0,0,1-24,0V112a12,12,0,0,1,24,0Zm-40,0v12a12,12,0,0,1-24,0V112a12,12,0,0,1,24,0Zm0,52v12a12,12,0,0,1-24,0V164a12,12,0,0,1,24,0Zm40,0v12a12,12,0,0,1-24,0V164a12,12,0,0,1,24,0Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M136,32V216H40V85.35a8,8,0,0,1,3.56-6.66l80-53.33A8,8,0,0,1,136,32Z",
@@ -293,7 +306,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Butterfly.es.js
-		const e$67 = /* @__PURE__ */ new Map([
+		const e$79 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M235.79,48c-4.27-5.48-12.4-12-26.88-12-17.86,0-40.5,11.7-60.57,31.3-3,2.89-5.74,5.85-8.34,8.84V56a12,12,0,0,0-24,0V76.14c-2.6-3-5.38-6-8.34-8.84C87.59,47.7,65,36,47.09,36c-14.48,0-22.61,6.54-26.88,12C7,65,12,93.91,19.28,122.66c5.75,22.64,17.8,33,28.88,37.69A48.12,48.12,0,0,0,92,228a47.87,47.87,0,0,0,36-16.28A48,48,0,0,0,212,180a48.51,48.51,0,0,0-4.14-19.65c11.08-4.67,23.13-15,28.88-37.69C244,93.91,249,65,235.79,48ZM92,204a24,24,0,0,1-24-24,24.36,24.36,0,0,1,21.31-24.07,12,12,0,0,0-2.64-23.86A47.63,47.63,0,0,0,65.17,140c-8.19-.29-18-4.92-22.63-23.24-7.41-29.18-8.55-47.35-3.39-54C39.74,62,41.3,60,47.09,60,58.3,60,75.91,69.83,90.9,84.47c15.25,14.9,25.1,31.86,25.1,43.2V180A24,24,0,0,1,92,204Zm121.45-87.25C208.81,135.07,199,139.7,190.82,140a47.54,47.54,0,0,0-21.51-7.92,12,12,0,1,0-2.64,23.86A24.36,24.36,0,0,1,188,180a24,24,0,1,1-48,0V127.67c0-11.34,9.85-28.3,25.1-43.2C180.09,69.83,197.7,60,208.91,60c5.79,0,7.35,2,7.94,2.76C222,69.4,220.87,87.57,213.46,116.75Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M225.12,119.71c-7.86,30.94-29.31,32.71-37.36,32.23h-1A36,36,0,1,1,128,180a36,36,0,1,1-58.72-28.06h-1c-8,.48-29.5-1.29-37.36-32.23C22.79,87.84,15.78,48,47.07,48S128,95.8,128,127.67C128,95.8,177.64,48,208.93,48S233.21,87.84,225.12,119.71Z",
@@ -303,6 +316,19 @@ window.__ModuleLoader__.load({
 			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M231.1,51.71C226.09,45.27,218.64,42,209,42c-16.33,0-37.41,11.06-56.4,29.59A132,132,0,0,0,134,93.94V56a6,6,0,0,0-12,0V93.94a132,132,0,0,0-18.54-22.35C84.49,53.06,63.4,42,47.07,42c-9.69,0-17.14,3.27-22.15,9.71-5.53,7.11-7.71,17.69-6.66,32.34.91,12.73,4.12,26.53,6.81,37.13,6.28,24.74,20.77,33,31.78,35.68A42,42,0,1,0,128,201.62a42,42,0,1,0,71.16-44.76c11-2.63,25.5-10.94,31.78-35.68C237.55,95.21,242.72,66.65,231.1,51.71ZM92,210a30.12,30.12,0,0,1-3.34-60A6,6,0,0,0,87.35,138a41.71,41.71,0,0,0-20.28,8c-9,.31-24.12-3.16-30.37-27.76-3.25-12.81-11.89-46.83-2.31-59.15C37.05,55.66,41.2,54,47.07,54c12.88,0,31.72,10.28,48,26.18C111.69,96.39,122,114.59,122,127.67V180A30,30,0,0,1,92,210Zm127.31-91.77C213.07,142.83,198,146.29,189,146a41.62,41.62,0,0,0-20.28-8A6,6,0,1,0,167.36,150,30.11,30.11,0,1,1,134,180V127.67c0-13.08,10.32-31.28,26.93-47.49C177.23,64.28,196.07,54,209,54c5.87,0,10,1.66,12.68,5.08C231.21,71.4,222.57,105.42,219.32,118.23Z" }))],
 			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M232.7,50.48C229,45.7,221.84,40,209,40c-16.85,0-38.46,11.28-57.81,30.16A140.07,140.07,0,0,0,136,87.53V56a8,8,0,0,0-16,0V87.53a140.07,140.07,0,0,0-15.15-17.37C85.49,51.28,63.88,40,47,40,34.16,40,27,45.7,23.3,50.48c-6.82,8.77-12.18,24.08-.21,71.2,6.05,23.83,19.51,33,30.63,36.42A44,44,0,0,0,128,205.27a44,44,0,0,0,74.28-47.17c11.12-3.4,24.57-12.59,30.63-36.42C239.63,95.24,244.85,66.1,232.7,50.48ZM92,208A28.12,28.12,0,0,1,88.86,152a8,8,0,1,0-1.76-15.9A43.64,43.64,0,0,0,66.36,144c-8.43.09-22-3.57-27.76-26.26C35.72,106.39,27,71.86,35.94,60.3,37.37,58.46,40.09,56,47,56c27.27,0,73,44.88,73,71.67V180A28,28,0,0,1,92,208ZM217.4,117.74c-5.77,22.69-19.33,26.34-27.77,26.26a43.6,43.6,0,0,0-20.74-7.95,8,8,0,1,0-1.76,15.9A28.11,28.11,0,1,1,136,180V127.67C136,100.88,181.69,56,209,56c6.95,0,9.66,2.46,11.1,4.3C229.05,71.86,220.28,106.39,217.4,117.74Z" }))],
 			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M229.5,52.94C224.89,47,218,44,208.93,44c-25.86,0-61.28,28.73-76.93,57.28V56a4,4,0,0,0-8,0v45.28C108.35,72.73,72.93,44,47.07,44c-9,0-16,3-20.57,8.94-11.1,14.26-6,42.25.5,67.75,3.67,14.42,10.55,24.64,20.48,30.38a36.79,36.79,0,0,0,12.75,4.45A40,40,0,1,0,128,197.43a40,40,0,1,0,67.77-41.9,36.82,36.82,0,0,0,12.75-4.46c9.93-5.74,16.81-16,20.48-30.38C235.47,95.19,240.6,67.2,229.5,52.94ZM92,212a32.12,32.12,0,0,1-3.56-64,4,4,0,0,0-.88-8A39.64,39.64,0,0,0,67.78,148c-22.8,1.24-30.68-20-33-29.24-5.65-22.24-11-49.26-1.95-60.87C35.87,53.91,40.54,52,47.07,52,76.55,52,124,98.68,124,127.67V180A32,32,0,0,1,92,212Zm129.24-93.28c-2.34,9.22-10.22,30.47-33,29.24A39.68,39.68,0,0,0,168.44,140a4,4,0,0,0-.88,8A32.1,32.1,0,1,1,132,180V127.67c0-29,47.45-75.67,76.93-75.67,6.53,0,11.2,1.91,14.26,5.85C232.22,69.46,226.89,96.48,221.24,118.72Z" }))]
+		]);
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/CalendarBlank.es.js
+		const e$78 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,28H188V24a12,12,0,0,0-24,0v4H92V24a12,12,0,0,0-24,0v4H48A20,20,0,0,0,28,48V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V48A20,20,0,0,0,208,28ZM68,52a12,12,0,0,0,24,0h72a12,12,0,0,0,24,0h16V76H52V52ZM52,204V100H204V204Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M216,48V88H40V48a8,8,0,0,1,8-8H208A8,8,0,0,1,216,48Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,48H48V48H72v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,34H182V24a6,6,0,0,0-12,0V34H86V24a6,6,0,0,0-12,0V34H48A14,14,0,0,0,34,48V208a14,14,0,0,0,14,14H208a14,14,0,0,0,14-14V48A14,14,0,0,0,208,34ZM48,46H74V56a6,6,0,0,0,12,0V46h84V56a6,6,0,0,0,12,0V46h26a2,2,0,0,1,2,2V82H46V48A2,2,0,0,1,48,46ZM208,210H48a2,2,0,0,1-2-2V94H210V208A2,2,0,0,1,208,210Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,36H180V24a4,4,0,0,0-8,0V36H84V24a4,4,0,0,0-8,0V36H48A12,12,0,0,0,36,48V208a12,12,0,0,0,12,12H208a12,12,0,0,0,12-12V48A12,12,0,0,0,208,36ZM48,44H76V56a4,4,0,0,0,8,0V44h88V56a4,4,0,0,0,8,0V44h28a4,4,0,0,1,4,4V84H44V48A4,4,0,0,1,48,44ZM208,212H48a4,4,0,0,1-4-4V92H212V208A4,4,0,0,1,208,212Z" }))]
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/CaretDown.es.js
@@ -319,7 +345,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/CaretLeft.es.js
-		const a$29 = /* @__PURE__ */ new Map([
+		const a$33 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M168.49,199.51a12,12,0,0,1-17,17l-80-80a12,12,0,0,1,0-17l80-80a12,12,0,0,1,17,17L97,128Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M160,48V208L80,128Z",
@@ -344,8 +370,21 @@ window.__ModuleLoader__.load({
 			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M178.83,130.83l-80,80a4,4,0,0,1-5.66-5.66L170.34,128,93.17,50.83a4,4,0,0,1,5.66-5.66l80,80A4,4,0,0,1,178.83,130.83Z" }))]
 		]);
 		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ChartBar.es.js
+		const e$77 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M224,196h-4V40a12,12,0,0,0-12-12H152a12,12,0,0,0-12,12V76H96A12,12,0,0,0,84,88v36H48a12,12,0,0,0-12,12v60H32a12,12,0,0,0,0,24H224a12,12,0,0,0,0-24ZM164,52h32V196H164Zm-56,48h32v96H108ZM60,148H84v48H60Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M208,40V208H152V40Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1,0-16h8V136a8,8,0,0,1,8-8H72a8,8,0,0,1,8,8v64H96V88a8,8,0,0,1,8-8h32a8,8,0,0,1,8,8V200h16V40a8,8,0,0,1,8-8h40a8,8,0,0,1,8,8V200h8A8,8,0,0,1,232,208Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M224,202H214V40a6,6,0,0,0-6-6H152a6,6,0,0,0-6,6V82H96a6,6,0,0,0-6,6v42H48a6,6,0,0,0-6,6v66H32a6,6,0,0,0,0,12H224a6,6,0,0,0,0-12ZM158,46h44V202H158ZM102,94h44V202H102ZM54,142H90v60H54Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M224,200h-8V40a8,8,0,0,0-8-8H152a8,8,0,0,0-8,8V80H96a8,8,0,0,0-8,8v40H48a8,8,0,0,0-8,8v64H32a8,8,0,0,0,0,16H224a8,8,0,0,0,0-16ZM160,48h40V200H160ZM104,96h40V200H104ZM56,144H88v56H56Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M224,204H212V40a4,4,0,0,0-4-4H152a4,4,0,0,0-4,4V84H96a4,4,0,0,0-4,4v44H48a4,4,0,0,0-4,4v68H32a4,4,0,0,0,0,8H224a4,4,0,0,0,0-8ZM156,44h48V204H156ZM100,92h48V204H100ZM52,140H92v64H52Z" }))]
+		]);
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ChartLine.es.js
-		const e$66 = /* @__PURE__ */ new Map([
+		const e$76 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M236,208a12,12,0,0,1-12,12H32a12,12,0,0,1-12-12V48a12,12,0,0,1,24,0v85.55L88.1,95a12,12,0,0,1,15.1-.57l56.22,42.16L216.1,87A12,12,0,1,1,231.9,105l-64,56a12,12,0,0,1-15.1.57L96.58,119.44,44,165.45V196H224A12,12,0,0,1,236,208Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,64V208H32V48H208A16,16,0,0,1,224,64Z",
@@ -358,7 +397,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ChartLineUp.es.js
-		const e$65 = /* @__PURE__ */ new Map([
+		const e$75 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M236,208a12,12,0,0,1-12,12H32a12,12,0,0,1-12-12V48a12,12,0,0,1,24,0v99l43.51-43.52a12,12,0,0,1,17,0L128,127l43-43H160a12,12,0,0,1,0-24h40a12,12,0,0,1,12,12v40a12,12,0,0,1-24,0V101l-51.51,51.52a12,12,0,0,1-17,0L96,129,44,181v15H224A12,12,0,0,1,236,208Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,64V208H32V48H208A16,16,0,0,1,224,64Z",
@@ -371,7 +410,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ChatCircleDots.es.js
-		const e$64 = /* @__PURE__ */ new Map([
+		const e$74 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M120,128a16,16,0,1,1-16-16A16,16,0,0,1,120,128Zm32-16a16,16,0,1,0,16,16A16,16,0,0,0,152,112Zm84,16A108,108,0,0,1,78.77,224.15L46.34,235A20,20,0,0,1,21,209.66l10.81-32.43A108,108,0,1,1,236,128Zm-24,0A84,84,0,1,0,55.27,170.06a12,12,0,0,1,1,9.81l-9.93,29.79,29.79-9.93a12.1,12.1,0,0,1,3.8-.62,12,12,0,0,1,6,1.62A84,84,0,0,0,212,128Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,128A96,96,0,0,1,79.93,211.11h0L42.54,223.58a8,8,0,0,1-10.12-10.12l12.47-37.39h0A96,96,0,1,1,224,128Z",
@@ -384,7 +423,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ChatsCircle.es.js
-		const e$63 = /* @__PURE__ */ new Map([
+		const e$73 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M236.34,187.09A84,84,0,0,0,172.29,68.9,84,84,0,0,0,19.66,139.09l-6.84,23.26a20,20,0,0,0,24.83,24.83l23.26-6.84a83.94,83.94,0,0,0,22.76,6.74,84.06,84.06,0,0,0,111.42,41.26l23.26,6.84a20,20,0,0,0,24.83-24.83ZM62,155.5a11.88,11.88,0,0,0-3.39.49l-20.72,6.09L44,141.35a12,12,0,0,0-.93-9A60,60,0,1,1,67.7,156.92,12,12,0,0,0,62,155.5Zm150.89,24.8a12,12,0,0,0-.93,9l6.09,20.73L197.36,204a12,12,0,0,0-9.06.93A60,60,0,0,1,111,186.63a83.93,83.93,0,0,0,68.55-91.37,60,60,0,0,1,33.38,85Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M231.66,213.73a8,8,0,0,1-9.93,9.93L194,215.5A72.05,72.05,0,0,1,92.06,175.89h0c1.31.07,2.62.11,3.94.11a72,72,0,0,0,67.93-95.88h0A72,72,0,0,1,223.5,186Z",
@@ -397,7 +436,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Check.es.js
-		const a$28 = /* @__PURE__ */ new Map([
+		const a$32 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M232.49,80.49l-128,128a12,12,0,0,1-17,0l-56-56a12,12,0,1,1,17-17L96,183,215.51,63.51a12,12,0,0,1,17,17Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M232,56V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Z",
@@ -410,7 +449,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/CheckCircle.es.js
-		const a$27 = /* @__PURE__ */ new Map([
+		const a$31 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M176.49,95.51a12,12,0,0,1,0,17l-56,56a12,12,0,0,1-17,0l-24-24a12,12,0,1,1,17-17L112,143l47.51-47.52A12,12,0,0,1,176.49,95.51ZM236,128A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z",
@@ -436,7 +475,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/CirclesThree.es.js
-		const e$62 = /* @__PURE__ */ new Map([
+		const e$72 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M176,76a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,76Zm-48,24a24,24,0,1,1,24-24A24,24,0,0,1,128,100Zm60,24a48,48,0,1,0,48,48A48.05,48.05,0,0,0,188,124Zm0,72a24,24,0,1,1,24-24A24,24,0,0,1,188,196ZM68,124a48,48,0,1,0,48,48A48.05,48.05,0,0,0,68,124Zm0,72a24,24,0,1,1,24-24A24,24,0,0,1,68,196Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M128,112a36,36,0,1,1,36-36A36,36,0,0,1,128,112Zm60,24a36,36,0,1,0,36,36A36,36,0,0,0,188,136ZM68,136a36,36,0,1,0,36,36A36,36,0,0,0,68,136Z",
@@ -449,7 +488,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Circuitry.es.js
-		const e$61 = /* @__PURE__ */ new Map([
+		const e$71 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,28H48A20,20,0,0,0,28,48V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V48A20,20,0,0,0,208,28ZM52,52H76v95.22a24,24,0,1,0,24,0V125l40,40v39H52ZM204,204H164V160a12,12,0,0,0-3.51-8.49L100,91V52h24V72a12,12,0,0,0,3.51,8.49l17.31,17.3a24,24,0,1,0,17-17L148,67V52h56Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,40H48a8,8,0,0,0-8,8V208a8,8,0,0,0,8,8H208a8,8,0,0,0,8-8V48A8,8,0,0,0,208,40ZM88,184a16,16,0,1,1,16-16A16,16,0,0,1,88,184Zm80-64a16,16,0,1,1,16-16A16,16,0,0,1,168,120Z",
@@ -462,7 +501,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Clock.es.js
-		const a$26 = /* @__PURE__ */ new Map([
+		const a$30 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,192a84,84,0,1,1,84-84A84.09,84.09,0,0,1,128,212Zm68-84a12,12,0,0,1-12,12H128a12,12,0,0,1-12-12V72a12,12,0,0,1,24,0v44h44A12,12,0,0,1,196,128Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z",
@@ -475,7 +514,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ClockCounterClockwise.es.js
-		const e$60 = /* @__PURE__ */ new Map([
+		const e$70 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M140,80v41.21l34.17,20.5a12,12,0,1,1-12.34,20.58l-40-24A12,12,0,0,1,116,128V80a12,12,0,0,1,24,0ZM128,28A99.38,99.38,0,0,0,57.24,57.34c-4.69,4.74-9,9.37-13.24,14V64a12,12,0,0,0-24,0v40a12,12,0,0,0,12,12H72a12,12,0,0,0,0-24H57.77C63,86,68.37,80.22,74.26,74.26a76,76,0,1,1,1.58,109,12,12,0,0,0-16.48,17.46A100,100,0,1,0,128,28Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,128a88,88,0,1,1-88-88A88,88,0,0,1,216,128Z",
@@ -488,7 +527,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/CloudArrowDown.es.js
-		const e$59 = /* @__PURE__ */ new Map([
+		const e$69 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M192.49,167.51a12,12,0,0,1,0,17l-32,32a12,12,0,0,1-17,0l-32-32a12,12,0,1,1,17-17L140,179V128a12,12,0,0,1,24,0v51l11.51-11.52A12,12,0,0,1,192.49,167.51ZM160,36A92.08,92.08,0,0,0,79,84.37,68,68,0,1,0,72,220H84a12,12,0,0,0,0-24H72a44,44,0,0,1-1.81-87.95A91.7,91.7,0,0,0,68,128a12,12,0,0,0,24,0,68,68,0,0,1,136,0,67.27,67.27,0,0,1-7.25,30.59,12,12,0,1,0,21.42,10.82A91.08,91.08,0,0,0,252,128,92.1,92.1,0,0,0,160,36Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M240,128a80,80,0,0,1-80,80H72A56,56,0,1,1,85.92,97.74l0,.1A80,80,0,0,1,240,128Z",
@@ -501,7 +540,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/CloudRain.es.js
-		const e$58 = /* @__PURE__ */ new Map([
+		const e$68 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M156,12A80.22,80.22,0,0,0,82.39,60.36,56.76,56.76,0,0,0,76,60a56,56,0,0,0,0,112h29.58L86,201.34a12,12,0,1,0,20,13.32L134.42,172H156a80,80,0,0,0,0-160Zm0,136H76a32,32,0,0,1,0-64h.28c-.11,1.1-.2,2.2-.26,3.3a12,12,0,1,0,24,1.39A56.06,56.06,0,1,1,156,148Zm.65,58.66-26.67,40a12,12,0,1,1-20-13.32l26.66-40a12,12,0,1,1,20,13.32Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,92a68,68,0,0,1-68,68H76A44,44,0,1,1,90.2,74.34v.11A68.06,68.06,0,0,1,224,92Z",
@@ -527,7 +566,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Cube.es.js
-		const l$7 = /* @__PURE__ */ new Map([
+		const l$10 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M225.6,62.64l-88-48.17a19.91,19.91,0,0,0-19.2,0l-88,48.17A20,20,0,0,0,20,80.19v95.62a20,20,0,0,0,10.4,17.55l88,48.17a19.89,19.89,0,0,0,19.2,0l88-48.17A20,20,0,0,0,236,175.81V80.19A20,20,0,0,0,225.6,62.64ZM128,36.57,200,76,128,115.4,56,76ZM44,96.79l72,39.4v76.67L44,173.44Zm96,116.07V136.19l72-39.4v76.65Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M128,129.09V232a8,8,0,0,1-3.84-1l-88-48.16a8,8,0,0,1-4.16-7V80.2a8,8,0,0,1,.7-3.27Z",
@@ -553,7 +592,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Diamond.es.js
-		const e$57 = /* @__PURE__ */ new Map([
+		const e$67 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M238.16,113.89,142.1,17.83a20,20,0,0,0-28.21,0l-96,96.06a20,20,0,0,0,0,28.22l96.05,96.06h0a20,20,0,0,0,28.21,0l96-96.06a20,20,0,0,0,0-28.22ZM128,218.33,37.68,128,128,37.67,218.32,128Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M229.67,133.62l-96,96a7.94,7.94,0,0,1-11.24,0l-96-96a7.94,7.94,0,0,1,0-11.24l96.05-96a7.94,7.94,0,0,1,11.24,0l96,96.05A7.94,7.94,0,0,1,229.67,133.62Z",
@@ -566,7 +605,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Dna.es.js
-		const e$56 = /* @__PURE__ */ new Map([
+		const e$66 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M204,204.5V232a12,12,0,0,1-24,0V204.5a59.68,59.68,0,0,0-33.17-53.67l-48.4-24.2A83.54,83.54,0,0,1,52,51.5V24a12,12,0,0,1,24,0V51.5a59.68,59.68,0,0,0,33.17,53.67l48.4,24.2A83.54,83.54,0,0,1,204,204.5Zm-52-.5H76a59.75,59.75,0,0,1,2.34-16h56.2a12,12,0,0,0,0-24H91.76c1-1.1,2-2.18,3.13-3.21a12,12,0,0,0-16.45-17.48A84.38,84.38,0,0,0,52,204.5V232a12,12,0,0,0,24,0v-4h76a12,12,0,0,0,0-24ZM192,12a12,12,0,0,0-12,12v4H104a12,12,0,0,0,0,24h76a59.75,59.75,0,0,1-2.34,16H121.44a12,12,0,0,0,0,24h42.8c-1,1.1-2,2.18-3.13,3.21a12,12,0,0,0,16.45,17.48A84.38,84.38,0,0,0,204,51.5V24A12,12,0,0,0,192,12Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M103.8,140.1,128,128l24.2,12.1A72,72,0,0,1,192,204.5V208H64v-3.5A72,72,0,0,1,103.8,140.1ZM192,51.5V48H64v3.5a72,72,0,0,0,39.8,64.4L128,128l24.2-12.1A72,72,0,0,0,192,51.5Z",
@@ -579,7 +618,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/DotsSixVertical.es.js
-		const e$55 = /* @__PURE__ */ new Map([
+		const e$65 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M108,60A16,16,0,1,1,92,44,16,16,0,0,1,108,60Zm56,16a16,16,0,1,0-16-16A16,16,0,0,0,164,76ZM92,112a16,16,0,1,0,16,16A16,16,0,0,0,92,112Zm72,0a16,16,0,1,0,16,16A16,16,0,0,0,164,112ZM92,180a16,16,0,1,0,16,16A16,16,0,0,0,92,180Zm72,0a16,16,0,1,0,16,16A16,16,0,0,0,164,180Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,32V224a16,16,0,0,1-16,16H64a16,16,0,0,1-16-16V32A16,16,0,0,1,64,16H192A16,16,0,0,1,208,32Z",
@@ -592,7 +631,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/DotsThree.es.js
-		const a$25 = /* @__PURE__ */ new Map([
+		const a$29 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M144,128a16,16,0,1,1-16-16A16,16,0,0,1,144,128ZM60,112a16,16,0,1,0,16,16A16,16,0,0,0,60,112Zm136,0a16,16,0,1,0,16,16A16,16,0,0,0,196,112Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M240,96v64a16,16,0,0,1-16,16H32a16,16,0,0,1-16-16V96A16,16,0,0,1,32,80H224A16,16,0,0,1,240,96Z",
@@ -605,7 +644,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/DotsThreeVertical.es.js
-		const a$24 = /* @__PURE__ */ new Map([
+		const a$28 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M112,60a16,16,0,1,1,16,16A16,16,0,0,1,112,60Zm16,52a16,16,0,1,0,16,16A16,16,0,0,0,128,112Zm0,68a16,16,0,1,0,16,16A16,16,0,0,0,128,180Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M176,32V224a16,16,0,0,1-16,16H96a16,16,0,0,1-16-16V32A16,16,0,0,1,96,16h64A16,16,0,0,1,176,32Z",
@@ -618,7 +657,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/DownloadSimple.es.js
-		const e$54 = /* @__PURE__ */ new Map([
+		const e$64 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M228,144v64a12,12,0,0,1-12,12H40a12,12,0,0,1-12-12V144a12,12,0,0,1,24,0v52H204V144a12,12,0,0,1,24,0Zm-108.49,8.49a12,12,0,0,0,17,0l40-40a12,12,0,0,0-17-17L140,115V32a12,12,0,0,0-24,0v83L96.49,95.51a12,12,0,0,0-17,17Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,48V208H40V48A16,16,0,0,1,56,32H200A16,16,0,0,1,216,48Z",
@@ -631,7 +670,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Drop.es.js
-		const e$53 = /* @__PURE__ */ new Map([
+		const e$63 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M134.88,6.17a12,12,0,0,0-13.76,0,259,259,0,0,0-42.18,39C50.85,77.43,36,111.62,36,144a92,92,0,0,0,184,0C220,66.64,138.36,8.6,134.88,6.17ZM128,212a68.07,68.07,0,0,1-68-68c0-33.31,20-63.37,36.7-82.71A249.35,249.35,0,0,1,128,31.11a249.35,249.35,0,0,1,31.3,30.18C176,80.63,196,110.69,196,144A68.07,68.07,0,0,1,128,212Zm49.62-52.4a52,52,0,0,1-34,34,12.2,12.2,0,0,1-3.6.55,12,12,0,0,1-3.6-23.45,28,28,0,0,0,18.32-18.32,12,12,0,0,1,22.9,7.2Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,144a80,80,0,0,1-160,0c0-72,80-128,80-128S208,72,208,144Z",
@@ -644,7 +683,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/DropHalf.es.js
-		const a$23 = /* @__PURE__ */ new Map([
+		const a$27 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M134.88,6.17a12,12,0,0,0-13.76,0,259,259,0,0,0-42.18,39C50.85,77.43,36,111.63,36,144a92,92,0,0,0,184,0C220,66.64,138.36,8.6,134.88,6.17ZM194.08,160H140V144h56A68,68,0,0,1,194.08,160ZM140,120V104h47a115,115,0,0,1,5.68,16Zm19.3-58.71A197.29,197.29,0,0,1,173.68,80H140V41.46A243.5,243.5,0,0,1,159.3,61.29ZM60,144c0-33.31,20-63.37,36.7-82.71A243.5,243.5,0,0,1,116,41.46V210.92A68.1,68.1,0,0,1,60,144Zm80,66.92V184h42.94A68,68,0,0,1,140,210.92Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,144a80,80,0,0,1-80,80V16S208,72,208,144Z",
@@ -657,7 +696,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Fan.es.js
-		const e$52 = /* @__PURE__ */ new Map([
+		const e$62 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M236.85,134a64,64,0,0,0-87.43-42.11l14.22-56.77a12,12,0,0,0-5.17-13A64,64,0,0,0,86,127.52L29.72,143.59a12,12,0,0,0-8.69,11,64,64,0,0,0,127.56,10l42,40.7a12,12,0,0,0,13.86,2A64,64,0,0,0,236.85,134ZM116,128a12,12,0,1,1,12,12A12,12,0,0,1,116,128Zm8-92a40,40,0,0,1,14,2.53L124.6,92.17a36,36,0,0,0-25.85,14.88A40,40,0,0,1,124,36ZM105,192.1A40,40,0,0,1,45.5,164l53.18-15.19a36,36,0,0,0,25.8,15A39.84,39.84,0,0,1,105,192.1Zm104.7-21.56a39.92,39.92,0,0,1-9.21,10.89L160.73,143a35.9,35.9,0,0,0,.05-29.83,40,40,0,0,1,48.89,57.4Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M136.5,150.45A52,52,0,1,1,33,155.13l71.91-20.54h0A24,24,0,0,0,128,152a23.75,23.75,0,0,0,8.5-1.56Zm-32.19-26.31h0a24,24,0,0,1,29.52-19.42h0L152,32.17a52,52,0,1,0-47.69,92ZM201,105.5a52,52,0,0,0-57.84,3.91h0a24,24,0,0,1,2.06,35.26h0l53.74,52a52,52,0,0,0,2-91.2Z",
@@ -670,7 +709,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Feather.es.js
-		const l$6 = /* @__PURE__ */ new Map([
+		const l$9 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M224.11,31.92A68,68,0,0,0,128,31.87l-70.12,69.3A19.91,19.91,0,0,0,52,115.31V187L23.52,215.51a12,12,0,0,0,17,17L69,204H140.7a19.87,19.87,0,0,0,14.15-5.86l.05,0,69.21-70A68.06,68.06,0,0,0,224.11,31.92Zm-79.21,17A44,44,0,0,1,210,108H165l27.52-27.51a12,12,0,0,0-17-17L124,115V69.54ZM76,117l24-23.72V139L76,163Zm63,63H93l48-48h45.5Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M215.8,119.6l-69.26,70.06a8,8,0,0,1-5.65,2.34H64.2V115.31a8,8,0,0,1,2.34-5.65L112.2,64.52V144l24-24Z",
@@ -683,7 +722,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/FileCode.es.js
-		const l$5 = /* @__PURE__ */ new Map([
+		const l$8 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M180.49,143.51a12,12,0,0,1,0,17l-24,24a12,12,0,0,1-17-17L155,152l-15.52-15.51a12,12,0,1,1,17-17Zm-64-24a12,12,0,0,0-17,0l-24,24a12,12,0,0,0,0,17l24,24a12,12,0,0,0,17-17L101,152l15.52-15.51A12,12,0,0,0,116.49,119.51ZM220,88V216a20,20,0,0,1-20,20H56a20,20,0,0,1-20-20V40A20,20,0,0,1,56,20h96a12,12,0,0,1,8.49,3.52l56,56A12,12,0,0,1,220,88ZM160,57V80h23Zm36,155V104H148a12,12,0,0,1-12-12V44H60V212Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,88H152V32Z",
@@ -696,7 +735,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/FileCsv.es.js
-		const e$51 = /* @__PURE__ */ new Map([
+		const e$61 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M48,180c0,8.67,5.49,16,12,16a10.27,10.27,0,0,0,7.33-3.43,12,12,0,1,1,17.34,16.6A34,34,0,0,1,60,220C40.15,220,24,202,24,180s16.15-40,36-40a34,34,0,0,1,24.67,10.83,12,12,0,1,1-17.34,16.6A10.27,10.27,0,0,0,60,164C53.49,164,48,171.31,48,180Zm97.51-5.71c-5.13-3.45-11.33-5.24-16.8-6.82a79.5,79.5,0,0,1-7.91-2.59c2.45-1.18,9.71-1.3,16.07.33A12,12,0,0,0,143,142a69.24,69.24,0,0,0-12-1.86c-9.93-.66-18,1.08-24.1,5.17a24.45,24.45,0,0,0-10.69,17.76c-1.1,8.74,2.48,16.27,10.11,21.19,4.78,3.09,10.36,4.7,15.75,6.26,3,.89,7.94,2.3,9.88,3.53a2,2,0,0,1-.22.71c-1.36,1.55-9.57,1.79-16.39-.06a12,12,0,0,0-6.45,23.11A63.73,63.73,0,0,0,125.09,220c6.47,0,13.74-1.17,19.74-5.15a24.73,24.73,0,0,0,10.95-18C157,187.53,153.32,179.53,145.51,174.27ZM216,140.68A12,12,0,0,0,200.7,148L192,172.3,183.3,148A12,12,0,1,0,160.7,156l20,56a12,12,0,0,0,22.6,0l20-56A12,12,0,0,0,216,140.68ZM36,108V40A20,20,0,0,1,56,20h96a12,12,0,0,1,8.49,3.51l56,56A12,12,0,0,1,220,88v20a12,12,0,1,1-24,0v-4H148a12,12,0,0,1-12-12V44H60v64a12,12,0,1,1-24,0ZM160,80h23L160,57Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,88H152V32Z",
@@ -709,7 +748,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/FilePdf.es.js
-		const e$50 = /* @__PURE__ */ new Map([
+		const e$60 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M200,164v8h12a12,12,0,0,1,0,24H200v12a12,12,0,0,1-24,0V152a12,12,0,0,1,12-12h32a12,12,0,0,1,0,24ZM92,172a32,32,0,0,1-32,32H56v4a12,12,0,0,1-24,0V152a12,12,0,0,1,12-12H60A32,32,0,0,1,92,172Zm-24,0a8,8,0,0,0-8-8H56v16h4A8,8,0,0,0,68,172Zm100,8a40,40,0,0,1-40,40H112a12,12,0,0,1-12-12V152a12,12,0,0,1,12-12h16A40,40,0,0,1,168,180Zm-24,0a16,16,0,0,0-16-16h-4v32h4A16,16,0,0,0,144,180ZM36,108V40A20,20,0,0,1,56,20h96a12,12,0,0,1,8.49,3.52l56,56A12,12,0,0,1,220,88v20a12,12,0,0,1-24,0v-4H148a12,12,0,0,1-12-12V44H60v64a12,12,0,0,1-24,0ZM160,57V80h23Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,88H152V32Z",
@@ -722,7 +761,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/FileText.es.js
-		const e$49 = /* @__PURE__ */ new Map([
+		const e$59 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216.49,79.52l-56-56A12,12,0,0,0,152,20H56A20,20,0,0,0,36,40V216a20,20,0,0,0,20,20H200a20,20,0,0,0,20-20V88A12,12,0,0,0,216.49,79.52ZM160,57l23,23H160ZM60,212V44h76V92a12,12,0,0,0,12,12h48V212Zm112-80a12,12,0,0,1-12,12H96a12,12,0,0,1,0-24h64A12,12,0,0,1,172,132Zm0,40a12,12,0,0,1-12,12H96a12,12,0,0,1,0-24h64A12,12,0,0,1,172,172Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,88H152V32Z",
@@ -734,8 +773,21 @@ window.__ModuleLoader__.load({
 			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M210.83,85.17l-56-56A4,4,0,0,0,152,28H56A12,12,0,0,0,44,40V216a12,12,0,0,0,12,12H200a12,12,0,0,0,12-12V88A4,4,0,0,0,210.83,85.17ZM156,41.65,198.34,84H156ZM200,220H56a4,4,0,0,1-4-4V40a4,4,0,0,1,4-4h92V88a4,4,0,0,0,4,4h52V216A4,4,0,0,1,200,220Zm-36-84a4,4,0,0,1-4,4H96a4,4,0,0,1,0-8h64A4,4,0,0,1,164,136Zm0,32a4,4,0,0,1-4,4H96a4,4,0,0,1,0-8h64A4,4,0,0,1,164,168Z" }))]
 		]);
 		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Files.es.js
+		const e$58 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M220.49,59.51l-40-40A12,12,0,0,0,172,16H92A20,20,0,0,0,72,36V56H56A20,20,0,0,0,36,76V216a20,20,0,0,0,20,20H164a20,20,0,0,0,20-20V196h20a20,20,0,0,0,20-20V68A12,12,0,0,0,220.49,59.51ZM160,212H60V80h67l33,33Zm40-40H184V108a12,12,0,0,0-3.51-8.49l-40-40A12,12,0,0,0,132,56H96V40h71l33,33Zm-56-28a12,12,0,0,1-12,12H88a12,12,0,0,1,0-24h44A12,12,0,0,1,144,144Zm0,40a12,12,0,0,1-12,12H88a12,12,0,0,1,0-24h44A12,12,0,0,1,144,184Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M208,72V184a8,8,0,0,1-8,8H176V104L136,64H80V40a8,8,0,0,1,8-8h80Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M213.66,66.34l-40-40A8,8,0,0,0,168,24H88A16,16,0,0,0,72,40V56H56A16,16,0,0,0,40,72V216a16,16,0,0,0,16,16H168a16,16,0,0,0,16-16V200h16a16,16,0,0,0,16-16V72A8,8,0,0,0,213.66,66.34ZM168,216H56V72h76.69L168,107.31v84.53c0,.06,0,.11,0,.16s0,.1,0,.16V216Zm32-32H184V104a8,8,0,0,0-2.34-5.66l-40-40A8,8,0,0,0,136,56H88V40h76.69L200,75.31Zm-56-32a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h48A8,8,0,0,1,144,152Zm0,32a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h48A8,8,0,0,1,144,184Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M213.66,66.34l-40-40A8,8,0,0,0,168,24H88A16,16,0,0,0,72,40V56H56A16,16,0,0,0,40,72V216a16,16,0,0,0,16,16H168a16,16,0,0,0,16-16V200h16a16,16,0,0,0,16-16V72A8,8,0,0,0,213.66,66.34ZM136,192H88a8,8,0,0,1,0-16h48a8,8,0,0,1,0,16Zm0-32H88a8,8,0,0,1,0-16h48a8,8,0,0,1,0,16Zm64,24H184V104a8,8,0,0,0-2.34-5.66l-40-40A8,8,0,0,0,136,56H88V40h76.69L200,75.31Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M212.24,67.76l-40-40A6,6,0,0,0,168,26H88A14,14,0,0,0,74,40V58H56A14,14,0,0,0,42,72V216a14,14,0,0,0,14,14H168a14,14,0,0,0,14-14V198h18a14,14,0,0,0,14-14V72A6,6,0,0,0,212.24,67.76ZM170,216a2,2,0,0,1-2,2H56a2,2,0,0,1-2-2V72a2,2,0,0,1,2-2h77.51L170,106.49Zm32-32a2,2,0,0,1-2,2H182V104a6,6,0,0,0-1.76-4.24l-40-40A6,6,0,0,0,136,58H86V40a2,2,0,0,1,2-2h77.51L202,74.49Zm-60-32a6,6,0,0,1-6,6H88a6,6,0,0,1,0-12h48A6,6,0,0,1,142,152Zm0,32a6,6,0,0,1-6,6H88a6,6,0,0,1,0-12h48A6,6,0,0,1,142,184Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M213.66,66.34l-40-40A8,8,0,0,0,168,24H88A16,16,0,0,0,72,40V56H56A16,16,0,0,0,40,72V216a16,16,0,0,0,16,16H168a16,16,0,0,0,16-16V200h16a16,16,0,0,0,16-16V72A8,8,0,0,0,213.66,66.34ZM168,216H56V72h76.69L168,107.31v84.53c0,.06,0,.11,0,.16s0,.1,0,.16V216Zm32-32H184V104a8,8,0,0,0-2.34-5.66l-40-40A8,8,0,0,0,136,56H88V40h76.69L200,75.31Zm-56-32a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h48A8,8,0,0,1,144,152Zm0,32a8,8,0,0,1-8,8H88a8,8,0,0,1,0-16h48A8,8,0,0,1,144,184Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M210.83,69.17l-40-40A4,4,0,0,0,168,28H88A12,12,0,0,0,76,40V60H56A12,12,0,0,0,44,72V216a12,12,0,0,0,12,12H168a12,12,0,0,0,12-12V196h20a12,12,0,0,0,12-12V72A4,4,0,0,0,210.83,69.17ZM172,216a4,4,0,0,1-4,4H56a4,4,0,0,1-4-4V72a4,4,0,0,1,4-4h78.34L172,105.66Zm32-32a4,4,0,0,1-4,4H180V104a4,4,0,0,0-1.17-2.83l-40-40A4,4,0,0,0,136,60H84V40a4,4,0,0,1,4-4h78.34L204,73.66Zm-64-32a4,4,0,0,1-4,4H88a4,4,0,0,1,0-8h48A4,4,0,0,1,140,152Zm0,32a4,4,0,0,1-4,4H88a4,4,0,0,1,0-8h48A4,4,0,0,1,140,184Z" }))]
+		]);
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Fish.es.js
-		const e$48 = /* @__PURE__ */ new Map([
+		const e$57 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M172,76a16,16,0,1,1-16-16A16,16,0,0,1,172,76Zm48.22,69.58a102,102,0,0,1-26.78,31.29c-.24.2-.47.39-.72.56a109.52,109.52,0,0,1-13.55,8.83c-18.3,10.07-40.88,15.9-67.22,17.36L91,249a12,12,0,0,1-10.89,7q-.41,0-.81,0a12,12,0,0,1-10.66-8.44l-14.16-46-46-14.19A12,12,0,0,1,7,165l45.4-20.92c1.47-26.33,7.3-48.91,17.37-67.2A110.62,110.62,0,0,1,78.57,63.3c.16-.22.34-.44.51-.66A101.91,101.91,0,0,1,110.41,35.8c25.55-14.19,54.33-16.37,74-15.69,17.76.61,36.49,4,40.76,6.52a12.07,12.07,0,0,1,4.23,4.23c2.52,4.26,5.92,23,6.53,40.76C236.57,91.26,234.4,120,220.22,145.58Zm-68.7,26.66a56.92,56.92,0,0,1-11.12-8.64,55.81,55.81,0,0,1-15.9-32.1,55.81,55.81,0,0,1-32.1-15.9,56.63,56.63,0,0,1-8.63-11.13q-7,20.48-7.7,47.69a12,12,0,0,1-7,10.61L45.51,173.64l22.1,6.82a12,12,0,0,1,7.94,7.94l6.79,22.09L93.23,186.9a12,12,0,0,1,10.61-7Q131,179.29,151.52,172.24ZM209,47c-16.25-3.14-61.81-9-95,14.91a76.73,76.73,0,0,0-14,13,32,32,0,0,0,35,32.94,12,12,0,0,1,13.09,13.09,32,32,0,0,0,33,35,76.33,76.33,0,0,0,13-14C218.05,108.81,212.18,63.22,209,47Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M185.81,167.62c-18,13.9-44.17,23.41-81.68,24.31L80.09,248l-16-56.07L8,175.87l56.07-24c.9-37.49,10.41-63.61,24.31-81.65A44,44,0,0,0,136.2,119.8a44,44,0,0,0,49.61,47.82Z",
@@ -748,7 +800,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Flask.es.js
-		const e$47 = /* @__PURE__ */ new Map([
+		const e$56 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M225.15,197.71,164,95.81V44h4a12,12,0,0,0,0-24H88a12,12,0,0,0,0,24h4V95.81L30.85,197.71A20,20,0,0,0,48,228H208a20,20,0,0,0,17.15-30.29ZM140,44V99.14a12,12,0,0,0,1.71,6.17l35.13,58.54c-10.79.86-25.15-1.31-43.42-10.56-14-7.08-27.46-11.33-40.27-12.76l21.14-35.22A12,12,0,0,0,116,99.14V44ZM55.06,204,79,164.19c13-1.11,27.62,2.42,43.62,10.52,19.61,9.92,36.25,13.31,49.85,13.31A75.44,75.44,0,0,0,190.11,186l10.83,18Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,216H48a8,8,0,0,1-6.86-12.12l30.48-50.8h0c13.23-2.48,32-1.41,56.37,10.92,32.25,16.33,54.75,12.91,67.5,7.65h0l19.34,32.23A8,8,0,0,1,208,216Z",
@@ -761,7 +813,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/FloppyDisk.es.js
-		const e$46 = /* @__PURE__ */ new Map([
+		const e$55 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M222.14,69.17,186.83,33.86A19.86,19.86,0,0,0,172.69,28H48A20,20,0,0,0,28,48V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V83.31A19.86,19.86,0,0,0,222.14,69.17ZM164,204H92V160h72Zm40,0H188V156a20,20,0,0,0-20-20H88a20,20,0,0,0-20,20v48H52V52H171l33,33ZM164,84a12,12,0,0,1-12,12H96a12,12,0,0,1,0-24h56A12,12,0,0,1,164,84Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,83.31V208a8,8,0,0,1-8,8H176V152a8,8,0,0,0-8-8H88a8,8,0,0,0-8,8v64H48a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8H172.69a8,8,0,0,1,5.65,2.34l35.32,35.32A8,8,0,0,1,216,83.31Z",
@@ -774,7 +826,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Flower.es.js
-		const c$5 = /* @__PURE__ */ new Map([
+		const c$9 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M215.64,128a44,44,0,0,0-43.82-75.9,44,44,0,0,0-87.64,0A44,44,0,0,0,40.36,128a44,44,0,0,0,43.82,75.89,44,44,0,0,0,87.64,0A44,44,0,0,0,215.64,128ZM108,128a20,20,0,1,1,20,20A20,20,0,0,1,108,128Zm72.35-53.32a20,20,0,1,1,20,34.64c-2.65,1.53-10.52,4.88-30.1,6.42a44.08,44.08,0,0,0-10.52-18.18C170.86,81.36,177.7,76.21,180.35,74.68ZM128,36a20,20,0,0,1,20,20c0,3.06-1,11.55-9.49,29.28a43.79,43.79,0,0,0-21,0C109,67.55,108,59.06,108,56A20,20,0,0,1,128,36ZM48.33,82a20,20,0,0,1,27.32-7.32c2.65,1.53,9.49,6.68,20.62,22.88a44.08,44.08,0,0,0-10.52,18.18c-19.58-1.54-27.45-4.89-30.1-6.42A20,20,0,0,1,48.33,82Zm27.32,99.32a20,20,0,1,1-20-34.64c2.65-1.53,10.52-4.88,30.1-6.42a44.08,44.08,0,0,0,10.52,18.18C85.14,174.64,78.3,179.79,75.65,181.32ZM128,220a20,20,0,0,1-20-20c0-3.06,1-11.55,9.49-29.28a43.79,43.79,0,0,0,21,0C147,188.45,148,196.94,148,200A20,20,0,0,1,128,220Zm79.67-46a20,20,0,0,1-27.32,7.32c-2.65-1.53-9.49-6.68-20.62-22.88a44.08,44.08,0,0,0,10.52-18.18c19.58,1.54,27.45,4.89,30.1,6.42A20,20,0,0,1,207.67,174Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M206.35,136.29c-8.87-5.13-24.46-7.38-39.4-8.29,14.94-.91,30.53-3.16,39.4-8.29a32,32,0,1,0-32-55.42c-8.87,5.12-18.61,17.48-26.87,30C154.17,80.87,160,66.25,160,56a32,32,0,0,0-64,0c0,10.25,5.83,24.87,12.52,38.26-8.26-12.49-18-24.85-26.87-30a32,32,0,1,0-32,55.42c8.87,5.13,24.46,7.38,39.4,8.29-14.94.91-30.53,3.16-39.4,8.29a32,32,0,1,0,32,55.42c8.87-5.12,18.61-17.48,26.87-30C101.83,175.13,96,189.75,96,200a32,32,0,0,0,64,0c0-10.25-5.83-24.87-12.52-38.26,8.26,12.49,18,24.85,26.87,30a32,32,0,1,0,32-55.42ZM155.71,144A32,32,0,1,1,160,128,31.74,31.74,0,0,1,155.71,144Z",
@@ -787,7 +839,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/FolderOpen.es.js
-		const e$45 = /* @__PURE__ */ new Map([
+		const e$54 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M248.23,112.31A20,20,0,0,0,232,104H220V88a20,20,0,0,0-20-20H132L105.34,48a20.12,20.12,0,0,0-12-4H40A20,20,0,0,0,20,64V208a12,12,0,0,0,12,12H211.1a12,12,0,0,0,11.33-8l28.49-81.47.06-.17A20,20,0,0,0,248.23,112.31ZM92,68l28.8,21.6A12,12,0,0,0,128,92h68v12H69.77a20,20,0,0,0-18.94,13.58L44,137.15V68ZM202.59,196H48.89l23.72-68H226.37Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,88v24H69.77a8,8,0,0,0-7.59,5.47L32,208V64a8,8,0,0,1,8-8H93.33a8,8,0,0,1,4.8,1.6L128,80h72A8,8,0,0,1,208,88Z",
@@ -800,7 +852,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/GearSix.es.js
-		const l$4 = /* @__PURE__ */ new Map([
+		const l$7 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,76a52,52,0,1,0,52,52A52.06,52.06,0,0,0,128,76Zm0,80a28,28,0,1,1,28-28A28,28,0,0,1,128,156Zm113.86-49.57A12,12,0,0,0,236,98.34L208.21,82.49l-.11-31.31a12,12,0,0,0-4.25-9.12,116,116,0,0,0-38-21.41,12,12,0,0,0-9.68.89L128,37.27,99.83,21.53a12,12,0,0,0-9.7-.9,116.06,116.06,0,0,0-38,21.47,12,12,0,0,0-4.24,9.1l-.14,31.34L20,98.35a12,12,0,0,0-5.85,8.11,110.7,110.7,0,0,0,0,43.11A12,12,0,0,0,20,157.66l27.82,15.85.11,31.31a12,12,0,0,0,4.25,9.12,116,116,0,0,0,38,21.41,12,12,0,0,0,9.68-.89L128,218.73l28.14,15.74a12,12,0,0,0,9.7.9,116.06,116.06,0,0,0,38-21.47,12,12,0,0,0,4.24-9.1l.14-31.34,27.81-15.81a12,12,0,0,0,5.85-8.11A110.7,110.7,0,0,0,241.86,106.43Zm-22.63,33.18-26.88,15.28a11.94,11.94,0,0,0-4.55,4.59c-.54,1-1.11,1.93-1.7,2.88a12,12,0,0,0-1.83,6.31L184.13,199a91.83,91.83,0,0,1-21.07,11.87l-27.15-15.19a12,12,0,0,0-5.86-1.53h-.29c-1.14,0-2.3,0-3.44,0a12.08,12.08,0,0,0-6.14,1.51L93,210.82A92.27,92.27,0,0,1,71.88,199l-.11-30.24a12,12,0,0,0-1.83-6.32c-.58-.94-1.16-1.91-1.7-2.88A11.92,11.92,0,0,0,63.7,155L36.8,139.63a86.53,86.53,0,0,1,0-23.24l26.88-15.28a12,12,0,0,0,4.55-4.58c.54-1,1.11-1.94,1.7-2.89a12,12,0,0,0,1.83-6.31L71.87,57A91.83,91.83,0,0,1,92.94,45.17l27.15,15.19a11.92,11.92,0,0,0,6.15,1.52c1.14,0,2.3,0,3.44,0a12.08,12.08,0,0,0,6.14-1.51L163,45.18A92.27,92.27,0,0,1,184.12,57l.11,30.24a12,12,0,0,0,1.83,6.32c.58.94,1.16,1.91,1.7,2.88A11.92,11.92,0,0,0,192.3,101l26.9,15.33A86.53,86.53,0,0,1,219.23,139.61Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M230.1,108.76,198.25,90.62c-.64-1.16-1.31-2.29-2-3.41l-.12-36A104.61,104.61,0,0,0,162,32L130,49.89c-1.34,0-2.69,0-4,0L94,32A104.58,104.58,0,0,0,59.89,51.25l-.16,36c-.7,1.12-1.37,2.26-2,3.41l-31.84,18.1a99.15,99.15,0,0,0,0,38.46l31.85,18.14c.64,1.16,1.31,2.29,2,3.41l.12,36A104.61,104.61,0,0,0,94,224l32-17.87c1.34,0,2.69,0,4,0L162,224a104.58,104.58,0,0,0,34.08-19.25l.16-36c.7-1.12,1.37-2.26,2-3.41l31.84-18.1A99.15,99.15,0,0,0,230.1,108.76ZM128,168a40,40,0,1,1,40-40A40,40,0,0,1,128,168Z",
@@ -813,7 +865,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Globe.es.js
-		const e$44 = /* @__PURE__ */ new Map([
+		const e$53 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,187a113.4,113.4,0,0,1-20.39-35h40.82a116.94,116.94,0,0,1-10,20.77A108.61,108.61,0,0,1,128,207Zm-26.49-59a135.42,135.42,0,0,1,0-40h53a135.42,135.42,0,0,1,0,40ZM44,128a83.49,83.49,0,0,1,2.43-20H77.25a160.63,160.63,0,0,0,0,40H46.43A83.49,83.49,0,0,1,44,128Zm84-79a113.4,113.4,0,0,1,20.39,35H107.59a116.94,116.94,0,0,1,10-20.77A108.61,108.61,0,0,1,128,49Zm50.73,59h30.82a83.52,83.52,0,0,1,0,40H178.75a160.63,160.63,0,0,0,0-40Zm20.77-24H173.71a140.82,140.82,0,0,0-15.5-34.36A84.51,84.51,0,0,1,199.52,84ZM97.79,49.64A140.82,140.82,0,0,0,82.29,84H56.48A84.51,84.51,0,0,1,97.79,49.64ZM56.48,172H82.29a140.82,140.82,0,0,0,15.5,34.36A84.51,84.51,0,0,1,56.48,172Zm101.73,34.36A140.82,140.82,0,0,0,173.71,172h25.81A84.51,84.51,0,0,1,158.21,206.36Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z",
@@ -826,7 +878,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/GridFour.es.js
-		const a$22 = /* @__PURE__ */ new Map([
+		const a$26 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M200,36H56A20,20,0,0,0,36,56V200a20,20,0,0,0,20,20H200a20,20,0,0,0,20-20V56A20,20,0,0,0,200,36Zm-4,80H140V60h56ZM116,60v56H60V60ZM60,140h56v56H60Zm80,56V140h56v56Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,56V200a8,8,0,0,1-8,8H56a8,8,0,0,1-8-8V56a8,8,0,0,1,8-8H200A8,8,0,0,1,208,56Z",
@@ -839,7 +891,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Hexagon.es.js
-		const l$3 = /* @__PURE__ */ new Map([
+		const l$6 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M225.6,62.64l-88-48.17a19.91,19.91,0,0,0-19.2,0l-88,48.17A20,20,0,0,0,20,80.19v95.62a20,20,0,0,0,10.4,17.55l88,48.17a19.89,19.89,0,0,0,19.2,0l88-48.17A20,20,0,0,0,236,175.81V80.19A20,20,0,0,0,225.6,62.64ZM212,173.44l-84,46-84-46V82.56l84-46,84,46Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,80.18v95.64a8,8,0,0,1-4.16,7l-88,48.18a8,8,0,0,1-7.68,0l-88-48.18a8,8,0,0,1-4.16-7V80.18a8,8,0,0,1,4.16-7l88-48.18a8,8,0,0,1,7.68,0l88,48.18A8,8,0,0,1,224,80.18Z",
@@ -852,7 +904,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/House.es.js
-		const e$43 = /* @__PURE__ */ new Map([
+		const e$52 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M222.14,105.85l-80-80a20,20,0,0,0-28.28,0l-80,80A19.86,19.86,0,0,0,28,120v96a12,12,0,0,0,12,12h64a12,12,0,0,0,12-12V164h24v52a12,12,0,0,0,12,12h64a12,12,0,0,0,12-12V120A19.86,19.86,0,0,0,222.14,105.85ZM204,204H164V152a12,12,0,0,0-12-12H104a12,12,0,0,0-12,12v52H52V121.65l76-76,76,76Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,120v96H152V152H104v64H40V120a8,8,0,0,1,2.34-5.66l80-80a8,8,0,0,1,11.32,0l80,80A8,8,0,0,1,216,120Z",
@@ -865,7 +917,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ImageSquare.es.js
-		const e$42 = /* @__PURE__ */ new Map([
+		const e$51 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,28H48A20,20,0,0,0,28,48V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V48A20,20,0,0,0,208,28Zm-4,24v63.72L186.14,97.86a20,20,0,0,0-28.28,0L52,203.72V52ZM85.66,204,172,117.66l32,32V204ZM76,96a20,20,0,1,1,20,20A20,20,0,0,1,76,96Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,40H48a8,8,0,0,0-8,8V208a8,8,0,0,0,8,8h8.69L166.34,106.34a8,8,0,0,1,11.32,0L216,144.69V48A8,8,0,0,0,208,40ZM96,112a16,16,0,1,1,16-16A16,16,0,0,1,96,112Z",
@@ -877,8 +929,21 @@ window.__ModuleLoader__.load({
 			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,36H48A12,12,0,0,0,36,48V208a12,12,0,0,0,12,12H208a12,12,0,0,0,12-12V48A12,12,0,0,0,208,36ZM44,208V48a4,4,0,0,1,4-4H208a4,4,0,0,1,4,4v87l-31.51-31.52a12,12,0,0,0-17,0L55,212H48A4,4,0,0,1,44,208Zm164,4H66.34L169.17,109.17a4,4,0,0,1,5.66,0L212,146.34V208A4,4,0,0,1,208,212ZM96,116A20,20,0,1,0,76,96,20,20,0,0,0,96,116Zm0-32A12,12,0,1,1,84,96,12,12,0,0,1,96,84Z" }))]
 		]);
 		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Info.es.js
+		const a$25 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M108,84a16,16,0,1,1,16,16A16,16,0,0,1,108,84Zm128,44A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Zm-72,36.68V132a20,20,0,0,0-20-20,12,12,0,0,0-4,23.32V168a20,20,0,0,0,20,20,12,12,0,0,0,4-23.32Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M144,176a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176Zm88-48A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128ZM124,96a12,12,0,1,0-12-12A12,12,0,0,0,124,96Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm-4,48a12,12,0,1,1-12,12A12,12,0,0,1,124,72Zm12,112a16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40a8,8,0,0,1,0,16Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M142,176a6,6,0,0,1-6,6,14,14,0,0,1-14-14V128a2,2,0,0,0-2-2,6,6,0,0,1,0-12,14,14,0,0,1,14,14v40a2,2,0,0,0,2,2A6,6,0,0,1,142,176ZM124,94a10,10,0,1,0-10-10A10,10,0,0,0,124,94Zm106,34A102,102,0,1,1,128,26,102.12,102.12,0,0,1,230,128Zm-12,0a90,90,0,1,0-90,90A90.1,90.1,0,0,0,218,128Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M140,176a4,4,0,0,1-4,4,12,12,0,0,1-12-12V128a4,4,0,0,0-4-4,4,4,0,0,1,0-8,12,12,0,0,1,12,12v40a4,4,0,0,0,4,4A4,4,0,0,1,140,176ZM124,92a8,8,0,1,0-8-8A8,8,0,0,0,124,92Zm104,36A100,100,0,1,1,128,28,100.11,100.11,0,0,1,228,128Zm-8,0a92,92,0,1,0-92,92A92.1,92.1,0,0,0,220,128Z" }))]
+		]);
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Island.es.js
-		const c$4 = /* @__PURE__ */ new Map([
+		const c$8 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M241.37,231.5a12,12,0,0,1-16.87,1.87C224.16,233.1,186.64,204,128,204S31.83,233.1,31.46,233.39a12,12,0,0,1-15-18.76c1.62-1.3,37.57-29.53,95.85-34A123.26,123.26,0,0,1,110,146.06c1.67-20.79,9.88-47.91,37-69.78a52.75,52.75,0,0,0-6.68-.23c-17.2.56-27.61,10.37-32.74,30.88A12,12,0,0,1,96,116a11.79,11.79,0,0,1-2.92-.36,12,12,0,0,1-8.73-14.55c4.46-17.79,17.56-47.82,55.26-49a79.14,79.14,0,0,1,14.8,1c-3.47-4.89-7.81-9.21-13.08-11.39-8.28-3.43-18.73-1.33-31.06,6.23A12,12,0,1,1,97.72,27.43c19.3-11.84,37.11-14.5,52.93-7.89,10.46,4.37,19.63,12.92,26.75,24.88,5.86-7.19,12.72-12.18,20.2-14.61,16.42-5.35,31.7,2.47,41.63,10a12,12,0,1,1-14.47,19.14c-7.79-5.89-14.42-8-19.68-6.32-4.57,1.47-8.45,5.67-11.43,10.19A73.43,73.43,0,0,1,210,69.61C225.48,78.48,244,97.21,244,136a12,12,0,0,1-24,0c0-20-6.13-34.43-18.21-43.15a61.84,61.84,0,0,1-7.33,49,12,12,0,1,1-20.28-12.78,40.61,40.61,0,0,0,5.51-15.76c1.18-9.09-1.07-17.81-6.66-26-23.61,14.28-36.72,34.36-39,59.8a99.84,99.84,0,0,0,2.87,33.06c62.23,2.71,100.91,33.07,102.6,34.42A12,12,0,0,1,241.37,231.5ZM20,144a32,32,0,1,1,32,32A32,32,0,0,1,20,144Zm24,0a8,8,0,1,0,8-8A8,8,0,0,0,44,144Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M32,140a20,20,0,1,1,20,20A20,20,0,0,1,32,140Zm96,52c-64,0-104,32-104,32H232S192,192,128,192Z",
@@ -891,7 +956,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Leaf.es.js
-		const a$21 = /* @__PURE__ */ new Map([
+		const a$24 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M227.42,39.86a12,12,0,0,0-11.28-11.28c-39.6-2.33-74.59,2.34-104,13.87C84,53.48,62.31,70.58,49.39,91.9c-17.62,29.11-17.66,64.45-.45,98.19L31.51,207.52a12,12,0,0,0,17,17l17.43-17.43c16.74,8.54,33.88,12.85,50.45,12.85a91.31,91.31,0,0,0,47.74-13.3c21.32-12.92,38.42-34.62,49.45-62.75C225.08,114.46,229.75,79.46,227.42,39.86ZM151.66,186.08C131.57,198.25,108,199.17,83.94,189l84.54-84.54a12,12,0,1,0-17-17L67,172.06c-10.14-24-9.22-47.63,3-67.72,20.91-34.53,70.54-53.72,134-52.25C205.38,115.53,186.19,165.17,151.66,186.08Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M63.81,192.19c-47.89-79.81,16-159.62,151.64-151.64C223.43,176.23,143.62,240.08,63.81,192.19Z",
@@ -904,7 +969,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Lightning.es.js
-		const a$20 = /* @__PURE__ */ new Map([
+		const a$23 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M219.71,117.38a12,12,0,0,0-7.25-8.52L161.28,88.39l10.59-70.61a12,12,0,0,0-20.64-10l-112,120a12,12,0,0,0,4.31,19.33l51.18,20.47L84.13,238.22a12,12,0,0,0,20.64,10l112-120A12,12,0,0,0,219.71,117.38ZM113.6,203.55l6.27-41.77a12,12,0,0,0-7.41-12.92L68.74,131.37,142.4,52.45l-6.27,41.77a12,12,0,0,0,7.41,12.92l43.72,17.49Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M96,240l16-80L48,136,160,16,144,96l64,24Z",
@@ -917,7 +982,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/List.es.js
-		const e$41 = /* @__PURE__ */ new Map([
+		const e$50 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M228,128a12,12,0,0,1-12,12H40a12,12,0,0,1,0-24H216A12,12,0,0,1,228,128ZM40,76H216a12,12,0,0,0,0-24H40a12,12,0,0,0,0,24ZM216,180H40a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,64V192H40V64Z",
@@ -929,8 +994,34 @@ window.__ModuleLoader__.load({
 			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M220,128a4,4,0,0,1-4,4H40a4,4,0,0,1,0-8H216A4,4,0,0,1,220,128ZM40,68H216a4,4,0,0,0,0-8H40a4,4,0,0,0,0,8ZM216,188H40a4,4,0,0,0,0,8H216a4,4,0,0,0,0-8Z" }))]
 		]);
 		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ListBullets.es.js
+		const e$49 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M76,64A12,12,0,0,1,88,52H216a12,12,0,0,1,0,24H88A12,12,0,0,1,76,64Zm140,52H88a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24Zm0,64H88a12,12,0,0,0,0,24H216a12,12,0,0,0,0-24ZM44,112a16,16,0,1,0,16,16A16,16,0,0,0,44,112Zm0-64A16,16,0,1,0,60,64,16,16,0,0,0,44,48Zm0,128a16,16,0,1,0,16,16A16,16,0,0,0,44,176Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M216,64V192H88V64Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M80,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H88A8,8,0,0,1,80,64Zm136,56H88a8,8,0,1,0,0,16H216a8,8,0,0,0,0-16Zm0,64H88a8,8,0,1,0,0,16H216a8,8,0,0,0,0-16ZM44,52A12,12,0,1,0,56,64,12,12,0,0,0,44,52Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,116Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,180Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM68,188a12,12,0,1,1,12-12A12,12,0,0,1,68,188Zm0-48a12,12,0,1,1,12-12A12,12,0,0,1,68,140Zm0-48A12,12,0,1,1,80,80,12,12,0,0,1,68,92Zm124,92H104a8,8,0,0,1,0-16h88a8,8,0,0,1,0,16Zm0-48H104a8,8,0,0,1,0-16h88a8,8,0,0,1,0,16Zm0-48H104a8,8,0,0,1,0-16h88a8,8,0,0,1,0,16Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M82,64a6,6,0,0,1,6-6H216a6,6,0,0,1,0,12H88A6,6,0,0,1,82,64Zm134,58H88a6,6,0,0,0,0,12H216a6,6,0,0,0,0-12Zm0,64H88a6,6,0,0,0,0,12H216a6,6,0,0,0,0-12ZM44,54A10,10,0,1,0,54,64,10,10,0,0,0,44,54Zm0,128a10,10,0,1,0,10,10A10,10,0,0,0,44,182Zm0-64a10,10,0,1,0,10,10A10,10,0,0,0,44,118Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M80,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H88A8,8,0,0,1,80,64Zm136,56H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Zm0,64H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16ZM44,52A12,12,0,1,0,56,64,12,12,0,0,0,44,52Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,116Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,180Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M84,64a4,4,0,0,1,4-4H216a4,4,0,0,1,0,8H88A4,4,0,0,1,84,64Zm132,60H88a4,4,0,0,0,0,8H216a4,4,0,0,0,0-8Zm0,64H88a4,4,0,0,0,0,8H216a4,4,0,0,0,0-8ZM44,120a8,8,0,1,0,8,8A8,8,0,0,0,44,120Zm0-64a8,8,0,1,0,8,8A8,8,0,0,0,44,56Zm0,128a8,8,0,1,0,8,8A8,8,0,0,0,44,184Z" }))]
+		]);
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ListChecks.es.js
+		const l$5 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M228,128a12,12,0,0,1-12,12H128a12,12,0,0,1,0-24h88A12,12,0,0,1,228,128ZM128,76h88a12,12,0,0,0,0-24H128a12,12,0,0,0,0,24Zm88,104H128a12,12,0,0,0,0,24h88a12,12,0,0,0,0-24ZM79.51,39.51,56,63l-7.51-7.52a12,12,0,0,0-17,17l16,16a12,12,0,0,0,17,0l32-32a12,12,0,0,0-17-17Zm0,64L56,127l-7.51-7.52a12,12,0,1,0-17,17l16,16a12,12,0,0,0,17,0l32-32a12,12,0,0,0-17-17Zm0,64L56,191l-7.51-7.52a12,12,0,1,0-17,17l16,16a12,12,0,0,0,17,0l32-32a12,12,0,0,0-17-17Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M216,64V192H128V64Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M224,128a8,8,0,0,1-8,8H128a8,8,0,0,1,0-16h88A8,8,0,0,1,224,128ZM128,72h88a8,8,0,0,0,0-16H128a8,8,0,0,0,0,16Zm88,112H128a8,8,0,0,0,0,16h88a8,8,0,0,0,0-16ZM82.34,42.34,56,68.69,45.66,58.34A8,8,0,0,0,34.34,69.66l16,16a8,8,0,0,0,11.32,0l32-32A8,8,0,0,0,82.34,42.34Zm0,64L56,132.69,45.66,122.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Zm0,64L56,196.69,45.66,186.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM117.66,149.66l-32,32a8,8,0,0,1-11.32,0l-16-16a8,8,0,0,1,11.32-11.32L80,164.69l26.34-26.35a8,8,0,0,1,11.32,11.32Zm0-64-32,32a8,8,0,0,1-11.32,0l-16-16A8,8,0,0,1,69.66,90.34L80,100.69l26.34-26.35a8,8,0,0,1,11.32,11.32ZM192,168H144a8,8,0,0,1,0-16h48a8,8,0,0,1,0,16Zm0-64H144a8,8,0,0,1,0-16h48a8,8,0,0,1,0,16Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M222,128a6,6,0,0,1-6,6H128a6,6,0,0,1,0-12h88A6,6,0,0,1,222,128ZM128,70h88a6,6,0,0,0,0-12H128a6,6,0,0,0,0,12Zm88,116H128a6,6,0,0,0,0,12h88a6,6,0,0,0,0-12ZM83.76,43.76,56,71.51,44.24,59.76a6,6,0,0,0-8.48,8.48l16,16a6,6,0,0,0,8.48,0l32-32a6,6,0,0,0-8.48-8.48Zm0,64L56,135.51,44.24,123.76a6,6,0,1,0-8.48,8.48l16,16a6,6,0,0,0,8.48,0l32-32a6,6,0,0,0-8.48-8.48Zm0,64L56,199.51,44.24,187.76a6,6,0,0,0-8.48,8.48l16,16a6,6,0,0,0,8.48,0l32-32a6,6,0,0,0-8.48-8.48Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M224,128a8,8,0,0,1-8,8H128a8,8,0,0,1,0-16h88A8,8,0,0,1,224,128ZM128,72h88a8,8,0,0,0,0-16H128a8,8,0,0,0,0,16Zm88,112H128a8,8,0,0,0,0,16h88a8,8,0,0,0,0-16ZM82.34,42.34,56,68.69,45.66,58.34A8,8,0,0,0,34.34,69.66l16,16a8,8,0,0,0,11.32,0l32-32A8,8,0,0,0,82.34,42.34Zm0,64L56,132.69,45.66,122.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Zm0,64L56,196.69,45.66,186.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32,0l32-32a8,8,0,0,0-11.32-11.32Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M220,128a4,4,0,0,1-4,4H128a4,4,0,0,1,0-8h88A4,4,0,0,1,220,128ZM128,68h88a4,4,0,0,0,0-8H128a4,4,0,0,0,0,8Zm88,120H128a4,4,0,0,0,0,8h88a4,4,0,0,0,0-8ZM85.17,45.17,56,74.34,42.83,61.17a4,4,0,0,0-5.66,5.66l16,16a4,4,0,0,0,5.66,0l32-32a4,4,0,0,0-5.66-5.66Zm0,64L56,138.34,42.83,125.17a4,4,0,1,0-5.66,5.66l16,16a4,4,0,0,0,5.66,0l32-32a4,4,0,0,0-5.66-5.66Zm0,64L56,202.34,42.83,189.17a4,4,0,0,0-5.66,5.66l16,16a4,4,0,0,0,5.66,0l32-32a4,4,0,0,0-5.66-5.66Z" }))]
+		]);
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/LockKey.es.js
-		const e$40 = /* @__PURE__ */ new Map([
+		const e$48 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,76H180V56A52,52,0,0,0,76,56V76H48A20,20,0,0,0,28,96V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V96A20,20,0,0,0,208,76ZM100,56a28,28,0,0,1,56,0V76H100ZM204,204H52V100H204Zm-76-92a32,32,0,0,0-12,61.66V180a12,12,0,0,0,24,0v-6.34A32,32,0,0,0,128,112Zm0,24a8,8,0,1,1-8,8A8,8,0,0,1,128,136Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,88H48a8,8,0,0,0-8,8V208a8,8,0,0,0,8,8H208a8,8,0,0,0,8-8V96A8,8,0,0,0,208,88Zm-80,72a20,20,0,1,1,20-20A20,20,0,0,1,128,160Z",
@@ -943,7 +1034,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/MagicWand.es.js
-		const e$39 = /* @__PURE__ */ new Map([
+		const e$47 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M252,152a12,12,0,0,1-12,12H228v12a12,12,0,0,1-24,0V164H192a12,12,0,0,1,0-24h12V128a12,12,0,0,1,24,0v12h12A12,12,0,0,1,252,152ZM56,76H68V88a12,12,0,0,0,24,0V76h12a12,12,0,1,0,0-24H92V40a12,12,0,0,0-24,0V52H56a12,12,0,0,0,0,24ZM184,188h-4v-4a12,12,0,0,0-24,0v4h-4a12,12,0,0,0,0,24h4v4a12,12,0,0,0,24,0v-4h4a12,12,0,0,0,0-24ZM222.14,82.83,82.82,222.14a20,20,0,0,1-28.28,0L33.85,201.46a20,20,0,0,1,0-28.29L173.17,33.86a20,20,0,0,1,28.28,0l20.69,20.68A20,20,0,0,1,222.14,82.83ZM159,112,144,97,53.65,187.31l15,15Zm43.31-43.31-15-15L161,80l15,15Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M176,112,74.34,213.66a8,8,0,0,1-11.31,0L42.34,193a8,8,0,0,1,0-11.31L144,80Z",
@@ -956,7 +1047,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/MagnifyingGlass.es.js
-		const a$19 = /* @__PURE__ */ new Map([
+		const a$22 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M232.49,215.51,185,168a92.12,92.12,0,1,0-17,17l47.53,47.54a12,12,0,0,0,17-17ZM44,112a68,68,0,1,1,68,68A68.07,68.07,0,0,1,44,112Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M192,112a80,80,0,1,1-80-80A80,80,0,0,1,192,112Z",
@@ -969,7 +1060,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Moon.es.js
-		const a$18 = /* @__PURE__ */ new Map([
+		const a$21 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M236.37,139.4a12,12,0,0,0-12-3A84.07,84.07,0,0,1,119.6,31.59a12,12,0,0,0-15-15A108.86,108.86,0,0,0,49.69,55.07,108,108,0,0,0,136,228a107.09,107.09,0,0,0,64.93-21.69,108.86,108.86,0,0,0,38.44-54.94A12,12,0,0,0,236.37,139.4Zm-49.88,47.74A84,84,0,0,1,68.86,69.51,84.93,84.93,0,0,1,92.27,48.29Q92,52.13,92,56A108.12,108.12,0,0,0,200,164q3.87,0,7.71-.27A84.79,84.79,0,0,1,186.49,187.14Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M227.89,147.89A96,96,0,1,1,108.11,28.11,96.09,96.09,0,0,0,227.89,147.89Z",
@@ -982,7 +1073,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Mountains.es.js
-		const e$38 = /* @__PURE__ */ new Map([
+		const e$46 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M160,80a32,32,0,1,0-32-32A32,32,0,0,0,160,80Zm0-40a8,8,0,1,1-8,8A8,8,0,0,1,160,40Zm94.32,153.88L199.76,101.8A19.85,19.85,0,0,0,182.55,92h0a19.83,19.83,0,0,0-17.2,9.8l-18.7,31.55-37.42-63.5a20,20,0,0,0-34.46,0L1.66,193.91A12,12,0,0,0,12,212H244a12,12,0,0,0,10.32-18.12ZM92,87.87,108.57,116H75.43ZM33,188l28.28-48h61.44L151,188Zm145.86,0L160.56,157l22-37.1L222.94,188Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M144,52a20,20,0,1,1,20,20A20,20,0,0,1,144,52Zm49.44,55.92a8,8,0,0,0-13.77,0l-33,55.75-21-35.67H50.35L8,200H248Z",
@@ -995,7 +1086,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Newspaper.es.js
-		const e$37 = /* @__PURE__ */ new Map([
+		const e$45 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M92,108a12,12,0,0,1,12-12h72a12,12,0,0,1,0,24H104A12,12,0,0,1,92,108Zm12,52h72a12,12,0,0,0,0-24H104a12,12,0,0,0,0,24ZM236,64V184a28,28,0,0,1-28,28H36A32,32,0,0,1,4,180V88a12,12,0,0,1,24,0v92a8,8,0,0,0,16,0V64A20,20,0,0,1,64,44H216A20,20,0,0,1,236,64Zm-24,4H68V180a32,32,0,0,1-1,8H208a4,4,0,0,0,4-4Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,64V184a16,16,0,0,1-16,16H32a16,16,0,0,0,16-16V64a8,8,0,0,1,8-8H216A8,8,0,0,1,224,64Z",
@@ -1008,7 +1099,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/PaintBrush.es.js
-		const a$17 = /* @__PURE__ */ new Map([
+		const a$20 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M236,32a12,12,0,0,0-12-12c-44.78,0-90,48.54-115.9,82a64,64,0,0,0-80,62c0,12-3.1,22.71-9.23,31.76A43,43,0,0,1,9.4,206.05a11.88,11.88,0,0,0-4.91,13.38A12.07,12.07,0,0,0,16.11,228h76A64,64,0,0,0,154,148C187.49,122.05,236,76.8,236,32ZM209.62,46.39c-4,12.92-13.15,27.49-26.92,42.91-3,3.39-6.16,6.7-9.35,9.89a104.31,104.31,0,0,0-16.5-16.51c3.19-3.19,6.49-6.32,9.88-9.35C182.15,59.55,196.71,50.43,209.62,46.39ZM92.07,204H42a80.17,80.17,0,0,0,10.14-40,40,40,0,1,1,40,40Zm38.18-91.32c3.12-3.93,6.55-8.09,10.23-12.35a80.52,80.52,0,0,1,15.23,15.24c-4.26,3.68-8.42,7.11-12.35,10.23A64.43,64.43,0,0,0,130.25,112.68Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,32c0,32.81-31.64,67.43-58.64,91.05A84.39,84.39,0,0,0,133,90.64C156.57,63.64,191.19,32,224,32Z",
@@ -1021,7 +1112,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Palette.es.js
-		const e$36 = /* @__PURE__ */ new Map([
+		const e$44 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M203.57,51A107.9,107.9,0,0,0,20,128c0,44.72,27.6,82.25,72,97.94A36,36,0,0,0,140,192a12,12,0,0,1,12-12h46.21a35.79,35.79,0,0,0,35.1-28A108.6,108.6,0,0,0,236,127.09,107.23,107.23,0,0,0,203.57,51Zm6.34,95.67a11.91,11.91,0,0,1-11.7,9.3H152a36,36,0,0,0-36,36,12,12,0,0,1-16,11.3c-16.65-5.88-30.65-15.76-40.48-28.56A76,76,0,0,1,44,128a84,84,0,0,1,83.13-84H128a84.35,84.35,0,0,1,84,83.29A84.72,84.72,0,0,1,209.91,146.71ZM144,76a16,16,0,1,1-16-16A16,16,0,0,1,144,76Zm-44,24A16,16,0,1,1,84,84,16,16,0,0,1,100,100Zm0,56a16,16,0,1,1-16-16A16,16,0,0,1,100,156Zm88-56a16,16,0,1,1-16-16A16,16,0,0,1,188,100Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,127.17a96.48,96.48,0,0,1-2.39,22.18A24,24,0,0,1,198.21,168H152a24,24,0,0,0-24,24,24,24,0,0,1-32,22.61C58.73,201.44,32,169.81,32,128a96,96,0,0,1,95-96C179.84,31.47,223.55,74.35,224,127.17Z",
@@ -1034,7 +1125,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/PaperPlaneTilt.es.js
-		const e$35 = /* @__PURE__ */ new Map([
+		const e$43 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M230.14,25.86a20,20,0,0,0-19.57-5.11l-.22.07L18.44,79a20,20,0,0,0-3.06,37.25L99,157l40.71,83.65a19.81,19.81,0,0,0,18,11.38c.57,0,1.15,0,1.73-.07A19.82,19.82,0,0,0,177,237.56L235.18,45.65a1.42,1.42,0,0,0,.07-.22A20,20,0,0,0,230.14,25.86ZM156.91,221.07l-34.37-70.64,46-45.95a12,12,0,0,0-17-17l-46,46L34.93,99.09,210,46Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M223.69,42.18l-58.22,192a8,8,0,0,1-14.92,1.25L108,148,20.58,105.45a8,8,0,0,1,1.25-14.92l192-58.22A8,8,0,0,1,223.69,42.18Z",
@@ -1047,7 +1138,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/PenNib.es.js
-		const e$34 = /* @__PURE__ */ new Map([
+		const e$42 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M252,92.68a19.86,19.86,0,0,0-5.86-14.14L177.46,9.85a20,20,0,0,0-28.29,0L121.35,37.67,64.11,59.14A20,20,0,0,0,51.4,74.58L28.16,214A12,12,0,0,0,40,228a11.9,11.9,0,0,0,2-.16l139.45-23.25a20.07,20.07,0,0,0,15.44-12.7l21.46-57.25,27.82-27.82A19.85,19.85,0,0,0,252,92.68ZM175.2,181.3,75,198l33-33a34,34,0,1,0-17-17L58,181,74.7,80.8,125,61.94,194.05,131ZM112,134a10,10,0,1,1,10,10A10,10,0,0,1,112,134Zm96-23L145,48l18.34-18.34,63,63Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M128,48,68.32,70.38a8,8,0,0,0-5.08,6.17L40,216l139.45-23.24a8,8,0,0,0,6.17-5.08L208,128Zm-4,104a20,20,0,1,1,20-20A20,20,0,0,1,124,152Z",
@@ -1060,7 +1151,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/PencilSimple.es.js
-		const e$33 = /* @__PURE__ */ new Map([
+		const e$41 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M230.14,70.54,185.46,25.85a20,20,0,0,0-28.29,0L33.86,149.17A19.85,19.85,0,0,0,28,163.31V208a20,20,0,0,0,20,20H92.69a19.86,19.86,0,0,0,14.14-5.86L230.14,98.82a20,20,0,0,0,0-28.28ZM91,204H52V165l84-84,39,39ZM192,103,153,64l18.34-18.34,39,39Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M221.66,90.34,192,120,136,64l29.66-29.66a8,8,0,0,1,11.31,0L221.66,79A8,8,0,0,1,221.66,90.34Z",
@@ -1073,7 +1164,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Planet.es.js
-		const a$16 = /* @__PURE__ */ new Map([
+		const a$19 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M248.59,58.67c-6.31-10.87-23-21.06-66.16-9.71A95.94,95.94,0,0,0,32,128q0,3.6.26,7.14C.56,166.86,1.1,186.4,7.44,197.33,13.4,207.61,25.3,212,40.68,212c9.79,0,21-1.78,32.95-4.91A95.94,95.94,0,0,0,224,128c0-2.41-.09-4.79-.27-7.16,14.31-14.38,23.86-28.21,27-40C253.55,70.42,251.12,63,248.59,58.67ZM128,56a72.11,72.11,0,0,1,70.19,56C184,124.73,165,138.59,141.92,151.86c-21.74,12.49-43.55,22.36-63.09,28.65A72,72,0,0,1,128,56ZM28.19,185.29c-.61-1.07-.17-8.22,10.67-21.71A95.77,95.77,0,0,0,52.35,187C35.12,189.61,28.85,186.41,28.19,185.29ZM128,200a71.66,71.66,0,0,1-22.56-3.64,394.1,394.1,0,0,0,48.42-23.69A388.11,388.11,0,0,0,198.43,143,72.12,72.12,0,0,1,128,200ZM227.57,74.65c-1.28,4.78-4.81,10.87-10.39,17.8A95.74,95.74,0,0,0,203.68,69c15.83-2.37,23.17,0,24.15,1.71C228,71,228.21,72.28,227.57,74.65Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,128a88,88,0,1,1-88-88A88,88,0,0,1,216,128Z",
@@ -1085,8 +1176,21 @@ window.__ModuleLoader__.load({
 			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M241.66,62.68c-6.73-11.58-26.58-13.8-56-6.3A92,92,0,0,0,37,141.7c-21.38,21.69-29.44,40-22.68,51.62,4.13,7.11,13,10.71,26,10.71A115.25,115.25,0,0,0,65,200.9c1.74-.39,3.52-.82,5.32-1.28A92,92,0,0,0,220,128a92.84,92.84,0,0,0-1-13.73c12.77-13,21.31-25.28,24-35.47C244.69,72.54,244.23,67.12,241.66,62.68ZM128,44a84.13,84.13,0,0,1,82.38,67.56c-16.17,15.69-38.8,32.48-64.49,47.24-27.31,15.69-52.81,26.25-73.61,32A84,84,0,0,1,128,44ZM21.25,189.3C17,182,23.75,167.7,39,151.24A92,92,0,0,0,63,193.09C40.86,198,25.47,196.58,21.25,189.3ZM128,212a83.58,83.58,0,0,1-48-15.1c21.58-6.58,45.83-17.37,69.85-31.16,24.25-13.94,45.61-29.46,61.83-44.44.18,2.21.3,4.44.3,6.7A84.1,84.1,0,0,1,128,212ZM235.28,76.73c-2.13,8-8.58,17.65-18.25,28.06a92.07,92.07,0,0,0-24.12-41.92c21.85-4.82,37.59-3.46,41.83,3.83C236.2,69.23,236.39,72.6,235.28,76.73Z" }))]
 		]);
 		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/PlugsConnected.es.js
+		const l$4 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M240.49,15.51a12,12,0,0,0-17,0L173.94,65.09l-2.54-2.55a36.05,36.05,0,0,0-50.91,0L100,83l-3.51-3.52a12,12,0,0,0-17,17L83,100,62.54,120.49a36,36,0,0,0,0,50.91l2.55,2.54L15.51,223.51a12,12,0,0,0,17,17l49.57-49.58,2.54,2.55a36.06,36.06,0,0,0,50.91,0L156,173l3.51,3.52a12,12,0,0,0,17-17L173,156l20.49-20.49a36,36,0,0,0,0-50.91l-2.55-2.54,49.58-49.57A12,12,0,0,0,240.49,15.51Zm-121.95,161a12,12,0,0,1-17,0L79.51,154.43a12,12,0,0,1,0-17L100,117l39,39Zm58-57.95h0L156,139l-39-39,20.49-20.49a12,12,0,0,1,17,0l22.06,22.06a12,12,0,0,1,0,17ZM85.27,33.37a12,12,0,0,1,21.46-10.74l8,16A12,12,0,1,1,93.27,49.37Zm-68,57.26a12,12,0,0,1,16.1-5.36l16,8a12,12,0,1,1-10.74,21.46l-16-8A12,12,0,0,1,17.27,90.63Zm221.46,74.74a12,12,0,0,1-16.1,5.36l-16-8a12,12,0,0,1,10.74-21.46l16,8A12,12,0,0,1,238.73,165.37Zm-68,57.26a12,12,0,1,1-21.46,10.74l-8-16a12,12,0,0,1,21.46-10.74Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M185,127,127,185a24,24,0,0,1-33.94,0L71,162.91A24,24,0,0,1,71,129L129,71a24,24,0,0,1,33.94,0L185,93.09A24,24,0,0,1,185,127Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M237.66,18.34a8,8,0,0,0-11.32,0l-52.4,52.41-5.37-5.38a32.05,32.05,0,0,0-45.26,0L100,88.69l-6.34-6.35A8,8,0,0,0,82.34,93.66L88.69,100,65.37,123.31a32,32,0,0,0,0,45.26l5.38,5.37-52.41,52.4a8,8,0,0,0,11.32,11.32l52.4-52.41,5.37,5.38a32.06,32.06,0,0,0,45.26,0L156,167.31l6.34,6.35a8,8,0,0,0,11.32-11.32L167.31,156l23.32-23.31a32,32,0,0,0,0-45.26l-5.38-5.37,52.41-52.4A8,8,0,0,0,237.66,18.34Zm-116.29,161a16,16,0,0,1-22.62,0L76.69,157.25a16,16,0,0,1,0-22.62L100,111.31,144.69,156Zm57.94-57.94h0L156,144.69,111.31,100l23.32-23.31a16,16,0,0,1,22.62,0l22.06,22a16,16,0,0,1,0,22.63ZM88.57,35A8,8,0,0,1,103.43,29l8,20A8,8,0,0,1,96.57,55ZM24.57,93A8,8,0,0,1,35,88.57l20,8A8,8,0,0,1,49,111.43l-20-8A8,8,0,0,1,24.57,93ZM231.43,163a8,8,0,0,1-10.4,4.46l-20-8A8,8,0,1,1,207,144.57l20,8A8,8,0,0,1,231.43,163Zm-64,58.06A8,8,0,0,1,152.57,227l-8-20A8,8,0,0,1,159.43,201Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M88.57,35A8,8,0,0,1,103.43,29l8,20A8,8,0,0,1,96.57,55ZM29,103.43l20,8A8,8,0,1,0,55,96.57l-20-8A8,8,0,0,0,29,103.43ZM227,152.57l-20-8A8,8,0,1,0,201,159.43l20,8A8,8,0,0,0,227,152.57ZM159.43,201A8,8,0,0,0,144.57,207l8,20A8,8,0,1,0,167.43,221ZM237.91,18.52a8,8,0,0,0-11.5-.18L174,70.75l-5.38-5.38a32,32,0,0,0-45.28,0L106.14,82.54a4,4,0,0,0,0,5.66l61.7,61.66a4,4,0,0,0,5.66,0l16.74-16.74a32.76,32.76,0,0,0,9.81-22.52,31.82,31.82,0,0,0-9.37-23.17l-5.38-5.37,52.2-52.17A8.22,8.22,0,0,0,237.91,18.52ZM85.64,90.34a8,8,0,0,0-11.49.18,8.22,8.22,0,0,0,.41,11.37L80.67,108,65.34,123.31A31.82,31.82,0,0,0,56,146.47,32.75,32.75,0,0,0,65.77,169l5,4.94L18.49,226.13a8.21,8.21,0,0,0-.61,11.1,8,8,0,0,0,11.72.43L82,185.25l5.37,5.38a32.1,32.1,0,0,0,45.29,0L148,175.31l6.34,6.35a8,8,0,0,0,11.32-11.32Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M236.24,19.76a6,6,0,0,0-8.48,0L173.94,73.57l-6.79-6.78a30,30,0,0,0-42.42,0L100,91.51l-7.76-7.75a6,6,0,0,0-8.48,8.48L91.51,100,66.79,124.73a30,30,0,0,0,0,42.42l6.78,6.79L19.76,227.76a6,6,0,1,0,8.48,8.48l53.82-53.81,6.79,6.78a30,30,0,0,0,42.42,0L156,164.49l7.76,7.75a6,6,0,0,0,8.48-8.48L164.49,156l24.72-24.73a30,30,0,0,0,0-42.42l-6.78-6.79,53.81-53.82A6,6,0,0,0,236.24,19.76Zm-113.45,161a18,18,0,0,1-25.46,0L75.27,158.67a18,18,0,0,1,0-25.46L100,108.49,147.51,156Zm57.94-57.94L156,147.51,108.49,100l24.72-24.73a18,18,0,0,1,25.46,0l22.06,22.06a18,18,0,0,1,0,25.46ZM90.43,34.23a6,6,0,0,1,11.14-4.46l8,20a6,6,0,1,1-11.14,4.46Zm-64,59.54a6,6,0,0,1,7.8-3.34l20,8a6,6,0,1,1-4.46,11.14l-20-8A6,6,0,0,1,26.43,93.77Zm203.14,68.46a6,6,0,0,1-7.8,3.34l-20-8a6,6,0,0,1,4.46-11.14l20,8A6,6,0,0,1,229.57,162.23Zm-64,59.54a6,6,0,1,1-11.14,4.46l-8-20a6,6,0,0,1,11.14-4.46Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M237.66,18.34a8,8,0,0,0-11.32,0l-52.4,52.41-5.37-5.38a32.05,32.05,0,0,0-45.26,0L100,88.69l-6.34-6.35A8,8,0,0,0,82.34,93.66L88.69,100,65.37,123.31a32,32,0,0,0,0,45.26l5.38,5.37-52.41,52.4a8,8,0,0,0,11.32,11.32l52.4-52.41,5.37,5.38a32,32,0,0,0,45.26,0L156,167.31l6.34,6.35a8,8,0,0,0,11.32-11.32L167.31,156l23.32-23.31a32,32,0,0,0,0-45.26l-5.38-5.37,52.41-52.4A8,8,0,0,0,237.66,18.34Zm-116.29,161a16,16,0,0,1-22.62,0L76.69,157.25a16,16,0,0,1,0-22.62L100,111.31,144.69,156Zm57.94-57.94L156,144.69,111.31,100l23.32-23.31a16,16,0,0,1,22.62,0l22.06,22A16,16,0,0,1,179.31,121.37ZM88.57,35A8,8,0,0,1,103.43,29l8,20A8,8,0,0,1,96.57,55ZM24.57,93A8,8,0,0,1,35,88.57l20,8A8,8,0,0,1,49,111.43l-20-8A8,8,0,0,1,24.57,93ZM231.43,163a8,8,0,0,1-10.4,4.46l-20-8A8,8,0,1,1,207,144.57l20,8A8,8,0,0,1,231.43,163Zm-64,58.06A8,8,0,0,1,152.57,227l-8-20A8,8,0,0,1,159.43,201Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M234.83,21.17a4,4,0,0,0-5.66,0L173.94,76.4l-8.2-8.2a28,28,0,0,0-39.6,0L100,94.34l-9.17-9.17a4,4,0,0,0-5.66,5.66L94.34,100,68.2,126.14a28,28,0,0,0,0,39.6l8.2,8.2L21.17,229.17a4,4,0,0,0,5.66,5.66L82.06,179.6l8.2,8.2a28,28,0,0,0,39.6,0L156,161.66l9.17,9.17a4,4,0,0,0,5.66-5.66L161.66,156l26.14-26.14a28,28,0,0,0,0-39.6l-8.2-8.2,55.23-55.23A4,4,0,0,0,234.83,21.17Zm-110.63,161a20,20,0,0,1-28.28,0L73.86,160.08a20,20,0,0,1,0-28.28L100,105.66,150.34,156Zm57.94-57.94L156,150.34,105.66,100,131.8,73.86a20,20,0,0,1,28.28,0l22.06,22.06A20,20,0,0,1,182.14,124.2ZM92.29,33.49a4,4,0,1,1,7.42-3l8,20a4,4,0,0,1-2.22,5.2A3.91,3.91,0,0,1,104,56a4,4,0,0,1-3.71-2.51Zm-64,61a4,4,0,0,1,5.2-2.22l20,8A4,4,0,0,1,52,108a3.91,3.91,0,0,1-1.49-.29l-20-8A4,4,0,0,1,28.29,94.51Zm199.42,67A4,4,0,0,1,224,164a3.91,3.91,0,0,1-1.49-.29l-20-8a4,4,0,1,1,3-7.42l20,8A4,4,0,0,1,227.71,161.49Zm-64,61a4,4,0,0,1-2.22,5.2A3.91,3.91,0,0,1,160,228a4,4,0,0,1-3.71-2.51l-8-20a4,4,0,0,1,7.42-3Z" }))]
+		]);
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Plus.es.js
-		const a$15 = /* @__PURE__ */ new Map([
+		const a$18 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M228,128a12,12,0,0,1-12,12H140v76a12,12,0,0,1-24,0V140H40a12,12,0,0,1,0-24h76V40a12,12,0,0,1,24,0v76h76A12,12,0,0,1,228,128Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,56V200a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V56A16,16,0,0,1,56,40H200A16,16,0,0,1,216,56Z",
@@ -1098,8 +1202,47 @@ window.__ModuleLoader__.load({
 			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M220,128a4,4,0,0,1-4,4H132v84a4,4,0,0,1-8,0V132H40a4,4,0,0,1,0-8h84V40a4,4,0,0,1,8,0v84h84A4,4,0,0,1,220,128Z" }))]
 		]);
 		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Pulse.es.js
+		const a$17 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M244,128a12,12,0,0,1-12,12H207.42l-36.69,73.37A12,12,0,0,1,160,220h-.6a12,12,0,0,1-10.61-7.72L95,71.15,66.92,133A12,12,0,0,1,56,140H24a12,12,0,0,1,0-24H48.27L85.08,35a12,12,0,0,1,22.13.7l54.28,142.46,27.78-55.56A12,12,0,0,1,200,116h32A12,12,0,0,1,244,128Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M96,40l33.52,88H56Zm104,88H129.52L160,208Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M240,128a8,8,0,0,1-8,8H204.94l-37.78,75.58A8,8,0,0,1,160,216h-.4a8,8,0,0,1-7.08-5.14L95.35,60.76,63.28,131.31A8,8,0,0,1,56,136H24a8,8,0,0,1,0-16H50.85L88.72,36.69a8,8,0,0,1,14.76.46l57.51,151,31.85-63.71A8,8,0,0,1,200,120h32A8,8,0,0,1,240,128Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm-8,96H188.64L159,188a8,8,0,0,1-6.95,4h-.46a8,8,0,0,1-6.89-4.84L103,89.92,79,132a8,8,0,0,1-7,4H48a8,8,0,0,1,0-16H67.36L97.05,68a8,8,0,0,1,14.3.82L153,166.08l24-42.05a8,8,0,0,1,6.95-4h24a8,8,0,0,1,0,16Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M238,128a6,6,0,0,1-6,6H203.71l-38.34,76.68A6,6,0,0,1,160,214h-.3a6,6,0,0,1-5.31-3.85L95.51,55.57,61.46,130.48A6,6,0,0,1,56,134H24a6,6,0,0,1,0-12H52.14l38.4-84.48a6,6,0,0,1,11.07.34L160.74,193.1l33.89-67.78A6,6,0,0,1,200,122h32A6,6,0,0,1,238,128Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M240,128a8,8,0,0,1-8,8H204.94l-37.78,75.58A8,8,0,0,1,160,216h-.4a8,8,0,0,1-7.08-5.14L95.35,60.76,63.28,131.31A8,8,0,0,1,56,136H24a8,8,0,0,1,0-16H50.85L88.72,36.69a8,8,0,0,1,14.76.46l57.51,151,31.85-63.71A8,8,0,0,1,200,120h32A8,8,0,0,1,240,128Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M236,128a4,4,0,0,1-4,4H202.47l-38.89,77.79A4,4,0,0,1,160,212h-.2a4,4,0,0,1-3.54-2.58l-60.59-159-36,79.28A4,4,0,0,1,56,132H24a4,4,0,0,1,0-8H53.42L92.36,38.35a4,4,0,0,1,7.38.23L160.5,198.06l35.92-71.85A4,4,0,0,1,200,124h32A4,4,0,0,1,236,128Z" }))]
+		]);
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Question.es.js
+		const a$16 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M144,180a16,16,0,1,1-16-16A16,16,0,0,1,144,180Zm92-52A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128ZM128,64c-24.26,0-44,17.94-44,40v4a12,12,0,0,0,24,0v-4c0-8.82,9-16,20-16s20,7.18,20,16-9,16-20,16a12,12,0,0,0-12,12v8a12,12,0,0,0,23.73,2.56C158.31,137.88,172,122.37,172,104,172,81.94,152.26,64,128,64Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,168a12,12,0,1,1,12-12A12,12,0,0,1,128,192Zm8-48.72V144a8,8,0,0,1-16,0v-8a8,8,0,0,1,8-8c13.23,0,24-9,24-20s-10.77-20-24-20-24,9-24,20v4a8,8,0,0,1-16,0v-4c0-19.85,17.94-36,40-36s40,16.15,40,36C168,125.38,154.24,139.93,136,143.28Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M138,180a10,10,0,1,1-10-10A10,10,0,0,1,138,180ZM128,74c-21,0-38,15.25-38,34v4a6,6,0,0,0,12,0v-4c0-12.13,11.66-22,26-22s26,9.87,26,22-11.66,22-26,22a6,6,0,0,0-6,6v8a6,6,0,0,0,12,0v-2.42c18.11-2.58,32-16.66,32-33.58C166,89.25,149,74,128,74Zm102,54A102,102,0,1,1,128,26,102.12,102.12,0,0,1,230,128Zm-12,0a90,90,0,1,0-90,90A90.1,90.1,0,0,0,218,128Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M136,180a8,8,0,1,1-8-8A8,8,0,0,1,136,180ZM128,76c-19.85,0-36,14.36-36,32v4a4,4,0,0,0,8,0v-4c0-13.23,12.56-24,28-24s28,10.77,28,24-12.56,24-28,24a4,4,0,0,0-4,4v8a4,4,0,0,0,8,0v-4.2c18-1.77,32-15.36,32-31.8C164,90.36,147.85,76,128,76Zm100,52A100,100,0,1,1,128,28,100.11,100.11,0,0,1,228,128Zm-8,0a92,92,0,1,0-92,92A92.1,92.1,0,0,0,220,128Z" }))]
+		]);
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Receipt.es.js
+		const e$40 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M68,100A12,12,0,0,1,80,88h96a12,12,0,0,1,0,24H80A12,12,0,0,1,68,100Zm12,52h96a12,12,0,0,0,0-24H80a12,12,0,0,0,0,24ZM236,56V208a12,12,0,0,1-17.37,10.73L192,205.42l-26.63,13.31a12,12,0,0,1-10.74,0L128,205.42l-26.63,13.31a12,12,0,0,1-10.74,0L64,205.42,37.37,218.73A12,12,0,0,1,20,208V56A20,20,0,0,1,40,36H216A20,20,0,0,1,236,56Zm-24,4H44V188.58l14.63-7.31a12,12,0,0,1,10.74,0L96,194.58l26.63-13.31a12,12,0,0,1,10.74,0L160,194.58l26.63-13.31a12,12,0,0,1,10.74,0L212,188.58Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M224,56V208l-32-16-32,16-32-16L96,208,64,192,32,208V56a8,8,0,0,1,8-8H216A8,8,0,0,1,224,56Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216,40H40A16,16,0,0,0,24,56V208a8,8,0,0,0,11.58,7.15L64,200.94l28.42,14.21a8,8,0,0,0,7.16,0L128,200.94l28.42,14.21a8,8,0,0,0,7.16,0L192,200.94l28.42,14.21A8,8,0,0,0,232,208V56A16,16,0,0,0,216,40ZM176,144H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Zm0-32H80a8,8,0,0,1,0-16h96a8,8,0,0,1,0,16Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M182,104a6,6,0,0,1-6,6H80a6,6,0,0,1,0-12h96A6,6,0,0,1,182,104Zm-6,26H80a6,6,0,0,0,0,12h96a6,6,0,0,0,0-12Zm54-74V208a6,6,0,0,1-2.85,5.1,5.93,5.93,0,0,1-3.15.9,6,6,0,0,1-2.68-.63L192,198.71l-29.32,14.66a6,6,0,0,1-5.36,0L128,198.71,98.68,213.37a6,6,0,0,1-5.36,0L64,198.71,34.68,213.37A6,6,0,0,1,26,208V56A14,14,0,0,1,40,42H216A14,14,0,0,1,230,56Zm-12,0a2,2,0,0,0-2-2H40a2,2,0,0,0-2,2V198.29l23.32-11.66a6,6,0,0,1,5.36,0L96,201.29l29.32-14.66a6,6,0,0,1,5.36,0L160,201.29l29.32-14.66a6,6,0,0,1,5.36,0L218,198.29Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M72,104a8,8,0,0,1,8-8h96a8,8,0,0,1,0,16H80A8,8,0,0,1,72,104Zm8,40h96a8,8,0,0,0,0-16H80a8,8,0,0,0,0,16ZM232,56V208a8,8,0,0,1-11.58,7.15L192,200.94l-28.42,14.21a8,8,0,0,1-7.16,0L128,200.94,99.58,215.15a8,8,0,0,1-7.16,0L64,200.94,35.58,215.15A8,8,0,0,1,24,208V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56Zm-16,0H40V195.06l20.42-10.22a8,8,0,0,1,7.16,0L96,199.06l28.42-14.22a8,8,0,0,1,7.16,0L160,199.06l28.42-14.22a8,8,0,0,1,7.16,0L216,195.06Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M180,104a4,4,0,0,1-4,4H80a4,4,0,0,1,0-8h96A4,4,0,0,1,180,104Zm-4,28H80a4,4,0,0,0,0,8h96a4,4,0,0,0,0-8Zm52-76V208a4,4,0,0,1-4,4,4.05,4.05,0,0,1-1.79-.42L192,196.47l-30.21,15.11a4,4,0,0,1-3.58,0L128,196.47,97.79,211.58a4,4,0,0,1-3.58,0L64,196.47,33.79,211.58A4,4,0,0,1,28,208V56A12,12,0,0,1,40,44H216A12,12,0,0,1,228,56Zm-8,0a4,4,0,0,0-4-4H40a4,4,0,0,0-4,4V201.53l26.21-13.11a4,4,0,0,1,3.58,0L96,203.53l30.21-15.11a4,4,0,0,1,3.58,0L160,203.53l30.21-15.11a4,4,0,0,1,3.58,0L220,201.53Z" }))]
+		]);
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Robot.es.js
-		const e$32 = /* @__PURE__ */ new Map([
+		const e$39 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M72,104a16,16,0,1,1,16,16A16,16,0,0,1,72,104Zm96,16a16,16,0,1,0-16-16A16,16,0,0,0,168,120Zm68-40V192a36,36,0,0,1-36,36H56a36,36,0,0,1-36-36V80A36,36,0,0,1,56,44h60V16a12,12,0,0,1,24,0V44h60A36,36,0,0,1,236,80Zm-24,0a12,12,0,0,0-12-12H56A12,12,0,0,0,44,80V192a12,12,0,0,0,12,12H200a12,12,0,0,0,12-12Zm-12,82a30,30,0,0,1-30,30H86a30,30,0,0,1,0-60h84A30,30,0,0,1,200,162Zm-80-6v12h16V156ZM86,168H96V156H86a6,6,0,0,0,0,12Zm90-6a6,6,0,0,0-6-6H160v12h10A6,6,0,0,0,176,162Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M200,56H56A24,24,0,0,0,32,80V192a24,24,0,0,0,24,24H200a24,24,0,0,0,24-24V80A24,24,0,0,0,200,56ZM164,184H92a20,20,0,0,1,0-40h72a20,20,0,0,1,0,40Z",
@@ -1112,7 +1255,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/RocketLaunch.es.js
-		const e$31 = /* @__PURE__ */ new Map([
+		const e$38 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M227.85,46.89a20,20,0,0,0-18.74-18.74c-13.13-.77-46.65.42-74.48,28.24L131,60H74.36a19.83,19.83,0,0,0-14.14,5.86L25.87,100.19a20,20,0,0,0,11.35,33.95l37.14,5.18,42.32,42.32,5.19,37.18A19.88,19.88,0,0,0,135.34,235a20.13,20.13,0,0,0,6.37,1,19.9,19.9,0,0,0,14.1-5.87l34.34-34.35A19.85,19.85,0,0,0,196,181.64V125l3.6-3.59C227.43,93.54,228.62,60,227.85,46.89ZM76,84h31L75.75,115.28l-27.23-3.8ZM151.6,73.37A72.27,72.27,0,0,1,204,52a72.17,72.17,0,0,1-21.38,52.41L128,159,97,128ZM172,180l-27.49,27.49-3.8-27.23L172,149Zm-72,22c-8.71,11.85-26.19,26-60,26a12,12,0,0,1-12-12c0-33.84,14.12-51.32,26-60A12,12,0,1,1,68.18,175.3C62.3,179.63,55.51,187.8,53,203c15.21-2.51,23.37-9.3,27.7-15.18A12,12,0,1,1,100,202Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M184,120v61.65a8,8,0,0,1-2.34,5.65l-34.35,34.35a8,8,0,0,1-13.57-4.53L128,176ZM136,72H74.35a8,8,0,0,0-5.65,2.34L34.35,108.69a8,8,0,0,0,4.53,13.57L80,128ZM40,216c37.65,0,50.69-19.69,54.56-28.18L68.18,161.44C59.69,165.31,40,178.35,40,216Z",
@@ -1125,7 +1268,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Shield.es.js
-		const a$14 = /* @__PURE__ */ new Map([
+		const a$15 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,36H48A20,20,0,0,0,28,56v56c0,54.29,26.32,87.22,48.4,105.29,23.71,19.39,47.44,26,48.44,26.29a12.1,12.1,0,0,0,6.32,0c1-.28,24.73-6.9,48.44-26.29,22.08-18.07,48.4-51,48.4-105.29V56A20,20,0,0,0,208,36Zm-4,76c0,35.71-13.09,64.69-38.91,86.15A126.28,126.28,0,0,1,128,219.38a126.14,126.14,0,0,1-37.09-21.23C65.09,176.69,52,147.71,52,112V60H204Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,56v56c0,96-88,120-88,120S40,208,40,112V56a8,8,0,0,1,8-8H208A8,8,0,0,1,216,56Z",
@@ -1138,7 +1281,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/SlidersHorizontal.es.js
-		const e$30 = /* @__PURE__ */ new Map([
+		const e$37 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M40,92H70.06a36,36,0,0,0,67.88,0H216a12,12,0,0,0,0-24H137.94a36,36,0,0,0-67.88,0H40a12,12,0,0,0,0,24Zm64-24A12,12,0,1,1,92,80,12,12,0,0,1,104,68Zm112,96H201.94a36,36,0,0,0-67.88,0H40a12,12,0,0,0,0,24h94.06a36,36,0,0,0,67.88,0H216a12,12,0,0,0,0-24Zm-48,24a12,12,0,1,1,12-12A12,12,0,0,1,168,188Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M128,80a24,24,0,1,1-24-24A24,24,0,0,1,128,80Zm40,72a24,24,0,1,0,24,24A24,24,0,0,0,168,152Z",
@@ -1151,7 +1294,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Sparkle.es.js
-		const l$2 = /* @__PURE__ */ new Map([
+		const l$3 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M199,125.31l-49.88-18.39L130.69,57a19.92,19.92,0,0,0-37.38,0L74.92,106.92,25,125.31a19.92,19.92,0,0,0,0,37.38l49.88,18.39L93.31,231a19.92,19.92,0,0,0,37.38,0l18.39-49.88L199,162.69a19.92,19.92,0,0,0,0-37.38Zm-63.38,35.16a12,12,0,0,0-7.11,7.11L112,212.28l-16.47-44.7a12,12,0,0,0-7.11-7.11L43.72,144l44.7-16.47a12,12,0,0,0,7.11-7.11L112,75.72l16.47,44.7a12,12,0,0,0,7.11,7.11L180.28,144ZM140,40a12,12,0,0,1,12-12h12V16a12,12,0,0,1,24,0V28h12a12,12,0,0,1,0,24H188V64a12,12,0,0,1-24,0V52H152A12,12,0,0,1,140,40ZM252,88a12,12,0,0,1-12,12h-4v4a12,12,0,0,1-24,0v-4h-4a12,12,0,0,1,0-24h4V72a12,12,0,0,1,24,0v4h4A12,12,0,0,1,252,88Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M194.82,151.43l-55.09,20.3-20.3,55.09a7.92,7.92,0,0,1-14.86,0l-20.3-55.09-55.09-20.3a7.92,7.92,0,0,1,0-14.86l55.09-20.3,20.3-55.09a7.92,7.92,0,0,1,14.86,0l20.3,55.09,55.09,20.3A7.92,7.92,0,0,1,194.82,151.43Z",
@@ -1177,7 +1320,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Stack.es.js
-		const a$13 = /* @__PURE__ */ new Map([
+		const a$14 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M234.36,170A12,12,0,0,1,230,186.37l-96,56a12,12,0,0,1-12.1,0l-96-56a12,12,0,0,1,12.09-20.74l90,52.48L218,165.63A12,12,0,0,1,234.36,170ZM218,117.63,128,170.11,38.05,117.63A12,12,0,0,0,26,138.37l96,56a12,12,0,0,0,12.1,0l96-56A12,12,0,0,0,218,117.63ZM20,80a12,12,0,0,1,6-10.37l96-56a12.06,12.06,0,0,1,12.1,0l96,56a12,12,0,0,1,0,20.74l-96,56a12,12,0,0,1-12.1,0l-96-56A12,12,0,0,1,20,80Zm35.82,0L128,122.11,200.18,80,128,37.89Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,80l-96,56L32,80l96-56Z",
@@ -1190,7 +1333,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Star.es.js
-		const l$1 = /* @__PURE__ */ new Map([
+		const l$2 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M243,96a20.33,20.33,0,0,0-17.74-14l-56.59-4.57L146.83,24.62a20.36,20.36,0,0,0-37.66,0L87.35,77.44,30.76,82A20.45,20.45,0,0,0,19.1,117.88l43.18,37.24-13.2,55.7A20.37,20.37,0,0,0,79.57,233L128,203.19,176.43,233a20.39,20.39,0,0,0,30.49-22.15l-13.2-55.7,43.18-37.24A20.43,20.43,0,0,0,243,96ZM172.53,141.7a12,12,0,0,0-3.84,11.86L181.58,208l-47.29-29.08a12,12,0,0,0-12.58,0L74.42,208l12.89-54.4a12,12,0,0,0-3.84-11.86L41.2,105.24l55.4-4.47a12,12,0,0,0,10.13-7.38L128,41.89l21.27,51.5a12,12,0,0,0,10.13,7.38l55.4,4.47Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M229.06,108.79l-48.7,42,14.88,62.79a8.4,8.4,0,0,1-12.52,9.17L128,189.09,73.28,222.74a8.4,8.4,0,0,1-12.52-9.17l14.88-62.79-48.7-42A8.46,8.46,0,0,1,31.73,94L95.64,88.8l24.62-59.6a8.36,8.36,0,0,1,15.48,0l24.62,59.6L224.27,94A8.46,8.46,0,0,1,229.06,108.79Z",
@@ -1203,7 +1346,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Sun.es.js
-		const e$29 = /* @__PURE__ */ new Map([
+		const e$36 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M116,36V20a12,12,0,0,1,24,0V36a12,12,0,0,1-24,0Zm80,92a68,68,0,1,1-68-68A68.07,68.07,0,0,1,196,128Zm-24,0a44,44,0,1,0-44,44A44.05,44.05,0,0,0,172,128ZM51.51,68.49a12,12,0,1,0,17-17l-12-12a12,12,0,0,0-17,17Zm0,119-12,12a12,12,0,0,0,17,17l12-12a12,12,0,1,0-17-17ZM196,72a12,12,0,0,0,8.49-3.51l12-12a12,12,0,0,0-17-17l-12,12A12,12,0,0,0,196,72Zm8.49,115.51a12,12,0,0,0-17,17l12,12a12,12,0,0,0,17-17ZM48,128a12,12,0,0,0-12-12H20a12,12,0,0,0,0,24H36A12,12,0,0,0,48,128Zm80,80a12,12,0,0,0-12,12v16a12,12,0,0,0,24,0V220A12,12,0,0,0,128,208Zm108-92H220a12,12,0,0,0,0,24h16a12,12,0,0,0,0-24Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M184,128a56,56,0,1,1-56-56A56,56,0,0,1,184,128Z",
@@ -1228,8 +1371,21 @@ window.__ModuleLoader__.load({
 			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M224,52H32a4,4,0,0,0-4,4V192a12,12,0,0,0,12,12H216a12,12,0,0,0,12-12V56A4,4,0,0,0,224,52ZM36,108H84v40H36Zm56,0H220v40H92ZM220,60v40H36V60ZM36,192V156H84v40H40A4,4,0,0,1,36,192Zm180,4H92V156H220v36A4,4,0,0,1,216,196Z" }))]
 		]);
 		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Timer.es.js
+		const e$35 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,44a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,44Zm0,168a72,72,0,1,1,72-72A72.08,72.08,0,0,1,128,212ZM164.49,99.51a12,12,0,0,1,0,17l-28,28a12,12,0,0,1-17-17l28-28A12,12,0,0,1,164.49,99.51ZM92,16A12,12,0,0,1,104,4h48a12,12,0,0,1,0,24H104A12,12,0,0,1,92,16Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M216,136a88,88,0,1,1-88-88A88,88,0,0,1,216,136Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm45.66,61.66-40,40a8,8,0,0,1-11.32-11.32l40-40a8,8,0,0,1,11.32,11.32ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,42a94,94,0,1,0,94,94A94.11,94.11,0,0,0,128,42Zm0,176a82,82,0,1,1,82-82A82.1,82.1,0,0,1,128,218ZM172.24,91.76a6,6,0,0,1,0,8.48l-40,40a6,6,0,1,1-8.48-8.48l40-40A6,6,0,0,1,172.24,91.76ZM98,16a6,6,0,0,1,6-6h48a6,6,0,0,1,0,12H104A6,6,0,0,1,98,16Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,40a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,40Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,216ZM173.66,90.34a8,8,0,0,1,0,11.32l-40,40a8,8,0,0,1-11.32-11.32l40-40A8,8,0,0,1,173.66,90.34ZM96,16a8,8,0,0,1,8-8h48a8,8,0,0,1,0,16H104A8,8,0,0,1,96,16Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,44a92,92,0,1,0,92,92A92.1,92.1,0,0,0,128,44Zm0,176a84,84,0,1,1,84-84A84.09,84.09,0,0,1,128,220ZM170.83,93.17a4,4,0,0,1,0,5.66l-40,40a4,4,0,1,1-5.66-5.66l40-40A4,4,0,0,1,170.83,93.17ZM100,16a4,4,0,0,1,4-4h48a4,4,0,0,1,0,8H104A4,4,0,0,1,100,16Z" }))]
+		]);
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Trash.es.js
-		const e$28 = /* @__PURE__ */ new Map([
+		const e$34 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216,48H180V36A28,28,0,0,0,152,8H104A28,28,0,0,0,76,36V48H40a12,12,0,0,0,0,24h4V208a20,20,0,0,0,20,20H192a20,20,0,0,0,20-20V72h4a12,12,0,0,0,0-24ZM100,36a4,4,0,0,1,4-4h48a4,4,0,0,1,4,4V48H100Zm88,168H68V72H188ZM116,104v64a12,12,0,0,1-24,0V104a12,12,0,0,1,24,0Zm48,0v64a12,12,0,0,1-24,0V104a12,12,0,0,1,24,0Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M200,56V208a8,8,0,0,1-8,8H64a8,8,0,0,1-8-8V56Z",
@@ -1242,7 +1398,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Tree.es.js
-		const e$27 = /* @__PURE__ */ new Map([
+		const e$33 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M201.17,59.62a80,80,0,0,0-146.34,0,76,76,0,0,0,61.17,139V232a12,12,0,0,0,24,0V198.64A76.26,76.26,0,0,0,168,204l1.92,0A76,76,0,0,0,201.17,59.62ZM169.35,180A52,52,0,0,1,140,171.79V135.42l41.37-20.69a12,12,0,1,0-10.74-21.46L140,108.58V88a12,12,0,0,0-24,0v44.58L85.37,117.27a12,12,0,0,0-10.74,21.46L116,159.42v12.37A52.24,52.24,0,0,1,86.65,180c-27.53-.69-50.72-24.56-50.65-52.13a51.81,51.81,0,0,1,32.61-48.1,12,12,0,0,0,6.78-7,56,56,0,0,1,105.22,0,12,12,0,0,0,6.78,7A51.81,51.81,0,0,1,220,127.85C220.08,155.41,196.88,179.29,169.35,180Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M232,127.82c.09,33.94-28.41,63.3-62.34,64.16a63.72,63.72,0,0,1-41.66-14,63.71,63.71,0,0,1-41.65,14c-33.93-.86-62.44-30.22-62.35-64.16a64,64,0,0,1,40.13-59.2,68,68,0,0,1,127.74,0A64,64,0,0,1,232,127.82Z",
@@ -1255,7 +1411,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/TreeEvergreen.es.js
-		const a$12 = /* @__PURE__ */ new Map([
+		const a$13 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M233.47,184.63,192.54,132H208a12,12,0,0,0,9.51-19.32l-80-104a12,12,0,0,0-19,0l-80,104A12,12,0,0,0,48,132H63.46L22.53,184.63A12,12,0,0,0,32,204h84v36a12,12,0,0,0,24,0V204h84a12,12,0,0,0,9.47-19.37ZM56.54,180l40.93-52.63A12,12,0,0,0,88,108H72.37L128,35.68,183.63,108H168a12,12,0,0,0-9.47,19.37L199.46,180Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M32,192l56-72H48L128,16l80,104H168l56,72Z",
@@ -1281,7 +1437,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Trophy.es.js
-		const e$26 = /* @__PURE__ */ new Map([
+		const e$32 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M232,60H212V48a12,12,0,0,0-12-12H56A12,12,0,0,0,44,48V60H24A20,20,0,0,0,4,80V96a44.05,44.05,0,0,0,44,44h.77A84.18,84.18,0,0,0,116,195.15V212H96a12,12,0,0,0,0,24h64a12,12,0,0,0,0-24H140V195.11c30.94-4.51,56.53-26.2,67-55.11h1a44.05,44.05,0,0,0,44-44V80A20,20,0,0,0,232,60ZM28,96V84H44v28c0,1.21,0,2.41.09,3.61A20,20,0,0,1,28,96Zm160,15.1c0,33.33-26.71,60.65-59.54,60.9A60,60,0,0,1,68,112V60H188ZM228,96a20,20,0,0,1-16.12,19.62c.08-1.5.12-3,.12-4.52V84h16Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M200,48v63.1c0,39.7-31.75,72.6-71.45,72.9A72,72,0,0,1,56,112V48Z",
@@ -1294,7 +1450,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Umbrella.es.js
-		const a$11 = /* @__PURE__ */ new Map([
+		const a$12 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M243.93,126.3A116.43,116.43,0,0,0,49,50.81a115.45,115.45,0,0,0-37,75.49A20,20,0,0,0,32,148h84v52a36,36,0,0,0,72,0,12,12,0,0,0-24,0,12,12,0,0,1-24,0V148h84a20,20,0,0,0,20-21.7ZM100.41,124c2.67-39.33,18.08-63.51,27.59-74.87,9.52,11.39,24.92,35.56,27.59,74.87ZM65.31,68.46A92,92,0,0,1,99,48.65C88.8,65.25,78.39,90.08,76.36,124H36.44A91.56,91.56,0,0,1,65.31,68.46ZM179.64,124c-2-33.92-12.44-58.75-22.65-75.35A92.19,92.19,0,0,1,219.56,124Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M128,32S88,64,88,136H32a8,8,0,0,1-8-8.71A104.21,104.21,0,0,1,128,32Zm104,95.29A104.21,104.21,0,0,0,128,32s40,32,40,104h56A8,8,0,0,0,232,127.29Z",
@@ -1307,7 +1463,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/UploadSimple.es.js
-		const e$25 = /* @__PURE__ */ new Map([
+		const e$31 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M228,144v64a12,12,0,0,1-12,12H40a12,12,0,0,1-12-12V144a12,12,0,0,1,24,0v52H204V144a12,12,0,0,1,24,0ZM96.49,80.49,116,61v83a12,12,0,0,0,24,0V61l19.51,19.52a12,12,0,1,0,17-17l-40-40a12,12,0,0,0-17,0l-40,40a12,12,0,1,0,17,17Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,48V208H40V48A16,16,0,0,1,56,32H200A16,16,0,0,1,216,48Z",
@@ -1319,8 +1475,21 @@ window.__ModuleLoader__.load({
 			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M220,144v64a4,4,0,0,1-4,4H40a4,4,0,0,1-4-4V144a4,4,0,0,1,8,0v60H212V144a4,4,0,0,1,8,0ZM90.83,74.83,124,41.66V144a4,4,0,0,0,8,0V41.66l33.17,33.17a4,4,0,1,0,5.66-5.66l-40-40a4,4,0,0,0-5.66,0l-40,40a4,4,0,0,0,5.66,5.66Z" }))]
 		]);
 		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Wallet.es.js
+		const e$30 = /* @__PURE__ */ new Map([
+			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M196,136a16,16,0,1,1-16-16A16,16,0,0,1,196,136Zm40-36v80a32,32,0,0,1-32,32H60a32,32,0,0,1-32-32V60.92A32,32,0,0,1,60,28H192a12,12,0,0,1,0,24H60a8,8,0,0,0-8,8.26v.08A8.32,8.32,0,0,0,60.48,68H204A32,32,0,0,1,236,100Zm-24,0a8,8,0,0,0-8-8H60.48A33.72,33.72,0,0,1,52,90.92V180a8,8,0,0,0,8,8H204a8,8,0,0,0,8-8Z" }))],
+			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
+				d: "M224,80V192a8,8,0,0,1-8,8H56a16,16,0,0,1-16-16V56A16,16,0,0,0,56,72H216A8,8,0,0,1,224,80Z",
+				opacity: "0.2"
+			}), /* @__PURE__ */ react.createElement("path", { d: "M216,64H56a8,8,0,0,1,0-16H192a8,8,0,0,0,0-16H56A24,24,0,0,0,32,56V184a24,24,0,0,0,24,24H216a16,16,0,0,0,16-16V80A16,16,0,0,0,216,64Zm0,128H56a8,8,0,0,1-8-8V78.63A23.84,23.84,0,0,0,56,80H216Zm-48-60a12,12,0,1,1,12,12A12,12,0,0,1,168,132Z" }))],
+			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216,64H56a8,8,0,0,1,0-16H192a8,8,0,0,0,0-16H56A24,24,0,0,0,32,56V184a24,24,0,0,0,24,24H216a16,16,0,0,0,16-16V80A16,16,0,0,0,216,64Zm-36,80a12,12,0,1,1,12-12A12,12,0,0,1,180,144Z" }))],
+			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216,66H56a10,10,0,0,1,0-20H192a6,6,0,0,0,0-12H56A22,22,0,0,0,34,56V184a22,22,0,0,0,22,22H216a14,14,0,0,0,14-14V80A14,14,0,0,0,216,66Zm2,126a2,2,0,0,1-2,2H56a10,10,0,0,1-10-10V75.59A21.84,21.84,0,0,0,56,78H216a2,2,0,0,1,2,2Zm-28-60a10,10,0,1,1-10-10A10,10,0,0,1,190,132Z" }))],
+			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216,64H56a8,8,0,0,1,0-16H192a8,8,0,0,0,0-16H56A24,24,0,0,0,32,56V184a24,24,0,0,0,24,24H216a16,16,0,0,0,16-16V80A16,16,0,0,0,216,64Zm0,128H56a8,8,0,0,1-8-8V78.63A23.84,23.84,0,0,0,56,80H216Zm-48-60a12,12,0,1,1,12,12A12,12,0,0,1,168,132Z" }))],
+			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216,68H56a12,12,0,0,1,0-24H192a4,4,0,0,0,0-8H56A20,20,0,0,0,36,56V184a20,20,0,0,0,20,20H216a12,12,0,0,0,12-12V80A12,12,0,0,0,216,68Zm4,124a4,4,0,0,1-4,4H56a12,12,0,0,1-12-12V72a19.86,19.86,0,0,0,12,4H216a4,4,0,0,1,4,4Zm-32-60a8,8,0,1,1-8-8A8,8,0,0,1,188,132Z" }))]
+		]);
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/WarningCircle.es.js
-		const a$10 = /* @__PURE__ */ new Map([
+		const a$11 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M128,20A108,108,0,1,0,236,128,108.12,108.12,0,0,0,128,20Zm0,192a84,84,0,1,1,84-84A84.09,84.09,0,0,1,128,212Zm-12-80V80a12,12,0,0,1,24,0v52a12,12,0,0,1-24,0Zm28,40a16,16,0,1,1-16-16A16,16,0,0,1,144,172Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,128a96,96,0,1,1-96-96A96,96,0,0,1,224,128Z",
@@ -1333,7 +1502,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Waveform.es.js
-		const e$24 = /* @__PURE__ */ new Map([
+		const e$29 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M60,96v64a12,12,0,0,1-24,0V96a12,12,0,0,1,24,0ZM88,20A12,12,0,0,0,76,32V224a12,12,0,0,0,24,0V32A12,12,0,0,0,88,20Zm40,32a12,12,0,0,0-12,12V192a12,12,0,0,0,24,0V64A12,12,0,0,0,128,52Zm40,32a12,12,0,0,0-12,12v64a12,12,0,0,0,24,0V96A12,12,0,0,0,168,84Zm40-16a12,12,0,0,0-12,12v96a12,12,0,0,0,24,0V80A12,12,0,0,0,208,68Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M208,96v64H48V96Z",
@@ -1346,7 +1515,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Waves.es.js
-		const e$23 = /* @__PURE__ */ new Map([
+		const e$28 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M225.24,174.74a12,12,0,0,1-1.58,16.89C205.49,206.71,189.06,212,174.15,212c-19.76,0-36.86-9.29-51.88-17.44-25.06-13.62-44.86-24.37-74.61.3a12,12,0,1,1-15.32-18.48c42.25-35,75-17.23,101.39-2.92,25.06,13.61,44.86,24.37,74.61-.3A12,12,0,0,1,225.24,174.74Zm-16.9-57.59c-29.75,24.67-49.55,13.91-74.61.3-26.35-14.3-59.14-32.11-101.39,2.92a12,12,0,0,0,15.32,18.48c29.75-24.67,49.55-13.92,74.61-.3,15,8.15,32.12,17.44,51.88,17.44,14.91,0,31.34-5.29,49.51-20.36a12,12,0,0,0-15.32-18.48ZM47.66,82.84c29.75-24.67,49.55-13.92,74.61-.3,15,8.15,32.12,17.44,51.88,17.44,14.91,0,31.34-5.29,49.51-20.36a12,12,0,0,0-15.32-18.48c-29.75,24.67-49.55,13.92-74.61.3-26.35-14.3-59.14-32.11-101.39,2.93A12,12,0,1,0,47.66,82.84Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,70.39v112c-72,59.69-104-56.47-176,3.22v-112C112,13.92,144,130.08,216,70.39Z",
@@ -1359,7 +1528,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Wrench.es.js
-		const e$22 = /* @__PURE__ */ new Map([
+		const e$27 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M230.47,67.5a12,12,0,0,0-19.26-4.32L172.43,99l-12.68-2.72L157,83.57l35.79-38.78a12,12,0,0,0-4.32-19.26A76.07,76.07,0,0,0,88.41,121.64L30.92,174.18a4.68,4.68,0,0,0-.39.38,36,36,0,0,0,50.91,50.91l.38-.39,52.54-57.49A76.05,76.05,0,0,0,230.47,67.5ZM160,148a51.5,51.5,0,0,1-23.35-5.52,12,12,0,0,0-14.26,2.62L64.31,208.66a12,12,0,0,1-17-17l63.55-58.07a12,12,0,0,0,2.62-14.26A51.5,51.5,0,0,1,108,96a52.06,52.06,0,0,1,52-52h.89L135.17,71.87a12,12,0,0,0-2.91,10.65l5.66,26.35a12,12,0,0,0,9.21,9.21l26.35,5.66a12,12,0,0,0,10.65-2.91L212,95.12c0,.3,0,.59,0,.89A52.06,52.06,0,0,1,160,148Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M224,96a64,64,0,0,1-94.94,56L73,217A24,24,0,0,1,39,183L104,126.94a64,64,0,0,1,80-90.29L144,80l5.66,26.34L176,112l43.35-40A63.8,63.8,0,0,1,224,96Z",
@@ -1372,7 +1541,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/defs/X.es.js
-		const a$9 = /* @__PURE__ */ new Map([
+		const a$10 = /* @__PURE__ */ new Map([
 			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z" }))],
 			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
 				d: "M216,56V200a16,16,0,0,1-16,16H56a16,16,0,0,1-16-16V56A16,16,0,0,1,56,40H200A16,16,0,0,1,216,56Z",
@@ -1385,7 +1554,7 @@ window.__ModuleLoader__.load({
 		]);
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/lib/context.es.js
-		const o$32 = (0, react.createContext)({
+		const o$38 = (0, react.createContext)({
 			color: "currentColor",
 			size: "1em",
 			weight: "regular",
@@ -1394,7 +1563,7 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/lib/IconBase.es.js
 		const p$1 = react.forwardRef((s, a) => {
-			const { alt: n, color: r, size: t, weight: o, mirrored: c, children: i, weights: m, ...x } = s, { color: d = "currentColor", size: l, weight: f = "regular", mirrored: g = !1, ...w } = react.useContext(o$32);
+			const { alt: n, color: r, size: t, weight: o, mirrored: c, children: i, weights: m, ...x } = s, { color: d = "currentColor", size: l, weight: f = "regular", mirrored: g = !1, ...w } = react.useContext(o$38);
 			return /* @__PURE__ */ react.createElement("svg", {
 				ref: a,
 				xmlns: "http://www.w3.org/2000/svg",
@@ -1410,263 +1579,291 @@ window.__ModuleLoader__.load({
 		p$1.displayName = "IconBase";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowClockwise.es.js
-		const r$24 = react.forwardRef((e, c) => /* @__PURE__ */ react.createElement(p$1, {
+		const r$25 = react.forwardRef((e, c) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: c,
 			...e,
-			weights: a$35
+			weights: a$39
 		}));
-		r$24.displayName = "ArrowClockwiseIcon";
+		r$25.displayName = "ArrowClockwiseIcon";
+		const m$1 = r$25;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowCounterClockwise.es.js
+		const r$24 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: t,
+			...e,
+			weights: e$89
+		}));
+		r$24.displayName = "ArrowCounterClockwiseIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowDown.es.js
 		const r$23 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: e$76
+			weights: a$38
 		}));
-		r$23.displayName = "ArrowCounterClockwiseIcon";
+		r$23.displayName = "ArrowDownIcon";
+		const c$7 = r$23;
 		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowDown.es.js
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowLeft.es.js
 		const r$22 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: a$34
+			weights: a$37
 		}));
-		r$22.displayName = "ArrowDownIcon";
-		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowLeft.es.js
-		const r$21 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
-			ref: t,
-			...e,
-			weights: a$33
-		}));
-		r$21.displayName = "ArrowLeftIcon";
+		r$22.displayName = "ArrowLeftIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowRight.es.js
-		const r$20 = react.forwardRef((t, e) => /* @__PURE__ */ react.createElement(p$1, {
+		const r$21 = react.forwardRef((t, e) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: e,
 			...t,
-			weights: a$32
+			weights: a$36
 		}));
-		r$20.displayName = "ArrowRightIcon";
+		r$21.displayName = "ArrowRightIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowSquareOut.es.js
-		const o$31 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$37 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: e$75
+			weights: e$88
 		}));
-		o$31.displayName = "ArrowSquareOutIcon";
+		o$37.displayName = "ArrowSquareOutIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowUp.es.js
-		const r$19 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const r$20 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: a$31
+			weights: a$35
 		}));
-		r$19.displayName = "ArrowUpIcon";
+		r$20.displayName = "ArrowUpIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowUpRight.es.js
-		const r$18 = react.forwardRef((t, e) => /* @__PURE__ */ react.createElement(p$1, {
+		const r$19 = react.forwardRef((t, e) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: e,
 			...t,
-			weights: a$30
+			weights: a$34
 		}));
-		r$18.displayName = "ArrowUpRightIcon";
-		const c$3 = r$18;
+		r$19.displayName = "ArrowUpRightIcon";
+		const c$6 = r$19;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowsClockwise.es.js
-		const r$17 = react.forwardRef((e, s) => /* @__PURE__ */ react.createElement(p$1, {
+		const r$18 = react.forwardRef((e, s) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: s,
 			...e,
-			weights: e$74
+			weights: e$87
 		}));
-		r$17.displayName = "ArrowsClockwiseIcon";
+		r$18.displayName = "ArrowsClockwiseIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowsInSimple.es.js
-		const r$16 = react.forwardRef((e, m) => /* @__PURE__ */ react.createElement(p$1, {
+		const r$17 = react.forwardRef((e, m) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: m,
 			...e,
-			weights: e$73
+			weights: e$86
 		}));
-		r$16.displayName = "ArrowsInSimpleIcon";
+		r$17.displayName = "ArrowsInSimpleIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ArrowsOutSimple.es.js
-		const r$15 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const r$16 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: e$72
+			weights: e$85
 		}));
-		r$15.displayName = "ArrowsOutSimpleIcon";
+		r$16.displayName = "ArrowsOutSimpleIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Bell.es.js
-		const o$30 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$36 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: e$71
+			weights: e$84
 		}));
-		o$30.displayName = "BellIcon";
+		o$36.displayName = "BellIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/BellRinging.es.js
-		const o$29 = react.forwardRef((n, i) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$35 = react.forwardRef((n, i) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: i,
 			...n,
-			weights: e$70
+			weights: e$83
 		}));
-		o$29.displayName = "BellRingingIcon";
+		o$35.displayName = "BellRingingIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/BoxArrowDown.es.js
-		const r$14 = react.forwardRef((e, n) => /* @__PURE__ */ react.createElement(p$1, {
+		const r$15 = react.forwardRef((e, n) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: n,
 			...e,
-			weights: l$8
+			weights: l$11
 		}));
-		r$14.displayName = "BoxArrowDownIcon";
+		r$15.displayName = "BoxArrowDownIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Brain.es.js
+		const r$14 = react.forwardRef((a, e) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: e,
+			...a,
+			weights: e$82
+		}));
+		r$14.displayName = "BrainIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Broadcast.es.js
-		const a$8 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const a$9 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: e$69
+			weights: e$81
 		}));
-		a$8.displayName = "BroadcastIcon";
+		a$9.displayName = "BroadcastIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Buildings.es.js
 		const i$1 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: e$68
+			weights: e$80
 		}));
 		i$1.displayName = "BuildingsIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Butterfly.es.js
-		const e$21 = react.forwardRef((o, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$26 = react.forwardRef((o, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...o,
-			weights: e$67
+			weights: e$79
 		}));
-		e$21.displayName = "ButterflyIcon";
+		e$26.displayName = "ButterflyIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/CalendarBlank.es.js
+		const e$25 = react.forwardRef((o, r) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: r,
+			...o,
+			weights: e$78
+		}));
+		e$25.displayName = "CalendarBlankIcon";
+		const c$5 = e$25;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/CaretDown.es.js
-		const e$20 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$24 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
 			weights: t$13
 		}));
-		e$20.displayName = "CaretDownIcon";
-		const s$4 = e$20;
+		e$24.displayName = "CaretDownIcon";
+		const s$4 = e$24;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/CaretLeft.es.js
 		const t$8 = react.forwardRef((o, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...o,
-			weights: a$29
+			weights: a$33
 		}));
 		t$8.displayName = "CaretLeftIcon";
 		const s$3 = t$8;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/CaretRight.es.js
-		const e$19 = react.forwardRef((o, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$23 = react.forwardRef((o, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...o,
 			weights: t$12
 		}));
-		e$19.displayName = "CaretRightIcon";
-		const s$2 = e$19;
+		e$23.displayName = "CaretRightIcon";
+		const s$2 = e$23;
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ChartBar.es.js
+		const a$8 = react.forwardRef((o, t) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: t,
+			...o,
+			weights: e$77
+		}));
+		a$8.displayName = "ChartBarIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ChartLine.es.js
-		const o$28 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$34 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: e$66
+			weights: e$76
 		}));
-		o$28.displayName = "ChartLineIcon";
+		o$34.displayName = "ChartLineIcon";
+		const c$4 = o$34;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ChartLineUp.es.js
-		const o$27 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$33 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: e$65
+			weights: e$75
 		}));
-		o$27.displayName = "ChartLineUpIcon";
+		o$33.displayName = "ChartLineUpIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ChatCircleDots.es.js
 		const t$7 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: e$64
+			weights: e$74
 		}));
 		t$7.displayName = "ChatCircleDotsIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ChatsCircle.es.js
-		const o$26 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$32 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: e$63
+			weights: e$73
 		}));
-		o$26.displayName = "ChatsCircleIcon";
+		o$32.displayName = "ChatsCircleIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Check.es.js
-		const o$25 = react.forwardRef((c, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$31 = react.forwardRef((c, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...c,
-			weights: a$28
+			weights: a$32
 		}));
-		o$25.displayName = "CheckIcon";
-		const n = o$25;
+		o$31.displayName = "CheckIcon";
+		const n = o$31;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/CheckCircle.es.js
-		const c$2 = react.forwardRef((o, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const c$3 = react.forwardRef((o, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...o,
-			weights: a$27
+			weights: a$31
 		}));
-		c$2.displayName = "CheckCircleIcon";
+		c$3.displayName = "CheckCircleIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Circle.es.js
-		const o$24 = react.forwardRef((r, c) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$30 = react.forwardRef((r, c) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: c,
 			...r,
 			weights: t$11
 		}));
-		o$24.displayName = "CircleIcon";
+		o$30.displayName = "CircleIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/CirclesThree.es.js
 		const r$13 = react.forwardRef((o, c) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: c,
 			...o,
-			weights: e$62
+			weights: e$72
 		}));
 		r$13.displayName = "CirclesThreeIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Circuitry.es.js
-		const o$23 = react.forwardRef((t, i) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$29 = react.forwardRef((t, i) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: i,
 			...t,
-			weights: e$61
+			weights: e$71
 		}));
-		o$23.displayName = "CircuitryIcon";
+		o$29.displayName = "CircuitryIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Clock.es.js
-		const c$1 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const c$2 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: a$26
+			weights: a$30
 		}));
-		c$1.displayName = "ClockIcon";
+		c$2.displayName = "ClockIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ClockCounterClockwise.es.js
-		const e$18 = react.forwardRef((c, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$22 = react.forwardRef((c, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...c,
-			weights: e$60
+			weights: e$70
 		}));
-		e$18.displayName = "ClockCounterClockwiseIcon";
+		e$22.displayName = "ClockCounterClockwiseIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/CloudArrowDown.es.js
 		const r$12 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: e$59
+			weights: e$69
 		}));
 		r$12.displayName = "CloudArrowDownIcon";
 		//#endregion
@@ -1674,39 +1871,39 @@ window.__ModuleLoader__.load({
 		const a$7 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: e$58
+			weights: e$68
 		}));
 		a$7.displayName = "CloudRainIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Cpu.es.js
-		const e$17 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$21 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
 			weights: H$2
 		}));
-		e$17.displayName = "CpuIcon";
+		e$21.displayName = "CpuIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Cube.es.js
-		const o$22 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$28 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: l$7
+			weights: l$10
 		}));
-		o$22.displayName = "CubeIcon";
+		o$28.displayName = "CubeIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Database.es.js
-		const e$16 = react.forwardRef((o, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$20 = react.forwardRef((o, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...o,
 			weights: t$10
 		}));
-		e$16.displayName = "DatabaseIcon";
+		e$20.displayName = "DatabaseIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Diamond.es.js
 		const a$6 = react.forwardRef((m, e) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: e,
 			...m,
-			weights: e$57
+			weights: e$67
 		}));
 		a$6.displayName = "DiamondIcon";
 		//#endregion
@@ -1714,7 +1911,7 @@ window.__ModuleLoader__.load({
 		const a$5 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: e$56
+			weights: e$66
 		}));
 		a$5.displayName = "DnaIcon";
 		//#endregion
@@ -1722,40 +1919,40 @@ window.__ModuleLoader__.load({
 		const t$6 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: e$55
+			weights: e$65
 		}));
 		t$6.displayName = "DotsSixVerticalIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/DotsThree.es.js
-		const o$21 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$27 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: a$25
+			weights: a$29
 		}));
-		o$21.displayName = "DotsThreeIcon";
+		o$27.displayName = "DotsThreeIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/DotsThreeVertical.es.js
-		const o$20 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$26 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: a$24
+			weights: a$28
 		}));
-		o$20.displayName = "DotsThreeVerticalIcon";
+		o$26.displayName = "DotsThreeVerticalIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/DownloadSimple.es.js
-		const e$15 = react.forwardRef((a, m) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$19 = react.forwardRef((a, m) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: m,
 			...a,
-			weights: e$54
+			weights: e$64
 		}));
-		e$15.displayName = "DownloadSimpleIcon";
-		const l = e$15;
+		e$19.displayName = "DownloadSimpleIcon";
+		const l$1 = e$19;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Drop.es.js
 		const r$11 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: e$53
+			weights: e$63
 		}));
 		r$11.displayName = "DropIcon";
 		//#endregion
@@ -1763,7 +1960,7 @@ window.__ModuleLoader__.load({
 		const r$10 = react.forwardRef((a, e) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: e,
 			...a,
-			weights: a$23
+			weights: a$27
 		}));
 		r$10.displayName = "DropHalfIcon";
 		//#endregion
@@ -1771,64 +1968,72 @@ window.__ModuleLoader__.load({
 		const a$4 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: e$52
+			weights: e$62
 		}));
 		a$4.displayName = "FanIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Feather.es.js
-		const o$19 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$25 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: l$6
+			weights: l$9
 		}));
-		o$19.displayName = "FeatherIcon";
+		o$25.displayName = "FeatherIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/FileCode.es.js
-		const o$18 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$24 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: l$5
+			weights: l$8
 		}));
-		o$18.displayName = "FileCodeIcon";
+		o$24.displayName = "FileCodeIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/FileCsv.es.js
-		const o$17 = react.forwardRef((r, s) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$23 = react.forwardRef((r, s) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: s,
 			...r,
-			weights: e$51
+			weights: e$61
 		}));
-		o$17.displayName = "FileCsvIcon";
+		o$23.displayName = "FileCsvIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/FilePdf.es.js
-		const o$16 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$22 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: e$50
+			weights: e$60
 		}));
-		o$16.displayName = "FilePdfIcon";
+		o$22.displayName = "FilePdfIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/FileText.es.js
-		const o$15 = react.forwardRef((t, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$21 = react.forwardRef((t, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...t,
-			weights: e$49
+			weights: e$59
 		}));
-		o$15.displayName = "FileTextIcon";
-		const s$1 = o$15;
+		o$21.displayName = "FileTextIcon";
+		const s$1 = o$21;
 		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Fish.es.js
-		const e$14 = react.forwardRef((r, s) => /* @__PURE__ */ react.createElement(p$1, {
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Files.es.js
+		const o$20 = react.forwardRef((r, s) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: s,
 			...r,
-			weights: e$48
+			weights: e$58
 		}));
-		e$14.displayName = "FishIcon";
+		o$20.displayName = "FilesIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Fish.es.js
+		const e$18 = react.forwardRef((r, s) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: s,
+			...r,
+			weights: e$57
+		}));
+		e$18.displayName = "FishIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Flask.es.js
 		const a$3 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: e$47
+			weights: e$56
 		}));
 		a$3.displayName = "FlaskIcon";
 		//#endregion
@@ -1836,95 +2041,104 @@ window.__ModuleLoader__.load({
 		const p = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: e$46
+			weights: e$55
 		}));
 		p.displayName = "FloppyDiskIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Flower.es.js
-		const e$13 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$17 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: c$5
+			weights: c$9
 		}));
-		e$13.displayName = "FlowerIcon";
+		e$17.displayName = "FlowerIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/FolderOpen.es.js
-		const e$12 = react.forwardRef((r, n) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$16 = react.forwardRef((r, n) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: n,
 			...r,
-			weights: e$45
+			weights: e$54
 		}));
-		e$12.displayName = "FolderOpenIcon";
+		e$16.displayName = "FolderOpenIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/GearSix.es.js
-		const o$14 = react.forwardRef((r, a) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$19 = react.forwardRef((r, a) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: a,
 			...r,
-			weights: l$4
+			weights: l$7
 		}));
-		o$14.displayName = "GearSixIcon";
+		o$19.displayName = "GearSixIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Globe.es.js
-		const e$11 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$15 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: e$44
+			weights: e$53
 		}));
-		e$11.displayName = "GlobeIcon";
+		e$15.displayName = "GlobeIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/GridFour.es.js
 		const r$9 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: a$22
+			weights: a$26
 		}));
 		r$9.displayName = "GridFourIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Hexagon.es.js
-		const e$10 = react.forwardRef((a, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$14 = react.forwardRef((a, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...a,
-			weights: l$3
+			weights: l$6
 		}));
-		e$10.displayName = "HexagonIcon";
+		e$14.displayName = "HexagonIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/House.es.js
-		const e$9 = react.forwardRef((r, s) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$13 = react.forwardRef((r, s) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: s,
 			...r,
-			weights: e$43
+			weights: e$52
 		}));
-		e$9.displayName = "HouseIcon";
+		e$13.displayName = "HouseIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ImageSquare.es.js
 		const a$2 = react.forwardRef((o, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...o,
-			weights: e$42
+			weights: e$51
 		}));
 		a$2.displayName = "ImageSquareIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Info.es.js
+		const e$12 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: t,
+			...r,
+			weights: a$25
+		}));
+		e$12.displayName = "InfoIcon";
+		const c$1 = e$12;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Island.es.js
 		const a$1 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: c$4
+			weights: c$8
 		}));
 		a$1.displayName = "IslandIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Leaf.es.js
-		const o$13 = react.forwardRef((a, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$18 = react.forwardRef((a, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...a,
-			weights: a$21
+			weights: a$24
 		}));
-		o$13.displayName = "LeafIcon";
+		o$18.displayName = "LeafIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Lightning.es.js
 		const t$5 = react.forwardRef((n, i) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: i,
 			...n,
-			weights: a$20
+			weights: a$23
 		}));
 		t$5.displayName = "LightningIcon";
 		//#endregion
@@ -1932,63 +2146,79 @@ window.__ModuleLoader__.load({
 		const t$4 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: e$41
+			weights: e$50
 		}));
 		t$4.displayName = "ListIcon";
 		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ListBullets.es.js
+		const e$11 = react.forwardRef((o, s) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: s,
+			...o,
+			weights: e$49
+		}));
+		e$11.displayName = "ListBulletsIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ListChecks.es.js
+		const o$17 = react.forwardRef((s, t) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: t,
+			...s,
+			weights: l$5
+		}));
+		o$17.displayName = "ListChecksIcon";
+		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/LockKey.es.js
-		const e$8 = react.forwardRef((c, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$10 = react.forwardRef((c, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...c,
-			weights: e$40
+			weights: e$48
 		}));
-		e$8.displayName = "LockKeyIcon";
+		e$10.displayName = "LockKeyIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/MagicWand.es.js
-		const o$12 = react.forwardRef((c, e) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$16 = react.forwardRef((c, e) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: e,
 			...c,
-			weights: e$39
+			weights: e$47
 		}));
-		o$12.displayName = "MagicWandIcon";
+		o$16.displayName = "MagicWandIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/MagnifyingGlass.es.js
-		const o$11 = react.forwardRef((s, n) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$15 = react.forwardRef((s, n) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: n,
 			...s,
-			weights: a$19
+			weights: a$22
 		}));
-		o$11.displayName = "MagnifyingGlassIcon";
+		o$15.displayName = "MagnifyingGlassIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Moon.es.js
-		const e$7 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const e$9 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: a$18
+			weights: a$21
 		}));
-		e$7.displayName = "MoonIcon";
+		e$9.displayName = "MoonIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Mountains.es.js
 		const t$3 = react.forwardRef((n, a) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: a,
 			...n,
-			weights: e$38
+			weights: e$46
 		}));
 		t$3.displayName = "MountainsIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Newspaper.es.js
-		const o$10 = react.forwardRef((r, a) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$14 = react.forwardRef((r, a) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: a,
 			...r,
-			weights: e$37
+			weights: e$45
 		}));
-		o$10.displayName = "NewspaperIcon";
+		o$14.displayName = "NewspaperIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/PaintBrush.es.js
 		const r$8 = react.forwardRef((t, a) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: a,
 			...t,
-			weights: a$17
+			weights: a$20
 		}));
 		r$8.displayName = "PaintBrushIcon";
 		//#endregion
@@ -1996,7 +2226,7 @@ window.__ModuleLoader__.load({
 		const t$2 = react.forwardRef((o, a) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: a,
 			...o,
-			weights: e$36
+			weights: e$44
 		}));
 		t$2.displayName = "PaletteIcon";
 		//#endregion
@@ -2004,47 +2234,79 @@ window.__ModuleLoader__.load({
 		const a = react.forwardRef((o, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...o,
-			weights: e$35
+			weights: e$43
 		}));
 		a.displayName = "PaperPlaneTiltIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/PenNib.es.js
-		const o$9 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$13 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: e$34
+			weights: e$42
 		}));
-		o$9.displayName = "PenNibIcon";
+		o$13.displayName = "PenNibIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/PencilSimple.es.js
-		const o$8 = react.forwardRef((i, m) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$12 = react.forwardRef((i, m) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: m,
 			...i,
-			weights: e$33
+			weights: e$41
 		}));
-		o$8.displayName = "PencilSimpleIcon";
+		o$12.displayName = "PencilSimpleIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Planet.es.js
-		const o$7 = react.forwardRef((t, a) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$11 = react.forwardRef((t, a) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: a,
+			...t,
+			weights: a$19
+		}));
+		o$11.displayName = "PlanetIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/PlugsConnected.es.js
+		const o$10 = react.forwardRef((t, n) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: n,
+			...t,
+			weights: l$4
+		}));
+		o$10.displayName = "PlugsConnectedIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Plus.es.js
+		const e$8 = react.forwardRef((r, s) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: s,
+			...r,
+			weights: a$18
+		}));
+		e$8.displayName = "PlusIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Pulse.es.js
+		const e$7 = react.forwardRef((t, s) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: s,
+			...t,
+			weights: a$17
+		}));
+		e$7.displayName = "PulseIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Question.es.js
+		const e$6 = react.forwardRef((t, r) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: r,
 			...t,
 			weights: a$16
 		}));
-		o$7.displayName = "PlanetIcon";
+		e$6.displayName = "QuestionIcon";
 		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Plus.es.js
-		const e$6 = react.forwardRef((r, s) => /* @__PURE__ */ react.createElement(p$1, {
-			ref: s,
-			...r,
-			weights: a$15
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Receipt.es.js
+		const o$9 = react.forwardRef((t, c) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: c,
+			...t,
+			weights: e$40
 		}));
-		e$6.displayName = "PlusIcon";
+		o$9.displayName = "ReceiptIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Robot.es.js
 		const t$1 = react.forwardRef((e, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...e,
-			weights: e$32
+			weights: e$39
 		}));
 		t$1.displayName = "RobotIcon";
 		//#endregion
@@ -2052,34 +2314,35 @@ window.__ModuleLoader__.load({
 		const c = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: e$31
+			weights: e$38
 		}));
 		c.displayName = "RocketLaunchIcon";
 		const s = c;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Shield.es.js
-		const o$6 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$8 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: a$14
+			weights: a$15
 		}));
-		o$6.displayName = "ShieldIcon";
+		o$8.displayName = "ShieldIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/SlidersHorizontal.es.js
 		const r$7 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: e$30
+			weights: e$37
 		}));
 		r$7.displayName = "SlidersHorizontalIcon";
+		const l = r$7;
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Sparkle.es.js
-		const o$5 = react.forwardRef((r, a) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$7 = react.forwardRef((r, a) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: a,
 			...r,
-			weights: l$2
+			weights: l$3
 		}));
-		o$5.displayName = "SparkleIcon";
+		o$7.displayName = "SparkleIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Spiral.es.js
 		const r$6 = react.forwardRef((a, e) => /* @__PURE__ */ react.createElement(p$1, {
@@ -2093,7 +2356,7 @@ window.__ModuleLoader__.load({
 		const t = react.forwardRef((a, c) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: c,
 			...a,
-			weights: a$13
+			weights: a$14
 		}));
 		t.displayName = "StackIcon";
 		//#endregion
@@ -2101,7 +2364,7 @@ window.__ModuleLoader__.load({
 		const r$5 = react.forwardRef((t, a) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: a,
 			...t,
-			weights: l$1
+			weights: l$2
 		}));
 		r$5.displayName = "StarIcon";
 		//#endregion
@@ -2109,39 +2372,47 @@ window.__ModuleLoader__.load({
 		const e$5 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: e$29
+			weights: e$36
 		}));
 		e$5.displayName = "SunIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Table.es.js
-		const o$4 = react.forwardRef((a, r) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$6 = react.forwardRef((a, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...a,
 			weights: H$1
 		}));
-		o$4.displayName = "TableIcon";
+		o$6.displayName = "TableIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Timer.es.js
+		const o$5 = react.forwardRef((r, m) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: m,
+			...r,
+			weights: e$35
+		}));
+		o$5.displayName = "TimerIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Trash.es.js
 		const r$4 = react.forwardRef((a, e) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: e,
 			...a,
-			weights: e$28
+			weights: e$34
 		}));
 		r$4.displayName = "TrashIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Tree.es.js
-		const o$3 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$4 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: e$27
+			weights: e$33
 		}));
-		o$3.displayName = "TreeIcon";
+		o$4.displayName = "TreeIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/TreeEvergreen.es.js
 		const r$3 = react.forwardRef((o, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...o,
-			weights: a$12
+			weights: a$13
 		}));
 		r$3.displayName = "TreeEvergreenIcon";
 		//#endregion
@@ -2157,31 +2428,39 @@ window.__ModuleLoader__.load({
 		const r$1 = react.forwardRef((e, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...e,
-			weights: e$26
+			weights: e$32
 		}));
 		r$1.displayName = "TrophyIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Umbrella.es.js
-		const o$2 = react.forwardRef((r, a) => /* @__PURE__ */ react.createElement(p$1, {
+		const o$3 = react.forwardRef((r, a) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: a,
 			...r,
-			weights: a$11
+			weights: a$12
 		}));
-		o$2.displayName = "UmbrellaIcon";
+		o$3.displayName = "UmbrellaIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/UploadSimple.es.js
 		const e$4 = react.forwardRef((a, m) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: m,
 			...a,
-			weights: e$25
+			weights: e$31
 		}));
 		e$4.displayName = "UploadSimpleIcon";
+		//#endregion
+		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Wallet.es.js
+		const o$2 = react.forwardRef((t, a) => /* @__PURE__ */ react.createElement(p$1, {
+			ref: a,
+			...t,
+			weights: e$30
+		}));
+		o$2.displayName = "WalletIcon";
 		//#endregion
 		//#region ../../node_modules/@phosphor-icons/react/dist/csr/WarningCircle.es.js
 		const e$3 = react.forwardRef((o, n) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: n,
 			...o,
-			weights: a$10
+			weights: a$11
 		}));
 		e$3.displayName = "WarningCircleIcon";
 		//#endregion
@@ -2189,7 +2468,7 @@ window.__ModuleLoader__.load({
 		const e$2 = react.forwardRef((r, a) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: a,
 			...r,
-			weights: e$24
+			weights: e$29
 		}));
 		e$2.displayName = "WaveformIcon";
 		//#endregion
@@ -2197,7 +2476,7 @@ window.__ModuleLoader__.load({
 		const o$1 = react.forwardRef((a, r) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: r,
 			...a,
-			weights: e$23
+			weights: e$28
 		}));
 		o$1.displayName = "WavesIcon";
 		//#endregion
@@ -2205,7 +2484,7 @@ window.__ModuleLoader__.load({
 		const o = react.forwardRef((r, c) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: c,
 			...r,
-			weights: e$22
+			weights: e$27
 		}));
 		o.displayName = "WrenchIcon";
 		//#endregion
@@ -2213,7 +2492,7 @@ window.__ModuleLoader__.load({
 		const e$1 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p$1, {
 			ref: t,
 			...r,
-			weights: a$9
+			weights: a$10
 		}));
 		e$1.displayName = "XIcon";
 		//#endregion
@@ -2469,13 +2748,13 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/PdfPreview.module.css.mjs
-		const css$23 = ".wfkmkq_viewer{color:#29313d;background:#e8eaed;min-width:0;overflow:auto}.wfkmkq_toolbar{z-index:1;background:#f5f6f8;justify-content:space-between;align-items:center;gap:8px;padding:8px;font-size:12px;display:flex;position:sticky;top:0}.wfkmkq_viewer button{color:inherit;cursor:pointer;background:#fff;border:1px solid #c8cdd5;border-radius:6px;padding:5px 9px}.wfkmkq_viewer button:disabled{opacity:.4;cursor:default}.wfkmkq_viewer p{padding:12px;font-size:13px}.wfkmkq_viewer canvas{background:#fff;width:100%;height:auto;display:block}.wfkmkq_viewer canvas[hidden]{display:none}";
-		const tagId$23 = "@deepseek-ai/dsh-client-ui-quantskills/PdfPreview.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$23) + "]") === null) {
+		const css$27 = ".wfkmkq_viewer{color:#29313d;background:#e8eaed;min-width:0;overflow:auto}.wfkmkq_toolbar{z-index:1;background:#f5f6f8;justify-content:space-between;align-items:center;gap:8px;padding:8px;font-size:12px;display:flex;position:sticky;top:0}.wfkmkq_viewer button{color:inherit;cursor:pointer;background:#fff;border:1px solid #c8cdd5;border-radius:6px;padding:5px 9px}.wfkmkq_viewer button:disabled{opacity:.4;cursor:default}.wfkmkq_viewer p{padding:12px;font-size:13px}.wfkmkq_viewer canvas{background:#fff;width:100%;height:auto;display:block}.wfkmkq_viewer canvas[hidden]{display:none}";
+		const tagId$27 = "@deepseek-ai/dsh-client-ui-quantskills/PdfPreview.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$27) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$23;
-			tag.textContent = css$23;
+			tag.dataset.pluginCss = tagId$27;
+			tag.textContent = css$27;
 			document.head.appendChild(tag);
 		}
 		var PdfPreview_module_css_default = {
@@ -25756,13 +26035,13 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		}
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/ZoomableImage.module.css.mjs
-		const css$22 = ".DYYSpW_thumbnail{cursor:zoom-in;touch-action:manipulation}.DYYSpW_thumbnail:focus-visible{outline:2px solid var(--qs-accent);outline-offset:-3px}.DYYSpW_viewer{box-sizing:border-box;border:1px solid var(--qs-line);width:calc(100vw - 32px);max-width:none;height:calc(100dvh - 32px);max-height:none;color:var(--qs-ink);background:var(--qs-chrome);border-radius:20px;margin:auto;padding:0;font:14px/1.5 system-ui,sans-serif;overflow:hidden;box-shadow:0 20px 80px #0004}.DYYSpW_viewer[open]{flex-direction:column;display:flex}.DYYSpW_viewer::backdrop{background:#0008}.DYYSpW_toolbar{border-bottom:1px solid var(--qs-line);background:var(--qs-surface);flex-shrink:0;justify-content:space-between;align-items:center;gap:16px;padding:12px 18px;display:flex}.DYYSpW_toolbar h2{text-overflow:ellipsis;white-space:nowrap;min-width:0;margin:0;font-size:15px;font-weight:600;overflow:hidden}.DYYSpW_controls{flex-shrink:0;align-items:center;gap:6px;display:flex}.DYYSpW_controls button{border:1px solid var(--qs-line);min-width:34px;min-height:34px;color:inherit;font:inherit;cursor:pointer;white-space:nowrap;background:0 0;border-radius:9px;padding:6px 10px}.DYYSpW_controls button:hover{background:var(--qs-tint)}.DYYSpW_controls button:disabled{opacity:.4;cursor:default}.DYYSpW_controls output{text-align:center;font-variant-numeric:tabular-nums;min-width:52px;color:var(--qs-secondary)}.DYYSpW_viewer :is(button,[tabindex]):focus-visible{outline:2px solid var(--qs-accent);outline-offset:-2px}.DYYSpW_stage{touch-action:none;overscroll-behavior:contain;user-select:none;cursor:grab;background:color-mix(in srgb,var(--qs-surface) 38%,transparent);flex:1;min-width:0;min-height:0;position:relative;overflow:hidden}.DYYSpW_stage[data-dragging]{cursor:grabbing}.DYYSpW_stage>p{text-align:center;color:var(--qs-secondary);padding:40px}.DYYSpW_fullImage{object-fit:contain;transform-origin:50%;pointer-events:none;visibility:hidden;max-width:none;max-height:none;display:block;position:absolute;top:50%;left:50%}.DYYSpW_fullImage[data-ready]{visibility:visible}.DYYSpW_viewer footer{text-align:center;color:var(--qs-secondary);border-top:1px solid var(--qs-line);flex-shrink:0;padding:8px 16px;font-size:12px}@media (width<=680px){.DYYSpW_viewer{width:calc(100vw - 12px);height:calc(var(--qs-mobile-height,100dvh) - 12px);border-radius:14px}.DYYSpW_toolbar{flex-wrap:wrap;gap:8px;padding:10px}.DYYSpW_toolbar h2{width:100%}.DYYSpW_controls{flex-wrap:wrap;justify-content:flex-end;width:100%}.DYYSpW_controls button{min-height:40px;padding:5px 8px}.DYYSpW_viewer footer{font-size:11px}}";
-		const tagId$22 = "@deepseek-ai/dsh-client-ui-quantskills/ZoomableImage.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$22) + "]") === null) {
+		const css$26 = ".DYYSpW_thumbnail{cursor:zoom-in;touch-action:manipulation}.DYYSpW_thumbnail:focus-visible{outline:2px solid var(--qs-accent);outline-offset:-3px}.DYYSpW_viewer{box-sizing:border-box;border:1px solid var(--qs-line);width:calc(100vw - 32px);max-width:none;height:calc(100dvh - 32px);max-height:none;color:var(--qs-ink);background:var(--qs-chrome);border-radius:20px;margin:auto;padding:0;font:14px/1.5 system-ui,sans-serif;overflow:hidden;box-shadow:0 20px 80px #0004}.DYYSpW_viewer[open]{flex-direction:column;display:flex}.DYYSpW_viewer::backdrop{background:#0008}.DYYSpW_toolbar{border-bottom:1px solid var(--qs-line);background:var(--qs-surface);flex-shrink:0;justify-content:space-between;align-items:center;gap:16px;padding:12px 18px;display:flex}.DYYSpW_toolbar h2{text-overflow:ellipsis;white-space:nowrap;min-width:0;margin:0;font-size:15px;font-weight:600;overflow:hidden}.DYYSpW_controls{flex-shrink:0;align-items:center;gap:6px;display:flex}.DYYSpW_controls button{border:1px solid var(--qs-line);min-width:34px;min-height:34px;color:inherit;font:inherit;cursor:pointer;white-space:nowrap;background:0 0;border-radius:9px;padding:6px 10px}.DYYSpW_controls button:hover{background:var(--qs-tint)}.DYYSpW_controls button:disabled{opacity:.4;cursor:default}.DYYSpW_controls output{text-align:center;font-variant-numeric:tabular-nums;min-width:52px;color:var(--qs-secondary)}.DYYSpW_viewer :is(button,[tabindex]):focus-visible{outline:2px solid var(--qs-accent);outline-offset:-2px}.DYYSpW_stage{touch-action:none;overscroll-behavior:contain;user-select:none;cursor:grab;background:color-mix(in srgb,var(--qs-surface) 38%,transparent);flex:1;min-width:0;min-height:0;position:relative;overflow:hidden}.DYYSpW_stage[data-dragging]{cursor:grabbing}.DYYSpW_stage>p{text-align:center;color:var(--qs-secondary);padding:40px}.DYYSpW_fullImage{object-fit:contain;transform-origin:50%;pointer-events:none;visibility:hidden;max-width:none;max-height:none;display:block;position:absolute;top:50%;left:50%}.DYYSpW_fullImage[data-ready]{visibility:visible}.DYYSpW_viewer footer{text-align:center;color:var(--qs-secondary);border-top:1px solid var(--qs-line);flex-shrink:0;padding:8px 16px;font-size:12px}@media (width<=680px){.DYYSpW_viewer{width:calc(100vw - 12px);height:calc(var(--qs-mobile-height,100dvh) - 12px);border-radius:14px}.DYYSpW_toolbar{flex-wrap:wrap;gap:8px;padding:10px}.DYYSpW_toolbar h2{width:100%}.DYYSpW_controls{flex-wrap:wrap;justify-content:flex-end;width:100%}.DYYSpW_controls button{min-height:40px;padding:5px 8px}.DYYSpW_viewer footer{font-size:11px}}";
+		const tagId$26 = "@deepseek-ai/dsh-client-ui-quantskills/ZoomableImage.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$26) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$22;
-			tag.textContent = css$22;
+			tag.dataset.pluginCss = tagId$26;
+			tag.textContent = css$26;
 			document.head.appendChild(tag);
 		}
 		var ZoomableImage_module_css_default = {
@@ -26065,13 +26344,13 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		}
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/FinalDeliverables.module.css.mjs
-		const css$21 = ".CVh5ya_deliveries{min-width:0;color:var(--dsw-alias-label-primary);grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));align-items:start;gap:12px;margin:20px 0 12px;display:grid;container-type:inline-size}.CVh5ya_card,.CVh5ya_interactive{background:var(--dsw-alias-bg-layer-2);border-radius:16px;min-width:0;overflow:hidden}.CVh5ya_fileButton{width:100%;color:inherit;text-align:left;cursor:pointer;font:inherit;background:0 0;border:0;align-items:center;gap:14px;padding:18px;display:flex}.CVh5ya_fileButton:hover,.CVh5ya_open:hover,.CVh5ya_toggle:hover{background:var(--dsw-alias-interactive-bg-hover)}.CVh5ya_fileButton:focus-visible,.CVh5ya_open:focus-visible,.CVh5ya_toggle:focus-visible,.CVh5ya_feedback button:focus-visible{outline:2px solid var(--dsw-alias-brand-primary-new-colorprimary-new-color);outline-offset:-3px}.CVh5ya_fileButton:disabled,.CVh5ya_open:disabled{cursor:default;opacity:.65}.CVh5ya_icon{color:var(--dsw-alias-label-secondary);flex:none}.CVh5ya_thumbnail{object-fit:cover;border-radius:7px;width:44px;height:44px}.CVh5ya_fileCopy{flex:1;gap:5px;min-width:0;display:grid}.CVh5ya_fileCopy strong{text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:600;overflow:hidden}.CVh5ya_fileCopy small,.CVh5ya_caption{color:var(--dsw-alias-label-secondary);font-size:12px}.CVh5ya_arrow{flex:none}.CVh5ya_interactive{border:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-base);grid-column:1/-1}.CVh5ya_header{background:var(--dsw-alias-bg-layer-2);justify-content:space-between;align-items:center;gap:8px;padding:6px;display:flex}.CVh5ya_toggle,.CVh5ya_open{color:inherit;cursor:pointer;font:inherit;background:0 0;border:0;border-radius:8px;align-items:center;gap:8px;padding:10px;display:flex}.CVh5ya_toggle{text-align:left;flex:1;min-width:0;font-size:14px;font-weight:600}.CVh5ya_toggle span{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.CVh5ya_open{flex-shrink:0;font-size:12px}.CVh5ya_frame{background:#fff;border:0;width:100%;height:380px;display:block}.CVh5ya_body{min-width:0}.CVh5ya_body>p,.CVh5ya_feedback{padding:12px 18px;font-size:13px}.CVh5ya_feedback button{color:inherit;cursor:pointer;background:0 0;border:0;margin-left:8px;text-decoration:underline}.CVh5ya_caption{border-top:1px solid var(--dsw-alias-border-l1);margin:0;padding:8px 14px}.CVh5ya_compactHint{color:var(--dsw-alias-label-secondary);margin:0;padding:12px;font-size:12px;display:none}@container (width<=340px){.CVh5ya_body,.CVh5ya_caption{display:none}.CVh5ya_compactHint{display:block}.CVh5ya_open span{display:none}.CVh5ya_fileButton{gap:8px;padding:12px}.CVh5ya_fileCopy strong{white-space:normal;overflow-wrap:anywhere}.CVh5ya_toggle svg{flex-shrink:0}}@media (width<=600px){.CVh5ya_frame{height:320px}.CVh5ya_open span{display:none}}.CVh5ya_card{border:1px solid var(--dsw-alias-border-l2)}.CVh5ya_image{object-fit:contain;background:var(--dsw-alias-bg-base);width:100%;max-height:300px;display:block}.CVh5ya_audio{width:calc(100% - 24px);margin:16px 12px;display:block}.CVh5ya_video{background:#111;width:100%;max-height:320px;display:block}.CVh5ya_more{border:1px solid var(--dsw-alias-border-l2);color:inherit;cursor:pointer;background:0 0;border-radius:10px;grid-column:1/-1;padding:12px}@container (width<=340px){.CVh5ya_body,.CVh5ya_caption{display:block}.CVh5ya_frame{height:240px}.CVh5ya_toggle{padding:8px 4px}.CVh5ya_open{padding:8px 5px}}";
-		const tagId$21 = "@deepseek-ai/dsh-client-ui-quantskills/FinalDeliverables.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$21) + "]") === null) {
+		const css$25 = ".CVh5ya_deliveries{min-width:0;color:var(--dsw-alias-label-primary);grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));align-items:start;gap:12px;margin:20px 0 12px;display:grid;container-type:inline-size}.CVh5ya_card,.CVh5ya_interactive{background:var(--dsw-alias-bg-layer-2);border-radius:16px;min-width:0;overflow:hidden}.CVh5ya_fileButton{width:100%;color:inherit;text-align:left;cursor:pointer;font:inherit;background:0 0;border:0;align-items:center;gap:14px;padding:18px;display:flex}.CVh5ya_fileButton:hover,.CVh5ya_open:hover,.CVh5ya_toggle:hover{background:var(--dsw-alias-interactive-bg-hover)}.CVh5ya_fileButton:focus-visible,.CVh5ya_open:focus-visible,.CVh5ya_toggle:focus-visible,.CVh5ya_feedback button:focus-visible{outline:2px solid var(--dsw-alias-brand-primary-new-colorprimary-new-color);outline-offset:-3px}.CVh5ya_fileButton:disabled,.CVh5ya_open:disabled{cursor:default;opacity:.65}.CVh5ya_icon{color:var(--dsw-alias-label-secondary);flex:none}.CVh5ya_thumbnail{object-fit:cover;border-radius:7px;width:44px;height:44px}.CVh5ya_fileCopy{flex:1;gap:5px;min-width:0;display:grid}.CVh5ya_fileCopy strong{text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:600;overflow:hidden}.CVh5ya_fileCopy small,.CVh5ya_caption{color:var(--dsw-alias-label-secondary);font-size:12px}.CVh5ya_arrow{flex:none}.CVh5ya_interactive{border:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-base);grid-column:1/-1}.CVh5ya_header{background:var(--dsw-alias-bg-layer-2);justify-content:space-between;align-items:center;gap:8px;padding:6px;display:flex}.CVh5ya_toggle,.CVh5ya_open{color:inherit;cursor:pointer;font:inherit;background:0 0;border:0;border-radius:8px;align-items:center;gap:8px;padding:10px;display:flex}.CVh5ya_toggle{text-align:left;flex:1;min-width:0;font-size:14px;font-weight:600}.CVh5ya_toggle span{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.CVh5ya_open{flex-shrink:0;font-size:12px}.CVh5ya_frame{background:#fff;border:0;width:100%;height:380px;display:block}.CVh5ya_body{min-width:0}.CVh5ya_body>p,.CVh5ya_feedback{padding:12px 18px;font-size:13px}.CVh5ya_feedback button{color:inherit;cursor:pointer;background:0 0;border:0;margin-left:8px;text-decoration:underline}.CVh5ya_caption{border-top:1px solid var(--dsw-alias-border-l1);margin:0;padding:8px 14px}.CVh5ya_compactHint{color:var(--dsw-alias-label-secondary);margin:0;padding:12px;font-size:12px;display:none}@container (width<=340px){.CVh5ya_body,.CVh5ya_caption{display:none}.CVh5ya_compactHint{display:block}.CVh5ya_open span{display:none}.CVh5ya_fileButton{gap:8px;padding:12px}.CVh5ya_fileCopy strong{white-space:normal;overflow-wrap:anywhere}.CVh5ya_toggle svg{flex-shrink:0}}@media (width<=600px){.CVh5ya_frame{height:320px}.CVh5ya_open span{display:none}}.CVh5ya_card{border:1px solid var(--dsw-alias-border-l2)}.CVh5ya_image{object-fit:contain;background:var(--dsw-alias-bg-base);width:100%;max-height:300px;display:block}.CVh5ya_audio{width:calc(100% - 24px);margin:16px 12px;display:block}.CVh5ya_video{background:#111;width:100%;max-height:320px;display:block}.CVh5ya_more{border:1px solid var(--dsw-alias-border-l2);color:inherit;cursor:pointer;background:0 0;border-radius:10px;grid-column:1/-1;padding:12px}@container (width<=340px){.CVh5ya_body,.CVh5ya_caption{display:block}.CVh5ya_frame{height:240px}.CVh5ya_toggle{padding:8px 4px}.CVh5ya_open{padding:8px 5px}}";
+		const tagId$25 = "@deepseek-ai/dsh-client-ui-quantskills/FinalDeliverables.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$25) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$21;
-			tag.textContent = css$21;
+			tag.dataset.pluginCss = tagId$25;
+			tag.textContent = css$25;
 			document.head.appendChild(tag);
 		}
 		var FinalDeliverables_module_css_default = {
@@ -26148,7 +26427,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 							onClick: () => inlinePreview ? setExpanded(!expanded) : openWorkbench(item.path),
 							title: inlinePreview ? title : `在右侧打开 ${title}`,
 							children: [
-								inlinePreview ? expanded ? (0, react_jsx_runtime.jsx)(s$4, { size: 16 }) : (0, react_jsx_runtime.jsx)(s$2, { size: 16 }) : (0, react_jsx_runtime.jsx)(c$3, { size: 16 }),
+								inlinePreview ? expanded ? (0, react_jsx_runtime.jsx)(s$4, { size: 16 }) : (0, react_jsx_runtime.jsx)(s$2, { size: 16 }) : (0, react_jsx_runtime.jsx)(c$6, { size: 16 }),
 								(0, react_jsx_runtime.jsx)(s$1, { size: 18 }),
 								(0, react_jsx_runtime.jsx)("span", { children: title })
 							]
@@ -26159,7 +26438,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 							"aria-label": `在右侧展开 ${title}`,
 							onClick: () => openWorkbench(item.path),
 							title: "在右侧展开",
-							children: (0, react_jsx_runtime.jsx)(c$3, { size: 18 })
+							children: (0, react_jsx_runtime.jsx)(c$6, { size: 18 })
 						}),
 						downloadFile && (0, react_jsx_runtime.jsx)("button", {
 							className: FinalDeliverables_module_css_default.open,
@@ -26167,7 +26446,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 							"aria-label": `下载 ${title}`,
 							onClick: () => downloadFile(item.path),
 							title: "下载原文件",
-							children: (0, react_jsx_runtime.jsx)(l, { size: 18 })
+							children: (0, react_jsx_runtime.jsx)(l$1, { size: 18 })
 						})
 					]
 				}), expanded && (0, react_jsx_runtime.jsxs)("div", {
@@ -27860,13 +28139,13 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		}
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/ActionDialog.module.css.mjs
-		const css$20 = ".KNqX8q_dialog{pointer-events:auto;box-sizing:border-box;border:1px solid var(--qs-line,#8883);background:var(--dsw-alias-bg-base,#fff);width:min(480px,100vw - 32px);max-width:none;max-height:calc(100dvh - 32px);color:var(--dsw-alias-label-primary,#111);overflow-wrap:anywhere;border-radius:18px;margin:auto;padding:0;font:14px/1.6 system-ui,sans-serif;overflow:auto;box-shadow:0 20px 80px #0003}.KNqX8q_dialog::backdrop{background:var(--dsw-alias-bg-mask-1,#0005);backdrop-filter:blur(2px)}.KNqX8q_dialog[data-wide]{background:var(--qs-surface,var(--dsw-alias-bg-base));width:min(900px,100vw - 32px);color:var(--qs-ink,var(--dsw-alias-label-primary))}.KNqX8q_header{justify-content:space-between;align-items:center;gap:16px;padding:20px 24px 12px;display:flex}.KNqX8q_dialog .KNqX8q_header h2{margin:0;font-size:18px;line-height:1.4}.KNqX8q_dialog .KNqX8q_header button{border:0;width:32px;height:32px;padding:0;font-size:22px}.KNqX8q_body{padding:0 24px 24px}.KNqX8q_body>form{border:0;gap:16px;margin:0;padding:0;display:grid}.KNqX8q_body p{opacity:1;margin:0 0 16px;line-height:1.65}.KNqX8q_body h3{margin:0;font-size:14px}.KNqX8q_body ul{max-height:180px;padding-left:20px;overflow:auto}.KNqX8q_body label{gap:8px;display:grid}.KNqX8q_dialog button,.KNqX8q_dialog input,.KNqX8q_dialog select,.KNqX8q_dialog textarea{box-sizing:border-box;font:inherit;color:inherit;border:1px solid var(--qs-line,#8884);background:0 0;border-radius:9px;min-width:0;padding:9px 12px}.KNqX8q_dialog input,.KNqX8q_dialog select,.KNqX8q_dialog textarea{width:100%}.KNqX8q_dialog input::file-selector-button{border:1px solid var(--qs-line);background:var(--qs-tint);color:var(--qs-ink);font:inherit;cursor:pointer;border-radius:6px;margin-right:10px;padding:5px 9px}.KNqX8q_dialog textarea{resize:vertical;min-height:100px}.KNqX8q_dialog button{cursor:pointer;white-space:normal;min-height:36px}.KNqX8q_dialog button:disabled{opacity:.5;cursor:default}.KNqX8q_dialog :is(button,input,select,textarea):focus-visible{outline:2px solid var(--qs-accent,#4285d4);outline-offset:2px}.KNqX8q_dialog button[data-primary],.KNqX8q_dialog button[type=submit]{background:var(--qs-accent,#0067d9);color:#fff;border-color:#0000}body[data-qs-plugin-theme=dark] .KNqX8q_dialog button[data-primary],body[data-qs-plugin-theme=dark] .KNqX8q_dialog button[type=submit]{color:var(--qs-deep,#152033)}.KNqX8q_dialog button[data-danger]{color:#fff;background:#b42318;border-color:#b42318}.KNqX8q_dialog footer{flex-wrap:wrap;justify-content:flex-end;gap:10px;margin-top:20px;display:flex}.KNqX8q_dialog .KNqX8q_error{color:#b42318;border:1px solid #b4231833;border-radius:8px;margin:16px 0 0;padding:10px}@media (width<=480px){.KNqX8q_header{padding:16px 18px 12px}.KNqX8q_body{padding:0 18px 18px}}@media (width<=840px){.KNqX8q_dialog{max-height:calc(var(--qs-mobile-height,100dvh) - 24px)}.KNqX8q_dialog :is(input,select,textarea){font-size:16px}.KNqX8q_dialog button{min-height:40px}}";
-		const tagId$20 = "@deepseek-ai/dsh-client-ui-quantskills/ActionDialog.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$20) + "]") === null) {
+		const css$24 = ".KNqX8q_dialog{pointer-events:auto;box-sizing:border-box;border:1px solid var(--qs-line,#8883);background:var(--dsw-alias-bg-base,#fff);width:min(480px,100vw - 32px);max-width:none;max-height:calc(100dvh - 32px);color:var(--dsw-alias-label-primary,#111);overflow-wrap:anywhere;border-radius:18px;margin:auto;padding:0;font:14px/1.6 system-ui,sans-serif;overflow:auto;box-shadow:0 20px 80px #0003}.KNqX8q_dialog::backdrop{background:var(--dsw-alias-bg-mask-1,#0005);backdrop-filter:blur(2px)}.KNqX8q_dialog[data-wide]{background:var(--qs-surface,var(--dsw-alias-bg-base));width:min(900px,100vw - 32px);color:var(--qs-ink,var(--dsw-alias-label-primary))}.KNqX8q_header{justify-content:space-between;align-items:center;gap:16px;padding:20px 24px 12px;display:flex}.KNqX8q_dialog .KNqX8q_header h2{margin:0;font-size:18px;line-height:1.4}.KNqX8q_dialog .KNqX8q_header button{border:0;width:32px;height:32px;padding:0;font-size:22px}.KNqX8q_body{padding:0 24px 24px}.KNqX8q_body>form{border:0;gap:16px;margin:0;padding:0;display:grid}.KNqX8q_body p{opacity:1;margin:0 0 16px;line-height:1.65}.KNqX8q_body h3{margin:0;font-size:14px}.KNqX8q_body ul{max-height:180px;padding-left:20px;overflow:auto}.KNqX8q_body label{gap:8px;display:grid}.KNqX8q_dialog button,.KNqX8q_dialog input,.KNqX8q_dialog select,.KNqX8q_dialog textarea{box-sizing:border-box;font:inherit;color:inherit;border:1px solid var(--qs-line,#8884);background:0 0;border-radius:9px;min-width:0;padding:9px 12px}.KNqX8q_dialog input,.KNqX8q_dialog select,.KNqX8q_dialog textarea{width:100%}.KNqX8q_dialog input::file-selector-button{border:1px solid var(--qs-line);background:var(--qs-tint);color:var(--qs-ink);font:inherit;cursor:pointer;border-radius:6px;margin-right:10px;padding:5px 9px}.KNqX8q_dialog textarea{resize:vertical;min-height:100px}.KNqX8q_dialog button{cursor:pointer;white-space:normal;min-height:36px}.KNqX8q_dialog button:disabled{opacity:.5;cursor:default}.KNqX8q_dialog :is(button,input,select,textarea):focus-visible{outline:2px solid var(--qs-accent,#4285d4);outline-offset:2px}.KNqX8q_dialog button[data-primary],.KNqX8q_dialog button[type=submit]{background:var(--qs-accent,#0067d9);color:#fff;border-color:#0000}body[data-qs-plugin-theme=dark] .KNqX8q_dialog button[data-primary],body[data-qs-plugin-theme=dark] .KNqX8q_dialog button[type=submit]{color:var(--qs-deep,#152033)}.KNqX8q_dialog button[data-danger]{color:#fff;background:#b42318;border-color:#b42318}.KNqX8q_dialog footer{flex-wrap:wrap;justify-content:flex-end;gap:10px;margin-top:20px;display:flex}.KNqX8q_dialog .KNqX8q_error{color:#b42318;border:1px solid #b4231833;border-radius:8px;margin:16px 0 0;padding:10px}@media (width<=480px){.KNqX8q_header{padding:16px 18px 12px}.KNqX8q_body{padding:0 18px 18px}}@media (width<=840px){.KNqX8q_dialog{max-height:calc(var(--qs-mobile-height,100dvh) - 24px)}.KNqX8q_dialog :is(input,select,textarea){font-size:16px}.KNqX8q_dialog button{min-height:40px}}";
+		const tagId$24 = "@deepseek-ai/dsh-client-ui-quantskills/ActionDialog.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$24) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$20;
-			tag.textContent = css$20;
+			tag.dataset.pluginCss = tagId$24;
+			tag.textContent = css$24;
 			document.head.appendChild(tag);
 		}
 		var ActionDialog_module_css_default = {
@@ -27877,13 +28156,13 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		};
 		//#endregion
 		//#region \0dsh-global-css:packages/ui-quantskills/src/client/TradingWorkspace.css.mjs
-		const css$19 = "dialog.qs-trading-drawer{--tw-ink:var(--fv-text,var(--qs-ink,var(--dsw-alias-text-primary)));--tw-panel:var(--fv-panel,var(--qs-surface,var(--dsw-alias-bg-base)));--tw-line:var(--fv-line,var(--qs-line,var(--dsw-alias-border-1)));--tw-muted:var(--fv-muted,var(--qs-muted,var(--dsw-alias-text-secondary)));--tw-accent:var(--fv-lime,var(--qs-accent,var(--dsw-alias-brand-primary)));width:min(510px,100vw);max-width:100vw;height:calc(100dvh / var(--qs-interface-scale,1));max-height:calc(100dvh / var(--qs-interface-scale,1));border:1px solid var(--tw-line);color:var(--tw-ink);background:var(--tw-panel);border-radius:20px 0 0 20px;margin:0;padding:0;font-family:inherit;font-size:14px;line-height:1.65;animation:.22s ease-out qs-drawer-enter;position:fixed;inset:0 0 0 auto;box-shadow:-20px 0 70px #0002}.qs-trading-drawer[open]{flex-direction:column;display:flex}.qs-trading-drawer>header{border-bottom:1px solid var(--tw-line);flex:none;margin:0;padding:22px 24px}.qs-trading-drawer>header h2{margin:0;font-size:20px}.qs-trading-drawer>div{flex:1;min-height:0;padding:22px 24px;overflow:auto}.qs-trading-drawer :is(input,select,textarea){box-sizing:border-box;background:var(--tw-panel);max-width:100%;color:var(--tw-ink);border:1px solid var(--tw-line);font:inherit;border-radius:8px;padding:10px}.qs-trading-drawer label{flex-direction:column;gap:7px;font-size:13px;display:flex}.qs-trading-drawer button{border:1px solid var(--tw-line);background:var(--tw-panel);min-height:40px;color:var(--tw-ink);font:inherit;cursor:pointer;border-radius:9px;padding:8px 13px}.qs-trading-drawer button:disabled{opacity:.5;cursor:default}.qs-trading-drawer :is(button,input,select,summary):focus-visible{outline:2px solid var(--tw-accent);outline-offset:2px}.qs-drawer-footer{background:var(--tw-panel);border-top:1px solid var(--tw-line);z-index:2;justify-content:flex-end;gap:10px;margin-top:22px;padding:18px 0;display:flex;position:sticky;bottom:-22px}.qs-trading-drawer .qs-trading-guide{border:0;margin:0;padding:0}.qs-trading-drawer .qs-trading-guide nav{grid-template-columns:1fr 1fr;display:grid}.qs-trading-drawer .qs-trading-guide header span{display:none}.qs-workspace-heading{justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px;display:flex}.qs-workspace-heading h2{margin:0 0 5px;font-size:25px}.qs-workspace-heading p{color:var(--qs-muted);margin:0;font-size:13px}.qs-workspace-actions{flex-shrink:0;align-items:center;gap:10px;display:flex}.qs-workspace-actions .qs-quick-help{color:var(--qs-muted);background:0 0;border:0}.qs-launch-row{flex-wrap:wrap;align-items:center;gap:16px;padding:18px 0 24px;display:flex}.qs-launch-row label,.qs-launch-field{color:var(--qs-muted);gap:6px;font-size:12px;display:grid}.qs-launch-row label>:is(button,select),.qs-launch-field>button{min-width:145px;min-height:42px;color:var(--qs-ink)}.qs-launch-summary{color:var(--qs-muted);flex:1;font-size:12px;line-height:1.8}.qs-launch-summary strong{color:var(--qs-ink);font-weight:500;display:block}.qs-compact-alert{border:1px solid var(--qs-line);background:var(--qs-tint);border-radius:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;padding:12px 16px;font-size:13px;display:flex}.qs-launch-row>button{min-width:130px;min-height:44px}.qs-watch-plans{border-block:1px solid var(--qs-line);margin-top:20px;padding:14px 0}.qs-instrument-parameters{grid-column:1/-1}.qs-instrument-parameters>summary,.qs-connection-settings>summary{cursor:pointer;padding:10px 0;font-size:13px}.qs-instrument-parameters>label{margin:12px 0}.qs-connection-settings{margin-bottom:16px}.qs-workspace-actions>button[aria-label],.fv-header-actions>button[aria-label]{justify-content:center;align-items:center;width:42px;height:42px;padding:9px;display:inline-flex}.fv-account-strip{border-bottom:1px solid var(--fv-line);grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:22px;padding:20px 0;display:grid}.fv-account-strip>div{gap:8px;display:grid}.fv-account-strip small{color:var(--fv-muted);font-size:12px}.fv-account-strip strong{font-variant-numeric:tabular-nums;font-size:20px;font-weight:550}.fv-quote-time{margin-top:8px;display:block}@media (width<=600px){.fv-account-strip{gap:12px}.fv-account-strip strong{font-size:16px}}@keyframes qs-drawer-enter{0%{opacity:.5;transform:translate(35px)}to{opacity:1;transform:translate(0)}}@media (prefers-reduced-motion:reduce){.qs-trading-drawer{animation:none}}@media (width<=600px){.qs-trading-drawer{border-radius:0;width:100vw}.qs-workspace-heading{flex-wrap:wrap}.qs-launch-row>button{width:100%}.qs-launch-summary{flex-basis:100%}}.qs-trader-shell{box-sizing:border-box;height:100%;padding:clamp(20px,3vw,40px);overflow:auto}.qs-trader-shell>.quantstudio-fly{height:auto;min-height:0;overflow:visible}.qs-trader-shell .fv-page{height:auto;min-height:0;padding:0;overflow:visible}.qs-contest-workspace>header h1{letter-spacing:-.025em;font-size:clamp(22px,2vw,28px)}.qs-contest-workspace [hidden],.qs-settings-sheet [hidden]{display:none!important}.qs-jev-workspace{background:var(--qs-surface);box-shadow:0 6px 28px #00000004;border-radius:22px!important}.qs-jev-workspace .qs-workspace-heading h2{letter-spacing:-.03em;font-family:inherit;font-size:26px}.qs-workspace-actions>button[aria-label],.fv-header-actions>button[aria-label]{background:var(--qs-surface);gap:7px;width:auto;padding:9px 15px;font-size:14px;font-weight:500}.qs-jev-workspace .qs-launch-row{border:1px solid var(--qs-line);background:var(--qs-tint);border-radius:16px;margin-bottom:20px;padding:20px}.qs-jev-workspace .qs-launch-row label>:is(button,select),.qs-jev-workspace .qs-launch-field>button{background:var(--qs-surface);border:1px solid var(--qs-line);border-radius:10px}.qs-launch-row>button[data-primary]{border-radius:11px;padding-inline:22px}.fv-workspace button.qs-summary-control,.qs-jev-workspace button.qs-summary-control{text-align:left;min-width:0;color:var(--qs-muted);background:0 0;border:0;border-radius:10px;flex-direction:column;justify-content:center;align-items:flex-start;gap:4px;padding:10px 12px;font-size:12px;display:flex}button.qs-summary-control:hover{background:var(--qs-surface)}button.qs-summary-control strong{color:var(--qs-ink);font-size:13px;font-weight:500}.fv-workspace .fv-launch-row{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:20px;gap:24px;margin:0 0 16px;padding:22px 24px}.qs-run-state{align-items:center;gap:12px;margin-right:auto;display:flex}.qs-run-state>div{gap:6px;display:grid}.qs-run-state strong{font-size:16px;font-weight:600}.qs-run-state small{color:var(--qs-muted);font-size:12px}.qs-state-dot{background:var(--qs-muted);border-radius:50%;width:9px;height:9px}.qs-state-dot[data-active=true]{background:var(--fv-success);box-shadow:0 0 0 5px color-mix(in srgb,var(--fv-success) 10%,transparent)}.qs-contract-strip{align-items:baseline;gap:16px;padding:6px 0 24px;display:flex}.qs-contract-strip>span{color:var(--qs-muted);flex-shrink:0;font-size:12px}.qs-contract-strip>div{flex-wrap:wrap;gap:7px;display:flex}.qs-contract-strip button{font-variant-numeric:tabular-nums;min-height:34px;padding:6px 13px;font-size:13px}.qs-contract-strip button[aria-pressed=true]{color:var(--fv-lime);background:var(--fv-tint);border-color:var(--fv-lime)}.qs-contract-strip .qs-add-contract{color:var(--fv-lime);background:0 0;border-color:#0000}.fv-workspace .fv-nav{border-bottom:1px solid var(--fv-line);gap:4px;margin-bottom:24px;padding-bottom:12px}.fv-workspace .fv-nav button{min-height:36px;font-size:14px}.fv-workspace .fv-trading-focus>section,.fv-workspace .fv-plans-focus{border-radius:20px}dialog.qs-settings-sheet{width:min(980px,100vw - 64px);height:min(760px, calc(100dvh / var(--qs-interface-scale,1) - 64px));max-height:calc(100dvh / var(--qs-interface-scale,1) - 32px);border:1px solid var(--qs-line);color:var(--qs-ink);background:var(--qs-surface);border-radius:22px;overflow:hidden;box-shadow:0 28px 100px #0003}.qs-settings-sheet[open]{flex-direction:column;display:flex}.qs-settings-sheet>header{border-bottom:1px solid var(--qs-line);flex:none;margin:0;padding:23px 26px}.qs-settings-sheet>header h2{letter-spacing:-.02em;font-size:19px;font-weight:600}.qs-settings-sheet>header button{background:var(--qs-tint);border:0;border-radius:50%}.qs-settings-sheet>div{flex-direction:column;flex:1;min-height:0;padding:0;display:flex;overflow:hidden}.qs-settings-sheet .qs-settings-form{flex-direction:column;flex:1;gap:0;min-height:0;margin:0;padding:0;display:flex}.qs-settings-layout{flex:1;grid-template-columns:208px minmax(0,1fr);min-height:0;display:grid}.qs-settings-navigation{background:color-mix(in srgb,var(--qs-ink) 3%,var(--qs-surface));border-right:1px solid var(--qs-line);padding:18px 12px;overflow:auto}.qs-settings-sheet .qs-settings-navigation button{width:100%;color:var(--qs-ink);text-align:left;background:0 0;border:1px solid #0000;border-radius:11px;justify-content:stretch;place-items:start;gap:4px;margin-bottom:5px;padding:13px 14px;font-weight:400;display:grid}.qs-settings-sheet .qs-settings-navigation button strong{font-size:14px;font-weight:550}.qs-settings-sheet .qs-settings-navigation button small{color:var(--qs-muted);font-size:11px;line-height:1.5}.qs-settings-sheet .qs-settings-navigation button[aria-current]{background:var(--qs-surface);border-color:var(--qs-line);box-shadow:0 2px 4px #00000005}.qs-settings-sheet .qs-settings-navigation button[aria-current] strong{color:var(--qs-accent)}.qs-settings-sheet .qs-settings-content{overscroll-behavior:contain;scrollbar-gutter:stable;min-width:0;min-height:0;padding:30px;overflow:auto}.qs-settings-sheet .qs-settings-intro{margin:0 0 24px}.qs-settings-sheet .qs-settings-intro h3{letter-spacing:-.02em;margin:0 0 8px;font-size:23px;font-weight:600;line-height:1.4}.qs-settings-sheet .qs-settings-intro p{color:var(--qs-muted);margin:0;font-size:13px}.qs-settings-sheet .qs-template-picker{grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px;display:grid}.qs-settings-sheet .qs-template-picker button{min-height:40px;margin:0;padding:9px 12px}.qs-settings-sheet .qs-settings-group>button{justify-self:start;margin:0}.qs-settings-sheet :is(.qs-settings-fields,.fv-settings-fields){border:0;min-width:0;margin:0;padding:0}.qs-settings-sheet .qs-settings-group{background:color-mix(in srgb,var(--qs-ink) 2%,var(--qs-surface));border:1px solid var(--qs-line);border-radius:14px;gap:18px;margin:0 0 18px;padding:20px;display:grid}.qs-settings-sheet .qs-settings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.qs-settings-sheet label{color:var(--qs-ink);gap:8px;font-size:13px;display:grid}.qs-settings-sheet :is(input,select,textarea){background:var(--qs-surface);color:var(--qs-ink);border:1px solid var(--qs-line);min-height:40px;box-shadow:none;border-radius:9px;padding:9px 11px;font-size:14px}.qs-settings-sheet :is(input,select,textarea):disabled{opacity:.65}.qs-settings-sheet input[type=checkbox]{width:17px;height:17px;min-height:0;accent-color:var(--qs-accent)}.qs-settings-sheet label.fv-checkbox{flex-direction:row;align-items:center;gap:10px;display:flex}.qs-settings-sheet details{background:0 0;border:0;margin:12px 0;padding:0}.qs-settings-sheet summary{cursor:pointer;color:var(--qs-muted);padding:10px 0;font-size:13px}.qs-settings-sheet details>:not(summary){margin-top:12px}.qs-settings-sheet .qs-settings-note{color:var(--qs-muted);font-size:12px}.qs-settings-sheet .qs-settings-notice{background:var(--qs-tint);color:var(--qs-muted);border-radius:10px;padding:12px}.qs-settings-sheet .qs-settings-footer{border-top:1px solid var(--qs-line);background:var(--qs-surface);flex-wrap:wrap;flex:none;align-items:center;gap:10px;margin:0;padding:17px 24px;display:flex}.qs-settings-footer>span{color:var(--qs-muted);margin-right:auto;font-size:12px}.qs-settings-footer button{min-width:76px}.qs-settings-sheet button.fv-primary{color:var(--fv-button-ink,#fff);background:var(--qs-accent);border-color:#0000}.qs-settings-sheet .fv-setup-body{gap:16px;padding:0;display:grid}.qs-settings-sheet .fv-setup-body>:is(p,small){color:var(--qs-muted);margin:0;font-size:12px}.qs-settings-sheet .fv-setup-body>fieldset{border:0;padding:0}.qs-settings-sheet .fv-setup-body>fieldset>legend{display:none}.qs-settings-sheet .qs-settings-content .fv-form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;display:grid}.qs-settings-sheet .qs-settings-content .fv-instrument{border:1px solid var(--qs-line);background:color-mix(in srgb,var(--qs-ink) 2%,var(--qs-surface));border-radius:12px;grid-template-columns:100px minmax(0,1fr) 28px;align-items:start;gap:12px;margin:10px 0;padding:16px;display:grid}.qs-settings-sheet .fv-instrument>div>small{margin-top:5px;font-size:11px;display:block}.qs-settings-sheet .fv-contract-choice{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;display:grid}.qs-settings-sheet .fv-contract-choice>:is(input,select){width:100%;min-width:0}.qs-settings-sheet .fv-contract-choice small{text-align:left;grid-column:1/-1;font-size:11px}.qs-settings-sheet .qs-settings-content .fv-instrument>button{width:28px;min-height:28px;color:var(--qs-muted);background:0 0;border-color:#0000;place-self:start end;padding:0;font-size:18px}.qs-settings-sheet .fv-check-row{border-bottom:1px solid var(--qs-line);justify-content:space-between;gap:12px;padding:14px 0;font-size:13px;display:flex}.qs-settings-sheet .qs-settings-content .fv-instruments-list{max-height:none}@media (width<=760px){.qs-trader-shell{padding:18px}.fv-workspace .fv-launch-row{gap:14px;padding:18px}.fv-launch-row>.qs-summary-control{display:none}dialog.qs-settings-sheet{width:calc(100vw - 20px);height:calc(100dvh / var(--qs-interface-scale,1) - 20px);max-height:calc(100dvh / var(--qs-interface-scale,1) - 20px);border-radius:16px}.qs-settings-sheet>header{padding:16px 18px}.qs-settings-layout{grid-template-rows:auto minmax(0,1fr);grid-template-columns:minmax(0,1fr)}.qs-settings-navigation{border:0;border-bottom:1px solid var(--qs-line);gap:4px;padding:8px;display:flex;overflow-x:auto}.qs-settings-sheet .qs-settings-navigation button{flex:none;width:auto;margin:0;padding:10px 12px}.qs-settings-sheet .qs-settings-navigation button small{display:none}.qs-settings-sheet .qs-settings-content{padding:20px}.qs-settings-sheet .qs-settings-footer{padding:12px 16px}.qs-settings-footer>span{flex-basis:100%}.qs-settings-sheet .qs-settings-grid,.qs-settings-sheet .qs-settings-content .fv-form-grid{grid-template-columns:1fr}.qs-settings-sheet .qs-settings-group{padding:16px}.qs-settings-sheet .qs-template-picker{grid-template-columns:minmax(0,1fr)}.qs-settings-sheet .qs-settings-content .fv-instrument{grid-template-columns:minmax(0,1fr) 28px}.qs-settings-sheet .fv-contract-choice{grid-area:2/1/auto/-1}.qs-settings-sheet .qs-settings-content .fv-instrument>button{grid-area:1/2}.qs-settings-footer>span+button{margin-left:auto}}.qs-jev-instruments{gap:18px;display:grid}.qs-jev-instruments .qs-product-filters{grid-template-columns:1.2fr 1fr;gap:10px;margin:12px 0;display:grid}.qs-jev-instruments .qs-product-checklist{border:1px solid var(--qs-line);border-radius:12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:220px;padding:4px;display:grid;overflow:auto}.qs-jev-instruments .qs-product-checklist>label{cursor:pointer;border-radius:9px;flex-direction:row;align-items:center;gap:9px;padding:10px;display:flex}.qs-jev-instruments .qs-product-checklist>label:has(:checked){background:var(--qs-tint)}.qs-jev-instruments .qs-product-checklist>label:has(:disabled){opacity:.5;cursor:default}.qs-jev-instruments .qs-product-checklist input{width:16px;height:16px;min-height:16px;accent-color:var(--qs-accent);flex-shrink:0;margin:0;padding:0}.qs-jev-instruments small{color:var(--qs-secondary);font-size:11px}.qs-jev-instruments .qs-product-checklist span{gap:1px;display:grid}.qs-selected-contracts{gap:12px;display:grid}.qs-selected-contract{border:1px solid var(--qs-line);border-radius:12px;padding:12px}.qs-selected-contract header{justify-content:space-between;align-items:center;margin-bottom:8px;display:flex}.qs-selected-contract header button{border:0;width:28px;min-height:28px;padding:0}.qs-selected-contract .fv-contract-choice{grid-template-columns:1fr 1fr;gap:7px;display:grid}.qs-selected-contract .fv-contract-choice small{grid-column:1/-1}.qs-selected-contract details{margin-top:8px;font-size:12px}.qs-jev-market-tabs{flex-wrap:wrap;gap:8px;margin:12px 0;display:flex}.qs-jev-market-tabs button{border:1px solid var(--qs-line);background:var(--qs-surface);color:var(--qs-ink);border-radius:10px;gap:4px;padding:10px 14px;display:grid}.qs-jev-market-tabs button[aria-pressed=true]{border-color:var(--qs-accent);background:var(--qs-tint)}.qs-jev-market-tabs small{color:var(--qs-secondary)}";
-		const tagId$19 = "@deepseek-ai/dsh-client-ui-quantskills/TradingWorkspace.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$19) + "]") === null) {
+		const css$23 = "dialog.qs-trading-drawer{--tw-ink:var(--fv-text,var(--qs-ink,var(--dsw-alias-text-primary)));--tw-panel:var(--fv-panel,var(--qs-surface,var(--dsw-alias-bg-base)));--tw-line:var(--fv-line,var(--qs-line,var(--dsw-alias-border-1)));--tw-muted:var(--fv-muted,var(--qs-muted,var(--dsw-alias-text-secondary)));--tw-accent:var(--fv-lime,var(--qs-accent,var(--dsw-alias-brand-primary)));width:min(510px,100vw);max-width:100vw;height:calc(100dvh / var(--qs-interface-scale,1));max-height:calc(100dvh / var(--qs-interface-scale,1));border:1px solid var(--tw-line);color:var(--tw-ink);background:var(--tw-panel);border-radius:20px 0 0 20px;margin:0;padding:0;font-family:inherit;font-size:14px;line-height:1.65;animation:.22s ease-out qs-drawer-enter;position:fixed;inset:0 0 0 auto;box-shadow:-20px 0 70px #0002}.qs-trading-drawer[open]{flex-direction:column;display:flex}.qs-trading-drawer>header{border-bottom:1px solid var(--tw-line);flex:none;margin:0;padding:22px 24px}.qs-trading-drawer>header h2{margin:0;font-size:20px}.qs-trading-drawer>div{flex:1;min-height:0;padding:22px 24px;overflow:auto}.qs-trading-drawer :is(input,select,textarea){box-sizing:border-box;background:var(--tw-panel);max-width:100%;color:var(--tw-ink);border:1px solid var(--tw-line);font:inherit;border-radius:8px;padding:10px}.qs-trading-drawer label{flex-direction:column;gap:7px;font-size:13px;display:flex}.qs-trading-drawer button{border:1px solid var(--tw-line);background:var(--tw-panel);min-height:40px;color:var(--tw-ink);font:inherit;cursor:pointer;border-radius:9px;padding:8px 13px}.qs-trading-drawer button:disabled{opacity:.5;cursor:default}.qs-trading-drawer :is(button,input,select,summary):focus-visible{outline:2px solid var(--tw-accent);outline-offset:2px}.qs-drawer-footer{background:var(--tw-panel);border-top:1px solid var(--tw-line);z-index:2;justify-content:flex-end;gap:10px;margin-top:22px;padding:18px 0;display:flex;position:sticky;bottom:-22px}.qs-trading-drawer .qs-trading-guide{border:0;margin:0;padding:0}.qs-trading-drawer .qs-trading-guide nav{grid-template-columns:1fr 1fr;display:grid}.qs-trading-drawer .qs-trading-guide header span{display:none}dialog.qs-trading-drawer.qs-support-drawer{width:min(560px,100vw)}.qs-trading-drawer.qs-support-drawer>header{padding:20px 24px}.qs-trading-drawer.qs-support-drawer>header h2{letter-spacing:-.025em;font-size:20px;font-weight:600}.qs-trading-drawer.qs-support-drawer>header button{background:var(--qs-tint);width:34px;height:34px;min-height:34px;color:var(--qs-muted);border:0;border-radius:50%;place-items:center;padding:0;font-size:22px;display:grid}.qs-trading-drawer.qs-support-drawer>header button:hover{color:var(--qs-accent)}.qs-trading-drawer.qs-support-drawer>div{overscroll-behavior:contain;padding:24px}@media (width<=480px){.qs-trading-drawer.qs-support-drawer>header{padding:18px}.qs-trading-drawer.qs-support-drawer>div{padding:20px 16px}}.qs-workspace-heading{justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px;display:flex}.qs-workspace-heading h2{margin:0 0 5px;font-size:25px}.qs-workspace-heading p{color:var(--qs-muted);margin:0;font-size:13px}.qs-workspace-actions{flex-shrink:0;align-items:center;gap:10px;display:flex}.qs-workspace-actions .qs-quick-help{color:var(--qs-muted);background:0 0;border:0}.qs-launch-row{flex-wrap:wrap;align-items:center;gap:16px;padding:18px 0 24px;display:flex}.qs-launch-row label,.qs-launch-field{color:var(--qs-muted);gap:6px;font-size:12px;display:grid}.qs-launch-row label>:is(button,select),.qs-launch-field>button{min-width:145px;min-height:42px;color:var(--qs-ink)}.qs-launch-summary{color:var(--qs-muted);flex:1;font-size:12px;line-height:1.8}.qs-launch-summary strong{color:var(--qs-ink);font-weight:500;display:block}.qs-compact-alert{border:1px solid var(--qs-line);background:var(--qs-tint);border-radius:10px;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;padding:12px 16px;font-size:13px;display:flex}.qs-launch-row>button{min-width:130px;min-height:44px}.qs-watch-plans{border-block:1px solid var(--qs-line);margin-top:20px;padding:14px 0}.qs-instrument-parameters{grid-column:1/-1}.qs-instrument-parameters>summary,.qs-connection-settings>summary{cursor:pointer;padding:10px 0;font-size:13px}.qs-instrument-parameters>label{margin:12px 0}.qs-connection-settings{margin-bottom:16px}.qs-workspace-actions>button[aria-label],.fv-header-actions>button[aria-label]{justify-content:center;align-items:center;width:42px;height:42px;padding:9px;display:inline-flex}.fv-account-strip{border-bottom:1px solid var(--fv-line);grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:22px;padding:20px 0;display:grid}.fv-account-strip>div{gap:8px;display:grid}.fv-account-strip small{color:var(--fv-muted);font-size:12px}.fv-account-strip strong{font-variant-numeric:tabular-nums;font-size:20px;font-weight:550}.fv-quote-time{margin-top:8px;display:block}@media (width<=600px){.fv-account-strip{gap:12px}.fv-account-strip strong{font-size:16px}}@keyframes qs-drawer-enter{0%{opacity:.5;transform:translate(35px)}to{opacity:1;transform:translate(0)}}@media (prefers-reduced-motion:reduce){.qs-trading-drawer{animation:none}}@media (width<=600px){.qs-trading-drawer{border-radius:0;width:100vw}.qs-workspace-heading{flex-wrap:wrap}.qs-launch-row>button{width:100%}.qs-launch-summary{flex-basis:100%}}.qs-trader-shell{box-sizing:border-box;height:100%;padding:clamp(20px,3vw,40px);overflow:auto}.qs-trader-shell>.quantstudio-fly{height:auto;min-height:0;overflow:visible}.qs-trader-shell .fv-page{height:auto;min-height:0;padding:0;overflow:visible}.qs-contest-workspace>header h1{letter-spacing:-.025em;font-size:clamp(22px,2vw,28px)}.qs-contest-workspace [hidden],.qs-settings-sheet [hidden]{display:none!important}.qs-jev-workspace{background:var(--qs-surface);box-shadow:0 6px 28px #00000004;border-radius:22px!important}.qs-jev-workspace .qs-workspace-heading h2{letter-spacing:-.03em;font-family:inherit;font-size:26px}.qs-workspace-actions>button[aria-label],.fv-header-actions>button[aria-label]{background:var(--qs-surface);gap:7px;width:auto;padding:9px 15px;font-size:14px;font-weight:500}.qs-jev-workspace .qs-launch-row{border:1px solid var(--qs-line);background:var(--qs-tint);border-radius:16px;margin-bottom:20px;padding:20px}.qs-jev-workspace .qs-launch-row label>:is(button,select),.qs-jev-workspace .qs-launch-field>button{background:var(--qs-surface);border:1px solid var(--qs-line);border-radius:10px}.qs-launch-row>button[data-primary]{border-radius:11px;padding-inline:22px}.fv-workspace button.qs-summary-control,.qs-jev-workspace button.qs-summary-control{text-align:left;min-width:0;color:var(--qs-muted);background:0 0;border:0;border-radius:10px;flex-direction:column;justify-content:center;align-items:flex-start;gap:4px;padding:10px 12px;font-size:12px;display:flex}button.qs-summary-control:hover{background:var(--qs-surface)}button.qs-summary-control strong{color:var(--qs-ink);font-size:13px;font-weight:500}.fv-workspace .fv-launch-row{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:20px;gap:24px;margin:0 0 16px;padding:22px 24px}.qs-run-state{align-items:center;gap:12px;margin-right:auto;display:flex}.qs-run-state>div{gap:6px;display:grid}.qs-run-state strong{font-size:16px;font-weight:600}.qs-run-state small{color:var(--qs-muted);font-size:12px}.qs-state-dot{background:var(--qs-muted);border-radius:50%;width:9px;height:9px}.qs-state-dot[data-active=true]{background:var(--fv-success);box-shadow:0 0 0 5px color-mix(in srgb,var(--fv-success) 10%,transparent)}.qs-contract-strip{align-items:baseline;gap:16px;padding:6px 0 24px;display:flex}.qs-contract-strip>span{color:var(--qs-muted);flex-shrink:0;font-size:12px}.qs-contract-strip>div{flex-wrap:wrap;gap:7px;display:flex}.qs-contract-strip button{font-variant-numeric:tabular-nums;min-height:34px;padding:6px 13px;font-size:13px}.qs-contract-strip button[aria-pressed=true]{color:var(--fv-lime);background:var(--fv-tint);border-color:var(--fv-lime)}.qs-contract-strip .qs-add-contract{color:var(--fv-lime);background:0 0;border-color:#0000}.fv-workspace .fv-nav{border-bottom:1px solid var(--fv-line);gap:4px;margin-bottom:24px;padding-bottom:12px}.fv-workspace .fv-nav button{min-height:36px;font-size:14px}.fv-workspace .fv-trading-focus>section,.fv-workspace .fv-plans-focus{border-radius:20px}dialog.qs-settings-sheet{width:min(980px,100vw - 64px);height:min(760px, calc(100dvh / var(--qs-interface-scale,1) - 64px));max-height:calc(100dvh / var(--qs-interface-scale,1) - 32px);border:1px solid var(--qs-line);color:var(--qs-ink);background:var(--qs-surface);border-radius:22px;overflow:hidden;box-shadow:0 28px 100px #0003}.qs-settings-sheet[open]{flex-direction:column;display:flex}.qs-settings-sheet>header{border-bottom:1px solid var(--qs-line);flex:none;margin:0;padding:23px 26px}.qs-settings-sheet>header h2{letter-spacing:-.02em;font-size:19px;font-weight:600}.qs-settings-sheet>header button{background:var(--qs-tint);border:0;border-radius:50%}.qs-settings-sheet>div{flex-direction:column;flex:1;min-height:0;padding:0;display:flex;overflow:hidden}.qs-settings-sheet .qs-settings-form{flex-direction:column;flex:1;gap:0;min-height:0;margin:0;padding:0;display:flex}.qs-settings-layout{flex:1;grid-template-columns:208px minmax(0,1fr);min-height:0;display:grid}.qs-settings-navigation{background:color-mix(in srgb,var(--qs-ink) 3%,var(--qs-surface));border-right:1px solid var(--qs-line);padding:18px 12px;overflow:auto}.qs-settings-sheet .qs-settings-navigation button{width:100%;color:var(--qs-ink);text-align:left;background:0 0;border:1px solid #0000;border-radius:11px;justify-content:stretch;place-items:start;gap:4px;margin-bottom:5px;padding:13px 14px;font-weight:400;display:grid}.qs-settings-sheet .qs-settings-navigation button strong{font-size:14px;font-weight:550}.qs-settings-sheet .qs-settings-navigation button small{color:var(--qs-muted);font-size:11px;line-height:1.5}.qs-settings-sheet .qs-settings-navigation button[aria-current]{background:var(--qs-surface);border-color:var(--qs-line);box-shadow:0 2px 4px #00000005}.qs-settings-sheet .qs-settings-navigation button[aria-current] strong{color:var(--qs-accent)}.qs-settings-sheet .qs-settings-content{overscroll-behavior:contain;scrollbar-gutter:stable;min-width:0;min-height:0;padding:30px;overflow:auto}.qs-settings-sheet .qs-settings-intro{margin:0 0 24px}.qs-settings-sheet .qs-settings-intro h3{letter-spacing:-.02em;margin:0 0 8px;font-size:23px;font-weight:600;line-height:1.4}.qs-settings-sheet .qs-settings-intro p{color:var(--qs-muted);margin:0;font-size:13px}.qs-settings-sheet .qs-template-picker{grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px;display:grid}.qs-settings-sheet .qs-template-picker button{min-height:40px;margin:0;padding:9px 12px}.qs-settings-sheet .qs-settings-group>button{justify-self:start;margin:0}.qs-settings-sheet :is(.qs-settings-fields,.fv-settings-fields){border:0;min-width:0;margin:0;padding:0}.qs-settings-sheet .qs-settings-group{background:color-mix(in srgb,var(--qs-ink) 2%,var(--qs-surface));border:1px solid var(--qs-line);border-radius:14px;gap:18px;margin:0 0 18px;padding:20px;display:grid}.qs-settings-sheet .qs-settings-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.qs-settings-sheet label{color:var(--qs-ink);gap:8px;font-size:13px;display:grid}.qs-settings-sheet :is(input,select,textarea){background:var(--qs-surface);color:var(--qs-ink);border:1px solid var(--qs-line);min-height:40px;box-shadow:none;border-radius:9px;padding:9px 11px;font-size:14px}.qs-settings-sheet :is(input,select,textarea):disabled{opacity:.65}.qs-settings-sheet input[type=checkbox]{width:17px;height:17px;min-height:0;accent-color:var(--qs-accent)}.qs-settings-sheet label.fv-checkbox{flex-direction:row;align-items:center;gap:10px;display:flex}.qs-settings-sheet details{background:0 0;border:0;margin:12px 0;padding:0}.qs-settings-sheet summary{cursor:pointer;color:var(--qs-muted);padding:10px 0;font-size:13px}.qs-settings-sheet details>:not(summary){margin-top:12px}.qs-settings-sheet .qs-settings-note{color:var(--qs-muted);font-size:12px}.qs-settings-sheet .qs-settings-notice{background:var(--qs-tint);color:var(--qs-muted);border-radius:10px;padding:12px}.qs-settings-sheet .qs-settings-footer{border-top:1px solid var(--qs-line);background:var(--qs-surface);flex-wrap:wrap;flex:none;align-items:center;gap:10px;margin:0;padding:17px 24px;display:flex}.qs-settings-footer>span{color:var(--qs-muted);margin-right:auto;font-size:12px}.qs-settings-footer button{min-width:76px}.qs-settings-sheet button.fv-primary{color:var(--fv-button-ink,#fff);background:var(--qs-accent);border-color:#0000}.qs-settings-sheet .fv-setup-body{gap:16px;padding:0;display:grid}.qs-settings-sheet .fv-setup-body>:is(p,small){color:var(--qs-muted);margin:0;font-size:12px}.qs-settings-sheet .fv-setup-body>fieldset{border:0;padding:0}.qs-settings-sheet .fv-setup-body>fieldset>legend{display:none}.qs-settings-sheet .qs-settings-content .fv-form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;display:grid}.qs-settings-sheet .qs-settings-content .fv-instrument{border:1px solid var(--qs-line);background:color-mix(in srgb,var(--qs-ink) 2%,var(--qs-surface));border-radius:12px;grid-template-columns:100px minmax(0,1fr) 28px;align-items:start;gap:12px;margin:10px 0;padding:16px;display:grid}.qs-settings-sheet .fv-instrument>div>small{margin-top:5px;font-size:11px;display:block}.qs-settings-sheet .fv-contract-choice{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;display:grid}.qs-settings-sheet .fv-contract-choice>:is(input,select){width:100%;min-width:0}.qs-settings-sheet .fv-contract-choice small{text-align:left;grid-column:1/-1;font-size:11px}.qs-settings-sheet .qs-settings-content .fv-instrument>button{width:28px;min-height:28px;color:var(--qs-muted);background:0 0;border-color:#0000;place-self:start end;padding:0;font-size:18px}.qs-settings-sheet .fv-check-row{border-bottom:1px solid var(--qs-line);justify-content:space-between;gap:12px;padding:14px 0;font-size:13px;display:flex}.qs-settings-sheet .qs-settings-content .fv-instruments-list{max-height:none}@media (width<=760px){.qs-trader-shell{padding:18px}.fv-workspace .fv-launch-row{gap:14px;padding:18px}.fv-launch-row>.qs-summary-control{display:none}dialog.qs-settings-sheet{width:calc(100vw - 20px);height:calc(100dvh / var(--qs-interface-scale,1) - 20px);max-height:calc(100dvh / var(--qs-interface-scale,1) - 20px);border-radius:16px}.qs-settings-sheet>header{padding:16px 18px}.qs-settings-layout{grid-template-rows:auto minmax(0,1fr);grid-template-columns:minmax(0,1fr)}.qs-settings-navigation{border:0;border-bottom:1px solid var(--qs-line);gap:4px;padding:8px;display:flex;overflow-x:auto}.qs-settings-sheet .qs-settings-navigation button{flex:none;width:auto;margin:0;padding:10px 12px}.qs-settings-sheet .qs-settings-navigation button small{display:none}.qs-settings-sheet .qs-settings-content{padding:20px}.qs-settings-sheet .qs-settings-footer{padding:12px 16px}.qs-settings-footer>span{flex-basis:100%}.qs-settings-sheet .qs-settings-grid,.qs-settings-sheet .qs-settings-content .fv-form-grid{grid-template-columns:1fr}.qs-settings-sheet .qs-settings-group{padding:16px}.qs-settings-sheet .qs-template-picker{grid-template-columns:minmax(0,1fr)}.qs-settings-sheet .qs-settings-content .fv-instrument{grid-template-columns:minmax(0,1fr) 28px}.qs-settings-sheet .fv-contract-choice{grid-area:2/1/auto/-1}.qs-settings-sheet .qs-settings-content .fv-instrument>button{grid-area:1/2}.qs-settings-footer>span+button{margin-left:auto}}.qs-jev-instruments{gap:18px;display:grid}.qs-jev-instruments .qs-product-filters{grid-template-columns:1.2fr 1fr;gap:10px;margin:12px 0;display:grid}.qs-jev-instruments .qs-product-checklist{border:1px solid var(--qs-line);border-radius:12px;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:220px;padding:4px;display:grid;overflow:auto}.qs-jev-instruments .qs-product-checklist>label{cursor:pointer;border-radius:9px;flex-direction:row;align-items:center;gap:9px;padding:10px;display:flex}.qs-jev-instruments .qs-product-checklist>label:has(:checked){background:var(--qs-tint)}.qs-jev-instruments .qs-product-checklist>label:has(:disabled){opacity:.5;cursor:default}.qs-jev-instruments .qs-product-checklist input{width:16px;height:16px;min-height:16px;accent-color:var(--qs-accent);flex-shrink:0;margin:0;padding:0}.qs-jev-instruments small{color:var(--qs-secondary);font-size:11px}.qs-jev-instruments .qs-product-checklist span{gap:1px;display:grid}.qs-selected-contracts{gap:12px;display:grid}.qs-selected-contract{border:1px solid var(--qs-line);border-radius:12px;padding:12px}.qs-selected-contract header{justify-content:space-between;align-items:center;margin-bottom:8px;display:flex}.qs-selected-contract header button{border:0;width:28px;min-height:28px;padding:0}.qs-selected-contract .fv-contract-choice{grid-template-columns:1fr 1fr;gap:7px;display:grid}.qs-selected-contract .fv-contract-choice small{grid-column:1/-1}.qs-selected-contract details{margin-top:8px;font-size:12px}.qs-jev-market-tabs{flex-wrap:wrap;gap:8px;margin:12px 0;display:flex}.qs-jev-market-tabs button{border:1px solid var(--qs-line);background:var(--qs-surface);color:var(--qs-ink);border-radius:10px;gap:4px;padding:10px 14px;display:grid}.qs-jev-market-tabs button[aria-pressed=true]{border-color:var(--qs-accent);background:var(--qs-tint)}.qs-jev-market-tabs small{color:var(--qs-secondary)}";
+		const tagId$23 = "@deepseek-ai/dsh-client-ui-quantskills/TradingWorkspace.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$23) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$19;
-			tag.textContent = css$19;
+			tag.dataset.pluginCss = tagId$23;
+			tag.textContent = css$23;
 			document.head.appendChild(tag);
 		}
 		//#endregion
@@ -27894,7 +28173,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 			return event.clientX < left || event.clientX > right || event.clientY < top || event.clientY > bottom;
 		}
 		/** Native modal: top-layer rendering, inert background and browser focus containment. */
-		function ActionDialog({ title, children, busy = false, error, wide = false, drawer = false, settings = false, dismissOnBackdrop = false, onClose }) {
+		function ActionDialog({ title, children, busy = false, error, wide = false, drawer = false, settings = false, dismissOnBackdrop = false, className = "", onClose }) {
 			const ref = (0, react.useRef)(null);
 			const backdropPress = (0, react.useRef)(false);
 			const titleId = (0, react.useId)();
@@ -27910,7 +28189,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 			}, []);
 			return (0, react_jsx_runtime.jsxs)("dialog", {
 				ref,
-				className: `${ActionDialog_module_css_default.dialog}${drawer ? " qs-trading-drawer" : ""}${settings ? " qs-settings-sheet" : ""}`,
+				className: `${ActionDialog_module_css_default.dialog}${drawer ? " qs-trading-drawer" : ""}${settings ? " qs-settings-sheet" : ""} ${className}`,
 				"data-wide": wide || void 0,
 				"aria-labelledby": titleId,
 				"aria-modal": "true",
@@ -27932,7 +28211,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 						return;
 					}
 					if (event.key !== "Tab") return;
-					const items = [...event.currentTarget.querySelectorAll("button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], [tabindex=\"0\"]")].filter((element) => element.getClientRects().length > 0 && !element.closest("[hidden]"));
+					const items = [...event.currentTarget.querySelectorAll("button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), a[href], summary, [tabindex=\"0\"]")].filter((element) => element.getClientRects().length > 0 && !element.closest("[hidden]"));
 					const first = items[0], last = items.at(-1);
 					if (!first || !last) {
 						event.preventDefault();
@@ -27974,13 +28253,13 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		}
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/SessionActionsMenu.module.css.mjs
-		const css$18 = ".o3dwra_root{justify-content:center;align-items:center;min-width:0;display:flex}.o3dwra_trigger{width:32px;height:34px;color:var(--qs-muted);cursor:pointer;background:0 0;border:0;border-radius:8px;place-items:center;padding:0;display:grid}.o3dwra_trigger:hover,.o3dwra_trigger[aria-expanded=true]{color:var(--qs-blue);background:var(--dsw-alias-button-ghost-active-fill)}.o3dwra_trigger:focus-visible,.o3dwra_menu button:focus-visible{outline:2px solid var(--qs-blue);outline-offset:-2px}.o3dwra_menu{box-sizing:border-box;border:1px solid var(--qs-border);width:180px;max-width:calc(100vw - 16px);color:var(--dsw-alias-label-primary);background:var(--dsw-alias-bg-base,Canvas);font:inherit;z-index:80;border-radius:12px;margin:0;padding:6px;position:fixed;inset:auto;box-shadow:0 8px 28px #141e3229}.o3dwra_menu button{width:100%;min-height:38px;color:inherit;font:inherit;text-align:left;cursor:pointer;background:0 0;border:0;border-radius:7px;align-items:center;gap:10px;padding:9px 11px;font-size:13px;display:flex}.o3dwra_menu button:hover:not(:disabled),.o3dwra_menu button:focus-visible{background:var(--dsw-alias-button-ghost-active-fill)}.o3dwra_menu button:disabled{opacity:.4;cursor:not-allowed}.o3dwra_menu .o3dwra_danger{color:var(--dsw-static-red-600,#b42318)}.o3dwra_separator{background:var(--qs-border);height:1px;margin:5px 7px}.o3dwra_menu small{color:var(--qs-muted);padding:7px 10px;font-size:11px;line-height:1.5;display:block}";
-		const tagId$18 = "@deepseek-ai/dsh-client-ui-quantskills/SessionActionsMenu.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$18) + "]") === null) {
+		const css$22 = ".o3dwra_root{justify-content:center;align-items:center;min-width:0;display:flex}.o3dwra_trigger{width:32px;height:34px;color:var(--qs-muted);cursor:pointer;background:0 0;border:0;border-radius:8px;place-items:center;padding:0;display:grid}.o3dwra_trigger:hover,.o3dwra_trigger[aria-expanded=true]{color:var(--qs-blue);background:var(--dsw-alias-button-ghost-active-fill)}.o3dwra_trigger:focus-visible,.o3dwra_menu button:focus-visible{outline:2px solid var(--qs-blue);outline-offset:-2px}.o3dwra_menu{box-sizing:border-box;border:1px solid var(--qs-border);width:180px;max-width:calc(100vw - 16px);color:var(--dsw-alias-label-primary);background:var(--dsw-alias-bg-base,Canvas);font:inherit;z-index:80;border-radius:12px;margin:0;padding:6px;position:fixed;inset:auto;box-shadow:0 8px 28px #141e3229}.o3dwra_menu button{width:100%;min-height:38px;color:inherit;font:inherit;text-align:left;cursor:pointer;background:0 0;border:0;border-radius:7px;align-items:center;gap:10px;padding:9px 11px;font-size:13px;display:flex}.o3dwra_menu button:hover:not(:disabled),.o3dwra_menu button:focus-visible{background:var(--dsw-alias-button-ghost-active-fill)}.o3dwra_menu button:disabled{opacity:.4;cursor:not-allowed}.o3dwra_menu .o3dwra_danger{color:var(--dsw-static-red-600,#b42318)}.o3dwra_separator{background:var(--qs-border);height:1px;margin:5px 7px}.o3dwra_menu small{color:var(--qs-muted);padding:7px 10px;font-size:11px;line-height:1.5;display:block}";
+		const tagId$22 = "@deepseek-ai/dsh-client-ui-quantskills/SessionActionsMenu.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$22) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$18;
-			tag.textContent = css$18;
+			tag.dataset.pluginCss = tagId$22;
+			tag.textContent = css$22;
 			document.head.appendChild(tag);
 		}
 		var SessionActionsMenu_module_css_default = {
@@ -28063,7 +28342,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 							setOpen(true);
 						}
 					},
-					children: (0, react_jsx_runtime.jsx)(o$20, {
+					children: (0, react_jsx_runtime.jsx)(o$26, {
 						size: 21,
 						weight: "bold"
 					})
@@ -28094,7 +28373,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 							role: "menuitem",
 							"aria-label": `重命名会话 ${title}`,
 							onClick: () => choose(onRename),
-							children: [(0, react_jsx_runtime.jsx)(o$8, { size: 17 }), "重命名"]
+							children: [(0, react_jsx_runtime.jsx)(o$12, { size: 17 }), "重命名"]
 						}),
 						onArchive && (0, react_jsx_runtime.jsxs)("button", {
 							type: "button",
@@ -28102,7 +28381,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 							"aria-label": `归档会话 ${title}`,
 							disabled: running,
 							onClick: () => choose(onArchive),
-							children: [(0, react_jsx_runtime.jsx)(r$14, { size: 17 }), "归档"]
+							children: [(0, react_jsx_runtime.jsx)(r$15, { size: 17 }), "归档"]
 						}),
 						(0, react_jsx_runtime.jsx)("div", { className: SessionActionsMenu_module_css_default.separator }),
 						(0, react_jsx_runtime.jsxs)("button", {
@@ -28121,13 +28400,13 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		}
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/ArchivedSessions.module.css.mjs
-		const css$17 = ".dptFxa_archives{color:var(--dsw-alias-label-primary)}.dptFxa_archives header{justify-content:space-between;align-items:flex-start;gap:24px;display:flex}.dptFxa_archives h2{margin:0 0 12px;font-size:24px}.dptFxa_archives h2 span{color:var(--qs-muted);font-size:14px;font-weight:400}.dptFxa_archives p{color:var(--qs-muted);line-height:1.7}.dptFxa_archives button,.dptFxa_actions button{border:1px solid var(--qs-border);color:inherit;cursor:pointer;background:0 0;border-radius:8px;padding:8px 12px}.dptFxa_archives button:where(:not(.dptFxa_primary,.dptFxa_danger)):not(:disabled):hover,.dptFxa_actions button:where(:not(.dptFxa_primary,.dptFxa_danger)):not(:disabled):hover{background:var(--dsw-alias-button-ghost-active-fill)}.dptFxa_archives button:disabled,.dptFxa_actions button:disabled{opacity:.45;cursor:not-allowed}.dptFxa_search{box-sizing:border-box;border:1px solid var(--qs-border);width:100%;color:inherit;background:0 0;border-radius:10px;margin:18px 0;padding:12px 14px}.dptFxa_list{padding:0;list-style:none}.dptFxa_list li{border-bottom:1px solid var(--qs-border);align-items:center;gap:16px;padding:20px 0;display:flex}.dptFxa_list li>svg{color:var(--qs-blue);flex-shrink:0}.dptFxa_description{flex-direction:column;flex:1;gap:6px;min-width:0;display:flex}.dptFxa_description b{overflow-wrap:anywhere}.dptFxa_description small{color:var(--qs-muted)}.dptFxa_actions{justify-content:flex-end;align-items:center;gap:8px;display:flex}.dptFxa_actions button{white-space:nowrap;align-items:center;gap:6px;display:inline-flex}.dptFxa_actions .dptFxa_danger{color:#fff;background:#b42318;border-color:#b42318}.dptFxa_actions .dptFxa_primary{background:var(--qs-blue);color:var(--qs-buttonInk,var(--dsw-alias-label-inverted-primary,#fff));border-color:var(--qs-blue)}.dptFxa_actions .dptFxa_primary:not(:disabled):hover{background:color-mix(in srgb, var(--qs-blue) 88%, var(--qs-ink,#111))}.dptFxa_actions .dptFxa_primary:not(:disabled):active{background:color-mix(in srgb, var(--qs-blue) 80%, var(--qs-ink,#111))}.dptFxa_actions .dptFxa_danger:not(:disabled):hover{background:#9e2016;border-color:#9e2016}.dptFxa_actions .dptFxa_danger:not(:disabled):active{background:#861b13;border-color:#861b13}.dptFxa_fileList,.dptFxa_retained ul{border:1px solid var(--qs-border);border-radius:9px;max-height:210px;padding:0;list-style:none;overflow:auto}.dptFxa_fileList li,.dptFxa_retained li{border-bottom:1px solid var(--qs-border);flex-direction:column;gap:4px;padding:10px 12px;display:flex}.dptFxa_fileList code,.dptFxa_retained code{overflow-wrap:anywhere;white-space:normal;font-size:12px}.dptFxa_fileList small,.dptFxa_retained small{color:var(--qs-muted)}.dptFxa_retained{margin:12px 0;font-size:12px}.dptFxa_retained summary{cursor:pointer}.dptFxa_empty{text-align:center;color:var(--qs-muted);padding:56px 12px}.dptFxa_error{color:#b42318!important}@media (width<=700px){.dptFxa_list li{flex-wrap:wrap}.dptFxa_actions{margin-left:auto}}";
-		const tagId$17 = "@deepseek-ai/dsh-client-ui-quantskills/ArchivedSessions.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$17) + "]") === null) {
+		const css$21 = ".dptFxa_archives{color:var(--dsw-alias-label-primary)}.dptFxa_archives header{justify-content:space-between;align-items:flex-start;gap:24px;display:flex}.dptFxa_archives h2{margin:0 0 12px;font-size:24px}.dptFxa_archives h2 span{color:var(--qs-muted);font-size:14px;font-weight:400}.dptFxa_archives p{color:var(--qs-muted);line-height:1.7}.dptFxa_archives button,.dptFxa_actions button{border:1px solid var(--qs-border);color:inherit;cursor:pointer;background:0 0;border-radius:8px;padding:8px 12px}.dptFxa_archives button:where(:not(.dptFxa_primary,.dptFxa_danger)):not(:disabled):hover,.dptFxa_actions button:where(:not(.dptFxa_primary,.dptFxa_danger)):not(:disabled):hover{background:var(--dsw-alias-button-ghost-active-fill)}.dptFxa_archives button:disabled,.dptFxa_actions button:disabled{opacity:.45;cursor:not-allowed}.dptFxa_search{box-sizing:border-box;border:1px solid var(--qs-border);width:100%;color:inherit;background:0 0;border-radius:10px;margin:18px 0;padding:12px 14px}.dptFxa_list{padding:0;list-style:none}.dptFxa_list li{border-bottom:1px solid var(--qs-border);align-items:center;gap:16px;padding:20px 0;display:flex}.dptFxa_list li>svg{color:var(--qs-blue);flex-shrink:0}.dptFxa_description{flex-direction:column;flex:1;gap:6px;min-width:0;display:flex}.dptFxa_description b{overflow-wrap:anywhere}.dptFxa_description small{color:var(--qs-muted)}.dptFxa_actions{justify-content:flex-end;align-items:center;gap:8px;display:flex}.dptFxa_actions button{white-space:nowrap;align-items:center;gap:6px;display:inline-flex}.dptFxa_actions .dptFxa_danger{color:#fff;background:#b42318;border-color:#b42318}.dptFxa_actions .dptFxa_primary{background:var(--qs-blue);color:var(--qs-buttonInk,var(--dsw-alias-label-inverted-primary,#fff));border-color:var(--qs-blue)}.dptFxa_actions .dptFxa_primary:not(:disabled):hover{background:color-mix(in srgb, var(--qs-blue) 88%, var(--qs-ink,#111))}.dptFxa_actions .dptFxa_primary:not(:disabled):active{background:color-mix(in srgb, var(--qs-blue) 80%, var(--qs-ink,#111))}.dptFxa_actions .dptFxa_danger:not(:disabled):hover{background:#9e2016;border-color:#9e2016}.dptFxa_actions .dptFxa_danger:not(:disabled):active{background:#861b13;border-color:#861b13}.dptFxa_fileList,.dptFxa_retained ul{border:1px solid var(--qs-border);border-radius:9px;max-height:210px;padding:0;list-style:none;overflow:auto}.dptFxa_fileList li,.dptFxa_retained li{border-bottom:1px solid var(--qs-border);flex-direction:column;gap:4px;padding:10px 12px;display:flex}.dptFxa_fileList code,.dptFxa_retained code{overflow-wrap:anywhere;white-space:normal;font-size:12px}.dptFxa_fileList small,.dptFxa_retained small{color:var(--qs-muted)}.dptFxa_retained{margin:12px 0;font-size:12px}.dptFxa_retained summary{cursor:pointer}.dptFxa_empty{text-align:center;color:var(--qs-muted);padding:56px 12px}.dptFxa_error{color:#b42318!important}@media (width<=700px){.dptFxa_list li{flex-wrap:wrap}.dptFxa_actions{margin-left:auto}}";
+		const tagId$21 = "@deepseek-ai/dsh-client-ui-quantskills/ArchivedSessions.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$21) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$17;
-			tag.textContent = css$17;
+			tag.dataset.pluginCss = tagId$21;
+			tag.textContent = css$21;
 			document.head.appendChild(tag);
 		}
 		var ArchivedSessions_module_css_default = {
@@ -28425,14 +28704,14 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 					}) : filtered.length === 0 ? (0, react_jsx_runtime.jsxs)("div", {
 						className: ArchivedSessions_module_css_default.empty,
 						children: [
-							(0, react_jsx_runtime.jsx)(r$14, { size: 35 }),
+							(0, react_jsx_runtime.jsx)(r$15, { size: 35 }),
 							(0, react_jsx_runtime.jsx)("h3", { children: search ? "没有匹配的归档会话" : "暂无归档会话" }),
 							(0, react_jsx_runtime.jsx)("p", { children: search ? "试试其他名称或会话类型。" : "在会话的操作菜单中选择“归档”，即可在这里管理。" })
 						]
 					}) : (0, react_jsx_runtime.jsx)("ul", {
 						className: ArchivedSessions_module_css_default.list,
 						children: filtered.map((row) => (0, react_jsx_runtime.jsxs)("li", { children: [
-							(0, react_jsx_runtime.jsx)(r$14, { size: 23 }),
+							(0, react_jsx_runtime.jsx)(r$15, { size: 23 }),
 							(0, react_jsx_runtime.jsxs)("div", {
 								className: ArchivedSessions_module_css_default.description,
 								children: [(0, react_jsx_runtime.jsx)("b", { children: row.title }), (0, react_jsx_runtime.jsxs)("small", { children: [
@@ -28450,7 +28729,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 										change(row, "restore");
 									},
 									"aria-label": `恢复 ${row.title}`,
-									children: [(0, react_jsx_runtime.jsx)(r$23, { size: 17 }), "恢复"]
+									children: [(0, react_jsx_runtime.jsx)(r$24, { size: 17 }), "恢复"]
 								}), (0, react_jsx_runtime.jsxs)("button", {
 									type: "button",
 									disabled: busy || row.running,
@@ -28492,13 +28771,13 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		var pandaai_mark_png_default = "data:image/png;base64,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";
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/ProductIntro.module.css.mjs
-		const css$16 = "._6r4COW_page{--product-accent:var(--qs-agent,var(--qs-accent));max-width:1180px;color:var(--qs-ink);background:color-mix(in srgb,var(--qs-chrome) 88%,transparent);border-radius:18px;margin:0 auto;padding:32px clamp(20px,4vw,64px) 48px}._6r4COW_page[data-product=evo]{--product-accent:var(--qs-skill,var(--qs-accent))}._6r4COW_productNav{border-bottom:1px solid var(--qs-line);justify-content:space-between;align-items:center;gap:20px;padding-bottom:24px;display:flex}._6r4COW_brand{align-items:center;gap:8px;font-size:16px;font-weight:650;display:flex}._6r4COW_brand img{object-fit:contain;width:23px;height:23px}._6r4COW_brand small{color:var(--qs-muted);margin-left:8px;font-size:12px;font-weight:400}._6r4COW_productNav>div{gap:24px;display:flex}._6r4COW_productNav button{color:var(--qs-muted);font:inherit;cursor:pointer;background:0 0;border:0;border-bottom:2px solid #0000;padding:10px 0;font-size:14px;font-weight:600;line-height:1.4}._6r4COW_productNav button[aria-current=page]{border-color:var(--product-accent);color:var(--qs-ink)}._6r4COW_hero{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:40px;padding:64px 0 60px;display:grid}._6r4COW_eyebrow,._6r4COW_sectionHeading>small,._6r4COW_audience small,._6r4COW_foundation>small{letter-spacing:.08em;color:var(--product-accent);font-size:12px}._6r4COW_copy h1{letter-spacing:-.055em;margin:12px 0 24px;font-size:clamp(56px,6vw,88px);font-weight:800;line-height:1}._6r4COW_copy h2{letter-spacing:-.035em;max-width:15em;margin:0;font-size:clamp(22px,2.2vw,30px);line-height:1.5}._6r4COW_description{color:var(--qs-muted);max-width:32em;margin:20px 0 0;font-size:14px;line-height:1.9}._6r4COW_actions{flex-wrap:wrap;align-items:center;gap:24px;margin-top:28px;display:flex}._6r4COW_start,._6r4COW_textLink{box-sizing:border-box;min-height:44px;font:inherit;cursor:pointer;justify-content:center;align-items:center;gap:8px;font-size:13px;text-decoration:none;display:inline-flex}._6r4COW_start{color:var(--qs-buttonInk,#102033);background:var(--qs-accent);border:0;border-radius:8px;padding:11px 20px;font-weight:650}._6r4COW_textLink{color:var(--qs-muted);background:0 0;border:0;padding:0}._6r4COW_page a:hover,._6r4COW_page button:hover{color:var(--product-accent)}._6r4COW_page ._6r4COW_start:hover{color:var(--qs-buttonInk,#102033);filter:brightness(1.08)}._6r4COW_page :is(a,button):focus-visible{outline:2px solid var(--qs-accent);outline-offset:4px}._6r4COW_interface{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:10px;min-width:0;margin:0;padding:10px}._6r4COW_interface img{aspect-ratio:2550/1293;object-fit:contain;border-radius:4px;width:100%;height:auto;display:block}._6r4COW_interface figcaption{color:var(--qs-muted);justify-content:space-between;align-items:center;gap:10px;padding:16px 2px 4px;font-size:12px;display:flex}._6r4COW_interface b{color:var(--product-accent);margin-right:6px}._6r4COW_interface small{flex-shrink:0;font-size:10px}._6r4COW_work{border-block:1px solid var(--qs-line);grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:40px;padding:40px 0;display:grid}._6r4COW_sectionHeading h2,._6r4COW_audience h2,._6r4COW_foundation h2,._6r4COW_footer h2{letter-spacing:-.025em;margin:14px 0 18px;font-size:clamp(21px,2vw,27px);font-weight:600;line-height:1.5}._6r4COW_features{margin:0}._6r4COW_features>div{border-bottom:1px solid var(--qs-line);padding:18px 0}._6r4COW_features>div:first-child{padding-top:0}._6r4COW_features>div:last-child{border:0;padding-bottom:0}._6r4COW_features dt{align-items:center;gap:18px;font-size:16px;font-weight:600;display:flex}._6r4COW_features dt span{color:var(--product-accent);font-variant-numeric:tabular-nums;font-size:10px;font-weight:400}._6r4COW_features dd{color:var(--qs-muted);margin:10px 0 0 31px;font-size:13px;line-height:1.8}._6r4COW_audience{grid-template-columns:1fr 1fr;gap:56px;padding:44px 0;display:grid}._6r4COW_audience p,._6r4COW_footer p{color:var(--qs-muted);font-size:14px;line-height:1.85}._6r4COW_audience blockquote{border-left:2px solid var(--product-accent);align-self:center;margin:8px 0;padding:12px 0 12px 24px}._6r4COW_audience blockquote p{margin-bottom:0}._6r4COW_comparison{border-block:1px solid var(--qs-line);padding:36px 0;scroll-margin-top:24px}._6r4COW_tableWrap{margin-top:24px;overflow-x:auto}._6r4COW_tableWrap table{table-layout:fixed;border-collapse:collapse;text-align:left;width:100%;font-size:13px;line-height:1.75}._6r4COW_tableWrap caption{text-align:left;color:var(--qs-muted);padding-bottom:20px;font-size:12px}._6r4COW_tableWrap th,._6r4COW_tableWrap td{border-bottom:1px solid var(--qs-line);overflow-wrap:anywhere;padding:20px 16px}._6r4COW_tableWrap th:first-child{width:16%;padding-left:0}._6r4COW_tableWrap thead th{font-size:18px;font-weight:700}._6r4COW_tableWrap thead th:first-child{color:var(--qs-muted);font-size:12px;font-weight:400}._6r4COW_tableWrap thead th:nth-child(2){color:var(--qs-agent,var(--qs-accent))}._6r4COW_tableWrap thead th:nth-child(3){color:var(--qs-skill,var(--qs-accent))}._6r4COW_tableWrap tbody th{color:var(--qs-muted);font-weight:400}._6r4COW_tableWrap tbody tr:last-child>*{border:0}._6r4COW_foundation{padding:40px 0}._6r4COW_foundation ul{grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;padding:12px 0 0;list-style:none;display:grid}._6r4COW_foundation li{gap:12px;display:grid}._6r4COW_foundation b{font-size:14px;font-weight:500}._6r4COW_foundation li span{color:var(--qs-muted);font-size:11px;line-height:1.7}._6r4COW_footer{border-top:1px solid var(--qs-line);justify-content:space-between;align-items:flex-end;gap:32px;padding-top:32px;display:flex}._6r4COW_footer>._6r4COW_textLink{flex-shrink:0}._6r4COW_footer p{max-width:38em}@media (width<=1000px){._6r4COW_hero,._6r4COW_work{gap:28px}._6r4COW_hero{padding-top:40px}._6r4COW_copy h1{font-size:64px}._6r4COW_interface figcaption{flex-wrap:wrap}}@media (width<=700px){._6r4COW_page{border-radius:12px;padding:20px 18px 32px}._6r4COW_brand small{display:none}._6r4COW_productNav{padding-bottom:14px}._6r4COW_productNav>div{gap:20px}._6r4COW_hero,._6r4COW_work,._6r4COW_audience{grid-template-columns:1fr}._6r4COW_hero{gap:28px;padding:32px 0}._6r4COW_copy h1{margin-bottom:20px;font-size:64px}._6r4COW_description{max-width:none}._6r4COW_interface figcaption{padding-top:12px}._6r4COW_work{gap:24px;padding:30px 0}._6r4COW_sectionHeading h2{margin-bottom:8px}._6r4COW_audience{gap:16px;padding:32px 0}._6r4COW_audience blockquote{margin:0}._6r4COW_comparison{padding:30px 0;scroll-margin-top:76px}._6r4COW_tableWrap th,._6r4COW_tableWrap td{padding:14px 8px;font-size:12px}._6r4COW_tableWrap th:first-child{width:18%}._6r4COW_tableWrap thead th{font-size:16px}._6r4COW_foundation{padding:30px 0}._6r4COW_foundation ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}._6r4COW_footer{padding-top:22px;display:block}._6r4COW_footer>._6r4COW_textLink{margin-top:24px}._6r4COW_actions{gap:20px}}body[data-qs-plugin-theme=dark] ._6r4COW_brand img{filter:brightness(0)invert()}";
-		const tagId$16 = "@deepseek-ai/dsh-client-ui-quantskills/ProductIntro.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$16) + "]") === null) {
+		const css$20 = "._6r4COW_page{--product-accent:var(--qs-agent,var(--qs-accent));max-width:1180px;color:var(--qs-ink);background:color-mix(in srgb,var(--qs-chrome) 88%,transparent);border-radius:18px;margin:0 auto;padding:32px clamp(20px,4vw,64px) 48px}._6r4COW_page[data-product=evo]{--product-accent:var(--qs-skill,var(--qs-accent))}._6r4COW_productNav{border-bottom:1px solid var(--qs-line);justify-content:space-between;align-items:center;gap:20px;padding-bottom:24px;display:flex}._6r4COW_brand{align-items:center;gap:8px;font-size:16px;font-weight:650;display:flex}._6r4COW_brand img{object-fit:contain;width:23px;height:23px}._6r4COW_brand small{color:var(--qs-muted);margin-left:8px;font-size:12px;font-weight:400}._6r4COW_productNav>div{gap:24px;display:flex}._6r4COW_productNav button{color:var(--qs-muted);font:inherit;cursor:pointer;background:0 0;border:0;border-bottom:2px solid #0000;padding:10px 0;font-size:14px;font-weight:600;line-height:1.4}._6r4COW_productNav button[aria-current=page]{border-color:var(--product-accent);color:var(--qs-ink)}._6r4COW_hero{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;gap:40px;padding:64px 0 60px;display:grid}._6r4COW_eyebrow,._6r4COW_sectionHeading>small,._6r4COW_audience small,._6r4COW_foundation>small{letter-spacing:.08em;color:var(--product-accent);font-size:12px}._6r4COW_copy h1{letter-spacing:-.055em;margin:12px 0 24px;font-size:clamp(56px,6vw,88px);font-weight:800;line-height:1}._6r4COW_copy h2{letter-spacing:-.035em;max-width:15em;margin:0;font-size:clamp(22px,2.2vw,30px);line-height:1.5}._6r4COW_description{color:var(--qs-muted);max-width:32em;margin:20px 0 0;font-size:14px;line-height:1.9}._6r4COW_actions{flex-wrap:wrap;align-items:center;gap:24px;margin-top:28px;display:flex}._6r4COW_start,._6r4COW_textLink{box-sizing:border-box;min-height:44px;font:inherit;cursor:pointer;justify-content:center;align-items:center;gap:8px;font-size:13px;text-decoration:none;display:inline-flex}._6r4COW_start{color:var(--qs-buttonInk,#102033);background:var(--qs-accent);border:0;border-radius:8px;padding:11px 20px;font-weight:650}._6r4COW_textLink{color:var(--qs-muted);background:0 0;border:0;padding:0}._6r4COW_page a:hover,._6r4COW_page button:hover{color:var(--product-accent)}._6r4COW_page ._6r4COW_start:hover{color:var(--qs-buttonInk,#102033);filter:brightness(1.08)}._6r4COW_page :is(a,button):focus-visible{outline:2px solid var(--qs-accent);outline-offset:4px}._6r4COW_interface{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:10px;min-width:0;margin:0;padding:10px}._6r4COW_interface img{aspect-ratio:2550/1293;object-fit:contain;border-radius:4px;width:100%;height:auto;display:block}._6r4COW_interface figcaption{color:var(--qs-muted);justify-content:space-between;align-items:center;gap:10px;padding:16px 2px 4px;font-size:12px;display:flex}._6r4COW_interface b{color:var(--product-accent);margin-right:6px}._6r4COW_interface small{flex-shrink:0;font-size:10px}._6r4COW_work{border-block:1px solid var(--qs-line);grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:40px;padding:40px 0;display:grid}._6r4COW_sectionHeading h2,._6r4COW_audience h2,._6r4COW_foundation h2,._6r4COW_footer h2{letter-spacing:-.025em;margin:14px 0 18px;font-size:clamp(21px,2vw,27px);font-weight:600;line-height:1.5}._6r4COW_features{margin:0}._6r4COW_features>div{border-bottom:1px solid var(--qs-line);padding:18px 0}._6r4COW_features>div:first-child{padding-top:0}._6r4COW_features>div:last-child{border:0;padding-bottom:0}._6r4COW_features dt{align-items:center;gap:18px;font-size:16px;font-weight:600;display:flex}._6r4COW_features dt span{color:var(--product-accent);font-variant-numeric:tabular-nums;font-size:10px;font-weight:400}._6r4COW_features dd{color:var(--qs-muted);margin:10px 0 0 31px;font-size:13px;line-height:1.8}._6r4COW_audience{grid-template-columns:1fr 1fr;gap:56px;padding:44px 0;display:grid}._6r4COW_audience p,._6r4COW_footer p{color:var(--qs-muted);font-size:14px;line-height:1.85}._6r4COW_audience blockquote{border-left:2px solid var(--product-accent);align-self:center;margin:8px 0;padding:12px 0 12px 24px}._6r4COW_audience blockquote p{margin-bottom:0}._6r4COW_comparison{border-block:1px solid var(--qs-line);padding:36px 0;scroll-margin-top:24px}._6r4COW_tableWrap{margin-top:24px;overflow-x:auto}._6r4COW_tableWrap table{table-layout:fixed;border-collapse:collapse;text-align:left;width:100%;font-size:13px;line-height:1.75}._6r4COW_tableWrap caption{text-align:left;color:var(--qs-muted);padding-bottom:20px;font-size:12px}._6r4COW_tableWrap th,._6r4COW_tableWrap td{border-bottom:1px solid var(--qs-line);overflow-wrap:anywhere;padding:20px 16px}._6r4COW_tableWrap th:first-child{width:16%;padding-left:0}._6r4COW_tableWrap thead th{font-size:18px;font-weight:700}._6r4COW_tableWrap thead th:first-child{color:var(--qs-muted);font-size:12px;font-weight:400}._6r4COW_tableWrap thead th:nth-child(2){color:var(--qs-agent,var(--qs-accent))}._6r4COW_tableWrap thead th:nth-child(3){color:var(--qs-skill,var(--qs-accent))}._6r4COW_tableWrap tbody th{color:var(--qs-muted);font-weight:400}._6r4COW_tableWrap tbody tr:last-child>*{border:0}._6r4COW_foundation{padding:40px 0}._6r4COW_foundation ul{grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;padding:12px 0 0;list-style:none;display:grid}._6r4COW_foundation li{gap:12px;display:grid}._6r4COW_foundation b{font-size:14px;font-weight:500}._6r4COW_foundation li span{color:var(--qs-muted);font-size:11px;line-height:1.7}._6r4COW_footer{border-top:1px solid var(--qs-line);justify-content:space-between;align-items:flex-end;gap:32px;padding-top:32px;display:flex}._6r4COW_footer>._6r4COW_textLink{flex-shrink:0}._6r4COW_footer p{max-width:38em}@media (width<=1000px){._6r4COW_hero,._6r4COW_work{gap:28px}._6r4COW_hero{padding-top:40px}._6r4COW_copy h1{font-size:64px}._6r4COW_interface figcaption{flex-wrap:wrap}}@media (width<=700px){._6r4COW_page{border-radius:12px;padding:20px 18px 32px}._6r4COW_brand small{display:none}._6r4COW_productNav{padding-bottom:14px}._6r4COW_productNav>div{gap:20px}._6r4COW_hero,._6r4COW_work,._6r4COW_audience{grid-template-columns:1fr}._6r4COW_hero{gap:28px;padding:32px 0}._6r4COW_copy h1{margin-bottom:20px;font-size:64px}._6r4COW_description{max-width:none}._6r4COW_interface figcaption{padding-top:12px}._6r4COW_work{gap:24px;padding:30px 0}._6r4COW_sectionHeading h2{margin-bottom:8px}._6r4COW_audience{gap:16px;padding:32px 0}._6r4COW_audience blockquote{margin:0}._6r4COW_comparison{padding:30px 0;scroll-margin-top:76px}._6r4COW_tableWrap th,._6r4COW_tableWrap td{padding:14px 8px;font-size:12px}._6r4COW_tableWrap th:first-child{width:18%}._6r4COW_tableWrap thead th{font-size:16px}._6r4COW_foundation{padding:30px 0}._6r4COW_foundation ul{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}._6r4COW_footer{padding-top:22px;display:block}._6r4COW_footer>._6r4COW_textLink{margin-top:24px}._6r4COW_actions{gap:20px}}body[data-qs-plugin-theme=dark] ._6r4COW_brand img{filter:brightness(0)invert()}";
+		const tagId$20 = "@deepseek-ai/dsh-client-ui-quantskills/ProductIntro.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$20) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$16;
-			tag.textContent = css$16;
+			tag.dataset.pluginCss = tagId$20;
+			tag.textContent = css$20;
 			document.head.appendChild(tag);
 		}
 		var ProductIntro_module_css_default = {
@@ -28604,7 +28883,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 				href,
 				target: "_blank",
 				rel: "noopener noreferrer",
-				children: [children, (0, react_jsx_runtime.jsx)(r$18, {
+				children: [children, (0, react_jsx_runtime.jsx)(r$19, {
 					size: 17,
 					"aria-hidden": "true"
 				})]
@@ -28701,7 +28980,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 										"与 ",
 										PRODUCTS[other].name,
 										" 对比 ",
-										(0, react_jsx_runtime.jsx)(r$20, { size: 16 })
+										(0, react_jsx_runtime.jsx)(r$21, { size: 16 })
 									]
 								})
 							]
@@ -28786,7 +29065,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 									children: [
 										"了解 ",
 										PRODUCTS[other].name,
-										(0, react_jsx_runtime.jsx)(r$20, { size: 17 })
+										(0, react_jsx_runtime.jsx)(r$21, { size: 17 })
 									]
 								})]
 							})
@@ -28996,13 +29275,13 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		}
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/DatabasePage.module.css.mjs
-		const css$15 = ".PkZEFG_page{height:100%;min-height:0;color:var(--qs-ink,var(--dsw-alias-label-primary));flex-direction:column;padding:30px 40px;display:flex;overflow:hidden}.PkZEFG_header{flex-shrink:0;justify-content:space-between;align-items:center;gap:24px;margin-bottom:20px;display:flex}.PkZEFG_headerActions{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:10px;display:flex}.PkZEFG_header h1{letter-spacing:-.04em;margin:0;font-size:30px;font-weight:650;line-height:1.25}.PkZEFG_page .PkZEFG_header p,.PkZEFG_page .PkZEFG_detailHeader p{color:var(--qs-muted);margin:8px 0 0;line-height:1.6}.PkZEFG_page button,.PkZEFG_form button{border:1px solid var(--qs-border);background:var(--qs-surface,var(--dsw-alias-bg-layer-1));color:inherit;cursor:pointer;font:inherit;border-radius:10px;justify-content:center;align-items:center;gap:8px;padding:10px 14px;display:inline-flex}.PkZEFG_page button:disabled,.PkZEFG_form button:disabled{opacity:.45;cursor:default}.PkZEFG_page :is(button,input,select,[tabindex]):focus-visible,.PkZEFG_form :is(button,input,textarea,select):focus-visible{outline:2px solid var(--qs-accent);outline-offset:-2px}.PkZEFG_page .PkZEFG_primary,.PkZEFG_form .PkZEFG_primary{background:var(--qs-accent);color:var(--qs-buttonInk,var(--dsw-alias-label-inverted-primary));border-color:#0000;font-weight:600}.PkZEFG_notice{background:color-mix(in srgb,var(--qs-surface) var(--qs-conversation-surface-opacity,92%),transparent);border:1px solid var(--qs-border);color:var(--qs-muted);backdrop-filter:blur(16px);z-index:2;border-radius:14px;flex-shrink:0;align-items:center;gap:12px;padding:13px 18px;line-height:1.6;display:flex;position:relative}.PkZEFG_notice>svg{color:var(--qs-accent);flex-shrink:0}.PkZEFG_categoryHelp{flex-shrink:0;margin-left:auto}.PkZEFG_categoryHelp summary{color:var(--qs-accent);cursor:pointer;padding:4px}.PkZEFG_categoryHelp>div{border:1px solid var(--qs-border);background:var(--qs-surface);width:min(420px,100%);color:var(--qs-ink);border-radius:14px;padding:20px;position:absolute;top:calc(100% + 8px);right:0;box-shadow:0 10px 30px #0002}.PkZEFG_categoryHelp p{gap:18px;margin:0 0 12px;display:flex}.PkZEFG_categoryHelp b{white-space:nowrap}.PkZEFG_categoryHelp small{color:var(--qs-muted);line-height:1.7}.PkZEFG_toolbar{flex-wrap:wrap;flex-shrink:0;align-items:center;gap:12px;margin:20px 0 16px;display:flex}.PkZEFG_tabs{gap:4px;display:flex}.PkZEFG_page .PkZEFG_tabs button,.PkZEFG_form .PkZEFG_tabs button{white-space:nowrap;background:0 0;border-color:#0000}.PkZEFG_page .PkZEFG_tabs button[aria-selected=true],.PkZEFG_form .PkZEFG_tabs button[aria-pressed=true]{background:var(--qs-tint);color:var(--qs-accent)}.PkZEFG_tabs button span{opacity:.75;font-size:12px}.PkZEFG_search{border:1px solid var(--qs-border);background:color-mix(in srgb,var(--qs-surface) 85%,transparent);border-radius:10px;align-items:center;gap:8px;min-width:220px;margin-left:auto;padding:0 12px;display:flex}.PkZEFG_search input{color:inherit;font:inherit;background:0 0;border:0;outline:none;width:100%;min-width:0;padding:10px 0}.PkZEFG_layout{flex:1;grid-template-columns:minmax(290px,.8fr) minmax(0,1.4fr);gap:22px;min-height:0;display:grid;overflow:hidden}.PkZEFG_listPane{flex-direction:column;min-width:0;min-height:0;display:flex}.PkZEFG_listHeading{justify-content:space-between;align-items:center;padding:0 4px 12px;font-size:13px;display:flex}.PkZEFG_listHeading span{color:var(--qs-muted)}.PkZEFG_list{overscroll-behavior:contain;scrollbar-gutter:stable;flex:1;min-width:0;min-height:0;padding:2px 6px 0 2px;overflow:auto}.PkZEFG_page .PkZEFG_item{text-align:left;border:1px solid color-mix(in srgb,var(--qs-border) 80%,transparent);background:color-mix(in srgb,var(--qs-surface) var(--qs-conversation-surface-opacity,92%),transparent);backdrop-filter:blur(16px);border-radius:14px;align-items:center;gap:8px;width:100%;margin-bottom:10px;padding:0 12px 0 0;transition:background .16s,border-color .16s;display:flex}.PkZEFG_page .PkZEFG_item:hover{background:color-mix(in srgb,var(--qs-tint) 75%,transparent)}.PkZEFG_page .PkZEFG_item[data-selected=true]{border-color:var(--qs-accent);background:color-mix(in srgb,var(--qs-tint) 88%,transparent);box-shadow:inset 3px 0 var(--qs-accent)}.PkZEFG_page .PkZEFG_openItem{text-align:left;background:0 0;border:0;border-radius:14px;flex:1;grid-template-columns:42px minmax(0,1fr);gap:12px;min-width:0;padding:18px 12px 18px 16px;display:grid}.PkZEFG_itemActions{flex-direction:column;justify-content:space-between;align-self:stretch;align-items:flex-end;gap:14px;padding:16px 0 12px;display:flex}.PkZEFG_page .PkZEFG_deleteItem{width:30px;height:30px;color:var(--qs-muted);background:0 0;border-color:#0000;padding:0}.PkZEFG_page .PkZEFG_deleteItem:hover{color:var(--qs-danger,#db6d6d);background:color-mix(in srgb,var(--qs-danger,#db6d6d) 12%,transparent)}.PkZEFG_listHeading{flex-wrap:wrap;flex-shrink:0;gap:10px}.PkZEFG_listHeading>span{margin-left:auto}.PkZEFG_page .PkZEFG_listHeading button{background:0 0;padding:5px 8px;font-size:12px}.PkZEFG_bulkBar{border:1px solid var(--qs-border);background:color-mix(in srgb,var(--qs-surface) 75%,transparent);border-radius:12px;flex-shrink:0;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;padding:10px;display:flex}.PkZEFG_bulkBar label{align-items:center;gap:7px;font-size:12px;display:flex}.PkZEFG_page .PkZEFG_bulkBar button{padding:7px 9px;font-size:12px}.PkZEFG_bulkBar input,.PkZEFG_selectItem{width:16px;height:16px;accent-color:var(--qs-accent);flex-shrink:0}.PkZEFG_selectItem{margin-left:14px}.PkZEFG_selectItem+.PkZEFG_openItem{padding-left:4px}.PkZEFG_itemContent{gap:6px;min-width:0;display:grid}.PkZEFG_item b,.PkZEFG_params{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.PkZEFG_item small{color:var(--qs-muted);font-size:12px;line-height:1.5}.PkZEFG_item .PkZEFG_params{color:var(--qs-ink)}.PkZEFG_icon{background:var(--qs-tint);width:42px;height:42px;color:var(--qs-accent);border-radius:11px;place-items:center;display:grid}.PkZEFG_icon[data-category=news]{color:var(--qs-team,var(--qs-accent));background:color-mix(in srgb,var(--qs-team,var(--qs-accent)) 12%,transparent)}.PkZEFG_icon[data-category=fundamental]{color:var(--qs-agent,var(--qs-accent));background:color-mix(in srgb,var(--qs-agent,var(--qs-accent)) 12%,transparent)}.PkZEFG_fresh{white-space:nowrap;color:var(--qs-accent);align-self:start;margin-top:3px;font-size:12px}.PkZEFG_fresh[data-stale=true]{color:var(--qs-muted)}.PkZEFG_empty{text-align:center;min-height:220px;color:var(--qs-muted);flex-direction:column;justify-content:center;align-items:center;gap:14px;padding:24px 16px;display:flex}.PkZEFG_empty h2{margin:0;font-size:19px}.PkZEFG_empty p{max-width:360px;margin:0 0 10px;line-height:1.8}.PkZEFG_detail{border:1px solid var(--qs-border);background:color-mix(in srgb,var(--qs-surface) var(--qs-conversation-surface-opacity,92%),transparent);backdrop-filter:blur(18px);border-radius:18px;flex-direction:column;min-width:0;min-height:0;display:flex;overflow:hidden;box-shadow:inset 0 1px #ffffff12}.PkZEFG_detailHeader{border-bottom:1px solid var(--qs-border);background:color-mix(in srgb,var(--qs-surface) 78%,transparent);flex-shrink:0;justify-content:space-between;align-items:start;gap:12px;padding:22px 24px 18px;display:flex}.PkZEFG_detailHeader>div{min-width:0}.PkZEFG_detailHeader h2{overflow-wrap:anywhere;margin:0;font-size:20px;line-height:1.3}.PkZEFG_detailHeader p{font-size:13px}.PkZEFG_page .PkZEFG_detailHeader button{background:0 0;border:0;flex-shrink:0;padding:6px}.PkZEFG_detailBody{overscroll-behavior:contain;scrollbar-gutter:stable;flex:1;min-height:0;padding:20px 24px 24px;overflow:auto}.PkZEFG_detailBody>.PkZEFG_empty{height:100%}.PkZEFG_categoryRow{flex-wrap:wrap;align-items:center;gap:12px;display:flex}.PkZEFG_categoryRow label{align-items:center;gap:10px;font-size:13px;display:flex}.PkZEFG_categoryRow>span{color:var(--qs-muted);font-size:12px}.PkZEFG_categoryRow select{border:1px solid var(--qs-border);background:var(--qs-chrome);color:var(--qs-ink);font:inherit;border-radius:8px;padding:7px 10px}.PkZEFG_meta{gap:14px;margin:24px 0;display:grid}.PkZEFG_meta div{grid-template-columns:94px minmax(0,1fr);gap:12px;font-size:13px;display:grid}.PkZEFG_meta dt{color:var(--qs-muted)}.PkZEFG_meta dd{overflow-wrap:anywhere;margin:0;line-height:1.6}.PkZEFG_meta dd small{color:var(--qs-muted);margin-top:3px;font-size:12px;display:block}.PkZEFG_actions{flex-wrap:wrap;align-items:center;gap:10px;display:flex}.PkZEFG_page .PkZEFG_actions button{border:1px solid var(--qs-border);background:color-mix(in srgb,var(--qs-surface) 85%,transparent)}.PkZEFG_query{border-block:1px solid var(--qs-border);gap:15px;margin-top:20px;padding:20px 0;display:grid}.PkZEFG_query b{font-size:14px}.PkZEFG_dates{grid-template-columns:1fr 1fr;gap:16px;display:grid}.PkZEFG_query label,.PkZEFG_form label{color:var(--qs-muted);gap:8px;min-width:0;font-size:13px;display:grid}.PkZEFG_query .PkZEFG_actions label{align-items:center;display:flex}.PkZEFG_query .PkZEFG_actions input{width:82px}.PkZEFG_query input,.PkZEFG_form input,.PkZEFG_form select,.PkZEFG_form textarea{box-sizing:border-box;border:1px solid var(--qs-border);background:var(--qs-chrome,var(--dsw-alias-bg-base));width:100%;color:var(--dsw-alias-label-primary);font:inherit;border-radius:8px;padding:10px}.PkZEFG_result{color:var(--qs-muted);font-size:13px;margin:18px 0!important;line-height:1.7!important}.PkZEFG_table{border:1px solid var(--qs-border);overscroll-behavior:contain;border-radius:9px;max-height:400px;overflow:auto}.PkZEFG_table table{border-collapse:collapse;white-space:nowrap;text-align:left;width:100%;font-size:12px}.PkZEFG_table th{background:var(--qs-chrome);font-weight:600;position:sticky;top:0}.PkZEFG_table :is(td,th){border-bottom:1px solid var(--qs-border);text-overflow:ellipsis;max-width:280px;padding:10px 12px;overflow:hidden}.PkZEFG_foot{color:var(--qs-muted);margin-top:12px;display:block}.PkZEFG_error{color:var(--dsw-alias-state-error-primary,#c74a51);flex-shrink:0;margin:0 0 12px;line-height:1.6}.PkZEFG_form{gap:20px;display:grid}.PkZEFG_form p{color:var(--qs-muted);margin:0;font-size:13px;line-height:1.7}.PkZEFG_form footer{justify-content:flex-end;gap:10px;display:flex}.PkZEFG_advanced{border-top:1px solid var(--qs-border);padding-top:14px}.PkZEFG_advanced summary{cursor:pointer;color:var(--qs-muted)}.PkZEFG_advanced label{margin:16px 0 10px}@media (width<=1050px){.PkZEFG_page{padding:24px}.PkZEFG_search{flex:1;margin-left:0}.PkZEFG_layout{grid-template-columns:minmax(270px,.85fr) minmax(0,1.3fr);gap:16px}.PkZEFG_page .PkZEFG_item{padding:0 10px 0 0}.PkZEFG_page .PkZEFG_openItem{grid-template-columns:36px minmax(0,1fr);gap:10px;padding:14px 10px}.PkZEFG_icon{width:36px;height:36px}.PkZEFG_detailHeader,.PkZEFG_detailBody{padding:18px}}@media (width<=760px){.PkZEFG_page{padding:18px 14px}.PkZEFG_header{gap:12px;margin-bottom:14px}.PkZEFG_header h1{font-size:25px}.PkZEFG_header p{font-size:12px}.PkZEFG_notice{padding:10px 12px;font-size:12px}.PkZEFG_notice>svg{display:none}.PkZEFG_toolbar{gap:8px;margin:14px 0 12px}.PkZEFG_tabs{width:100%;overflow:auto}.PkZEFG_page .PkZEFG_tabs button{padding:8px 10px}.PkZEFG_layout{grid-template-columns:minmax(0,1fr)}.PkZEFG_layout[data-selected=false] .PkZEFG_detail,.PkZEFG_layout[data-selected=true] .PkZEFG_listPane{display:none}.PkZEFG_search{min-width:0}.PkZEFG_dates{gap:10px}}@media (prefers-reduced-motion:reduce){.PkZEFG_page .PkZEFG_item{transition:none}}@media (width<=760px){.PkZEFG_header{flex-wrap:wrap}.PkZEFG_headerActions{gap:8px}.PkZEFG_page .PkZEFG_headerActions button{padding:8px 10px}.PkZEFG_bulkBar{flex-wrap:wrap}}.PkZEFG_mobileBack{display:none}@media (width<=840px){.PkZEFG_layout{grid-template-columns:minmax(0,1fr)}.PkZEFG_layout[data-selected=false] .PkZEFG_detail,.PkZEFG_layout[data-selected=true] .PkZEFG_listPane,.PkZEFG_page:has(.PkZEFG_layout[data-selected=true])>:is(.PkZEFG_header,.PkZEFG_notice,.PkZEFG_toolbar){display:none}.PkZEFG_mobileBack{white-space:nowrap;font-size:12px;display:inline}.PkZEFG_page .PkZEFG_detailHeader button{gap:4px;min-height:40px}.PkZEFG_meta div{grid-template-columns:76px minmax(0,1fr)}.PkZEFG_meta div:first-child dd{max-height:112px;overflow:auto}.PkZEFG_page :is(input,textarea,select),.PkZEFG_form :is(input,textarea,select){font-size:16px}}@media (height<=560px) and (width<=840px){.PkZEFG_page>.PkZEFG_header p,.PkZEFG_notice{display:none}.PkZEFG_header{margin-bottom:8px}.PkZEFG_toolbar{margin:8px 0}}";
-		const tagId$15 = "@deepseek-ai/dsh-client-ui-quantskills/DatabasePage.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$15) + "]") === null) {
+		const css$19 = ".PkZEFG_page{height:100%;min-height:0;color:var(--qs-ink,var(--dsw-alias-label-primary));flex-direction:column;padding:30px 40px;display:flex;overflow:hidden}.PkZEFG_header{flex-shrink:0;justify-content:space-between;align-items:center;gap:24px;margin-bottom:20px;display:flex}.PkZEFG_headerActions{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:10px;display:flex}.PkZEFG_header h1{letter-spacing:-.04em;margin:0;font-size:30px;font-weight:650;line-height:1.25}.PkZEFG_page .PkZEFG_header p,.PkZEFG_page .PkZEFG_detailHeader p{color:var(--qs-muted);margin:8px 0 0;line-height:1.6}.PkZEFG_page button,.PkZEFG_form button{border:1px solid var(--qs-border);background:var(--qs-surface,var(--dsw-alias-bg-layer-1));color:inherit;cursor:pointer;font:inherit;border-radius:10px;justify-content:center;align-items:center;gap:8px;padding:10px 14px;display:inline-flex}.PkZEFG_page button:disabled,.PkZEFG_form button:disabled{opacity:.45;cursor:default}.PkZEFG_page :is(button,input,select,[tabindex]):focus-visible,.PkZEFG_form :is(button,input,textarea,select):focus-visible{outline:2px solid var(--qs-accent);outline-offset:-2px}.PkZEFG_page .PkZEFG_primary,.PkZEFG_form .PkZEFG_primary{background:var(--qs-accent);color:var(--qs-buttonInk,var(--dsw-alias-label-inverted-primary));border-color:#0000;font-weight:600}.PkZEFG_notice{background:color-mix(in srgb,var(--qs-surface) var(--qs-conversation-surface-opacity,92%),transparent);border:1px solid var(--qs-border);color:var(--qs-muted);backdrop-filter:blur(16px);z-index:2;border-radius:14px;flex-shrink:0;align-items:center;gap:12px;padding:13px 18px;line-height:1.6;display:flex;position:relative}.PkZEFG_notice>svg{color:var(--qs-accent);flex-shrink:0}.PkZEFG_categoryHelp{flex-shrink:0;margin-left:auto}.PkZEFG_categoryHelp summary{color:var(--qs-accent);cursor:pointer;padding:4px}.PkZEFG_categoryHelp>div{border:1px solid var(--qs-border);background:var(--qs-surface);width:min(420px,100%);color:var(--qs-ink);border-radius:14px;padding:20px;position:absolute;top:calc(100% + 8px);right:0;box-shadow:0 10px 30px #0002}.PkZEFG_categoryHelp p{gap:18px;margin:0 0 12px;display:flex}.PkZEFG_categoryHelp b{white-space:nowrap}.PkZEFG_categoryHelp small{color:var(--qs-muted);line-height:1.7}.PkZEFG_toolbar{flex-wrap:wrap;flex-shrink:0;align-items:center;gap:12px;margin:20px 0 16px;display:flex}.PkZEFG_tabs{gap:4px;display:flex}.PkZEFG_page .PkZEFG_tabs button,.PkZEFG_form .PkZEFG_tabs button{white-space:nowrap;background:0 0;border-color:#0000}.PkZEFG_page .PkZEFG_tabs button[aria-selected=true],.PkZEFG_form .PkZEFG_tabs button[aria-pressed=true]{background:var(--qs-tint);color:var(--qs-accent)}.PkZEFG_tabs button span{opacity:.75;font-size:12px}.PkZEFG_search{border:1px solid var(--qs-border);background:color-mix(in srgb,var(--qs-surface) 85%,transparent);border-radius:10px;align-items:center;gap:8px;min-width:220px;margin-left:auto;padding:0 12px;display:flex}.PkZEFG_search input{color:inherit;font:inherit;background:0 0;border:0;outline:none;width:100%;min-width:0;padding:10px 0}.PkZEFG_layout{flex:1;grid-template-columns:minmax(290px,.8fr) minmax(0,1.4fr);gap:22px;min-height:0;display:grid;overflow:hidden}.PkZEFG_listPane{flex-direction:column;min-width:0;min-height:0;display:flex}.PkZEFG_listHeading{justify-content:space-between;align-items:center;padding:0 4px 12px;font-size:13px;display:flex}.PkZEFG_listHeading span{color:var(--qs-muted)}.PkZEFG_list{overscroll-behavior:contain;scrollbar-gutter:stable;flex:1;min-width:0;min-height:0;padding:2px 6px 0 2px;overflow:auto}.PkZEFG_page .PkZEFG_item{text-align:left;border:1px solid color-mix(in srgb,var(--qs-border) 80%,transparent);background:color-mix(in srgb,var(--qs-surface) var(--qs-conversation-surface-opacity,92%),transparent);backdrop-filter:blur(16px);border-radius:14px;align-items:center;gap:8px;width:100%;margin-bottom:10px;padding:0 12px 0 0;transition:background .16s,border-color .16s;display:flex}.PkZEFG_page .PkZEFG_item:hover{background:color-mix(in srgb,var(--qs-tint) 75%,transparent)}.PkZEFG_page .PkZEFG_item[data-selected=true]{border-color:var(--qs-accent);background:color-mix(in srgb,var(--qs-tint) 88%,transparent);box-shadow:inset 3px 0 var(--qs-accent)}.PkZEFG_page .PkZEFG_openItem{text-align:left;background:0 0;border:0;border-radius:14px;flex:1;grid-template-columns:42px minmax(0,1fr);gap:12px;min-width:0;padding:18px 12px 18px 16px;display:grid}.PkZEFG_itemActions{flex-direction:column;justify-content:space-between;align-self:stretch;align-items:flex-end;gap:14px;padding:16px 0 12px;display:flex}.PkZEFG_page .PkZEFG_deleteItem{width:30px;height:30px;color:var(--qs-muted);background:0 0;border-color:#0000;padding:0}.PkZEFG_page .PkZEFG_deleteItem:hover{color:var(--qs-danger,#db6d6d);background:color-mix(in srgb,var(--qs-danger,#db6d6d) 12%,transparent)}.PkZEFG_listHeading{flex-wrap:wrap;flex-shrink:0;gap:10px}.PkZEFG_listHeading>span{margin-left:auto}.PkZEFG_page .PkZEFG_listHeading button{background:0 0;padding:5px 8px;font-size:12px}.PkZEFG_bulkBar{border:1px solid var(--qs-border);background:color-mix(in srgb,var(--qs-surface) 75%,transparent);border-radius:12px;flex-shrink:0;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;padding:10px;display:flex}.PkZEFG_bulkBar label{align-items:center;gap:7px;font-size:12px;display:flex}.PkZEFG_page .PkZEFG_bulkBar button{padding:7px 9px;font-size:12px}.PkZEFG_bulkBar input,.PkZEFG_selectItem{width:16px;height:16px;accent-color:var(--qs-accent);flex-shrink:0}.PkZEFG_selectItem{margin-left:14px}.PkZEFG_selectItem+.PkZEFG_openItem{padding-left:4px}.PkZEFG_itemContent{gap:6px;min-width:0;display:grid}.PkZEFG_item b,.PkZEFG_params{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.PkZEFG_item small{color:var(--qs-muted);font-size:12px;line-height:1.5}.PkZEFG_item .PkZEFG_params{color:var(--qs-ink)}.PkZEFG_icon{background:var(--qs-tint);width:42px;height:42px;color:var(--qs-accent);border-radius:11px;place-items:center;display:grid}.PkZEFG_icon[data-category=news]{color:var(--qs-team,var(--qs-accent));background:color-mix(in srgb,var(--qs-team,var(--qs-accent)) 12%,transparent)}.PkZEFG_icon[data-category=fundamental]{color:var(--qs-agent,var(--qs-accent));background:color-mix(in srgb,var(--qs-agent,var(--qs-accent)) 12%,transparent)}.PkZEFG_fresh{white-space:nowrap;color:var(--qs-accent);align-self:start;margin-top:3px;font-size:12px}.PkZEFG_fresh[data-stale=true]{color:var(--qs-muted)}.PkZEFG_empty{text-align:center;min-height:220px;color:var(--qs-muted);flex-direction:column;justify-content:center;align-items:center;gap:14px;padding:24px 16px;display:flex}.PkZEFG_empty h2{margin:0;font-size:19px}.PkZEFG_empty p{max-width:360px;margin:0 0 10px;line-height:1.8}.PkZEFG_detail{border:1px solid var(--qs-border);background:color-mix(in srgb,var(--qs-surface) var(--qs-conversation-surface-opacity,92%),transparent);backdrop-filter:blur(18px);border-radius:18px;flex-direction:column;min-width:0;min-height:0;display:flex;overflow:hidden;box-shadow:inset 0 1px #ffffff12}.PkZEFG_detailHeader{border-bottom:1px solid var(--qs-border);background:color-mix(in srgb,var(--qs-surface) 78%,transparent);flex-shrink:0;justify-content:space-between;align-items:start;gap:12px;padding:22px 24px 18px;display:flex}.PkZEFG_detailHeader>div{min-width:0}.PkZEFG_detailHeader h2{overflow-wrap:anywhere;margin:0;font-size:20px;line-height:1.3}.PkZEFG_detailHeader p{font-size:13px}.PkZEFG_page .PkZEFG_detailHeader button{background:0 0;border:0;flex-shrink:0;padding:6px}.PkZEFG_detailBody{overscroll-behavior:contain;scrollbar-gutter:stable;flex:1;min-height:0;padding:20px 24px 24px;overflow:auto}.PkZEFG_detailBody>.PkZEFG_empty{height:100%}.PkZEFG_categoryRow{flex-wrap:wrap;align-items:center;gap:12px;display:flex}.PkZEFG_categoryRow label{align-items:center;gap:10px;font-size:13px;display:flex}.PkZEFG_categoryRow>span{color:var(--qs-muted);font-size:12px}.PkZEFG_categoryRow select{border:1px solid var(--qs-border);background:var(--qs-chrome);color:var(--qs-ink);font:inherit;border-radius:8px;padding:7px 10px}.PkZEFG_meta{gap:14px;margin:24px 0;display:grid}.PkZEFG_meta div{grid-template-columns:94px minmax(0,1fr);gap:12px;font-size:13px;display:grid}.PkZEFG_meta dt{color:var(--qs-muted)}.PkZEFG_meta dd{overflow-wrap:anywhere;margin:0;line-height:1.6}.PkZEFG_meta dd small{color:var(--qs-muted);margin-top:3px;font-size:12px;display:block}.PkZEFG_actions{flex-wrap:wrap;align-items:center;gap:10px;display:flex}.PkZEFG_page .PkZEFG_actions button{border:1px solid var(--qs-border);background:color-mix(in srgb,var(--qs-surface) 85%,transparent)}.PkZEFG_query{border-block:1px solid var(--qs-border);gap:15px;margin-top:20px;padding:20px 0;display:grid}.PkZEFG_query b{font-size:14px}.PkZEFG_dates{grid-template-columns:1fr 1fr;gap:16px;display:grid}.PkZEFG_query label,.PkZEFG_form label{color:var(--qs-muted);gap:8px;min-width:0;font-size:13px;display:grid}.PkZEFG_query .PkZEFG_actions label{align-items:center;display:flex}.PkZEFG_query .PkZEFG_actions input{width:82px}.PkZEFG_query input,.PkZEFG_form input,.PkZEFG_form select,.PkZEFG_form textarea{box-sizing:border-box;border:1px solid var(--qs-border);background:var(--qs-chrome,var(--dsw-alias-bg-base));width:100%;color:var(--dsw-alias-label-primary);font:inherit;border-radius:8px;padding:10px}.PkZEFG_result{color:var(--qs-muted);font-size:13px;margin:18px 0!important;line-height:1.7!important}.PkZEFG_table{border:1px solid var(--qs-border);overscroll-behavior:contain;border-radius:9px;max-height:400px;overflow:auto}.PkZEFG_table table{border-collapse:collapse;white-space:nowrap;text-align:left;width:100%;font-size:12px}.PkZEFG_table th{background:var(--qs-chrome);font-weight:600;position:sticky;top:0}.PkZEFG_table :is(td,th){border-bottom:1px solid var(--qs-border);text-overflow:ellipsis;max-width:280px;padding:10px 12px;overflow:hidden}.PkZEFG_foot{color:var(--qs-muted);margin-top:12px;display:block}.PkZEFG_error{color:var(--dsw-alias-state-error-primary,#c74a51);flex-shrink:0;margin:0 0 12px;line-height:1.6}.PkZEFG_form{gap:20px;display:grid}.PkZEFG_form p{color:var(--qs-muted);margin:0;font-size:13px;line-height:1.7}.PkZEFG_form footer{justify-content:flex-end;gap:10px;display:flex}.PkZEFG_advanced{border-top:1px solid var(--qs-border);padding-top:14px}.PkZEFG_advanced summary{cursor:pointer;color:var(--qs-muted)}.PkZEFG_advanced label{margin:16px 0 10px}@media (width<=1050px){.PkZEFG_page{padding:24px}.PkZEFG_search{flex:1;margin-left:0}.PkZEFG_layout{grid-template-columns:minmax(270px,.85fr) minmax(0,1.3fr);gap:16px}.PkZEFG_page .PkZEFG_item{padding:0 10px 0 0}.PkZEFG_page .PkZEFG_openItem{grid-template-columns:36px minmax(0,1fr);gap:10px;padding:14px 10px}.PkZEFG_icon{width:36px;height:36px}.PkZEFG_detailHeader,.PkZEFG_detailBody{padding:18px}}@media (width<=760px){.PkZEFG_page{padding:18px 14px}.PkZEFG_header{gap:12px;margin-bottom:14px}.PkZEFG_header h1{font-size:25px}.PkZEFG_header p{font-size:12px}.PkZEFG_notice{padding:10px 12px;font-size:12px}.PkZEFG_notice>svg{display:none}.PkZEFG_toolbar{gap:8px;margin:14px 0 12px}.PkZEFG_tabs{width:100%;overflow:auto}.PkZEFG_page .PkZEFG_tabs button{padding:8px 10px}.PkZEFG_layout{grid-template-columns:minmax(0,1fr)}.PkZEFG_layout[data-selected=false] .PkZEFG_detail,.PkZEFG_layout[data-selected=true] .PkZEFG_listPane{display:none}.PkZEFG_search{min-width:0}.PkZEFG_dates{gap:10px}}@media (prefers-reduced-motion:reduce){.PkZEFG_page .PkZEFG_item{transition:none}}@media (width<=760px){.PkZEFG_header{flex-wrap:wrap}.PkZEFG_headerActions{gap:8px}.PkZEFG_page .PkZEFG_headerActions button{padding:8px 10px}.PkZEFG_bulkBar{flex-wrap:wrap}}.PkZEFG_mobileBack{display:none}@media (width<=840px){.PkZEFG_layout{grid-template-columns:minmax(0,1fr)}.PkZEFG_layout[data-selected=false] .PkZEFG_detail,.PkZEFG_layout[data-selected=true] .PkZEFG_listPane,.PkZEFG_page:has(.PkZEFG_layout[data-selected=true])>:is(.PkZEFG_header,.PkZEFG_notice,.PkZEFG_toolbar){display:none}.PkZEFG_mobileBack{white-space:nowrap;font-size:12px;display:inline}.PkZEFG_page .PkZEFG_detailHeader button{gap:4px;min-height:40px}.PkZEFG_meta div{grid-template-columns:76px minmax(0,1fr)}.PkZEFG_meta div:first-child dd{max-height:112px;overflow:auto}.PkZEFG_page :is(input,textarea,select),.PkZEFG_form :is(input,textarea,select){font-size:16px}}@media (height<=560px) and (width<=840px){.PkZEFG_page>.PkZEFG_header p,.PkZEFG_notice{display:none}.PkZEFG_header{margin-bottom:8px}.PkZEFG_toolbar{margin:8px 0}}";
+		const tagId$19 = "@deepseek-ai/dsh-client-ui-quantskills/DatabasePage.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$19) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$15;
-			tag.textContent = css$15;
+			tag.dataset.pluginCss = tagId$19;
+			tag.textContent = css$19;
 			document.head.appendChild(tag);
 		}
 		var DatabasePage_module_css_default = {
@@ -29053,13 +29332,13 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 				id: "market",
 				label: "行情",
 				description: "价格、成交量、盘口与历史 K 线",
-				icon: o$28
+				icon: o$34
 			},
 			{
 				id: "news",
 				label: "新闻",
 				description: "新闻快讯、公司公告与市场事件",
-				icon: o$10
+				icon: o$14
 			},
 			{
 				id: "fundamental",
@@ -29071,7 +29350,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 				id: "other",
 				label: "其他",
 				description: "暂未识别的研究数据，可在详情中调整分类",
-				icon: o$4
+				icon: o$6
 			}
 		];
 		const categoryOf = (item) => categories.find((category) => category.id === item.category) ?? categories[3];
@@ -29230,14 +29509,14 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 								className: DatabasePage_module_css_default.primary,
 								disabled: !access || busy,
 								onClick: () => setAdding(true),
-								children: [(0, react_jsx_runtime.jsx)(e$6, { size: 18 }), "添加数据"]
+								children: [(0, react_jsx_runtime.jsx)(e$8, { size: 18 }), "添加数据"]
 							})]
 						})]
 					}),
 					(0, react_jsx_runtime.jsxs)("div", {
 						className: DatabasePage_module_css_default.notice,
 						children: [
-							(0, react_jsx_runtime.jsx)(e$16, { size: 21 }),
+							(0, react_jsx_runtime.jsx)(e$20, { size: 21 }),
 							(0, react_jsx_runtime.jsx)("span", { children: "AI 优先读取本地缓存；过期、日期范围或条数不足时，再按需更新。" }),
 							(0, react_jsx_runtime.jsxs)("details", {
 								className: DatabasePage_module_css_default.categoryHelp,
@@ -29267,7 +29546,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 							}),
 							(0, react_jsx_runtime.jsxs)("label", {
 								className: DatabasePage_module_css_default.search,
-								children: [(0, react_jsx_runtime.jsx)(o$11, { size: 17 }), (0, react_jsx_runtime.jsx)("input", {
+								children: [(0, react_jsx_runtime.jsx)(o$15, { size: 17 }), (0, react_jsx_runtime.jsx)("input", {
 									"aria-label": "搜索数据集",
 									placeholder: "名称、股票代码、来源或字段",
 									value: search,
@@ -29278,7 +29557,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 								"aria-label": "刷新数据目录",
 								disabled: busy || !access,
 								onClick: () => void run(load),
-								children: (0, react_jsx_runtime.jsx)(r$24, { size: 18 })
+								children: (0, react_jsx_runtime.jsx)(r$25, { size: 18 })
 							})
 						]
 					}),
@@ -29337,7 +29616,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 									}) : visible.length === 0 ? (0, react_jsx_runtime.jsxs)("div", {
 										className: DatabasePage_module_css_default.empty,
 										children: [
-											(0, react_jsx_runtime.jsx)(e$16, { size: 32 }),
+											(0, react_jsx_runtime.jsx)(e$20, { size: 32 }),
 											(0, react_jsx_runtime.jsx)("h2", { children: items.length ? "没有匹配的数据" : "建立你的研究数据库" }),
 											(0, react_jsx_runtime.jsx)("p", { children: currentCategory?.description ?? "连接 PandaData 或外部接口，也可以导入 CSV、JSON 文件。" }),
 											!items.length && (0, react_jsx_runtime.jsx)("button", {
@@ -29436,11 +29715,11 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 								children: opening ? (0, react_jsx_runtime.jsxs)("div", {
 									className: DatabasePage_module_css_default.empty,
 									role: "status",
-									children: [(0, react_jsx_runtime.jsx)(r$24, { size: 28 }), (0, react_jsx_runtime.jsx)("p", { children: "正在读取数据预览…" })]
+									children: [(0, react_jsx_runtime.jsx)(r$25, { size: 28 }), (0, react_jsx_runtime.jsx)("p", { children: "正在读取数据预览…" })]
 								}) : !selected ? (0, react_jsx_runtime.jsxs)("div", {
 									className: DatabasePage_module_css_default.empty,
 									children: [
-										(0, react_jsx_runtime.jsx)(o$4, { size: 40 }),
+										(0, react_jsx_runtime.jsx)(o$6, { size: 40 }),
 										(0, react_jsx_runtime.jsx)("h2", { children: selectedId ? "暂时无法读取数据" : "选择数据，展开研究" }),
 										(0, react_jsx_runtime.jsx)("p", { children: "左侧列表独立滚动，详情会保留在这里。" }),
 										selectedId && (0, react_jsx_runtime.jsx)("button", {
@@ -29496,7 +29775,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 												await load();
 												setSelected(await access.preview(selected.dataset.id));
 											}),
-											children: [(0, react_jsx_runtime.jsx)(r$24, { size: 16 }), "更新缓存"]
+											children: [(0, react_jsx_runtime.jsx)(r$25, { size: 16 }), "更新缓存"]
 										}), (0, react_jsx_runtime.jsxs)("button", {
 											disabled: busy,
 											onClick: () => askRemove("single", [selected.dataset]),
@@ -30013,13 +30292,13 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		}
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/ContestPage.module.css.mjs
-		const css$14 = "._07psQa_page{height:100%;min-height:0;color:var(--qs-ink,var(--dsw-alias-label-primary));padding:30px 40px;overflow:auto}._07psQa_connection[data-compact]{gap:16px;padding:16px 20px}._07psQa_connection[data-compact]>div{flex-wrap:wrap;align-items:center;gap:12px;display:flex}._07psQa_connection[data-compact] small{margin:0}._07psQa_connection[data-compact] p{flex-basis:100%;margin:0}._07psQa_accountActions{flex-shrink:0;position:relative}._07psQa_accountActions>summary{cursor:pointer;border:1px solid var(--qs-line);border-radius:8px;padding:8px 12px;font-size:13px}._07psQa_accountActions>div{max-width:360px;margin-top:12px}._07psQa_connection[data-compact] ._07psQa_accountActions>div{background:var(--qs-surface);border:1px solid var(--qs-line);z-index:5;border-radius:12px;width:300px;padding:16px;position:absolute;top:100%;right:0;box-shadow:0 8px 30px #0002}._07psQa_assistantDisclosure{margin:18px 0}._07psQa_assistantDisclosure>summary{cursor:pointer;padding:12px 0;font-size:14px}._07psQa_assistantDisclosure>summary span{color:var(--qs-muted);margin-left:12px;font-size:12px}._07psQa_assistantDisclosure>section{margin-top:12px}._07psQa_plans{color:var(--qs-ink,var(--dsw-alias-label-primary))}._07psQa_header{justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px;display:flex}._07psQa_header h1{letter-spacing:-.04em;margin:6px 0 8px;font-size:30px}._07psQa_header p,._07psQa_muted,._07psQa_connection p{color:var(--qs-muted);line-height:1.7}._07psQa_eyebrow{letter-spacing:.12em;color:var(--qs-muted);font-size:11px}._07psQa_page button,._07psQa_plans button{cursor:pointer;font:inherit;color:var(--qs-ink,var(--dsw-alias-label-primary));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:8px;padding:9px 14px}._07psQa_page button:not(:disabled):hover,._07psQa_plans button:not(:disabled):hover{border-color:var(--qs-accent)}._07psQa_page button:disabled,._07psQa_plans button:disabled{cursor:default;opacity:.5}._07psQa_page button:focus-visible,._07psQa_plans button:focus-visible,._07psQa_page a:focus-visible{outline:2px solid var(--qs-accent,#3579b5);outline-offset:3px}._07psQa_page button[data-primary],._07psQa_plans button[data-primary]{color:var(--qs-buttonInk,#fff);background:var(--qs-accent,#3579b5);border-color:#0000;font-weight:600}body[data-qs-plugin-theme=dark] ._07psQa_page button[data-primary],body[data-qs-plugin-theme=dark] ._07psQa_plans button[data-primary]{color:var(--qs-buttonInk,var(--qs-deep,#152033))}._07psQa_page a{color:var(--qs-accent,#3579b5);text-decoration:none}._07psQa_page ._07psQa_switch{white-space:nowrap;align-items:center;gap:10px;display:flex}._07psQa_switch>span{background:var(--qs-border,#b8c2cf);border-radius:20px;width:32px;height:19px;position:relative}._07psQa_switch>span:after{content:\"\";background:#fff;border-radius:50%;width:13px;height:13px;position:absolute;top:3px;left:3px}._07psQa_switch[data-enabled=true]>span{background:var(--qs-accent,#3579b5)}._07psQa_switch[data-enabled=true]>span:after{left:16px}._07psQa_welcome{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:16px;max-width:700px;margin:56px auto;padding:38px}._07psQa_welcome h2{font-size:24px}._07psQa_welcome p{color:var(--qs-muted);line-height:1.85}._07psQa_welcome a{margin-top:12px;display:inline-block}._07psQa_connection{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:12px;justify-content:space-between;align-items:center;gap:20px;margin-bottom:22px;padding:22px;display:flex}._07psQa_connection p{margin:6px 0}._07psQa_connection small{color:var(--qs-muted);line-height:1.7;display:block}._07psQa_actions{flex-wrap:wrap;align-items:center;gap:10px;display:flex}._07psQa_actions a{padding:8px}._07psQa_actions button{white-space:nowrap}._07psQa_assistant{border:1px solid var(--qs-accent);background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:14px;margin:22px 0;padding:24px}._07psQa_assistantHeading{justify-content:space-between;align-items:center;gap:24px;display:flex}._07psQa_watchWorkbench ._07psQa_watchToggle,._07psQa_flyModule ._07psQa_watchToggle{text-align:left;font:inherit;color:inherit;background:0 0;border:0;align-items:center;gap:18px;padding:0;display:inline-flex}._07psQa_watchToggle>span{color:var(--qs-muted);white-space:nowrap;font-size:13px;font-weight:400}._07psQa_assistant h2{margin:0 0 8px;font-size:21px}._07psQa_assistant p{color:var(--qs-muted);margin:0;line-height:1.7}._07psQa_steps{border-top:1px solid var(--qs-line);gap:24px;margin:20px 0 14px;padding:18px 0 0;list-style:none;display:flex}._07psQa_steps li{align-items:center;gap:9px;font-size:13px;display:flex}._07psQa_steps b{background:var(--qs-tint);width:25px;height:25px;color:var(--qs-accent);border-radius:50%;place-items:center;font-size:12px;display:grid}._07psQa_assistant ._07psQa_recent{margin-top:12px;font-size:12px}._07psQa_flyModule{border-color:var(--qs-line,var(--dsw-alias-border-l2))}._07psQa_contestDetails{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:14px;min-width:0;margin:30px 0 22px;padding:24px}._07psQa_contestDetails>summary{cursor:pointer;flex-wrap:wrap;align-items:center;gap:12px;list-style:none;display:flex}._07psQa_contestDetails>summary::-webkit-details-marker{display:none}._07psQa_contestDetails>summary:before{content:\"▸\";color:var(--qs-muted)}._07psQa_contestDetails[open]>summary:before{transform:rotate(90deg)}._07psQa_contestDetails>summary:focus-visible{outline:2px solid var(--qs-accent,#3579b5);outline-offset:6px;border-radius:4px}._07psQa_contestDetails>summary h2{margin:0;font-size:21px}._07psQa_contestDetails>summary span{color:var(--qs-muted);font-size:12px}._07psQa_contestDetails>p{margin:10px 0 0}._07psQa_contestDetails>._07psQa_plans{border-top:1px solid var(--qs-line,var(--dsw-alias-border-l2));margin-bottom:0;padding-top:18px}._07psQa_flySummary{color:var(--qs-muted);font-variant-numeric:tabular-nums;flex-wrap:wrap;gap:10px 24px;margin-top:14px;font-size:13px;display:flex}._07psQa_flySummary b{color:var(--qs-ink,var(--dsw-alias-label-primary));font-weight:600}._07psQa_flyConnection,._07psQa_flyActivity{border-top:1px solid var(--qs-line,var(--dsw-alias-border-l2));margin-top:18px;padding-top:16px}._07psQa_flyActivity small{color:var(--qs-muted);line-height:1.6}._07psQa_flyList{margin:16px 0}._07psQa_flyList h3{margin:0 0 9px;font-size:15px}._07psQa_flyList p{margin:7px 0}._07psQa_conversation{width:calc(100% - 2 * var(--dsh-composer-side-clearance,16px));max-width:var(--dsh-composer-card-max-width,800px);box-sizing:border-box;overflow-wrap:anywhere;border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));min-width:0;color:var(--qs-ink,var(--dsw-alias-label-primary));border-radius:12px;flex:none;margin:0 auto 10px;padding:14px 16px;font-size:12px}._07psQa_conversationHeader,._07psQa_conversationActions,._07psQa_symbolResearch{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._07psQa_conversationHeader strong{flex:none;max-width:100%}._07psQa_conversationHeader small{overflow-wrap:anywhere;flex:200px;min-width:min(200px,100%)}._07psQa_conversation small{color:var(--qs-muted,var(--dsw-alias-label-secondary))}._07psQa_conversation p{margin:6px 0;line-height:1.5}._07psQa_conversation button,._07psQa_symbolResearch input{font:inherit;color:var(--qs-ink,var(--dsw-alias-label-primary));background:var(--qs-surface,var(--dsw-alias-bg-base));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:6px;padding:6px 9px}._07psQa_conversation button{cursor:pointer}._07psQa_conversation button:disabled{opacity:.5;cursor:default}._07psQa_conversation button:focus-visible,._07psQa_symbolResearch input:focus-visible{outline:2px solid var(--qs-accent,var(--dsw-alias-brand-primary));outline-offset:2px}._07psQa_inspection{margin:10px 0}._07psQa_symbolResearch{margin-top:8px}._07psQa_symbolResearch input{flex:1;min-width:100px}._07psQa_symbolResearch input::placeholder{color:var(--qs-muted,var(--dsw-alias-label-secondary));opacity:1}._07psQa_dataPanel,._07psQa_plans{min-width:0;margin:22px 0}._07psQa_plans h2{font-size:18px}._07psQa_tabs{border-bottom:1px solid var(--qs-border,#dbe2ea);gap:4px;padding-bottom:8px;display:flex;overflow-x:auto}._07psQa_plans[data-compact=true]{margin:0}._07psQa_page ._07psQa_tabs button{color:var(--qs-muted);background:0 0;border-color:#0000;flex-shrink:0;padding:9px 13px}._07psQa_page ._07psQa_tabs button[aria-selected=true]{background:var(--qs-surface,var(--dsw-alias-bg-base));border-color:var(--qs-line,var(--dsw-alias-border-l2));color:var(--qs-ink);font-weight:600}._07psQa_toolbar{flex-wrap:wrap;align-items:center;gap:14px;padding:18px 0;display:flex}._07psQa_toolbar label{align-items:center;gap:8px;font-size:13px;display:flex}._07psQa_toolbar small{color:var(--qs-muted)}._07psQa_toolbar input,._07psQa_toolbar select{font:inherit;background:var(--qs-surface,var(--dsw-alias-bg-base));color:var(--qs-ink,var(--dsw-alias-label-primary));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:6px;max-width:100%;padding:8px 10px}._07psQa_toolbar input::placeholder{color:var(--qs-muted);opacity:1}._07psQa_tableWrap{border:1px solid var(--qs-border,#dbe2ea);border-radius:10px;max-width:100%;overflow:auto}._07psQa_tableWrap table{border-collapse:collapse;text-align:left;width:100%;font-size:12px}._07psQa_tableWrap th,._07psQa_tableWrap td{border-bottom:1px solid var(--qs-border,#dbe2ea);white-space:nowrap;padding:12px 14px}._07psQa_tableWrap th{color:var(--qs-muted);background:var(--qs-surface,var(--dsw-alias-bg-base));font-weight:500}._07psQa_tableWrap tr:last-child td{border-bottom:0}._07psQa_metrics{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;display:grid}._07psQa_metrics>div{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:10px;padding:18px}._07psQa_metrics dt{color:var(--qs-muted);font-size:12px}._07psQa_metrics dd{color:var(--qs-ink,var(--dsw-alias-label-primary));font-variant-numeric:tabular-nums;overflow-wrap:anywhere;margin:10px 0 0;font-size:19px}._07psQa_empty{text-align:center;color:var(--qs-muted);padding:36px}._07psQa_error{background:#bd625714;border-left:3px solid #bd6257;padding:12px 16px;line-height:1.6}._07psQa_plans ._07psQa_planRow{text-align:left;justify-content:space-between;align-items:center;gap:18px;width:100%;margin:8px 0;padding:16px;display:flex}._07psQa_planRow strong{font-size:13px}._07psQa_planRow small{color:var(--qs-muted);margin-top:6px;display:block}._07psQa_planRow>span:last-child{color:var(--qs-muted);font-size:12px}._07psQa_planDetails h3{margin:0 0 20px;font-size:18px}._07psQa_planDetails dl{grid-template-columns:110px minmax(0,1fr);gap:12px;display:grid}._07psQa_planDetails dt{color:var(--qs-muted)}._07psQa_planDetails dd{overflow-wrap:anywhere;font-variant-numeric:tabular-nums;margin:0}@media (width<=900px){._07psQa_page{padding:24px}._07psQa_connection,._07psQa_assistantHeading{flex-direction:column;align-items:flex-start}._07psQa_steps{flex-wrap:wrap;gap:14px}}@media (width<=600px){._07psQa_page{padding:18px 14px}._07psQa_header{flex-wrap:wrap;gap:14px}._07psQa_header h1{font-size:26px}._07psQa_welcome{margin:20px 0;padding:24px}._07psQa_connection,._07psQa_assistant{padding:16px}._07psQa_assistantHeading ._07psQa_actions,._07psQa_assistantHeading button{width:100%}._07psQa_metrics{grid-template-columns:repeat(2,minmax(0,1fr))}._07psQa_metrics>div{padding:14px}._07psQa_metrics dd{font-size:17px}._07psQa_plans ._07psQa_planRow{flex-direction:column;align-items:flex-start;gap:8px}._07psQa_toolbar label{width:100%}._07psQa_toolbar input{flex:1;min-width:0}._07psQa_planDetails dl{grid-template-columns:95px minmax(0,1fr);font-size:13px}}._07psQa_conversationControls{flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto;display:flex}._07psQa_conversationBody{max-height:min(240px,32dvh);overflow:auto}._07psQa_conversation[data-collapsed=true]{padding-block:8px}._07psQa_watchFields{border:0;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:0;padding:12px 0;display:grid}._07psQa_watchFields label{flex-direction:column;gap:7px;font-size:13px;display:flex}._07psQa_watchFields input,._07psQa_watchFields textarea,._07psQa_watchFields select{box-sizing:border-box;border:1px solid var(--qs-line);background:var(--qs-surface);width:100%;color:var(--qs-ink);font:inherit;border-radius:8px;padding:9px 10px}._07psQa_watchFields input:focus,._07psQa_watchFields textarea:focus,._07psQa_watchFields select:focus{outline:2px solid var(--qs-accent);outline-offset:2px}._07psQa_watchInstructions{grid-column:1/-1}._07psQa_watchInstructions textarea{resize:vertical;min-height:70px}._07psQa_watchReview{border:1px solid var(--qs-accent);border-radius:10px;margin:12px 0;padding:16px}._07psQa_watchSummary{color:var(--qs-muted);flex-wrap:wrap;gap:12px;margin:16px 0;font-size:13px;display:flex}._07psQa_watchLog{max-height:220px;padding-left:24px;font-size:13px;line-height:1.8;overflow:auto}._07psQa_watchStatus{border:1px solid var(--qs-line);background:var(--qs-tint);border-radius:10px;align-items:center;gap:16px;margin:16px 0;padding:14px 18px;display:flex}._07psQa_watchStatus>div{overflow-wrap:anywhere;min-width:0}._07psQa_watchStatus strong{margin-bottom:4px;font-size:14px;display:block}._07psQa_watchStatus small{color:var(--qs-muted);font-size:12px}._07psQa_watchIndicator{height:10px;color:var(--qs-muted);background:currentColor;border-radius:50%;flex:0 0 10px;margin:7px;position:relative}._07psQa_watchStatus[data-active=true] ._07psQa_watchIndicator{color:var(--qs-accent,#3579b5)}._07psQa_watchStatus[data-phase=waiting_quote] ._07psQa_watchIndicator,._07psQa_watchStatus[data-phase=waiting_plan] ._07psQa_watchIndicator{color:var(--dsw-alias-state-warning-primary)}._07psQa_watchStatus[data-active=true] ._07psQa_watchIndicator:after{content:\"\";border:1px solid;border-radius:50%;animation:1.8s ease-out infinite _07psQa_watchPulse;position:absolute;inset:-6px}@keyframes _07psQa_watchPulse{0%{opacity:.8;transform:scale(.5)}to{opacity:0;transform:scale(1.3)}}@media (prefers-reduced-motion:reduce){._07psQa_watchStatus[data-active=true] ._07psQa_watchIndicator:after{opacity:.5;animation:none}}._07psQa_watchWorkbench{background:var(--qs-surface,var(--dsw-alias-bg-base));color:var(--qs-ink);border:1px solid var(--qs-line);border-radius:16px;padding:26px}._07psQa_watchWorkbench h2{letter-spacing:.02em;margin:8px 0;font-family:Bahnschrift,Segoe UI,sans-serif;font-size:28px}._07psQa_watchWorkbench h3{margin:5px 0 0;font-size:20px}._07psQa_watchWorkbench summary{cursor:pointer}._07psQa_watchWorkbench summary:focus-visible{outline:2px solid var(--qs-accent);outline-offset:4px}._07psQa_watchWorkbench p._07psQa_jevFine{margin:10px 0;font-size:12px;line-height:1.7}._07psQa_jevCaption{letter-spacing:.09em;color:var(--qs-accent);font-size:11px;display:block}._07psQa_jevModel,._07psQa_jevBadge{white-space:nowrap;border:1px solid var(--qs-line);color:var(--qs-muted);border-radius:4px;padding:5px 8px;font:11px Consolas,monospace}._07psQa_jevConnection{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:9px;margin:20px 0 0}._07psQa_jevConnection>summary{padding:13px 16px;font-size:13px}._07psQa_jevConnection>summary>span:first-child{margin-right:12px}._07psQa_jevBadge[data-ready=true]{color:var(--qs-accent);border-color:color-mix(in srgb,var(--qs-accent) 35%,transparent)}._07psQa_jevConnectionBody{padding:0 16px 15px}._07psQa_jevKeyForm{flex-wrap:wrap;align-items:flex-end;gap:10px;margin:14px 0;display:flex}._07psQa_jevKeyForm label{flex-direction:column;flex:260px;gap:7px;font-size:13px;display:flex}._07psQa_jevKeyForm input{box-sizing:border-box;background:var(--qs-surface);border:1px solid var(--qs-line);width:100%;color:var(--qs-ink);font:inherit;border-radius:6px;padding:10px}._07psQa_jevKeyForm input:focus-visible{outline:2px solid var(--qs-accent)}._07psQa_watchWorkbench input::placeholder{color:var(--qs-muted)}._07psQa_watchWorkbench ._07psQa_watchStatus{background:0 0;border:0;border-radius:0;margin-bottom:0;padding:20px 8px}._07psQa_watchWorkbench ._07psQa_watchStatus strong{color:var(--qs-ink)}._07psQa_watchWorkbench ._07psQa_watchStatus p{font-size:13px}._07psQa_jevDashboard{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;display:grid}._07psQa_jevPanel{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:10px;min-width:0;padding:20px}._07psQa_jevPanelHeading{justify-content:space-between;align-items:center;gap:12px;display:flex}._07psQa_jevPrice{color:var(--qs-accent);text-align:right;font:26px Consolas,Cascadia Code,monospace}._07psQa_jevPrice small{color:var(--qs-muted);margin-top:5px;font:11px sans-serif;display:block}._07psQa_jevChart{width:100%;height:180px;margin-top:12px;display:block;overflow:visible}._07psQa_jevGridLine{stroke:var(--qs-line);stroke-width:1px;stroke-dasharray:4 5}._07psQa_jevPriceLine{stroke:var(--qs-accent);stroke-width:2px;vector-effect:non-scaling-stroke}._07psQa_jevQuoteDot{fill:var(--qs-accent)}._07psQa_jevQuoteDot:hover{r:5;fill:var(--qs-ink)}._07psQa_jevChartAxis{color:var(--qs-muted);justify-content:space-between;gap:8px;font:11px Consolas,monospace;display:flex}._07psQa_jevChartEmpty{background:repeating-linear-gradient(0deg,transparent,transparent 44px,color-mix(in srgb,var(--qs-line) 35%,transparent) 45px);flex-direction:column;justify-content:center;align-items:center;gap:8px;min-height:210px;display:flex}._07psQa_jevChartEmpty>span{color:var(--qs-accent);font-size:42px}._07psQa_jevChartEmpty strong{font-size:14px}._07psQa_jevChartEmpty p{font-size:12px}._07psQa_jevSampling{align-items:center;gap:16px;margin-top:20px;font-size:12px;display:flex}._07psQa_jevSampling span{white-space:nowrap}._07psQa_jevSampling b{color:var(--qs-accent);font:18px Consolas,monospace}._07psQa_jevSampling progress{background:var(--qs-line);width:100%;height:5px;accent-color:var(--qs-accent);border:0;border-radius:4px}._07psQa_jevSampling progress::-webkit-progress-bar{background:var(--qs-line);border-radius:4px}._07psQa_jevSampling progress::-webkit-progress-value{background:var(--qs-accent);border-radius:4px}._07psQa_watchWorkbench p._07psQa_jevConfidence{justify-content:space-between;align-items:center;margin:18px 0 12px;font-size:12px;display:flex}._07psQa_jevConfidence strong{color:var(--qs-ink);font:28px Consolas,monospace}._07psQa_jevConfidence small{margin-left:4px;font-size:13px}._07psQa_jevProbabilities>div{color:var(--qs-muted);grid-template-columns:34px minmax(0,1fr) 58px;align-items:center;gap:12px;margin:13px 0;font-size:12px;display:grid}._07psQa_jevProbabilities b{text-align:right;font:12px Consolas,monospace}._07psQa_jevProbabilities [data-selected=true]{color:var(--qs-accent)}._07psQa_jevProbabilityTrack{background:var(--qs-tint);border-radius:3px;height:6px;overflow:hidden}._07psQa_jevProbabilityTrack i{background:var(--qs-muted);height:100%;transition:width .35s;display:block}._07psQa_jevProbabilities [data-selected=true] i{background:var(--qs-accent)}._07psQa_jevDecisionEmpty{flex-direction:column;justify-content:center;gap:10px;min-height:230px;font-size:13px;display:flex}._07psQa_jevOutcome{border-top:1px solid var(--qs-line);overflow-wrap:anywhere;margin-top:12px;padding-top:12px}._07psQa_jevOutcome>span{color:var(--qs-accent);font-size:11px}._07psQa_jevOutcome p{margin-top:6px;font-size:12px}._07psQa_jevControls,._07psQa_jevHistory{border:1px solid var(--qs-line);border-radius:9px;margin-top:16px;padding:0 16px}._07psQa_jevControls>summary,._07psQa_jevHistory>summary{padding:15px 0;font-size:14px}._07psQa_jevControls>summary span,._07psQa_jevHistory>summary span{color:var(--qs-muted);margin-left:12px;font-size:11px}._07psQa_jevControls form{padding-bottom:16px}._07psQa_watchWorkbench ._07psQa_watchFields{border-top:1px solid var(--qs-line);padding-top:18px}._07psQa_watchWorkbench ._07psQa_watchFields input,._07psQa_watchWorkbench ._07psQa_watchFields textarea,._07psQa_watchWorkbench ._07psQa_watchReview{background:var(--qs-surface)}._07psQa_watchWorkbench ._07psQa_watchSummary{font:12px Consolas,Segoe UI,sans-serif}._07psQa_jevHistoryItem{border-top:1px solid var(--qs-line);font-size:12px}._07psQa_jevHistoryItem>summary{align-items:center;gap:18px;padding:13px 0;display:flex}._07psQa_jevHistoryItem time{color:var(--qs-muted);font-family:Consolas,monospace}._07psQa_jevHistoryItem summary>span{color:var(--qs-muted);margin-left:auto}._07psQa_jevHistoryItem>div{padding:0 0 12px}._07psQa_jevHistoryItem dl{grid-template-columns:95px minmax(0,1fr);gap:9px;font-size:12px;display:grid}._07psQa_jevHistoryItem dt{color:var(--qs-muted)}._07psQa_jevHistoryItem dd{overflow-wrap:anywhere;margin:0}@media (width<=1100px){._07psQa_jevDashboard{grid-template-columns:1fr}}@media (width<=600px){._07psQa_watchWorkbench{padding:16px}._07psQa_jevPanel{padding:15px}._07psQa_jevControls>summary span{margin:8px 0 0;display:block}._07psQa_jevKeyForm button{width:100%}._07psQa_jevPanelHeading{gap:8px}._07psQa_jevPrice{font-size:23px}._07psQa_jevModel,._07psQa_jevChartAxis{font-size:10px}._07psQa_jevHistoryItem>summary{gap:10px}}@media (prefers-reduced-motion:reduce){._07psQa_jevProbabilityTrack i{transition:none}}._07psQa_jevAuditBody{overflow-wrap:anywhere;padding:1rem}._07psQa_jevStrategyPreset{flex-wrap:wrap;align-items:end;gap:1rem;margin-bottom:1rem;display:flex}._07psQa_jevStrategyPreset label{flex:1;min-width:12rem}._07psQa_jevEvidence{border:1px solid var(--qs-line);overflow-wrap:anywhere;border-radius:9px;margin-top:16px;padding:16px}._07psQa_jevChecks{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;padding:0;list-style:none;display:grid}._07psQa_jevChecks li{border:1px solid var(--qs-line);border-radius:6px;padding:10px;font-size:12px}._07psQa_jevChecks strong{justify-content:space-between;gap:12px;display:flex}._07psQa_jevChecks span{color:var(--dsw-alias-state-warning-primary)}._07psQa_jevChecks [data-state=pass] span{color:var(--qs-accent)}._07psQa_jevAssessment{flex-wrap:wrap;gap:24px;display:flex}._07psQa_jevAssessment>div{flex-direction:column;gap:5px;display:flex}._07psQa_jevAssessment span,._07psQa_jevAssessment small{color:var(--qs-muted);font-size:12px}._07psQa_watchFields input[type=checkbox]{align-self:flex-start;width:auto}._07psQa_watchFields ._07psQa_jevCheckLabel{flex-direction:row;align-items:center;margin-top:16px}._07psQa_jevLauncher{border:0;min-width:0;margin:0;padding:18px 0 8px}._07psQa_jevLauncher legend{padding:16px 0 0;font-size:14px;font-weight:600}._07psQa_jevTemplateGrid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;display:grid}._07psQa_watchWorkbench ._07psQa_jevTemplateCard{text-align:left;border:1px solid var(--qs-line);background:var(--qs-surface);color:var(--qs-ink);border-radius:10px;flex-direction:column;align-items:flex-start;gap:9px;padding:18px;display:flex}._07psQa_watchWorkbench ._07psQa_jevTemplateCard[aria-pressed=true]{border-color:var(--qs-accent);box-shadow:inset 3px 0 0 var(--qs-accent);background:var(--qs-tint)}._07psQa_jevTemplateCard strong{font-size:19px}._07psQa_jevTemplateCard>span:not(:first-child),._07psQa_jevTemplateCard small{color:var(--qs-muted);font-size:12px;line-height:1.6}._07psQa_jevQuickStart{border:1px solid var(--qs-line);border-radius:10px;flex-wrap:wrap;align-items:center;gap:20px;margin:20px 0 12px;padding:18px;display:flex}._07psQa_jevQuickStart label,._07psQa_jevSaveTemplate label{flex-direction:column;gap:8px;font-size:12px;display:flex}._07psQa_jevQuickStart input{width:170px}._07psQa_jevRunSummary{flex-direction:column;flex:1;gap:7px;font-size:12px;display:flex}._07psQa_jevRunSummary span{color:var(--qs-muted)}._07psQa_watchWorkbench ._07psQa_jevReuse{margin-top:12px;font-size:12px}._07psQa_jevSaveTemplate{flex-wrap:wrap;align-items:end;gap:12px;margin:18px 0;display:flex}._07psQa_jevLauncher:disabled{opacity:.75}._07psQa_watchWorkbench.qs-jev-workspace h2{letter-spacing:0;margin:0 0 6px;font-family:inherit;font-size:25px;font-weight:600;line-height:1.4}._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_watchStatus{padding:14px 0 20px}._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_watchStatus details{color:var(--qs-muted);margin-top:8px;font-size:12px}._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_jevDashboard{grid-template-columns:minmax(0,2.4fr) minmax(250px,1fr);gap:22px}._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_jevPanel{border-radius:16px;padding:24px}._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_jevChart{height:230px}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevLauncher{border:0;padding:0}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevLauncher legend{display:none}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevQuickStart{border:0;grid-template-columns:1fr 1fr;gap:16px;padding:0;display:grid}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevQuickStart label{min-width:0}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevQuickStart :is(input,select){width:100%;max-width:100%}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevRunSummary{background:var(--qs-tint);border-radius:9px;grid-column:1/-1;min-width:0;padding:14px}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_watchFields{grid-template-columns:1fr}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevConnectionBody{border-bottom:1px solid var(--qs-line);margin-bottom:20px;padding:0 0 16px}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevControls{padding:0 12px}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevCatalogTools{font-size:11px}@media (width<=950px){._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_jevDashboard{grid-template-columns:1fr}}._07psQa_jevCreator{border:1px solid var(--qs-line);border-radius:10px;flex-wrap:wrap;align-items:end;gap:12px;margin-top:16px;padding:18px;display:flex}._07psQa_jevCreator label{flex-direction:column;gap:8px;font-size:12px;display:flex}._07psQa_jevCreator p{color:var(--qs-muted);flex-basis:100%;font-size:12px}._07psQa_jevQuickStart select{max-width:210px}._07psQa_jevQuickStart ._07psQa_jevRunSummary{min-width:240px}._07psQa_jevCatalogTools{color:var(--qs-muted);flex-wrap:wrap;align-items:center;gap:10px 16px;margin-bottom:16px;font-size:12px;line-height:1.7;display:flex}._07psQa_jevCatalogTools button{font-size:12px}._07psQa_jevInstrumentHint{color:var(--qs-muted);flex-basis:100%;margin:0;font-size:12px}@media (width<=600px){._07psQa_jevTemplateGrid{grid-template-columns:1fr}._07psQa_jevQuickStart{align-items:stretch;gap:14px}._07psQa_jevQuickStart label,._07psQa_jevRunSummary,._07psQa_jevQuickStart>button{flex-basis:100%;width:100%}._07psQa_jevQuickStart input{box-sizing:border-box;width:100%}}._07psQa_entrySection{margin:28px 0;container-type:inline-size}._07psQa_entryHeading{flex-wrap:wrap;align-items:baseline;gap:14px;margin:0 0 16px;display:flex}._07psQa_entryHeading h2{letter-spacing:-.02em;margin:0;font-size:19px}._07psQa_entryHeading>span{color:var(--qs-muted);font-size:12px}._07psQa_entryGrid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:18px;display:grid}._07psQa_entryCard{box-sizing:border-box;border:1px solid var(--qs-line);background:var(--qs-surface);min-width:0;box-shadow:0 5px 18px color-mix(in srgb,var(--qs-ink) 3%,transparent);border-radius:18px;padding:24px;transition:border-color .18s,box-shadow .18s;position:relative}._07psQa_entryCard:hover,._07psQa_entryCard[data-selected]{border-color:color-mix(in srgb,var(--qs-accent) 65%,var(--qs-line));box-shadow:0 8px 24px color-mix(in srgb,var(--qs-ink) 5%,transparent)}._07psQa_entryTop{color:var(--qs-muted);align-items:center;gap:12px;font-size:11px;display:flex}._07psQa_entryIcon{width:44px;height:44px;color:var(--qs-accent);background:var(--qs-tint);border-radius:13px;flex-shrink:0;place-items:center;display:grid}._07psQa_entryCard h3{letter-spacing:-.025em;margin:22px 0 10px;font-size:22px;line-height:1.3}._07psQa_entryDescription{min-height:66px;color:var(--qs-muted);text-wrap:pretty;margin:0;font-size:13px;line-height:1.8}._07psQa_entryStatus{min-height:20px;color:var(--qs-muted);overflow-wrap:anywhere;align-items:center;gap:7px;margin:18px 0 14px;font-size:11px;line-height:1.7;display:flex}._07psQa_entryStatus i{background:var(--qs-muted);border-radius:50%;flex-shrink:0;width:6px;height:6px}._07psQa_entryStatus[data-active=true]{color:var(--qs-accent)}._07psQa_entryStatus[data-active=true] i{background:var(--qs-accent);box-shadow:0 0 0 3px var(--qs-tint)}._07psQa_page ._07psQa_entryAction{border-color:var(--qs-line);background:var(--qs-tint);text-align:left;border-radius:9px;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:42px;padding:11px 13px;font-size:13px;font-weight:600;display:flex}._07psQa_page ._07psQa_entryAction:not(:disabled):hover{background:var(--qs-accent);color:var(--qs-buttonInk);border-color:#0000}._07psQa_entryHint{color:var(--qs-muted);margin:13px 0 0;font-size:11px;line-height:20px;display:block}._07psQa_entryMore{color:var(--qs-muted);margin-top:13px;font-size:11px;line-height:20px}._07psQa_entryMore summary{cursor:pointer;width:fit-content}._07psQa_entryMore summary:focus-visible,._07psQa_methodGuide summary:focus-visible{outline:2px solid var(--qs-accent);outline-offset:4px;border-radius:4px}._07psQa_entryMore>div{gap:8px;margin-top:12px;display:grid}._07psQa_entryMore small{overflow-wrap:anywhere;font-size:11px}._07psQa_page ._07psQa_entryMore button{text-align:left;padding:8px 10px;font-size:12px}._07psQa_methodGuide{color:var(--qs-muted);margin-top:18px;font-size:12px}._07psQa_methodGuide>summary{cursor:pointer;width:fit-content;line-height:1.8}._07psQa_methodGuide>div{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:12px;grid-template-columns:1fr 1fr;gap:14px 28px;margin-top:12px;padding:18px 20px;display:grid}._07psQa_methodGuide p{margin:0;line-height:1.8}._07psQa_methodGuide p:last-child{border-top:1px solid var(--qs-line);grid-column:1/-1;padding-top:12px}._07psQa_methodGuide strong{color:var(--qs-ink);margin-bottom:4px;font-size:13px;display:block}._07psQa_connectionState{align-items:center;gap:8px;font-size:13px;display:inline-flex}._07psQa_connectionState:before{content:\"\";background:var(--qs-muted);border-radius:50%;width:7px;height:7px}._07psQa_connectionState[data-connected=true]:before{background:var(--qs-accent)}._07psQa_connection ._07psQa_connectionTools{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:10px;display:flex}._07psQa_connectionTools ._07psQa_plans{margin:0}._07psQa_connectionTools button,._07psQa_connectionTools summary{padding:8px 11px;font-size:12px}._07psQa_connectionTools ._07psQa_accountActions>div small{width:100%}._07psQa_connectionTools ._07psQa_accountActions>div{box-sizing:border-box;max-width:min(300px,80vw)}._07psQa_watchArea{outline:none;min-width:0;margin:24px 0;scroll-margin:18px}._07psQa_watchArea[hidden]{display:none}._07psQa_workspaceBar{color:var(--qs-muted);justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;font-size:12px;display:flex}._07psQa_page ._07psQa_workspaceBar button{padding:6px 10px;font-size:12px}._07psQa_watchArea>._07psQa_watchWorkbench{margin-top:0}@container (width<=780px){._07psQa_entryGrid{grid-template-columns:1fr;gap:12px}._07psQa_entryCard{grid-template-columns:minmax(0,1fr) 190px;column-gap:24px;padding:20px;display:grid}._07psQa_entryTop{grid-column:1}._07psQa_entryCard h3{grid-column:1;margin:14px 0 8px;font-size:20px}._07psQa_entryDescription{grid-column:1;min-height:0}._07psQa_entryStatus{grid-area:1/2/3;align-self:end;margin:0;padding-bottom:12px}._07psQa_page ._07psQa_entryAction{grid-area:3/2;align-self:start}._07psQa_entryHint,._07psQa_entryMore{grid-column:2;margin-top:8px}._07psQa_entryMore{grid-row:4}}@container (width<=480px){._07psQa_entryCard{padding:20px;display:block}._07psQa_entryCard h3{margin-top:15px}._07psQa_entryDescription{min-height:0}._07psQa_entryStatus{margin:12px 0;padding:0}._07psQa_methodGuide>div{grid-template-columns:1fr}._07psQa_methodGuide p:last-child{grid-column:auto}}@media (width<=900px){._07psQa_connection[data-compact]{flex-flow:wrap;align-items:center}._07psQa_connectionTools{margin-left:auto}}@media (width<=600px){._07psQa_connectionTools{margin-left:0}._07psQa_connection ._07psQa_connectionTools{justify-content:flex-start}._07psQa_connection[data-compact] ._07psQa_accountActions>div{left:0;right:auto}._07psQa_entryHeading>span{font-size:11px}._07psQa_entrySection{margin:22px 0}._07psQa_contestDetails{padding:18px}._07psQa_contestDetails>summary h2{font-size:17px}._07psQa_header h1{font-size:24px}}@media (prefers-reduced-motion:reduce){._07psQa_entryCard{transition:none}}";
-		const tagId$14 = "@deepseek-ai/dsh-client-ui-quantskills/ContestPage.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$14) + "]") === null) {
+		const css$18 = "._07psQa_page{height:100%;min-height:0;color:var(--qs-ink,var(--dsw-alias-label-primary));padding:30px 40px;overflow:auto}._07psQa_connection[data-compact]{gap:16px;padding:16px 20px}._07psQa_connection[data-compact]>div{flex-wrap:wrap;align-items:center;gap:12px;display:flex}._07psQa_connection[data-compact] small{margin:0}._07psQa_connection[data-compact] p{flex-basis:100%;margin:0}._07psQa_accountActions{flex-shrink:0;position:relative}._07psQa_accountActions>summary{cursor:pointer;border:1px solid var(--qs-line);border-radius:8px;padding:8px 12px;font-size:13px}._07psQa_accountActions>div{max-width:360px;margin-top:12px}._07psQa_connection[data-compact] ._07psQa_accountActions>div{background:var(--qs-surface);border:1px solid var(--qs-line);z-index:5;border-radius:12px;width:300px;padding:16px;position:absolute;top:100%;right:0;box-shadow:0 8px 30px #0002}._07psQa_assistantDisclosure{margin:18px 0}._07psQa_assistantDisclosure>summary{cursor:pointer;padding:12px 0;font-size:14px}._07psQa_assistantDisclosure>summary span{color:var(--qs-muted);margin-left:12px;font-size:12px}._07psQa_assistantDisclosure>section{margin-top:12px}._07psQa_plans{color:var(--qs-ink,var(--dsw-alias-label-primary))}._07psQa_header{justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px;display:flex}._07psQa_header h1{letter-spacing:-.04em;margin:6px 0 8px;font-size:30px}._07psQa_header p,._07psQa_muted,._07psQa_connection p{color:var(--qs-muted);line-height:1.7}._07psQa_eyebrow{letter-spacing:.12em;color:var(--qs-muted);font-size:11px}._07psQa_page button,._07psQa_plans button{cursor:pointer;font:inherit;color:var(--qs-ink,var(--dsw-alias-label-primary));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:8px;padding:9px 14px}._07psQa_page button:not(:disabled):hover,._07psQa_plans button:not(:disabled):hover{border-color:var(--qs-accent)}._07psQa_page button:disabled,._07psQa_plans button:disabled{cursor:default;opacity:.5}._07psQa_page button:focus-visible,._07psQa_plans button:focus-visible,._07psQa_page a:focus-visible{outline:2px solid var(--qs-accent,#3579b5);outline-offset:3px}._07psQa_page button[data-primary],._07psQa_plans button[data-primary]{color:var(--qs-buttonInk,#fff);background:var(--qs-accent,#3579b5);border-color:#0000;font-weight:600}body[data-qs-plugin-theme=dark] ._07psQa_page button[data-primary],body[data-qs-plugin-theme=dark] ._07psQa_plans button[data-primary]{color:var(--qs-buttonInk,var(--qs-deep,#152033))}._07psQa_page a{color:var(--qs-accent,#3579b5);text-decoration:none}._07psQa_page ._07psQa_switch{white-space:nowrap;align-items:center;gap:10px;display:flex}._07psQa_switch>span{background:var(--qs-border,#b8c2cf);border-radius:20px;width:32px;height:19px;position:relative}._07psQa_switch>span:after{content:\"\";background:#fff;border-radius:50%;width:13px;height:13px;position:absolute;top:3px;left:3px}._07psQa_switch[data-enabled=true]>span{background:var(--qs-accent,#3579b5)}._07psQa_switch[data-enabled=true]>span:after{left:16px}._07psQa_welcome{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:16px;max-width:700px;margin:56px auto;padding:38px}._07psQa_welcome h2{font-size:24px}._07psQa_welcome p{color:var(--qs-muted);line-height:1.85}._07psQa_welcome a{margin-top:12px;display:inline-block}._07psQa_connection{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:12px;justify-content:space-between;align-items:center;gap:20px;margin-bottom:22px;padding:22px;display:flex}._07psQa_connection p{margin:6px 0}._07psQa_connection small{color:var(--qs-muted);line-height:1.7;display:block}._07psQa_actions{flex-wrap:wrap;align-items:center;gap:10px;display:flex}._07psQa_actions a{padding:8px}._07psQa_actions button{white-space:nowrap}._07psQa_assistant{border:1px solid var(--qs-accent);background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:14px;margin:22px 0;padding:24px}._07psQa_assistantHeading{justify-content:space-between;align-items:center;gap:24px;display:flex}._07psQa_watchWorkbench ._07psQa_watchToggle,._07psQa_flyModule ._07psQa_watchToggle{text-align:left;font:inherit;color:inherit;background:0 0;border:0;align-items:center;gap:18px;padding:0;display:inline-flex}._07psQa_watchToggle>span{color:var(--qs-muted);white-space:nowrap;font-size:13px;font-weight:400}._07psQa_assistant h2{margin:0 0 8px;font-size:21px}._07psQa_assistant p{color:var(--qs-muted);margin:0;line-height:1.7}._07psQa_steps{border-top:1px solid var(--qs-line);gap:24px;margin:20px 0 14px;padding:18px 0 0;list-style:none;display:flex}._07psQa_steps li{align-items:center;gap:9px;font-size:13px;display:flex}._07psQa_steps b{background:var(--qs-tint);width:25px;height:25px;color:var(--qs-accent);border-radius:50%;place-items:center;font-size:12px;display:grid}._07psQa_assistant ._07psQa_recent{margin-top:12px;font-size:12px}._07psQa_flyModule{border-color:var(--qs-line,var(--dsw-alias-border-l2))}._07psQa_contestDetails{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:14px;min-width:0;margin:30px 0 22px;padding:24px}._07psQa_contestDetails>summary{cursor:pointer;flex-wrap:wrap;align-items:center;gap:12px;list-style:none;display:flex}._07psQa_contestDetails>summary::-webkit-details-marker{display:none}._07psQa_contestDetails>summary:before{content:\"▸\";color:var(--qs-muted)}._07psQa_contestDetails[open]>summary:before{transform:rotate(90deg)}._07psQa_contestDetails>summary:focus-visible{outline:2px solid var(--qs-accent,#3579b5);outline-offset:6px;border-radius:4px}._07psQa_contestDetails>summary h2{margin:0;font-size:21px}._07psQa_contestDetails>summary span{color:var(--qs-muted);font-size:12px}._07psQa_contestDetails>p{margin:10px 0 0}._07psQa_contestDetails>._07psQa_plans{border-top:1px solid var(--qs-line,var(--dsw-alias-border-l2));margin-bottom:0;padding-top:18px}._07psQa_flySummary{color:var(--qs-muted);font-variant-numeric:tabular-nums;flex-wrap:wrap;gap:10px 24px;margin-top:14px;font-size:13px;display:flex}._07psQa_flySummary b{color:var(--qs-ink,var(--dsw-alias-label-primary));font-weight:600}._07psQa_flyConnection,._07psQa_flyActivity{border-top:1px solid var(--qs-line,var(--dsw-alias-border-l2));margin-top:18px;padding-top:16px}._07psQa_flyActivity small{color:var(--qs-muted);line-height:1.6}._07psQa_flyList{margin:16px 0}._07psQa_flyList h3{margin:0 0 9px;font-size:15px}._07psQa_flyList p{margin:7px 0}._07psQa_conversation{width:calc(100% - 2 * var(--dsh-composer-side-clearance,16px));max-width:var(--dsh-composer-card-max-width,800px);box-sizing:border-box;overflow-wrap:anywhere;border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));min-width:0;color:var(--qs-ink,var(--dsw-alias-label-primary));border-radius:12px;flex:none;margin:0 auto 10px;padding:14px 16px;font-size:12px}._07psQa_conversationHeader,._07psQa_conversationActions,._07psQa_symbolResearch{flex-wrap:wrap;align-items:center;gap:8px;display:flex}._07psQa_conversationHeader strong{flex:none;max-width:100%}._07psQa_conversationHeader small{overflow-wrap:anywhere;flex:200px;min-width:min(200px,100%)}._07psQa_conversation small{color:var(--qs-muted,var(--dsw-alias-label-secondary))}._07psQa_conversation p{margin:6px 0;line-height:1.5}._07psQa_conversation button,._07psQa_symbolResearch input{font:inherit;color:var(--qs-ink,var(--dsw-alias-label-primary));background:var(--qs-surface,var(--dsw-alias-bg-base));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:6px;padding:6px 9px}._07psQa_conversation button{cursor:pointer}._07psQa_conversation button:disabled{opacity:.5;cursor:default}._07psQa_conversation button:focus-visible,._07psQa_symbolResearch input:focus-visible{outline:2px solid var(--qs-accent,var(--dsw-alias-brand-primary));outline-offset:2px}._07psQa_inspection{margin:10px 0}._07psQa_symbolResearch{margin-top:8px}._07psQa_symbolResearch input{flex:1;min-width:100px}._07psQa_symbolResearch input::placeholder{color:var(--qs-muted,var(--dsw-alias-label-secondary));opacity:1}._07psQa_dataPanel,._07psQa_plans{min-width:0;margin:22px 0}._07psQa_plans h2{font-size:18px}._07psQa_tabs{border-bottom:1px solid var(--qs-border,#dbe2ea);gap:4px;padding-bottom:8px;display:flex;overflow-x:auto}._07psQa_plans[data-compact=true]{margin:0}._07psQa_page ._07psQa_tabs button{color:var(--qs-muted);background:0 0;border-color:#0000;flex-shrink:0;padding:9px 13px}._07psQa_page ._07psQa_tabs button[aria-selected=true]{background:var(--qs-surface,var(--dsw-alias-bg-base));border-color:var(--qs-line,var(--dsw-alias-border-l2));color:var(--qs-ink);font-weight:600}._07psQa_toolbar{flex-wrap:wrap;align-items:center;gap:14px;padding:18px 0;display:flex}._07psQa_toolbar label{align-items:center;gap:8px;font-size:13px;display:flex}._07psQa_toolbar small{color:var(--qs-muted)}._07psQa_toolbar input,._07psQa_toolbar select{font:inherit;background:var(--qs-surface,var(--dsw-alias-bg-base));color:var(--qs-ink,var(--dsw-alias-label-primary));border:1px solid var(--qs-line,var(--dsw-alias-border-l2));border-radius:6px;max-width:100%;padding:8px 10px}._07psQa_toolbar input::placeholder{color:var(--qs-muted);opacity:1}._07psQa_tableWrap{border:1px solid var(--qs-border,#dbe2ea);border-radius:10px;max-width:100%;overflow:auto}._07psQa_tableWrap table{border-collapse:collapse;text-align:left;width:100%;font-size:12px}._07psQa_tableWrap th,._07psQa_tableWrap td{border-bottom:1px solid var(--qs-border,#dbe2ea);white-space:nowrap;padding:12px 14px}._07psQa_tableWrap th{color:var(--qs-muted);background:var(--qs-surface,var(--dsw-alias-bg-base));font-weight:500}._07psQa_tableWrap tr:last-child td{border-bottom:0}._07psQa_metrics{grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;display:grid}._07psQa_metrics>div{border:1px solid var(--qs-line,var(--dsw-alias-border-l2));background:var(--qs-surface,var(--dsw-alias-bg-base));border-radius:10px;padding:18px}._07psQa_metrics dt{color:var(--qs-muted);font-size:12px}._07psQa_metrics dd{color:var(--qs-ink,var(--dsw-alias-label-primary));font-variant-numeric:tabular-nums;overflow-wrap:anywhere;margin:10px 0 0;font-size:19px}._07psQa_empty{text-align:center;color:var(--qs-muted);padding:36px}._07psQa_error{background:#bd625714;border-left:3px solid #bd6257;padding:12px 16px;line-height:1.6}._07psQa_plans ._07psQa_planRow{text-align:left;justify-content:space-between;align-items:center;gap:18px;width:100%;margin:8px 0;padding:16px;display:flex}._07psQa_planRow strong{font-size:13px}._07psQa_planRow small{color:var(--qs-muted);margin-top:6px;display:block}._07psQa_planRow>span:last-child{color:var(--qs-muted);font-size:12px}._07psQa_planDetails h3{margin:0 0 20px;font-size:18px}._07psQa_planDetails dl{grid-template-columns:110px minmax(0,1fr);gap:12px;display:grid}._07psQa_planDetails dt{color:var(--qs-muted)}._07psQa_planDetails dd{overflow-wrap:anywhere;font-variant-numeric:tabular-nums;margin:0}@media (width<=900px){._07psQa_page{padding:24px}._07psQa_connection,._07psQa_assistantHeading{flex-direction:column;align-items:flex-start}._07psQa_steps{flex-wrap:wrap;gap:14px}}@media (width<=600px){._07psQa_page{padding:18px 14px}._07psQa_header{flex-wrap:wrap;gap:14px}._07psQa_header h1{font-size:26px}._07psQa_welcome{margin:20px 0;padding:24px}._07psQa_connection,._07psQa_assistant{padding:16px}._07psQa_assistantHeading ._07psQa_actions,._07psQa_assistantHeading button{width:100%}._07psQa_metrics{grid-template-columns:repeat(2,minmax(0,1fr))}._07psQa_metrics>div{padding:14px}._07psQa_metrics dd{font-size:17px}._07psQa_plans ._07psQa_planRow{flex-direction:column;align-items:flex-start;gap:8px}._07psQa_toolbar label{width:100%}._07psQa_toolbar input{flex:1;min-width:0}._07psQa_planDetails dl{grid-template-columns:95px minmax(0,1fr);font-size:13px}}._07psQa_conversationControls{flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto;display:flex}._07psQa_conversationBody{max-height:min(240px,32dvh);overflow:auto}._07psQa_conversation[data-collapsed=true]{padding-block:8px}._07psQa_watchFields{border:0;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:0;padding:12px 0;display:grid}._07psQa_watchFields label{flex-direction:column;gap:7px;font-size:13px;display:flex}._07psQa_watchFields input,._07psQa_watchFields textarea,._07psQa_watchFields select{box-sizing:border-box;border:1px solid var(--qs-line);background:var(--qs-surface);width:100%;color:var(--qs-ink);font:inherit;border-radius:8px;padding:9px 10px}._07psQa_watchFields input:focus,._07psQa_watchFields textarea:focus,._07psQa_watchFields select:focus{outline:2px solid var(--qs-accent);outline-offset:2px}._07psQa_watchInstructions{grid-column:1/-1}._07psQa_watchInstructions textarea{resize:vertical;min-height:70px}._07psQa_watchReview{border:1px solid var(--qs-accent);border-radius:10px;margin:12px 0;padding:16px}._07psQa_watchSummary{color:var(--qs-muted);flex-wrap:wrap;gap:12px;margin:16px 0;font-size:13px;display:flex}._07psQa_watchLog{max-height:220px;padding-left:24px;font-size:13px;line-height:1.8;overflow:auto}._07psQa_watchStatus{border:1px solid var(--qs-line);background:var(--qs-tint);border-radius:10px;align-items:center;gap:16px;margin:16px 0;padding:14px 18px;display:flex}._07psQa_watchStatus>div{overflow-wrap:anywhere;min-width:0}._07psQa_watchStatus strong{margin-bottom:4px;font-size:14px;display:block}._07psQa_watchStatus small{color:var(--qs-muted);font-size:12px}._07psQa_watchIndicator{height:10px;color:var(--qs-muted);background:currentColor;border-radius:50%;flex:0 0 10px;margin:7px;position:relative}._07psQa_watchStatus[data-active=true] ._07psQa_watchIndicator{color:var(--qs-accent,#3579b5)}._07psQa_watchStatus[data-phase=waiting_quote] ._07psQa_watchIndicator,._07psQa_watchStatus[data-phase=waiting_plan] ._07psQa_watchIndicator{color:var(--dsw-alias-state-warning-primary)}._07psQa_watchStatus[data-active=true] ._07psQa_watchIndicator:after{content:\"\";border:1px solid;border-radius:50%;animation:1.8s ease-out infinite _07psQa_watchPulse;position:absolute;inset:-6px}@keyframes _07psQa_watchPulse{0%{opacity:.8;transform:scale(.5)}to{opacity:0;transform:scale(1.3)}}@media (prefers-reduced-motion:reduce){._07psQa_watchStatus[data-active=true] ._07psQa_watchIndicator:after{opacity:.5;animation:none}}._07psQa_watchWorkbench{background:var(--qs-surface,var(--dsw-alias-bg-base));color:var(--qs-ink);border:1px solid var(--qs-line);border-radius:16px;padding:26px}._07psQa_watchWorkbench h2{letter-spacing:.02em;margin:8px 0;font-family:Bahnschrift,Segoe UI,sans-serif;font-size:28px}._07psQa_watchWorkbench h3{margin:5px 0 0;font-size:20px}._07psQa_watchWorkbench summary{cursor:pointer}._07psQa_watchWorkbench summary:focus-visible{outline:2px solid var(--qs-accent);outline-offset:4px}._07psQa_watchWorkbench p._07psQa_jevFine{margin:10px 0;font-size:12px;line-height:1.7}._07psQa_jevCaption{letter-spacing:.09em;color:var(--qs-accent);font-size:11px;display:block}._07psQa_jevModel,._07psQa_jevBadge{white-space:nowrap;border:1px solid var(--qs-line);color:var(--qs-muted);border-radius:4px;padding:5px 8px;font:11px Consolas,monospace}._07psQa_jevConnection{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:9px;margin:20px 0 0}._07psQa_jevConnection>summary{padding:13px 16px;font-size:13px}._07psQa_jevConnection>summary>span:first-child{margin-right:12px}._07psQa_jevBadge[data-ready=true]{color:var(--qs-accent);border-color:color-mix(in srgb,var(--qs-accent) 35%,transparent)}._07psQa_jevConnectionBody{padding:0 16px 15px}._07psQa_jevKeyForm{flex-wrap:wrap;align-items:flex-end;gap:10px;margin:14px 0;display:flex}._07psQa_jevKeyForm label{flex-direction:column;flex:260px;gap:7px;font-size:13px;display:flex}._07psQa_jevKeyForm input{box-sizing:border-box;background:var(--qs-surface);border:1px solid var(--qs-line);width:100%;color:var(--qs-ink);font:inherit;border-radius:6px;padding:10px}._07psQa_jevKeyForm input:focus-visible{outline:2px solid var(--qs-accent)}._07psQa_watchWorkbench input::placeholder{color:var(--qs-muted)}._07psQa_watchWorkbench ._07psQa_watchStatus{background:0 0;border:0;border-radius:0;margin-bottom:0;padding:20px 8px}._07psQa_watchWorkbench ._07psQa_watchStatus strong{color:var(--qs-ink)}._07psQa_watchWorkbench ._07psQa_watchStatus p{font-size:13px}._07psQa_jevDashboard{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;display:grid}._07psQa_jevPanel{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:10px;min-width:0;padding:20px}._07psQa_jevPanelHeading{justify-content:space-between;align-items:center;gap:12px;display:flex}._07psQa_jevPrice{color:var(--qs-accent);text-align:right;font:26px Consolas,Cascadia Code,monospace}._07psQa_jevPrice small{color:var(--qs-muted);margin-top:5px;font:11px sans-serif;display:block}._07psQa_jevChart{width:100%;height:180px;margin-top:12px;display:block;overflow:visible}._07psQa_jevGridLine{stroke:var(--qs-line);stroke-width:1px;stroke-dasharray:4 5}._07psQa_jevPriceLine{stroke:var(--qs-accent);stroke-width:2px;vector-effect:non-scaling-stroke}._07psQa_jevQuoteDot{fill:var(--qs-accent)}._07psQa_jevQuoteDot:hover{r:5;fill:var(--qs-ink)}._07psQa_jevChartAxis{color:var(--qs-muted);justify-content:space-between;gap:8px;font:11px Consolas,monospace;display:flex}._07psQa_jevChartEmpty{background:repeating-linear-gradient(0deg,transparent,transparent 44px,color-mix(in srgb,var(--qs-line) 35%,transparent) 45px);flex-direction:column;justify-content:center;align-items:center;gap:8px;min-height:210px;display:flex}._07psQa_jevChartEmpty>span{color:var(--qs-accent);font-size:42px}._07psQa_jevChartEmpty strong{font-size:14px}._07psQa_jevChartEmpty p{font-size:12px}._07psQa_jevSampling{align-items:center;gap:16px;margin-top:20px;font-size:12px;display:flex}._07psQa_jevSampling span{white-space:nowrap}._07psQa_jevSampling b{color:var(--qs-accent);font:18px Consolas,monospace}._07psQa_jevSampling progress{background:var(--qs-line);width:100%;height:5px;accent-color:var(--qs-accent);border:0;border-radius:4px}._07psQa_jevSampling progress::-webkit-progress-bar{background:var(--qs-line);border-radius:4px}._07psQa_jevSampling progress::-webkit-progress-value{background:var(--qs-accent);border-radius:4px}._07psQa_watchWorkbench p._07psQa_jevConfidence{justify-content:space-between;align-items:center;margin:18px 0 12px;font-size:12px;display:flex}._07psQa_jevConfidence strong{color:var(--qs-ink);font:28px Consolas,monospace}._07psQa_jevConfidence small{margin-left:4px;font-size:13px}._07psQa_jevProbabilities>div{color:var(--qs-muted);grid-template-columns:34px minmax(0,1fr) 58px;align-items:center;gap:12px;margin:13px 0;font-size:12px;display:grid}._07psQa_jevProbabilities b{text-align:right;font:12px Consolas,monospace}._07psQa_jevProbabilities [data-selected=true]{color:var(--qs-accent)}._07psQa_jevProbabilityTrack{background:var(--qs-tint);border-radius:3px;height:6px;overflow:hidden}._07psQa_jevProbabilityTrack i{background:var(--qs-muted);height:100%;transition:width .35s;display:block}._07psQa_jevProbabilities [data-selected=true] i{background:var(--qs-accent)}._07psQa_jevDecisionEmpty{flex-direction:column;justify-content:center;gap:10px;min-height:230px;font-size:13px;display:flex}._07psQa_jevOutcome{border-top:1px solid var(--qs-line);overflow-wrap:anywhere;margin-top:12px;padding-top:12px}._07psQa_jevOutcome>span{color:var(--qs-accent);font-size:11px}._07psQa_jevOutcome p{margin-top:6px;font-size:12px}._07psQa_jevControls,._07psQa_jevHistory{border:1px solid var(--qs-line);border-radius:9px;margin-top:16px;padding:0 16px}._07psQa_jevControls>summary,._07psQa_jevHistory>summary{padding:15px 0;font-size:14px}._07psQa_jevControls>summary span,._07psQa_jevHistory>summary span{color:var(--qs-muted);margin-left:12px;font-size:11px}._07psQa_jevControls form{padding-bottom:16px}._07psQa_watchWorkbench ._07psQa_watchFields{border-top:1px solid var(--qs-line);padding-top:18px}._07psQa_watchWorkbench ._07psQa_watchFields input,._07psQa_watchWorkbench ._07psQa_watchFields textarea,._07psQa_watchWorkbench ._07psQa_watchReview{background:var(--qs-surface)}._07psQa_watchWorkbench ._07psQa_watchSummary{font:12px Consolas,Segoe UI,sans-serif}._07psQa_jevHistoryItem{border-top:1px solid var(--qs-line);font-size:12px}._07psQa_jevHistoryItem>summary{align-items:center;gap:18px;padding:13px 0;display:flex}._07psQa_jevHistoryItem time{color:var(--qs-muted);font-family:Consolas,monospace}._07psQa_jevHistoryItem summary>span{color:var(--qs-muted);margin-left:auto}._07psQa_jevHistoryItem>div{padding:0 0 12px}._07psQa_jevHistoryItem dl{grid-template-columns:95px minmax(0,1fr);gap:9px;font-size:12px;display:grid}._07psQa_jevHistoryItem dt{color:var(--qs-muted)}._07psQa_jevHistoryItem dd{overflow-wrap:anywhere;margin:0}@media (width<=1100px){._07psQa_jevDashboard{grid-template-columns:1fr}}@media (width<=600px){._07psQa_watchWorkbench{padding:16px}._07psQa_jevPanel{padding:15px}._07psQa_jevControls>summary span{margin:8px 0 0;display:block}._07psQa_jevKeyForm button{width:100%}._07psQa_jevPanelHeading{gap:8px}._07psQa_jevPrice{font-size:23px}._07psQa_jevModel,._07psQa_jevChartAxis{font-size:10px}._07psQa_jevHistoryItem>summary{gap:10px}}@media (prefers-reduced-motion:reduce){._07psQa_jevProbabilityTrack i{transition:none}}._07psQa_jevAuditBody{overflow-wrap:anywhere;padding:1rem}._07psQa_jevStrategyPreset{flex-wrap:wrap;align-items:end;gap:1rem;margin-bottom:1rem;display:flex}._07psQa_jevStrategyPreset label{flex:1;min-width:12rem}._07psQa_jevEvidence{border:1px solid var(--qs-line);overflow-wrap:anywhere;border-radius:9px;margin-top:16px;padding:16px}._07psQa_jevChecks{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;padding:0;list-style:none;display:grid}._07psQa_jevChecks li{border:1px solid var(--qs-line);border-radius:6px;padding:10px;font-size:12px}._07psQa_jevChecks strong{justify-content:space-between;gap:12px;display:flex}._07psQa_jevChecks span{color:var(--dsw-alias-state-warning-primary)}._07psQa_jevChecks [data-state=pass] span{color:var(--qs-accent)}._07psQa_jevAssessment{flex-wrap:wrap;gap:24px;display:flex}._07psQa_jevAssessment>div{flex-direction:column;gap:5px;display:flex}._07psQa_jevAssessment span,._07psQa_jevAssessment small{color:var(--qs-muted);font-size:12px}._07psQa_watchFields input[type=checkbox]{align-self:flex-start;width:auto}._07psQa_watchFields ._07psQa_jevCheckLabel{flex-direction:row;align-items:center;margin-top:16px}._07psQa_jevLauncher{border:0;min-width:0;margin:0;padding:18px 0 8px}._07psQa_jevLauncher legend{padding:16px 0 0;font-size:14px;font-weight:600}._07psQa_jevTemplateGrid{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;display:grid}._07psQa_watchWorkbench ._07psQa_jevTemplateCard{text-align:left;border:1px solid var(--qs-line);background:var(--qs-surface);color:var(--qs-ink);border-radius:10px;flex-direction:column;align-items:flex-start;gap:9px;padding:18px;display:flex}._07psQa_watchWorkbench ._07psQa_jevTemplateCard[aria-pressed=true]{border-color:var(--qs-accent);box-shadow:inset 3px 0 0 var(--qs-accent);background:var(--qs-tint)}._07psQa_jevTemplateCard strong{font-size:19px}._07psQa_jevTemplateCard>span:not(:first-child),._07psQa_jevTemplateCard small{color:var(--qs-muted);font-size:12px;line-height:1.6}._07psQa_jevQuickStart{border:1px solid var(--qs-line);border-radius:10px;flex-wrap:wrap;align-items:center;gap:20px;margin:20px 0 12px;padding:18px;display:flex}._07psQa_jevQuickStart label,._07psQa_jevSaveTemplate label{flex-direction:column;gap:8px;font-size:12px;display:flex}._07psQa_jevQuickStart input{width:170px}._07psQa_jevRunSummary{flex-direction:column;flex:1;gap:7px;font-size:12px;display:flex}._07psQa_jevRunSummary span{color:var(--qs-muted)}._07psQa_watchWorkbench ._07psQa_jevReuse{margin-top:12px;font-size:12px}._07psQa_jevSaveTemplate{flex-wrap:wrap;align-items:end;gap:12px;margin:18px 0;display:flex}._07psQa_jevLauncher:disabled{opacity:.75}._07psQa_watchWorkbench.qs-jev-workspace h2{letter-spacing:0;margin:0 0 6px;font-family:inherit;font-size:25px;font-weight:600;line-height:1.4}._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_watchStatus{padding:14px 0 20px}._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_watchStatus details{color:var(--qs-muted);margin-top:8px;font-size:12px}._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_jevDashboard{grid-template-columns:minmax(0,2.4fr) minmax(250px,1fr);gap:22px}._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_jevPanel{border-radius:16px;padding:24px}._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_jevChart{height:230px}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevLauncher{border:0;padding:0}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevLauncher legend{display:none}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevQuickStart{border:0;grid-template-columns:1fr 1fr;gap:16px;padding:0;display:grid}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevQuickStart label{min-width:0}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevQuickStart :is(input,select){width:100%;max-width:100%}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevRunSummary{background:var(--qs-tint);border-radius:9px;grid-column:1/-1;min-width:0;padding:14px}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_watchFields{grid-template-columns:1fr}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevConnectionBody{border-bottom:1px solid var(--qs-line);margin-bottom:20px;padding:0 0 16px}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevControls{padding:0 12px}._07psQa_watchWorkbench .qs-trading-drawer ._07psQa_jevCatalogTools{font-size:11px}@media (width<=950px){._07psQa_watchWorkbench.qs-jev-workspace ._07psQa_jevDashboard{grid-template-columns:1fr}}._07psQa_jevCreator{border:1px solid var(--qs-line);border-radius:10px;flex-wrap:wrap;align-items:end;gap:12px;margin-top:16px;padding:18px;display:flex}._07psQa_jevCreator label{flex-direction:column;gap:8px;font-size:12px;display:flex}._07psQa_jevCreator p{color:var(--qs-muted);flex-basis:100%;font-size:12px}._07psQa_jevQuickStart select{max-width:210px}._07psQa_jevQuickStart ._07psQa_jevRunSummary{min-width:240px}._07psQa_jevCatalogTools{color:var(--qs-muted);flex-wrap:wrap;align-items:center;gap:10px 16px;margin-bottom:16px;font-size:12px;line-height:1.7;display:flex}._07psQa_jevCatalogTools button{font-size:12px}._07psQa_jevInstrumentHint{color:var(--qs-muted);flex-basis:100%;margin:0;font-size:12px}@media (width<=600px){._07psQa_jevTemplateGrid{grid-template-columns:1fr}._07psQa_jevQuickStart{align-items:stretch;gap:14px}._07psQa_jevQuickStart label,._07psQa_jevRunSummary,._07psQa_jevQuickStart>button{flex-basis:100%;width:100%}._07psQa_jevQuickStart input{box-sizing:border-box;width:100%}}._07psQa_entrySection{margin:28px 0;container-type:inline-size}._07psQa_entryHeading{flex-wrap:wrap;align-items:baseline;gap:14px;margin:0 0 16px;display:flex}._07psQa_entryHeading h2{letter-spacing:-.02em;margin:0;font-size:19px}._07psQa_entryHeading>span{color:var(--qs-muted);font-size:12px}._07psQa_entryGrid{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:18px;display:grid}._07psQa_entryCard{box-sizing:border-box;border:1px solid var(--qs-line);background:var(--qs-surface);min-width:0;box-shadow:0 5px 18px color-mix(in srgb,var(--qs-ink) 3%,transparent);border-radius:18px;padding:24px;transition:border-color .18s,box-shadow .18s;position:relative}._07psQa_entryCard:hover,._07psQa_entryCard[data-selected]{border-color:color-mix(in srgb,var(--qs-accent) 65%,var(--qs-line));box-shadow:0 8px 24px color-mix(in srgb,var(--qs-ink) 5%,transparent)}._07psQa_entryTop{color:var(--qs-muted);align-items:center;gap:12px;font-size:11px;display:flex}._07psQa_entryIcon{width:44px;height:44px;color:var(--qs-accent);background:var(--qs-tint);border-radius:13px;flex-shrink:0;place-items:center;display:grid}._07psQa_entryCard h3{letter-spacing:-.025em;margin:22px 0 10px;font-size:22px;line-height:1.3}._07psQa_entryDescription{min-height:66px;color:var(--qs-muted);text-wrap:pretty;margin:0;font-size:13px;line-height:1.8}._07psQa_entryStatus{min-height:20px;color:var(--qs-muted);overflow-wrap:anywhere;align-items:center;gap:7px;margin:18px 0 14px;font-size:11px;line-height:1.7;display:flex}._07psQa_entryStatus i{background:var(--qs-muted);border-radius:50%;flex-shrink:0;width:6px;height:6px}._07psQa_entryStatus[data-active=true]{color:var(--qs-accent)}._07psQa_entryStatus[data-active=true] i{background:var(--qs-accent);box-shadow:0 0 0 3px var(--qs-tint)}._07psQa_page ._07psQa_entryAction{border-color:var(--qs-line);background:var(--qs-tint);text-align:left;border-radius:9px;justify-content:space-between;align-items:center;gap:10px;width:100%;min-height:42px;padding:11px 13px;font-size:13px;font-weight:600;display:flex}._07psQa_page ._07psQa_entryAction:not(:disabled):hover{background:var(--qs-accent);color:var(--qs-buttonInk);border-color:#0000}._07psQa_entryHint{color:var(--qs-muted);margin:13px 0 0;font-size:11px;line-height:20px;display:block}._07psQa_entryMore{color:var(--qs-muted);margin-top:13px;font-size:11px;line-height:20px}._07psQa_entryMore summary{cursor:pointer;width:fit-content}._07psQa_entryMore summary:focus-visible,._07psQa_methodGuide summary:focus-visible{outline:2px solid var(--qs-accent);outline-offset:4px;border-radius:4px}._07psQa_entryMore>div{gap:8px;margin-top:12px;display:grid}._07psQa_entryMore small{overflow-wrap:anywhere;font-size:11px}._07psQa_page ._07psQa_entryMore button{text-align:left;padding:8px 10px;font-size:12px}._07psQa_methodGuide{color:var(--qs-muted);margin-top:18px;font-size:12px}._07psQa_methodGuide>summary{cursor:pointer;width:fit-content;line-height:1.8}._07psQa_methodGuide>div{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:12px;grid-template-columns:1fr 1fr;gap:14px 28px;margin-top:12px;padding:18px 20px;display:grid}._07psQa_methodGuide p{margin:0;line-height:1.8}._07psQa_methodGuide p:last-child{border-top:1px solid var(--qs-line);grid-column:1/-1;padding-top:12px}._07psQa_methodGuide strong{color:var(--qs-ink);margin-bottom:4px;font-size:13px;display:block}._07psQa_connectionState{align-items:center;gap:8px;font-size:13px;display:inline-flex}._07psQa_connectionState:before{content:\"\";background:var(--qs-muted);border-radius:50%;width:7px;height:7px}._07psQa_connectionState[data-connected=true]:before{background:var(--qs-accent)}._07psQa_connection ._07psQa_connectionTools{flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:10px;display:flex}._07psQa_connectionTools ._07psQa_plans{margin:0}._07psQa_connectionTools button,._07psQa_connectionTools summary{padding:8px 11px;font-size:12px}._07psQa_connectionTools ._07psQa_accountActions>div small{width:100%}._07psQa_connectionTools ._07psQa_accountActions>div{box-sizing:border-box;max-width:min(300px,80vw)}._07psQa_watchArea{outline:none;min-width:0;margin:24px 0;scroll-margin:18px}._07psQa_watchArea[hidden]{display:none}._07psQa_workspaceBar{color:var(--qs-muted);justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;font-size:12px;display:flex}._07psQa_page ._07psQa_workspaceBar button{padding:6px 10px;font-size:12px}._07psQa_watchArea>._07psQa_watchWorkbench{margin-top:0}@container (width<=780px){._07psQa_entryGrid{grid-template-columns:1fr;gap:12px}._07psQa_entryCard{grid-template-columns:minmax(0,1fr) 190px;column-gap:24px;padding:20px;display:grid}._07psQa_entryTop{grid-column:1}._07psQa_entryCard h3{grid-column:1;margin:14px 0 8px;font-size:20px}._07psQa_entryDescription{grid-column:1;min-height:0}._07psQa_entryStatus{grid-area:1/2/3;align-self:end;margin:0;padding-bottom:12px}._07psQa_page ._07psQa_entryAction{grid-area:3/2;align-self:start}._07psQa_entryHint,._07psQa_entryMore{grid-column:2;margin-top:8px}._07psQa_entryMore{grid-row:4}}@container (width<=480px){._07psQa_entryCard{padding:20px;display:block}._07psQa_entryCard h3{margin-top:15px}._07psQa_entryDescription{min-height:0}._07psQa_entryStatus{margin:12px 0;padding:0}._07psQa_methodGuide>div{grid-template-columns:1fr}._07psQa_methodGuide p:last-child{grid-column:auto}}@media (width<=900px){._07psQa_connection[data-compact]{flex-flow:wrap;align-items:center}._07psQa_connectionTools{margin-left:auto}}@media (width<=600px){._07psQa_connectionTools{margin-left:0}._07psQa_connection ._07psQa_connectionTools{justify-content:flex-start}._07psQa_connection[data-compact] ._07psQa_accountActions>div{left:0;right:auto}._07psQa_entryHeading>span{font-size:11px}._07psQa_entrySection{margin:22px 0}._07psQa_contestDetails{padding:18px}._07psQa_contestDetails>summary h2{font-size:17px}._07psQa_header h1{font-size:24px}}@media (prefers-reduced-motion:reduce){._07psQa_entryCard{transition:none}}";
+		const tagId$18 = "@deepseek-ai/dsh-client-ui-quantskills/ContestPage.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$18) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$14;
-			tag.textContent = css$14;
+			tag.dataset.pluginCss = tagId$18;
+			tag.textContent = css$18;
 			document.head.appendChild(tag);
 		}
 		var ContestPage_module_css_default = {
@@ -30382,6 +30661,46 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 						children: "执行使用这份冻结计划。修改参数需要重新预演。"
 					})
 				]
+			});
+		}
+		//#endregion
+		//#region lib/types/client/fly/TraderDisclosure.js
+		const icons = {
+			market: o$34,
+			plans: o$9,
+			account: o$2
+		};
+		function TraderDisclosure({ kind, title, description, status, tone = "neutral", open, id, children }) {
+			const Icon = icons[kind];
+			return (0, react_jsx_runtime.jsxs)("details", {
+				className: "qs-trader-disclosure",
+				"data-kind": kind,
+				open,
+				id,
+				children: [(0, react_jsx_runtime.jsxs)("summary", { children: [
+					(0, react_jsx_runtime.jsx)("span", {
+						className: "qs-trader-disclosure-icon",
+						"aria-hidden": "true",
+						children: (0, react_jsx_runtime.jsx)(Icon, { size: 21 })
+					}),
+					(0, react_jsx_runtime.jsxs)("span", {
+						className: "qs-trader-disclosure-copy",
+						children: [(0, react_jsx_runtime.jsx)("strong", { children: title }), (0, react_jsx_runtime.jsx)("span", { children: description })]
+					}),
+					(0, react_jsx_runtime.jsx)("span", {
+						className: "qs-trader-disclosure-status",
+						"data-tone": tone,
+						children: status
+					}),
+					(0, react_jsx_runtime.jsx)(e$23, {
+						className: "qs-trader-disclosure-chevron",
+						size: 16,
+						"aria-hidden": "true"
+					})
+				] }), (0, react_jsx_runtime.jsx)("div", {
+					className: "qs-trader-disclosure-content",
+					children
+				})]
 			});
 		}
 		//#endregion
@@ -31831,7 +32150,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 				children: [(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsxs)("h2", { children: ["交易合约 ", (0, react_jsx_runtime.jsxs)("small", { children: [markets.length, " 个已配置"] })] }), (0, react_jsx_runtime.jsxs)("button", {
 					type: "button",
 					onClick: onManage,
-					children: [(0, react_jsx_runtime.jsx)(e$6, { size: 15 }), "管理合约"]
+					children: [(0, react_jsx_runtime.jsx)(e$8, { size: 15 }), "管理合约"]
 				})] }), (0, react_jsx_runtime.jsxs)("div", {
 					className: "qs-contract-list",
 					children: [markets.map((market) => {
@@ -31867,7 +32186,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 									className: "qs-contract-state",
 									children: state
 								}),
-								(0, react_jsx_runtime.jsx)(e$19, { size: 14 })
+								(0, react_jsx_runtime.jsx)(e$23, { size: 14 })
 							]
 						}, market.product);
 					}), !markets.length && (0, react_jsx_runtime.jsx)("p", { children: "添加实际合约后，在这里同时查看行情与运行状态。" })]
@@ -31876,19 +32195,19 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		}
 		//#endregion
 		//#region \0dsh-global-css:packages/ui-quantskills/src/client/TradingGuide.css.mjs
-		const css$13 = ".qs-trading-guide{color:var(--qs-ink,var(--dsw-alias-text-primary));background:var(--qs-surface,var(--dsw-alias-bg-base));border:1px solid var(--qs-line,var(--dsw-alias-border-main));border-radius:14px;min-width:0;margin:18px 0;padding:18px}.qs-trading-guide>header{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;display:flex}.qs-trading-guide>header>div{flex-direction:column;gap:6px;display:flex}.qs-trading-guide header strong{font-size:16px}.qs-trading-guide header span{color:var(--qs-muted,var(--dsw-alias-text-secondary));font-size:12px}.qs-trading-guide button{font:inherit;cursor:pointer;border:1px solid var(--qs-line,var(--dsw-alias-border-main));background:var(--qs-surface,var(--dsw-alias-bg-base));color:inherit;border-radius:9px;padding:9px 12px;font-size:13px}.qs-trading-guide button:focus-visible{outline:2px solid var(--qs-accent,var(--dsw-alias-brand-primary));outline-offset:3px}.qs-trading-guide nav{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:18px 0;display:grid}.qs-trading-guide nav button{text-align:left;align-items:center;gap:10px;min-width:0;display:flex}.qs-trading-guide nav button>span{text-align:center;background:var(--qs-tint,var(--dsw-alias-bg-subtle));border-radius:50%;flex:0 0 24px;line-height:24px}.qs-trading-guide nav button[aria-current=step]{border-color:var(--qs-accent,var(--dsw-alias-brand-primary));background:var(--qs-tint,var(--dsw-alias-bg-subtle))}.qs-trading-guide nav b,.qs-trading-guide nav small{overflow-wrap:anywhere;line-height:1.5;display:block}.qs-trading-guide nav small{color:var(--qs-muted,var(--dsw-alias-text-secondary));margin-top:4px;font-size:11px}.qs-trading-guide nav small[data-ready=true]{color:var(--qs-accent,var(--dsw-alias-brand-primary))}.qs-trading-guide .qs-guide-body{border-top:1px solid var(--qs-line,var(--dsw-alias-border-main));padding-top:16px}.qs-trading-guide .qs-guide-body h3{margin:0 0 8px;font-size:16px}.qs-trading-guide p{overflow-wrap:anywhere;margin:8px 0;font-size:13px;line-height:1.8}.qs-trading-guide .qs-guide-note{color:var(--qs-muted,var(--dsw-alias-text-secondary))}.qs-guide-actions{flex-wrap:wrap;gap:8px;margin-top:14px;display:flex}.qs-guide-help{border-top:1px solid var(--qs-line,var(--dsw-alias-border-main));margin-top:16px;padding-top:12px;font-size:13px}.qs-guide-help summary{cursor:pointer}.qs-guide-help>div{margin-top:14px}.qs-guide-help p{color:var(--qs-muted,var(--dsw-alias-text-secondary))}@media (width<=900px){.qs-trading-guide nav{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (width<=480px){.qs-trading-guide{padding:14px}.qs-trading-guide nav{grid-template-columns:1fr}}";
-		const tagId$13 = "@deepseek-ai/dsh-client-ui-quantskills/TradingGuide.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$13) + "]") === null) {
+		const css$17 = ".qs-trading-guide{color:var(--qs-ink);background:var(--qs-surface);border:1px solid var(--qs-line);border-radius:16px;min-width:0;margin:18px 0;padding:20px}.qs-trading-guide>header{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;display:flex}.qs-trading-guide>header>div{gap:5px;display:grid}.qs-trading-guide>header strong{font-size:15px;font-weight:600}.qs-trading-guide>header span{color:var(--qs-muted);font-size:12px}.qs-trading-guide>header .qs-guide-step-count{background:var(--qs-tint);color:var(--qs-accent);border-radius:7px;padding:5px 9px;font-size:11px}.qs-trading-guide.qs-trading-guide button{font:inherit;cursor:pointer;border:1px solid var(--qs-line);background:var(--qs-surface);min-height:36px;color:var(--qs-ink);border-radius:9px;padding:8px 12px;font-size:12px}.qs-trading-guide.qs-trading-guide :is(button,summary):focus-visible{outline:2px solid var(--qs-accent);outline-offset:2px}.qs-trading-guide nav{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:20px 0;display:grid}.qs-trading-guide.qs-trading-guide nav button{text-align:left;border-radius:12px;align-items:center;gap:10px;min-width:0;min-height:74px;padding:13px 12px;display:flex}.qs-trading-guide nav button>span{text-align:center;background:color-mix(in srgb,var(--qs-muted) 8%,var(--qs-surface));color:var(--qs-muted);border-radius:9px;flex:0 0 28px;font-size:12px;font-weight:600;line-height:28px}.qs-trading-guide.qs-trading-guide nav button[aria-current=step]{border-color:color-mix(in srgb,var(--qs-accent) 32%,var(--qs-line));background:var(--qs-tint)}.qs-trading-guide nav button[aria-current=step]>span{background:var(--qs-accent);color:var(--qs-buttonInk,#fff)}.qs-trading-guide.qs-trading-guide nav button:not([aria-current=step]):hover{border-color:var(--qs-accent)}.qs-trading-guide nav button>div{min-width:0}.qs-trading-guide nav b,.qs-trading-guide nav small{overflow-wrap:anywhere;line-height:1.6;display:block}.qs-trading-guide nav b{font-size:13px;font-weight:550}.qs-trading-guide nav small{color:var(--qs-muted);margin-top:3px;font-size:11px}.qs-trading-guide nav small[data-ready=true]{color:var(--qs-accent)}.qs-trading-guide .qs-guide-body{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:14px;padding:20px}.qs-trading-guide .qs-guide-eyebrow{color:var(--qs-accent);margin-bottom:6px;font-size:11px;display:block}.qs-trading-guide .qs-guide-body h3{margin:0 0 12px;font-size:18px;font-weight:600;line-height:1.5}.qs-trading-guide p{overflow-wrap:anywhere;color:var(--qs-muted);margin:0;font-size:13px;line-height:1.85}.qs-trading-guide .qs-guide-body>p{margin:0 0 16px}.qs-trading-guide .qs-guide-note{background:color-mix(in srgb,var(--qs-tint) 35%,var(--qs-surface));border-radius:10px;gap:9px;padding:12px;display:flex}.qs-guide-note>svg{color:var(--qs-muted);flex-shrink:0;margin-top:3px}.qs-trading-guide .qs-guide-note>p{margin:0;font-size:12px;line-height:1.8}.qs-guide-actions{flex-wrap:wrap;gap:8px;margin-top:18px;display:flex}.qs-trading-guide.qs-trading-guide button.qs-guide-action{color:var(--qs-buttonInk,#fff);background:var(--qs-accent);border-color:#0000;font-weight:550}.qs-guide-paging{border-top:1px solid var(--qs-line);justify-content:space-between;align-items:center;gap:10px;margin-top:18px;padding-top:14px;display:flex}.qs-guide-paging>span{color:var(--qs-muted);font-size:11px}.qs-guide-paging>div{gap:8px;display:flex}.qs-trading-guide.qs-trading-guide .qs-guide-paging button{min-height:32px;color:var(--qs-muted);background:0 0;border-color:#0000;padding:5px 8px}.qs-trading-guide.qs-trading-guide .qs-guide-paging button:hover{background:var(--qs-tint);color:var(--qs-accent)}.qs-guide-help{margin-top:24px}.qs-guide-help>header{color:var(--qs-muted);align-items:center;gap:8px;margin-bottom:12px;display:flex}.qs-trading-guide .qs-guide-help>header h3{color:var(--qs-ink);margin:0;font-size:14px;font-weight:550}.qs-guide-help>header>span{margin-left:auto;font-size:11px}.qs-trading-guide .qs-guide-help>details{border:1px solid var(--qs-line);border-radius:11px;margin:0 0 8px}.qs-guide-help summary{cursor:pointer;justify-content:space-between;align-items:center;gap:10px;padding:13px 14px;list-style:none;display:flex}.qs-guide-help summary::-webkit-details-marker{display:none}.qs-guide-help summary strong{font-size:12px;font-weight:500;line-height:1.7}.qs-guide-help summary svg{color:var(--qs-muted);flex-shrink:0;transition:transform .15s}.qs-guide-help details[open] summary svg{transform:rotate(180deg)}.qs-trading-guide .qs-guide-help details>p{border-top:1px solid var(--qs-line);margin:0 14px;padding:12px 0 14px;font-size:12px}.qs-trading-drawer.qs-support-drawer .qs-trading-guide>header span,.qs-trading-drawer.qs-support-drawer .qs-guide-help>header>span{display:block}@media (width<=900px){.qs-trading-guide nav{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (width<=480px){.qs-trading-guide{padding:14px}.qs-trading-guide.qs-trading-guide nav button{gap:8px;padding:11px 9px}.qs-trading-guide nav button>span{flex-basis:23px;line-height:23px}.qs-trading-guide .qs-guide-body{padding:16px}}@media (prefers-reduced-motion:reduce){.qs-guide-help summary svg{transition:none}}";
+		const tagId$17 = "@deepseek-ai/dsh-client-ui-quantskills/TradingGuide.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$17) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$13;
-			tag.textContent = css$13;
+			tag.dataset.pluginCss = tagId$17;
+			tag.textContent = css$17;
 			document.head.appendChild(tag);
 		}
 		//#endregion
 		//#region lib/types/client/TradingGuide.js
 		/** Navigation and explanation only: opening a guide never starts a trading operation. */
-		function TradingGuide({ name, steps, troubleshooting, compact = false }) {
+		function TradingGuide({ name, steps, troubleshooting, compact = false, triggerIcon, inDrawer = false }) {
 			const [help, setHelp] = (0, react.useState)(false);
 			const id = (0, react.useId)();
 			const [open, setOpen] = (0, react.useState)(() => {
@@ -31906,16 +32225,18 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 					localStorage.setItem(`qs-guide-v1-${name}`, open ? "closed" : "open");
 				} catch {}
 			}
-			if (compact) return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("button", {
+			if (compact) return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsxs)("button", {
 				type: "button",
 				className: "qs-quick-help",
 				onClick: () => setHelp(true),
-				children: "快速上手"
+				children: [triggerIcon, "快速上手"]
 			}), help && (0, react_jsx_runtime.jsx)(ActionDialog, {
 				drawer: true,
+				className: "qs-support-drawer",
 				title: `${name}快速上手`,
 				onClose: () => setHelp(false),
 				children: (0, react_jsx_runtime.jsx)(TradingGuide, {
+					inDrawer: true,
 					name,
 					steps: steps.map((item) => ({
 						...item,
@@ -31933,13 +32254,21 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 			return (0, react_jsx_runtime.jsxs)("section", {
 				className: "qs-trading-guide",
 				"aria-label": `${name}新手引导`,
-				children: [(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsxs)("strong", { children: [name, " · 从这里开始"] }), (0, react_jsx_runtime.jsx)("span", { children: "配置 → 核验 → 运行 → 确认计划" })] }), (0, react_jsx_runtime.jsx)("button", {
+				children: [(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("strong", { children: inDrawer ? "完成运行前的准备" : `${name} · 从这里开始` }), (0, react_jsx_runtime.jsx)("span", { children: "核对配置与行情，再确认执行方式。" })] }), inDrawer ? (0, react_jsx_runtime.jsxs)("span", {
+					className: "qs-guide-step-count",
+					children: [
+						step + 1,
+						" / ",
+						steps.length,
+						" 步"
+					]
+				}) : (0, react_jsx_runtime.jsx)("button", {
 					type: "button",
 					onClick: toggle,
 					"aria-expanded": open,
 					"aria-controls": id,
 					children: open ? "收起新手引导" : "打开新手引导"
-				})] }), open && (0, react_jsx_runtime.jsxs)("div", {
+				})] }), (open || inDrawer) && (0, react_jsx_runtime.jsxs)("div", {
 					id,
 					children: [
 						(0, react_jsx_runtime.jsx)("nav", {
@@ -31957,37 +32286,64 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 						(0, react_jsx_runtime.jsxs)("div", {
 							className: "qs-guide-body",
 							children: [
+								(0, react_jsx_runtime.jsxs)("span", {
+									className: "qs-guide-eyebrow",
+									children: [
+										"第 ",
+										step + 1,
+										" 步"
+									]
+								}),
 								(0, react_jsx_runtime.jsx)("h3", { children: current.title }),
 								(0, react_jsx_runtime.jsx)("p", { children: current.body }),
-								(0, react_jsx_runtime.jsx)("p", {
-									className: "qs-guide-note",
-									children: current.note
-								}),
 								(0, react_jsx_runtime.jsxs)("div", {
+									className: "qs-guide-note",
+									children: [(0, react_jsx_runtime.jsx)(e$12, {
+										size: 16,
+										"aria-hidden": "true"
+									}), (0, react_jsx_runtime.jsx)("p", { children: current.note })]
+								}),
+								(0, react_jsx_runtime.jsx)("div", {
 									className: "qs-guide-actions",
-									children: [
-										current.action && (0, react_jsx_runtime.jsxs)("button", {
-											type: "button",
-											onClick: current.action.run,
-											children: [current.action.label, " ↗"]
-										}),
-										step > 0 && (0, react_jsx_runtime.jsx)("button", {
-											type: "button",
-											onClick: () => setStep(step - 1),
-											children: "上一步说明"
-										}),
-										step < steps.length - 1 && (0, react_jsx_runtime.jsx)("button", {
-											type: "button",
-											onClick: () => setStep(step + 1),
-											children: "下一步说明 →"
-										})
-									]
+									children: current.action && (0, react_jsx_runtime.jsxs)("button", {
+										type: "button",
+										className: "qs-guide-action",
+										onClick: current.action.run,
+										children: [current.action.label, " ↗"]
+									})
+								}),
+								steps.length > 1 && (0, react_jsx_runtime.jsxs)("div", {
+									className: "qs-guide-paging",
+									children: [(0, react_jsx_runtime.jsxs)("span", { children: [
+										step + 1,
+										" / ",
+										steps.length
+									] }), (0, react_jsx_runtime.jsxs)("div", { children: [step > 0 && (0, react_jsx_runtime.jsx)("button", {
+										type: "button",
+										onClick: () => setStep(step - 1),
+										children: "上一步说明"
+									}), step < steps.length - 1 && (0, react_jsx_runtime.jsx)("button", {
+										type: "button",
+										onClick: () => setStep(step + 1),
+										children: "下一步说明 →"
+									})] })]
 								})
 							]
 						}),
-						(0, react_jsx_runtime.jsxs)("details", {
+						troubleshooting.length > 0 && (0, react_jsx_runtime.jsxs)("section", {
 							className: "qs-guide-help",
-							children: [(0, react_jsx_runtime.jsx)("summary", { children: "卡在某一步？查看常见问题" }), troubleshooting.map((item) => (0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("b", { children: item.title }), (0, react_jsx_runtime.jsx)("p", { children: item.body })] }, item.title))]
+							"aria-label": "常见问题",
+							children: [(0, react_jsx_runtime.jsxs)("header", { children: [
+								(0, react_jsx_runtime.jsx)(e$6, {
+									size: 18,
+									"aria-hidden": "true"
+								}),
+								(0, react_jsx_runtime.jsx)("h3", { children: "常见问题" }),
+								(0, react_jsx_runtime.jsxs)("span", { children: [troubleshooting.length, " 项"] })
+							] }), troubleshooting.map((item) => (0, react_jsx_runtime.jsxs)("details", { children: [(0, react_jsx_runtime.jsxs)("summary", { children: [(0, react_jsx_runtime.jsx)("strong", { children: item.title }), (0, react_jsx_runtime.jsx)(e$24, {
+								size: 15,
+								"aria-hidden": "true"
+							})] }), (0, react_jsx_runtime.jsx)("p", { children: item.body })] }, item.title))]
 						})
 					]
 				})]
@@ -32084,29 +32440,353 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		}
 		//#endregion
 		//#region \0dsh-global-css:packages/ui-quantskills/src/client/fly/fly-v2.css.mjs
-		const css$12 = ".fv-page{--fv-bg:var(--qs-surface,var(--dsw-alias-bg-base));--fv-panel:var(--qs-surface,var(--dsw-alias-bg-base));--fv-line:var(--qs-line,var(--dsw-alias-border-l2));--fv-text:var(--qs-ink,var(--dsw-alias-label-primary));--fv-muted:var(--qs-muted,var(--dsw-alias-label-secondary));--fv-lime:var(--qs-accent,var(--dsw-alias-brand-primary));--fv-tint:var(--qs-tint,var(--dsw-alias-bg-hover));--fv-button-ink:var(--qs-buttonInk,var(--dsw-alias-label-inverted-primary));--fv-danger:var(--dsw-alias-state-error-primary,#c03939);--fv-success:var(--dsw-alias-state-success-primary,#16805b);--fv-warning:var(--dsw-alias-state-warning-primary,#a36813);background:var(--fv-bg);height:100%;color:var(--fv-text);padding:26px 32px 48px;font-family:Inter,Microsoft YaHei,sans-serif;font-size:13px;line-height:1.6;overflow:auto}.fv-page *{box-sizing:border-box}.fv-page button,.fv-page input,.fv-page select,.fv-page textarea{font:inherit}.fv-page button{cursor:pointer;border:1px solid var(--fv-line);background:var(--fv-panel);color:var(--fv-text);border-radius:7px;padding:7px 12px;transition:background .15s}.fv-page button:hover{background:var(--fv-panel)}.fv-page button:disabled{opacity:.4;cursor:default}.fv-page button.fv-primary{background:var(--fv-lime);color:var(--fv-muted);border-color:var(--fv-lime);font-weight:600}.fv-page button.fv-primary:hover{background:var(--fv-tint)}.fv-page input,.fv-page textarea,.fv-page select{background:var(--fv-panel);border:1px solid var(--fv-line);color:var(--fv-text);border-radius:6px;outline:none;max-width:100%;padding:8px 10px}.fv-page textarea{resize:vertical;width:100%;min-height:120px;line-height:1.8}.fv-page input:focus,.fv-page textarea:focus,.fv-page select:focus{border-color:var(--fv-line)}.fv-page input[type=checkbox]{accent-color:var(--fv-lime)}.fv-page h1,.fv-page h2,.fv-page h3,.fv-page p{margin:0}.fv-page h2{font-size:20px;font-weight:500}.fv-page h3{font-size:13px;font-weight:500}.fv-page p{color:var(--fv-muted);margin:9px 0}.fv-page small{font-size:12px}.fv-page hr{border:0;border-top:1px solid var(--fv-line);margin:24px 0}.fv-header{justify-content:space-between;align-items:center;gap:20px;margin-bottom:25px;display:flex}.fv-identity{align-items:center;gap:15px;display:flex}.fv-avatar{background:var(--fv-panel);width:46px;height:46px;color:var(--fv-text);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fv-lime) 15%,transparent);border-radius:15px;place-items:center;font-size:27px;display:grid}.fv-kicker{letter-spacing:2px;color:var(--fv-muted);font-size:12px}.fv-identity h1{letter-spacing:1px;font-size:25px;font-weight:500}.fv-identity h1 span{letter-spacing:0;color:var(--fv-muted);margin-left:14px;font-size:13px;font-weight:400}.fv-header-actions,.fv-actions{flex-wrap:wrap;align-items:center;gap:9px;display:flex}.fv-status{color:var(--fv-muted);white-space:nowrap;margin-right:8px;font-size:13px}.fv-status i{background:var(--fv-tint);border-radius:50%;width:6px;height:6px;margin-right:7px;display:inline-block}.fv-status.on i{background:var(--fv-tint);box-shadow:0 0 10px color-mix(in srgb,var(--fv-lime) 15%,transparent)}.fv-nav{border-bottom:1px solid var(--fv-line);align-items:center;gap:25px;margin-bottom:28px;display:flex}.fv-nav>button{color:var(--fv-muted);background:0 0;border:0;border-radius:0;padding:12px 3px 16px;font-size:15px;position:relative}.fv-nav>button small{letter-spacing:1px;color:var(--fv-muted);margin-right:9px;font-size:12px}.fv-nav>button.selected{color:var(--fv-text)}.fv-nav>button.selected:after{content:\"\";background:var(--fv-tint);height:2px;position:absolute;bottom:-1px;left:0;right:0}.fv-nav-right{letter-spacing:1px;color:var(--fv-muted);align-items:center;gap:18px;margin-left:auto;font-size:12px;display:flex}.fv-nav-right button{color:var(--fv-muted);background:0 0;border:0;font-size:13px}.fv-section-line{justify-content:space-between;align-items:center;gap:20px;margin-bottom:20px;display:flex}.fv-section-line h2{letter-spacing:.5px;font-size:19px}.fv-section-line p{color:var(--fv-muted);margin:5px 0 0;font-size:13px}.fv-grid{grid-template-columns:repeat(12,minmax(0,1fr));gap:15px;display:grid}.fv-widget{background:linear-gradient(125deg,var(--fv-panel),var(--fv-panel));border:1px solid var(--fv-line);border-radius:12px;flex-direction:column;min-width:0;min-height:180px;max-height:800px;display:flex;overflow:hidden}.fv-widget.editing{resize:vertical;border-style:dashed}.fv-widget>header{flex-shrink:0;justify-content:space-between;align-items:center;padding:15px 19px 12px;display:flex}.fv-widget>header h3{color:var(--fv-text);letter-spacing:1px;font-size:13px}.fv-widget.editing>header{cursor:grab}.fv-widget>header>div{gap:4px;display:flex}.fv-widget>header select,.fv-widget>header button{padding:1px 5px;font-size:12px}.fv-widget-content{flex:1;min-height:0;padding:0 19px 17px;overflow:auto}.fv-markets{grid-template-columns:repeat(7,minmax(0,1fr));align-items:center;gap:16px;height:100%;display:grid}.fv-market{border-right:1px solid var(--fv-line);min-width:0;padding-right:15px}.fv-market:last-child{border:0;padding:0}.fv-market>div:first-child{align-items:center;gap:7px;display:flex}.fv-market strong{font-size:14px;font-weight:500}.fv-market span{color:var(--fv-muted);white-space:nowrap;font-size:12px}.fv-market>b{margin:10px 0;font-family:Inter,monospace;font-size:22px;font-weight:400;display:block}.fv-market small{color:var(--fv-muted);white-space:nowrap;font-size:12px;display:block}.fv-market em{color:var(--fv-muted);margin-top:9px;font-size:12px;font-style:normal;display:block}.fv-market em.ready{color:var(--fv-muted)}.fv-spark{width:100%;height:60px;color:var(--fv-muted);margin:4px 0}.fv-no-chart{border-bottom:1px dashed var(--fv-line);height:70px;color:var(--fv-muted);place-items:center;margin-bottom:10px;font-size:12px;display:grid}.fv-goal{color:var(--fv-text);margin:9px 0 2px!important;font-size:27px!important}.fv-states{grid-template-columns:1fr 1fr;gap:8px 22px;margin:17px 0 12px;display:grid}.fv-states>div{color:var(--fv-muted);align-items:center;gap:9px;font-size:12px;display:flex}.fv-states meter{min-width:25px;height:5px;accent-color:var(--fv-lime);flex:1}.fv-states meter::-webkit-meter-bar{background:var(--fv-panel);border:0}.fv-states meter::-webkit-meter-optimum-value{background:var(--fv-tint)}.fv-note{color:var(--fv-muted);margin-top:12px;font-size:12px;line-height:1.7;display:block}.fv-stat{align-items:baseline;gap:12px;margin:4px 0 17px;display:flex}.fv-stat strong{letter-spacing:-1px;color:var(--fv-text);font-size:32px;font-weight:350}.fv-stat span{color:var(--fv-muted);font-size:12px}.fv-rate-list{gap:8px;margin:9px 0 17px;display:grid}.fv-rate-list>div{border-bottom:1px solid var(--fv-line);color:var(--fv-muted);justify-content:space-between;padding-bottom:7px;font-size:13px;display:flex}.fv-rate-list b{color:var(--fv-text);font-weight:400}.fv-widget table{border-collapse:collapse;text-align:left;width:100%;font-size:13px}.fv-widget th{color:var(--fv-muted);border-bottom:1px solid var(--fv-line);padding:6px 7px;font-size:12px;font-weight:400}.fv-widget td{border-bottom:1px solid var(--fv-line);color:var(--fv-text);white-space:nowrap;padding:7px}.fv-empty{height:100%;min-height:100px;color:var(--fv-muted);flex-direction:column;justify-content:center;align-items:center;display:flex}.fv-empty>span{color:var(--fv-muted);font-size:34px}.fv-empty small{color:var(--fv-muted);font-size:12px}.fv-mini-events>div{border-bottom:1px solid var(--fv-line);grid-template-columns:60px 1fr;gap:5px;padding:9px 0;display:grid}.fv-mini-events time{color:var(--fv-muted);font-size:12px}.fv-mini-events small{color:var(--fv-muted);grid-column:2}.fv-learning-badges{gap:8px;margin:9px 0 18px;display:flex}.fv-learning-badges span,.fv-pill{border:1px solid var(--fv-line);background:var(--fv-panel);color:var(--fv-text);border-radius:15px;padding:4px 10px;font-size:12px}.fv-widget select{width:100%;margin-top:12px;font-size:13px}.fv-layout-tools{background:var(--fv-panel);border:1px dashed var(--fv-line);border-radius:9px;align-items:center;gap:10px;margin-bottom:16px;padding:12px 16px;font-size:13px;display:flex}.fv-layout-tools span{color:var(--fv-muted);margin-right:auto}.fv-layout-tools select{font-size:13px}.fv-home-layout{grid-template-columns:minmax(0,1fr) 286px;gap:18px;display:grid}.fv-home-stage{background:radial-gradient(ellipse at 45% 50%,var(--fv-panel),var(--fv-panel) 70%);border:1px solid var(--fv-line);border-radius:15px;flex-direction:column;min-height:590px;display:flex;position:relative;overflow:hidden}.fv-home-canvas{flex:1;min-height:480px;position:relative}.fv-three{position:absolute;inset:0}.fv-three canvas{touch-action:none;width:100%;height:100%;display:block}.fv-home-preview{object-fit:contain;width:100%;height:100%;position:absolute;inset:0}.fv-scene-caption{color:var(--fv-muted);pointer-events:none;font-size:12px;position:absolute;bottom:18px;left:22px}.fv-page button.fv-camera{background:var(--fv-panel);padding:4px 9px;font-size:12px;position:absolute;bottom:14px;right:18px}.fv-home-footer{background:var(--fv-panel);border-top:1px solid var(--fv-line);gap:42px;padding:19px 25px;display:flex}.fv-home-footer small{color:var(--fv-muted);font-size:12px;display:block}.fv-home-footer strong{color:var(--fv-text);margin-top:3px;font-size:12px;font-weight:400;display:block}.fv-home-editor{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:12px;padding:25px}.fv-home-editor h2{margin:14px 0}.fv-home-editor p{color:var(--fv-muted);font-size:13px;line-height:1.9}.fv-home-editor textarea{min-height:145px;margin:14px 0 12px;font-size:12px}.fv-home-editor>.fv-primary{width:100%}.fv-home-editor select{width:100%;margin-top:13px;font-size:13px}.fv-job{border-bottom:1px solid var(--fv-line);padding:12px 0}.fv-job b{color:var(--fv-text);font-size:13px;font-weight:400}.fv-job small{color:var(--fv-muted);margin-top:4px;display:block}.fv-job p{color:var(--fv-muted);font-size:12px}.fv-talk-layout{grid-template-columns:310px 1fr;gap:25px;display:grid}.fv-oracle{border:1px solid var(--fv-line);background:linear-gradient(145deg,var(--fv-panel),var(--fv-panel));border-radius:12px;align-self:start;padding:28px}.fv-oracle h2{margin:15px 0}.fv-oracle p{font-size:12px;line-height:1.9}.fv-oracle textarea{margin:18px 0 12px}.fv-oracle>.fv-primary{width:100%}.fv-oracle h3{margin-bottom:12px}.fv-report{white-space:pre-wrap;background:var(--fv-panel);border-radius:6px;padding:13px;font-size:13px!important}.fv-journal{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:12px;min-height:560px;padding:23px 30px}.fv-journal>header{justify-content:space-between;align-items:center;margin-bottom:25px;display:flex}.fv-journal>header h2{font-size:16px}.fv-journal>header select{font-size:13px}.fv-journal article{gap:18px;padding:0 0 25px;display:flex;position:relative}.fv-journal article:before{content:\"\";background:var(--fv-panel);width:1px;position:absolute;top:13px;bottom:3px;left:4px}.fv-event-dot{background:var(--fv-tint);border-radius:50%;flex-shrink:0;width:9px;height:9px;margin-top:5px}.fv-event-dot.fly,.fv-event-dot.jev,.fv-event-dot.user,.fv-event-dot.counter{background:var(--fv-tint)}.fv-event-meta{align-items:center;gap:12px;font-size:12px;display:flex}.fv-event-meta b{color:var(--fv-muted);font-weight:500}.fv-event-meta time,.fv-event-meta small{color:var(--fv-muted)}.fv-journal article p{color:var(--fv-text);white-space:pre-wrap;margin:6px 0 0;font-size:12px}.fv-journal article .fv-note{margin-top:5px;font-size:12px}.fv-modal-backdrop{background:var(--fv-panel);backdrop-filter:blur(6px);z-index:2000;place-items:center;padding:20px;display:grid;position:fixed;inset:0}.fv-setup{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:16px;width:min(650px,100%);max-height:90vh;padding:28px 32px;overflow:auto;box-shadow:0 30px 100px #0007}.fv-setup>header{justify-content:space-between;align-items:flex-start;display:flex}.fv-setup>header h2{margin-top:8px}.fv-setup>header>button{background:0 0;border:0;padding:0 7px;font-size:24px}.fv-steps{gap:8px;margin:25px 0;display:flex}.fv-steps button{color:var(--fv-muted);border-color:var(--fv-line);background:0 0;flex:1;padding:6px;font-size:12px}.fv-steps .current{border-color:var(--fv-line);color:var(--fv-text);background:var(--fv-panel)}.fv-setup-body{min-height:295px;padding:0 0 15px}.fv-setup-body>p{font-size:12px;line-height:1.9}.fv-setup label{color:var(--fv-muted);flex-direction:column;gap:7px;margin-bottom:16px;font-size:13px;display:flex}.fv-setup input,.fv-setup select{width:100%}.fv-setup label.fv-checkbox{flex-direction:row;align-items:center;margin-top:17px;display:flex}.fv-setup .fv-checkbox input{width:auto}.fv-check-row{border-bottom:1px solid var(--fv-line);justify-content:space-between;margin-bottom:13px;padding:18px 0;display:flex}.fv-check-row b{color:var(--fv-text);font-weight:400}.fv-form-grid{grid-template-columns:1fr 1fr;gap:2px 18px;display:grid}.fv-setup footer{border-top:1px solid var(--fv-line);justify-content:space-between;align-items:center;padding-top:19px;display:flex}.fv-welcome-star{color:var(--fv-text);text-align:center;padding:0 0 18px;font-size:42px}.fv-error{border:1px solid var(--fv-line);color:var(--fv-text);background:var(--fv-panel);border-radius:8px;justify-content:space-between;gap:10px;margin:0 0 18px;padding:12px 16px;font-size:12px;display:flex}.fv-error button{background:0 0;border:0;font-size:12px}.fv-runtime-note{color:var(--fv-muted)!important;margin-bottom:16px!important;font-size:13px!important}.fv-loading{flex-direction:column;justify-content:center;align-items:center;display:flex}.fv-loading h2{margin-top:18px}.fv-orbit{border:1px solid var(--fv-line);width:60px;height:60px;color:var(--fv-text);border-radius:50%;place-items:center;font-size:28px;display:grid}.fv-page progress{width:100%;accent-color:var(--fv-lime)}@media (width<=1150px){.fv-page{padding:22px}.fv-identity h1 span{margin:0;font-size:12px;display:block}.fv-markets{grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}.fv-market:nth-child(4){border:0}.fv-market>b{margin:5px 0;font-size:19px}.fv-spark{height:35px}.fv-market em{margin-top:4px}.fv-section-line{align-items:flex-start}.fv-section-line>.fv-actions{justify-content:flex-end;max-width:50%}.fv-home-layout{grid-template-columns:minmax(0,1fr) 250px}.fv-home-editor{padding:20px}.fv-nav-right{gap:8px}.fv-status{display:none}}@media (width<=800px){.fv-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.fv-widget{grid-column:span 6!important}.fv-home-layout,.fv-talk-layout{grid-template-columns:1fr}.fv-home-stage{min-height:460px}.fv-home-canvas{min-height:400px}.fv-nav-right>span{display:none}.fv-section-line{flex-wrap:wrap}.fv-section-line>.fv-actions{max-width:100%}.fv-header{gap:10px}.fv-header-actions{gap:5px}.fv-header-actions button{font-size:12px}.fv-layout-tools{flex-wrap:wrap}.fv-layout-tools span{width:100%}.fv-journal{padding:20px}.fv-setup{padding:22px}.fv-markets{grid-template-columns:repeat(4,minmax(0,1fr))}}.fv-effect-result{background:var(--fv-panel);color:var(--fv-text);border:1px solid var(--fv-line);pointer-events:none;border-radius:10px;padding:12px 18px}.fv-effect-result small{opacity:.7;margin-top:5px;display:block}.fv-neural-proof{border:1px solid var(--fv-line);border-radius:8px;margin:8px 0;padding:10px;font-size:12px}.fv-neural-proof p{margin:5px 0}.fv-neural-proof small{opacity:.65}.fv-wait-reason{border:1px solid var(--fv-line);background:var(--fv-panel);color:var(--fv-text);pointer-events:none;border-radius:10px;padding:12px 16px;font-size:13px}.fv-wait-reason small{color:var(--fv-text);margin-top:5px;display:block}.fv-world-notices{pointer-events:none;flex-direction:column;align-items:flex-start;gap:8px;display:flex;position:absolute;top:18px;left:18px;right:18px}.fv-world-notices>div{max-width:100%}.fv-life-chain{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;display:grid}.fv-life-chain section{border-right:1px solid var(--fv-line);min-width:0;padding-right:16px}.fv-life-chain section:nth-child(4){border-right:0}.fv-life-chain h3{margin:12px 0 18px;font-size:18px}.fv-life-chain p{color:var(--fv-muted);font-size:12px;line-height:1.7}.fv-life-chain small,.fv-life-chain footer{color:var(--fv-muted);font-size:13px;line-height:1.6}.fv-life-chain footer{grid-column:1/-1}.fv-trade-statistics{font-variant-numeric:tabular-nums}.fv-statistics-caption{color:var(--fv-muted);margin:2px 0 14px;font-size:13px}.fv-pnl-cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px;display:grid}.fv-pnl-cards>div{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:9px;min-width:0;padding:12px 15px}.fv-pnl-cards small{color:var(--fv-muted);font-size:13px;display:block}.fv-pnl-cards strong{white-space:nowrap;color:var(--fv-text);margin-top:5px;font-size:21px;font-weight:450;display:block}.fv-profit,.fv-loss{color:var(--fv-text)}.fv-statistics-toolbar{align-items:center;gap:8px;margin:12px 0;display:flex}.fv-statistics-toolbar button[aria-pressed=true]{background:var(--fv-panel);border-color:var(--fv-line);color:var(--fv-text)}.fv-statistics-toolbar select{width:auto;max-width:180px;margin:0 0 0 auto}.fv-statistics-scroll{border:1px solid var(--fv-line);border-radius:8px;max-height:350px;overflow:auto}.fv-statistics-scroll table{min-width:930px;font-size:12px}.fv-statistics-scroll th{background:var(--fv-panel);z-index:1;color:var(--fv-text);padding:11px 12px;position:sticky;top:0}.fv-statistics-scroll td{padding:11px 12px}.fv-statistics-scroll td small{color:var(--fv-muted);margin-top:3px;font-size:12px;display:block}.fv-statistics-scroll tbody tr:hover{background:var(--fv-panel)}.fv-page button.fv-contract-link{color:var(--fv-text);text-underline-offset:4px;background:0 0;border:0;padding:0;font-size:12px;text-decoration:underline}.fv-statistics-pagination{color:var(--fv-muted);align-items:center;gap:8px;margin-top:10px;font-size:13px;display:flex}.fv-statistics-pagination span{margin-right:auto}@media (width<=700px){.fv-pnl-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.fv-pnl-cards strong{font-size:17px}.fv-statistics-toolbar{flex-wrap:wrap}}.fv-life-row{justify-content:space-between;align-items:center;gap:8px;margin:8px 0;font-size:12px;display:flex}.fv-life-row meter{width:54px;min-width:24px}.fv-life-row b{font-variant-numeric:tabular-nums;font-weight:500}@media (width<=1100px){.fv-life-chain{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (width<=640px){.fv-life-chain{grid-template-columns:1fr}.fv-life-chain section{border-right:0}}.fv-trade-loop{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:16px;margin:18px 0 26px;padding:20px}.fv-trade-loop h3{margin:0 0 10px}.fv-trade-loop small{color:var(--fv-muted);font-size:12px;line-height:1.6;display:block}.fv-trade-loop h3 small{margin-left:14px;font-weight:400;display:inline}.fv-trade-loop p{color:var(--fv-text);font-size:13px}.fv-trade-scroll{margin:14px 0;overflow:auto}.fv-trade-loop table{border-collapse:collapse;text-align:left;width:100%;min-width:880px;font-size:13px}.fv-trade-loop th,.fv-trade-loop td{border-bottom:1px solid var(--fv-line);vertical-align:top;padding:12px 10px}.fv-trade-loop th{color:var(--fv-text)}.fv-trade-loop td:nth-child(3){min-width:230px}.fv-trade-loop td:nth-child(4){max-width:290px}.fv-trade-learning{font-variant-numeric:tabular-nums;scroll-margin-top:20px}.fv-learning-toolbar,.fv-learning-title{justify-content:space-between;align-items:center;gap:18px;display:flex}.fv-learning-toolbar{color:var(--fv-muted);margin-bottom:16px;font-size:13px}.fv-learning-toolbar select,.fv-learning-title select{width:auto;max-width:220px;margin:0}.fv-learning-title h2{color:var(--fv-text);font-size:22px}.fv-learning-title p{font-size:13px}.fv-learning-cards{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:15px}.fv-learning-cards strong small{font-size:13px;display:inline}.fv-learning-checks{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;display:grid}.fv-learning-checks>div{color:var(--fv-muted);border-left:2px solid var(--fv-line);padding-left:10px;font-size:12px}.fv-learning-checks span{margin-bottom:3px;font-size:13px;display:block}.fv-learning-checks .verified{border-color:var(--fv-line);color:var(--fv-text)}.fv-learning-explanation{line-height:1.7;font-size:13px!important}.fv-trade-learning .fv-statistics-scroll{max-height:270px}.fv-learning-footer{margin-top:14px;line-height:1.8;display:block}.fv-trade-learning .fv-statistics-scroll table{min-width:790px}.fv-trade-learning .fv-statistics-scroll td{white-space:nowrap;padding:9px 12px}@media (width<=800px){.fv-learning-cards,.fv-learning-checks{grid-template-columns:repeat(2,minmax(0,1fr))}.fv-learning-toolbar,.fv-learning-title{flex-wrap:wrap}}.fv-continuity{border:1px solid var(--fv-line);color:var(--fv-muted);border-radius:10px;margin:14px 0;padding:12px 18px;font-size:13px;line-height:1.8}.fv-continuity summary{cursor:pointer;color:var(--fv-text);flex-wrap:wrap;gap:8px 24px;display:flex}.fv-continuity dl{grid-template-columns:110px minmax(0,1fr);gap:4px 10px;display:grid}.fv-continuity dd{overflow-wrap:anywhere;margin:0}.fv-trade-filter-controls{border:1px solid var(--fv-line);background:var(--fv-panel);color:var(--fv-muted);border-radius:10px;margin:14px 0;padding:16px 20px;font-size:12px;line-height:1.8}.fv-trade-filter-controls summary{cursor:pointer;color:var(--fv-text)}.fv-trade-filter-controls summary span{color:var(--fv-muted);margin-left:20px;display:inline-block}.fv-trade-filter-controls small{color:var(--fv-muted);display:block}.quantstudio-fly{width:100%;min-width:0;height:100%;overflow:auto}.fv-contest-banner{border-bottom:1px solid var(--border,var(--fv-line));justify-content:space-between;align-items:center;gap:16px;padding:12px 28px;display:flex}.fv-contest-banner button,.fv-page button{cursor:pointer}.fv-contest-plans{padding:20px 28px}.fv-native-table{width:100%;overflow:auto}.fv-native-table table{border-collapse:collapse;width:100%;font-size:12px}.fv-native-table th,.fv-native-table td{text-align:left;white-space:nowrap;border-bottom:1px solid var(--fv-line);padding:9px 12px}.fv-replay-json{white-space:pre-wrap;max-height:450px;font-size:12px;overflow:auto}.fv-instrument{justify-content:space-between;align-items:center;gap:16px;margin:8px 0;display:flex}.fv-instrument label{flex-direction:row;align-items:center;display:flex}.fv-instrument input[type=checkbox]{width:auto}.fv-instrument>input{width:150px}.fv-contract-choice{grid-template-columns:130px 190px;align-items:center;gap:4px 8px;display:grid}.fv-contract-choice input,.fv-contract-choice select{width:100%}.fv-contract-choice small{color:var(--fv-muted);text-align:right;grid-column:1/-1}.fv-contract-choice select:disabled{opacity:.65}@media (width<=560px){.fv-instrument{flex-direction:column;align-items:stretch;gap:4px}.fv-contract-choice{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fv-contract-choice small{text-align:left}}.quantstudio-fly>.fv-page{height:auto;min-height:80vh;overflow:visible}.fv-contest-banner a{color:inherit;text-decoration:underline}.fv-contest-plans{padding:20px;scroll-margin-top:20px}.fv-trading-bar{justify-content:space-between;align-items:center;gap:20px;padding:18px 0 24px;display:flex}.fv-trading-bar strong{font-size:18px;font-weight:600;display:block}.fv-trading-bar span{color:var(--fv-muted);margin-top:6px;font-size:13px;display:block}.fv-trading-section{border-top:1px solid var(--fv-line);padding:26px 0}.fv-trading-section>header{align-items:baseline;gap:16px;margin-bottom:18px;display:flex}.fv-trading-section>header h2{margin:0;font-size:22px}.fv-trading-section>header span{color:var(--fv-muted);font-size:12px}.fv-trading-section .fv-contest-plans{border-top:1px solid var(--fv-line);margin:20px 0 0;padding:18px 0 0}.fv-decisions{grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px;display:grid}.fv-decision{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:10px;min-width:0;padding:20px}.fv-decision header{font-variant-numeric:tabular-nums;justify-content:space-between;gap:12px;display:flex}.fv-decision header span{color:var(--fv-text)}.fv-decision p{margin:12px 0;font-size:14px;line-height:1.7}.fv-decision small{color:var(--fv-muted);font-size:12px;line-height:1.8;display:block}.fv-decision details{overflow-wrap:anywhere;margin-top:14px;font-size:12px}.fv-decision details p{font-size:12px}.fv-data-details{border-top:1px solid var(--fv-line);margin-top:20px;padding:16px 0;font-size:13px}.fv-page summary{cursor:pointer}.fv-data-details>summary{color:var(--fv-text);margin-bottom:16px}.fv-setup-needed{border-left:3px solid var(--fv-line);background:var(--fv-panel);margin-bottom:20px;padding:16px 20px;font-size:14px}.fv-setup-needed>div{flex-wrap:wrap;gap:8px;margin-top:12px;display:flex}.fv-setup-checks{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:24px;display:flex}.fv-page input[aria-invalid=true]{border-color:var(--fv-line);outline:1px solid var(--fv-line)}.fv-page button:focus-visible,.fv-page summary:focus-visible{outline:2px solid var(--fv-line);outline-offset:4px}@media (width<=700px){.fv-trading-bar{flex-direction:column;align-items:flex-start}.fv-trading-section>header{flex-wrap:wrap;gap:8px}.fv-setup footer,.fv-setup footer .fv-actions{flex-wrap:wrap;gap:10px}}";
-		const tagId$12 = "@deepseek-ai/dsh-client-ui-quantskills/fly-v2.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$12) + "]") === null) {
+		const css$16 = ".fv-page{--fv-bg:var(--qs-surface,var(--dsw-alias-bg-base));--fv-panel:var(--qs-surface,var(--dsw-alias-bg-base));--fv-line:var(--qs-line,var(--dsw-alias-border-l2));--fv-text:var(--qs-ink,var(--dsw-alias-label-primary));--fv-muted:var(--qs-muted,var(--dsw-alias-label-secondary));--fv-lime:var(--qs-accent,var(--dsw-alias-brand-primary));--fv-tint:var(--qs-tint,var(--dsw-alias-bg-hover));--fv-button-ink:var(--qs-buttonInk,var(--dsw-alias-label-inverted-primary));--fv-danger:var(--dsw-alias-state-error-primary,#c03939);--fv-success:var(--dsw-alias-state-success-primary,#16805b);--fv-warning:var(--dsw-alias-state-warning-primary,#a36813);background:var(--fv-bg);height:100%;color:var(--fv-text);padding:26px 32px 48px;font-family:Inter,Microsoft YaHei,sans-serif;font-size:13px;line-height:1.6;overflow:auto}.fv-page *{box-sizing:border-box}.fv-page button,.fv-page input,.fv-page select,.fv-page textarea{font:inherit}.fv-page button{cursor:pointer;border:1px solid var(--fv-line);background:var(--fv-panel);color:var(--fv-text);border-radius:7px;padding:7px 12px;transition:background .15s}.fv-page button:hover{background:var(--fv-panel)}.fv-page button:disabled{opacity:.4;cursor:default}.fv-page button.fv-primary{background:var(--fv-lime);color:var(--fv-muted);border-color:var(--fv-lime);font-weight:600}.fv-page button.fv-primary:hover{background:var(--fv-tint)}.fv-page input,.fv-page textarea,.fv-page select{background:var(--fv-panel);border:1px solid var(--fv-line);color:var(--fv-text);border-radius:6px;outline:none;max-width:100%;padding:8px 10px}.fv-page textarea{resize:vertical;width:100%;min-height:120px;line-height:1.8}.fv-page input:focus,.fv-page textarea:focus,.fv-page select:focus{border-color:var(--fv-line)}.fv-page input[type=checkbox]{accent-color:var(--fv-lime)}.fv-page h1,.fv-page h2,.fv-page h3,.fv-page p{margin:0}.fv-page h2{font-size:20px;font-weight:500}.fv-page h3{font-size:13px;font-weight:500}.fv-page p{color:var(--fv-muted);margin:9px 0}.fv-page small{font-size:12px}.fv-page hr{border:0;border-top:1px solid var(--fv-line);margin:24px 0}.fv-header{justify-content:space-between;align-items:center;gap:20px;margin-bottom:25px;display:flex}.fv-identity{align-items:center;gap:15px;display:flex}.fv-avatar{background:var(--fv-panel);width:46px;height:46px;color:var(--fv-text);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fv-lime) 15%,transparent);border-radius:15px;place-items:center;font-size:27px;display:grid}.fv-kicker{letter-spacing:2px;color:var(--fv-muted);font-size:12px}.fv-identity h1{letter-spacing:1px;font-size:25px;font-weight:500}.fv-identity h1 span{letter-spacing:0;color:var(--fv-muted);margin-left:14px;font-size:13px;font-weight:400}.fv-header-actions,.fv-actions{flex-wrap:wrap;align-items:center;gap:9px;display:flex}.fv-status{color:var(--fv-muted);white-space:nowrap;margin-right:8px;font-size:13px}.fv-status i{background:var(--fv-tint);border-radius:50%;width:6px;height:6px;margin-right:7px;display:inline-block}.fv-status.on i{background:var(--fv-tint);box-shadow:0 0 10px color-mix(in srgb,var(--fv-lime) 15%,transparent)}.fv-nav{border-bottom:1px solid var(--fv-line);align-items:center;gap:25px;margin-bottom:28px;display:flex}.fv-nav>button{color:var(--fv-muted);background:0 0;border:0;border-radius:0;padding:12px 3px 16px;font-size:15px;position:relative}.fv-nav>button small{letter-spacing:1px;color:var(--fv-muted);margin-right:9px;font-size:12px}.fv-nav>button.selected{color:var(--fv-text)}.fv-nav>button.selected:after{content:\"\";background:var(--fv-tint);height:2px;position:absolute;bottom:-1px;left:0;right:0}.fv-nav-right{letter-spacing:1px;color:var(--fv-muted);align-items:center;gap:18px;margin-left:auto;font-size:12px;display:flex}.fv-nav-right button{color:var(--fv-muted);background:0 0;border:0;font-size:13px}.fv-section-line{justify-content:space-between;align-items:center;gap:20px;margin-bottom:20px;display:flex}.fv-section-line h2{letter-spacing:.5px;font-size:19px}.fv-section-line p{color:var(--fv-muted);margin:5px 0 0;font-size:13px}.fv-grid{grid-template-columns:repeat(12,minmax(0,1fr));gap:15px;display:grid}.fv-widget{background:linear-gradient(125deg,var(--fv-panel),var(--fv-panel));border:1px solid var(--fv-line);border-radius:12px;flex-direction:column;min-width:0;min-height:180px;max-height:800px;display:flex;overflow:hidden}.fv-widget.editing{resize:vertical;border-style:dashed}.fv-widget>header{flex-shrink:0;justify-content:space-between;align-items:center;padding:15px 19px 12px;display:flex}.fv-widget>header h3{color:var(--fv-text);letter-spacing:1px;font-size:13px}.fv-widget.editing>header{cursor:grab}.fv-widget>header>div{gap:4px;display:flex}.fv-widget>header select,.fv-widget>header button{padding:1px 5px;font-size:12px}.fv-widget-content{flex:1;min-height:0;padding:0 19px 17px;overflow:auto}.fv-markets{grid-template-columns:repeat(7,minmax(0,1fr));align-items:center;gap:16px;height:100%;display:grid}.fv-market{border-right:1px solid var(--fv-line);min-width:0;padding-right:15px}.fv-market:last-child{border:0;padding:0}.fv-market>div:first-child{align-items:center;gap:7px;display:flex}.fv-market strong{font-size:14px;font-weight:500}.fv-market span{color:var(--fv-muted);white-space:nowrap;font-size:12px}.fv-market>b{margin:10px 0;font-family:Inter,monospace;font-size:22px;font-weight:400;display:block}.fv-market small{color:var(--fv-muted);white-space:nowrap;font-size:12px;display:block}.fv-market em{color:var(--fv-muted);margin-top:9px;font-size:12px;font-style:normal;display:block}.fv-market em.ready{color:var(--fv-muted)}.fv-spark{width:100%;height:60px;color:var(--fv-muted);margin:4px 0}.fv-no-chart{border-bottom:1px dashed var(--fv-line);height:70px;color:var(--fv-muted);place-items:center;margin-bottom:10px;font-size:12px;display:grid}.fv-goal{color:var(--fv-text);margin:9px 0 2px!important;font-size:27px!important}.fv-states{grid-template-columns:1fr 1fr;gap:8px 22px;margin:17px 0 12px;display:grid}.fv-states>div{color:var(--fv-muted);align-items:center;gap:9px;font-size:12px;display:flex}.fv-states meter{min-width:25px;height:5px;accent-color:var(--fv-lime);flex:1}.fv-states meter::-webkit-meter-bar{background:var(--fv-panel);border:0}.fv-states meter::-webkit-meter-optimum-value{background:var(--fv-tint)}.fv-note{color:var(--fv-muted);margin-top:12px;font-size:12px;line-height:1.7;display:block}.fv-stat{align-items:baseline;gap:12px;margin:4px 0 17px;display:flex}.fv-stat strong{letter-spacing:-1px;color:var(--fv-text);font-size:32px;font-weight:350}.fv-stat span{color:var(--fv-muted);font-size:12px}.fv-rate-list{gap:8px;margin:9px 0 17px;display:grid}.fv-rate-list>div{border-bottom:1px solid var(--fv-line);color:var(--fv-muted);justify-content:space-between;padding-bottom:7px;font-size:13px;display:flex}.fv-rate-list b{color:var(--fv-text);font-weight:400}.fv-widget table{border-collapse:collapse;text-align:left;width:100%;font-size:13px}.fv-widget th{color:var(--fv-muted);border-bottom:1px solid var(--fv-line);padding:6px 7px;font-size:12px;font-weight:400}.fv-widget td{border-bottom:1px solid var(--fv-line);color:var(--fv-text);white-space:nowrap;padding:7px}.fv-empty{height:100%;min-height:100px;color:var(--fv-muted);flex-direction:column;justify-content:center;align-items:center;display:flex}.fv-empty>span{color:var(--fv-muted);font-size:34px}.fv-empty small{color:var(--fv-muted);font-size:12px}.fv-mini-events>div{border-bottom:1px solid var(--fv-line);grid-template-columns:60px 1fr;gap:5px;padding:9px 0;display:grid}.fv-mini-events time{color:var(--fv-muted);font-size:12px}.fv-mini-events small{color:var(--fv-muted);grid-column:2}.fv-learning-badges{gap:8px;margin:9px 0 18px;display:flex}.fv-learning-badges span,.fv-pill{border:1px solid var(--fv-line);background:var(--fv-panel);color:var(--fv-text);border-radius:15px;padding:4px 10px;font-size:12px}.fv-widget select{width:100%;margin-top:12px;font-size:13px}.fv-layout-tools{background:var(--fv-panel);border:1px dashed var(--fv-line);border-radius:9px;align-items:center;gap:10px;margin-bottom:16px;padding:12px 16px;font-size:13px;display:flex}.fv-layout-tools span{color:var(--fv-muted);margin-right:auto}.fv-layout-tools select{font-size:13px}.fv-home-layout{grid-template-columns:minmax(0,1fr) 286px;gap:18px;display:grid}.fv-home-stage{background:radial-gradient(ellipse at 45% 50%,var(--fv-panel),var(--fv-panel) 70%);border:1px solid var(--fv-line);border-radius:15px;flex-direction:column;min-height:590px;display:flex;position:relative;overflow:hidden}.fv-home-canvas{flex:1;min-height:480px;position:relative}.fv-three{position:absolute;inset:0}.fv-three canvas{touch-action:none;width:100%;height:100%;display:block}.fv-home-preview{object-fit:contain;width:100%;height:100%;position:absolute;inset:0}.fv-scene-caption{color:var(--fv-muted);pointer-events:none;font-size:12px;position:absolute;bottom:18px;left:22px}.fv-page button.fv-camera{background:var(--fv-panel);padding:4px 9px;font-size:12px;position:absolute;bottom:14px;right:18px}.fv-home-footer{background:var(--fv-panel);border-top:1px solid var(--fv-line);gap:42px;padding:19px 25px;display:flex}.fv-home-footer small{color:var(--fv-muted);font-size:12px;display:block}.fv-home-footer strong{color:var(--fv-text);margin-top:3px;font-size:12px;font-weight:400;display:block}.fv-home-editor{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:12px;padding:25px}.fv-home-editor h2{margin:14px 0}.fv-home-editor p{color:var(--fv-muted);font-size:13px;line-height:1.9}.fv-home-editor textarea{min-height:145px;margin:14px 0 12px;font-size:12px}.fv-home-editor>.fv-primary{width:100%}.fv-home-editor select{width:100%;margin-top:13px;font-size:13px}.fv-job{border-bottom:1px solid var(--fv-line);padding:12px 0}.fv-job b{color:var(--fv-text);font-size:13px;font-weight:400}.fv-job small{color:var(--fv-muted);margin-top:4px;display:block}.fv-job p{color:var(--fv-muted);font-size:12px}.fv-talk-layout{grid-template-columns:310px 1fr;gap:25px;display:grid}.fv-oracle{border:1px solid var(--fv-line);background:linear-gradient(145deg,var(--fv-panel),var(--fv-panel));border-radius:12px;align-self:start;padding:28px}.fv-oracle h2{margin:15px 0}.fv-oracle p{font-size:12px;line-height:1.9}.fv-oracle textarea{margin:18px 0 12px}.fv-oracle>.fv-primary{width:100%}.fv-oracle h3{margin-bottom:12px}.fv-report{white-space:pre-wrap;background:var(--fv-panel);border-radius:6px;padding:13px;font-size:13px!important}.fv-journal{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:12px;min-height:560px;padding:23px 30px}.fv-journal>header{justify-content:space-between;align-items:center;margin-bottom:25px;display:flex}.fv-journal>header h2{font-size:16px}.fv-journal>header select{font-size:13px}.fv-journal article{gap:18px;padding:0 0 25px;display:flex;position:relative}.fv-journal article:before{content:\"\";background:var(--fv-panel);width:1px;position:absolute;top:13px;bottom:3px;left:4px}.fv-event-dot{background:var(--fv-tint);border-radius:50%;flex-shrink:0;width:9px;height:9px;margin-top:5px}.fv-event-dot.fly,.fv-event-dot.jev,.fv-event-dot.user,.fv-event-dot.counter{background:var(--fv-tint)}.fv-event-meta{align-items:center;gap:12px;font-size:12px;display:flex}.fv-event-meta b{color:var(--fv-muted);font-weight:500}.fv-event-meta time,.fv-event-meta small{color:var(--fv-muted)}.fv-journal article p{color:var(--fv-text);white-space:pre-wrap;margin:6px 0 0;font-size:12px}.fv-journal article .fv-note{margin-top:5px;font-size:12px}.fv-modal-backdrop{background:var(--fv-panel);backdrop-filter:blur(6px);z-index:2000;place-items:center;padding:20px;display:grid;position:fixed;inset:0}.fv-setup{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:16px;width:min(650px,100%);max-height:90vh;padding:28px 32px;overflow:auto;box-shadow:0 30px 100px #0007}.fv-setup>header{justify-content:space-between;align-items:flex-start;display:flex}.fv-setup>header h2{margin-top:8px}.fv-setup>header>button{background:0 0;border:0;padding:0 7px;font-size:24px}.fv-steps{gap:8px;margin:25px 0;display:flex}.fv-steps button{color:var(--fv-muted);border-color:var(--fv-line);background:0 0;flex:1;padding:6px;font-size:12px}.fv-steps .current{border-color:var(--fv-line);color:var(--fv-text);background:var(--fv-panel)}.fv-setup-body{min-height:295px;padding:0 0 15px}.fv-setup-body>p{font-size:12px;line-height:1.9}.fv-setup label{color:var(--fv-muted);flex-direction:column;gap:7px;margin-bottom:16px;font-size:13px;display:flex}.fv-setup input,.fv-setup select{width:100%}.fv-setup label.fv-checkbox{flex-direction:row;align-items:center;margin-top:17px;display:flex}.fv-setup .fv-checkbox input{width:auto}.fv-check-row{border-bottom:1px solid var(--fv-line);justify-content:space-between;margin-bottom:13px;padding:18px 0;display:flex}.fv-check-row b{color:var(--fv-text);font-weight:400}.fv-form-grid{grid-template-columns:1fr 1fr;gap:2px 18px;display:grid}.fv-setup footer{border-top:1px solid var(--fv-line);justify-content:space-between;align-items:center;padding-top:19px;display:flex}.fv-welcome-star{color:var(--fv-text);text-align:center;padding:0 0 18px;font-size:42px}.fv-error{border:1px solid var(--fv-line);color:var(--fv-text);background:var(--fv-panel);border-radius:8px;justify-content:space-between;gap:10px;margin:0 0 18px;padding:12px 16px;font-size:12px;display:flex}.fv-error button{background:0 0;border:0;font-size:12px}.fv-runtime-note{color:var(--fv-muted)!important;margin-bottom:16px!important;font-size:13px!important}.fv-loading{flex-direction:column;justify-content:center;align-items:center;display:flex}.fv-loading h2{margin-top:18px}.fv-orbit{border:1px solid var(--fv-line);width:60px;height:60px;color:var(--fv-text);border-radius:50%;place-items:center;font-size:28px;display:grid}.fv-page progress{width:100%;accent-color:var(--fv-lime)}@media (width<=1150px){.fv-page{padding:22px}.fv-identity h1 span{margin:0;font-size:12px;display:block}.fv-markets{grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}.fv-market:nth-child(4){border:0}.fv-market>b{margin:5px 0;font-size:19px}.fv-spark{height:35px}.fv-market em{margin-top:4px}.fv-section-line{align-items:flex-start}.fv-section-line>.fv-actions{justify-content:flex-end;max-width:50%}.fv-home-layout{grid-template-columns:minmax(0,1fr) 250px}.fv-home-editor{padding:20px}.fv-nav-right{gap:8px}.fv-status{display:none}}@media (width<=800px){.fv-grid{grid-template-columns:repeat(6,minmax(0,1fr))}.fv-widget{grid-column:span 6!important}.fv-home-layout,.fv-talk-layout{grid-template-columns:1fr}.fv-home-stage{min-height:460px}.fv-home-canvas{min-height:400px}.fv-nav-right>span{display:none}.fv-section-line{flex-wrap:wrap}.fv-section-line>.fv-actions{max-width:100%}.fv-header{gap:10px}.fv-header-actions{gap:5px}.fv-header-actions button{font-size:12px}.fv-layout-tools{flex-wrap:wrap}.fv-layout-tools span{width:100%}.fv-journal{padding:20px}.fv-setup{padding:22px}.fv-markets{grid-template-columns:repeat(4,minmax(0,1fr))}}.fv-effect-result{background:var(--fv-panel);color:var(--fv-text);border:1px solid var(--fv-line);pointer-events:none;border-radius:10px;padding:12px 18px}.fv-effect-result small{opacity:.7;margin-top:5px;display:block}.fv-neural-proof{border:1px solid var(--fv-line);border-radius:8px;margin:8px 0;padding:10px;font-size:12px}.fv-neural-proof p{margin:5px 0}.fv-neural-proof small{opacity:.65}.fv-wait-reason{border:1px solid var(--fv-line);background:var(--fv-panel);color:var(--fv-text);pointer-events:none;border-radius:10px;padding:12px 16px;font-size:13px}.fv-wait-reason small{color:var(--fv-text);margin-top:5px;display:block}.fv-world-notices{pointer-events:none;flex-direction:column;align-items:flex-start;gap:8px;display:flex;position:absolute;top:18px;left:18px;right:18px}.fv-world-notices>div{max-width:100%}.fv-life-chain{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;display:grid}.fv-life-chain section{border-right:1px solid var(--fv-line);min-width:0;padding-right:16px}.fv-life-chain section:nth-child(4){border-right:0}.fv-life-chain h3{margin:12px 0 18px;font-size:18px}.fv-life-chain p{color:var(--fv-muted);font-size:12px;line-height:1.7}.fv-life-chain small,.fv-life-chain footer{color:var(--fv-muted);font-size:13px;line-height:1.6}.fv-life-chain footer{grid-column:1/-1}.fv-trade-statistics{font-variant-numeric:tabular-nums}.fv-statistics-caption{color:var(--fv-muted);margin:2px 0 14px;font-size:13px}.fv-pnl-cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px;display:grid}.fv-pnl-cards>div{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:9px;min-width:0;padding:12px 15px}.fv-pnl-cards small{color:var(--fv-muted);font-size:13px;display:block}.fv-pnl-cards strong{white-space:nowrap;color:var(--fv-text);margin-top:5px;font-size:21px;font-weight:450;display:block}.fv-profit,.fv-loss{color:var(--fv-text)}.fv-statistics-toolbar{align-items:center;gap:8px;margin:12px 0;display:flex}.fv-statistics-toolbar button[aria-pressed=true]{background:var(--fv-panel);border-color:var(--fv-line);color:var(--fv-text)}.fv-statistics-toolbar select{width:auto;max-width:180px;margin:0 0 0 auto}.fv-statistics-scroll{border:1px solid var(--fv-line);border-radius:8px;max-height:350px;overflow:auto}.fv-statistics-scroll table{min-width:930px;font-size:12px}.fv-statistics-scroll th{background:var(--fv-panel);z-index:1;color:var(--fv-text);padding:11px 12px;position:sticky;top:0}.fv-statistics-scroll td{padding:11px 12px}.fv-statistics-scroll td small{color:var(--fv-muted);margin-top:3px;font-size:12px;display:block}.fv-statistics-scroll tbody tr:hover{background:var(--fv-panel)}.fv-page button.fv-contract-link{color:var(--fv-text);text-underline-offset:4px;background:0 0;border:0;padding:0;font-size:12px;text-decoration:underline}.fv-statistics-pagination{color:var(--fv-muted);align-items:center;gap:8px;margin-top:10px;font-size:13px;display:flex}.fv-statistics-pagination span{margin-right:auto}@media (width<=700px){.fv-pnl-cards{grid-template-columns:repeat(2,minmax(0,1fr))}.fv-pnl-cards strong{font-size:17px}.fv-statistics-toolbar{flex-wrap:wrap}}.fv-life-row{justify-content:space-between;align-items:center;gap:8px;margin:8px 0;font-size:12px;display:flex}.fv-life-row meter{width:54px;min-width:24px}.fv-life-row b{font-variant-numeric:tabular-nums;font-weight:500}@media (width<=1100px){.fv-life-chain{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (width<=640px){.fv-life-chain{grid-template-columns:1fr}.fv-life-chain section{border-right:0}}.fv-trade-loop{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:16px;margin:18px 0 26px;padding:20px}.fv-trade-loop h3{margin:0 0 10px}.fv-trade-loop small{color:var(--fv-muted);font-size:12px;line-height:1.6;display:block}.fv-trade-loop h3 small{margin-left:14px;font-weight:400;display:inline}.fv-trade-loop p{color:var(--fv-text);font-size:13px}.fv-trade-scroll{margin:14px 0;overflow:auto}.fv-trade-loop table{border-collapse:collapse;text-align:left;width:100%;min-width:880px;font-size:13px}.fv-trade-loop th,.fv-trade-loop td{border-bottom:1px solid var(--fv-line);vertical-align:top;padding:12px 10px}.fv-trade-loop th{color:var(--fv-text)}.fv-trade-loop td:nth-child(3){min-width:230px}.fv-trade-loop td:nth-child(4){max-width:290px}.fv-trade-learning{font-variant-numeric:tabular-nums;scroll-margin-top:20px}.fv-learning-toolbar,.fv-learning-title{justify-content:space-between;align-items:center;gap:18px;display:flex}.fv-learning-toolbar{color:var(--fv-muted);margin-bottom:16px;font-size:13px}.fv-learning-toolbar select,.fv-learning-title select{width:auto;max-width:220px;margin:0}.fv-learning-title h2{color:var(--fv-text);font-size:22px}.fv-learning-title p{font-size:13px}.fv-learning-cards{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:15px}.fv-learning-cards strong small{font-size:13px;display:inline}.fv-learning-checks{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;display:grid}.fv-learning-checks>div{color:var(--fv-muted);border-left:2px solid var(--fv-line);padding-left:10px;font-size:12px}.fv-learning-checks span{margin-bottom:3px;font-size:13px;display:block}.fv-learning-checks .verified{border-color:var(--fv-line);color:var(--fv-text)}.fv-learning-explanation{line-height:1.7;font-size:13px!important}.fv-trade-learning .fv-statistics-scroll{max-height:270px}.fv-learning-footer{margin-top:14px;line-height:1.8;display:block}.fv-trade-learning .fv-statistics-scroll table{min-width:790px}.fv-trade-learning .fv-statistics-scroll td{white-space:nowrap;padding:9px 12px}@media (width<=800px){.fv-learning-cards,.fv-learning-checks{grid-template-columns:repeat(2,minmax(0,1fr))}.fv-learning-toolbar,.fv-learning-title{flex-wrap:wrap}}.fv-continuity{border:1px solid var(--fv-line);color:var(--fv-muted);border-radius:10px;margin:14px 0;padding:12px 18px;font-size:13px;line-height:1.8}.fv-continuity summary{cursor:pointer;color:var(--fv-text);flex-wrap:wrap;gap:8px 24px;display:flex}.fv-continuity dl{grid-template-columns:110px minmax(0,1fr);gap:4px 10px;display:grid}.fv-continuity dd{overflow-wrap:anywhere;margin:0}.fv-trade-filter-controls{border:1px solid var(--fv-line);background:var(--fv-panel);color:var(--fv-muted);border-radius:10px;margin:14px 0;padding:16px 20px;font-size:12px;line-height:1.8}.fv-trade-filter-controls summary{cursor:pointer;color:var(--fv-text)}.fv-trade-filter-controls summary span{color:var(--fv-muted);margin-left:20px;display:inline-block}.fv-trade-filter-controls small{color:var(--fv-muted);display:block}.quantstudio-fly{width:100%;min-width:0;height:100%;overflow:auto}.fv-contest-banner{border-bottom:1px solid var(--border,var(--fv-line));justify-content:space-between;align-items:center;gap:16px;padding:12px 28px;display:flex}.fv-contest-banner button,.fv-page button{cursor:pointer}.fv-contest-plans{padding:20px 28px}.fv-native-table{width:100%;overflow:auto}.fv-native-table table{border-collapse:collapse;width:100%;font-size:12px}.fv-native-table th,.fv-native-table td{text-align:left;white-space:nowrap;border-bottom:1px solid var(--fv-line);padding:9px 12px}.fv-replay-json{white-space:pre-wrap;max-height:450px;font-size:12px;overflow:auto}.fv-instrument{justify-content:space-between;align-items:center;gap:16px;margin:8px 0;display:flex}.fv-instrument label{flex-direction:row;align-items:center;display:flex}.fv-instrument input[type=checkbox]{width:auto}.fv-instrument>input{width:150px}.fv-contract-choice{grid-template-columns:130px 190px;align-items:center;gap:4px 8px;display:grid}.fv-contract-choice input,.fv-contract-choice select{width:100%}.fv-contract-choice small{color:var(--fv-muted);text-align:right;grid-column:1/-1}.fv-contract-choice select:disabled{opacity:.65}@media (width<=560px){.fv-instrument{flex-direction:column;align-items:stretch;gap:4px}.fv-contract-choice{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fv-contract-choice small{text-align:left}}.quantstudio-fly>.fv-page{height:auto;min-height:80vh;overflow:visible}.fv-contest-banner a{color:inherit;text-decoration:underline}.fv-contest-plans{padding:20px;scroll-margin-top:20px}.fv-trading-bar{justify-content:space-between;align-items:center;gap:20px;padding:18px 0 24px;display:flex}.fv-trading-bar strong{font-size:18px;font-weight:600;display:block}.fv-trading-bar span{color:var(--fv-muted);margin-top:6px;font-size:13px;display:block}.fv-trading-section{border-top:1px solid var(--fv-line);padding:26px 0}.fv-trading-section>header{align-items:baseline;gap:16px;margin-bottom:18px;display:flex}.fv-trading-section>header h2{margin:0;font-size:22px}.fv-trading-section>header span{color:var(--fv-muted);font-size:12px}.fv-trading-section .fv-contest-plans{border-top:1px solid var(--fv-line);margin:20px 0 0;padding:18px 0 0}.fv-decisions{grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px;display:grid}.fv-decision{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:10px;min-width:0;padding:20px}.fv-decision header{font-variant-numeric:tabular-nums;justify-content:space-between;gap:12px;display:flex}.fv-decision header span{color:var(--fv-text)}.fv-decision p{margin:12px 0;font-size:14px;line-height:1.7}.fv-decision small{color:var(--fv-muted);font-size:12px;line-height:1.8;display:block}.fv-decision details{overflow-wrap:anywhere;margin-top:14px;font-size:12px}.fv-decision details p{font-size:12px}.fv-data-details{border-top:1px solid var(--fv-line);margin-top:20px;padding:16px 0;font-size:13px}.fv-page summary{cursor:pointer}.fv-data-details>summary{color:var(--fv-text);margin-bottom:16px}.fv-setup-needed{border-left:3px solid var(--fv-line);background:var(--fv-panel);margin-bottom:20px;padding:16px 20px;font-size:14px}.fv-setup-needed>div{flex-wrap:wrap;gap:8px;margin-top:12px;display:flex}.fv-setup-checks{flex-direction:column;align-items:flex-start;gap:10px;margin-bottom:24px;display:flex}.fv-page input[aria-invalid=true]{border-color:var(--fv-line);outline:1px solid var(--fv-line)}.fv-page button:focus-visible,.fv-page summary:focus-visible{outline:2px solid var(--fv-line);outline-offset:4px}@media (width<=700px){.fv-trading-bar{flex-direction:column;align-items:flex-start}.fv-trading-section>header{flex-wrap:wrap;gap:8px}.fv-setup footer,.fv-setup footer .fv-actions{flex-wrap:wrap;gap:10px}}";
+		const tagId$16 = "@deepseek-ai/dsh-client-ui-quantskills/fly-v2.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$16) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$12;
-			tag.textContent = css$12;
+			tag.dataset.pluginCss = tagId$16;
+			tag.textContent = css$16;
 			document.head.appendChild(tag);
 		}
 		//#endregion
-		//#region lib/types/client/fly/flyJournal.js
-		function collapseNeuralWaits(events) {
-			const result = [];
-			const key = (e) => e.kind === "decision" && !e.payload.life_response && e.payload.motor && !e.payload.motor.drive ? `${e.actor}:${e.payload.wait_reason?.code || (e.payload.sensory?.visible_food === 0 ? "food_depleted" : e.payload.motor.reason)}` : null;
-			for (const event of events) {
-				const previous = result[result.length - 1];
-				if (previous && key(event) && key(previous) === key(event)) result[result.length - 1] = {
-					...event,
-					merged_count: (previous.merged_count || 1) + 1
+		//#region \0dsh-global-css:packages/ui-quantskills/src/client/fly/trader-journal.css.mjs
+		const css$15 = ".fv-journal.qs-trader-journal{align-self:start;min-width:0;min-height:0;padding:22px 24px 0;overflow:hidden}.qs-trader-journal>header{flex-wrap:wrap;gap:16px;margin-bottom:18px}.qs-trader-journal>header h2{font-weight:600}.qs-trader-journal>header p{color:var(--qs-muted);margin:5px 0 0;font-size:12px}.qs-journal-tools,.qs-journal-selection,.qs-journal-selection label,.qs-journal-pagination,.qs-journal-pagination nav{align-items:center;gap:12px;display:flex}.qs-journal-tools{gap:8px;margin-left:auto}.qs-trader-journal .qs-journal-tools>button,.qs-trader-journal .qs-journal-pagination button{place-items:center;min-width:32px;padding:7px;display:grid}.qs-journal-selection{border-block:1px solid var(--qs-line);color:var(--qs-muted);flex-wrap:wrap;padding:10px 0;font-size:12px}.qs-trader-journal input[type=checkbox]{width:15px;height:15px;accent-color:var(--qs-accent);cursor:pointer;flex-shrink:0;margin:0}.qs-journal-selection label{cursor:pointer;gap:8px}.qs-trader-journal .qs-journal-selection button{background:0 0;border:0;padding:4px 6px;font-size:12px}.qs-journal-clear-actions{flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto;display:flex}.qs-trader-journal .qs-journal-selection button.qs-journal-clear{color:var(--fv-danger);align-items:center;gap:5px;display:inline-flex}.qs-journal-list{overscroll-behavior:contain;scrollbar-width:thin;scrollbar-gutter:stable;max-height:620px;overflow-y:auto}.qs-trader-journal .qs-journal-list article{border-bottom:1px solid var(--qs-line);align-items:flex-start;gap:12px;padding:17px 0;display:flex}.qs-journal-list article:last-child{border-bottom:0}.qs-journal-list article:before{display:none}.qs-journal-list article>input{margin-top:3px!important}.qs-journal-entry{overflow-wrap:anywhere;flex:1;min-width:0}.qs-journal-entry .fv-event-meta{flex-wrap:wrap;gap:3px 10px}.qs-journal-entry .fv-event-meta b{color:var(--qs-ink)}.qs-trader-journal button.qs-journal-delete{color:var(--qs-muted);background:0 0;border:0;flex-shrink:0;place-items:center;padding:6px;display:grid}.qs-trader-journal button.qs-journal-delete:hover{color:var(--fv-danger);background:color-mix(in srgb, var(--fv-danger) 7%, transparent)}.qs-trader-journal .qs-journal-new{background:var(--qs-tint);width:100%;color:var(--qs-accent);border:0;margin:10px 0 0;font-size:12px}.qs-journal-pagination{border-top:1px solid var(--qs-line);color:var(--qs-muted);flex-wrap:wrap;justify-content:space-between;gap:12px;padding:15px 0;font-size:12px}.qs-journal-pagination nav{gap:10px;margin-left:auto}.qs-journal-pagination nav>span{white-space:nowrap;font-variant-numeric:tabular-nums}.qs-trader-journal .qs-journal-error{color:var(--fv-danger);font-size:12px}.qs-trader-journal .qs-journal-message{color:var(--qs-muted);font-size:12px}.qs-journal-confirm{justify-content:flex-end;gap:12px;margin-top:24px;display:flex}.fv-page .qs-journal-confirm>button.qs-journal-confirm-delete{color:#fff;background:var(--fv-danger,#c62828);border-color:var(--fv-danger,#c62828)}@media (width<=680px){.fv-journal.qs-trader-journal{padding:18px 16px 0}.qs-journal-list{max-height:60vh}.qs-journal-pagination{font-size:11px}}";
+		const tagId$15 = "@deepseek-ai/dsh-client-ui-quantskills/trader-journal.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$15) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
+			tag.dataset.pluginCss = tagId$15;
+			tag.textContent = css$15;
+			document.head.appendChild(tag);
+		}
+		//#endregion
+		//#region lib/types/client/fly/TraderJournal.js
+		function TraderJournal({ actors, formatEvent }) {
+			const [actor, setActor] = (0, react.useState)("all"), [page, setPage] = (0, react.useState)(1), [revision, setRevision] = (0, react.useState)(0);
+			const [data, setData] = (0, react.useState)(), [selected, setSelected] = (0, react.useState)([]);
+			const [loading, setLoading] = (0, react.useState)(true), [error, setError] = (0, react.useState)(""), [message, setMessage] = (0, react.useState)("");
+			const [removal, setRemoval] = (0, react.useState)(), [busy, setBusy] = (0, react.useState)(false);
+			const snapshot = (0, react.useRef)(void 0), request = (0, react.useRef)(0), deleting = (0, react.useRef)(false);
+			const list = (0, react.useRef)(null);
+			(0, react.useEffect)(() => {
+				let disposed = false, timer;
+				const load = async () => {
+					if (disposed) return;
+					if (deleting.current) {
+						timer = setTimeout(load, 1e4);
+						return;
+					}
+					const current = ++request.current;
+					const query = new URLSearchParams({
+						actor,
+						page: String(page)
+					});
+					if (snapshot.current !== void 0) query.set("snapshot", String(snapshot.current));
+					try {
+						const result = await flyApi(`journal?${query}`);
+						if (disposed || current !== request.current) return;
+						snapshot.current = result.snapshot;
+						setData(result);
+						setError("");
+						setSelected((previous) => previous.filter((seq) => result.events.some((event) => event.seq === seq)));
+					} catch (cause) {
+						if (!disposed && current === request.current) setError(cause instanceof Error ? cause.message : "记录读取失败，请重试。");
+					} finally {
+						if (!disposed) {
+							if (current === request.current) setLoading(false);
+							timer = setTimeout(load, 1e4);
+						}
+					}
 				};
-				else result.push({ ...event });
+				load();
+				return () => {
+					disposed = true;
+					clearTimeout(timer);
+				};
+			}, [
+				actor,
+				page,
+				revision
+			]);
+			function navigate(next, fresh = false, source = actor) {
+				request.current++;
+				if (fresh) snapshot.current = void 0;
+				setActor(source);
+				setPage(next);
+				setSelected([]);
+				setLoading(true);
+				setData(void 0);
+				setError("");
+				setMessage("");
+				setRevision((value) => value + 1);
+				list.current?.scrollTo?.({ top: 0 });
 			}
-			return result;
+			function review(seqs) {
+				if (!data) return;
+				setRemoval({
+					actor,
+					snapshot: data.snapshot,
+					count: seqs?.length ?? data.total,
+					label: seqs ? `选中的 ${seqs.length} 条记录` : `${actor === "all" ? "所有来源" : actors[actor] || actor}中本次已加载范围的全部 ${data.total.toLocaleString()} 条记录`,
+					...seqs ? { seqs } : { all_matching: true }
+				});
+				setError("");
+			}
+			async function reviewAll() {
+				if (deleting.current) return;
+				deleting.current = true;
+				request.current++;
+				setBusy(true);
+				setError("");
+				try {
+					const result = await flyApi("journal?actor=all&page=1");
+					if (!result.total) {
+						setMessage("暂无可删除的运行记录");
+						return;
+					}
+					setRemoval({
+						actor: "all",
+						snapshot: result.snapshot,
+						count: result.total,
+						all_matching: true,
+						label: `所有来源、全部分页中的 ${result.total.toLocaleString()} 条运行记录`
+					});
+				} catch (cause) {
+					setError(cause instanceof Error ? cause.message : "无法读取全部记录数量，请重试。");
+				} finally {
+					deleting.current = false;
+					setBusy(false);
+				}
+			}
+			async function remove() {
+				if (!removal || deleting.current) return;
+				deleting.current = true;
+				request.current++;
+				setBusy(true);
+				setError("");
+				try {
+					const result = await flyApi("journal/delete", {
+						actor: removal.actor,
+						snapshot: removal.snapshot,
+						confirm: true,
+						...removal.seqs ? { seqs: removal.seqs } : { all_matching: true }
+					});
+					setRemoval(void 0);
+					setSelected([]);
+					setData(void 0);
+					setLoading(true);
+					setMessage(`已删除 ${result.deleted.toLocaleString()} 条列表记录`);
+					setRevision((value) => value + 1);
+				} catch (cause) {
+					setError(cause instanceof Error ? cause.message : "删除失败，请重试。");
+				} finally {
+					deleting.current = false;
+					setBusy(false);
+				}
+			}
+			const currentPage = data?.page ?? page;
+			return (0, react_jsx_runtime.jsxs)("section", {
+				className: "fv-journal qs-trader-journal",
+				"aria-label": "运行与交易记录",
+				children: [
+					(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("h2", { children: "运行与交易记录" }), (0, react_jsx_runtime.jsxs)("p", { children: [data ? `共 ${data.total.toLocaleString()} 条` : "读取记录", " · 每页 20 条"] })] }), (0, react_jsx_runtime.jsxs)("div", {
+						className: "qs-journal-tools",
+						children: [(0, react_jsx_runtime.jsxs)("select", {
+							"aria-label": "记录来源",
+							value: actor,
+							disabled: busy,
+							onChange: (event) => navigate(1, true, event.target.value),
+							children: [(0, react_jsx_runtime.jsx)("option", {
+								value: "all",
+								children: "所有来源"
+							}), Object.entries(actors).map(([id, label]) => (0, react_jsx_runtime.jsx)("option", {
+								value: id,
+								children: label
+							}, id))]
+						}), (0, react_jsx_runtime.jsx)("button", {
+							type: "button",
+							"aria-label": "刷新记录",
+							title: "刷新记录",
+							disabled: busy || loading,
+							onClick: () => navigate(1, true),
+							children: (0, react_jsx_runtime.jsx)(r$25, { size: 17 })
+						})]
+					})] }),
+					(0, react_jsx_runtime.jsxs)("div", {
+						className: "qs-journal-selection",
+						children: [
+							(0, react_jsx_runtime.jsxs)("label", { children: [(0, react_jsx_runtime.jsx)("input", {
+								type: "checkbox",
+								"aria-label": "选择本页全部记录",
+								disabled: loading || busy || !data?.events.length,
+								checked: !!data?.events.length && selected.length === data.events.length,
+								onChange: (event) => setSelected(event.target.checked ? data.events.map((item) => item.seq) : [])
+							}), (0, react_jsx_runtime.jsx)("span", { children: selected.length ? `已选 ${selected.length} 条` : "选择本页" })] }),
+							selected.length > 0 && (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								disabled: busy || loading,
+								onClick: () => review(selected),
+								children: "删除所选"
+							}),
+							(0, react_jsx_runtime.jsxs)("div", {
+								className: "qs-journal-clear-actions",
+								children: [actor !== "all" && (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									disabled: busy || loading || !data?.total,
+									onClick: () => review(),
+									children: "清理此来源记录"
+								}), (0, react_jsx_runtime.jsxs)("button", {
+									type: "button",
+									className: "qs-journal-clear",
+									disabled: busy || loading || !data,
+									onClick: () => void reviewAll(),
+									children: [(0, react_jsx_runtime.jsx)(r$4, {
+										size: 15,
+										"aria-hidden": "true"
+									}), "删除全部"]
+								})]
+							})
+						]
+					}),
+					data?.has_new && (0, react_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: "qs-journal-new",
+						disabled: busy || loading,
+						onClick: () => navigate(1, true),
+						children: "有新记录，点击刷新"
+					}),
+					error && !removal && (0, react_jsx_runtime.jsxs)("p", {
+						className: "qs-journal-error",
+						role: "alert",
+						children: [error, (0, react_jsx_runtime.jsx)("button", {
+							type: "button",
+							onClick: () => navigate(currentPage),
+							children: "重试"
+						})]
+					}),
+					message && (0, react_jsx_runtime.jsx)("p", {
+						role: "status",
+						className: "qs-journal-message",
+						children: message
+					}),
+					(0, react_jsx_runtime.jsx)("div", {
+						className: "qs-journal-list",
+						ref: list,
+						"aria-busy": loading,
+						children: loading ? (0, react_jsx_runtime.jsx)("div", {
+							className: "fv-empty",
+							role: "status",
+							children: "正在读取记录…"
+						}) : data?.events.length ? data.events.map((event) => (0, react_jsx_runtime.jsxs)("article", { children: [
+							(0, react_jsx_runtime.jsx)("input", {
+								type: "checkbox",
+								"aria-label": `选择记录 #${event.seq}`,
+								disabled: busy,
+								checked: selected.includes(event.seq),
+								onChange: (e) => setSelected((previous) => e.target.checked ? [...previous, event.seq] : previous.filter((seq) => seq !== event.seq))
+							}),
+							(0, react_jsx_runtime.jsxs)("div", {
+								className: "qs-journal-entry",
+								children: [
+									(0, react_jsx_runtime.jsxs)("div", {
+										className: "fv-event-meta",
+										children: [
+											(0, react_jsx_runtime.jsx)("b", { children: actors[event.actor] || event.actor }),
+											(0, react_jsx_runtime.jsx)("time", {
+												dateTime: (/* @__PURE__ */ new Date(event.at * 1e3)).toISOString(),
+												children: (/* @__PURE__ */ new Date(event.at * 1e3)).toLocaleString("zh-CN", { hour12: false })
+											}),
+											(0, react_jsx_runtime.jsxs)("small", { children: ["#", event.seq] })
+										]
+									}),
+									(0, react_jsx_runtime.jsx)("p", { children: formatEvent(event) }),
+									event.decision_id && (0, react_jsx_runtime.jsxs)("small", {
+										className: "fv-note",
+										children: ["决策 ", event.decision_id.slice(0, 12)]
+									})
+								]
+							}),
+							(0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: "qs-journal-delete",
+								"aria-label": `删除记录 #${event.seq}`,
+								title: "删除此记录",
+								disabled: busy,
+								onClick: () => review([event.seq]),
+								children: (0, react_jsx_runtime.jsx)(r$4, { size: 16 })
+							})
+						] }, event.seq)) : (0, react_jsx_runtime.jsx)("div", {
+							className: "fv-empty",
+							children: error ? "暂时无法读取记录" : "暂无记录"
+						})
+					}),
+					(0, react_jsx_runtime.jsxs)("footer", {
+						className: "qs-journal-pagination",
+						children: [(0, react_jsx_runtime.jsx)("span", { children: data?.total ? `${(currentPage - 1) * 20 + 1}–${Math.min(currentPage * 20, data.total)} / ${data.total.toLocaleString()} 条` : "0 条记录" }), (0, react_jsx_runtime.jsxs)("nav", {
+							"aria-label": "记录分页",
+							children: [
+								(0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									"aria-label": "上一页",
+									disabled: loading || busy || currentPage <= 1,
+									onClick: () => navigate(currentPage - 1),
+									children: (0, react_jsx_runtime.jsx)(t$8, { size: 16 })
+								}),
+								(0, react_jsx_runtime.jsxs)("span", { children: [
+									"第 ",
+									currentPage,
+									" / ",
+									data?.pages ?? 1,
+									" 页"
+								] }),
+								(0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									"aria-label": "下一页",
+									disabled: loading || busy || !data || currentPage >= data.pages,
+									onClick: () => navigate(currentPage + 1),
+									children: (0, react_jsx_runtime.jsx)(e$23, { size: 16 })
+								})
+							]
+						})]
+					}),
+					removal && (0, react_jsx_runtime.jsxs)(ActionDialog, {
+						title: removal.all_matching && removal.actor === "all" ? "删除全部运行记录？" : "删除运行记录？",
+						busy,
+						error: error || void 0,
+						onClose: () => {
+							setRemoval(void 0);
+							setError("");
+						},
+						children: [
+							(0, react_jsx_runtime.jsxs)("p", { children: [
+								"将删除",
+								removal.label,
+								"。删除后不会重新出现在此列表，无法在列表中恢复。"
+							] }),
+							(0, react_jsx_runtime.jsx)("p", { children: "此操作只清理运行记录列表。成交回执、持仓、盈亏统计及策略审计底账会保留；确认期间产生的新记录不会被删除。" }),
+							(0, react_jsx_runtime.jsxs)("div", {
+								className: "qs-journal-confirm",
+								children: [(0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									disabled: busy,
+									onClick: () => {
+										setRemoval(void 0);
+										setError("");
+									},
+									children: "取消"
+								}), (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: "qs-journal-confirm-delete",
+									disabled: busy,
+									onClick: () => void remove(),
+									children: busy ? "正在删除…" : `确认删除 ${removal.count.toLocaleString()} 条`
+								})]
+							})
+						]
+					})
+				]
+			});
 		}
 		//#endregion
 		//#region lib/types/client/fly/LifeTrace.js
@@ -32480,7 +33160,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 									type: "button",
 									className: "qs-overview-link qs-overview-more",
 									onClick: () => setView("fills"),
-									children: ["查看成交记录", (0, react_jsx_runtime.jsx)(r$20, { size: 16 })]
+									children: ["查看成交记录", (0, react_jsx_runtime.jsx)(r$21, { size: 16 })]
 								})
 							]
 						}) : (0, react_jsx_runtime.jsxs)("section", {
@@ -32629,7 +33309,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 										setView("positions");
 										setSelectedDay("");
 									},
-									children: [(0, react_jsx_runtime.jsx)(r$21, { size: 16 }), "返回持仓"]
+									children: [(0, react_jsx_runtime.jsx)(r$22, { size: 16 }), "返回持仓"]
 								})
 							]
 						}), view === "positions" && (0, react_jsx_runtime.jsxs)("section", {
@@ -32656,7 +33336,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 									type: "button",
 									className: "qs-overview-link qs-overview-more",
 									onClick: onRecords,
-									children: ["查看工作记录", (0, react_jsx_runtime.jsx)(r$20, { size: 16 })]
+									children: ["查看工作记录", (0, react_jsx_runtime.jsx)(r$21, { size: 16 })]
 								})
 							]
 						})]
@@ -108364,13 +109044,13 @@ get: function(visualType, key, isCategory) {
 		use(installScatterJitter);
 		//#endregion
 		//#region \0dsh-global-css:packages/ui-quantskills/src/client/fly/trade-analytics.css.mjs
-		const css$11 = ".fv-analysis{margin-top:28px}.fv-analysis-controls{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:10px;flex-wrap:wrap;align-items:flex-end;gap:16px 24px;margin:0 0 20px;padding:16px;display:flex}.fv-period-switch{flex-wrap:wrap;gap:4px;display:flex}.fv-period-switch button[aria-pressed=true]{background:var(--fv-panel);border-color:var(--fv-line);color:var(--fv-text)}.fv-date-range{flex-wrap:wrap;align-items:flex-end;gap:8px;display:flex}.fv-date-range label{color:var(--fv-muted);flex-direction:column;gap:5px;font-size:12px;display:flex}.fv-date-range input{color-scheme:inherit;min-width:128px;font-size:13px}.fv-date-range>span{color:var(--fv-muted);padding-bottom:9px}.fv-analysis-presets{flex-wrap:wrap;align-items:center;gap:8px;width:100%;display:flex}.fv-analysis-presets button{padding:5px 9px;font-size:12px}.fv-analysis-presets label{color:var(--fv-muted);align-items:center;gap:8px;margin-left:auto;font-size:12px;display:flex}.fv-analysis-gaps{border:1px solid var(--fv-line);background:var(--fv-panel);color:var(--fv-muted);border-radius:8px;margin:-6px 0 20px;padding:12px 16px;font-size:13px}.fv-analysis-gaps summary{cursor:pointer}.fv-analysis-gaps p{margin:10px 0}.fv-analysis-gaps small{color:var(--fv-muted);line-height:1.8}.fv-analysis-details+.fv-analysis-details{margin-top:14px}.fv-analysis-heading{justify-content:space-between;align-items:flex-end;gap:20px;margin-bottom:26px;display:flex}.fv-analysis-heading h2{letter-spacing:-.5px;margin:10px 0 8px;font-size:23px;font-weight:500}.fv-analysis-heading p{color:var(--fv-muted);margin:0;font-size:12px}.fv-analysis-tools{flex-shrink:0;align-items:flex-end;gap:8px;display:flex}.fv-analysis-tools label{color:var(--fv-muted);flex-direction:column;gap:6px;font-size:12px;display:flex}.fv-analysis-tools select{min-width:138px}.fv-analysis-tools button{white-space:nowrap}.fv-analysis-metrics{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:12px;grid-template-columns:1.2fr 1fr 1fr 1fr;gap:1px;display:grid;overflow:hidden}.fv-analysis-metrics>div{background:var(--fv-panel);min-width:0;padding:24px 20px 20px}.fv-analysis-metrics span{color:var(--fv-muted);margin-bottom:14px;font-size:13px;display:block}.fv-analysis-metrics strong{font-variant-numeric:tabular-nums;letter-spacing:-.7px;color:var(--fv-text);white-space:nowrap;font-size:clamp(18px,1.65vw,28px);font-weight:500;display:block}.fv-analysis-metrics strong em{margin-left:3px;font-size:14px;font-style:normal}.fv-analysis-metrics small{color:var(--fv-muted);margin-top:12px;font-size:12px;line-height:1.6;display:block}.fv-analysis .positive,.fv-analysis .negative{color:var(--fv-muted)}.fv-analysis-coverage{color:var(--fv-muted);align-items:center;gap:10px;margin:20px 0;font-size:13px;display:flex}.fv-analysis-coverage p{flex:1;margin:0;line-height:1.8}.fv-analysis-coverage b{color:var(--fv-text);font-weight:500}.fv-analysis-coverage small{color:var(--fv-muted);display:block}.fv-analysis-coverage>span:last-child{border:1px solid var(--fv-line);white-space:nowrap;border-radius:20px;padding:6px 12px}.fv-analysis-dot{background:var(--fv-tint);border-radius:50%;flex:0 0 6px;width:6px;height:6px}.fv-analysis-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;display:grid}.fv-analysis-chart,.fv-analysis-reconcile{border:1px solid var(--fv-line);background:linear-gradient(145deg,var(--fv-panel),var(--fv-panel));border-radius:12px;min-width:0;overflow:hidden}.fv-analysis-chart.wide{grid-column:1/-1}.fv-analysis-chart header{padding:21px 23px 0}.fv-analysis-chart h3,.fv-analysis-reconcile h3{color:var(--fv-text);margin:0;font-size:15px;font-weight:500}.fv-analysis-chart header p{color:var(--fv-muted);margin:7px 0 0;font-size:12px;line-height:1.6}.fv-analysis-canvas{width:100%;height:280px;margin-top:6px}.fv-analysis-chart.wide .fv-analysis-canvas{height:335px}.fv-analysis-empty{min-height:280px;color:var(--fv-muted);text-align:center;place-items:center;padding:25px;font-size:12px;display:grid}.fv-analysis-reconcile{padding:26px}.fv-analysis-reconcile h3{margin-top:12px}.fv-analysis-reconcile>p{color:var(--fv-muted);font-size:12px}.fv-analysis-reconcile dl{margin:22px 0 15px}.fv-analysis-reconcile dl>div{color:var(--fv-muted);justify-content:space-between;align-items:center;padding:10px 0;font-size:12px;display:flex}.fv-analysis-reconcile dd{font-variant-numeric:tabular-nums;margin:0}.fv-analysis-reconcile .total{border-top:1px solid var(--fv-line);color:var(--fv-text);margin-top:10px;padding-top:17px}.fv-analysis-reconcile .total dd{font-size:22px}.fv-analysis-reconcile>small{color:var(--fv-muted);font-size:12px;line-height:1.8;display:block}.fv-analysis-footnote{color:var(--fv-muted);margin:18px 0;padding:4px 0;font-size:12px;line-height:1.9}.fv-analysis-alert{border:1px solid var(--fv-line);background:var(--fv-panel);color:var(--fv-text);border-radius:8px;margin-bottom:15px;padding:12px 15px;font-size:12px}.fv-analysis-details{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:10px;padding:18px 22px}.fv-analysis-details summary{cursor:pointer;color:var(--fv-text);font-size:12px}.fv-analysis-details[open] summary{margin-bottom:20px}@media (width<=1200px){.fv-analysis-heading{flex-direction:column;align-items:flex-start}.fv-analysis-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.fv-analysis-metrics strong{font-size:25px}}@media (width<=750px){.fv-analysis-grid{grid-template-columns:minmax(0,1fr)}.fv-analysis-heading h2{font-size:20px}.fv-analysis-metrics>div{padding:18px 14px}.fv-analysis-metrics strong{font-size:20px}.fv-analysis-tools{flex-wrap:wrap}.fv-analysis-coverage{align-items:flex-start}.fv-analysis-dot{margin-top:7px}.fv-analysis-canvas{height:265px}}";
-		const tagId$11 = "@deepseek-ai/dsh-client-ui-quantskills/trade-analytics.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$11) + "]") === null) {
+		const css$14 = ".fv-analysis{color:var(--fv-text);font-variant-numeric:tabular-nums;--analysis-soft:color-mix(in srgb, var(--fv-muted) 5%, var(--fv-panel));margin-top:8px;container:trade-analytics/inline-size}.fv-analysis .fv-analysis-heading{justify-content:space-between;align-items:center;gap:20px;margin:0 0 24px;display:flex}.fv-analysis .fv-analysis-heading h2{letter-spacing:-.4px;margin:0 0 4px;font-size:22px;font-weight:650}.fv-analysis-heading p{color:var(--fv-muted);margin:0;font-size:12px}.fv-analysis-tools{flex-shrink:0;gap:6px;display:flex}.fv-page .fv-analysis button{min-height:34px;box-shadow:none;border:1px solid #0000;font-size:12px}.fv-page .fv-analysis-tools button{border-color:var(--fv-line);padding:7px 11px}.fv-page .fv-analysis button:disabled{opacity:.45;cursor:default}.fv-analysis-controls{margin-bottom:22px}.fv-analysis-toolbar{flex-wrap:wrap;align-items:center;gap:12px;display:flex}.fv-analysis-presets,.fv-analysis-curve-switch{background:var(--analysis-soft);border-radius:10px;gap:2px;padding:3px;display:inline-flex}.fv-page .fv-analysis-presets button,.fv-page .fv-analysis-curve-switch button{min-height:30px;color:var(--fv-muted);white-space:nowrap;background:0 0;border-radius:7px;padding:6px 12px}.fv-page .fv-analysis-presets button[aria-pressed=true],.fv-page .fv-analysis-curve-switch button[aria-pressed=true]{background:var(--fv-panel);color:var(--fv-lime);box-shadow:0 1px 4px color-mix(in srgb, var(--fv-text) 9%, transparent);border-color:var(--fv-line)}.fv-page .fv-analysis .fv-analysis-date-button{color:var(--fv-muted);padding:6px 8px}.fv-analysis-display{align-items:center;gap:8px;margin-left:auto;display:flex}.fv-analysis-display label,.fv-analysis-display-settings label{color:var(--fv-muted);align-items:center;gap:9px;font-size:12px;display:flex}.fv-page .fv-analysis select{border:1px solid var(--fv-line);width:auto;min-width:100px;max-width:100%;min-height:34px;margin:0;padding:7px 26px 7px 10px;font-size:12px}.fv-page .fv-analysis-display>button{border-color:var(--fv-line);width:34px;padding:6px}.fv-page .fv-analysis-display>button[aria-expanded=true]{color:var(--fv-lime);background:var(--fv-tint)}.fv-date-range,.fv-analysis-display-settings{border:1px solid var(--fv-line);background:var(--analysis-soft);border-radius:12px;flex-wrap:wrap;align-items:flex-end;gap:10px;margin-top:12px;padding:16px;display:flex}.fv-date-range label{color:var(--fv-muted);flex-direction:column;gap:6px;font-size:12px;display:flex}.fv-page .fv-date-range input{width:152px;min-width:0;min-height:34px;color-scheme:inherit;margin:0;padding:6px 10px;font-size:12px}.fv-date-range>span{color:var(--fv-muted);padding-bottom:8px;font-size:12px}.fv-page .fv-analysis .fv-analysis-apply{background:var(--fv-lime);color:var(--fv-button-ink);padding:7px 15px}.fv-analysis-display-settings{align-items:center;gap:12px 22px}.fv-analysis-display-settings>span{color:var(--fv-muted);font-size:12px}.fv-analysis-metrics{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:15px;grid-template-columns:repeat(4,minmax(0,1fr));display:grid;overflow:hidden}.fv-analysis-metrics>div{min-width:0;padding:22px 20px 19px;position:relative}.fv-analysis-metrics>div+div:before{content:\"\";background:var(--fv-line);width:1px;position:absolute;top:24px;bottom:24px;left:0}.fv-analysis-metrics span{color:var(--fv-muted);margin-bottom:10px;font-size:12px;display:block}.fv-analysis-metrics strong{letter-spacing:-.65px;white-space:nowrap;font-size:27px;font-weight:600;line-height:1.4;display:block}.fv-analysis-metrics strong.is-pending{color:var(--fv-muted);letter-spacing:0;font-size:23px;font-weight:450;line-height:1.64}.fv-analysis-metrics strong em{margin-left:3px;font-size:14px;font-style:normal;font-weight:400}.fv-analysis-metrics small{color:var(--fv-muted);margin-top:8px;font-size:11px;line-height:1.7;display:block}.fv-analysis .positive{color:var(--fv-danger)}.fv-analysis .negative{color:var(--fv-success)}.fv-analysis-quality{color:var(--fv-muted);margin:13px 0 22px;font-size:12px}.fv-analysis-quality>summary{cursor:pointer;justify-content:space-between;align-items:center;gap:12px;padding:6px 1px;list-style:none;display:flex}.fv-analysis-quality summary::-webkit-details-marker{display:none}.fv-analysis-quality>summary>span{align-items:center;gap:7px;display:flex}.fv-analysis-quality>summary>span:first-child>svg{color:var(--fv-warning)}.fv-analysis-quality[open]>summary>span:last-child>svg{transform:rotate(180deg)}.fv-analysis-quality-body{background:var(--analysis-soft);border-radius:10px;margin-top:8px;padding:10px 16px;line-height:1.8}.fv-analysis-quality-body p{margin:8px 0}.fv-analysis-main{grid-template-columns:minmax(0,1.9fr) minmax(260px,1fr);align-items:stretch;gap:18px;display:grid}.fv-analysis-chart,.fv-analysis-reconcile{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:15px;min-width:0;overflow:hidden}.fv-analysis-chart>header{flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px;padding:20px 22px 0;display:flex}.fv-analysis-chart h3,.fv-analysis-reconcile h3,.fv-analysis-section-heading h3{color:var(--fv-text);margin:0;font-size:15px;font-weight:600}.fv-analysis-chart header p{color:var(--fv-muted);margin:5px 0 0;font-size:11px;line-height:1.7}.fv-page .fv-analysis-curve-switch button{min-height:26px;padding:4px 9px;font-size:11px}.fv-analysis-canvas{width:100%;height:262px;margin-top:12px}.fv-analysis-main .fv-analysis-canvas{height:286px}.fv-analysis-empty{min-height:200px;color:var(--fv-muted);text-align:center;flex-direction:column;justify-content:center;align-items:center;gap:9px;padding:30px 22px;font-size:12px;display:flex}.fv-analysis-empty>svg{color:color-mix(in srgb, var(--fv-muted) 55%, var(--fv-line));margin-bottom:5px}.fv-analysis-empty strong{color:var(--fv-text);font-size:14px;font-weight:500}.fv-analysis-empty p{max-width:340px;margin:0;line-height:1.8}.fv-analysis-chart.is-empty{flex-direction:column;display:flex}.fv-analysis-chart.is-empty .fv-analysis-empty{flex:1}.fv-analysis-reconcile{background:var(--analysis-soft);padding:20px 22px}.fv-analysis-reconcile>p{color:var(--fv-muted);margin:4px 0 0;font-size:11px}.fv-analysis-reconcile dl{margin:16px 0 12px}.fv-analysis-reconcile dl>div{color:var(--fv-muted);justify-content:space-between;align-items:center;gap:12px;padding:9px 0;font-size:12px;display:flex}.fv-analysis-reconcile dt span{color:var(--fv-muted);margin-top:1px;font-size:10px;display:block}.fv-analysis-reconcile dd{color:var(--fv-text);white-space:nowrap;margin:0;font-size:14px}.fv-analysis-reconcile .total{border-top:1px solid var(--fv-line);color:var(--fv-text);margin-top:5px;padding-top:13px}.fv-analysis-reconcile .total dd{font-size:19px;font-weight:550}.fv-analysis-reconcile>small{color:var(--fv-muted);font-size:11px}.fv-analysis-section-heading{align-items:baseline;gap:16px;margin:28px 0 14px;display:flex}.fv-analysis-section-heading>span{color:var(--fv-muted);font-size:11px}.fv-analysis-secondary{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;display:grid}.fv-analysis-alert{border:1px solid var(--fv-line);border-radius:10px;margin-bottom:15px;padding:12px 15px;font-size:12px}.fv-analysis-ledger{border-top:1px solid var(--fv-line);min-width:0;margin-top:32px;padding-top:26px}.fv-analysis .fv-ledger-heading{justify-content:space-between;align-items:baseline;gap:16px;margin:0 0 12px;display:flex}.fv-ledger-heading h3{letter-spacing:-.2px;margin:0;font-size:16px;font-weight:600}.fv-ledger-heading>span{color:var(--fv-muted);white-space:nowrap;font-size:11px}.fv-ledger-tabs{border-bottom:1px solid var(--fv-line);align-items:stretch;gap:26px;display:flex}.fv-page .fv-analysis .fv-ledger-tabs>button{min-height:46px;color:var(--fv-muted);white-space:nowrap;background:0 0;border:0;border-radius:0;gap:7px;padding:12px 0;font-size:13px;position:relative}.fv-page .fv-analysis .fv-ledger-tabs>button:after{content:\"\";background:0 0;border-radius:2px;height:2px;position:absolute;bottom:-1px;left:0;right:0}.fv-page .fv-analysis .fv-ledger-tabs>button[aria-selected=true]{color:var(--fv-lime);font-weight:600}.fv-page .fv-analysis .fv-ledger-tabs>button[aria-selected=true]:after{background:var(--fv-lime)}.fv-page .fv-analysis .fv-ledger-tabs>button:hover{color:var(--fv-lime)}.fv-ledger-tabs>button>span{background:var(--analysis-soft);border-radius:5px;min-width:21px;padding:1px 6px;font-size:10px;font-weight:500;line-height:17px}.fv-ledger-tabs>button[aria-selected=true]>span{background:var(--fv-tint)}.fv-page .fv-analysis .fv-ledger-tabs>button:focus-visible,.fv-ledger-panel:focus-visible{outline:2px solid var(--fv-lime);outline-offset:3px;border-radius:4px}.fv-ledger-panel{min-width:0;padding-top:18px}.fv-ledger-context{color:var(--fv-muted);flex-wrap:wrap;justify-content:space-between;gap:5px 16px;margin-bottom:14px;font-size:11px;line-height:1.7;display:flex}.fv-ledger-panel>.fv-statistics-scroll{border:0;border-radius:8px 8px 0 0;max-height:440px}.fv-ledger-panel>.fv-statistics-scroll table{min-width:680px}.fv-ledger-panel>.fv-statistics-scroll th{background:var(--analysis-soft);font-size:11px;font-weight:400}.fv-ledger-panel>.fv-statistics-scroll td{padding-block:14px;font-size:12px}.fv-ledger-panel>.fv-statistics-scroll tr:hover td{background:var(--analysis-soft)}.fv-ledger-panel>.fv-statistics-scroll .fv-ledger-empty{text-align:center;height:150px;color:var(--fv-muted)}.fv-ledger-panel>.fv-statistics-pagination{color:var(--fv-muted);margin-top:14px;font-size:11px}.fv-page .fv-ledger-panel>.fv-statistics-pagination button{border-color:var(--fv-line);min-height:30px;padding:5px 10px;font-size:11px}.fv-ledger-note{color:var(--fv-muted);margin:12px 0 0;font-size:11px;line-height:1.8}.fv-ledger-scope{margin:0 0 16px}.fv-ledger-charts .fv-analysis-chart{border:0;border-radius:0}.fv-ledger-charts .fv-analysis-chart>header{padding:4px 0 0}.fv-ledger-panel .fv-trade-statistics{margin-top:0}@container trade-analytics (width<=900px){.fv-analysis-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.fv-analysis-metrics>div:nth-child(3),.fv-analysis-metrics>div:nth-child(4){border-top:1px solid var(--fv-line)}.fv-analysis-metrics>div:nth-child(3):before{display:none}.fv-analysis-main{grid-template-columns:minmax(0,1.6fr) minmax(230px,1fr);gap:12px}.fv-analysis-chart>header,.fv-analysis-reconcile{padding:18px 16px}.fv-analysis-chart>header{padding-bottom:0}}@container trade-analytics (width<=650px){.fv-analysis .fv-analysis-heading{flex-wrap:wrap;gap:12px;margin-bottom:18px}.fv-analysis-main,.fv-analysis-secondary{grid-template-columns:minmax(0,1fr)}.fv-analysis-toolbar{gap:10px 6px}.fv-analysis-presets{width:100%}.fv-page .fv-analysis-presets button{flex:1;padding-inline:8px}.fv-page .fv-analysis-date-button{max-width:100%;font-size:11px}.fv-analysis-display{gap:4px}.fv-analysis-display label{gap:5px}.fv-page .fv-analysis select{min-width:85px}.fv-analysis-metrics>div{padding:16px 12px}.fv-analysis-metrics strong{font-size:22px}.fv-analysis-metrics strong.is-pending{font-size:20px}.fv-analysis-quality>summary{flex-direction:column;align-items:flex-start;gap:5px}.fv-analysis-section-heading{flex-wrap:wrap;gap:4px}.fv-analysis-section-heading>span{width:100%}.fv-analysis-reconcile dl{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;display:grid}.fv-analysis-reconcile dl>div{min-width:0}.fv-analysis-reconcile .total{grid-column:1/-1}.fv-analysis-main .fv-analysis-canvas{height:255px}.fv-ledger-tabs{gap:18px}.fv-page .fv-analysis .fv-ledger-tabs>button{font-size:12px}.fv-ledger-context{flex-direction:column}}@container trade-analytics (width<=390px){.fv-analysis-reconcile dl{display:block}.fv-analysis-tools{gap:4px}.fv-page .fv-analysis-tools button{padding-inline:8px}.fv-date-range{padding:12px}.fv-page .fv-date-range input{width:136px}.fv-ledger-tabs{justify-content:space-between;gap:0}.fv-page .fv-analysis .fv-ledger-tabs>button{gap:4px;font-size:11px}}";
+		const tagId$14 = "@deepseek-ai/dsh-client-ui-quantskills/trade-analytics.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$14) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$11;
-			tag.textContent = css$11;
+			tag.dataset.pluginCss = tagId$14;
+			tag.textContent = css$14;
 			document.head.appendChild(tag);
 		}
 		//#endregion
@@ -108423,6 +109103,53 @@ get: function(visualType, key, isCategory) {
 			return {
 				ref,
 				palette
+			};
+		}
+		//#endregion
+		//#region lib/types/client/fly/chart-pointer.js
+		/** ECharts/zrender reads native offsetX/Y, which Chromium scales with CSS zoom.
+		* Convert viewport coordinates to chart units before zrender normalizes the
+		* event. Keep its wheel/button handling intact, and remeasure after scrolling,
+		* resizing or changing the interface scale. Device pixels are not chart units.
+		*/
+		function installChartPointerCoordinates(host, viewport) {
+			const events = [
+				"mousemove",
+				"mousedown",
+				"mouseup",
+				"mouseout",
+				"pointermove",
+				"pointerdown",
+				"pointerup",
+				"pointerout",
+				"click",
+				"dblclick",
+				"contextmenu",
+				"wheel",
+				"mousewheel"
+			];
+			const normalize = (event) => {
+				const mouse = event;
+				if (!Number.isFinite(mouse.clientX) || !Number.isFinite(mouse.clientY)) return;
+				const { element, width, height } = viewport(), rect = element.getBoundingClientRect();
+				if (rect.width <= 0 || rect.height <= 0 || width <= 0 || height <= 0) return;
+				Object.defineProperties(event, {
+					offsetX: {
+						configurable: true,
+						value: (mouse.clientX - rect.left) * width / rect.width
+					},
+					offsetY: {
+						configurable: true,
+						value: (mouse.clientY - rect.top) * height / rect.height
+					}
+				});
+			};
+			for (const name of events) host.addEventListener(name, normalize, {
+				capture: true,
+				passive: true
+			});
+			return () => {
+				for (const name of events) host.removeEventListener(name, normalize, true);
 			};
 		}
 		//#endregion
@@ -108510,6 +109237,11 @@ get: function(visualType, key, isCategory) {
 			};
 		}
 		function equityOption(points, field, period, bridge, gaps, multiDay, colors) {
+			if (field === "cumulative_net" || field === "realized_equity") {
+				const start = points.findIndex((p) => p[field] != null);
+				if (start >= 0) points = points.slice(start);
+				gaps = gaps.filter((g) => points[0] && g.from >= points[0].at);
+			}
 			const data = [];
 			const bridges = [];
 			let previous;
@@ -108543,9 +109275,13 @@ get: function(visualType, key, isCategory) {
 				yAxis: {
 					type: "value",
 					scale: field !== "cumulative_net",
+					...field === "realized_equity" ? {
+						min: ({ min, max }) => min - Math.max((max - min) * .1, Math.abs(max) * 1e-5, 1),
+						max: ({ min, max }) => max + Math.max((max - min) * .1, Math.abs(max) * 1e-5, 1)
+					} : {},
 					axisLabel: {
 						color: colors.muted,
-						formatter: (value) => field === "Balance" || field === "realized_equity" ? `${(value / 1e4).toFixed(2)}万` : fmt$1(value, 0)
+						formatter: (value) => field === "Balance" ? `${(value / 1e4).toFixed(2)}万` : fmt$1(value, 0)
 					},
 					splitLine: { lineStyle: {
 						color: colors.grid,
@@ -108617,16 +109353,22 @@ get: function(visualType, key, isCategory) {
 				}]
 			};
 		}
-		function Chart({ title, subtitle, option, empty, wide = false }) {
+		function Chart({ title, subtitle, option, empty, controls }) {
 			const host = (0, react.useRef)(null);
 			const instance = (0, react.useRef)();
 			(0, react.useEffect)(() => {
 				if (!host.current || empty) return;
 				const chart = init$1(host.current, void 0, { renderer: "canvas" });
+				const removePointerCoordinates = installChartPointerCoordinates(host.current, () => ({
+					element: chart.getZr().painter.getViewportRoot(),
+					width: chart.getWidth(),
+					height: chart.getHeight()
+				}));
 				instance.current = chart;
 				const resize = new ResizeObserver(() => chart.resize());
 				resize.observe(host.current);
 				return () => {
+					removePointerCoordinates();
 					resize.disconnect();
 					chart.dispose();
 					instance.current = void 0;
@@ -108636,19 +109378,27 @@ get: function(visualType, key, isCategory) {
 				instance.current?.setOption(option, { replaceMerge: ["series"] });
 			}, [option, empty]);
 			return (0, react_jsx_runtime.jsxs)("section", {
-				className: `fv-analysis-chart ${wide ? "wide" : ""}`,
-				children: [(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsx)("h3", { children: title }), (0, react_jsx_runtime.jsx)("p", { children: subtitle })] }), empty ? (0, react_jsx_runtime.jsx)("div", {
+				className: `fv-analysis-chart${empty ? " is-empty" : ""}`,
+				children: [(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("h3", { children: title }), (0, react_jsx_runtime.jsx)("p", { children: subtitle })] }), controls] }), empty ? (0, react_jsx_runtime.jsxs)("div", {
 					className: "fv-analysis-empty",
-					children: empty
-				}) : (0, react_jsx_runtime.jsx)("div", {
+					children: [
+						(0, react_jsx_runtime.jsx)(c$4, {
+							size: 28,
+							weight: "light",
+							"aria-hidden": "true"
+						}),
+						(0, react_jsx_runtime.jsx)("strong", { children: "暂无可绘制数据" }),
+						(0, react_jsx_runtime.jsx)("p", { children: empty })
+					]
+				}, "empty") : (0, react_jsx_runtime.jsx)("div", {
 					className: "fv-analysis-canvas",
 					ref: host,
 					role: "img",
 					"aria-label": `${title}。${subtitle}`
-				})]
+				}, "chart")]
 			});
 		}
-		function TradeAnalytics({ active }) {
+		function TradeAnalytics({ active, traderDetails }) {
 			const { ref: paletteRef, palette: colors } = useChartPalette();
 			const [data, setData] = (0, react.useState)();
 			const [range, setRange] = (0, react.useState)({
@@ -108661,11 +109411,17 @@ get: function(visualType, key, isCategory) {
 			});
 			const [period, setPeriod] = (0, react.useState)("1m");
 			const [bridge, setBridge] = (0, react.useState)(false);
+			const [preset, setPreset] = (0, react.useState)("单日");
+			const [customDates, setCustomDates] = (0, react.useState)(false);
+			const [displaySettings, setDisplaySettings] = (0, react.useState)(false);
+			const [detailView, setDetailView] = (0, react.useState)("fills");
+			const detailId = (0, react.useId)();
+			const [curve, setCurve] = (0, react.useState)("net");
 			const [error, setError] = (0, react.useState)("");
 			const [reload, setReload] = (0, react.useState)(0);
 			const [page, setPage] = (0, react.useState)(0);
 			const [bucketPage, setBucketPage] = (0, react.useState)(0);
-			const applyRange = (start, end) => {
+			const applyRange = (start, end, selection = "自定义") => {
 				if (!start || !end || start > end) {
 					setError("请选择有效日期范围，开始日期不能晚于结束日期");
 					return;
@@ -108685,6 +109441,9 @@ get: function(visualType, key, isCategory) {
 				setPage(0);
 				setBucketPage(0);
 				setData(void 0);
+				setError("");
+				setPreset(selection);
+				setCustomDates(false);
 			};
 			(0, react.useEffect)(() => {
 				if (!active) return;
@@ -108862,6 +109621,25 @@ get: function(visualType, key, isCategory) {
 				colors
 			]);
 			const s = data?.summary;
+			const detailTabs = [
+				{
+					key: "fills",
+					label: "成交明细"
+				},
+				...data?.period !== "raw" ? [{
+					key: "periods",
+					label: "周期统计"
+				}] : [],
+				{
+					key: "activity",
+					label: "成交节奏"
+				},
+				...traderDetails ? [{
+					key: "trader",
+					label: "当日盈亏"
+				}] : []
+			];
+			const selectedDetail = detailTabs.some((t) => t.key === detailView) ? detailView : "fills";
 			const exportData = () => {
 				if (!data) return;
 				const rows = [[
@@ -108977,49 +109755,115 @@ get: function(visualType, key, isCategory) {
 				children: [
 					(0, react_jsx_runtime.jsxs)("header", {
 						className: "fv-analysis-heading",
-						children: [(0, react_jsx_runtime.jsxs)("div", { children: [
-							(0, react_jsx_runtime.jsx)("span", {
-								className: "fv-kicker",
-								children: "TRADING ANALYTICS"
-							}),
-							(0, react_jsx_runtime.jsx)("h2", { children: "每一次交易，留下怎样的结果" }),
-							(0, react_jsx_runtime.jsx)("p", { children: "平仓盈亏、盈亏来源与成交表现 · PandaAI 模拟赛" })
-						] }), (0, react_jsx_runtime.jsxs)("div", {
+						children: [(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("h2", { children: "交易表现" }), (0, react_jsx_runtime.jsx)("p", { children: "账户收益与交易员表现，一处查看。" })] }), (0, react_jsx_runtime.jsxs)("div", {
 							className: "fv-analysis-tools",
-							children: [(0, react_jsx_runtime.jsx)("button", {
+							children: [(0, react_jsx_runtime.jsxs)("button", {
 								type: "button",
 								onClick: () => setReload((v) => v + 1),
-								children: "刷新"
-							}), (0, react_jsx_runtime.jsx)("button", {
+								children: [(0, react_jsx_runtime.jsx)(m$1, {
+									size: 15,
+									"aria-hidden": "true"
+								}), "刷新"]
+							}), (0, react_jsx_runtime.jsxs)("button", {
 								type: "button",
 								disabled: !data,
 								onClick: exportData,
-								children: "导出 CSV ↗"
+								children: [(0, react_jsx_runtime.jsx)(c$7, {
+									size: 15,
+									"aria-hidden": "true"
+								}), "导出 CSV"]
 							})]
 						})]
 					}),
 					(0, react_jsx_runtime.jsxs)("div", {
 						className: "fv-analysis-controls",
 						children: [
-							(0, react_jsx_runtime.jsx)("div", {
-								className: "fv-period-switch",
-								"aria-label": "图表周期",
-								children: Object.keys(periodNames).map((p) => (0, react_jsx_runtime.jsx)("button", {
-									type: "button",
-									"aria-pressed": period === p,
-									onClick: () => {
-										if (p === period) return;
-										setPeriod(p);
-										setBucketPage(0);
-										setData(void 0);
-									},
-									children: periodNames[p]
-								}, p))
-							}),
 							(0, react_jsx_runtime.jsxs)("div", {
+								className: "fv-analysis-toolbar",
+								children: [
+									(0, react_jsx_runtime.jsx)("div", {
+										className: "fv-analysis-presets",
+										role: "group",
+										"aria-label": "交易日期范围",
+										children: [
+											"单日",
+											"近 7 日",
+											"近 30 日",
+											"全部记录"
+										].map((label, index) => (0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											"aria-pressed": preset === label,
+											disabled: !data,
+											onClick: () => {
+												if (!data) return;
+												const end = data.days[0] || data.day;
+												const earliest = data.days[data.days.length - 1] || end;
+												const offset = [
+													0,
+													6,
+													29,
+													-1
+												][index];
+												applyRange(offset < 0 ? earliest < moveDay(end, -366) ? moveDay(end, -366) : earliest : moveDay(end, -offset), end, label);
+											},
+											children: label
+										}, label))
+									}),
+									(0, react_jsx_runtime.jsxs)("button", {
+										className: "fv-analysis-date-button",
+										type: "button",
+										"aria-expanded": customDates,
+										onClick: () => setCustomDates((v) => !v),
+										children: [
+											(0, react_jsx_runtime.jsx)(c$5, {
+												size: 15,
+												"aria-hidden": "true"
+											}),
+											data ? data.start_day === data.end_day ? dateInput(data.start_day) : `${dateInput(data.start_day)} — ${dateInput(data.end_day)}` : "自定义日期",
+											(0, react_jsx_runtime.jsx)(s$4, {
+												size: 12,
+												"aria-hidden": "true"
+											})
+										]
+									}),
+									(0, react_jsx_runtime.jsxs)("div", {
+										className: "fv-analysis-display",
+										children: [(0, react_jsx_runtime.jsxs)("label", { children: ["周期", (0, react_jsx_runtime.jsx)("select", {
+											"aria-label": "图表周期",
+											value: period,
+											onChange: (e) => {
+												setPeriod(e.target.value);
+												setBucketPage(0);
+												setData(void 0);
+											},
+											children: Object.keys(periodNames).map((p) => (0, react_jsx_runtime.jsx)("option", {
+												value: p,
+												children: periodNames[p]
+											}, p))
+										})] }), (0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											"aria-label": "图表显示设置",
+											"aria-expanded": displaySettings,
+											onClick: () => setDisplaySettings((v) => !v),
+											children: (0, react_jsx_runtime.jsx)(l, {
+												size: 17,
+												"aria-hidden": "true"
+											})
+										})]
+									})
+								]
+							}),
+							customDates && (0, react_jsx_runtime.jsxs)("form", {
 								className: "fv-date-range",
+								onSubmit: (e) => {
+									e.preventDefault();
+									const values = new FormData(e.currentTarget);
+									applyRange(String(values.get("start") || "").replace(/-/g, ""), String(values.get("end") || "").replace(/-/g, ""));
+								},
 								children: [
 									(0, react_jsx_runtime.jsxs)("label", { children: ["开始交易日", (0, react_jsx_runtime.jsx)("input", {
+										name: "start",
+										required: true,
 										type: "date",
 										"aria-label": "开始交易日",
 										value: draft.start ? dateInput(draft.start) : "",
@@ -109028,8 +109872,10 @@ get: function(visualType, key, isCategory) {
 											start: e.target.value.replace(/-/g, "")
 										}))
 									})] }),
-									(0, react_jsx_runtime.jsx)("span", { children: "—" }),
+									(0, react_jsx_runtime.jsx)("span", { children: "至" }),
 									(0, react_jsx_runtime.jsxs)("label", { children: ["结束交易日", (0, react_jsx_runtime.jsx)("input", {
+										name: "end",
+										required: true,
 										type: "date",
 										"aria-label": "结束交易日",
 										value: draft.end ? dateInput(draft.end) : "",
@@ -109039,30 +109885,20 @@ get: function(visualType, key, isCategory) {
 										}))
 									})] }),
 									(0, react_jsx_runtime.jsx)("button", {
-										type: "button",
-										onClick: () => applyRange(draft.start, draft.end),
+										className: "fv-analysis-apply",
+										type: "submit",
 										children: "应用日期"
+									}),
+									(0, react_jsx_runtime.jsx)("button", {
+										type: "button",
+										onClick: () => setCustomDates(false),
+										children: "取消"
 									})
 								]
 							}),
-							(0, react_jsx_runtime.jsxs)("div", {
-								className: "fv-analysis-presets",
-								children: [[
-									["单日", 0],
-									["近 7 日", 6],
-									["近 30 日", 29],
-									["全部记录", -1]
-								].map(([label, n]) => (0, react_jsx_runtime.jsx)("button", {
-									type: "button",
-									disabled: !data,
-									onClick: () => {
-										if (!data) return;
-										const end = data.days[0] || data.day;
-										const earliest = data.days[data.days.length - 1] || end;
-										applyRange(Number(n) < 0 ? earliest < moveDay(end, -366) ? moveDay(end, -366) : earliest : moveDay(end, -Number(n)), end);
-									},
-									children: label
-								}, label)), (0, react_jsx_runtime.jsxs)("label", { children: ["账户回撤缺口", (0, react_jsx_runtime.jsxs)("select", {
+							displaySettings && (0, react_jsx_runtime.jsxs)("div", {
+								className: "fv-analysis-display-settings",
+								children: [(0, react_jsx_runtime.jsxs)("label", { children: ["权益缺口", (0, react_jsx_runtime.jsxs)("select", {
 									"aria-label": "权益缺口显示",
 									value: bridge ? "bridge" : "break",
 									onChange: (e) => setBridge(e.target.value === "bridge"),
@@ -109073,348 +109909,385 @@ get: function(visualType, key, isCategory) {
 										value: "bridge",
 										children: "虚线连接（非采样）"
 									})]
-								})] })]
+								})] }), (0, react_jsx_runtime.jsx)("span", { children: "只调整曲线显示，不改变统计结果。" })]
 							})
 						]
 					}),
 					error && (0, react_jsx_runtime.jsxs)("div", {
 						className: "fv-analysis-alert",
 						role: "status",
-						children: [error, data ? "，以下保留上次成功结果。" : "，请检查后台连接。"]
+						children: [error, data ? "，以下保留上次成功结果。" : ""]
 					}),
-					!data || !s || !charts ? (0, react_jsx_runtime.jsx)("div", {
+					!data || !s || !charts ? (0, react_jsx_runtime.jsxs)("div", {
 						className: "fv-analysis-empty",
-						children: "正在读取账户权益与成交记录…"
+						role: "status",
+						children: [(0, react_jsx_runtime.jsx)(c$4, {
+							size: 28,
+							"aria-hidden": "true"
+						}), (0, react_jsx_runtime.jsx)("p", { children: error ? "暂未读取到分析数据，请稍后刷新。" : "正在读取账户权益与成交记录…" })]
 					}) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 						(0, react_jsx_runtime.jsxs)("div", {
 							className: "fv-analysis-metrics",
 							children: [
 								(0, react_jsx_runtime.jsxs)("div", { children: [
-									(0, react_jsx_runtime.jsx)("span", { children: "累计平仓净盈亏" }),
+									(0, react_jsx_runtime.jsx)("span", { children: "账户平仓净盈亏" }),
 									(0, react_jsx_runtime.jsx)("strong", {
-										className: tone(data.period_summary.realized_net),
-										children: money(data.period_summary.realized_net)
+										className: data.period_summary.realized_net == null ? "is-pending" : tone(data.period_summary.realized_net),
+										children: data.period_summary.realized_net == null ? "待补齐" : money(data.period_summary.realized_net)
 									}),
-									(0, react_jsx_runtime.jsx)("small", { children: "整个账户 · 已扣开平仓手续费 · 不含浮盈 · 元" })
+									(0, react_jsx_runtime.jsx)("small", { children: "已扣开平仓手续费 · 不含浮盈" })
 								] }),
 								(0, react_jsx_runtime.jsxs)("div", { children: [
-									(0, react_jsx_runtime.jsx)("span", { children: "有记录交易日净收益" }),
+									(0, react_jsx_runtime.jsx)("span", { children: "账户区间净收益" }),
 									(0, react_jsx_runtime.jsx)("strong", {
-										className: tone(data.period_summary.day_net),
-										children: money(data.period_summary.day_net)
+										className: data.period_summary.day_net == null ? "is-pending" : tone(data.period_summary.day_net),
+										children: data.period_summary.day_net == null ? "待补齐" : money(data.period_summary.day_net)
 									}),
-									(0, react_jsx_runtime.jsxs)("small", { children: [data.period_summary.recorded_days, " 个交易日 · 已扣费 · 含浮盈 · 元"] })
-								] }),
-								(0, react_jsx_runtime.jsxs)("div", { children: [
-									(0, react_jsx_runtime.jsx)("span", { children: "账户采样最大回撤" }),
-									(0, react_jsx_runtime.jsx)("strong", { children: fmt$1(s.max_drawdown) }),
-									(0, react_jsx_runtime.jsxs)("small", { children: [fmt$1(s.max_drawdown_pct, 3), "% · 未调整出入金"] })
-								] }),
-								(0, react_jsx_runtime.jsxs)("div", { children: [
-									(0, react_jsx_runtime.jsx)("span", { children: "平仓成交胜率 · 毛收益" }),
-									(0, react_jsx_runtime.jsxs)("strong", { children: [fmt$1(s.win_rate, 1), (0, react_jsx_runtime.jsx)("em", { children: "%" })] }),
 									(0, react_jsx_runtime.jsxs)("small", { children: [
+										"已扣费 · 含浮盈 · ",
+										data.period_summary.recorded_days,
+										" 个有记录交易日"
+									] })
+								] }),
+								(0, react_jsx_runtime.jsxs)("div", { children: [
+									(0, react_jsx_runtime.jsx)("span", { children: "账户最大回撤" }),
+									(0, react_jsx_runtime.jsx)("strong", { children: fmt$1(s.max_drawdown) }),
+									(0, react_jsx_runtime.jsxs)("small", { children: [fmt$1(s.max_drawdown_pct, 3), "% · 按原始采样计算"] })
+								] }),
+								(0, react_jsx_runtime.jsxs)("div", { children: [
+									(0, react_jsx_runtime.jsx)("span", { children: "交易员平仓胜率" }),
+									(0, react_jsx_runtime.jsxs)("strong", { children: [fmt$1(s.win_rate, 1), s.win_rate != null && (0, react_jsx_runtime.jsx)("em", { children: "%" })] }),
+									(0, react_jsx_runtime.jsxs)("small", { children: [
+										"未扣费 · ",
 										s.wins,
 										" 盈 / ",
 										s.losses,
 										" 亏 / ",
 										s.breakeven,
-										" 平 · ",
-										s.matched_closes,
-										" 笔已配对"
+										" 平"
 									] })
 								] })
 							]
 						}),
-						(0, react_jsx_runtime.jsxs)("div", {
-							className: "fv-analysis-coverage",
-							children: [
-								(0, react_jsx_runtime.jsx)("span", { className: "fv-analysis-dot" }),
-								(0, react_jsx_runtime.jsxs)("p", { children: [data.coverage.samples ? (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-									(0, react_jsx_runtime.jsxs)("b", { children: [data.coverage.samples, " 个权益采样"] }),
-									" · ",
-									stamp(data.coverage.first_at),
-									"—",
-									stamp(data.coverage.last_at),
-									" · ",
-									data.coverage.gaps,
-									" 处间隔断线",
-									data.coverage.observation_samples > 0 && ` · ${data.coverage.observation_samples} 条历史验收观测，使用记录时间`
-								] }) : "尚无该交易日的权益采样；后台收到新柜台快照后自动记录。", (0, react_jsx_runtime.jsxs)("small", { children: [
-									periodNames[data.period],
-									" · ",
-									data.period === "raw" ? data.coverage.samples : data.periods.filter((g) => g.Balance != null).length,
-									" 个权益点；回撤按原始采样计算。",
-									s.unmatched_closes > 0 && ` ${s.unmatched_closes} 笔平仓缺少配对数据，不计入胜率。`,
-									data.coverage.cash_flow_changed && " 检测到出入金变化，原始权益回撤会受影响。"
-								] })] }),
-								(0, react_jsx_runtime.jsxs)("span", { children: [s.fills, " 笔成交"] })
-							]
-						}),
-						data.gaps.length > 0 && (0, react_jsx_runtime.jsxs)("details", {
-							className: "fv-analysis-gaps",
-							children: [
-								(0, react_jsx_runtime.jsxs)("summary", { children: [
-									"账户回撤数据：",
-									data.gaps.length,
-									" 段权益快照缺失"
-								] }),
-								data.gaps.map((g) => (0, react_jsx_runtime.jsxs)("p", { children: [
-									stamp(g.from),
-									" → ",
-									stamp(g.to),
-									" · ",
-									Math.floor(g.seconds / 60),
-									" 分 ",
-									Math.round(g.seconds % 60),
-									" 秒"
-								] }, g.from)),
-								(0, react_jsx_runtime.jsx)("small", { children: "这段时间未记录到权益快照，无法还原其间浮盈浮亏。虚线仅连接已知端点，不生成采样，也不改变统计结果。小时、日线仍会标明周期内包含缺口。" })
-							]
-						}),
-						data.period === "1d" && (0, react_jsx_runtime.jsxs)("p", {
-							className: "fv-analysis-footnote",
-							children: [
-								"日线按柜台交易日归档，夜盘跟随所属交易日。当前 ",
-								data.periods.filter((g) => g.Balance != null).length,
-								" 个交易日有权益观测；每个交易日一个末次观测点，不把盘中快照当作正式日终结算。"
-							]
+						(0, react_jsx_runtime.jsxs)("details", {
+							className: "fv-analysis-quality",
+							children: [(0, react_jsx_runtime.jsxs)("summary", { children: [(0, react_jsx_runtime.jsxs)("span", { children: [
+								(0, react_jsx_runtime.jsx)(c$1, {
+									size: 15,
+									"aria-hidden": "true"
+								}),
+								data.period_summary.realized_net == null ? "部分收益数据待补齐" : "数据与统计口径",
+								data.gaps.length > 0 && ` · ${data.gaps.length} 段采样缺口`
+							] }), (0, react_jsx_runtime.jsxs)("span", { children: [
+								s.fills,
+								" 笔成交 · 金额单位：元",
+								(0, react_jsx_runtime.jsx)(s$4, {
+									size: 13,
+									"aria-hidden": "true"
+								})
+							] })] }), (0, react_jsx_runtime.jsxs)("div", {
+								className: "fv-analysis-quality-body",
+								children: [
+									(0, react_jsx_runtime.jsx)("p", { children: "账户指标包含其他策略和手工交易；品种贡献与胜率只统计 AI 交易员。缺少平仓盈亏或手续费时显示“待补齐”，不按零计算。" }),
+									(0, react_jsx_runtime.jsxs)("p", { children: [
+										data.coverage.samples,
+										" 个权益采样 · ",
+										stamp(data.coverage.first_at),
+										" — ",
+										stamp(data.coverage.last_at),
+										"。",
+										s.unmatched_closes > 0 && ` ${s.unmatched_closes} 笔平仓缺少配对数据，未计入胜率。`,
+										data.coverage.observation_samples > 0 && ` ${data.coverage.observation_samples} 条为历史验收观测，使用记录时间。`,
+										data.coverage.cash_flow_changed && " 检测到出入金变化，回撤会受影响。"
+									] }),
+									data.coverage.pnl_samples != null && data.coverage.pnl_samples < data.coverage.samples && (0, react_jsx_runtime.jsxs)("p", { children: ["部分历史快照未记录盈亏分项。", data.coverage.pnl_first_at != null ? `完整盈亏记录始于 ${stamp(data.coverage.pnl_first_at)}，此前曲线保留空白；当日汇总使用最新完整数据。` : "当前范围没有完整的账户盈亏快照；已有成交仍可在下方查看。"] }),
+									data.gaps.map((g) => (0, react_jsx_runtime.jsxs)("p", { children: [
+										"缺口：",
+										stamp(g.from),
+										" → ",
+										stamp(g.to),
+										" · ",
+										Math.floor(g.seconds / 60),
+										" 分 ",
+										Math.round(g.seconds % 60),
+										" 秒"
+									] }, g.from)),
+									data.gaps.length > 0 && (0, react_jsx_runtime.jsx)("p", { children: "缺口期间未记录到权益快照。虚线只连接已知端点，不生成采样，也不改变统计结果。" }),
+									(0, react_jsx_runtime.jsx)("p", { children: data.note })
+								]
+							})]
 						}),
 						(0, react_jsx_runtime.jsxs)("div", {
-							className: "fv-analysis-grid",
-							children: [
-								(0, react_jsx_runtime.jsx)(Chart, {
-									title: "平仓权益曲线",
-									subtitle: `${periodNames[data.period]} · 固定基准 ${fmt$1(data.equity_baseline?.value)} 元 ＋ 累计平仓净盈亏 · 已扣手续费 · 不含浮盈变化及后续出入金`,
-									option: charts.realizedEquity,
-									empty: !data.equity.some((p) => p.realized_equity != null) ? "等待可以确定基准权益及手续费的柜台快照。" : void 0,
-									wide: true
-								}),
-								(0, react_jsx_runtime.jsx)(Chart, {
-									title: "累计平仓净盈亏",
-									subtitle: `${periodNames[data.period]} · 整个 PandaAI 模拟赛 账户 · 平仓盈亏 − 已发生开平仓手续费 · 不含浮盈 · 按有记录交易日累计 · 元`,
-									option: charts.cumulative,
-									empty: !data.equity.some((p) => p.cumulative_net != null) ? "等待包含平仓盈亏和手续费的柜台快照；缺失费用不按零计算。" : void 0,
-									wide: true
-								}),
-								(0, react_jsx_runtime.jsx)(Chart, {
-									title: "账户回撤",
-									subtitle: `${data.period === "raw" ? "距原始采样峰值" : "周期内最深原始采样回撤"} · 单位：元`,
-									option: charts.drawdown,
-									empty: data.equity.length < 2 ? "至少需要两个真实权益采样。" : void 0
-								}),
-								(0, react_jsx_runtime.jsx)(Chart, {
-									title: "品种盈亏贡献",
-									subtitle: "所选日期范围内的AI 交易员毛盈亏 · 不分摊账户手续费",
-									option: charts.products,
-									empty: !s.fills ? "该交易日尚无AI 交易员成交。" : void 0
-								}),
-								(0, react_jsx_runtime.jsx)(Chart, {
-									title: "平仓胜负分布",
-									subtitle: `以已配对平仓成交计数；不是手数或完整持仓周期 · 毛利润 / 毛亏损 ${fmt$1(s.profit_factor)}`,
-									option: charts.distribution,
-									empty: !s.matched_closes ? "尚无可配对的平仓成交。" : void 0
-								}),
-								(0, react_jsx_runtime.jsx)(Chart, {
-									title: data.period === "raw" ? "逐次平仓结果" : "周期平仓盈亏",
-									subtitle: `${periodNames[data.period]} · 每个柱形对应该周期的平仓毛盈亏 / 元`,
-									option: charts.closes,
-									empty: !s.closing_fills ? "等待第一笔平仓成交。" : void 0
-								}),
-								data.period !== "raw" && (0, react_jsx_runtime.jsx)(Chart, {
-									title: "周期成交笔数",
-									subtitle: `${periodNames[data.period]} · 开仓和平仓均计入 · 按回报接收时间汇总`,
-									option: charts.activity,
-									empty: !s.fills ? "所选范围尚无成交。" : void 0
-								}),
-								(0, react_jsx_runtime.jsxs)("section", {
-									className: "fv-analysis-reconcile",
+							className: "fv-analysis-main",
+							children: [(0, react_jsx_runtime.jsx)(Chart, {
+								title: curve === "net" ? "累计平仓净盈亏" : curve === "equity" ? "平仓权益曲线" : "账户回撤",
+								subtitle: (curve === "net" ? "整个账户 · 已扣开平仓手续费 · 不含浮盈" : curve === "equity" ? `固定基准 ${fmt$1(data.equity_baseline?.value)} 元 ＋ 累计平仓净盈亏 · 已扣费` : "距采样峰值的回撤 · 未调整出入金 · 元") + (curve !== "drawdown" && data.coverage.pnl_samples != null && data.coverage.pnl_samples < data.coverage.samples && data.coverage.pnl_first_at != null ? ` · 完整记录始于 ${clock(data.coverage.pnl_first_at)}` : ""),
+								option: curve === "net" ? charts.cumulative : curve === "equity" ? charts.realizedEquity : charts.drawdown,
+								empty: curve === "net" ? !data.equity.some((p) => p.cumulative_net != null) ? "所选范围的历史快照缺少盈亏分项，无法还原累计净收益；可查看有完整记录的单日。" : void 0 : curve === "equity" ? !data.equity.some((p) => p.realized_equity != null) ? "所选范围首个交易日缺少完整盈亏快照，无法确定权益基准；已有成交可在下方查看。" : void 0 : data.equity.length < 2 ? "至少需要两个真实权益采样。" : void 0,
+								controls: (0, react_jsx_runtime.jsx)("div", {
+									className: "fv-analysis-curve-switch",
+									role: "group",
+									"aria-label": "收益曲线类型",
 									children: [
-										(0, react_jsx_runtime.jsx)("span", {
-											className: "fv-kicker",
-											children: "ACCOUNT RECONCILIATION"
+										["net", "净盈亏"],
+										["equity", "平仓权益"],
+										["drawdown", "回撤"]
+									].map(([key, label]) => (0, react_jsx_runtime.jsx)("button", {
+										type: "button",
+										"aria-pressed": curve === key,
+										onClick: () => setCurve(key),
+										children: label
+									}, key))
+								})
+							}), (0, react_jsx_runtime.jsxs)("section", {
+								className: "fv-analysis-reconcile",
+								children: [
+									(0, react_jsx_runtime.jsx)("h3", { children: "收益拆解" }),
+									(0, react_jsx_runtime.jsxs)("p", { children: [
+										"整个比赛账户 · ",
+										data.period_summary.recorded_days,
+										" 个有记录交易日"
+									] }),
+									(0, react_jsx_runtime.jsxs)("dl", { children: [
+										(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsxs)("dt", { children: ["平仓盈亏", (0, react_jsx_runtime.jsx)("span", { children: "扣费前" })] }), (0, react_jsx_runtime.jsx)("dd", {
+											className: tone(data.period_summary.CloseProfit),
+											children: money(data.period_summary.CloseProfit)
+										})] }),
+										(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("dt", { children: "减：开仓与平仓手续费" }), (0, react_jsx_runtime.jsx)("dd", { children: fmt$1(data.period_summary.Commission) })] }),
+										(0, react_jsx_runtime.jsxs)("div", {
+											className: "total",
+											children: [(0, react_jsx_runtime.jsxs)("dt", { children: ["平仓净盈亏", (0, react_jsx_runtime.jsx)("span", { children: "已扣手续费" })] }), (0, react_jsx_runtime.jsx)("dd", {
+												className: tone(data.period_summary.realized_net),
+												children: money(data.period_summary.realized_net)
+											})]
 										}),
-										(0, react_jsx_runtime.jsx)("h3", { children: "收益从哪里来" }),
-										(0, react_jsx_runtime.jsxs)("p", { children: [
-											dateInput(data.start_day),
-											"—",
-											dateInput(data.end_day),
-											" · ",
-											data.period_summary.recorded_days,
-											" 个有记录交易日"
-										] }),
-										(0, react_jsx_runtime.jsxs)("dl", { children: [
-											(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("dt", { children: "柜台平仓盈亏" }), (0, react_jsx_runtime.jsx)("dd", {
-												className: tone(data.period_summary.CloseProfit),
-												children: money(data.period_summary.CloseProfit)
-											})] }),
-											(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("dt", { children: "− 开仓及平仓手续费" }), (0, react_jsx_runtime.jsx)("dd", { children: fmt$1(data.period_summary.Commission) })] }),
-											(0, react_jsx_runtime.jsxs)("div", {
-												className: "total",
-												children: [(0, react_jsx_runtime.jsx)("dt", { children: "＝ 平仓净盈亏（主曲线）" }), (0, react_jsx_runtime.jsx)("dd", {
-													className: tone(data.period_summary.realized_net),
-													children: money(data.period_summary.realized_net)
-												})]
+										(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("dt", { children: "加：持仓浮盈亏" }), (0, react_jsx_runtime.jsx)("dd", {
+											className: tone(data.period_summary.PositionProfit),
+											children: money(data.period_summary.PositionProfit)
+										})] }),
+										(0, react_jsx_runtime.jsxs)("div", {
+											className: "total",
+											children: [(0, react_jsx_runtime.jsx)("dt", { children: "区间净收益" }), (0, react_jsx_runtime.jsx)("dd", {
+												className: tone(data.period_summary.day_net),
+												children: money(data.period_summary.day_net)
+											})]
+										})
+									] }),
+									(0, react_jsx_runtime.jsx)("small", { children: "按有记录交易日累计；缺失项目显示 —。" })
+								]
+							})]
+						}),
+						(0, react_jsx_runtime.jsxs)("div", {
+							className: "fv-analysis-section-heading",
+							children: [(0, react_jsx_runtime.jsx)("h3", { children: "成交分析" }), (0, react_jsx_runtime.jsx)("span", { children: "仅 AI 交易员 · 以下为扣费前统计" })]
+						}),
+						(0, react_jsx_runtime.jsxs)("div", {
+							className: "fv-analysis-secondary",
+							children: [(0, react_jsx_runtime.jsx)(Chart, {
+								title: "品种盈亏贡献",
+								subtitle: "已配对平仓成交 · 未扣手续费",
+								option: charts.products,
+								empty: !s.fills ? "所选范围尚无 AI 交易员成交。" : void 0
+							}), (0, react_jsx_runtime.jsx)(Chart, {
+								title: "平仓胜负分布",
+								subtitle: `${s.matched_closes} 笔已配对 · 毛利润 / 毛亏损 ${fmt$1(s.profit_factor)}`,
+								option: charts.distribution,
+								empty: !s.matched_closes ? "尚无可配对的平仓成交。" : void 0
+							})]
+						}),
+						(0, react_jsx_runtime.jsxs)("section", {
+							className: "fv-analysis-ledger",
+							"aria-label": "交易明细",
+							children: [
+								(0, react_jsx_runtime.jsxs)("header", {
+									className: "fv-ledger-heading",
+									children: [(0, react_jsx_runtime.jsx)("h3", { children: "交易明细" }), (0, react_jsx_runtime.jsxs)("span", {
+										title: "每 15 秒读取已保存的分析记录",
+										children: ["更新于 ", clock(data.generated_at)]
+									})]
+								}),
+								(0, react_jsx_runtime.jsx)("div", {
+									className: "fv-ledger-tabs",
+									role: "tablist",
+									"aria-label": "明细视图",
+									children: detailTabs.map(({ key, label }, index) => (0, react_jsx_runtime.jsxs)("button", {
+										type: "button",
+										id: `${detailId}-${key}`,
+										role: "tab",
+										"aria-selected": selectedDetail === key,
+										"aria-controls": `${detailId}-panel`,
+										tabIndex: selectedDetail === key ? 0 : -1,
+										onClick: () => setDetailView(key),
+										onKeyDown: (e) => {
+											const next = e.key === "ArrowRight" ? (index + 1) % detailTabs.length : e.key === "ArrowLeft" ? (index + detailTabs.length - 1) % detailTabs.length : e.key === "Home" ? 0 : e.key === "End" ? detailTabs.length - 1 : -1;
+											if (next < 0) return;
+											e.preventDefault();
+											setDetailView(detailTabs[next].key);
+											e.currentTarget.parentElement?.querySelectorAll("[role=\"tab\"]")[next]?.focus();
+										},
+										children: [label, key === "fills" && (0, react_jsx_runtime.jsx)("span", { children: s.fills })]
+									}, key))
+								}),
+								(0, react_jsx_runtime.jsxs)("div", {
+									className: "fv-ledger-panel",
+									id: `${detailId}-panel`,
+									role: "tabpanel",
+									"aria-labelledby": `${detailId}-${selectedDetail}`,
+									tabIndex: 0,
+									children: [
+										selectedDetail !== "trader" && (0, react_jsx_runtime.jsxs)("div", {
+											className: "fv-ledger-context",
+											children: [(0, react_jsx_runtime.jsxs)("span", { children: [
+												dateInput(data.start_day),
+												data.start_day !== data.end_day && ` — ${dateInput(data.end_day)}`,
+												selectedDetail !== "fills" && ` · ${periodNames[data.period]}`
+											] }), (0, react_jsx_runtime.jsxs)("span", { children: [selectedDetail === "periods" ? `${data.periods.length} 个有记录周期 · ` : "", "AI 交易员 · 盈亏未扣手续费"] })]
+										}),
+										selectedDetail === "fills" && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("div", {
+											className: "fv-statistics-scroll",
+											children: (0, react_jsx_runtime.jsxs)(FlyTable, {
+												resizeStorageKey: "fly-analysis-fills",
+												children: [(0, react_jsx_runtime.jsx)("thead", { children: (0, react_jsx_runtime.jsxs)("tr", { children: [
+													(0, react_jsx_runtime.jsx)("th", { children: "时间" }),
+													(0, react_jsx_runtime.jsx)("th", { children: "合约" }),
+													(0, react_jsx_runtime.jsx)("th", { children: "动作" }),
+													(0, react_jsx_runtime.jsx)("th", { children: "手数" }),
+													(0, react_jsx_runtime.jsx)("th", { children: "成交价" }),
+													(0, react_jsx_runtime.jsx)("th", { children: "平仓毛盈亏" }),
+													(0, react_jsx_runtime.jsx)("th", { children: "成交编号" })
+												] }) }), (0, react_jsx_runtime.jsxs)("tbody", { children: [data.fills.slice(page * 20, page * 20 + 20).map((f) => (0, react_jsx_runtime.jsxs)("tr", { children: [
+													(0, react_jsx_runtime.jsxs)("td", { children: [
+														data.start_day !== data.end_day && (0, react_jsx_runtime.jsx)("small", { children: dateInput(f.trading_day) }),
+														f.time,
+														f.time_source !== "counter" && (0, react_jsx_runtime.jsx)("small", { children: "回报时间" })
+													] }),
+													(0, react_jsx_runtime.jsx)("td", { children: f.symbol }),
+													(0, react_jsx_runtime.jsx)("td", { children: f.offset === "0" ? f.direction === "0" ? "开多" : "开空" : f.direction === "0" ? "平空" : "平多" }),
+													(0, react_jsx_runtime.jsx)("td", { children: f.volume }),
+													(0, react_jsx_runtime.jsx)("td", { children: fmt$1(f.price) }),
+													(0, react_jsx_runtime.jsx)("td", {
+														className: tone(f.realized_gross),
+														children: money(f.realized_gross)
+													}),
+													(0, react_jsx_runtime.jsx)("td", { children: f.trade_id })
+												] }, f.seq)), !data.fills.length && (0, react_jsx_runtime.jsx)("tr", { children: (0, react_jsx_runtime.jsx)("td", {
+													colSpan: 7,
+													className: "fv-ledger-empty",
+													children: "所选范围暂无成交记录"
+												}) })] })]
+											})
+										}), (0, react_jsx_runtime.jsxs)("div", {
+											className: "fv-statistics-pagination",
+											children: [
+												(0, react_jsx_runtime.jsxs)("span", { children: [
+													s.fills,
+													" 笔 · 第 ",
+													page + 1,
+													" / ",
+													Math.max(1, Math.ceil(s.fills / 20)),
+													" 页"
+												] }),
+												(0, react_jsx_runtime.jsx)("button", {
+													type: "button",
+													disabled: !page,
+													onClick: () => setPage((p) => p - 1),
+													children: "上一页"
+												}),
+												(0, react_jsx_runtime.jsx)("button", {
+													type: "button",
+													disabled: (page + 1) * 20 >= s.fills,
+													onClick: () => setPage((p) => p + 1),
+													children: "下一页"
+												})
+											]
+										})] }),
+										selectedDetail === "periods" && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+											(0, react_jsx_runtime.jsx)("div", {
+												className: "fv-statistics-scroll",
+												children: (0, react_jsx_runtime.jsxs)(FlyTable, {
+													resizeStorageKey: "fly-analysis-periods",
+													children: [(0, react_jsx_runtime.jsx)("thead", { children: (0, react_jsx_runtime.jsxs)("tr", { children: [
+														(0, react_jsx_runtime.jsx)("th", { children: "周期 / 交易日" }),
+														(0, react_jsx_runtime.jsx)("th", { children: "末次真实权益" }),
+														(0, react_jsx_runtime.jsx)("th", { children: "周期最深回撤" }),
+														(0, react_jsx_runtime.jsx)("th", { children: "成交 / 平仓笔数" }),
+														(0, react_jsx_runtime.jsx)("th", { children: "平仓毛盈亏" }),
+														(0, react_jsx_runtime.jsx)("th", { children: "毛胜率" }),
+														(0, react_jsx_runtime.jsx)("th", { children: "采样情况" })
+													] }) }), (0, react_jsx_runtime.jsxs)("tbody", { children: [data.periods.slice(bucketPage * 20, bucketPage * 20 + 20).map((g) => (0, react_jsx_runtime.jsxs)("tr", { children: [
+														(0, react_jsx_runtime.jsxs)("td", { children: [g.label, (0, react_jsx_runtime.jsxs)("small", { children: ["交易日 ", dateInput(g.day)] })] }),
+														(0, react_jsx_runtime.jsxs)("td", { children: [fmt$1(g.Balance), g.observed_at != null && (0, react_jsx_runtime.jsx)("small", { children: stamp(g.observed_at) })] }),
+														(0, react_jsx_runtime.jsx)("td", { children: fmt$1(g.worst_drawdown == null ? null : -g.worst_drawdown) }),
+														(0, react_jsx_runtime.jsxs)("td", { children: [
+															g.fill_count,
+															" / ",
+															g.closing_fills
+														] }),
+														(0, react_jsx_runtime.jsx)("td", {
+															className: tone(g.realized_gross),
+															children: money(g.realized_gross)
+														}),
+														(0, react_jsx_runtime.jsxs)("td", { children: [fmt$1(g.win_rate, 1), "%"] }),
+														(0, react_jsx_runtime.jsxs)("td", { children: [
+															g.sample_count,
+															" 条",
+															g.contains_gap && (0, react_jsx_runtime.jsx)("small", { children: "含采样缺口" }),
+															!g.sample_count && (0, react_jsx_runtime.jsx)("small", { children: "权益未知" })
+														] })
+													] }, `${g.day}-${g.at}`)), !data.periods.length && (0, react_jsx_runtime.jsx)("tr", { children: (0, react_jsx_runtime.jsx)("td", {
+														colSpan: 7,
+														className: "fv-ledger-empty",
+														children: "所选范围暂无周期记录"
+													}) })] })]
+												})
 											}),
-											(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("dt", { children: "＋ 持仓浮盈亏" }), (0, react_jsx_runtime.jsx)("dd", { children: money(data.period_summary.PositionProfit) })] }),
 											(0, react_jsx_runtime.jsxs)("div", {
-												className: "total",
-												children: [(0, react_jsx_runtime.jsx)("dt", { children: "有记录交易日净收益" }), (0, react_jsx_runtime.jsx)("dd", {
-													className: tone(data.period_summary.day_net),
-													children: money(data.period_summary.day_net)
-												})]
+												className: "fv-statistics-pagination",
+												children: [
+													(0, react_jsx_runtime.jsxs)("span", { children: [
+														"第 ",
+														bucketPage + 1,
+														" / ",
+														Math.max(1, Math.ceil(data.periods.length / 20)),
+														" 页"
+													] }),
+													(0, react_jsx_runtime.jsx)("button", {
+														type: "button",
+														disabled: !bucketPage,
+														onClick: () => setBucketPage((p) => p - 1),
+														children: "上一页"
+													}),
+													(0, react_jsx_runtime.jsx)("button", {
+														type: "button",
+														disabled: (bucketPage + 1) * 20 >= data.periods.length,
+														onClick: () => setBucketPage((p) => p + 1),
+														children: "下一页"
+													})
+												]
+											}),
+											(0, react_jsx_runtime.jsxs)("p", {
+												className: "fv-ledger-note",
+												children: ["权益与回撤为整个比赛账户的采样；成交与毛盈亏仅统计 AI 交易员。", data.period === "1d" && "日线为各交易日末次观测，非正式日终结算。"]
 											})
 										] }),
-										(0, react_jsx_runtime.jsxs)("small", { children: [
-											"整个 PandaAI 模拟赛 账户口径，其他策略或手工交易也会计入。AI 交易员成交另计的毛盈亏为 ",
-											money(s.realized_gross),
-											" 元。"
-										] })
-									]
-								})
-							]
-						}),
-						(0, react_jsx_runtime.jsxs)("p", {
-							className: "fv-analysis-footnote",
-							children: [
-								data.note,
-								" 图表每 15 秒读取已保存数据；柜台刷新频率独立于页面。更新时间 ",
-								clock(data.generated_at),
-								"。"
-							]
-						}),
-						data.period !== "raw" && (0, react_jsx_runtime.jsxs)("details", {
-							className: "fv-analysis-details",
-							children: [
-								(0, react_jsx_runtime.jsxs)("summary", { children: [
-									"查看 ",
-									periodNames[data.period],
-									" 周期统计 · ",
-									data.periods.length,
-									" 个有记录周期"
-								] }),
-								(0, react_jsx_runtime.jsx)("div", {
-									className: "fv-statistics-scroll",
-									children: (0, react_jsx_runtime.jsxs)(FlyTable, {
-										resizeStorageKey: "fly-analysis-periods",
-										children: [(0, react_jsx_runtime.jsx)("thead", { children: (0, react_jsx_runtime.jsxs)("tr", { children: [
-											(0, react_jsx_runtime.jsx)("th", { children: "周期 / 交易日" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "末次真实权益" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "周期最深回撤" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "成交 / 平仓笔数" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "平仓毛盈亏" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "毛胜率" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "采样情况" })
-										] }) }), (0, react_jsx_runtime.jsx)("tbody", { children: data.periods.slice(bucketPage * 20, bucketPage * 20 + 20).map((g) => (0, react_jsx_runtime.jsxs)("tr", { children: [
-											(0, react_jsx_runtime.jsxs)("td", { children: [g.label, (0, react_jsx_runtime.jsxs)("small", { children: ["交易日 ", dateInput(g.day)] })] }),
-											(0, react_jsx_runtime.jsxs)("td", { children: [fmt$1(g.Balance), g.observed_at != null && (0, react_jsx_runtime.jsx)("small", { children: stamp(g.observed_at) })] }),
-											(0, react_jsx_runtime.jsx)("td", { children: fmt$1(g.worst_drawdown == null ? null : -g.worst_drawdown) }),
-											(0, react_jsx_runtime.jsxs)("td", { children: [
-												g.fill_count,
-												" / ",
-												g.closing_fills
-											] }),
-											(0, react_jsx_runtime.jsx)("td", {
-												className: tone(g.realized_gross),
-												children: money(g.realized_gross)
-											}),
-											(0, react_jsx_runtime.jsxs)("td", { children: [fmt$1(g.win_rate, 1), "%"] }),
-											(0, react_jsx_runtime.jsxs)("td", { children: [
-												g.sample_count,
-												" 条",
-												g.contains_gap && (0, react_jsx_runtime.jsx)("small", { children: "含采样缺口" }),
-												!g.sample_count && (0, react_jsx_runtime.jsx)("small", { children: "权益未知" })
-											] })
-										] }, `${g.day}-${g.at}`)) })]
-									})
-								}),
-								(0, react_jsx_runtime.jsxs)("div", {
-									className: "fv-statistics-pagination",
-									children: [
-										(0, react_jsx_runtime.jsxs)("span", { children: [
-											"第 ",
-											bucketPage + 1,
-											" / ",
-											Math.max(1, Math.ceil(data.periods.length / 20)),
-											" 页"
-										] }),
-										(0, react_jsx_runtime.jsx)("button", {
-											type: "button",
-											disabled: !bucketPage,
-											onClick: () => setBucketPage((p) => p - 1),
-											children: "上一页"
+										selectedDetail === "activity" && (0, react_jsx_runtime.jsxs)("div", {
+											className: "fv-analysis-secondary fv-ledger-charts",
+											children: [(0, react_jsx_runtime.jsx)(Chart, {
+												title: data.period === "raw" ? "逐次平仓结果" : "周期平仓盈亏",
+												subtitle: "平仓毛盈亏 · 未扣手续费 / 元",
+												option: charts.closes,
+												empty: !s.closing_fills ? "等待第一笔平仓成交。" : void 0
+											}), data.period !== "raw" && (0, react_jsx_runtime.jsx)(Chart, {
+												title: "周期成交笔数",
+												subtitle: "开仓和平仓均计入",
+												option: charts.activity,
+												empty: !s.fills ? "所选范围尚无成交。" : void 0
+											})]
 										}),
-										(0, react_jsx_runtime.jsx)("button", {
-											type: "button",
-											disabled: (bucketPage + 1) * 20 >= data.periods.length,
-											onClick: () => setBucketPage((p) => p + 1),
-											children: "下一页"
-										})
-									]
-								})
-							]
-						}),
-						(0, react_jsx_runtime.jsxs)("details", {
-							className: "fv-analysis-details",
-							children: [
-								(0, react_jsx_runtime.jsxs)("summary", { children: [
-									"查看所选范围的 ",
-									s.fills,
-									" 笔成交明细"
-								] }),
-								(0, react_jsx_runtime.jsx)("div", {
-									className: "fv-statistics-scroll",
-									children: (0, react_jsx_runtime.jsxs)(FlyTable, {
-										resizeStorageKey: "fly-analysis-fills",
-										children: [(0, react_jsx_runtime.jsx)("thead", { children: (0, react_jsx_runtime.jsxs)("tr", { children: [
-											(0, react_jsx_runtime.jsx)("th", { children: "时间" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "合约" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "动作" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "手数" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "成交价" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "平仓毛盈亏" }),
-											(0, react_jsx_runtime.jsx)("th", { children: "成交编号" })
-										] }) }), (0, react_jsx_runtime.jsx)("tbody", { children: data.fills.slice(page * 20, page * 20 + 20).map((f) => (0, react_jsx_runtime.jsxs)("tr", { children: [
-											(0, react_jsx_runtime.jsxs)("td", { children: [
-												data.start_day !== data.end_day && (0, react_jsx_runtime.jsx)("small", { children: dateInput(f.trading_day) }),
-												f.time,
-												f.time_source !== "counter" && (0, react_jsx_runtime.jsx)("small", { children: "回报时间" })
-											] }),
-											(0, react_jsx_runtime.jsx)("td", { children: f.symbol }),
-											(0, react_jsx_runtime.jsx)("td", { children: f.offset === "0" ? f.direction === "0" ? "开多" : "开空" : f.direction === "0" ? "平空" : "平多" }),
-											(0, react_jsx_runtime.jsx)("td", { children: f.volume }),
-											(0, react_jsx_runtime.jsx)("td", { children: fmt$1(f.price) }),
-											(0, react_jsx_runtime.jsx)("td", {
-												className: tone(f.realized_gross),
-												children: money(f.realized_gross)
-											}),
-											(0, react_jsx_runtime.jsx)("td", { children: f.trade_id })
-										] }, f.seq)) })]
-									})
-								}),
-								(0, react_jsx_runtime.jsxs)("div", {
-									className: "fv-statistics-pagination",
-									children: [
-										(0, react_jsx_runtime.jsxs)("span", { children: [
-											s.fills,
-											" 笔 · 第 ",
-											page + 1,
-											" / ",
-											Math.max(1, Math.ceil(s.fills / 20)),
-											" 页"
-										] }),
-										(0, react_jsx_runtime.jsx)("button", {
-											type: "button",
-											disabled: !page,
-											onClick: () => setPage((p) => p - 1),
-											children: "上一页"
-										}),
-										(0, react_jsx_runtime.jsx)("button", {
-											type: "button",
-											disabled: (page + 1) * 20 >= s.fills,
-											onClick: () => setPage((p) => p + 1),
-											children: "下一页"
-										})
+										selectedDetail === "trader" && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("p", {
+											className: "fv-ledger-note fv-ledger-scope",
+											children: "当日柜台数据，独立于上方日期范围。平仓净盈亏已扣对应开仓与平仓手续费。"
+										}), traderDetails] })
 									]
 								})
 							]
@@ -109623,35 +110496,35 @@ get: function(visualType, key, isCategory) {
 		}
 		//#endregion
 		//#region \0dsh-global-css:packages/ui-quantskills/src/client/fly/fly-workspace.css.mjs
-		const css$10 = ".fv-page{scrollbar-color:var(--fv-line) transparent;background:0 0;padding:clamp(18px,3vw,36px);font-family:inherit;font-size:14px;line-height:1.65}.fv-page button{background:var(--fv-panel);min-height:38px;color:var(--fv-text);border-color:var(--fv-line);border-radius:10px;justify-content:center;align-items:center;gap:8px;padding:8px 14px;font-weight:500;line-height:1.4;transition:background .15s,border-color .15s;display:inline-flex}.fv-page button:not(:disabled):hover{background:var(--fv-tint);border-color:var(--fv-lime)}.fv-page button.fv-primary{background:var(--fv-lime);color:var(--fv-button-ink);border-color:var(--fv-lime)}.fv-page button.fv-primary:not(:disabled):hover{background:color-mix(in srgb,var(--fv-lime) 88%,var(--fv-text))}.fv-page button.fv-pause{color:var(--fv-warning);border-color:var(--fv-warning)}.fv-page :is(button,summary,input,select,textarea):focus-visible{outline:2px solid var(--fv-lime);outline-offset:3px}.fv-page :is(input,select,textarea){color:var(--fv-text);background:var(--fv-panel);border-color:var(--fv-line);border-radius:9px}.fv-page :is(input,textarea)::placeholder{color:var(--fv-muted);opacity:.85}.fv-page input[type=checkbox],.fv-page progress{accent-color:var(--fv-lime)}.fv-page input[aria-invalid=true]{border-color:var(--fv-danger);outline-color:var(--fv-danger)}.fv-page p,.fv-note{color:var(--fv-muted)}.fv-page small{font-size:12px}.fv-page fieldset{border:1px solid var(--fv-line);border-radius:12px;min-width:0;padding:16px}.fv-page legend{padding:0 8px;font-weight:600}.fv-header{margin-bottom:20px}.fv-identity h1{letter-spacing:0;font-size:26px;font-weight:650}.fv-identity h1 span{font-size:13px}.fv-avatar{background:var(--fv-tint);color:var(--fv-lime);box-shadow:none}.fv-kicker{color:var(--fv-muted);letter-spacing:.06em;font-size:12px}.fv-nav{flex-wrap:wrap;gap:8px;margin-bottom:24px;padding-bottom:10px}.fv-nav>button{color:var(--fv-muted);background:0 0;border:0;border-radius:10px;padding:9px 18px}.fv-nav>button.selected{background:var(--fv-tint);color:var(--fv-lime);font-weight:600}.fv-nav>button.selected:after{display:none}.fv-status{color:var(--fv-muted);align-items:center;margin:0;font-size:12px;display:inline-flex}.fv-status.on i{background:var(--fv-success);box-shadow:none}.fv-trading-bar{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:16px;padding:22px 24px}.fv-trading-bar .fv-actions{justify-content:flex-end}.fv-trading-bar .fv-primary{min-width:160px;min-height:44px}.fv-run-meta{flex-wrap:wrap;gap:8px;margin-top:14px;display:flex}.fv-run-meta span{background:var(--fv-tint);border-radius:6px;margin:0;padding:3px 9px;font-size:12px}.fv-setup-needed{background:var(--fv-tint);border:1px solid var(--fv-line);border-radius:12px;margin:14px 0 0}.fv-trading-section{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:16px;margin-top:20px;padding:24px}.fv-trading-section>header h2{font-size:19px;font-weight:600}.fv-trading-section>header span{margin-left:auto}.fv-learning-section>summary{justify-content:space-between;align-items:center;gap:16px;font-size:18px;font-weight:600;display:flex}.fv-learning-section>summary span{color:var(--fv-muted);font-size:12px;font-weight:400}.fv-learning-section>summary:after{content:\"+\";color:var(--fv-lime);font-size:22px}.fv-learning-section[open]>summary:after{content:\"−\"}.fv-learning-section[open]>summary{margin-bottom:20px}.fv-pnl-cards>div{background:var(--fv-tint);border-color:#0000;padding:16px}.fv-pnl-cards strong{color:var(--fv-text)}.fv-profit,.fv-pnl-cards .fv-profit,.fv-analysis .positive{color:var(--fv-danger)}.fv-loss,.fv-pnl-cards .fv-loss,.fv-analysis .negative{color:var(--fv-success)}.fv-pill,.fv-learning-badges span{background:var(--fv-tint);color:var(--fv-lime);border-color:var(--fv-line)}.fv-statistics-toolbar button[aria-pressed=true],.fv-period-switch button[aria-pressed=true]{background:var(--fv-tint);color:var(--fv-lime);border-color:var(--fv-lime)}.fv-learning-checks .verified{color:var(--fv-success);border-color:var(--fv-success)}.fv-error,.fv-analysis-alert{color:var(--fv-danger);border-color:color-mix(in srgb,var(--fv-danger) 35%,var(--fv-line));background:color-mix(in srgb,var(--fv-danger) 7%,var(--fv-panel))}.fv-analysis-gaps{color:var(--fv-warning);border-color:var(--fv-line);background:var(--fv-tint)}.fv-analysis-grid,.fv-home-layout,.fv-talk-layout{min-width:0}.fv-home-stage{background:var(--fv-tint)}.fv-home-footer{background:var(--fv-panel);flex-wrap:wrap;gap:16px 32px}.fv-home-editor,.fv-oracle,.fv-journal{background:var(--fv-panel)}.fv-home-tools{margin-bottom:16px}.fv-event-dot.fly{background:var(--fv-lime)}.fv-event-dot.jev{background:var(--fv-success)}.fv-event-dot.user{background:var(--fv-warning)}.fv-page .fv-data-details>summary{margin-bottom:0}.fv-page .fv-data-details[open]>summary{margin-bottom:16px}.fv-page .fv-data-details .fv-actions{margin-top:12px}.fv-modal-backdrop{background:var(--dsw-alias-bg-mask-1,#0006);padding:24px}.fv-setup{background:var(--fv-panel);border-color:var(--fv-line);border-radius:20px;flex-direction:column;width:min(860px,100%);max-height:min(840px,90vh);padding:0;display:flex}.fv-setup>header{flex-shrink:0;padding:24px 28px 12px}.fv-setup>header h2{font-size:22px;font-weight:600}.fv-steps{flex-shrink:0;gap:8px;margin:0;padding:12px 28px 20px}.fv-steps button{border-color:var(--fv-line);color:var(--fv-muted);padding:10px;font-size:13px}.fv-steps button.current{color:var(--fv-lime);background:var(--fv-tint);border-color:var(--fv-lime)}.fv-setup-body{flex:1;min-height:0;padding:8px 28px 24px;overflow-y:auto}.fv-setup-body>p{font-size:13px}.fv-setup label{color:var(--fv-text);font-size:13px}.fv-setup .fv-instrument{border:1px solid var(--fv-line);border-radius:10px;align-items:flex-start;padding:12px}.fv-setup .fv-instrument>label{min-width:110px;margin:8px 0}.fv-setup footer{border-color:var(--fv-line);background:var(--fv-panel);flex-shrink:0;gap:10px;padding:18px 28px}.fv-setup>.fv-error{flex-shrink:0;margin:0 28px 12px}.fv-install{max-width:760px;margin:auto;padding-block:50px}.fv-install-card{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:18px;margin-top:24px;padding:28px}.fv-install-card label{gap:8px;display:grid}.fv-install-card .fv-primary{margin-top:12px}@media (width<=700px){.fv-header{flex-wrap:wrap;align-items:flex-start}.fv-trading-bar{padding:18px}.fv-trading-bar .fv-actions{justify-content:flex-start;width:100%}.fv-trading-section{padding:18px}.fv-trading-section>header span{margin-left:0}.fv-nav>button{flex:1;padding:9px 10px}.fv-setup>header,.fv-setup-body{padding-inline:18px}.fv-steps{flex-wrap:wrap;padding:12px 18px}.fv-steps button{flex:40%}.fv-setup footer{padding:14px 18px}.fv-setup footer>.fv-actions{justify-content:flex-end;width:100%}.fv-modal-backdrop{padding:12px}.fv-learning-section>summary{flex-wrap:wrap;gap:8px}}.fv-instrument-search{flex-wrap:wrap;align-items:end;gap:12px;margin:16px 0;display:flex}.fv-instrument-search label{flex:180px;gap:6px;display:grid}.fv-product-catalog{border:1px solid var(--fv-line);border-radius:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;max-height:240px;padding:12px;display:grid;overflow:auto}.fv-setup label.fv-product-option{background:var(--fv-tint);cursor:pointer;border-radius:8px;flex-flow:wrap;justify-content:flex-start;align-items:center;gap:8px;margin:0;padding:8px;display:flex}.fv-product-option small{color:var(--fv-warning)}.fv-instruments>h3{margin:20px 0 12px}.fv-instrument>div>small{color:var(--fv-muted);display:block}.fv-instruments .fv-contract-choice{flex:240px;min-width:0}.fv-setup .fv-product-option input[type=checkbox]{flex:0 0 16px;width:16px;height:16px;margin:0;padding:0}.fv-step-help{border:1px solid var(--fv-line);border-left:3px solid var(--fv-lime);background:var(--fv-tint);border-radius:10px;margin-bottom:18px;padding:14px 16px}.fv-step-help strong{color:var(--fv-text)}.fv-step-help p{margin:8px 0 0;font-size:13px}.fv-page .qs-trading-guide{--qs-ink:var(--fv-text);--qs-muted:var(--fv-muted);--qs-surface:var(--fv-panel);--qs-line:var(--fv-line);--qs-accent:var(--fv-lime);--qs-tint:var(--fv-tint)}.fv-workspace{max-width:1680px;margin:0 auto}.fv-workspace .fv-avatar{border-radius:13px;width:44px;height:44px;font-size:24px}.fv-workspace .fv-identity h1{font-size:25px;line-height:1.3}.fv-workspace .fv-identity h1 span{color:var(--fv-muted);margin:6px 0 0;font-size:12px;font-weight:400;display:block}.fv-workspace .fv-header-actions .qs-quick-help{color:var(--fv-muted);background:0 0;border:0}.fv-workspace .fv-nav{border-bottom:1px solid var(--fv-line);margin-bottom:8px}.fv-launch-row{flex-wrap:wrap;align-items:center;gap:16px;padding:18px 0 24px;display:flex}.fv-launch-row>label{color:var(--fv-muted);gap:6px;font-size:12px;display:grid}.fv-launch-row select{min-width:145px;min-height:42px;font:inherit;padding:8px 12px;font-size:14px}.fv-launch-summary{color:var(--fv-muted);flex:1;font-size:12px;line-height:1.9}.fv-launch-summary strong{color:var(--fv-text);font-weight:500;display:block}.fv-launch-row>.fv-primary,.fv-launch-row>.fv-pause{min-width:130px;min-height:44px}.fv-page .fv-pause{color:var(--fv-text);border-color:var(--fv-line);background:var(--fv-tint)}.fv-page .fv-contract-settings{color:var(--fv-muted);background:0 0;border:0;padding:8px 0}.fv-focus-grid{grid-template-columns:minmax(0,2.4fr) minmax(250px,1fr);gap:22px;display:grid}.fv-market-focus,.fv-reason-focus{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:16px;min-width:0;padding:24px}.fv-market-focus header{justify-content:space-between;align-items:center;gap:16px;display:flex}.fv-market-focus h2{margin:4px 0 0;font-size:20px}.fv-market-price{font-variant-numeric:tabular-nums;font-size:32px;font-weight:550}.fv-market-focus small,.fv-reason-focus>small{color:var(--fv-muted);font-size:12px}.fv-market-focus svg{width:100%;height:230px;margin:15px 0;display:block}.fv-market-focus footer{color:var(--fv-muted);flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:12px;display:flex}.fv-market-empty{height:250px;color:var(--fv-muted);flex-direction:column;justify-content:center;align-items:center;display:flex}.fv-market-empty span{font-size:21px;font-weight:500}.fv-market-empty p{font-size:12px}.fv-reason-focus{flex-direction:column;gap:18px;display:flex}.fv-reason-focus>button{color:var(--fv-muted);border:0;align-self:flex-start;margin-top:auto;padding-left:0;font-size:12px}.fv-reason-focus .fv-decisions{display:block}.fv-reason-focus .fv-decision{background:0 0;border:0;padding:0}.fv-reason-focus .fv-decision header{margin-bottom:18px}.fv-reason-focus .fv-decision p{font-size:14px}.fv-plans-focus{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:14px;margin-top:22px;padding:20px 24px}.fv-plans-focus h2{margin:0 0 8px;font-size:15px}.fv-plans-focus p{margin:0;font-size:13px}.fv-workspace-health{color:var(--fv-muted);flex-wrap:wrap;align-items:center;gap:16px;padding:16px 0;font-size:12px;display:flex}.fv-workspace-health>button{color:var(--fv-muted);background:0 0;border:0;margin-left:auto;font-size:12px}.fv-workspace .fv-setup-needed{flex-wrap:wrap;align-items:center;gap:10px 20px;margin:0 0 20px;padding:16px;display:flex}.fv-workspace .fv-setup-needed strong{font-size:14px}.fv-workspace .fv-setup-needed span{color:var(--fv-muted);flex:1;font-size:12px}.fv-setup-content .fv-steps{flex-wrap:wrap;gap:6px;padding:0 0 20px;display:flex}.fv-setup-content .fv-steps button{white-space:nowrap;flex:1;padding:8px 10px;font-size:12px}.fv-setup-content .fv-settings-fields{border:0;margin:0;padding:0}.fv-setup-content .fv-setup-body{padding:0;overflow:visible}.fv-setup-content .fv-form-grid{grid-template-columns:1fr}.fv-setup-content .fv-checkbox{flex-direction:row;justify-content:flex-start;align-items:center;display:flex}.fv-setup-content input[type=checkbox]{flex:0 0 16px;width:16px;height:16px}.fv-setup-content .fv-product-option{flex-direction:row;align-items:center;gap:6px;display:flex}.fv-setup-content .fv-product-catalog{grid-template-columns:1fr 1fr;padding:8px}.fv-setup-content .fv-instrument{border-bottom:1px solid var(--fv-line);gap:12px;padding:16px 0;display:grid}.fv-setup-content .fv-instrument>button{justify-self:start}.fv-setup-content .fv-instrument>div>strong{font-size:14px}.fv-setup-content .fv-instruments>h3{margin-top:20px;font-size:13px}.fv-setup-content .fv-catalog-picker{border:1px solid var(--fv-line);border-radius:10px;margin:12px 0;padding:12px}.fv-setup-content p{font-size:12px;line-height:1.7}.fv-setup-content :is(details,fieldset){margin-bottom:16px}.fv-setup-content details>summary{cursor:pointer;padding-block:10px;font-size:13px}.fv-setup-content .fv-check-row{margin:0;padding:12px 0}.fv-setup-content .fv-check-row b{font-size:12px}.fv-workspace .qs-trading-drawer .fv-data-details{border:0;border-top:1px solid var(--fv-line);padding:12px 0}@media (width<=950px){.fv-focus-grid{grid-template-columns:1fr}.fv-reason-focus{gap:12px}.fv-reason-focus .fv-decision header{margin-bottom:8px}}@media (width<=600px){.fv-launch-summary{flex-basis:100%}.fv-launch-row>.fv-primary,.fv-launch-row>.fv-pause{width:100%}.fv-market-focus,.fv-reason-focus{padding:18px}.fv-market-price{font-size:26px}.fv-market-focus svg{height:190px}.fv-market-empty{height:200px}.fv-header-actions{flex-wrap:wrap}}";
-		const tagId$10 = "@deepseek-ai/dsh-client-ui-quantskills/fly-workspace.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$10) + "]") === null) {
+		const css$13 = ".fv-page{scrollbar-color:var(--fv-line) transparent;background:0 0;padding:clamp(18px,3vw,36px);font-family:inherit;font-size:14px;line-height:1.65}.fv-page button{background:var(--fv-panel);min-height:38px;color:var(--fv-text);border-color:var(--fv-line);border-radius:10px;justify-content:center;align-items:center;gap:8px;padding:8px 14px;font-weight:500;line-height:1.4;transition:background .15s,border-color .15s;display:inline-flex}.fv-page button:not(:disabled):hover{background:var(--fv-tint);border-color:var(--fv-lime)}.fv-page button.fv-primary{background:var(--fv-lime);color:var(--fv-button-ink);border-color:var(--fv-lime)}.fv-page button.fv-primary:not(:disabled):hover{background:color-mix(in srgb,var(--fv-lime) 88%,var(--fv-text))}.fv-page button.fv-pause{color:var(--fv-warning);border-color:var(--fv-warning)}.fv-page :is(button,summary,input,select,textarea):focus-visible{outline:2px solid var(--fv-lime);outline-offset:3px}.fv-page :is(input,select,textarea){color:var(--fv-text);background:var(--fv-panel);border-color:var(--fv-line);border-radius:9px}.fv-page :is(input,textarea)::placeholder{color:var(--fv-muted);opacity:.85}.fv-page input[type=checkbox],.fv-page progress{accent-color:var(--fv-lime)}.fv-page input[aria-invalid=true]{border-color:var(--fv-danger);outline-color:var(--fv-danger)}.fv-page p,.fv-note{color:var(--fv-muted)}.fv-page small{font-size:12px}.fv-page fieldset{border:1px solid var(--fv-line);border-radius:12px;min-width:0;padding:16px}.fv-page legend{padding:0 8px;font-weight:600}.fv-header{margin-bottom:20px}.fv-identity h1{letter-spacing:0;font-size:26px;font-weight:650}.fv-identity h1 span{font-size:13px}.fv-avatar{background:var(--fv-tint);color:var(--fv-lime);box-shadow:none}.fv-kicker{color:var(--fv-muted);letter-spacing:.06em;font-size:12px}.fv-nav{flex-wrap:wrap;gap:8px;margin-bottom:24px;padding-bottom:10px}.fv-nav>button{color:var(--fv-muted);background:0 0;border:0;border-radius:10px;padding:9px 18px}.fv-nav>button.selected{background:var(--fv-tint);color:var(--fv-lime);font-weight:600}.fv-nav>button.selected:after{display:none}.fv-status{color:var(--fv-muted);align-items:center;margin:0;font-size:12px;display:inline-flex}.fv-status.on i{background:var(--fv-success);box-shadow:none}.fv-trading-bar{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:16px;padding:22px 24px}.fv-trading-bar .fv-actions{justify-content:flex-end}.fv-trading-bar .fv-primary{min-width:160px;min-height:44px}.fv-run-meta{flex-wrap:wrap;gap:8px;margin-top:14px;display:flex}.fv-run-meta span{background:var(--fv-tint);border-radius:6px;margin:0;padding:3px 9px;font-size:12px}.fv-setup-needed{background:var(--fv-tint);border:1px solid var(--fv-line);border-radius:12px;margin:14px 0 0}.fv-trading-section{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:16px;margin-top:20px;padding:24px}.fv-trading-section>header h2{font-size:19px;font-weight:600}.fv-trading-section>header span{margin-left:auto}.fv-learning-section>summary{justify-content:space-between;align-items:center;gap:16px;font-size:18px;font-weight:600;display:flex}.fv-learning-section>summary span{color:var(--fv-muted);font-size:12px;font-weight:400}.fv-learning-section>summary:after{content:\"+\";color:var(--fv-lime);font-size:22px}.fv-learning-section[open]>summary:after{content:\"−\"}.fv-learning-section[open]>summary{margin-bottom:20px}.fv-pnl-cards>div{background:var(--fv-tint);border-color:#0000;padding:16px}.fv-pnl-cards strong{color:var(--fv-text)}.fv-profit,.fv-pnl-cards .fv-profit,.fv-analysis .positive{color:var(--fv-danger)}.fv-loss,.fv-pnl-cards .fv-loss,.fv-analysis .negative{color:var(--fv-success)}.fv-pill,.fv-learning-badges span{background:var(--fv-tint);color:var(--fv-lime);border-color:var(--fv-line)}.fv-statistics-toolbar button[aria-pressed=true],.fv-period-switch button[aria-pressed=true]{background:var(--fv-tint);color:var(--fv-lime);border-color:var(--fv-lime)}.fv-learning-checks .verified{color:var(--fv-success);border-color:var(--fv-success)}.fv-error,.fv-analysis-alert{color:var(--fv-danger);border-color:color-mix(in srgb,var(--fv-danger) 35%,var(--fv-line));background:color-mix(in srgb,var(--fv-danger) 7%,var(--fv-panel))}.fv-analysis-gaps{color:var(--fv-warning);border-color:var(--fv-line);background:var(--fv-tint)}.fv-analysis-grid,.fv-home-layout,.fv-talk-layout{min-width:0}.fv-home-stage{background:var(--fv-tint)}.fv-home-footer{background:var(--fv-panel);flex-wrap:wrap;gap:16px 32px}.fv-home-editor,.fv-oracle,.fv-journal{background:var(--fv-panel)}.fv-home-tools{margin-bottom:16px}.fv-event-dot.fly{background:var(--fv-lime)}.fv-event-dot.jev{background:var(--fv-success)}.fv-event-dot.user{background:var(--fv-warning)}.fv-page .fv-data-details>summary{margin-bottom:0}.fv-page .fv-data-details[open]>summary{margin-bottom:16px}.fv-page .fv-data-details .fv-actions{margin-top:12px}.fv-modal-backdrop{background:var(--dsw-alias-bg-mask-1,#0006);padding:24px}.fv-setup{background:var(--fv-panel);border-color:var(--fv-line);border-radius:20px;flex-direction:column;width:min(860px,100%);max-height:min(840px,90vh);padding:0;display:flex}.fv-setup>header{flex-shrink:0;padding:24px 28px 12px}.fv-setup>header h2{font-size:22px;font-weight:600}.fv-steps{flex-shrink:0;gap:8px;margin:0;padding:12px 28px 20px}.fv-steps button{border-color:var(--fv-line);color:var(--fv-muted);padding:10px;font-size:13px}.fv-steps button.current{color:var(--fv-lime);background:var(--fv-tint);border-color:var(--fv-lime)}.fv-setup-body{flex:1;min-height:0;padding:8px 28px 24px;overflow-y:auto}.fv-setup-body>p{font-size:13px}.fv-setup label{color:var(--fv-text);font-size:13px}.fv-setup .fv-instrument{border:1px solid var(--fv-line);border-radius:10px;align-items:flex-start;padding:12px}.fv-setup .fv-instrument>label{min-width:110px;margin:8px 0}.fv-setup footer{border-color:var(--fv-line);background:var(--fv-panel);flex-shrink:0;gap:10px;padding:18px 28px}.fv-setup>.fv-error{flex-shrink:0;margin:0 28px 12px}.fv-install{max-width:760px;margin:auto;padding-block:50px}.fv-install-card{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:18px;margin-top:24px;padding:28px}.fv-install-card label{gap:8px;display:grid}.fv-install-card .fv-primary{margin-top:12px}@media (width<=700px){.fv-header{flex-wrap:wrap;align-items:flex-start}.fv-trading-bar{padding:18px}.fv-trading-bar .fv-actions{justify-content:flex-start;width:100%}.fv-trading-section{padding:18px}.fv-trading-section>header span{margin-left:0}.fv-nav>button{flex:1;padding:9px 10px}.fv-setup>header,.fv-setup-body{padding-inline:18px}.fv-steps{flex-wrap:wrap;padding:12px 18px}.fv-steps button{flex:40%}.fv-setup footer{padding:14px 18px}.fv-setup footer>.fv-actions{justify-content:flex-end;width:100%}.fv-modal-backdrop{padding:12px}.fv-learning-section>summary{flex-wrap:wrap;gap:8px}}.fv-instrument-search{flex-wrap:wrap;align-items:end;gap:12px;margin:16px 0;display:flex}.fv-instrument-search label{flex:180px;gap:6px;display:grid}.fv-product-catalog{border:1px solid var(--fv-line);border-radius:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;max-height:240px;padding:12px;display:grid;overflow:auto}.fv-setup label.fv-product-option{background:var(--fv-tint);cursor:pointer;border-radius:8px;flex-flow:wrap;justify-content:flex-start;align-items:center;gap:8px;margin:0;padding:8px;display:flex}.fv-product-option small{color:var(--fv-warning)}.fv-instruments>h3{margin:20px 0 12px}.fv-instrument>div>small{color:var(--fv-muted);display:block}.fv-instruments .fv-contract-choice{flex:240px;min-width:0}.fv-setup .fv-product-option input[type=checkbox]{flex:0 0 16px;width:16px;height:16px;margin:0;padding:0}.fv-step-help{border:1px solid var(--fv-line);border-left:3px solid var(--fv-lime);background:var(--fv-tint);border-radius:10px;margin-bottom:18px;padding:14px 16px}.fv-step-help strong{color:var(--fv-text)}.fv-step-help p{margin:8px 0 0;font-size:13px}.fv-page .qs-trading-guide{--qs-ink:var(--fv-text);--qs-muted:var(--fv-muted);--qs-surface:var(--fv-panel);--qs-line:var(--fv-line);--qs-accent:var(--fv-lime);--qs-tint:var(--fv-tint)}.fv-workspace{max-width:1680px;margin:0 auto}.fv-workspace .fv-avatar{border-radius:13px;width:44px;height:44px;font-size:24px}.fv-workspace .fv-identity h1{font-size:25px;line-height:1.3}.fv-workspace .fv-identity h1 span{color:var(--fv-muted);margin:6px 0 0;font-size:12px;font-weight:400;display:block}.fv-workspace .fv-header-actions .qs-quick-help{color:var(--fv-muted);background:0 0;border:0}.fv-workspace .fv-nav{border-bottom:1px solid var(--fv-line);margin-bottom:8px}.fv-launch-row{flex-wrap:wrap;align-items:center;gap:16px;padding:18px 0 24px;display:flex}.fv-launch-row>label{color:var(--fv-muted);gap:6px;font-size:12px;display:grid}.fv-launch-row select{min-width:145px;min-height:42px;font:inherit;padding:8px 12px;font-size:14px}.fv-launch-summary{color:var(--fv-muted);flex:1;font-size:12px;line-height:1.9}.fv-launch-summary strong{color:var(--fv-text);font-weight:500;display:block}.fv-launch-row>.fv-primary,.fv-launch-row>.fv-pause{min-width:130px;min-height:44px}.fv-page .fv-pause{color:var(--fv-text);border-color:var(--fv-line);background:var(--fv-tint)}.fv-page .fv-contract-settings{color:var(--fv-muted);background:0 0;border:0;padding:8px 0}.fv-focus-grid{grid-template-columns:minmax(0,2.4fr) minmax(250px,1fr);gap:22px;display:grid}.fv-market-focus,.fv-reason-focus{background:var(--fv-panel);border:1px solid var(--fv-line);border-radius:16px;min-width:0;padding:24px}.fv-market-focus header{justify-content:space-between;align-items:center;gap:16px;display:flex}.fv-market-focus h2{margin:4px 0 0;font-size:20px}.fv-market-price{font-variant-numeric:tabular-nums;font-size:32px;font-weight:550}.fv-market-focus small,.fv-reason-focus>small{color:var(--fv-muted);font-size:12px}.fv-market-focus svg{width:100%;height:230px;margin:15px 0;display:block}.fv-market-focus footer{color:var(--fv-muted);flex-wrap:wrap;justify-content:space-between;gap:12px;font-size:12px;display:flex}.fv-market-empty{height:250px;color:var(--fv-muted);flex-direction:column;justify-content:center;align-items:center;display:flex}.fv-market-empty span{font-size:21px;font-weight:500}.fv-market-empty p{font-size:12px}.fv-reason-focus{flex-direction:column;gap:18px;display:flex}.fv-reason-focus>button{color:var(--fv-muted);border:0;align-self:flex-start;margin-top:auto;padding-left:0;font-size:12px}.fv-reason-focus .fv-decisions{display:block}.fv-reason-focus .fv-decision{background:0 0;border:0;padding:0}.fv-reason-focus .fv-decision header{margin-bottom:18px}.fv-reason-focus .fv-decision p{font-size:14px}.fv-plans-focus{border:1px solid var(--fv-line);background:var(--fv-panel);border-radius:14px;margin-top:22px;padding:20px 24px}.fv-plans-focus h2{margin:0 0 8px;font-size:15px}.fv-plans-focus p{margin:0;font-size:13px}.fv-workspace-health{color:var(--fv-muted);flex-wrap:wrap;align-items:center;gap:16px;padding:16px 0;font-size:12px;display:flex}.fv-workspace-health>button{color:var(--fv-muted);background:0 0;border:0;margin-left:auto;font-size:12px}.fv-workspace .fv-setup-needed{flex-wrap:wrap;align-items:center;gap:10px 20px;margin:0 0 20px;padding:16px;display:flex}.fv-workspace .fv-setup-needed strong{font-size:14px}.fv-workspace .fv-setup-needed span{color:var(--fv-muted);flex:1;font-size:12px}.fv-setup-content .fv-steps{flex-wrap:wrap;gap:6px;padding:0 0 20px;display:flex}.fv-setup-content .fv-steps button{white-space:nowrap;flex:1;padding:8px 10px;font-size:12px}.fv-setup-content .fv-settings-fields{border:0;margin:0;padding:0}.fv-setup-content .fv-setup-body{padding:0;overflow:visible}.fv-setup-content .fv-form-grid{grid-template-columns:1fr}.fv-setup-content .fv-checkbox{flex-direction:row;justify-content:flex-start;align-items:center;display:flex}.fv-setup-content input[type=checkbox]{flex:0 0 16px;width:16px;height:16px}.fv-setup-content .fv-product-option{flex-direction:row;align-items:center;gap:6px;display:flex}.fv-setup-content .fv-product-catalog{grid-template-columns:1fr 1fr;padding:8px}.fv-setup-content .fv-instrument{border-bottom:1px solid var(--fv-line);gap:12px;padding:16px 0;display:grid}.fv-setup-content .fv-instrument>button{justify-self:start}.fv-setup-content .fv-instrument>div>strong{font-size:14px}.fv-setup-content .fv-instruments>h3{margin-top:20px;font-size:13px}.fv-setup-content .fv-catalog-picker{border:1px solid var(--fv-line);border-radius:10px;margin:12px 0;padding:12px}.fv-setup-content p{font-size:12px;line-height:1.7}.fv-setup-content :is(details,fieldset){margin-bottom:16px}.fv-setup-content details>summary{cursor:pointer;padding-block:10px;font-size:13px}.fv-setup-content .fv-check-row{margin:0;padding:12px 0}.fv-setup-content .fv-check-row b{font-size:12px}.fv-workspace .qs-trading-drawer .fv-data-details{border:0;border-top:1px solid var(--fv-line);padding:12px 0}@media (width<=950px){.fv-focus-grid{grid-template-columns:1fr}.fv-reason-focus{gap:12px}.fv-reason-focus .fv-decision header{margin-bottom:8px}}@media (width<=600px){.fv-launch-summary{flex-basis:100%}.fv-launch-row>.fv-primary,.fv-launch-row>.fv-pause{width:100%}.fv-market-focus,.fv-reason-focus{padding:18px}.fv-market-price{font-size:26px}.fv-market-focus svg{height:190px}.fv-market-empty{height:200px}.fv-header-actions{flex-wrap:wrap}}";
+		const tagId$13 = "@deepseek-ai/dsh-client-ui-quantskills/fly-workspace.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$13) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$10;
-			tag.textContent = css$10;
+			tag.dataset.pluginCss = tagId$13;
+			tag.textContent = css$13;
 			document.head.appendChild(tag);
 		}
 		//#endregion
 		//#region \0dsh-global-css:packages/ui-quantskills/src/client/fly/trader-overview.css.mjs
-		const css$9 = ".fv-page.qs-workspace-refined.qs-trader-dashboard{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:18px;padding:28px}.qs-workspace-refined .qs-trader-identity-header{margin-bottom:24px}.qs-workspace-refined .qs-trader-identity-header .fv-avatar{background:var(--qs-tint);width:60px;height:60px;box-shadow:none;border-radius:19px}.qs-trader-name-line{flex-wrap:wrap;align-items:center;gap:10px 16px;display:flex}.qs-workspace-refined .qs-trader-name-line h1{letter-spacing:-.02em;font-size:26px}.qs-trader-running{color:var(--qs-muted);white-space:nowrap;align-items:center;gap:7px;font-size:12px;display:inline-flex}.qs-trader-name-line>.qs-trader-running[data-running=true]{color:var(--fv-success)}.qs-trader-running .qs-state-dot{width:5px;height:5px}.qs-workspace-refined .qs-trader-subtitle{color:var(--qs-muted);margin:9px 0 0;font-size:13px}.qs-trader-dashboard .fv-header-actions>button:first-child{color:var(--qs-accent);background:0 0;border-color:#0000}.fv-page.qs-workspace-refined .qs-trader-identity-header .fv-pause{background:var(--qs-accent);border-color:var(--qs-accent);color:var(--qs-accent-ink,#fff)}.qs-trader-dashboard .qs-trader-navigation{margin-bottom:0}.qs-trader-overview-anchor{outline:none}.qs-trader-metrics{border-bottom:1px solid var(--qs-line);grid-template-columns:1.12fr 1.12fr .88fr;margin:0;padding:28px 0 30px;display:grid}.qs-trader-metrics>div{border-left:1px solid var(--qs-line);min-width:0;padding:0 26px}.qs-trader-metrics>div:first-child{border-left:0;padding-left:0}.qs-trader-metrics>div:last-child{padding-right:0}.qs-trader-metrics dt{color:var(--qs-muted);font-size:13px}.qs-trader-metrics dd{font-variant-numeric:tabular-nums;letter-spacing:-.035em;white-space:nowrap;margin:12px 0 0;font-size:clamp(28px,2.5vw,32px);font-weight:500;line-height:1.2}.qs-trader-metrics dd small{color:var(--qs-muted);letter-spacing:0;margin-left:9px;font-size:13px;font-weight:400}.qs-trader-metrics p{color:var(--qs-muted);margin:9px 0 0;font-size:11px;line-height:1.5}.qs-trader-summary-grid{grid-template-columns:minmax(0,3fr) minmax(0,2fr);padding:28px 0;display:grid}.qs-trader-summary-grid[data-view=fills]{grid-template-columns:minmax(0,1fr)}.qs-trader-fills{min-width:0}.qs-fills-toolbar{color:var(--qs-muted);flex-wrap:wrap;align-items:center;gap:12px;margin:-6px 0 16px;font-size:12px;display:flex}.qs-fills-toolbar>span{margin-right:auto}.qs-fills-toolbar strong{color:var(--qs-ink);margin-left:6px;font-weight:500}.qs-workspace-refined .qs-fills-toolbar select,.qs-workspace-refined .qs-fills-toolbar input{width:auto;max-width:150px;min-height:32px;padding:5px 10px;font-size:12px}.qs-fills-scroll{max-height:400px}.qs-fills-note{color:var(--qs-muted);margin:14px 0 0;font-size:11px;line-height:1.7}.qs-fills-fee-note{margin-top:4px;font-size:11px;font-weight:400;line-height:1.4;display:block}.qs-trader-positions{min-width:0;padding-right:25px}.qs-trader-activity{border-left:1px solid var(--qs-line);flex-direction:column;min-width:0;padding-left:25px;display:flex}.qs-trader-summary-grid header{flex-wrap:wrap;align-items:center;gap:10px;min-height:28px;margin-bottom:20px;display:flex}.qs-workspace-refined .qs-trader-summary-grid h2{letter-spacing:-.02em;margin:0;font-size:18px;font-weight:650}.qs-trader-summary-grid header>span{color:var(--qs-muted);margin-left:auto;font-size:12px}.fv-page.qs-workspace-refined button.qs-overview-link{color:var(--qs-accent);box-shadow:none;background:0 0;border:0;border-radius:4px;align-items:center;gap:5px;min-height:32px;padding:0;font-size:13px;display:inline-flex}.fv-page.qs-workspace-refined button.qs-overview-link:hover{text-underline-offset:4px;text-decoration:underline}.qs-trader-summary-grid button.qs-overview-more{align-self:flex-start;margin-top:14px}.qs-positions-scroll{scrollbar-width:thin;max-height:358px;overflow-x:auto}.qs-positions-scroll table{border-collapse:collapse;font-variant-numeric:tabular-nums;width:100%;font-size:13px}.qs-positions-scroll th,.qs-positions-scroll td{border-bottom:1px solid var(--qs-line);white-space:nowrap;text-align:left;padding:14px 12px}.qs-positions-scroll thead th{background:color-mix(in srgb, var(--qs-line) 28%, var(--qs-surface));color:var(--qs-muted);z-index:1;padding-block:14px;font-weight:400;position:sticky;top:0}.qs-positions-scroll th:last-child,.qs-positions-scroll td:last-child{text-align:right}.qs-positions-scroll tbody th{font-weight:550}.qs-positions-scroll td small{color:var(--qs-muted);margin-top:3px;font-size:11px;line-height:1.25;display:block}.qs-position-side{color:var(--qs-accent);background:var(--qs-tint);border-radius:5px;padding:3px 7px;font-size:12px}.qs-positions-scroll .qs-position-empty{text-align:center;white-space:normal;color:var(--qs-muted);padding:50px 12px;line-height:1.7}.qs-trader-activity ol{flex:1;margin:0;padding:0;list-style:none}.qs-trader-activity li{grid-template-columns:42px minmax(0,1fr);gap:14px;margin:12px 0 28px;font-size:13px;display:grid}.qs-trader-activity time{color:var(--qs-muted);font-variant-numeric:tabular-nums;font-size:12px;line-height:1.6}.qs-trader-activity strong{font-size:14px;font-weight:500;line-height:1.6}.qs-trader-activity p{color:var(--qs-muted);overflow-wrap:anywhere;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin:7px 0 0;font-size:13px;line-height:1.8;display:-webkit-box;overflow:hidden}.qs-trader-activity .qs-activity-empty{margin:12px 0 36px;display:block}.qs-trader-market-fold,.qs-trader-account-fold{border-top:1px solid var(--qs-line);font-size:12px}.qs-trader-market-fold>summary,.qs-trader-account-fold>summary{cursor:pointer;color:var(--qs-muted);padding:19px 0}.qs-trader-market-fold>summary span,.qs-trader-account-fold>summary span{margin-left:4px}.qs-trader-market-fold .qs-contracts{margin-top:0}.qs-trader-connection-actions{color:var(--qs-muted);justify-content:space-between;align-items:center;gap:12px;padding:12px 0;display:flex}.qs-trader-connection-actions button{color:var(--qs-accent);background:0 0;border:0;padding:6px 0}.qs-trader-dashboard .fv-plans-focus{padding-block:18px;font-size:12px}.qs-workspace-refined .qs-trading-drawer .fv-focus-grid{grid-template-columns:minmax(0,1fr)}.qs-workspace-refined .qs-trading-drawer .fv-focus-grid>aside{border-left:0;border-top:1px solid var(--qs-line)}@media (width<=680px){.fv-page.qs-workspace-refined.qs-trader-dashboard{padding:20px}.qs-trader-metrics{grid-template-columns:1fr 1fr;row-gap:22px}.qs-trader-metrics>div{padding-inline:18px}.qs-trader-metrics>div:last-child{border-left:0;flex-wrap:wrap;grid-column:1/-1;align-items:baseline;gap:12px;padding-left:0;display:flex}.qs-trader-metrics>div:last-child dd,.qs-trader-metrics>div:last-child p{margin:0}.qs-trader-metrics>div:last-child dd{font-size:22px}.qs-trader-summary-grid{grid-template-columns:1fr;gap:24px}.qs-trader-positions{padding-right:0}.qs-trader-activity{border-left:0;border-top:1px solid var(--qs-line);padding:24px 0 0}.qs-trader-activity li{margin-bottom:22px}.qs-trader-metrics dd{font-size:24px}}@media (width<=400px){.fv-page.qs-workspace-refined.qs-trader-dashboard{padding:15px}.qs-trader-metrics>div{padding-inline:12px}.qs-trader-metrics dd{font-size:21px}.qs-trader-metrics dd small{margin-left:4px}.qs-positions-scroll th,.qs-positions-scroll td{padding-inline:8px}}";
-		const tagId$9 = "@deepseek-ai/dsh-client-ui-quantskills/trader-overview.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$9) + "]") === null) {
+		const css$12 = ".fv-page.qs-workspace-refined.qs-trader-dashboard{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:18px;padding:28px}.qs-workspace-refined .qs-trader-identity-header{margin-bottom:24px}.qs-workspace-refined .qs-trader-identity-header .fv-avatar{background:var(--qs-tint);width:60px;height:60px;box-shadow:none;border-radius:19px}.qs-trader-name-line{flex-wrap:wrap;align-items:center;gap:10px 16px;display:flex}.qs-workspace-refined .qs-trader-name-line h1{letter-spacing:-.02em;font-size:26px}.qs-trader-running{color:var(--qs-muted);white-space:nowrap;align-items:center;gap:7px;font-size:12px;display:inline-flex}.qs-trader-name-line>.qs-trader-running[data-running=true]{color:var(--fv-success)}.qs-trader-running .qs-state-dot{width:5px;height:5px}.qs-workspace-refined .qs-trader-subtitle{color:var(--qs-muted);margin:9px 0 0;font-size:13px}.qs-trader-dashboard .fv-header-actions>button:first-child{color:var(--qs-accent);background:0 0;border-color:#0000}.fv-page.qs-workspace-refined .qs-trader-identity-header .fv-pause{background:var(--qs-accent);border-color:var(--qs-accent);color:var(--qs-accent-ink,#fff)}.fv-page.qs-trader-dashboard .qs-trader-navigation{border:0;gap:12px 20px;margin:0 0 22px;padding:0}.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections{border:1px solid color-mix(in srgb, var(--qs-line) 45%, transparent);background:color-mix(in srgb, var(--qs-line) 36%, var(--qs-surface));border-radius:13px;flex:0 auto;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px;margin:0;padding:4px;display:inline-grid}.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button{min-width:96px;min-height:36px;color:var(--qs-muted);white-space:nowrap;background:0 0;border:1px solid #0000;border-radius:9px;justify-content:center;align-items:center;gap:8px;padding:7px 18px;font-size:13px;font-weight:500;line-height:1.4;transition:background .15s,color .15s,box-shadow .15s;display:inline-flex}.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button:not(.selected):hover{color:var(--qs-ink);background:color-mix(in srgb, var(--qs-surface) 60%, transparent)}.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button.selected{color:var(--qs-ink);background:var(--qs-surface);border-color:color-mix(in srgb, var(--qs-line) 50%, transparent);font-weight:600;box-shadow:0 1px 3px #0000000d}.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button.selected svg{color:var(--qs-accent)}.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button:focus-visible{outline:2px solid var(--qs-accent);outline-offset:2px}.fv-page.qs-trader-dashboard .qs-trader-navigation>.qs-quick-help{border:1px solid var(--qs-line);min-height:36px;color:var(--qs-muted);background:var(--qs-surface);border-radius:10px;justify-content:center;align-items:center;gap:7px;margin-left:auto;padding:7px 12px;font-size:12px;line-height:1.4;display:inline-flex}.fv-page.qs-trader-dashboard .qs-trader-navigation>.qs-quick-help:hover{color:var(--qs-accent);border-color:color-mix(in srgb, var(--qs-accent) 25%, var(--qs-line));background:var(--qs-tint)}.qs-trader-overview-anchor{outline:none}.qs-trader-metrics{border-bottom:1px solid var(--qs-line);grid-template-columns:1.12fr 1.12fr .88fr;margin:0;padding:28px 0 30px;display:grid}.qs-trader-metrics>div{border-left:1px solid var(--qs-line);min-width:0;padding:0 26px}.qs-trader-metrics>div:first-child{border-left:0;padding-left:0}.qs-trader-metrics>div:last-child{padding-right:0}.qs-trader-metrics dt{color:var(--qs-muted);font-size:13px}.qs-trader-metrics dd{font-variant-numeric:tabular-nums;letter-spacing:-.035em;white-space:nowrap;margin:12px 0 0;font-size:clamp(28px,2.5vw,32px);font-weight:500;line-height:1.2}.qs-trader-metrics dd small{color:var(--qs-muted);letter-spacing:0;margin-left:9px;font-size:13px;font-weight:400}.qs-trader-metrics p{color:var(--qs-muted);margin:9px 0 0;font-size:11px;line-height:1.5}.qs-trader-summary-grid{grid-template-columns:minmax(0,3fr) minmax(0,2fr);padding:28px 0;display:grid}.qs-trader-summary-grid[data-view=fills]{grid-template-columns:minmax(0,1fr)}.qs-trader-fills{min-width:0}.qs-fills-toolbar{color:var(--qs-muted);flex-wrap:wrap;align-items:center;gap:12px;margin:-6px 0 16px;font-size:12px;display:flex}.qs-fills-toolbar>span{margin-right:auto}.qs-fills-toolbar strong{color:var(--qs-ink);margin-left:6px;font-weight:500}.qs-workspace-refined .qs-fills-toolbar select,.qs-workspace-refined .qs-fills-toolbar input{width:auto;max-width:150px;min-height:32px;padding:5px 10px;font-size:12px}.qs-fills-scroll{max-height:400px}.qs-fills-note{color:var(--qs-muted);margin:14px 0 0;font-size:11px;line-height:1.7}.qs-fills-fee-note{margin-top:4px;font-size:11px;font-weight:400;line-height:1.4;display:block}.qs-trader-positions{min-width:0;padding-right:25px}.qs-trader-activity{border-left:1px solid var(--qs-line);flex-direction:column;min-width:0;padding-left:25px;display:flex}.qs-trader-summary-grid header{flex-wrap:wrap;align-items:center;gap:10px;min-height:28px;margin-bottom:20px;display:flex}.qs-workspace-refined .qs-trader-summary-grid h2{letter-spacing:-.02em;margin:0;font-size:18px;font-weight:650}.qs-trader-summary-grid header>span{color:var(--qs-muted);margin-left:auto;font-size:12px}.fv-page.qs-workspace-refined button.qs-overview-link{color:var(--qs-accent);box-shadow:none;background:0 0;border:0;border-radius:4px;align-items:center;gap:5px;min-height:32px;padding:0;font-size:13px;display:inline-flex}.fv-page.qs-workspace-refined button.qs-overview-link:hover{text-underline-offset:4px;text-decoration:underline}.qs-trader-summary-grid button.qs-overview-more{align-self:flex-start;margin-top:14px}.qs-positions-scroll{scrollbar-width:thin;max-height:358px;overflow-x:auto}.qs-positions-scroll table{border-collapse:collapse;font-variant-numeric:tabular-nums;width:100%;font-size:13px}.qs-positions-scroll th,.qs-positions-scroll td{border-bottom:1px solid var(--qs-line);white-space:nowrap;text-align:left;padding:14px 12px}.qs-positions-scroll thead th{background:color-mix(in srgb, var(--qs-line) 28%, var(--qs-surface));color:var(--qs-muted);z-index:1;padding-block:14px;font-weight:400;position:sticky;top:0}.qs-positions-scroll th:last-child,.qs-positions-scroll td:last-child{text-align:right}.qs-positions-scroll tbody th{font-weight:550}.qs-positions-scroll td small{color:var(--qs-muted);margin-top:3px;font-size:11px;line-height:1.25;display:block}.qs-position-side{color:var(--qs-accent);background:var(--qs-tint);border-radius:5px;padding:3px 7px;font-size:12px}.qs-positions-scroll .qs-position-empty{text-align:center;white-space:normal;color:var(--qs-muted);padding:50px 12px;line-height:1.7}.qs-trader-activity ol{flex:1;margin:0;padding:0;list-style:none}.qs-trader-activity li{grid-template-columns:42px minmax(0,1fr);gap:14px;margin:12px 0 28px;font-size:13px;display:grid}.qs-trader-activity time{color:var(--qs-muted);font-variant-numeric:tabular-nums;font-size:12px;line-height:1.6}.qs-trader-activity strong{font-size:14px;font-weight:500;line-height:1.6}.qs-trader-activity p{color:var(--qs-muted);overflow-wrap:anywhere;-webkit-line-clamp:2;-webkit-box-orient:vertical;margin:7px 0 0;font-size:13px;line-height:1.8;display:-webkit-box;overflow:hidden}.qs-trader-activity .qs-activity-empty{margin:12px 0 36px;display:block}.qs-trader-support{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:16px;margin-top:4px}.qs-trader-support .qs-trader-disclosure{border:0;margin:0;padding:0;scroll-margin-top:24px;font-size:13px}.qs-trader-disclosure+.qs-trader-disclosure{border-top:1px solid var(--qs-line)}.qs-trader-support .qs-trader-disclosure>summary{cursor:pointer;border-radius:12px;grid-template-columns:38px minmax(0,1fr) auto 16px;align-items:center;gap:16px;margin:0;padding:18px 20px;list-style:none;transition:background .15s;display:grid}.qs-trader-disclosure>summary::-webkit-details-marker{display:none}.qs-trader-disclosure>summary:hover{background:color-mix(in srgb, var(--qs-tint) 45%, var(--qs-surface))}.qs-trader-support .qs-trader-disclosure>summary:focus-visible{outline:2px solid var(--qs-accent);outline-offset:-3px}.qs-trader-disclosure-icon{width:38px;height:38px;color:var(--qs-accent);background:var(--qs-tint);border-radius:12px;place-items:center;display:grid}.qs-trader-disclosure-copy{gap:5px;min-width:0;display:grid}.qs-trader-disclosure-copy strong{color:var(--qs-ink);font-size:14px;font-weight:600;line-height:1.4}.qs-trader-disclosure-copy>span{color:var(--qs-muted);font-size:12px;line-height:1.5}.qs-trader-disclosure-status{background:color-mix(in srgb, var(--qs-line) 26%, var(--qs-surface));color:var(--qs-muted);font-variant-numeric:tabular-nums;white-space:nowrap;border-radius:7px;padding:6px 10px;font-size:12px;line-height:1.5}.qs-trader-disclosure-status[data-tone=ready]{color:var(--fv-success);background:color-mix(in srgb, var(--fv-success) 8%, var(--qs-surface))}.qs-trader-disclosure-status[data-tone=attention]{color:var(--qs-accent);background:var(--qs-tint)}.qs-trader-disclosure[data-kind=account] .qs-trader-disclosure-status{color:var(--qs-ink);letter-spacing:-.015em;background:0 0;padding-inline:0;font-size:15px;font-weight:550}.qs-trader-disclosure-status small{color:var(--qs-muted);font-weight:400}.qs-trader-disclosure-chevron{color:var(--qs-muted);transition:transform .18s}.qs-trader-disclosure[open]>summary .qs-trader-disclosure-chevron{transform:rotate(90deg)}.qs-trader-disclosure-content{border-top:1px solid var(--qs-line);min-width:0;margin:0 20px;padding:18px 0 20px}.qs-trader-disclosure-content>p{margin:0 0 16px;font-size:12px;line-height:1.7}.qs-trader-disclosure-content .qs-contracts{margin-top:0}.qs-trader-disclosure[data-kind=plans] .qs-trader-disclosure-content>section{overscroll-behavior:contain;scrollbar-width:thin;max-height:420px;overflow-y:auto}.qs-trader-disclosure[data-kind=plans] .qs-trader-disclosure-content>section>h2{display:none}.qs-trader-disclosure-content>section>button{border:0;border-bottom:1px solid var(--qs-line);border-radius:0;margin:0;padding:14px 12px}.qs-trader-disclosure-content>section>button:last-of-type{border-bottom:0}.qs-workspace-refined .qs-trader-disclosure-content .fv-account-strip{border:0;margin:0;padding:2px 0}.qs-trader-connection-actions{color:var(--qs-muted);justify-content:space-between;align-items:center;gap:12px;padding:12px 0;display:flex}.qs-trader-connection-actions button{color:var(--qs-accent);background:0 0;border:0;padding:6px 0}.qs-workspace-refined .qs-trading-drawer .fv-focus-grid{grid-template-columns:minmax(0,1fr)}.qs-workspace-refined .qs-trading-drawer .fv-focus-grid>aside{border-left:0;border-top:1px solid var(--qs-line)}@media (width<=680px){.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections>button{min-width:72px;padding-inline:12px}.qs-trader-support .qs-trader-disclosure>summary{grid-template-columns:34px minmax(0,1fr) 16px;gap:6px 12px;padding:16px}.qs-trader-disclosure-icon{border-radius:10px;grid-row:1/3;width:34px;height:34px}.qs-trader-disclosure-copy{grid-column:2}.qs-trader-disclosure-status{grid-column:2;justify-self:start;padding:2px 7px}.qs-trader-disclosure-chevron{grid-area:1/3/3}.qs-trader-disclosure-content{margin-inline:16px}.qs-trader-disclosure-content>section>button{flex-direction:column;align-items:flex-start;gap:8px;padding-inline:4px}.qs-trader-disclosure-content .fv-account-strip{grid-template-columns:1fr;gap:16px}.qs-trader-disclosure-content .fv-account-strip>div{justify-content:space-between;align-items:baseline;gap:12px;display:flex}.fv-page.qs-workspace-refined.qs-trader-dashboard{padding:20px}.qs-trader-metrics{grid-template-columns:1fr 1fr;row-gap:22px}.qs-trader-metrics>div{padding-inline:18px}.qs-trader-metrics>div:last-child{border-left:0;flex-wrap:wrap;grid-column:1/-1;align-items:baseline;gap:12px;padding-left:0;display:flex}.qs-trader-metrics>div:last-child dd,.qs-trader-metrics>div:last-child p{margin:0}.qs-trader-metrics>div:last-child dd{font-size:22px}.qs-trader-summary-grid{grid-template-columns:1fr;gap:24px}.qs-trader-positions{padding-right:0}.qs-trader-activity{border-left:0;border-top:1px solid var(--qs-line);padding:24px 0 0}.qs-trader-activity li{margin-bottom:22px}.qs-trader-metrics dd{font-size:24px}}@media (width<=400px){.fv-page.qs-trader-dashboard .fv-nav.qs-trader-sections{flex:100%}.fv-page.qs-workspace-refined.qs-trader-dashboard{padding:15px}.qs-trader-metrics>div{padding-inline:12px}.qs-trader-metrics dd{font-size:21px}.qs-trader-metrics dd small{margin-left:4px}.qs-positions-scroll th,.qs-positions-scroll td{padding-inline:8px}}";
+		const tagId$12 = "@deepseek-ai/dsh-client-ui-quantskills/trader-overview.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$12) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$9;
-			tag.textContent = css$9;
+			tag.dataset.pluginCss = tagId$12;
+			tag.textContent = css$12;
 			document.head.appendChild(tag);
 		}
 		//#endregion
 		//#region \0dsh-css:packages/ui-quantskills/src/client/fly/FlyHistory.module.css.mjs
-		const css$8 = ".a3eOXq_history{border:1px solid var(--fv-line);border-radius:10px;margin:16px 0;padding:16px}.a3eOXq_heading{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;display:flex}.a3eOXq_history p{margin:8px 0;font-size:13px;line-height:1.6}.a3eOXq_history ul{margin:12px 0 0;padding:0;list-style:none}.a3eOXq_history li{flex-wrap:wrap;gap:8px 20px;padding:7px 0;font-size:13px;display:flex}.a3eOXq_error{color:var(--fv-danger);overflow-wrap:anywhere}";
-		const tagId$8 = "@deepseek-ai/dsh-client-ui-quantskills/FlyHistory.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$8) + "]") === null) {
+		const css$11 = ".a3eOXq_history{border:1px solid var(--fv-line);border-radius:10px;margin:16px 0;padding:16px}.a3eOXq_heading{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;display:flex}.a3eOXq_history p{margin:8px 0;font-size:13px;line-height:1.6}.a3eOXq_history ul{margin:12px 0 0;padding:0;list-style:none}.a3eOXq_history li{flex-wrap:wrap;gap:8px 20px;padding:7px 0;font-size:13px;display:flex}.a3eOXq_error{color:var(--fv-danger);overflow-wrap:anywhere}";
+		const tagId$11 = "@deepseek-ai/dsh-client-ui-quantskills/FlyHistory.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$11) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$8;
-			tag.textContent = css$8;
+			tag.dataset.pluginCss = tagId$11;
+			tag.textContent = css$11;
 			document.head.appendChild(tag);
 		}
 		var FlyHistory_module_css_default = {
@@ -109834,7 +110707,6 @@ get: function(visualType, key, isCategory) {
 			const [models, setModels] = (0, react.useState)();
 			const [oracle, setOracle] = (0, react.useState)("");
 			const [report, setReport] = (0, react.useState)("");
-			const [filter, setFilter] = (0, react.useState)("all");
 			const loaded = (0, react.useRef)(false);
 			const tradingRef = (0, react.useRef)(null);
 			function showTrading() {
@@ -109963,7 +110835,6 @@ get: function(visualType, key, isCategory) {
 			const isLLM = s.settings.decision_engine === "llm";
 			const executionMode = s.settings.execution_mode ?? "automatic";
 			const automatic = executionMode === "automatic";
-			const events = collapseNeuralWaits(s.events).filter((e) => filter === "all" || e.actor === filter).reverse();
 			const issueList = (value) => {
 				const issues = [];
 				if (value.decision_engine !== "llm" && !s.environment.brain_ready) issues.push({
@@ -110076,6 +110947,10 @@ get: function(visualType, key, isCategory) {
 			}
 			const guide = (0, react_jsx_runtime.jsx)(TradingGuide, {
 				compact: true,
+				triggerIcon: (0, react_jsx_runtime.jsx)(e$6, {
+					size: 17,
+					"aria-hidden": "true"
+				}),
 				name: "AI 交易员",
 				steps: [
 					{
@@ -110171,15 +111046,30 @@ get: function(visualType, key, isCategory) {
 				className: "fv-nav qs-trader-sections",
 				"aria-label": "AI 交易员栏目",
 				children: [
-					["dashboard", "交易"],
-					["analysis", "表现"],
-					["talk", "记录"]
-				].map(([key, label]) => (0, react_jsx_runtime.jsx)("button", {
+					[
+						"dashboard",
+						"交易",
+						o$34
+					],
+					[
+						"analysis",
+						"表现",
+						a$8
+					],
+					[
+						"talk",
+						"记录",
+						e$11
+					]
+				].map(([key, label, Icon]) => (0, react_jsx_runtime.jsxs)("button", {
 					type: "button",
 					className: tab === key ? "selected" : "",
 					"aria-current": tab === key ? "page" : void 0,
 					onClick: () => setTab(key),
-					children: label
+					children: [(0, react_jsx_runtime.jsx)(Icon, {
+						size: 17,
+						"aria-hidden": "true"
+					}), (0, react_jsx_runtime.jsx)("span", { children: label })]
 				}, key))
 			});
 			return (0, react_jsx_runtime.jsxs)("div", {
@@ -110223,7 +111113,7 @@ get: function(visualType, key, isCategory) {
 								type: "button",
 								"aria-label": "AI 交易员运行设置",
 								onClick: openSetup,
-								children: [(0, react_jsx_runtime.jsx)(o$14, { size: 18 }), (0, react_jsx_runtime.jsx)("span", { children: "编辑" })]
+								children: [(0, react_jsx_runtime.jsx)(o$19, { size: 18 }), (0, react_jsx_runtime.jsx)("span", { children: "编辑" })]
 							}), (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
 								className: s.control.trading ? "fv-pause" : "fv-primary",
@@ -110314,56 +111204,61 @@ get: function(visualType, key, isCategory) {
 								onManage: () => configureAt(2)
 							})
 						}),
-						(0, react_jsx_runtime.jsxs)("details", {
-							className: "qs-trader-market-fold",
+						(0, react_jsx_runtime.jsxs)("section", {
+							className: "qs-trader-support",
+							"aria-label": "交易运行详情",
 							children: [
-								(0, react_jsx_runtime.jsxs)("summary", { children: ["行情与连接 ", (0, react_jsx_runtime.jsxs)("span", { children: [
-									"· ",
-									displayedMarkets.filter((m) => m.readiness === "ready").length,
-									"/",
-									displayedMarkets.length,
-									" 就绪"
-								] })] }),
-								(0, react_jsx_runtime.jsx)(FlyContractList, {
-									markets: displayedMarkets,
-									selected: currentMarket?.product,
-									trading: s.control.trading && !s.control.paused,
-									onSelect: (product) => {
-										setSelected(product);
-										setMarketOpen(true);
-									},
-									onManage: () => configureAt(2)
+								(0, react_jsx_runtime.jsxs)(TraderDisclosure, {
+									kind: "market",
+									title: "行情与连接",
+									description: "合约行情、连接状态与运行诊断",
+									status: `${displayedMarkets.filter((m) => m.readiness === "ready").length} / ${displayedMarkets.length} 就绪`,
+									tone: displayedMarkets.length > 0 && displayedMarkets.every((m) => m.readiness === "ready") ? "ready" : "neutral",
+									children: [(0, react_jsx_runtime.jsx)(FlyContractList, {
+										markets: displayedMarkets,
+										selected: currentMarket?.product,
+										trading: s.control.trading && !s.control.paused,
+										onSelect: (product) => {
+											setSelected(product);
+											setMarketOpen(true);
+										},
+										onManage: () => configureAt(2)
+									}), (0, react_jsx_runtime.jsxs)("div", {
+										className: "qs-trader-connection-actions",
+										children: [(0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											onClick: () => setDetails(true),
+											children: "连接与诊断 ↗"
+										}), (0, react_jsx_runtime.jsxs)("span", { children: ["存档", s.persistence?.ok === false ? "异常" : s.persistence?.ok ? "已保存" : "待确认"] })]
+									})]
 								}),
-								(0, react_jsx_runtime.jsxs)("div", {
-									className: "qs-trader-connection-actions",
-									children: [(0, react_jsx_runtime.jsx)("button", {
-										type: "button",
-										onClick: () => setDetails(true),
-										children: "连接与诊断 ↗"
-									}), (0, react_jsx_runtime.jsxs)("span", { children: ["存档", s.persistence?.ok === false ? "异常" : s.persistence?.ok ? "已保存" : "待确认"] })]
+								tradePlans || (0, react_jsx_runtime.jsx)(TraderDisclosure, {
+									kind: "plans",
+									title: "交易计划与回执",
+									description: "核对交易计划，查看委托与成交回执",
+									status: "暂无待处理",
+									children: (0, react_jsx_runtime.jsx)("p", { children: automatic ? "暂无委托。有有效信号后自动提交，回执显示在这里。" : "暂无计划。有有效信号后生成计划，核对并确认后才会下单。" })
+								}),
+								s.account?.official && (0, react_jsx_runtime.jsx)(TraderDisclosure, {
+									kind: "account",
+									title: "比赛账户",
+									description: "账户权益 · 上次快照",
+									status: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+										fmt(s.account.official.Balance),
+										" ",
+										(0, react_jsx_runtime.jsx)("small", { children: "元" })
+									] }),
+									children: (0, react_jsx_runtime.jsxs)("div", {
+										className: "fv-account-strip",
+										"aria-label": "账户上次快照",
+										children: [
+											(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("small", { children: "账户权益 · 上次快照" }), (0, react_jsx_runtime.jsx)("strong", { children: fmt(s.account.official.Balance) })] }),
+											(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("small", { children: "可用资金" }), (0, react_jsx_runtime.jsx)("strong", { children: fmt(s.account.official.Available) })] }),
+											(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("small", { children: "当日手续费" }), (0, react_jsx_runtime.jsx)("strong", { children: fmt(s.account.official.Commission) })] })
+										]
+									})
 								})
 							]
-						}),
-						(0, react_jsx_runtime.jsx)("section", {
-							className: "fv-plans-focus",
-							"aria-label": "交易计划与回执",
-							children: tradePlans || (0, react_jsx_runtime.jsxs)("details", { children: [(0, react_jsx_runtime.jsx)("summary", { children: "交易计划与回执" }), (0, react_jsx_runtime.jsx)("p", { children: automatic ? "暂无委托。有有效信号后自动提交，回执显示在这里。" : "暂无计划。有有效信号后生成计划，核对并确认后才会下单。" })] })
-						}),
-						s.account?.official && (0, react_jsx_runtime.jsxs)("details", {
-							className: "qs-trader-account-fold",
-							children: [(0, react_jsx_runtime.jsxs)("summary", { children: ["比赛账户 ", (0, react_jsx_runtime.jsxs)("span", { children: [
-								"· 权益 ",
-								fmt(s.account.official.Balance),
-								" 元"
-							] })] }), (0, react_jsx_runtime.jsxs)("div", {
-								className: "fv-account-strip",
-								"aria-label": "账户上次快照",
-								children: [
-									(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("small", { children: "账户权益 · 上次快照" }), (0, react_jsx_runtime.jsx)("strong", { children: fmt(s.account.official.Balance) })] }),
-									(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("small", { children: "可用资金" }), (0, react_jsx_runtime.jsx)("strong", { children: fmt(s.account.official.Available) })] }),
-									(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("small", { children: "当日手续费" }), (0, react_jsx_runtime.jsx)("strong", { children: fmt(s.account.official.Commission) })] })
-								]
-							})]
 						})
 					] }),
 					tab === "talk" && (0, react_jsx_runtime.jsxs)("div", {
@@ -110414,47 +111309,18 @@ get: function(visualType, key, isCategory) {
 									children: report
 								})
 							]
-						}), (0, react_jsx_runtime.jsxs)("section", {
-							className: "fv-journal",
-							children: [(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsx)("h2", { children: "运行与交易记录" }), (0, react_jsx_runtime.jsxs)("select", {
-								"aria-label": "记录来源",
-								value: filter,
-								onChange: (e) => setFilter(e.target.value),
-								children: [(0, react_jsx_runtime.jsx)("option", {
-									value: "all",
-									children: "所有来源"
-								}), Object.entries(actors).map(([id, label]) => (0, react_jsx_runtime.jsx)("option", {
-									value: id,
-									children: label
-								}, id))]
-							})] }), events.length ? events.map((e) => (0, react_jsx_runtime.jsxs)("article", { children: [(0, react_jsx_runtime.jsx)("div", { className: `fv-event-dot ${e.actor}` }), (0, react_jsx_runtime.jsxs)("div", { children: [
-								(0, react_jsx_runtime.jsxs)("div", {
-									className: "fv-event-meta",
-									children: [
-										(0, react_jsx_runtime.jsx)("b", { children: actors[e.actor] || e.actor }),
-										(0, react_jsx_runtime.jsx)("time", { children: (/* @__PURE__ */ new Date(e.at * 1e3)).toLocaleTimeString() }),
-										(0, react_jsx_runtime.jsxs)("small", { children: ["#", e.seq] })
-									]
-								}),
-								(0, react_jsx_runtime.jsx)("p", { children: eventText(e) }),
-								e.decision_id && (0, react_jsx_runtime.jsxs)("small", {
-									className: "fv-note",
-									children: ["决策 ", e.decision_id.slice(0, 12)]
-								})
-							] })] }, e.seq)) : (0, react_jsx_runtime.jsx)("div", {
-								className: "fv-empty",
-								children: "唤醒后，这里会记录它的选择与经历。"
-							})]
+						}), (0, react_jsx_runtime.jsx)(TraderJournal, {
+							actors,
+							formatEvent: eventText
 						})]
 					}),
-					tab === "analysis" && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-						(0, react_jsx_runtime.jsx)(TradeStatistics, {}),
-						(0, react_jsx_runtime.jsx)(TradeAnalytics, { active }),
-						!isLLM && (0, react_jsx_runtime.jsxs)("details", {
-							className: "fv-data-details",
-							children: [(0, react_jsx_runtime.jsx)("summary", { children: "学习反馈" }), (0, react_jsx_runtime.jsx)(TradeLearning, {})]
-						})
-					] }),
+					tab === "analysis" && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(TradeAnalytics, {
+						active,
+						traderDetails: (0, react_jsx_runtime.jsx)(TradeStatistics, {})
+					}), !isLLM && (0, react_jsx_runtime.jsxs)("details", {
+						className: "fv-data-details",
+						children: [(0, react_jsx_runtime.jsx)("summary", { children: "学习反馈" }), (0, react_jsx_runtime.jsx)(TradeLearning, {})]
+					})] }),
 					tab === "replay" && (0, react_jsx_runtime.jsx)(FlyReplayLab, { active }),
 					marketOpen && (0, react_jsx_runtime.jsx)(ActionDialog, {
 						drawer: true,
@@ -110905,13 +111771,13 @@ get: function(visualType, key, isCategory) {
 		}
 		//#endregion
 		//#region \0dsh-global-css:packages/ui-quantskills/src/client/RefinedTrading.css.mjs
-		const css$7 = ".qs-contest-workspace{background:linear-gradient(155deg,var(--qs-surface),color-mix(in srgb,var(--qs-tint) 28%,var(--qs-surface)))}.qs-contest-workspace [hidden],nav[aria-label=选择比赛][hidden]{display:none!important}.qs-workspace-breadcrumb{min-height:34px;color:var(--qs-muted);flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:26px;font-size:12px;display:flex}.qs-contest-workspace .qs-workspace-breadcrumb>button,.qs-trader-shell .qs-workspace-breadcrumb>button{color:var(--qs-muted);font:inherit;cursor:pointer;background:0 0;border:0;align-items:center;gap:7px;padding:4px 0;display:inline-flex}.qs-workspace-account{align-items:center;gap:12px;margin-left:auto;display:flex}.qs-contest-workspace .qs-workspace-account>button{color:var(--qs-muted);background:0 0;border:0;font-size:12px}.qs-independent-workspace{min-width:0;max-width:1440px;margin-inline:auto}.qs-contest-workspace>.qs-workspace-breadcrumb{max-width:1440px;margin-inline:auto}.qs-independent-workspace .qs-trader-shell.qs-trader-embedded{height:auto;padding:0;overflow:visible}.qs-independent-workspace .fv-page,.qs-trader-shell .fv-page{height:auto;overflow:visible}.qs-workspace-entries{margin:24px 0}.qs-contest-workspace button.qs-workspace-entry{text-align:left;border:0;border-top:1px solid var(--qs-line);background:0 0;border-radius:0;align-items:center;gap:22px;width:100%;padding:27px 12px;display:flex}.qs-contest-workspace .qs-workspace-entries>button.qs-workspace-entry:last-child{border-bottom:1px solid var(--qs-line)}.qs-workspace-entry>span:nth-child(2){min-width:0}.qs-workspace-entry strong{letter-spacing:-.03em;font-size:23px;font-weight:600;display:block}.qs-workspace-entry small{color:var(--qs-muted);margin-top:7px;font-size:13px;display:block}.qs-workspace-entry>svg{color:var(--qs-muted);flex-shrink:0;margin-left:auto}.qs-workspace-entry:hover strong{color:var(--qs-accent)}.qs-workspace-avatar,.qs-workspace-refined .fv-avatar{width:48px;height:48px;color:var(--qs-accent);background:linear-gradient(140deg,var(--qs-tint),color-mix(in srgb,var(--qs-accent) 9%,var(--qs-surface)));box-shadow:inset 0 1px 1px color-mix(in srgb,var(--qs-surface) 60%,transparent);border-radius:16px;flex-shrink:0;place-items:center;display:grid}.qs-workspace-entry .qs-workspace-avatar{border-radius:19px;width:58px;height:58px}.qs-trader-orb{background:radial-gradient(at 25% 22%,var(--qs-surface),transparent 48%),conic-gradient(from 20deg,color-mix(in srgb,var(--qs-accent) 40%,var(--qs-surface)),color-mix(in srgb,var(--qs-accent) 20%,var(--qs-muted)),var(--qs-tint),color-mix(in srgb,var(--qs-accent) 30%,var(--qs-surface)));width:29px;height:29px;box-shadow:inset -4px -4px 7px color-mix(in srgb,var(--qs-accent) 20%,transparent),0 3px 9px color-mix(in srgb,var(--qs-accent) 10%,transparent);border-radius:48% 52% 43% 57%;display:block;transform:rotate(-18deg)}.qs-workspace-research{border-block:1px solid var(--qs-line);align-items:center;display:flex;position:relative}.qs-contest-workspace .qs-workspace-research>button.qs-workspace-entry{border:0;flex:1;min-width:0}.qs-workspace-research .qs-workspace-entry>span:nth-child(2){padding-right:44px}.qs-research-more{position:absolute;top:50%;right:44px;transform:translateY(-50%)}.qs-contest-workspace button.qs-research-more-trigger{width:36px;height:36px;color:var(--qs-muted);background:0 0;border:1px solid #0000;border-radius:11px;place-items:center;padding:0;display:grid}.qs-contest-workspace button.qs-research-more-trigger:is(:hover,[aria-expanded=true]){background:var(--qs-tint);color:var(--qs-accent);border-color:#0000}.qs-research-menu{z-index:10;border:1px solid var(--qs-line);background:var(--qs-surface);width:276px;max-width:calc(100vw - 64px);box-shadow:0 12px 36px color-mix(in srgb,var(--qs-ink) 12%,transparent),0 2px 6px color-mix(in srgb,var(--qs-ink) 4%,transparent);border-radius:16px;padding:6px;position:absolute;top:calc(100% + 8px);right:0}.qs-research-menu[data-above=true]{top:auto;bottom:calc(100% + 8px)}.qs-contest-workspace .qs-research-menu>button{text-align:left;background:0 0;border:0;border-radius:10px;align-items:center;gap:10px;width:100%;padding:12px;font-size:13px;display:flex}.qs-contest-workspace .qs-research-menu>button:not(:disabled):hover{background:var(--qs-tint);color:var(--qs-accent)}.qs-research-menu>button>svg{color:var(--qs-muted);flex-shrink:0}.qs-research-recent{border-top:1px solid var(--qs-line);gap:5px;margin:5px 6px 0;padding:12px 6px 8px;font-size:12px;display:grid}.qs-research-recent span{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.qs-research-recent small{color:var(--qs-muted);font-size:11px}.qs-jev-workspace.qs-workspace-refined{box-shadow:none;background:0 0;border:0;margin:0;padding:0;border-radius:0!important}.qs-workspace-refined .qs-workspace-heading,.qs-workspace-refined .fv-header{gap:18px;margin:0 0 25px}.qs-workspace-identity{align-items:center;gap:15px;min-width:0;display:flex}.qs-jev-workspace.qs-workspace-refined .qs-workspace-heading h2,.qs-workspace-refined .fv-identity h1{letter-spacing:-.035em;margin:0;font-family:inherit;font-size:28px;font-weight:650;line-height:1.3}.qs-workspace-refined .qs-workspace-heading p,.qs-workspace-refined .fv-identity h1 span{color:var(--qs-muted);letter-spacing:0;margin:6px 0 0;font-size:12px;font-weight:400;display:block}.qs-workspace-refined :is(.qs-workspace-actions,.fv-header-actions){flex-wrap:wrap;align-items:center;gap:9px;display:flex}.qs-workspace-refined :is(.qs-workspace-actions,.fv-header-actions)>button{border-radius:11px;justify-content:center;align-items:center;gap:7px;width:auto;height:auto;min-height:39px;padding:9px 15px;font-size:13px;display:inline-flex}.qs-workspace-refined .fv-header-actions .fv-pause{color:var(--qs-ink);border-color:var(--qs-line)}.qs-strategy-strip{border:1px solid color-mix(in srgb,var(--qs-accent) 12%,var(--qs-line));background:linear-gradient(100deg,var(--qs-tint),color-mix(in srgb,var(--qs-tint) 40%,var(--qs-surface)));border-radius:14px;align-items:center;gap:16px;margin-bottom:18px;padding:15px 18px;display:flex}.qs-strategy-strip>div{flex:1;min-width:0}.qs-strategy-strip small{color:var(--qs-muted);font-size:11px}.qs-jev-workspace .qs-strategy-strip p{color:var(--qs-ink);-webkit-line-clamp:2;overflow-wrap:anywhere;-webkit-box-orient:vertical;margin:5px 0 0;font-size:13px;line-height:1.8;display:-webkit-box;overflow:hidden}.qs-jev-workspace .qs-strategy-strip button{color:var(--qs-accent);background:0 0;border:0;flex-shrink:0;align-items:center;gap:6px;padding:7px 0 7px 10px;font-size:12px;display:inline-flex}.qs-jev-workspace.qs-workspace-refined .qs-watch-status-inline{background:0 0;border:0;border-radius:0;align-items:start;gap:9px;margin:0;padding:4px 0 14px}.qs-watch-status-inline>span{flex-basis:6px;width:6px;height:6px;margin:7px 3px 0}.qs-watch-status-inline>span:after{display:none}.qs-watch-status-inline>div{flex-wrap:wrap;flex:1;align-items:baseline;gap:8px 14px;display:flex}.qs-watch-status-inline>div>strong{margin:0;font-size:12px;font-weight:500}.qs-watch-meta{color:var(--qs-muted);font-size:12px}.qs-watch-status-inline details{margin-left:auto;font-size:12px}.qs-watch-status-inline details[open]{flex-basis:100%}.qs-watch-status-inline summary{color:var(--qs-muted)}.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard,.qs-workspace-refined .fv-focus-grid{border:1px solid var(--qs-line);background:var(--qs-surface);box-shadow:0 7px 30px color-mix(in srgb,var(--qs-ink) 3%,transparent);border-radius:22px;grid-template-columns:minmax(0,1fr) minmax(220px,25%);gap:0;display:grid;overflow:hidden}.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard>section,.qs-workspace-refined .fv-focus-grid>:is(section,aside){background:0 0;border:0;border-radius:0;min-width:0;padding:24px}.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard>section+section,.qs-workspace-refined .fv-focus-grid>aside{border-left:1px solid var(--qs-line);background:linear-gradient(145deg,var(--qs-surface),color-mix(in srgb,var(--qs-tint) 28%,var(--qs-surface)));padding:24px 20px}.qs-jev-workspace .qs-quote-panel>div:first-child{flex-direction:column;align-items:start;gap:10px}.qs-jev-workspace .qs-quote-panel h3{margin:3px 0 0;font-size:16px}.qs-jev-workspace .qs-quote-panel>div:first-child>div:last-child{letter-spacing:-.04em;color:var(--qs-ink);text-align:left;font-variant-numeric:tabular-nums;font-family:inherit;font-size:36px;font-weight:550}.qs-workspace-refined .fv-market-focus>header{flex-direction:column;align-items:start;gap:8px;display:flex}.qs-workspace-refined .fv-market-focus h2{margin:4px 0 0;font-size:16px}.qs-workspace-refined .fv-market-price{letter-spacing:-.04em;color:var(--qs-ink);font-variant-numeric:tabular-nums;font-family:inherit;font-size:36px;font-weight:550}.qs-price-chart{width:100%;height:210px;margin:18px 0 6px;display:block;overflow:visible}.qs-price-chart line{stroke:color-mix(in srgb,var(--qs-line) 65%,transparent);stroke-width:1px}.qs-price-chart text{fill:var(--qs-muted);font-family:inherit;font-size:11px}.qs-price-chart .qs-price-line{stroke:var(--qs-accent);stroke-width:2.3px;fill:none;stroke-linecap:round;stroke-linejoin:round}.qs-workspace-refined .fv-market-focus>svg.qs-price-chart{height:210px}.qs-workspace-refined .fv-market-focus footer{color:var(--qs-muted);flex-wrap:wrap;justify-content:space-between;gap:10px;padding:0;font-size:11px;display:flex}.qs-workspace-refined .fv-market-focus .fv-quote-time{color:var(--qs-muted);font-size:11px}.qs-workspace-refined .fv-market-empty{min-height:220px}.qs-workspace-refined .qs-decision-panel>div:first-child{flex-wrap:wrap;align-items:start;gap:8px}.qs-workspace-refined .qs-decision-panel h3{letter-spacing:-.025em;margin-top:18px;font-size:22px}.qs-workspace-refined .qs-decision-panel>div:first-child>span{font-size:10px}.qs-probability-details{color:var(--qs-muted);margin:12px 0;font-size:12px}.qs-probability-details summary{cursor:pointer}.qs-workspace-refined .qs-decision-panel p{font-size:12px;line-height:1.8}.qs-workspace-refined .fv-reason-focus>small{color:var(--qs-muted);font-size:11px}.qs-workspace-refined .fv-reason-focus .fv-decision{background:0 0;border:0;margin-top:18px;padding:0}.qs-workspace-refined .fv-reason-focus .fv-decision header{flex-direction:column;align-items:start;gap:4px;display:flex}.qs-workspace-refined .fv-reason-focus .fv-decision header strong{color:var(--qs-muted);font-size:11px;font-weight:400}.qs-workspace-refined .fv-reason-focus .fv-decision header span{color:var(--qs-ink);letter-spacing:-.025em;font-size:22px;font-weight:550}.qs-workspace-refined .fv-reason-focus :is(p,small,summary){font-size:12px;line-height:1.8}.qs-workspace-refined .fv-reason-focus>button{color:var(--qs-accent);background:0 0;border:0;margin-top:14px;padding:0;font-size:12px}.qs-workspace-facts{flex-wrap:wrap;gap:10px 22px;padding:15px 0 4px;display:flex}.qs-jev-workspace .qs-workspace-facts button{color:var(--qs-muted);background:0 0;border:0;border-radius:0;padding:0;font-size:12px}.qs-workspace-facts strong{color:var(--qs-ink);margin-left:5px;font-weight:500}.qs-workspace-footer{align-items:center;gap:15px}.qs-workspace-footer>span{margin-left:auto;font-size:11px}.qs-workspace-footer>button{background:0 0;border:0;padding:5px 0;font-size:12px}.qs-quick-config{gap:16px;display:grid}.qs-quick-config>p{color:var(--qs-muted);margin:0;font-size:13px}.qs-quick-config fieldset{border:0;gap:14px;min-width:0;margin:0;padding:0;display:grid}.qs-quick-config label{gap:7px;font-size:13px;display:grid}.qs-quick-config :is(input,textarea,select){border:1px solid var(--qs-line);background:color-mix(in srgb,var(--qs-tint) 20%,var(--qs-surface));width:100%;min-width:0;color:var(--qs-ink);font:inherit;border-radius:11px;padding:11px 12px}.qs-quick-config textarea{resize:vertical;line-height:1.8}.qs-quick-config summary,.qs-quick-config-summary{color:var(--qs-muted);font-size:12px}.qs-quick-config details>label{margin-top:12px}.qs-quick-config .qs-config-advanced{color:var(--qs-accent);background:0 0;border:0;justify-self:start;padding:0}.qs-quick-config footer{border-top:1px solid var(--qs-line);justify-content:flex-end;gap:10px;padding-top:16px;display:flex}.qs-workspace-refined .fv-launch-row.qs-trader-status-line{background:0 0;border:0;border-radius:0;gap:16px;margin:0;padding:0 0 15px}.qs-trader-status-line .qs-run-state{gap:10px}.qs-trader-status-line .qs-run-state>div{flex-wrap:wrap;align-items:baseline;gap:9px;display:flex}.qs-trader-status-line .qs-run-state strong{font-size:12px;font-weight:500}.qs-trader-status-line .qs-run-state small{font-size:12px}.qs-trader-status-line .qs-state-dot{width:6px;height:6px;box-shadow:none}.qs-workspace-refined .qs-trader-status-line button.qs-summary-control{flex:none;padding:0}.qs-trader-status-line .qs-summary-control span{display:none}.qs-trader-status-line .qs-summary-control strong{color:var(--qs-muted);font-size:12px;font-weight:400}.qs-contract-overview{margin:22px 0}.qs-contract-overview>header{justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px;display:flex}.qs-workspace-refined .qs-contract-overview h2{font-size:15px;font-weight:600}.qs-contract-overview h2 small{color:var(--qs-muted);margin-left:8px;font-size:11px;font-weight:400}.qs-workspace-refined .qs-contract-overview>header button{color:var(--qs-accent);background:0 0;border:0;min-height:32px;padding:3px 0;font-size:12px}.qs-contract-list{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:16px;padding:0 18px}.qs-workspace-refined .qs-contract-list>button.qs-contract-row{text-align:left;background:0 0;border:0;border-radius:0;grid-template-columns:minmax(135px,1.3fr) .8fr 100px .8fr .8fr 15px;align-items:center;gap:20px;width:100%;padding:15px 0;font-weight:400;display:grid;position:relative}.qs-workspace-refined .qs-contract-list>button+button{border-top:1px solid var(--qs-line)}.qs-contract-row[aria-pressed=true]:before{content:\"\";background:var(--qs-accent);border-radius:0 3px 3px 0;width:3px;height:24px;position:absolute;left:-18px}.qs-contract-row>span:first-child strong{color:var(--qs-ink);font-size:13px;font-weight:500}.qs-contract-row[aria-pressed=true]>span:first-child strong{color:var(--qs-accent)}.qs-contract-row>span:first-child small{color:var(--qs-muted);margin-left:7px;font-size:11px}.qs-contract-price{font-variant-numeric:tabular-nums;font-size:13px}.qs-contract-spark{width:100px;color:var(--qs-muted);font-size:11px}.qs-contract-spark svg{width:100px;height:30px;display:block}.qs-contract-spark polyline{fill:none;stroke:color-mix(in srgb,var(--qs-accent) 65%,var(--qs-muted));stroke-width:1.5px}.qs-contract-position,.qs-contract-state{color:var(--qs-muted);font-size:12px}.qs-contract-row>svg{color:var(--qs-muted)}.qs-workspace-refined .fv-plans-focus{border:0;border-top:1px solid var(--qs-line);background:0 0;border-radius:0;padding:16px 0}.qs-workspace-refined .fv-account-strip{margin-top:0;padding:14px 0}.qs-workspace-refined .fv-account-strip strong{font-size:18px}.qs-trader-navigation{border-bottom:1px solid var(--qs-line);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 14px;margin:0 0 24px;padding-bottom:14px;display:flex}.qs-workspace-refined .fv-nav.qs-trader-sections{border:0;gap:8px;margin:0;padding:0}.qs-workspace-refined .fv-nav.qs-trader-sections button{min-height:36px;padding:8px 14px;font-size:14px}.qs-trader-navigation .qs-quick-help{color:var(--qs-muted);background:0 0;border:0;margin-left:auto;font-size:12px}@media (width<=1000px){.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard,.qs-workspace-refined .fv-focus-grid{grid-template-columns:minmax(0,1fr) 210px}.qs-workspace-refined .qs-contract-list>button.qs-contract-row{grid-template-columns:minmax(100px,1.2fr) .8fr 70px .8fr .8fr 12px;gap:12px}.qs-contract-spark,.qs-contract-spark svg{width:70px}.qs-contract-row>span:first-child small{margin-left:0;display:block}}@media (width<=760px){.qs-workspace-heading,.qs-workspace-refined .fv-header{flex-wrap:wrap;align-items:start}.qs-workspace-actions,.qs-workspace-refined .fv-header-actions{margin-left:auto}.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard,.qs-workspace-refined .fv-focus-grid{grid-template-columns:minmax(0,1fr)}.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard>section+section,.qs-workspace-refined .fv-focus-grid>aside{border-left:0;border-top:1px solid var(--qs-line)}.qs-workspace-refined .qs-contract-list>button.qs-contract-row{grid-template-columns:minmax(90px,1fr) .8fr .9fr 12px}.qs-contract-position,.qs-contract-spark{display:none}.qs-workspace-account{margin-left:0}.qs-workspace-breadcrumb{margin-bottom:20px}.qs-workspace-footer>span{flex-basis:100%;margin-left:0}.qs-workspace-entry small{line-height:1.7}.qs-contest-workspace button.qs-workspace-entry{gap:16px;padding:22px 0}.qs-workspace-entry strong{font-size:21px}.qs-workspace-refined .fv-account-strip{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}}.qs-engine-choices{grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 24px;display:grid}.qs-settings-form .qs-engine-choices button{text-align:left;border:1px solid var(--qs-line);background:var(--qs-surface);color:var(--qs-ink);border-radius:16px;flex-direction:column;justify-content:center;align-items:flex-start;padding:18px;display:flex}.qs-engine-choices strong,.qs-engine-choices span{display:block}.qs-engine-choices strong{margin-bottom:6px;font-size:15px}.qs-engine-choices span{color:var(--qs-muted);font-size:12px;line-height:1.6}.qs-settings-form .qs-engine-choices button[aria-pressed=true]{border-color:var(--qs-accent);background:var(--qs-tint);box-shadow:0 0 0 1px var(--qs-accent)}.qs-engine-settings textarea{resize:vertical;min-height:145px;line-height:1.8}.qs-engine-summary{max-width:260px}.qs-engine-summary span{overflow-wrap:anywhere}@media (width<=600px){.qs-engine-choices{grid-template-columns:1fr}.qs-trader-status-line{flex-wrap:wrap}}.qs-trader-status-line .qs-engine-summary>span{text-overflow:ellipsis;white-space:nowrap;max-width:250px;font-size:11px;display:block;overflow:hidden}.qs-execution-choice{margin:18px 0}.qs-execution-choice h3{margin:0 0 10px;font-size:14px}.qs-execution-options{grid-template-columns:1fr 1fr;gap:10px;display:grid}.qs-execution-options button{text-align:left;border:1px solid var(--qs-line,#d8dce3);background:var(--qs-surface,transparent);color:inherit;border-radius:14px;flex-direction:column;gap:6px;padding:14px 16px;display:flex}.qs-execution-options button[aria-pressed=true]{border-color:var(--qs-accent,#0066e6);background:color-mix(in srgb, var(--qs-accent,#0066e6) 9%, transparent)}.qs-execution-options span,.qs-execution-choice p{opacity:.78;font-size:12px;line-height:1.65}.qs-execution-disclosure{font-size:13px;line-height:1.8}dialog .qs-execution-disclosure ul{max-height:none;padding-left:19px;overflow:visible}.qs-execution-disclosure li{margin:7px 0}.qs-execution-disclosure label{align-items:flex-start;gap:9px;margin:18px 0;font-weight:600;display:flex}.qs-execution-disclosure input{flex:none;height:16px;margin-top:4px;width:16px!important}@media (width<=520px){.qs-execution-options{grid-template-columns:1fr}}";
-		const tagId$7 = "@deepseek-ai/dsh-client-ui-quantskills/RefinedTrading.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$7) + "]") === null) {
+		const css$10 = ".qs-contest-workspace{background:linear-gradient(155deg,var(--qs-surface),color-mix(in srgb,var(--qs-tint) 28%,var(--qs-surface)))}.qs-contest-workspace [hidden],nav[aria-label=选择比赛][hidden]{display:none!important}.qs-workspace-breadcrumb{min-height:34px;color:var(--qs-muted);flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:26px;font-size:12px;display:flex}.qs-contest-workspace .qs-workspace-breadcrumb>button,.qs-trader-shell .qs-workspace-breadcrumb>button{color:var(--qs-muted);font:inherit;cursor:pointer;background:0 0;border:0;align-items:center;gap:7px;padding:4px 0;display:inline-flex}.qs-workspace-account{align-items:center;gap:12px;margin-left:auto;display:flex}.qs-contest-workspace .qs-workspace-account>button{color:var(--qs-muted);background:0 0;border:0;font-size:12px}.qs-independent-workspace{min-width:0;max-width:1440px;margin-inline:auto}.qs-contest-workspace>.qs-workspace-breadcrumb{max-width:1440px;margin-inline:auto}.qs-independent-workspace .qs-trader-shell.qs-trader-embedded{height:auto;padding:0;overflow:visible}.qs-independent-workspace .fv-page,.qs-trader-shell .fv-page{height:auto;overflow:visible}.qs-workspace-entries{margin:24px 0}.qs-contest-workspace button.qs-workspace-entry{text-align:left;border:0;border-top:1px solid var(--qs-line);background:0 0;border-radius:0;align-items:center;gap:22px;width:100%;padding:27px 12px;display:flex}.qs-contest-workspace .qs-workspace-entries>button.qs-workspace-entry:last-child{border-bottom:1px solid var(--qs-line)}.qs-workspace-entry>span:nth-child(2){min-width:0}.qs-workspace-entry strong{letter-spacing:-.03em;font-size:23px;font-weight:600;display:block}.qs-workspace-entry small{color:var(--qs-muted);margin-top:7px;font-size:13px;display:block}.qs-workspace-entry>svg{color:var(--qs-muted);flex-shrink:0;margin-left:auto}.qs-workspace-entry:hover strong{color:var(--qs-accent)}.qs-workspace-avatar,.qs-workspace-refined .fv-avatar{width:48px;height:48px;color:var(--qs-accent);background:linear-gradient(140deg,var(--qs-tint),color-mix(in srgb,var(--qs-accent) 9%,var(--qs-surface)));box-shadow:inset 0 1px 1px color-mix(in srgb,var(--qs-surface) 60%,transparent);border-radius:16px;flex-shrink:0;place-items:center;display:grid}.qs-workspace-entry .qs-workspace-avatar{border-radius:19px;width:58px;height:58px}.qs-trader-orb{background:radial-gradient(at 25% 22%,var(--qs-surface),transparent 48%),conic-gradient(from 20deg,color-mix(in srgb,var(--qs-accent) 40%,var(--qs-surface)),color-mix(in srgb,var(--qs-accent) 20%,var(--qs-muted)),var(--qs-tint),color-mix(in srgb,var(--qs-accent) 30%,var(--qs-surface)));width:29px;height:29px;box-shadow:inset -4px -4px 7px color-mix(in srgb,var(--qs-accent) 20%,transparent),0 3px 9px color-mix(in srgb,var(--qs-accent) 10%,transparent);border-radius:48% 52% 43% 57%;display:block;transform:rotate(-18deg)}.qs-workspace-research{border-block:1px solid var(--qs-line);align-items:center;display:flex;position:relative}.qs-contest-workspace .qs-workspace-research>button.qs-workspace-entry{border:0;flex:1;min-width:0}.qs-workspace-research .qs-workspace-entry>span:nth-child(2){padding-right:44px}.qs-research-more{position:absolute;top:50%;right:44px;transform:translateY(-50%)}.qs-contest-workspace button.qs-research-more-trigger{width:36px;height:36px;color:var(--qs-muted);background:0 0;border:1px solid #0000;border-radius:11px;place-items:center;padding:0;display:grid}.qs-contest-workspace button.qs-research-more-trigger:is(:hover,[aria-expanded=true]){background:var(--qs-tint);color:var(--qs-accent);border-color:#0000}.qs-research-menu{z-index:10;border:1px solid var(--qs-line);background:var(--qs-surface);width:276px;max-width:calc(100vw - 64px);box-shadow:0 12px 36px color-mix(in srgb,var(--qs-ink) 12%,transparent),0 2px 6px color-mix(in srgb,var(--qs-ink) 4%,transparent);border-radius:16px;padding:6px;position:absolute;top:calc(100% + 8px);right:0}.qs-research-menu[data-above=true]{top:auto;bottom:calc(100% + 8px)}.qs-contest-workspace .qs-research-menu>button{text-align:left;background:0 0;border:0;border-radius:10px;align-items:center;gap:10px;width:100%;padding:12px;font-size:13px;display:flex}.qs-contest-workspace .qs-research-menu>button:not(:disabled):hover{background:var(--qs-tint);color:var(--qs-accent)}.qs-research-menu>button>svg{color:var(--qs-muted);flex-shrink:0}.qs-research-recent{border-top:1px solid var(--qs-line);gap:5px;margin:5px 6px 0;padding:12px 6px 8px;font-size:12px;display:grid}.qs-research-recent span{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.qs-research-recent small{color:var(--qs-muted);font-size:11px}.qs-jev-workspace.qs-workspace-refined{box-shadow:none;background:0 0;border:0;margin:0;padding:0;border-radius:0!important}.qs-workspace-refined .qs-workspace-heading,.qs-workspace-refined .fv-header{gap:18px;margin:0 0 25px}.qs-workspace-identity{align-items:center;gap:15px;min-width:0;display:flex}.qs-jev-workspace.qs-workspace-refined .qs-workspace-heading h2,.qs-workspace-refined .fv-identity h1{letter-spacing:-.035em;margin:0;font-family:inherit;font-size:28px;font-weight:650;line-height:1.3}.qs-workspace-refined .qs-workspace-heading p,.qs-workspace-refined .fv-identity h1 span{color:var(--qs-muted);letter-spacing:0;margin:6px 0 0;font-size:12px;font-weight:400;display:block}.qs-workspace-refined :is(.qs-workspace-actions,.fv-header-actions){flex-wrap:wrap;align-items:center;gap:9px;display:flex}.qs-workspace-refined :is(.qs-workspace-actions,.fv-header-actions)>button{border-radius:11px;justify-content:center;align-items:center;gap:7px;width:auto;height:auto;min-height:39px;padding:9px 15px;font-size:13px;display:inline-flex}.qs-workspace-refined .fv-header-actions .fv-pause{color:var(--qs-ink);border-color:var(--qs-line)}.qs-strategy-strip{border:1px solid color-mix(in srgb,var(--qs-accent) 12%,var(--qs-line));background:linear-gradient(100deg,var(--qs-tint),color-mix(in srgb,var(--qs-tint) 40%,var(--qs-surface)));border-radius:14px;align-items:center;gap:16px;margin-bottom:18px;padding:15px 18px;display:flex}.qs-strategy-strip>div{flex:1;min-width:0}.qs-strategy-strip small{color:var(--qs-muted);font-size:11px}.qs-jev-workspace .qs-strategy-strip p{color:var(--qs-ink);-webkit-line-clamp:2;overflow-wrap:anywhere;-webkit-box-orient:vertical;margin:5px 0 0;font-size:13px;line-height:1.8;display:-webkit-box;overflow:hidden}.qs-jev-workspace .qs-strategy-strip button{color:var(--qs-accent);background:0 0;border:0;flex-shrink:0;align-items:center;gap:6px;padding:7px 0 7px 10px;font-size:12px;display:inline-flex}.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard,.qs-workspace-refined .fv-focus-grid{border:1px solid var(--qs-line);background:var(--qs-surface);box-shadow:0 7px 30px color-mix(in srgb,var(--qs-ink) 3%,transparent);border-radius:22px;grid-template-columns:minmax(0,1fr) minmax(220px,25%);gap:0;display:grid;overflow:hidden}.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard>section,.qs-workspace-refined .fv-focus-grid>:is(section,aside){background:0 0;border:0;border-radius:0;min-width:0;padding:24px}.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard>section+section,.qs-workspace-refined .fv-focus-grid>aside{border-left:1px solid var(--qs-line);background:linear-gradient(145deg,var(--qs-surface),color-mix(in srgb,var(--qs-tint) 28%,var(--qs-surface)));padding:24px 20px}.qs-jev-workspace .qs-quote-panel>div:first-child{flex-direction:column;align-items:start;gap:10px}.qs-jev-workspace .qs-quote-panel h3{margin:3px 0 0;font-size:16px}.qs-jev-workspace .qs-quote-panel>div:first-child>div:last-child{letter-spacing:-.04em;color:var(--qs-ink);text-align:left;font-variant-numeric:tabular-nums;font-family:inherit;font-size:36px;font-weight:550}.qs-workspace-refined .fv-market-focus>header{flex-direction:column;align-items:start;gap:8px;display:flex}.qs-workspace-refined .fv-market-focus h2{margin:4px 0 0;font-size:16px}.qs-workspace-refined .fv-market-price{letter-spacing:-.04em;color:var(--qs-ink);font-variant-numeric:tabular-nums;font-family:inherit;font-size:36px;font-weight:550}.qs-price-chart{width:100%;height:210px;margin:18px 0 6px;display:block;overflow:visible}.qs-price-chart line{stroke:color-mix(in srgb,var(--qs-line) 65%,transparent);stroke-width:1px}.qs-price-chart text{fill:var(--qs-muted);font-family:inherit;font-size:11px}.qs-price-chart .qs-price-line{stroke:var(--qs-accent);stroke-width:2.3px;fill:none;stroke-linecap:round;stroke-linejoin:round}.qs-workspace-refined .fv-market-focus>svg.qs-price-chart{height:210px}.qs-workspace-refined .fv-market-focus footer{color:var(--qs-muted);flex-wrap:wrap;justify-content:space-between;gap:10px;padding:0;font-size:11px;display:flex}.qs-workspace-refined .fv-market-focus .fv-quote-time{color:var(--qs-muted);font-size:11px}.qs-workspace-refined .fv-market-empty{min-height:220px}.qs-workspace-refined .qs-decision-panel>div:first-child{flex-wrap:wrap;align-items:start;gap:8px}.qs-workspace-refined .qs-decision-panel h3{letter-spacing:-.025em;margin-top:18px;font-size:22px}.qs-workspace-refined .qs-decision-panel>div:first-child>span{font-size:10px}.qs-probability-details{color:var(--qs-muted);margin:12px 0;font-size:12px}.qs-probability-details summary{cursor:pointer}.qs-workspace-refined .qs-decision-panel p{font-size:12px;line-height:1.8}.qs-workspace-refined .fv-reason-focus>small{color:var(--qs-muted);font-size:11px}.qs-workspace-refined .fv-reason-focus .fv-decision{background:0 0;border:0;margin-top:18px;padding:0}.qs-workspace-refined .fv-reason-focus .fv-decision header{flex-direction:column;align-items:start;gap:4px;display:flex}.qs-workspace-refined .fv-reason-focus .fv-decision header strong{color:var(--qs-muted);font-size:11px;font-weight:400}.qs-workspace-refined .fv-reason-focus .fv-decision header span{color:var(--qs-ink);letter-spacing:-.025em;font-size:22px;font-weight:550}.qs-workspace-refined .fv-reason-focus :is(p,small,summary){font-size:12px;line-height:1.8}.qs-workspace-refined .fv-reason-focus>button{color:var(--qs-accent);background:0 0;border:0;margin-top:14px;padding:0;font-size:12px}.qs-quick-config{gap:16px;display:grid}.qs-quick-config>p{color:var(--qs-muted);margin:0;font-size:13px}.qs-quick-config fieldset{border:0;gap:14px;min-width:0;margin:0;padding:0;display:grid}.qs-quick-config label{gap:7px;font-size:13px;display:grid}.qs-quick-config :is(input,textarea,select){border:1px solid var(--qs-line);background:color-mix(in srgb,var(--qs-tint) 20%,var(--qs-surface));width:100%;min-width:0;color:var(--qs-ink);font:inherit;border-radius:11px;padding:11px 12px}.qs-quick-config textarea{resize:vertical;line-height:1.8}.qs-quick-config summary,.qs-quick-config-summary{color:var(--qs-muted);font-size:12px}.qs-quick-config details>label{margin-top:12px}.qs-quick-config .qs-config-advanced{color:var(--qs-accent);background:0 0;border:0;justify-self:start;padding:0}.qs-quick-config footer{border-top:1px solid var(--qs-line);justify-content:flex-end;gap:10px;padding-top:16px;display:flex}.qs-workspace-refined .fv-launch-row.qs-trader-status-line{background:0 0;border:0;border-radius:0;gap:16px;margin:0;padding:0 0 15px}.qs-trader-status-line .qs-run-state{gap:10px}.qs-trader-status-line .qs-run-state>div{flex-wrap:wrap;align-items:baseline;gap:9px;display:flex}.qs-trader-status-line .qs-run-state strong{font-size:12px;font-weight:500}.qs-trader-status-line .qs-run-state small{font-size:12px}.qs-trader-status-line .qs-state-dot{width:6px;height:6px;box-shadow:none}.qs-workspace-refined .qs-trader-status-line button.qs-summary-control{flex:none;padding:0}.qs-trader-status-line .qs-summary-control span{display:none}.qs-trader-status-line .qs-summary-control strong{color:var(--qs-muted);font-size:12px;font-weight:400}.qs-contract-overview{margin:22px 0}.qs-contract-overview>header{justify-content:space-between;align-items:center;gap:10px;margin-bottom:11px;display:flex}.qs-workspace-refined .qs-contract-overview h2{font-size:15px;font-weight:600}.qs-contract-overview h2 small{color:var(--qs-muted);margin-left:8px;font-size:11px;font-weight:400}.qs-workspace-refined .qs-contract-overview>header button{color:var(--qs-accent);background:0 0;border:0;min-height:32px;padding:3px 0;font-size:12px}.qs-contract-list{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:16px;padding:0 18px}.qs-workspace-refined .qs-contract-list>button.qs-contract-row{text-align:left;background:0 0;border:0;border-radius:0;grid-template-columns:minmax(135px,1.3fr) .8fr 100px .8fr .8fr 15px;align-items:center;gap:20px;width:100%;padding:15px 0;font-weight:400;display:grid;position:relative}.qs-workspace-refined .qs-contract-list>button+button{border-top:1px solid var(--qs-line)}.qs-contract-row[aria-pressed=true]:before{content:\"\";background:var(--qs-accent);border-radius:0 3px 3px 0;width:3px;height:24px;position:absolute;left:-18px}.qs-contract-row>span:first-child strong{color:var(--qs-ink);font-size:13px;font-weight:500}.qs-contract-row[aria-pressed=true]>span:first-child strong{color:var(--qs-accent)}.qs-contract-row>span:first-child small{color:var(--qs-muted);margin-left:7px;font-size:11px}.qs-contract-price{font-variant-numeric:tabular-nums;font-size:13px}.qs-contract-spark{width:100px;color:var(--qs-muted);font-size:11px}.qs-contract-spark svg{width:100px;height:30px;display:block}.qs-contract-spark polyline{fill:none;stroke:color-mix(in srgb,var(--qs-accent) 65%,var(--qs-muted));stroke-width:1.5px}.qs-contract-position,.qs-contract-state{color:var(--qs-muted);font-size:12px}.qs-contract-row>svg{color:var(--qs-muted)}.qs-workspace-refined .fv-plans-focus{border:0;border-top:1px solid var(--qs-line);background:0 0;border-radius:0;padding:16px 0}.qs-workspace-refined .fv-account-strip{margin-top:0;padding:14px 0}.qs-workspace-refined .fv-account-strip strong{font-size:18px}.qs-trader-navigation{border-bottom:1px solid var(--qs-line);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 14px;margin:0 0 24px;padding-bottom:14px;display:flex}.qs-workspace-refined .fv-nav.qs-trader-sections{border:0;gap:8px;margin:0;padding:0}.qs-workspace-refined .fv-nav.qs-trader-sections button{min-height:36px;padding:8px 14px;font-size:14px}.qs-trader-navigation .qs-quick-help{color:var(--qs-muted);background:0 0;border:0;margin-left:auto;font-size:12px}@media (width<=1000px){.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard,.qs-workspace-refined .fv-focus-grid{grid-template-columns:minmax(0,1fr) 210px}.qs-workspace-refined .qs-contract-list>button.qs-contract-row{grid-template-columns:minmax(100px,1.2fr) .8fr 70px .8fr .8fr 12px;gap:12px}.qs-contract-spark,.qs-contract-spark svg{width:70px}.qs-contract-row>span:first-child small{margin-left:0;display:block}}@media (width<=760px){.qs-workspace-heading,.qs-workspace-refined .fv-header{flex-wrap:wrap;align-items:start}.qs-workspace-actions,.qs-workspace-refined .fv-header-actions{margin-left:auto}.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard,.qs-workspace-refined .fv-focus-grid{grid-template-columns:minmax(0,1fr)}.qs-jev-workspace.qs-workspace-refined .qs-jev-dashboard>section+section,.qs-workspace-refined .fv-focus-grid>aside{border-left:0;border-top:1px solid var(--qs-line)}.qs-workspace-refined .qs-contract-list>button.qs-contract-row{grid-template-columns:minmax(90px,1fr) .8fr .9fr 12px}.qs-contract-position,.qs-contract-spark{display:none}.qs-workspace-account{margin-left:0}.qs-workspace-breadcrumb{margin-bottom:20px}.qs-workspace-entry small{line-height:1.7}.qs-contest-workspace button.qs-workspace-entry{gap:16px;padding:22px 0}.qs-workspace-entry strong{font-size:21px}.qs-workspace-refined .fv-account-strip{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}}.qs-engine-choices{grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 24px;display:grid}.qs-settings-form .qs-engine-choices button{text-align:left;border:1px solid var(--qs-line);background:var(--qs-surface);color:var(--qs-ink);border-radius:16px;flex-direction:column;justify-content:center;align-items:flex-start;padding:18px;display:flex}.qs-engine-choices strong,.qs-engine-choices span{display:block}.qs-engine-choices strong{margin-bottom:6px;font-size:15px}.qs-engine-choices span{color:var(--qs-muted);font-size:12px;line-height:1.6}.qs-settings-form .qs-engine-choices button[aria-pressed=true]{border-color:var(--qs-accent);background:var(--qs-tint);box-shadow:0 0 0 1px var(--qs-accent)}.qs-engine-settings textarea{resize:vertical;min-height:145px;line-height:1.8}.qs-engine-summary{max-width:260px}.qs-engine-summary span{overflow-wrap:anywhere}@media (width<=600px){.qs-engine-choices{grid-template-columns:1fr}.qs-trader-status-line{flex-wrap:wrap}}.qs-trader-status-line .qs-engine-summary>span{text-overflow:ellipsis;white-space:nowrap;max-width:250px;font-size:11px;display:block;overflow:hidden}.qs-execution-choice{margin:18px 0}.qs-execution-choice h3{margin:0 0 10px;font-size:14px}.qs-execution-options{grid-template-columns:1fr 1fr;gap:10px;display:grid}.qs-execution-options button{text-align:left;border:1px solid var(--qs-line,#d8dce3);background:var(--qs-surface,transparent);color:inherit;border-radius:14px;flex-direction:column;gap:6px;padding:14px 16px;display:flex}.qs-execution-options button[aria-pressed=true]{border-color:var(--qs-accent,#0066e6);background:color-mix(in srgb, var(--qs-accent,#0066e6) 9%, transparent)}.qs-execution-options span,.qs-execution-choice p{opacity:.78;font-size:12px;line-height:1.65}.qs-execution-disclosure{font-size:13px;line-height:1.8}dialog .qs-execution-disclosure ul{max-height:none;padding-left:19px;overflow:visible}.qs-execution-disclosure li{margin:7px 0}.qs-execution-disclosure label{align-items:flex-start;gap:9px;margin:18px 0;font-weight:600;display:flex}.qs-execution-disclosure input{flex:none;height:16px;margin-top:4px;width:16px!important}@media (width<=520px){.qs-execution-options{grid-template-columns:1fr}}";
+		const tagId$10 = "@deepseek-ai/dsh-client-ui-quantskills/RefinedTrading.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$10) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
-			tag.dataset.pluginCss = tagId$7;
-			tag.textContent = css$7;
+			tag.dataset.pluginCss = tagId$10;
+			tag.textContent = css$10;
 			document.head.appendChild(tag);
 		}
 		//#endregion
@@ -111057,24 +111923,31 @@ get: function(visualType, key, isCategory) {
 				"unknown",
 				"partial"
 			].includes(plan.status)).length;
-			return (0, react_jsx_runtime.jsxs)("details", {
+			return (0, react_jsx_runtime.jsxs)(TraderDisclosure, {
 				id: "fly-contest-plans",
-				className: "fv-contest-plans",
+				kind: "plans",
+				title: "交易计划与回执",
+				description: "核对交易计划，查看委托与成交回执",
+				status: pending ? `${pending} 笔待处理` : "暂无待处理",
+				tone: pending ? "attention" : "neutral",
 				open: pending > 0,
-				children: [
-					(0, react_jsx_runtime.jsxs)("summary", { children: [
-						"交易计划与回执 · ",
-						pending,
-						" 笔待处理"
-					] }),
-					(0, react_jsx_runtime.jsx)("p", { children: "逐笔确认的计划需要核对后提交；自动委托直接展示回执。成交以柜台记录为准。" }),
-					(0, react_jsx_runtime.jsx)(ContestPlans, {
-						status: filtered,
-						access,
-						refresh: state.refresh
-					})
-				]
+				children: [(0, react_jsx_runtime.jsx)("p", { children: "逐笔确认的计划需要核对后提交；自动委托直接展示回执。成交以柜台记录为准。" }), (0, react_jsx_runtime.jsx)(ContestPlans, {
+					status: filtered,
+					access,
+					refresh: state.refresh
+				})]
 			});
+		}
+		//#endregion
+		//#region \0dsh-global-css:packages/ui-quantskills/src/client/JevUsage.css.mjs
+		const css$9 = ".qs-jev-diagnostics{color:var(--qs-ink);gap:26px;display:grid}.qs-jev-diagnostics>section{min-width:0}.qs-jev-diagnostics .qs-diagnostics-heading{justify-content:space-between;align-items:center;gap:12px;margin:0 0 14px;display:flex}.qs-jev-diagnostics .qs-diagnostics-heading h3{align-items:center;gap:8px;margin:0;font-size:15px;font-weight:600;display:flex}.qs-jev-diagnostics .qs-diagnostics-heading h3 small{background:var(--qs-tint);color:var(--qs-muted);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:500}.qs-jev-diagnostics .qs-diagnostics-heading p{color:var(--qs-muted);margin:4px 0 0;font-size:11px}.qs-diagnostics-heading>svg{color:var(--qs-muted)}.qs-jev-diagnostics button.qs-diagnostics-icon-button{background:var(--qs-surface);border:1px solid var(--qs-line);width:34px;height:34px;min-height:34px;color:var(--qs-muted);border-radius:9px;place-items:center;padding:0;display:grid}.qs-jev-diagnostics button.qs-diagnostics-export{border:1px solid var(--qs-line);background:var(--qs-surface);min-height:32px;color:var(--qs-muted);border-radius:8px;align-items:center;gap:6px;padding:5px 9px;font-size:11px;display:inline-flex}.qs-jev-diagnostics button:not(:disabled):hover{color:var(--qs-accent);border-color:var(--qs-accent)}.qs-diagnostics-metrics{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 12px;display:grid}.qs-diagnostics-metrics>div{background:color-mix(in srgb,var(--qs-tint) 40%,var(--qs-surface));border:1px solid var(--qs-line);border-radius:12px;min-width:0;padding:14px 12px}.qs-diagnostics-metrics dt{color:var(--qs-muted);align-items:center;gap:5px;font-size:11px;display:flex}.qs-diagnostics-metrics dt svg{flex-shrink:0}.qs-diagnostics-metrics dd{letter-spacing:-.03em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;margin:10px 0 5px;font-size:25px;font-weight:600;line-height:1.3}.qs-diagnostics-metrics dd small{color:var(--qs-muted);margin-left:5px;font-size:11px;font-weight:400}.qs-jev-diagnostics .qs-diagnostics-metrics p{color:var(--qs-muted);margin:0;font-size:10px}.qs-diagnostics-method{background:var(--qs-tint);border-radius:9px}.qs-diagnostics-method summary{color:var(--qs-muted);cursor:pointer;align-items:center;gap:7px;padding:10px 12px;font-size:11px;list-style:none;display:flex}.qs-diagnostics-method summary>span{flex:1}.qs-diagnostics-method summary>svg{flex-shrink:0}.qs-diagnostics-method summary>svg:last-child,.qs-diagnostics-caret{transition:transform .15s}.qs-diagnostics-method[open] summary>svg:last-child,.qs-diagnostics-call[open] .qs-diagnostics-caret{transform:rotate(180deg)}.qs-diagnostics-method>div{padding:0 12px 10px}.qs-jev-diagnostics .qs-diagnostics-method p{color:var(--qs-muted);margin:0 0 6px;font-size:11px;line-height:1.8}.qs-diagnostics-calls{overscroll-behavior:contain;gap:8px;max-height:360px;display:grid;overflow:auto}.qs-diagnostics-call{border:1px solid var(--qs-line);border-radius:12px;min-width:0}.qs-diagnostics-call>summary{cursor:pointer;align-items:center;gap:10px;padding:13px;list-style:none;display:flex}.qs-jev-diagnostics summary::-webkit-details-marker{display:none}.qs-jev-diagnostics summary:focus-visible{outline:2px solid var(--qs-accent);outline-offset:2px;border-radius:9px}.qs-diagnostics-call-icon{background:var(--qs-tint);height:34px;color:var(--qs-accent);border-radius:10px;flex:0 0 34px;place-items:center;display:grid}.qs-diagnostics-call-copy{flex:1;gap:3px;min-width:0;display:grid}.qs-diagnostics-call-copy strong{font-size:13px;font-weight:550}.qs-diagnostics-call-copy time{color:var(--qs-muted);font-variant-numeric:tabular-nums;font-size:10px}.qs-diagnostics-http{color:var(--qs-muted);border:1px solid var(--qs-line);border-radius:6px;flex-shrink:0;padding:2px 6px;font-size:10px}.qs-diagnostics-http[data-ok=true]{color:var(--qs-accent);background:var(--qs-tint);border-color:#0000}.qs-diagnostics-caret{color:var(--qs-muted);flex-shrink:0}.qs-diagnostics-call>div{border-top:1px solid var(--qs-line);margin:0 13px;padding:12px 0}.qs-diagnostics-call dl{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px 14px;margin:0;font-size:11px;line-height:1.7;display:grid}.qs-diagnostics-call dt{color:var(--qs-muted)}.qs-diagnostics-call dd{text-align:right;overflow-wrap:anywhere;margin:0}.qs-diagnostics-events{border:1px solid var(--qs-line);overscroll-behavior:contain;border-radius:12px;max-height:320px;margin:0;padding:16px;list-style:none;overflow:auto}.qs-diagnostics-events li{border-left:1px solid var(--qs-line);margin:0 0 0 4px;padding:0 0 20px 18px;position:relative}.qs-diagnostics-events li:last-child{border-left-color:#0000;padding-bottom:0}.qs-diagnostics-events li:before{content:\"\";background:var(--qs-accent);width:7px;height:7px;box-shadow:0 0 0 3px var(--qs-tint);border-radius:50%;position:absolute;top:6px;left:-4px}.qs-diagnostics-events time{color:var(--qs-muted);font-variant-numeric:tabular-nums;font-size:10px;display:block}.qs-jev-diagnostics .qs-diagnostics-events p{overflow-wrap:anywhere;margin:5px 0 0;font-size:12px;line-height:1.8}.qs-jev-diagnostics .qs-diagnostics-empty{border:1px dashed var(--qs-line);color:var(--qs-muted);text-align:center;border-radius:12px;margin:0;padding:25px 16px;font-size:12px}.qs-jev-diagnostics .qs-diagnostics-error{color:#b42318;background:#b423180a;border-radius:9px;margin:0 0 12px;padding:10px 12px;font-size:12px}@media (width<=480px){.qs-diagnostics-metrics{gap:6px}.qs-diagnostics-metrics>div{padding:12px 9px}.qs-diagnostics-metrics dd{font-size:23px}.qs-diagnostics-call>summary{gap:8px;padding:11px}}@media (prefers-reduced-motion:reduce){.qs-diagnostics-method summary>svg:last-child,.qs-diagnostics-caret{transition:none}}";
+		const tagId$9 = "@deepseek-ai/dsh-client-ui-quantskills/JevUsage.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$9) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
+			tag.dataset.pluginCss = tagId$9;
+			tag.textContent = css$9;
+			document.head.appendChild(tag);
 		}
 		//#endregion
 		//#region lib/types/client/JevUsage.js
@@ -111084,11 +111957,13 @@ get: function(visualType, key, isCategory) {
 			research: "研究评估",
 			validation: "合成场景验证"
 		};
-		function JevUsage({ access }) {
+		function JevUsage({ access, events }) {
 			const [usage, setUsage] = (0, react.useState)(), [error, setError] = (0, react.useState)("");
+			const [revision, setRevision] = (0, react.useState)(0), [loading, setLoading] = (0, react.useState)(true);
 			(0, react.useEffect)(() => {
 				let disposed = false, timer;
 				const refresh = async () => {
+					if (!disposed) setLoading(true);
 					try {
 						const value = await waitForCompetition(() => access.usage(), "Jev 调用记录");
 						if (!disposed) {
@@ -111098,9 +111973,12 @@ get: function(visualType, key, isCategory) {
 					} catch {
 						if (!disposed) setError("调用记录暂时无法读取；请稍后重试。");
 					} finally {
-						if (!disposed) timer = setTimeout(() => {
-							refresh();
-						}, 1e4);
+						if (!disposed) {
+							setLoading(false);
+							timer = setTimeout(() => {
+								refresh();
+							}, 1e4);
+						}
 					}
 				};
 				refresh();
@@ -111108,7 +111986,7 @@ get: function(visualType, key, isCategory) {
 					disposed = true;
 					clearTimeout(timer);
 				};
-			}, [access]);
+			}, [access, revision]);
 			const download = () => {
 				if (!usage) return;
 				const url = URL.createObjectURL(new Blob([JSON.stringify(usage, null, 2)], { type: "application/json" }));
@@ -111118,46 +111996,128 @@ get: function(visualType, key, isCategory) {
 				anchor.click();
 				setTimeout(() => URL.revokeObjectURL(url), 1e3);
 			};
-			return (0, react_jsx_runtime.jsxs)("details", {
-				className: ContestPage_module_css_default.jevHistory,
+			return (0, react_jsx_runtime.jsxs)("div", {
+				className: "qs-jev-diagnostics",
 				children: [
-					(0, react_jsx_runtime.jsxs)("summary", { children: ["Jev 请求与 token 用量 ", (0, react_jsx_runtime.jsx)("span", { children: usage ? `${usage.requests} 次 · 已知输入 ${usage.inputTokens.toLocaleString()} token` : "正在读取" })] }),
-					error && (0, react_jsx_runtime.jsx)("p", {
-						className: ContestPage_module_css_default.error,
-						children: error
-					}),
-					usage && (0, react_jsx_runtime.jsxs)("div", {
-						className: ContestPage_module_css_default.jevAuditBody,
+					(0, react_jsx_runtime.jsxs)("section", {
+						"aria-label": "Jev 调用概览",
 						children: [
-							(0, react_jsx_runtime.jsxs)("p", { children: [
-								"统计自 ",
-								contestTime(usage.since),
-								" 起的本机 API 调用：HTTP 成功 ",
-								usage.responsesOk,
-								" 次，已知输入 ",
-								usage.inputTokens.toLocaleString(),
-								" / 输出 ",
-								usage.outputTokens.toLocaleString(),
-								" token，用量未知 ",
-								usage.unknownUsage,
-								" 次。"
-							] }),
-							(0, react_jsx_runtime.jsx)("p", {
-								className: ContestPage_module_css_default.jevFine,
-								children: "来自 TypeSafe 响应的 usage 字段，非官网账单。旧版本未记录的请求不计入；用量未知不等于零。汇总累计保存，明细保留最近 200 次，每 10 秒更新。"
+							(0, react_jsx_runtime.jsxs)("header", {
+								className: "qs-diagnostics-heading",
+								children: [(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("h3", { children: "调用概览" }), (0, react_jsx_runtime.jsx)("p", { children: "本机累计用量 · 每 10 秒更新" })] }), (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: "qs-diagnostics-icon-button",
+									"aria-label": "刷新调用记录",
+									disabled: loading,
+									onClick: () => setRevision((value) => value + 1),
+									children: (0, react_jsx_runtime.jsx)(r$25, {
+										size: 17,
+										"aria-hidden": "true"
+									})
+								})]
 							}),
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								disabled: !usage.records.length,
-								onClick: download,
-								children: "导出脱敏调用记录"
+							error && (0, react_jsx_runtime.jsx)("p", {
+								className: "qs-diagnostics-error",
+								role: "alert",
+								children: error
 							}),
-							[...usage.records].reverse().map((item) => (0, react_jsx_runtime.jsxs)("details", {
-								className: ContestPage_module_css_default.jevHistoryItem,
+							(0, react_jsx_runtime.jsxs)("dl", {
+								className: "qs-diagnostics-metrics",
+								children: [
+									(0, react_jsx_runtime.jsxs)("div", { children: [
+										(0, react_jsx_runtime.jsxs)("dt", { children: [(0, react_jsx_runtime.jsx)(e$7, {
+											size: 15,
+											"aria-hidden": "true"
+										}), "API 调用"] }),
+										(0, react_jsx_runtime.jsxs)("dd", { children: [usage?.requests.toLocaleString() ?? "—", (0, react_jsx_runtime.jsx)("small", { children: "次" })] }),
+										(0, react_jsx_runtime.jsx)("p", { children: usage ? `HTTP 成功 ${usage.responsesOk} 次` : "正在读取" })
+									] }),
+									(0, react_jsx_runtime.jsxs)("div", { children: [
+										(0, react_jsx_runtime.jsxs)("dt", { children: [(0, react_jsx_runtime.jsx)(r$20, {
+											size: 15,
+											"aria-hidden": "true"
+										}), "输入 token"] }),
+										(0, react_jsx_runtime.jsx)("dd", { children: usage?.inputTokens.toLocaleString() ?? "—" }),
+										(0, react_jsx_runtime.jsx)("p", { children: "已知输入用量" })
+									] }),
+									(0, react_jsx_runtime.jsxs)("div", { children: [
+										(0, react_jsx_runtime.jsxs)("dt", { children: [(0, react_jsx_runtime.jsx)(r$23, {
+											size: 15,
+											"aria-hidden": "true"
+										}), "输出 token"] }),
+										(0, react_jsx_runtime.jsx)("dd", { children: usage?.outputTokens.toLocaleString() ?? "—" }),
+										(0, react_jsx_runtime.jsx)("p", { children: "已知输出用量" })
+									] })
+								]
+							}),
+							(0, react_jsx_runtime.jsxs)("details", {
+								className: "qs-diagnostics-method",
 								children: [(0, react_jsx_runtime.jsxs)("summary", { children: [
-									(0, react_jsx_runtime.jsx)("time", { children: contestTime(item.startedAt) }),
-									(0, react_jsx_runtime.jsx)("strong", { children: labels$2[item.purpose] }),
-									(0, react_jsx_runtime.jsx)("span", { children: item.httpStatus ? `HTTP ${item.httpStatus}` : "未收到 HTTP 响应" })
+									(0, react_jsx_runtime.jsx)(e$12, {
+										size: 16,
+										"aria-hidden": "true"
+									}),
+									(0, react_jsx_runtime.jsxs)("span", { children: ["统计口径", usage ? ` · ${usage.unknownUsage} 次用量未知` : ""] }),
+									(0, react_jsx_runtime.jsx)(e$24, {
+										size: 14,
+										"aria-hidden": "true"
+									})
+								] }), (0, react_jsx_runtime.jsxs)("div", { children: [usage && (0, react_jsx_runtime.jsxs)("p", { children: [
+									"统计自 ",
+									contestTime(usage.since),
+									" 起的本机 API 调用。"
+								] }), (0, react_jsx_runtime.jsx)("p", { children: "来自 TypeSafe 响应的 usage 字段，非官网账单。旧版本未记录的请求不计入；用量未知不等于零。汇总累计保存，明细保留最近 200 次，每 10 秒更新。" })] })]
+							})
+						]
+					}),
+					(0, react_jsx_runtime.jsxs)("section", {
+						"aria-label": "最近调用",
+						children: [(0, react_jsx_runtime.jsxs)("header", {
+							className: "qs-diagnostics-heading",
+							children: [(0, react_jsx_runtime.jsxs)("h3", { children: ["最近调用 ", (0, react_jsx_runtime.jsx)("small", { children: usage?.records.length ?? "—" })] }), (0, react_jsx_runtime.jsxs)("button", {
+								type: "button",
+								className: "qs-diagnostics-export",
+								"aria-label": "导出脱敏调用记录",
+								disabled: !usage?.records.length,
+								onClick: download,
+								children: [(0, react_jsx_runtime.jsx)(e$19, {
+									size: 15,
+									"aria-hidden": "true"
+								}), "导出记录"]
+							})]
+						}), !usage ? (0, react_jsx_runtime.jsx)("p", {
+							className: "qs-diagnostics-empty",
+							role: "status",
+							children: error ? "调用记录暂不可用" : "正在读取调用记录…"
+						}) : !usage.records.length ? (0, react_jsx_runtime.jsx)("p", {
+							className: "qs-diagnostics-empty",
+							children: "暂无调用记录，模型请求后会显示在这里。"
+						}) : (0, react_jsx_runtime.jsx)("div", {
+							className: "qs-diagnostics-calls",
+							children: [...usage.records].reverse().map((item) => (0, react_jsx_runtime.jsxs)("details", {
+								className: "qs-diagnostics-call",
+								children: [(0, react_jsx_runtime.jsxs)("summary", { children: [
+									(0, react_jsx_runtime.jsx)("span", {
+										className: "qs-diagnostics-call-icon",
+										children: (0, react_jsx_runtime.jsx)(e$7, {
+											size: 18,
+											"aria-hidden": "true"
+										})
+									}),
+									(0, react_jsx_runtime.jsxs)("span", {
+										className: "qs-diagnostics-call-copy",
+										children: [(0, react_jsx_runtime.jsx)("strong", { children: labels$2[item.purpose] }), (0, react_jsx_runtime.jsx)("time", { children: contestTime(item.startedAt) })]
+									}),
+									(0, react_jsx_runtime.jsx)("span", {
+										className: "qs-diagnostics-http",
+										"data-ok": Boolean(item.httpStatus && item.httpStatus >= 200 && item.httpStatus < 300),
+										children: item.httpStatus ? `HTTP ${item.httpStatus}` : "未收到响应"
+									}),
+									(0, react_jsx_runtime.jsx)(e$24, {
+										className: "qs-diagnostics-caret",
+										size: 14,
+										"aria-hidden": "true"
+									})
 								] }), (0, react_jsx_runtime.jsx)("div", { children: (0, react_jsx_runtime.jsxs)("dl", { children: [
 									(0, react_jsx_runtime.jsx)("dt", { children: "实际返回模型" }),
 									(0, react_jsx_runtime.jsx)("dd", { children: item.model ?? "未返回" }),
@@ -111171,7 +112131,26 @@ get: function(visualType, key, isCategory) {
 									(0, react_jsx_runtime.jsx)("dd", { children: item.id })
 								] }) })]
 							}, item.id))
-						]
+						})]
+					}),
+					(0, react_jsx_runtime.jsxs)("section", {
+						"aria-label": "Jev 运行记录",
+						children: [(0, react_jsx_runtime.jsxs)("header", {
+							className: "qs-diagnostics-heading",
+							children: [(0, react_jsx_runtime.jsxs)("h3", { children: ["运行记录 ", (0, react_jsx_runtime.jsx)("small", { children: events?.length ?? "—" })] }), (0, react_jsx_runtime.jsx)(e$22, {
+								size: 17,
+								"aria-hidden": "true"
+							})]
+						}), !events ? (0, react_jsx_runtime.jsx)("p", {
+							className: "qs-diagnostics-empty",
+							children: "正在读取运行状态…"
+						}) : !events.length ? (0, react_jsx_runtime.jsx)("p", {
+							className: "qs-diagnostics-empty",
+							children: "暂无运行记录，盯盘状态变化后会显示在这里。"
+						}) : (0, react_jsx_runtime.jsx)("ol", {
+							className: "qs-diagnostics-events",
+							children: [...events].reverse().map((entry, index) => (0, react_jsx_runtime.jsxs)("li", { children: [(0, react_jsx_runtime.jsx)("time", { children: contestTime(entry.time) }), (0, react_jsx_runtime.jsx)("p", { children: entry.message })] }, `${entry.time}-${index}`))
+						})]
 					})
 				]
 			});
@@ -111512,6 +112491,49 @@ get: function(visualType, key, isCategory) {
 			] });
 		}
 		//#endregion
+		//#region \0dsh-global-css:packages/ui-quantskills/src/client/JevSettings.css.mjs
+		const css$8 = ".qs-jev-workspace .qs-jev-settings-disclosure{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:12px;min-width:0;margin:0;padding:0}.qs-jev-workspace .qs-jev-settings-disclosure>summary{box-sizing:border-box;min-height:66px;color:var(--qs-ink);cursor:pointer;border-radius:12px;align-items:center;gap:12px;padding:13px 15px;list-style:none;display:flex}.qs-jev-settings-disclosure>summary::-webkit-details-marker{display:none}.qs-jev-workspace .qs-jev-settings-disclosure>summary:hover{background:color-mix(in srgb, var(--qs-tint) 38%, var(--qs-surface))}.qs-jev-disclosure-icon{background:var(--qs-tint);width:32px;height:32px;color:var(--qs-accent);border-radius:9px;flex:0 0 32px;place-items:center;display:grid}.qs-jev-disclosure-copy{flex:1;gap:3px;min-width:0;display:grid}.qs-jev-workspace .qs-jev-disclosure-copy strong{color:var(--qs-ink);font-size:13px;font-weight:550;line-height:1.5}.qs-jev-workspace .qs-jev-disclosure-copy small{color:var(--qs-muted);font-size:11px;line-height:1.6}.qs-jev-disclosure-badge{background:color-mix(in srgb, var(--qs-muted) 7%, var(--qs-surface));color:var(--qs-muted);border-radius:6px;flex-shrink:0;padding:3px 7px;font-size:11px;font-weight:400}.qs-jev-disclosure-chevron{color:var(--qs-muted);flex-shrink:0;transition:transform .15s}.qs-jev-settings-disclosure[open]>summary .qs-jev-disclosure-chevron{transform:rotate(180deg)}.qs-jev-workspace .qs-jev-disclosure-body{border-top:1px solid var(--qs-line);gap:16px;min-width:0;margin:0 16px;padding:18px 0;display:grid}.qs-jev-workspace .qs-jev-disclosure-body>:is(p,div,label){margin-block:0}.qs-jev-workspace .qs-jev-disclosure-body p{color:var(--qs-muted);font-size:12px;line-height:1.75}.qs-jev-workspace .qs-jev-disclosure-body>button{justify-self:start}.qs-jev-workspace .qs-jev-settings-disclosure>summary:focus-visible{outline:2px solid var(--qs-accent);outline-offset:-2px}.qs-jev-workspace .qs-jev-settings-disclosure[data-compact]>summary{gap:8px;min-height:44px;padding:9px 10px}.qs-jev-settings-disclosure[data-compact] .qs-jev-disclosure-icon{background:0 0;flex-basis:24px;width:24px;height:24px}.qs-jev-workspace .qs-jev-settings-disclosure[data-compact] .qs-jev-disclosure-copy strong{font-size:12px}.qs-jev-workspace dialog.qs-settings-sheet{height:min(820px, calc(100dvh / var(--qs-interface-scale,1) - 48px))}.qs-jev-workspace .qs-settings-sheet>header{padding:19px 24px}.qs-jev-workspace .qs-settings-sheet>header h2{letter-spacing:-.02em;margin:0;font-size:20px}.qs-jev-workspace .qs-settings-sheet .qs-settings-content{padding:24px}.qs-jev-workspace .qs-settings-sheet .qs-settings-intro{margin-bottom:20px}.qs-jev-workspace .qs-settings-sheet .qs-settings-intro h3{margin-bottom:6px;font-size:21px}.qs-jev-workspace .qs-settings-sheet .qs-settings-intro p{font-size:12px;line-height:1.7}.qs-jev-workspace .qs-settings-sheet .qs-settings-group{background:var(--qs-surface);gap:16px;padding:18px}.qs-jev-workspace .qs-settings-sheet label{gap:7px;font-size:12px;line-height:1.6}.qs-jev-workspace .qs-settings-sheet :is(input,select,textarea){width:100%;min-width:0;font-size:13px;line-height:1.7}.qs-jev-workspace .qs-settings-sheet textarea{resize:vertical}.qs-jev-workspace .qs-settings-sheet .qs-settings-navigation{padding:16px 10px}.qs-jev-workspace .qs-settings-sheet .qs-settings-navigation button{margin-bottom:4px;padding:12px}.qs-jev-workspace .qs-settings-sheet .qs-settings-navigation button strong{font-size:13px}.qs-jev-workspace .qs-settings-sheet .qs-settings-footer{padding:15px 22px}.qs-jev-workspace .qs-settings-sheet .qs-settings-footer button{min-height:38px;padding:8px 14px;font-size:13px}.qs-jev-workspace .qs-settings-sheet .qs-settings-note{margin:12px 0 0;line-height:1.7}.qs-jev-strategy-editor,.qs-jev-strategy-fields{gap:10px;min-width:0;display:grid}.qs-jev-strategy-editor{margin-bottom:10px}.qs-jev-workspace .qs-jev-instructions-field{margin:6px 0 10px}.qs-jev-workspace .qs-jev-strategy-editor>button{justify-self:start}.qs-jev-workspace .qs-settings-sheet .qs-template-picker{align-items:end;gap:10px;margin-bottom:2px}.qs-jev-workspace .qs-settings-sheet .qs-template-picker button{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:9px;min-height:40px;padding:9px 12px;font-size:12px}.qs-jev-workspace .qs-jev-strategy-editor>section{border:1px solid var(--qs-line);background:color-mix(in srgb, var(--qs-tint) 25%, var(--qs-surface));border-radius:12px;gap:14px;padding:16px;display:grid}.qs-jev-workspace .qs-jev-strategy-editor>section>p{margin:0;font-size:12px;line-height:1.7}.qs-jev-workspace .qs-jev-strategy-editor>section>button{justify-self:start}.qs-jev-contract-editor{margin-bottom:12px}.qs-jev-workspace .qs-jev-instruments{gap:12px}.qs-jev-workspace .qs-jev-instruments .qs-product-filters{margin:0}.qs-jev-workspace .qs-jev-instruments .qs-product-checklist{background:color-mix(in srgb, var(--qs-tint) 20%, var(--qs-surface));border:0;border-radius:8px;max-height:220px;padding:4px}.qs-jev-workspace .qs-jev-instruments .qs-product-checklist>label{border:1px solid #0000;gap:9px;padding:9px;font-size:12px}.qs-jev-workspace .qs-jev-instruments .qs-product-checklist>label:has(:checked){border-color:color-mix(in srgb, var(--qs-accent) 20%, var(--qs-line))}.qs-jev-workspace .qs-jev-instruments .qs-product-checklist input{width:16px;height:16px}.qs-jev-workspace .qs-selected-contract{background:var(--qs-surface);padding:14px}.qs-jev-workspace .qs-selected-contract .qs-jev-settings-disclosure{margin-top:12px}.qs-jev-workspace .qs-selected-contracts>strong{font-size:12px;font-weight:550}.qs-jev-workspace .qs-jev-parameter-grid{border:0;grid-template-columns:repeat(2,minmax(0,1fr));align-items:end;gap:16px;margin:0;padding:0;display:grid}.qs-jev-parameter-grid>p{grid-column:1/-1}.qs-jev-workspace label.qs-jev-checkbox{border:1px solid var(--qs-line);background:color-mix(in srgb, var(--qs-tint) 25%, var(--qs-surface));border-radius:9px;grid-column:1/-1;align-items:flex-start;gap:10px;padding:12px;display:flex}.qs-jev-workspace label.qs-jev-checkbox input{width:16px;height:16px;min-height:16px;accent-color:var(--qs-accent);flex:0 0 16px;margin:2px 0 0;padding:0}.qs-jev-workspace .qs-settings-sheet .qs-execution-choice{margin:0 0 20px}.qs-jev-workspace .qs-settings-sheet .qs-execution-choice h3{margin:0 0 10px;font-size:13px}.qs-jev-workspace .qs-settings-sheet .qs-execution-options>button{border:1px solid var(--qs-line);border-radius:12px;padding:14px 34px 14px 14px;position:relative}.qs-jev-workspace .qs-settings-sheet .qs-execution-options>button[aria-pressed=true]{border-color:color-mix(in srgb, var(--qs-accent) 35%, var(--qs-line));background:var(--qs-tint)}.qs-jev-workspace .qs-settings-sheet .qs-execution-options>button:after{content:\"\";border:1px solid var(--qs-line);border-radius:50%;width:13px;height:13px;position:absolute;top:17px;right:12px}.qs-jev-workspace .qs-settings-sheet .qs-execution-options>button[aria-pressed=true]:after{border-color:var(--qs-accent);background:var(--qs-accent);box-shadow:inset 0 0 0 3px var(--qs-surface)}.qs-jev-workspace .qs-settings-sheet .qs-execution-options strong{font-size:13px}.qs-jev-workspace .qs-settings-sheet .qs-execution-options span{font-size:11px}.qs-jev-workspace .qs-settings-sheet .qs-execution-choice>p{margin:10px 0 0;font-size:12px;line-height:1.7}.qs-jev-connection-card{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:14px;padding:20px}.qs-jev-connection-card>header{align-items:center;gap:12px;margin-bottom:18px;display:flex}.qs-jev-connection-card>header>div{gap:3px;display:grid}.qs-jev-connection-card strong{font-size:16px}.qs-jev-connection-card small{color:var(--qs-muted);font-size:11px}.qs-jev-connection-state{background:color-mix(in srgb, var(--qs-muted) 8%, var(--qs-surface));color:var(--qs-muted);border-radius:7px;margin-left:auto;padding:5px 9px;font-size:11px}.qs-jev-connection-state[data-ready=true]{background:var(--qs-tint);color:var(--qs-accent)}.qs-jev-workspace .qs-jev-connection-card>p{margin:0;font-size:12px;line-height:1.8}.qs-jev-connection-actions{border-top:1px solid var(--qs-line);flex-wrap:wrap;align-items:center;gap:8px;margin-top:18px;padding-top:18px;display:flex}.qs-jev-workspace .qs-jev-connection-actions button{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:9px;padding:9px 12px;font-size:12px}.qs-jev-workspace .qs-jev-connection-actions button:first-child{color:var(--qs-accent)}@media (width<=760px){.qs-jev-workspace dialog.qs-settings-sheet{height:calc(100dvh / var(--qs-interface-scale,1) - 20px)}.qs-jev-workspace .qs-settings-sheet .qs-settings-content{padding:18px}.qs-jev-workspace .qs-settings-sheet .qs-settings-navigation{padding:8px}.qs-jev-workspace .qs-settings-sheet .qs-settings-navigation button{margin:0;padding:10px 12px}.qs-jev-workspace .qs-settings-sheet .qs-settings-footer{padding:12px 16px}}@media (width<=540px){.qs-jev-workspace .qs-jev-settings-disclosure>summary{flex-wrap:wrap;gap:9px;padding:12px}.qs-jev-disclosure-copy{flex-basis:calc(100% - 76px)}.qs-jev-disclosure-badge{order:2;margin-left:41px}.qs-jev-workspace .qs-jev-disclosure-body{margin-inline:12px}.qs-jev-workspace .qs-jev-parameter-grid,.qs-jev-workspace .qs-jev-instruments .qs-product-filters{grid-template-columns:minmax(0,1fr)}.qs-jev-workspace .qs-settings-sheet .qs-settings-content{padding:16px}.qs-jev-workspace .qs-settings-sheet .qs-template-picker{grid-template-columns:minmax(0,1fr) auto}}@media (prefers-reduced-motion:reduce){.qs-jev-disclosure-chevron{transition:none}}";
+		const tagId$8 = "@deepseek-ai/dsh-client-ui-quantskills/JevSettings.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$8) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
+			tag.dataset.pluginCss = tagId$8;
+			tag.textContent = css$8;
+			document.head.appendChild(tag);
+		}
+		//#endregion
+		//#region lib/types/client/JevSettingsDisclosure.js
+		function JevSettingsDisclosure({ title, description, icon, badge, open, children, compact = false }) {
+			return (0, react_jsx_runtime.jsxs)("details", {
+				className: "qs-jev-settings-disclosure",
+				"data-compact": compact || void 0,
+				open,
+				children: [(0, react_jsx_runtime.jsxs)("summary", { children: [
+					(0, react_jsx_runtime.jsx)("span", {
+						className: "qs-jev-disclosure-icon",
+						"aria-hidden": "true",
+						children: icon
+					}),
+					(0, react_jsx_runtime.jsxs)("span", {
+						className: "qs-jev-disclosure-copy",
+						children: [(0, react_jsx_runtime.jsx)("strong", { children: title }), description && (0, react_jsx_runtime.jsx)("small", { children: description })]
+					}),
+					badge && (0, react_jsx_runtime.jsx)("span", {
+						className: "qs-jev-disclosure-badge",
+						children: badge
+					}),
+					(0, react_jsx_runtime.jsx)(e$24, {
+						className: "qs-jev-disclosure-chevron",
+						size: 16,
+						"aria-hidden": "true"
+					})
+				] }), (0, react_jsx_runtime.jsx)("div", {
+					className: "qs-jev-disclosure-body",
+					children
+				})]
+			});
+		}
+		//#endregion
 		//#region lib/types/client/JevStrategy.js
 		const defaults = {
 			hold: "证据不足、信号不清或维持持仓更合适时观望。",
@@ -111523,52 +112545,55 @@ get: function(visualType, key, isCategory) {
 		function JevStrategy({ config, onChange }) {
 			const [error, setError] = (0, react.useState)("");
 			return (0, react_jsx_runtime.jsxs)("div", {
-				className: ContestPage_module_css_default.watchInstructions,
+				className: "qs-jev-strategy-fields",
 				children: [
-					(0, react_jsx_runtime.jsxs)("label", { children: ["研究目标和约束", (0, react_jsx_runtime.jsx)("textarea", {
-						rows: 5,
-						required: true,
-						maxLength: 2e3,
-						value: config.instructions,
-						onChange: (event) => onChange({
-							...config,
-							instructions: event.target.value
-						})
-					})] }),
-					(0, react_jsx_runtime.jsxs)("details", {
-						className: ContestPage_module_css_default.jevHistory,
-						children: [
-							(0, react_jsx_runtime.jsx)("summary", { children: "定制各动作判断标准" }),
-							(0, react_jsx_runtime.jsxs)("label", { children: ["策略名称", (0, react_jsx_runtime.jsx)("input", {
-								maxLength: 80,
-								value: config.strategyName ?? "自定义策略",
+					(0, react_jsx_runtime.jsxs)("label", {
+						className: "qs-jev-instructions-field",
+						children: ["研究目标和约束", (0, react_jsx_runtime.jsx)("textarea", {
+							rows: 4,
+							required: true,
+							maxLength: 2e3,
+							value: config.instructions,
+							onChange: (event) => onChange({
+								...config,
+								instructions: event.target.value
+							})
+						})]
+					}),
+					(0, react_jsx_runtime.jsxs)(JevSettingsDisclosure, {
+						title: "定制各动作判断标准",
+						description: "分别定义观望、开仓和平仓的条件",
+						icon: (0, react_jsx_runtime.jsx)(o$17, { size: 19 }),
+						children: [(0, react_jsx_runtime.jsxs)("label", { children: ["策略名称", (0, react_jsx_runtime.jsx)("input", {
+							maxLength: 80,
+							value: config.strategyName ?? "自定义策略",
+							onChange: (event) => onChange({
+								...config,
+								strategyName: event.target.value
+							})
+						})] }), Object.entries(watchActions).map(([action, label]) => (0, react_jsx_runtime.jsxs)("label", { children: [
+							label,
+							"标准",
+							(0, react_jsx_runtime.jsx)("textarea", {
+								required: true,
+								maxLength: 1e3,
+								value: config.actionCriteria?.[action] ?? defaults[action],
 								onChange: (event) => onChange({
 									...config,
-									strategyName: event.target.value
+									actionCriteria: {
+										...config.actionCriteria,
+										[action]: event.target.value
+									}
 								})
-							})] }),
-							Object.entries(watchActions).map(([action, label]) => (0, react_jsx_runtime.jsxs)("label", { children: [
-								label,
-								"标准",
-								(0, react_jsx_runtime.jsx)("textarea", {
-									required: true,
-									maxLength: 1e3,
-									value: config.actionCriteria?.[action] ?? defaults[action],
-									onChange: (event) => onChange({
-										...config,
-										actionCriteria: {
-											...config.actionCriteria,
-											[action]: event.target.value
-										}
-									})
-								})
-							] }, action))
-						]
+							})
+						] }, action))]
 					}),
-					(0, react_jsx_runtime.jsxs)("details", {
-						className: ContestPage_module_css_default.jevHistory,
+					(0, react_jsx_runtime.jsxs)(JevSettingsDisclosure, {
+						title: "补充参考资料",
+						description: "粘贴研究记录，或导入 TXT / Markdown 文本",
+						badge: "可选",
+						icon: (0, react_jsx_runtime.jsx)(o$20, { size: 19 }),
 						children: [
-							(0, react_jsx_runtime.jsx)("summary", { children: "补充参考资料（可选）" }),
 							(0, react_jsx_runtime.jsxs)("label", { children: ["参考资料", (0, react_jsx_runtime.jsx)("textarea", {
 								maxLength: 12e3,
 								value: config.referenceMaterial ?? "",
@@ -111808,13 +112833,14 @@ get: function(visualType, key, isCategory) {
 			};
 			return (0, react_jsx_runtime.jsx)("div", {
 				className: ContestPage_module_css_default.watchInstructions,
-				children: (0, react_jsx_runtime.jsxs)("details", {
-					className: ContestPage_module_css_default.jevHistory,
+				children: (0, react_jsx_runtime.jsxs)(JevSettingsDisclosure, {
+					title: "历史行情与策略条件",
+					description: "配置历史数据来源、参考指标与信号参数",
+					icon: (0, react_jsx_runtime.jsx)(o$34, { size: 19 }),
 					open: Boolean(config.history || config.rangeRules || config.signalRules),
 					children: [
-						(0, react_jsx_runtime.jsx)("summary", { children: "历史行情与策略条件" }),
 						(0, react_jsx_runtime.jsxs)("label", {
-							className: ContestPage_module_css_default.jevCheckLabel,
+							className: "qs-jev-checkbox",
 							children: [(0, react_jsx_runtime.jsx)("input", {
 								type: "checkbox",
 								checked: Boolean(config.autoHistory),
@@ -111828,7 +112854,7 @@ get: function(visualType, key, isCategory) {
 							}), "启动时自动准备 PandaData 行情"]
 						}),
 						config.autoHistory && (0, react_jsx_runtime.jsxs)("div", {
-							className: ContestPage_module_css_default.watchFields,
+							className: `${ContestPage_module_css_default.watchFields} qs-jev-parameter-grid`,
 							children: [(0, react_jsx_runtime.jsxs)("label", { children: ["自动行情周期", (0, react_jsx_runtime.jsxs)("select", {
 								value: config.autoHistory.barSeconds,
 								onChange: (event) => onChange({
@@ -111941,7 +112967,7 @@ get: function(visualType, key, isCategory) {
 								children: error
 							}),
 							config.history && (0, react_jsx_runtime.jsxs)("div", {
-								className: ContestPage_module_css_default.watchFields,
+								className: `${ContestPage_module_css_default.watchFields} qs-jev-parameter-grid`,
 								children: [
 									(0, react_jsx_runtime.jsxs)("label", { children: ["K 线周期", (0, react_jsx_runtime.jsxs)("select", {
 										value: config.history.barSeconds,
@@ -112007,7 +113033,7 @@ get: function(visualType, key, isCategory) {
 										})
 									] }, key)),
 									(0, react_jsx_runtime.jsxs)("label", {
-										className: ContestPage_module_css_default.watchInstructions,
+										className: "qs-jev-checkbox",
 										children: ["允许刷新所选远程数据源", (0, react_jsx_runtime.jsx)("input", {
 											type: "checkbox",
 											checked: config.history.refresh,
@@ -112024,7 +113050,7 @@ get: function(visualType, key, isCategory) {
 							})
 						] }),
 						!config.signalRules && (0, react_jsx_runtime.jsxs)("label", {
-							className: ContestPage_module_css_default.jevCheckLabel,
+							className: "qs-jev-checkbox",
 							children: [(0, react_jsx_runtime.jsx)("input", {
 								type: "checkbox",
 								checked: Boolean(config.rangeRules),
@@ -112045,7 +113071,7 @@ get: function(visualType, key, isCategory) {
 								children: "以下初值是待验证示例，未经收益回测。自主模式中数值条件只作为 Jev 参考，严格模式中用于程序筛选。止损/目标仅生成待确认的平仓建议，不是柜台止损单。"
 							}),
 							(0, react_jsx_runtime.jsx)("div", {
-								className: ContestPage_module_css_default.watchFields,
+								className: `${ContestPage_module_css_default.watchFields} qs-jev-parameter-grid`,
 								children: fields$1.filter((item) => item[0] !== "tickSize").map(([key, label, min, max, step]) => (0, react_jsx_runtime.jsxs)("label", { children: [label, (0, react_jsx_runtime.jsx)("input", {
 									type: "number",
 									required: true,
@@ -112077,7 +113103,7 @@ get: function(visualType, key, isCategory) {
 								children: [config.signalRules.kind === "trend" ? "趋势回调：快均线周期 < 慢均线周期 < 回看根数；趋势、回踩及报价恢复按方向分别校验。" : "突破跟随：末根收盘与最新价共同确认，前序窗口不包含确认 K 线；突破幅度须小于追价上限。", " 止损和目标仅生成待确认平仓建议。"]
 							}),
 							(0, react_jsx_runtime.jsx)("div", {
-								className: ContestPage_module_css_default.watchFields,
+								className: `${ContestPage_module_css_default.watchFields} qs-jev-parameter-grid`,
 								children: signalFields.filter((item) => config.signalRules.kind === "trend" ? !["bufferTicks", "maxChaseTicks"].includes(item[0]) : ![
 									"fastBars",
 									"slowBars",
@@ -112401,60 +113427,55 @@ get: function(visualType, key, isCategory) {
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: "qs-jev-instruments",
 				children: [
-					(0, react_jsx_runtime.jsxs)("details", {
-						className: "qs-instrument-browser",
+					(0, react_jsx_runtime.jsxs)(JevSettingsDisclosure, {
+						title: "勾选期货品种",
+						description: "搜索品种，并为所选品种配置月份合约",
+						badge: `已选 ${selected.length} 个`,
+						icon: (0, react_jsx_runtime.jsx)(t, { size: 19 }),
 						open: true,
-						children: [
-							(0, react_jsx_runtime.jsxs)("summary", { children: [
-								"勾选期货品种 · 已选 ",
-								selected.length,
-								" 个"
-							] }),
-							(0, react_jsx_runtime.jsxs)("div", {
-								className: "qs-product-filters",
-								children: [(0, react_jsx_runtime.jsxs)("label", { children: ["搜索期货品种", (0, react_jsx_runtime.jsx)("input", {
-									type: "search",
-									placeholder: "名称、代码或交易所",
-									value: search,
-									onChange: (event) => setSearch(event.target.value)
-								})] }), (0, react_jsx_runtime.jsxs)("label", { children: ["筛选交易所", (0, react_jsx_runtime.jsxs)("select", {
-									value: exchange,
-									onChange: (event) => setExchange(event.target.value),
-									children: [(0, react_jsx_runtime.jsx)("option", {
-										value: "",
-										children: "全部交易所"
-									}), Object.entries(exchanges).map(([code, name]) => (0, react_jsx_runtime.jsx)("option", {
-										value: code,
-										children: name
-									}, code))]
-								})] })]
-							}),
-							(0, react_jsx_runtime.jsxs)("div", {
-								className: "qs-product-checklist",
-								"aria-label": "可选期货品种",
-								children: [visible.map((item) => (0, react_jsx_runtime.jsxs)("label", { children: [(0, react_jsx_runtime.jsx)("input", {
-									type: "checkbox",
-									disabled: !item.enabled,
-									checked: selected.some((value) => value.instrument.product === item.product),
-									onChange: (event) => {
-										setManualEntry(false);
-										const entries = selectedContracts(current.current, catalog);
-										change(withContracts(current.current, event.target.checked ? [...entries, {
-											symbol: "",
-											instrument: {
-												product: item.product,
-												exchange: item.exchange,
-												tickSize: item.tickSize
-											}
-										}] : entries.filter((value) => value.instrument.product !== item.product)));
-									}
-								}), (0, react_jsx_runtime.jsxs)("span", { children: [item.name, (0, react_jsx_runtime.jsxs)("small", { children: [
-									item.product.toUpperCase(),
-									" · ",
-									item.enabled ? item.exchange : "柜台未启用"
-								] })] })] }, item.product)), !visible.length && (0, react_jsx_runtime.jsx)("p", { children: "没有匹配品种，可在下方手动填写合约。" })]
-							})
-						]
+						children: [(0, react_jsx_runtime.jsxs)("div", {
+							className: "qs-product-filters",
+							children: [(0, react_jsx_runtime.jsxs)("label", { children: ["搜索期货品种", (0, react_jsx_runtime.jsx)("input", {
+								type: "search",
+								placeholder: "名称、代码或交易所",
+								value: search,
+								onChange: (event) => setSearch(event.target.value)
+							})] }), (0, react_jsx_runtime.jsxs)("label", { children: ["筛选交易所", (0, react_jsx_runtime.jsxs)("select", {
+								value: exchange,
+								onChange: (event) => setExchange(event.target.value),
+								children: [(0, react_jsx_runtime.jsx)("option", {
+									value: "",
+									children: "全部交易所"
+								}), Object.entries(exchanges).map(([code, name]) => (0, react_jsx_runtime.jsx)("option", {
+									value: code,
+									children: name
+								}, code))]
+							})] })]
+						}), (0, react_jsx_runtime.jsxs)("div", {
+							className: "qs-product-checklist",
+							"aria-label": "可选期货品种",
+							children: [visible.map((item) => (0, react_jsx_runtime.jsxs)("label", { children: [(0, react_jsx_runtime.jsx)("input", {
+								type: "checkbox",
+								disabled: !item.enabled,
+								checked: selected.some((value) => value.instrument.product === item.product),
+								onChange: (event) => {
+									setManualEntry(false);
+									const entries = selectedContracts(current.current, catalog);
+									change(withContracts(current.current, event.target.checked ? [...entries, {
+										symbol: "",
+										instrument: {
+											product: item.product,
+											exchange: item.exchange,
+											tickSize: item.tickSize
+										}
+									}] : entries.filter((value) => value.instrument.product !== item.product)));
+								}
+							}), (0, react_jsx_runtime.jsxs)("span", { children: [item.name, (0, react_jsx_runtime.jsxs)("small", { children: [
+								item.product.toUpperCase(),
+								" · ",
+								item.enabled ? item.exchange : "柜台未启用"
+							] })] })] }, item.product)), !visible.length && (0, react_jsx_runtime.jsx)("p", { children: "没有匹配品种，可在下方手动填写合约。" })]
+						})]
 					}),
 					(0, react_jsx_runtime.jsxs)("div", {
 						className: "qs-selected-contracts",
@@ -112499,14 +113520,13 @@ get: function(visualType, key, isCategory) {
 												} : entry)));
 											}
 										}),
-										(0, react_jsx_runtime.jsxs)("details", {
+										(0, react_jsx_runtime.jsx)(JevSettingsDisclosure, {
+											compact: true,
+											title: "合约参数",
+											badge: `${item.instrument.exchange} · tick ${item.instrument.tickSize || "待填写"}`,
+											icon: (0, react_jsx_runtime.jsx)(r$7, { size: 17 }),
 											open: !item.instrument.tickSize,
-											children: [(0, react_jsx_runtime.jsxs)("summary", { children: [
-												"合约参数 · ",
-												item.instrument.exchange,
-												" · tick ",
-												item.instrument.tickSize || "待填写"
-											] }), (0, react_jsx_runtime.jsxs)("label", { children: [index === 0 ? "最小价格变动（tick 对应价格）" : `${name}最小价格变动`, (0, react_jsx_runtime.jsx)("input", {
+											children: (0, react_jsx_runtime.jsxs)("label", { children: [index === 0 ? "最小价格变动（tick 对应价格）" : `${name}最小价格变动`, (0, react_jsx_runtime.jsx)("input", {
 												type: "number",
 												min: "0.000001",
 												step: "any",
@@ -112519,7 +113539,7 @@ get: function(visualType, key, isCategory) {
 														tickSize: Number(event.target.value)
 													}
 												} : entry)))
-											})] })]
+											})] })
 										})
 									]
 								}, index === 0 ? "primary" : item.instrument.product);
@@ -112534,57 +113554,66 @@ get: function(visualType, key, isCategory) {
 							})
 						]
 					}),
-					(0, react_jsx_runtime.jsxs)("details", {
-						className: "qs-instrument-parameters",
+					(0, react_jsx_runtime.jsxs)(JevSettingsDisclosure, {
+						title: "手动更换首个品种与交易所",
+						description: "自定义品种、交易所与最小价格变动",
+						icon: (0, react_jsx_runtime.jsx)(r$7, { size: 19 }),
 						open: !known || !instrument.tickSize,
-						children: [
-							(0, react_jsx_runtime.jsx)("summary", { children: "手动更换首个品种与交易所" }),
-							(0, react_jsx_runtime.jsxs)("label", { children: ["交易品种", (0, react_jsx_runtime.jsxs)("select", {
-								value: !known ? "custom" : instrument.product,
-								onChange: (event) => {
-									const product = catalog.find((item) => item.product === event.target.value);
-									change(withInstrument(config, product ? {
-										product: product.product,
-										exchange: product.exchange,
-										tickSize: product.tickSize
-									} : {
-										product: "",
-										exchange: instrument.exchange,
-										tickSize: 0
-									}));
-								},
-								children: [Object.entries(exchanges).map(([code, name]) => (0, react_jsx_runtime.jsx)("optgroup", {
-									label: name,
-									children: catalog.filter((item) => item.exchange === code).map((item) => (0, react_jsx_runtime.jsxs)("option", {
-										value: item.product,
-										disabled: !item.enabled,
-										children: [
-											item.name,
-											" · ",
-											item.product.toUpperCase(),
-											item.enabled ? "" : " · 柜台未启用"
-										]
-									}, item.product))
-								}, code)), (0, react_jsx_runtime.jsx)("option", {
-									value: "custom",
-									children: "其他品种 / 自定义"
-								})]
-							})] }),
-							selected.length && !manualEntry ? (0, react_jsx_runtime.jsxs)("label", { children: ["交易所", (0, react_jsx_runtime.jsx)("select", {
-								value: instrument.exchange,
-								onChange: (event) => change(withInstrument(config, {
-									...instrument,
-									exchange: event.target.value
-								})),
-								children: Object.entries(exchanges).map(([code, name]) => (0, react_jsx_runtime.jsx)("option", {
-									value: code,
-									children: name
-								}, code))
-							})] }) : parameters
-						]
+						children: [(0, react_jsx_runtime.jsxs)("label", { children: ["交易品种", (0, react_jsx_runtime.jsxs)("select", {
+							value: !known ? "custom" : instrument.product,
+							onChange: (event) => {
+								const product = catalog.find((item) => item.product === event.target.value);
+								change(withInstrument(config, product ? {
+									product: product.product,
+									exchange: product.exchange,
+									tickSize: product.tickSize
+								} : {
+									product: "",
+									exchange: instrument.exchange,
+									tickSize: 0
+								}));
+							},
+							children: [Object.entries(exchanges).map(([code, name]) => (0, react_jsx_runtime.jsx)("optgroup", {
+								label: name,
+								children: catalog.filter((item) => item.exchange === code).map((item) => (0, react_jsx_runtime.jsxs)("option", {
+									value: item.product,
+									disabled: !item.enabled,
+									children: [
+										item.name,
+										" · ",
+										item.product.toUpperCase(),
+										item.enabled ? "" : " · 柜台未启用"
+									]
+								}, item.product))
+							}, code)), (0, react_jsx_runtime.jsx)("option", {
+								value: "custom",
+								children: "其他品种 / 自定义"
+							})]
+						})] }), selected.length && !manualEntry ? (0, react_jsx_runtime.jsxs)("label", { children: ["交易所", (0, react_jsx_runtime.jsx)("select", {
+							value: instrument.exchange,
+							onChange: (event) => change(withInstrument(config, {
+								...instrument,
+								exchange: event.target.value
+							})),
+							children: Object.entries(exchanges).map(([code, name]) => (0, react_jsx_runtime.jsx)("option", {
+								value: code,
+								children: name
+							}, code))
+						})] }) : parameters]
 					})
 				]
 			});
+		}
+		//#endregion
+		//#region \0dsh-global-css:packages/ui-quantskills/src/client/JevWorkspace.css.mjs
+		const css$7 = ".qs-jev-workspace .qs-jev-status{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:14px;margin:0 0 16px;overflow:hidden}.qs-jev-status>summary{cursor:pointer;align-items:center;gap:16px;padding:12px 16px;list-style:none;display:flex}.qs-jev-status>summary::-webkit-details-marker{display:none}.qs-jev-status>summary:hover{background:color-mix(in srgb, var(--qs-tint) 28%, var(--qs-surface))}.qs-jev-status-label{background:color-mix(in srgb, var(--qs-muted) 7%, var(--qs-surface));color:var(--qs-muted);border-radius:8px;flex-shrink:0;align-items:center;gap:8px;padding:6px 10px;font-size:12px;font-weight:550;display:inline-flex}.qs-jev-status-label>i{background:currentColor;border-radius:50%;flex-shrink:0;width:6px;height:6px}.qs-jev-status[data-active=true] .qs-jev-status-label{color:var(--qs-accent);background:var(--qs-tint)}.qs-jev-status:is([data-phase=waiting_quote],[data-phase=waiting_plan],[data-phase=unknown]) .qs-jev-status-label{color:var(--dsw-alias-state-warning-primary,#a66b11);background:color-mix(in srgb, var(--dsw-alias-state-warning-primary,#a66b11) 8%, var(--qs-surface))}.qs-jev-status-meta{min-width:0;color:var(--qs-muted);flex-wrap:wrap;align-items:center;gap:6px 14px;font-size:12px;display:flex}.qs-jev-status-meta>span{overflow-wrap:anywhere}.qs-jev-status-meta>span+span{border-left:1px solid var(--qs-line);padding-left:14px}.qs-jev-status-toggle{color:var(--qs-muted);flex-shrink:0;align-items:center;gap:8px;margin-left:auto;font-size:12px;display:inline-flex}.qs-jev-status-toggle svg{transition:transform .15s}.qs-jev-status[open] .qs-jev-status-toggle svg{transform:rotate(180deg)}.qs-jev-status-body{border-top:1px solid var(--qs-line);color:var(--qs-muted);margin:0 16px;padding:14px 0 16px;font-size:12px;line-height:1.8}.qs-jev-workspace .qs-jev-status-body p{margin:0 0 8px;font-size:12px}.qs-jev-status-body p:last-child{margin-bottom:0}.qs-jev-status-body small{font-size:11px;display:block}.qs-jev-run-panel{border:1px solid var(--qs-line);background:var(--qs-surface);border-radius:16px;margin-top:18px;padding:20px}.qs-jev-run-panel>header{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;display:flex}.qs-jev-workspace .qs-jev-run-panel>header h3{letter-spacing:0;margin:0;font-size:14px;font-weight:600}.qs-jev-plan-counts{color:var(--qs-muted);flex-wrap:wrap;align-items:center;gap:16px;font-size:12px;display:flex}.qs-jev-plan-counts>span{align-items:baseline;gap:8px;display:inline-flex}.qs-jev-plan-counts>span+span{border-left:1px solid var(--qs-line);padding-left:16px}.qs-jev-plan-counts strong{color:var(--qs-ink);font-variant-numeric:tabular-nums;font-size:15px;font-weight:600}.qs-jev-plan-counts small{color:var(--qs-muted);font-size:12px;font-weight:400}.qs-jev-run-settings{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:16px -6px;display:grid}.qs-jev-workspace .qs-jev-run-settings>button{text-align:left;background:color-mix(in srgb, var(--qs-tint) 23%, var(--qs-surface));min-width:0;color:var(--qs-ink);border:1px solid #0000;border-radius:11px;align-items:center;gap:12px;padding:13px 12px;display:flex}.qs-jev-run-settings>button>svg:first-child{color:var(--qs-accent);flex-shrink:0}.qs-jev-run-settings>button>span{gap:6px;min-width:0;display:grid}.qs-jev-run-settings small{color:var(--qs-muted);font-size:11px;font-weight:400}.qs-jev-run-settings strong{overflow-wrap:anywhere;font-size:13px;font-weight:550;line-height:1.5}.qs-jev-setting-separator{color:var(--qs-muted);margin:0 5px}.qs-jev-run-settings>button>svg:last-child{color:var(--qs-muted);flex-shrink:0;margin-left:auto}.qs-jev-workspace .qs-jev-run-settings>button:hover{background:var(--qs-tint);border-color:color-mix(in srgb, var(--qs-accent) 18%, var(--qs-line))}.qs-jev-run-timing{color:var(--qs-muted);flex-wrap:wrap;gap:8px 20px;padding-bottom:16px;font-size:12px;line-height:1.7;display:flex}.qs-jev-run-panel>footer{border-top:1px solid var(--qs-line);flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding-top:14px;display:flex}.qs-jev-support-actions{flex-wrap:wrap;gap:8px;display:flex}.qs-jev-workspace .qs-jev-support-actions>button{border:1px solid var(--qs-line);background:var(--qs-surface);min-height:34px;color:var(--qs-muted);border-radius:9px;justify-content:center;align-items:center;gap:7px;padding:7px 10px;font-size:12px;display:inline-flex}.qs-jev-workspace .qs-jev-support-actions>button:hover{background:var(--qs-tint);color:var(--qs-accent)}.qs-jev-stop-note{color:var(--qs-muted);align-items:center;gap:6px;font-size:11px;display:inline-flex}.qs-jev-stop-note svg{flex-shrink:0}.qs-jev-workspace :is(.qs-jev-status>summary,.qs-jev-run-settings>button,.qs-jev-support-actions>button):focus-visible{outline:2px solid var(--qs-accent);outline-offset:-2px}@media (width<=1100px){.qs-jev-run-settings{grid-template-columns:repeat(2,minmax(0,1fr))}}@media (width<=600px){.qs-jev-status>summary{flex-wrap:wrap;gap:10px;padding:12px}.qs-jev-status-meta{flex-basis:100%;order:3;padding-left:2px}.qs-jev-run-panel{padding:16px}.qs-jev-run-settings{margin-inline:0}.qs-jev-workspace .qs-jev-run-settings>button{gap:8px;padding:12px 10px}}@media (width<=400px){.qs-jev-run-settings{grid-template-columns:minmax(0,1fr)}}@media (prefers-reduced-motion:reduce){.qs-jev-status-toggle svg{transition:none}}";
+		const tagId$7 = "@deepseek-ai/dsh-client-ui-quantskills/JevWorkspace.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$7) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-quantskills";
+			tag.dataset.pluginCss = tagId$7;
+			tag.textContent = css$7;
+			document.head.appendChild(tag);
 		}
 		//#endregion
 		//#region lib/types/client/ContestWatch.js
@@ -112685,6 +113714,10 @@ get: function(visualType, key, isCategory) {
 			const [historyBusy, setHistoryBusy] = (0, react.useState)(false);
 			const [refreshingSettings, setRefreshingSettings] = (0, react.useState)(false);
 			const [settingsSection, setSettingsSection] = (0, react.useState)("contract");
+			const settingsContent = (0, react.useRef)(null);
+			(0, react.useEffect)(() => {
+				if (settingsOpen) settingsContent.current?.scrollTo?.({ top: 0 });
+			}, [settingsOpen, settingsSection]);
 			function openSettings(target = "launcher") {
 				savedDraft.current = structuredClone(config);
 				setSettingsSection(target === "connection" ? "connection" : target === "review" ? "limits" : target === "strategy" ? "strategy" : "contract");
@@ -112865,6 +113898,10 @@ get: function(visualType, key, isCategory) {
 			]);
 			const guide = (0, react_jsx_runtime.jsx)(TradingGuide, {
 				compact: true,
+				triggerIcon: (0, react_jsx_runtime.jsx)(e$6, {
+					size: 17,
+					"aria-hidden": "true"
+				}),
 				name: "JEV",
 				steps: [
 					{
@@ -112944,7 +113981,7 @@ get: function(visualType, key, isCategory) {
 								type: "button",
 								"aria-label": "Jev 运行设置",
 								onClick: openQuickSettings,
-								children: [(0, react_jsx_runtime.jsx)(o$14, { size: 18 }), (0, react_jsx_runtime.jsx)("span", { children: "设置" })]
+								children: [(0, react_jsx_runtime.jsx)(o$19, { size: 18 }), (0, react_jsx_runtime.jsx)("span", { children: "设置" })]
 							}), (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
 								"data-primary": !status?.running || void 0,
@@ -112993,30 +114030,38 @@ get: function(visualType, key, isCategory) {
 						children: [(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("small", { children: "我的盯盘要求" }), (0, react_jsx_runtime.jsx)("p", { children: config.instructions || "用自己的话描述想观察的行情、入场与退出条件。" })] }), (0, react_jsx_runtime.jsxs)("button", {
 							type: "button",
 							onClick: openQuickSettings,
-							children: ["修改", (0, react_jsx_runtime.jsx)(o$8, { size: 15 })]
+							children: ["修改", (0, react_jsx_runtime.jsx)(o$12, { size: 15 })]
 						})]
 					}),
-					(0, react_jsx_runtime.jsxs)("div", {
-						className: `${ContestPage_module_css_default.watchStatus} qs-watch-status-inline`,
-						role: "status",
+					(0, react_jsx_runtime.jsxs)("details", {
+						className: "qs-jev-status",
+						"aria-label": "盯盘状态",
 						"data-phase": phase,
 						"data-active": active,
-						children: [(0, react_jsx_runtime.jsx)("span", {
-							className: ContestPage_module_css_default.watchIndicator,
-							"aria-hidden": "true"
-						}), (0, react_jsx_runtime.jsxs)("div", { children: [
-							(0, react_jsx_runtime.jsx)("strong", { children: label }),
+						children: [(0, react_jsx_runtime.jsxs)("summary", { children: [
 							(0, react_jsx_runtime.jsxs)("span", {
-								className: "qs-watch-meta",
-								children: [
-									contractsLabel || "待选择合约",
-									" · 每 ",
+								className: "qs-jev-status-label",
+								role: "status",
+								children: [(0, react_jsx_runtime.jsx)("i", { "aria-hidden": "true" }), label]
+							}),
+							(0, react_jsx_runtime.jsxs)("span", {
+								className: "qs-jev-status-meta",
+								children: [(0, react_jsx_runtime.jsx)("span", { children: contractsLabel || "待选择合约" }), (0, react_jsx_runtime.jsxs)("span", { children: [
+									"每 ",
 									config.decisionIntervalSeconds ?? 30,
 									" 秒判断"
-								]
+								] })]
 							}),
-							(0, react_jsx_runtime.jsxs)("details", { children: [
-								(0, react_jsx_runtime.jsx)("summary", { children: "状态详情" }),
+							(0, react_jsx_runtime.jsxs)("span", {
+								className: "qs-jev-status-toggle",
+								children: ["状态详情", (0, react_jsx_runtime.jsx)(e$24, {
+									size: 15,
+									"aria-hidden": "true"
+								})]
+							})
+						] }), (0, react_jsx_runtime.jsxs)("div", {
+							className: "qs-jev-status-body",
+							children: [
 								(0, react_jsx_runtime.jsx)("p", { children: statusError ? "暂时无法确认盯盘状态，正在重试连接。" : status?.message ?? "读取盯盘状态…" }),
 								phase === "waiting_quote" && (0, react_jsx_runtime.jsxs)("p", { children: [
 									"实时报价来自比赛柜台，PandaData 用于历史 K 线；PandaData 已授权不代表柜台已返回有效报价。请在比赛页「最新行情」核对",
@@ -113034,39 +114079,136 @@ get: function(visualType, key, isCategory) {
 									"，等待期间不请求 Jev。"
 								] }),
 								status?.accountCheckedAt && (0, react_jsx_runtime.jsxs)("small", { children: ["最近账户巡检：", contestTime(status.accountCheckedAt)] })
-							] })
-						] })]
+							]
+						})]
 					}),
 					(0, react_jsx_runtime.jsx)(ContestWatchVisuals, {
 						status,
 						active,
 						config
 					}),
-					(0, react_jsx_runtime.jsxs)("div", {
-						className: "qs-workspace-facts",
+					(0, react_jsx_runtime.jsxs)("section", {
+						className: "qs-jev-run-panel",
+						"aria-label": "本次运行配置",
 						children: [
-							(0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								"aria-label": "选择实际合约",
-								onClick: () => openSettings(),
-								children: ["实际合约 ", (0, react_jsx_runtime.jsx)("strong", { children: contractsLabel || "待选择" })]
-							}),
-							(0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								onClick: () => openSettings("strategy"),
-								children: ["策略 ", (0, react_jsx_runtime.jsx)("strong", { children: config.strategyName || "自定义" })]
-							}),
-							(0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								onClick: () => openSettings("review"),
+							(0, react_jsx_runtime.jsxs)("header", { children: [(0, react_jsx_runtime.jsx)("h3", { children: "本次运行" }), (0, react_jsx_runtime.jsxs)("div", {
+								className: "qs-jev-plan-counts",
+								"aria-label": "计划统计",
+								children: [(0, react_jsx_runtime.jsxs)("span", { children: ["开仓计划 ", (0, react_jsx_runtime.jsxs)("strong", { children: [status ? status.openingPlanCount ?? status.planCount : "—", (0, react_jsx_runtime.jsxs)("small", { children: [" / ", status?.config?.maxPlans ?? config.maxPlans] })] })] }), (0, react_jsx_runtime.jsxs)("span", { children: ["总计划 ", (0, react_jsx_runtime.jsx)("strong", { children: status?.planCount ?? "—" })] })]
+							})] }),
+							(0, react_jsx_runtime.jsxs)("div", {
+								className: "qs-jev-run-settings",
 								children: [
-									"单笔上限 ",
-									(0, react_jsx_runtime.jsxs)("strong", { children: [config.volume, " 手"] }),
-									" · 运行 ",
-									config.durationMinutes,
-									" 分钟"
+									(0, react_jsx_runtime.jsxs)("button", {
+										type: "button",
+										"aria-label": "选择实际合约",
+										onClick: () => openSettings(),
+										children: [
+											(0, react_jsx_runtime.jsx)(t, {
+												size: 19,
+												"aria-hidden": "true"
+											}),
+											(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("small", { children: "实际合约" }), (0, react_jsx_runtime.jsx)("strong", { children: contractsLabel || "选择交易合约" })] }),
+											(0, react_jsx_runtime.jsx)(e$23, {
+												size: 14,
+												"aria-hidden": "true"
+											})
+										]
+									}),
+									(0, react_jsx_runtime.jsxs)("button", {
+										type: "button",
+										onClick: () => openSettings("strategy"),
+										children: [
+											(0, react_jsx_runtime.jsx)(r$7, {
+												size: 19,
+												"aria-hidden": "true"
+											}),
+											(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("small", { children: "交易策略" }), (0, react_jsx_runtime.jsx)("strong", { children: config.strategyName || "自定义" })] }),
+											(0, react_jsx_runtime.jsx)(e$23, {
+												size: 14,
+												"aria-hidden": "true"
+											})
+										]
+									}),
+									(0, react_jsx_runtime.jsxs)("button", {
+										type: "button",
+										onClick: () => openSettings("review"),
+										children: [
+											(0, react_jsx_runtime.jsx)(o$5, {
+												size: 19,
+												"aria-hidden": "true"
+											}),
+											(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("small", { children: "额度与时长" }), (0, react_jsx_runtime.jsxs)("strong", { children: [
+												"单笔 ",
+												config.volume,
+												" 手",
+												(0, react_jsx_runtime.jsx)("span", {
+													className: "qs-jev-setting-separator",
+													children: "·"
+												}),
+												config.durationMinutes,
+												" 分钟"
+											] })] }),
+											(0, react_jsx_runtime.jsx)(e$23, {
+												size: 14,
+												"aria-hidden": "true"
+											})
+										]
+									}),
+									(0, react_jsx_runtime.jsxs)("button", {
+										type: "button",
+										onClick: openQuickSettings,
+										children: [
+											(0, react_jsx_runtime.jsx)(o$19, {
+												size: 19,
+												"aria-hidden": "true"
+											}),
+											(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("small", { children: "执行方式" }), (0, react_jsx_runtime.jsx)("strong", { children: config.executionMode === "automatic" ? "自动下单" : "逐笔确认" })] }),
+											(0, react_jsx_runtime.jsx)(e$23, {
+												size: 14,
+												"aria-hidden": "true"
+											})
+										]
+									})
 								]
-							})
+							}),
+							status?.running && (status.openingCooldownUntil && status.openingCooldownUntil > Date.now() || status.nextDecisionAt) ? (0, react_jsx_runtime.jsxs)("div", {
+								className: "qs-jev-run-timing",
+								role: "status",
+								children: [status.openingCooldownUntil && status.openingCooldownUntil > Date.now() && (0, react_jsx_runtime.jsxs)("span", { children: [
+									"开仓冷却至 ",
+									contestTime(status.openingCooldownUntil),
+									"（不影响平仓判断）"
+								] }), status.nextDecisionAt && (0, react_jsx_runtime.jsxs)("span", { children: [
+									"下次决策最早 ",
+									contestTime(status.nextDecisionAt),
+									"（需有效样本、无待处理计划）"
+								] })]
+							}) : null,
+							(0, react_jsx_runtime.jsxs)("footer", { children: [(0, react_jsx_runtime.jsxs)("div", {
+								className: "qs-jev-support-actions",
+								children: [guide, (0, react_jsx_runtime.jsxs)("button", {
+									type: "button",
+									onClick: () => setDiagnostics(true),
+									children: [
+										(0, react_jsx_runtime.jsx)(e$11, {
+											size: 17,
+											"aria-hidden": "true"
+										}),
+										"运行记录与诊断",
+										(0, react_jsx_runtime.jsx)(r$19, {
+											size: 13,
+											"aria-hidden": "true"
+										})
+									]
+								})]
+							}), (0, react_jsx_runtime.jsxs)("span", {
+								className: "qs-jev-stop-note",
+								children: [(0, react_jsx_runtime.jsx)(e$12, {
+									size: 15,
+									"aria-hidden": "true"
+								}), "停止盯盘不撤单、不平仓"]
+							})] })
 						]
 					}),
 					plans && (0, react_jsx_runtime.jsx)("div", {
@@ -113077,50 +114219,6 @@ get: function(visualType, key, isCategory) {
 						className: ContestPage_module_css_default.jevFine,
 						children: note
 					}, note)),
-					status && (0, react_jsx_runtime.jsxs)("div", {
-						className: ContestPage_module_css_default.watchSummary,
-						children: [
-							(0, react_jsx_runtime.jsxs)("span", { children: [
-								"本次开仓计划 ",
-								status.openingPlanCount ?? status.planCount,
-								"/",
-								status.config?.maxPlans ?? "—",
-								" · 总计划 ",
-								status.planCount
-							] }),
-							status.running && status.openingCooldownUntil && status.openingCooldownUntil > Date.now() && (0, react_jsx_runtime.jsxs)("span", { children: [
-								"开仓冷却至 ",
-								contestTime(status.openingCooldownUntil),
-								"（不影响平仓判断）"
-							] }),
-							status.running && status.nextDecisionAt && (0, react_jsx_runtime.jsxs)("span", { children: [
-								"下次决策最早 ",
-								contestTime(status.nextDecisionAt),
-								"（需有效样本、无待处理计划）"
-							] })
-						]
-					}),
-					(0, react_jsx_runtime.jsxs)("div", {
-						className: `${ContestPage_module_css_default.watchSummary} qs-workspace-footer`,
-						children: [
-							guide,
-							(0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								onClick: () => setDiagnostics(true),
-								children: "运行记录与诊断 ↗"
-							}),
-							(0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								onClick: openQuickSettings,
-								children: [
-									"执行方式：",
-									config.executionMode === "automatic" ? "自动下单" : "逐笔确认",
-									" ›"
-								]
-							}),
-							(0, react_jsx_runtime.jsx)("span", { children: "停止盯盘不撤单、不平仓" })
-						]
-					}),
 					quickSettings && (0, react_jsx_runtime.jsx)(ActionDialog, {
 						title: "Jev 运行设置",
 						dismissOnBackdrop: true,
@@ -113220,7 +114318,7 @@ get: function(visualType, key, isCategory) {
 						onClose: cancelSettings,
 						children: (0, react_jsx_runtime.jsxs)("form", {
 							noValidate: true,
-							className: "qs-settings-form",
+							className: "qs-settings-form qs-jev-settings-form",
 							onSubmit: (event) => {
 								event.preventDefault();
 								if (!locked) {
@@ -113268,6 +114366,7 @@ get: function(visualType, key, isCategory) {
 									]
 								}), (0, react_jsx_runtime.jsxs)("div", {
 									className: "qs-settings-content",
+									ref: settingsContent,
 									children: [
 										status?.running && (0, react_jsx_runtime.jsx)("p", {
 											className: "qs-settings-notice",
@@ -113276,46 +114375,65 @@ get: function(visualType, key, isCategory) {
 										(0, react_jsx_runtime.jsxs)("section", {
 											hidden: settingsSection !== "connection",
 											"aria-label": "模型连接",
-											children: [
-												(0, react_jsx_runtime.jsxs)("div", {
-													className: "qs-settings-intro",
-													children: [(0, react_jsx_runtime.jsx)("h3", { children: "模型连接" }), (0, react_jsx_runtime.jsx)("p", { children: "统一使用 QuantStudio 中配置的 Jev 服务。" })]
-												}),
-												(0, react_jsx_runtime.jsxs)("p", { children: [
-													"Jev · ",
-													configured === void 0 ? "配置状态待确认" : configured ? "API Key 已配置" : "API Key 未配置",
-													"。API Key 请在「设置 → 模型服务 → Jev」中配置，与 AI 交易员的模型辅助共用。"
-												] }),
-												openModelSettings && (0, react_jsx_runtime.jsx)("button", {
-													type: "button",
-													onClick: () => {
-														cancelSettings();
-														openModelSettings();
-													},
-													children: "前往模型服务配置 Jev"
-												}),
-												(0, react_jsx_runtime.jsx)("button", {
-													type: "button",
-													disabled: refreshingSettings,
-													onClick: async () => {
-														setRefreshingSettings(true);
-														setConnectionError("");
-														try {
-															setConfigured((await waitForCompetition(() => access.settings(), "Jev 配置")).configured);
-														} catch (failure) {
-															setConnectionError(failure instanceof Error ? failure.message : "配置读取失败，请重试。");
-														} finally {
-															setRefreshingSettings(false);
-														}
-													},
-													children: "刷新配置状态"
-												}),
-												connectionError && (0, react_jsx_runtime.jsx)("p", {
-													className: ContestPage_module_css_default.error,
-													role: "alert",
-													children: connectionError
-												})
-											]
+											children: [(0, react_jsx_runtime.jsxs)("div", {
+												className: "qs-settings-intro",
+												children: [(0, react_jsx_runtime.jsx)("h3", { children: "模型连接" }), (0, react_jsx_runtime.jsx)("p", { children: "统一使用 QuantStudio 中配置的 Jev 服务。" })]
+											}), (0, react_jsx_runtime.jsxs)("div", {
+												className: "qs-jev-connection-card",
+												children: [
+													(0, react_jsx_runtime.jsxs)("header", { children: [
+														(0, react_jsx_runtime.jsx)("span", {
+															className: "qs-jev-disclosure-icon",
+															children: (0, react_jsx_runtime.jsx)(o$10, {
+																size: 22,
+																"aria-hidden": "true"
+															})
+														}),
+														(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("strong", { children: "Jev" }), (0, react_jsx_runtime.jsx)("small", { children: "jev-1.13.0" })] }),
+														(0, react_jsx_runtime.jsx)("span", {
+															className: "qs-jev-connection-state",
+															"data-ready": configured === true,
+															children: configured === void 0 ? "待核验" : configured ? "密钥已配置" : "待配置"
+														})
+													] }),
+													(0, react_jsx_runtime.jsxs)("p", { children: [
+														"Jev · ",
+														configured === void 0 ? "配置状态待确认" : configured ? "API Key 已配置" : "API Key 未配置",
+														"。API Key 请在「设置 → 模型服务 → Jev」中配置，与 AI 交易员的模型辅助共用。"
+													] }),
+													(0, react_jsx_runtime.jsxs)("div", {
+														className: "qs-jev-connection-actions",
+														children: [openModelSettings && (0, react_jsx_runtime.jsx)("button", {
+															type: "button",
+															onClick: () => {
+																cancelSettings();
+																openModelSettings();
+															},
+															children: "前往模型服务配置 Jev"
+														}), (0, react_jsx_runtime.jsx)("button", {
+															type: "button",
+															disabled: refreshingSettings,
+															onClick: async () => {
+																setRefreshingSettings(true);
+																setConnectionError("");
+																try {
+																	setConfigured((await waitForCompetition(() => access.settings(), "Jev 配置")).configured);
+																} catch (failure) {
+																	setConnectionError(failure instanceof Error ? failure.message : "配置读取失败，请重试。");
+																} finally {
+																	setRefreshingSettings(false);
+																}
+															},
+															children: "刷新配置状态"
+														})]
+													}),
+													connectionError && (0, react_jsx_runtime.jsx)("p", {
+														className: ContestPage_module_css_default.error,
+														role: "alert",
+														children: connectionError
+													})
+												]
+											})]
 										}),
 										(0, react_jsx_runtime.jsxs)("fieldset", {
 											className: "qs-settings-fields",
@@ -113330,7 +114448,7 @@ get: function(visualType, key, isCategory) {
 															children: [(0, react_jsx_runtime.jsx)("h3", { children: "选择盯盘品种" }), (0, react_jsx_runtime.jsx)("p", { children: "可勾选多个品种，为每个品种选择实际月份合约。" })]
 														}),
 														(0, react_jsx_runtime.jsx)("div", {
-															className: "qs-settings-group",
+															className: "qs-jev-contract-editor",
 															children: (0, react_jsx_runtime.jsx)(JevInstrument, {
 																compact: true,
 																config,
@@ -113340,10 +114458,11 @@ get: function(visualType, key, isCategory) {
 																accountKey: connected ? accountId || status?.identity?.accountId || "connected" : ""
 															})
 														}),
-														(0, react_jsx_runtime.jsxs)("details", {
-															className: "qs-settings-disclosure",
+														(0, react_jsx_runtime.jsxs)(JevSettingsDisclosure, {
+															title: "品种目录与同步",
+															description: "查看目录状态，从比赛柜台同步可交易品种",
+															icon: (0, react_jsx_runtime.jsx)(r$18, { size: 19 }),
 															children: [
-																(0, react_jsx_runtime.jsx)("summary", { children: "品种目录与同步" }),
 																(0, react_jsx_runtime.jsx)("p", { children: catalogMessage }),
 																access.varieties && (0, react_jsx_runtime.jsx)("button", {
 																	type: "button",
@@ -113367,7 +114486,7 @@ get: function(visualType, key, isCategory) {
 															children: [(0, react_jsx_runtime.jsx)("h3", { children: "告诉 JEV 怎么盯盘" }), (0, react_jsx_runtime.jsx)("p", { children: "选择模板，或用自己的话描述入场、退出和等待条件。" })]
 														}),
 														(0, react_jsx_runtime.jsxs)("div", {
-															className: "qs-settings-group",
+															className: "qs-jev-strategy-editor",
 															children: [
 																(0, react_jsx_runtime.jsxs)("div", {
 																	className: "qs-template-picker",
@@ -113464,9 +114583,12 @@ get: function(visualType, key, isCategory) {
 																	config,
 																	onChange: setConfig
 																}),
-																(0, react_jsx_runtime.jsxs)("details", { children: [
-																	(0, react_jsx_runtime.jsxs)("summary", { children: ["判断方式 · ", config.decisionMode === "jev" ? "Jev 自主决策" : "严格规则"] }),
-																	(0, react_jsx_runtime.jsxs)("label", { children: ["决策方式", (0, react_jsx_runtime.jsxs)("select", {
+																(0, react_jsx_runtime.jsxs)(JevSettingsDisclosure, {
+																	title: "判断方式",
+																	description: "选择由 JEV 综合判断，或先按程序规则筛选",
+																	badge: config.decisionMode === "jev" ? "Jev 自主决策" : "严格规则",
+																	icon: (0, react_jsx_runtime.jsx)(r$14, { size: 19 }),
+																	children: [(0, react_jsx_runtime.jsxs)("label", { children: ["决策方式", (0, react_jsx_runtime.jsxs)("select", {
 																		value: config.decisionMode ?? "strict",
 																		onChange: (event) => setConfig({
 																			...config,
@@ -113479,38 +114601,35 @@ get: function(visualType, key, isCategory) {
 																			value: "strict",
 																			children: "严格规则模式"
 																		})]
-																	})] }),
-																	(0, react_jsx_runtime.jsx)("p", {
+																	})] }), (0, react_jsx_runtime.jsx)("p", {
 																		className: "qs-settings-note",
 																		children: config.decisionMode === "jev" ? "历史不足也会请求分析并产生用量，但不允许新开仓。策略作为参考，由 Jev 判断机会。" : "严格规则模式：程序条件先筛选，全部可交易动作被拦截时不请求 Jev。"
-																	})
-																] })
-															]
-														}),
-														(0, react_jsx_runtime.jsxs)("details", {
-															className: "qs-settings-disclosure",
-															children: [
-																(0, react_jsx_runtime.jsx)("summary", { children: "另存为我的模板" }),
-																(0, react_jsx_runtime.jsxs)("div", {
-																	className: ContestPage_module_css_default.jevSaveTemplate,
-																	children: [(0, react_jsx_runtime.jsxs)("label", { children: ["保存模板名称", (0, react_jsx_runtime.jsx)("input", {
-																		maxLength: 80,
-																		placeholder: "例如 我的午后区间",
-																		value: templateName,
-																		onChange: (event) => setTemplateName(event.target.value)
-																	})] }), (0, react_jsx_runtime.jsx)("button", {
-																		type: "button",
-																		onClick: () => {
-																			saveTemplate();
-																		},
-																		children: saving ? "保存中…" : "保存为我的模板"
 																	})]
-																}),
-																(0, react_jsx_runtime.jsx)("p", {
-																	className: ContestPage_module_css_default.jevFine,
-																	children: "同名保存会更新已有模板，可不填实际合约先保存。换品种时核对交易所、tick 与成本；启动前必须填写柜台支持的实际合约。"
 																})
 															]
+														}),
+														(0, react_jsx_runtime.jsxs)(JevSettingsDisclosure, {
+															title: "另存为我的模板",
+															description: "将当前策略与运行参数保存到本机，方便下次使用",
+															icon: (0, react_jsx_runtime.jsx)(p, { size: 19 }),
+															children: [(0, react_jsx_runtime.jsxs)("div", {
+																className: ContestPage_module_css_default.jevSaveTemplate,
+																children: [(0, react_jsx_runtime.jsxs)("label", { children: ["保存模板名称", (0, react_jsx_runtime.jsx)("input", {
+																	maxLength: 80,
+																	placeholder: "例如 我的午后区间",
+																	value: templateName,
+																	onChange: (event) => setTemplateName(event.target.value)
+																})] }), (0, react_jsx_runtime.jsx)("button", {
+																	type: "button",
+																	onClick: () => {
+																		saveTemplate();
+																	},
+																	children: saving ? "保存中…" : "保存为我的模板"
+																})]
+															}), (0, react_jsx_runtime.jsx)("p", {
+																className: ContestPage_module_css_default.jevFine,
+																children: "同名保存会更新已有模板，可不填实际合约先保存。换品种时核对交易所、tick 与成本；启动前必须填写柜台支持的实际合约。"
+															})]
 														})
 													]
 												}),
@@ -113651,22 +114770,15 @@ get: function(visualType, key, isCategory) {
 							})]
 						})
 					}),
-					diagnostics && (0, react_jsx_runtime.jsxs)(ActionDialog, {
+					diagnostics && (0, react_jsx_runtime.jsx)(ActionDialog, {
 						drawer: true,
+						className: "qs-support-drawer",
 						title: "Jev 运行记录与诊断",
 						onClose: () => setDiagnostics(false),
-						children: [(0, react_jsx_runtime.jsx)(JevUsage, { access }), status?.events.length ? (0, react_jsx_runtime.jsxs)("details", { children: [(0, react_jsx_runtime.jsxs)("summary", { children: [
-							"运行记录（",
-							status.events.length,
-							"）"
-						] }), (0, react_jsx_runtime.jsx)("ol", {
-							className: ContestPage_module_css_default.watchLog,
-							children: [...status.events].reverse().map((entry, index) => (0, react_jsx_runtime.jsxs)("li", { children: [
-								(0, react_jsx_runtime.jsx)("time", { children: contestTime(entry.time) }),
-								" ",
-								entry.message
-							] }, `${entry.time}-${index}`))
-						})] }) : null]
+						children: (0, react_jsx_runtime.jsx)(JevUsage, {
+							access,
+							events: status?.events
+						})
 					}),
 					review && (0, react_jsx_runtime.jsxs)(ActionDialog, {
 						title: "核对本次盯盘",
@@ -114025,7 +115137,7 @@ get: function(visualType, key, isCategory) {
 							(0, react_jsx_runtime.jsxs)("button", {
 								type: "button",
 								onClick: () => navigateWorkspace("entry"),
-								children: [(0, react_jsx_runtime.jsx)(r$21, { size: 15 }), "返回比赛首页"]
+								children: [(0, react_jsx_runtime.jsx)(r$22, { size: 15 }), "返回比赛首页"]
 							}),
 							(0, react_jsx_runtime.jsx)("span", { children: "/" }),
 							(0, react_jsx_runtime.jsx)("span", { children: workspace === "jev" ? "JEV 盯盘" : "AI 交易员" }),
@@ -114174,7 +115286,7 @@ get: function(visualType, key, isCategory) {
 													children: (0, react_jsx_runtime.jsx)(e$2, { size: 27 })
 												}),
 												(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("strong", { children: "JEV 盯盘" }), (0, react_jsx_runtime.jsx)("small", { children: "按你的策略盯盘，自选确认或自动下单。" })] }),
-												(0, react_jsx_runtime.jsx)(r$20, { size: 21 })
+												(0, react_jsx_runtime.jsx)(r$21, { size: 21 })
 											]
 										}),
 										(flyAccess || openFly) && (0, react_jsx_runtime.jsxs)("button", {
@@ -114187,7 +115299,7 @@ get: function(visualType, key, isCategory) {
 													children: (0, react_jsx_runtime.jsx)("span", { className: "qs-trader-orb" })
 												}),
 												(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("strong", { children: "AI 交易员" }), (0, react_jsx_runtime.jsx)("small", { children: "同时跟踪多个合约，自选确认或自动下单。" })] }),
-												(0, react_jsx_runtime.jsx)(r$20, { size: 21 })
+												(0, react_jsx_runtime.jsx)(r$21, { size: 21 })
 											]
 										}),
 										(0, react_jsx_runtime.jsxs)("article", {
@@ -114208,7 +115320,7 @@ get: function(visualType, key, isCategory) {
 														children: (0, react_jsx_runtime.jsx)(t$7, { size: 27 })
 													}),
 													(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("strong", { children: "Ai辅助" }), (0, react_jsx_runtime.jsx)("small", { children: busy === "research" ? "正在打开对话…" : connected ? "查持仓、研究行情，把想法整理成交易计划。" : "连接比赛账户后，即可进入 AI 交易助手。" })] }),
-													(0, react_jsx_runtime.jsx)(r$20, { size: 21 })
+													(0, react_jsx_runtime.jsx)(r$21, { size: 21 })
 												]
 											}), (0, react_jsx_runtime.jsxs)("div", {
 												className: "qs-research-more",
@@ -114224,7 +115336,7 @@ get: function(visualType, key, isCategory) {
 													"aria-expanded": researchMore,
 													"aria-controls": researchMenuId,
 													onClick: () => setResearchMore((open) => !open),
-													children: (0, react_jsx_runtime.jsx)(o$21, { size: 24 })
+													children: (0, react_jsx_runtime.jsx)(o$27, { size: 24 })
 												}), researchMore && (0, react_jsx_runtime.jsxs)("div", {
 													id: researchMenuId,
 													className: "qs-research-menu",
@@ -114237,7 +115349,7 @@ get: function(visualType, key, isCategory) {
 																setResearchMore(false);
 																run("topic", (signal) => access.startResearch(true, signal));
 															},
-															children: [(0, react_jsx_runtime.jsx)(e$6, { size: 18 }), "新建专题对话"]
+															children: [(0, react_jsx_runtime.jsx)(e$8, { size: 18 }), "新建专题对话"]
 														}),
 														recentResearch && openResearch && (0, react_jsx_runtime.jsxs)("button", {
 															type: "button",
@@ -114246,7 +115358,7 @@ get: function(visualType, key, isCategory) {
 																setResearchMore(false);
 																openResearch(recentResearch.sessionId);
 															},
-															children: [(0, react_jsx_runtime.jsx)(e$18, { size: 18 }), "继续最近对话"]
+															children: [(0, react_jsx_runtime.jsx)(e$22, { size: 18 }), "继续最近对话"]
 														}),
 														recentResearch && (0, react_jsx_runtime.jsxs)("div", {
 															className: "qs-research-recent",
@@ -115116,7 +116228,7 @@ get: function(visualType, key, isCategory) {
 							type: "button",
 							className: FactorContestPage_module_css_default.settingsButton,
 							onClick: () => setSettings(true),
-							children: [(0, react_jsx_runtime.jsx)(o$14, { size: 18 }), "账户与设置"]
+							children: [(0, react_jsx_runtime.jsx)(o$19, { size: 18 }), "账户与设置"]
 						})]
 					}),
 					status?.enabled && (0, react_jsx_runtime.jsxs)("div", {
@@ -115145,7 +116257,7 @@ get: function(visualType, key, isCategory) {
 								"data-primary": true,
 								disabled: Boolean(busy),
 								onClick: () => setLogin(true),
-								children: ["登录并连接", (0, react_jsx_runtime.jsx)(r$20, { size: 15 })]
+								children: ["登录并连接", (0, react_jsx_runtime.jsx)(r$21, { size: 15 })]
 							})]
 						})]
 					}),
@@ -115190,7 +116302,7 @@ get: function(visualType, key, isCategory) {
 							].map(([label, detail], i) => (0, react_jsx_runtime.jsxs)("li", {
 								"data-current": stage === i,
 								"data-done": stage > i,
-								children: [(0, react_jsx_runtime.jsx)("span", { children: stage > i ? (0, react_jsx_runtime.jsx)(o$25, { size: 16 }) : String(i + 1).padStart(2, "0") }), (0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("strong", { children: label }), (0, react_jsx_runtime.jsx)("small", { children: detail })] })]
+								children: [(0, react_jsx_runtime.jsx)("span", { children: stage > i ? (0, react_jsx_runtime.jsx)(o$31, { size: 16 }) : String(i + 1).padStart(2, "0") }), (0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("strong", { children: label }), (0, react_jsx_runtime.jsx)("small", { children: detail })] })]
 							}, label))
 						}),
 						(0, react_jsx_runtime.jsxs)("div", {
@@ -115213,7 +116325,7 @@ get: function(visualType, key, isCategory) {
 											onClick: () => {
 												run("research", (signal) => access.startResearch(void 0, signal));
 											},
-											children: [busy === "research" ? "正在打开对话…" : "进入 AI 因子助手", (0, react_jsx_runtime.jsx)(r$20, { size: 17 })]
+											children: [busy === "research" ? "正在打开对话…" : "进入 AI 因子助手", (0, react_jsx_runtime.jsx)(r$21, { size: 17 })]
 										}), ready && (0, react_jsx_runtime.jsx)("button", {
 											type: "button",
 											disabled: Boolean(busy),
@@ -115228,7 +116340,7 @@ get: function(visualType, key, isCategory) {
 							}), (0, react_jsx_runtime.jsxs)("div", {
 								className: FactorContestPage_module_css_default.researchExample,
 								children: [
-									(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)(o$27, { size: 18 }), "可以这样开始"] }),
+									(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)(o$33, { size: 18 }), "可以这样开始"] }),
 									(0, react_jsx_runtime.jsxs)("p", { children: [
 										"“研究一个低换手的反转因子，",
 										(0, react_jsx_runtime.jsx)("br", {}),
@@ -115236,9 +116348,9 @@ get: function(visualType, key, isCategory) {
 									] }),
 									(0, react_jsx_runtime.jsxs)("div", { children: [
 										(0, react_jsx_runtime.jsx)("span", { children: "研究假设" }),
-										(0, react_jsx_runtime.jsx)(r$20, { size: 13 }),
+										(0, react_jsx_runtime.jsx)(r$21, { size: 13 }),
 										(0, react_jsx_runtime.jsx)("span", { children: "回测结果" }),
-										(0, react_jsx_runtime.jsx)(r$20, { size: 13 }),
+										(0, react_jsx_runtime.jsx)(r$21, { size: 13 }),
 										(0, react_jsx_runtime.jsx)("span", { children: "参赛因子" })
 									] })
 								]
@@ -115298,7 +116410,7 @@ get: function(visualType, key, isCategory) {
 										onClick: () => {
 											read();
 										},
-										children: [(0, react_jsx_runtime.jsx)(r$17, { size: 17 }), loading ? "读取中…" : "刷新"]
+										children: [(0, react_jsx_runtime.jsx)(r$18, { size: 17 }), loading ? "读取中…" : "刷新"]
 									})]
 								}), (0, react_jsx_runtime.jsxs)("div", {
 									className: FactorContestPage_module_css_default.panelContent,
@@ -115627,7 +116739,7 @@ get: function(visualType, key, isCategory) {
 								href: "https://www.pandaaiquant.com/factorhub/fourthFactorCompetition/",
 								target: "_blank",
 								rel: "noreferrer",
-								children: ["查看赛事与报名 ", (0, react_jsx_runtime.jsx)(r$20, { size: 16 })]
+								children: ["查看赛事与报名 ", (0, react_jsx_runtime.jsx)(r$21, { size: 16 })]
 							})]
 						})
 					] }),
@@ -117518,13 +118630,13 @@ get: function(visualType, key, isCategory) {
 								href: PANDAAI_SITE,
 								target: "_blank",
 								rel: "noopener noreferrer",
-								children: [(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: "PandaAI 官网" }), (0, react_jsx_runtime.jsx)("small", { children: "pandaaiquant.com" })] }), (0, react_jsx_runtime.jsx)(o$31, {})]
+								children: [(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: "PandaAI 官网" }), (0, react_jsx_runtime.jsx)("small", { children: "pandaaiquant.com" })] }), (0, react_jsx_runtime.jsx)(o$37, {})]
 							}),
 							(0, react_jsx_runtime.jsxs)("a", {
 								href: QUANTSKILLS_SITE,
 								target: "_blank",
 								rel: "noopener noreferrer",
-								children: [(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: "QuantSkills 官网" }), (0, react_jsx_runtime.jsx)("small", { children: "quantskills.ai" })] }), (0, react_jsx_runtime.jsx)(o$31, {})]
+								children: [(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: "QuantSkills 官网" }), (0, react_jsx_runtime.jsx)("small", { children: "quantskills.ai" })] }), (0, react_jsx_runtime.jsx)(o$37, {})]
 							})
 						]
 					}),
@@ -117539,7 +118651,7 @@ get: function(visualType, key, isCategory) {
 							children: [(0, react_jsx_runtime.jsxs)("article", {
 								className: QuantSkillsApp_module_css_default.qrCard,
 								children: [
-									(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)(o$26, {}), (0, react_jsx_runtime.jsx)("b", { children: "入群小助理" })] }),
+									(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)(o$32, {}), (0, react_jsx_runtime.jsx)("b", { children: "入群小助理" })] }),
 									(0, react_jsx_runtime.jsx)("img", {
 										src: pandaai_group_assistant_qr_png_default,
 										alt: "PandaAI 入群小助理二维码"
@@ -117550,7 +118662,7 @@ get: function(visualType, key, isCategory) {
 							}), (0, react_jsx_runtime.jsxs)("article", {
 								className: QuantSkillsApp_module_css_default.qrCard,
 								children: [
-									(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)(a$8, {}), (0, react_jsx_runtime.jsx)("b", { children: "官方公众号" })] }),
+									(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)(a$9, {}), (0, react_jsx_runtime.jsx)("b", { children: "官方公众号" })] }),
 									(0, react_jsx_runtime.jsx)("img", {
 										src: quantskills_wechat_qr_png_default,
 										alt: "QuantSkills 官方公众号二维码"
@@ -117584,12 +118696,12 @@ get: function(visualType, key, isCategory) {
 							href: PANDAAI_SITE,
 							target: "_blank",
 							rel: "noopener noreferrer",
-							children: [(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: "PandaAI 官网" }), (0, react_jsx_runtime.jsx)("small", { children: "pandaaiquant.com" })] }), (0, react_jsx_runtime.jsx)(o$31, {})]
+							children: [(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: "PandaAI 官网" }), (0, react_jsx_runtime.jsx)("small", { children: "pandaaiquant.com" })] }), (0, react_jsx_runtime.jsx)(o$37, {})]
 						}), (0, react_jsx_runtime.jsxs)("a", {
 							href: QUANTSKILLS_SITE,
 							target: "_blank",
 							rel: "noopener noreferrer",
-							children: [(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: "QuantSkills 官网" }), (0, react_jsx_runtime.jsx)("small", { children: "quantskills.ai" })] }), (0, react_jsx_runtime.jsx)(o$31, {})]
+							children: [(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: "QuantSkills 官网" }), (0, react_jsx_runtime.jsx)("small", { children: "quantskills.ai" })] }), (0, react_jsx_runtime.jsx)(o$37, {})]
 						})]
 					}),
 					(0, react_jsx_runtime.jsxs)("section", {
@@ -117599,14 +118711,14 @@ get: function(visualType, key, isCategory) {
 							src: pandaai_group_assistant_qr_png_default,
 							alt: "PandaAI 入群小助理二维码"
 						}), (0, react_jsx_runtime.jsxs)("span", { children: [
-							(0, react_jsx_runtime.jsx)(o$26, {}),
+							(0, react_jsx_runtime.jsx)(o$32, {}),
 							(0, react_jsx_runtime.jsx)("b", { children: "入群小助理" }),
 							(0, react_jsx_runtime.jsx)("small", { children: "安装协助与用户群" })
 						] })] }), (0, react_jsx_runtime.jsxs)("article", { children: [(0, react_jsx_runtime.jsx)("img", {
 							src: quantskills_wechat_qr_png_default,
 							alt: "QuantSkills 官方公众号二维码"
 						}), (0, react_jsx_runtime.jsxs)("span", { children: [
-							(0, react_jsx_runtime.jsx)(a$8, {}),
+							(0, react_jsx_runtime.jsx)(a$9, {}),
 							(0, react_jsx_runtime.jsx)("b", { children: "官方公众号" }),
 							(0, react_jsx_runtime.jsx)("small", { children: "产品更新与研究内容" })
 						] })] })]
@@ -117949,7 +119061,7 @@ get: function(visualType, key, isCategory) {
 							setError("");
 							setMessage("");
 						},
-						children: [(0, react_jsx_runtime.jsx)(e$6, {}), "添加模型服务"]
+						children: [(0, react_jsx_runtime.jsx)(e$8, {}), "添加模型服务"]
 					})] }),
 					error && (0, react_jsx_runtime.jsx)("p", {
 						role: "alert",
@@ -117980,7 +119092,7 @@ get: function(visualType, key, isCategory) {
 									setDraft(void 0);
 									setAdvancedModels(void 0);
 								},
-								children: (0, react_jsx_runtime.jsx)(r$21, {})
+								children: (0, react_jsx_runtime.jsx)(r$22, {})
 							}),
 							(0, react_jsx_runtime.jsx)("h3", { children: draft ? draft.name : "选择模型服务" }),
 							(0, react_jsx_runtime.jsx)("button", {
@@ -118566,44 +119678,44 @@ get: function(visualType, key, isCategory) {
 		//#region lib/types/client/theme-icons.js
 		const THEME_ICON_FAMILIES = {
 			cosmos: [
-				o$5,
 				o$7,
+				o$11,
 				r$6
 			],
 			geometry: [
 				a$6,
-				o$22,
-				e$10
+				o$28,
+				e$14
 			],
 			botanical: [
-				o$13,
-				o$3,
+				o$18,
+				o$4,
 				r$2
 			],
 			atelier: [
-				o$19,
-				o$9,
+				o$25,
+				o$13,
 				t
 			],
 			ocean: [
 				r$11,
-				e$14,
+				e$18,
 				o$1
 			],
 			meadow: [
-				e$13,
-				e$21,
+				e$17,
+				e$26,
 				r$3
 			],
 			jiangnan: [
-				o$13,
+				o$18,
 				a$4,
 				t$3
 			],
 			cyber: [
 				t$5,
-				e$17,
-				o$23
+				e$21,
+				o$29
 			],
 			lagoon: [
 				r$11,
@@ -118613,7 +119725,7 @@ get: function(visualType, key, isCategory) {
 			rain: [
 				r$10,
 				a$7,
-				o$2
+				o$3
 			],
 			ink: [
 				r$8,
@@ -119712,7 +120824,7 @@ void main() {
 								children: [
 									(0, react_jsx_runtime.jsx)("span", {
 										className: QuantSkillsApp_module_css_default.presetSwatch,
-										children: theme.scheme === "dark" ? (0, react_jsx_runtime.jsx)(e$7, {
+										children: theme.scheme === "dark" ? (0, react_jsx_runtime.jsx)(e$9, {
 											size: 26,
 											weight: "duotone"
 										}) : (0, react_jsx_runtime.jsx)(e$5, {
@@ -119746,7 +120858,7 @@ void main() {
 							onClick: () => {
 								onChange("dark");
 							},
-							children: [(0, react_jsx_runtime.jsx)(e$7, { size: 18 }), (0, react_jsx_runtime.jsx)("span", { children: "深色" })]
+							children: [(0, react_jsx_runtime.jsx)(e$9, { size: 18 }), (0, react_jsx_runtime.jsx)("span", { children: "深色" })]
 						})]
 					}),
 					(0, react_jsx_runtime.jsxs)("div", {
@@ -121146,7 +122258,7 @@ void main() {
 												onClick: () => {
 													setNotificationsOpen((open) => !open);
 												},
-												children: [unreadCount === 0 ? (0, react_jsx_runtime.jsx)(o$30, { size: 18 }) : (0, react_jsx_runtime.jsx)(o$29, { size: 18 }), unreadCount > 0 && (0, react_jsx_runtime.jsx)("mark", { children: unreadCount })]
+												children: [unreadCount === 0 ? (0, react_jsx_runtime.jsx)(o$36, { size: 18 }) : (0, react_jsx_runtime.jsx)(o$35, { size: 18 }), unreadCount > 0 && (0, react_jsx_runtime.jsx)("mark", { children: unreadCount })]
 											}), notificationsOpen && (0, react_jsx_runtime.jsx)(ConversationNotificationMenu, {
 												rows: notificationRows,
 												unreadCount,
@@ -121170,7 +122282,7 @@ void main() {
 													setError(cause instanceof Error ? cause.message : String(cause));
 												});
 											},
-											children: [(0, react_jsx_runtime.jsx)(e$6, {}), "新对话"]
+											children: [(0, react_jsx_runtime.jsx)(e$8, {}), "新对话"]
 										}),
 										managing && (0, react_jsx_runtime.jsx)("button", {
 											type: "button",
@@ -121186,7 +122298,7 @@ void main() {
 							}),
 							(0, react_jsx_runtime.jsxs)("label", {
 								className: QuantSkillsApp_module_css_default.sessionSearch,
-								children: [(0, react_jsx_runtime.jsx)(o$11, { size: 17 }), (0, react_jsx_runtime.jsx)("input", {
+								children: [(0, react_jsx_runtime.jsx)(o$15, { size: 17 }), (0, react_jsx_runtime.jsx)("input", {
 									type: "search",
 									value: sessionSearch,
 									placeholder: "搜索会话名称或 ID",
@@ -121256,7 +122368,7 @@ void main() {
 											setError(void 0);
 											setPendingArchive(allRows.filter((row) => selectedSessionIds.has(row.archive.sessionId) && !row.archive.running));
 										},
-										children: [(0, react_jsx_runtime.jsx)(r$14, { size: 15 }), "归档"]
+										children: [(0, react_jsx_runtime.jsx)(r$15, { size: 15 }), "归档"]
 									}),
 									(0, react_jsx_runtime.jsxs)("button", {
 										type: "button",
@@ -121340,11 +122452,11 @@ void main() {
 									(0, react_jsx_runtime.jsx)("b", { children: "还没有 专家团 会话" }),
 									(0, react_jsx_runtime.jsx)("small", { children: "专家团 编排完成后会在这里保留独立存档。" })
 								] }) : kindFilter === "plain" ? (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-									(0, react_jsx_runtime.jsx)(o$26, { size: 28 }),
+									(0, react_jsx_runtime.jsx)(o$32, { size: 28 }),
 									(0, react_jsx_runtime.jsx)("b", { children: "还没有普通会话" }),
 									(0, react_jsx_runtime.jsx)("small", { children: "点击“新对话”即可开始，不需要先配置 Python 或 PandaData。" })
 								] }) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-									(0, react_jsx_runtime.jsx)(o$11, { size: 28 }),
+									(0, react_jsx_runtime.jsx)(o$15, { size: 28 }),
 									(0, react_jsx_runtime.jsx)("b", { children: "没有匹配的会话" }),
 									(0, react_jsx_runtime.jsx)("small", { children: "清除搜索词或切换会话类型。" })
 								] })
@@ -121573,7 +122685,7 @@ void main() {
 					children: [
 						row.kind === "skill" ? (0, react_jsx_runtime.jsx)(SkillMark, { small: true }) : (0, react_jsx_runtime.jsx)("span", {
 							className: QuantSkillsApp_module_css_default.agentMark,
-							children: row.kind === "plain" ? (0, react_jsx_runtime.jsx)(o$26, {}) : (0, react_jsx_runtime.jsx)(CapabilityIcon, { kind: row.kind === "team" ? "agent-team" : "agent" })
+							children: row.kind === "plain" ? (0, react_jsx_runtime.jsx)(o$32, {}) : (0, react_jsx_runtime.jsx)(CapabilityIcon, { kind: row.kind === "team" ? "agent-team" : "agent" })
 						}),
 						(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: conversationRowTitle(row, catalog) }), (0, react_jsx_runtime.jsxs)("small", { children: [
 							conversationNotificationLabel(row),
@@ -121633,7 +122745,7 @@ void main() {
 					children: [
 						(0, react_jsx_runtime.jsx)("span", {
 							className: QuantSkillsApp_module_css_default.renameDialogIcon,
-							children: (0, react_jsx_runtime.jsx)(o$8, { size: 20 })
+							children: (0, react_jsx_runtime.jsx)(o$12, { size: 20 })
 						}),
 						(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("h2", {
 							id: titleId,
@@ -121704,7 +122816,7 @@ void main() {
 								children: [
 									row.kind === "skill" ? (0, react_jsx_runtime.jsx)(SkillMark, { small: true }) : (0, react_jsx_runtime.jsx)("span", {
 										className: QuantSkillsApp_module_css_default.agentMark,
-										children: row.kind === "plain" ? (0, react_jsx_runtime.jsx)(o$26, {}) : (0, react_jsx_runtime.jsx)(CapabilityIcon, { kind: row.kind === "team" ? "agent-team" : "agent" })
+										children: row.kind === "plain" ? (0, react_jsx_runtime.jsx)(o$32, {}) : (0, react_jsx_runtime.jsx)(CapabilityIcon, { kind: row.kind === "team" ? "agent-team" : "agent" })
 									}),
 									(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: conversationRowTitle(row, catalog) }), (0, react_jsx_runtime.jsxs)("small", { children: [
 										row.kind === "plain" ? "普通会话" : row.kind === "skill" ? `${assetTitle(catalog, row.archive.binding.assetId)} · 技能` : row.kind === "agent" ? `专家 · ${row.archive.agent.name}` : `专家团 · ${row.archive.team.name}`,
@@ -121745,7 +122857,7 @@ void main() {
 			{
 				page: "home",
 				label: "首页",
-				icon: (0, react_jsx_runtime.jsx)(e$9, { size: 24 })
+				icon: (0, react_jsx_runtime.jsx)(e$13, { size: 24 })
 			},
 			{
 				page: "skills",
@@ -121765,12 +122877,12 @@ void main() {
 			{
 				page: "conversations",
 				label: "会话",
-				icon: (0, react_jsx_runtime.jsx)(o$26, { size: 25 })
+				icon: (0, react_jsx_runtime.jsx)(o$32, { size: 25 })
 			},
 			{
 				page: "database",
 				label: "数据库",
-				icon: (0, react_jsx_runtime.jsx)(e$16, { size: 24 })
+				icon: (0, react_jsx_runtime.jsx)(e$20, { size: 24 })
 			},
 			{
 				page: "favorites",
@@ -121782,7 +122894,7 @@ void main() {
 			{
 				page: "qube",
 				label: "QUBE",
-				icon: (0, react_jsx_runtime.jsx)(o$22, { size: 24 })
+				icon: (0, react_jsx_runtime.jsx)(o$28, { size: 24 })
 			},
 			{
 				page: "evo",
@@ -122160,7 +123272,7 @@ void main() {
 									closeResults();
 									setMobilePanel((current) => current === "sessions" ? void 0 : "sessions");
 								},
-								children: (0, react_jsx_runtime.jsx)(o$26, { size: 22 })
+								children: (0, react_jsx_runtime.jsx)(o$32, { size: 22 })
 							}),
 							resultSurfaceVisible && (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
@@ -122172,7 +123284,7 @@ void main() {
 									if (resultWorkbenchOpen) closeResults();
 									else openResults();
 								},
-								children: (0, react_jsx_runtime.jsx)(e$12, { size: 22 })
+								children: (0, react_jsx_runtime.jsx)(e$16, { size: 22 })
 							})
 						]
 					}),
@@ -122257,7 +123369,7 @@ void main() {
 										onClick: () => {
 											actions.navigate("settings");
 										},
-										children: [(0, react_jsx_runtime.jsx)(o$14, { size: 24 }), (0, react_jsx_runtime.jsx)("span", { children: "设置" })]
+										children: [(0, react_jsx_runtime.jsx)(o$19, { size: 24 }), (0, react_jsx_runtime.jsx)("span", { children: "设置" })]
 									})
 								]
 							}),
@@ -122311,7 +123423,7 @@ void main() {
 						onClick: () => {
 							setSessionDrawerOpen(true);
 						},
-						children: (0, react_jsx_runtime.jsx)(e$19, { size: 15 })
+						children: (0, react_jsx_runtime.jsx)(e$23, { size: 15 })
 					}),
 					!mobile && resultSurfaceVisible && !resultWorkbenchOpen && (0, react_jsx_runtime.jsx)("button", {
 						type: "button",
@@ -122363,7 +123475,7 @@ void main() {
 									event.stopPropagation();
 									closeResults();
 								},
-								children: (0, react_jsx_runtime.jsx)(e$19, { size: 15 })
+								children: (0, react_jsx_runtime.jsx)(e$23, { size: 15 })
 							})
 						}), (0, react_jsx_runtime.jsx)("div", {
 							className: QuantSkillsApp_module_css_default.resultDock,
@@ -122446,14 +123558,14 @@ void main() {
 						onClick: () => {
 							actions.navigate("settings");
 						},
-						children: [(0, react_jsx_runtime.jsx)(o$14, { size: 25 }), (0, react_jsx_runtime.jsx)("span", { children: "设置" })]
+						children: [(0, react_jsx_runtime.jsx)(o$19, { size: 25 }), (0, react_jsx_runtime.jsx)("span", { children: "设置" })]
 					}),
 					collapsed && (0, react_jsx_runtime.jsx)("button", {
 						type: "button",
 						className: QuantSkillsApp_module_css_default.railExpand,
 						"aria-label": "展开导航",
 						onClick: collapse,
-						children: (0, react_jsx_runtime.jsx)(e$19, {})
+						children: (0, react_jsx_runtime.jsx)(e$23, {})
 					})
 				]
 			});
@@ -122789,7 +123901,7 @@ void main() {
 									"aria-busy": applicationUpdateBusy,
 									disabled: applicationUpdateBusy,
 									onClick: applicationUpdate.state === "available" ? startApplicationUpdate : checkApplicationUpdate,
-									children: [(0, react_jsx_runtime.jsx)(r$24, { className: applicationUpdateBusy ? QuantSkillsApp_module_css_default.spinningIcon : void 0 }), applicationUpdate.state === "checking" ? "正在检查…" : applicationUpdate.state === "preparing" ? "正在准备更新…" : applicationUpdate.state === "available" ? "下载并更新" : applicationUpdate.state === "ready" ? "更新已就绪" : "检查更新"]
+									children: [(0, react_jsx_runtime.jsx)(r$25, { className: applicationUpdateBusy ? QuantSkillsApp_module_css_default.spinningIcon : void 0 }), applicationUpdate.state === "checking" ? "正在检查…" : applicationUpdate.state === "preparing" ? "正在准备更新…" : applicationUpdate.state === "available" ? "下载并更新" : applicationUpdate.state === "ready" ? "更新已就绪" : "检查更新"]
 								}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Menu, {
 									open: applicationUpdateSourceOpen,
 									portal: true,
@@ -122829,9 +123941,9 @@ void main() {
 											setApplicationUpdateSourceOpen((value) => !value);
 										},
 										children: [
-											(0, react_jsx_runtime.jsx)(e$11, { size: 16 }),
+											(0, react_jsx_runtime.jsx)(e$15, { size: 16 }),
 											(0, react_jsx_runtime.jsx)("span", { children: applicationUpdateSourceLabel(applicationUpdateSource) }),
-											(0, react_jsx_runtime.jsx)(e$20, { size: 13 })
+											(0, react_jsx_runtime.jsx)(e$24, { size: 13 })
 										]
 									})
 								})]
@@ -122842,10 +123954,10 @@ void main() {
 									props.actions.navigate("parallel");
 								},
 								children: [
-									(0, react_jsx_runtime.jsx)(o$26, {}),
+									(0, react_jsx_runtime.jsx)(o$32, {}),
 									"活动会话 ",
 									attentionCount,
-									(0, react_jsx_runtime.jsx)(e$19, {})
+									(0, react_jsx_runtime.jsx)(e$23, {})
 								]
 							})]
 						})
@@ -122982,7 +124094,7 @@ void main() {
 													className: QuantSkillsApp_module_css_default.primaryButton,
 													disabled: taskBusy !== void 0,
 													onClick: createSkillForTask,
-													children: [(0, react_jsx_runtime.jsx)(o$12, {}), "都不合适，AI 创建"]
+													children: [(0, react_jsx_runtime.jsx)(o$16, {}), "都不合适，AI 创建"]
 												})]
 											})] }),
 											taskGuide.result.kind === "creation" && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("b", { children: "这个需求更适合创建新 技能" }), (0, react_jsx_runtime.jsx)("p", { children: taskGuide.result.message })] }), (0, react_jsx_runtime.jsxs)("div", {
@@ -122997,7 +124109,7 @@ void main() {
 													className: QuantSkillsApp_module_css_default.primaryButton,
 													disabled: taskBusy !== void 0,
 													onClick: createSkillForTask,
-													children: [(0, react_jsx_runtime.jsx)(o$12, {}), "AI 创建 技能"]
+													children: [(0, react_jsx_runtime.jsx)(o$16, {}), "AI 创建 技能"]
 												})]
 											})] })
 										]
@@ -123033,7 +124145,7 @@ void main() {
 										}),
 										(0, react_jsx_runtime.jsxs)("span", {
 											className: QuantSkillsApp_module_css_default.linkText,
-											children: ["继续 ", (0, react_jsx_runtime.jsx)(e$19, {})]
+											children: ["继续 ", (0, react_jsx_runtime.jsx)(e$23, {})]
 										})
 									]
 								})] }),
@@ -123053,7 +124165,7 @@ void main() {
 										}),
 										(0, react_jsx_runtime.jsxs)("span", {
 											className: QuantSkillsApp_module_css_default.linkText,
-											children: ["继续 ", (0, react_jsx_runtime.jsx)(e$19, {})]
+											children: ["继续 ", (0, react_jsx_runtime.jsx)(e$23, {})]
 										})
 									]
 								})] }),
@@ -123082,7 +124194,7 @@ void main() {
 													small: true
 												}),
 												(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: asset?.title ?? entry.assetId }), (0, react_jsx_runtime.jsxs)("small", { children: [entry.sessionCount, " 个存档 · 继续最近会话"] })] }),
-												(0, react_jsx_runtime.jsx)(e$19, {})
+												(0, react_jsx_runtime.jsx)(e$23, {})
 											]
 										}), (0, react_jsx_runtime.jsx)("button", {
 											type: "button",
@@ -123093,7 +124205,7 @@ void main() {
 												if (recent === void 0) return;
 												props.startBoundSession(recent.binding, asset?.title ?? entry.assetId);
 											},
-											children: (0, react_jsx_runtime.jsx)(e$6, {})
+											children: (0, react_jsx_runtime.jsx)(e$8, {})
 										})]
 									}, entry.assetId))
 								})] }),
@@ -123314,7 +124426,7 @@ void main() {
 						selectedCategory === "all" ? "全部" : `“${selectedLabel}”`,
 						targetLabel,
 						" ",
-						(0, react_jsx_runtime.jsx)(e$19, {})
+						(0, react_jsx_runtime.jsx)(e$23, {})
 					]
 				})
 			] });
@@ -123480,12 +124592,12 @@ void main() {
 													setActionError(error instanceof Error ? error.message : "无法开始技能创作");
 												});
 											},
-											children: [(0, react_jsx_runtime.jsx)(e$6, {}), "AI 创建技能"]
+											children: [(0, react_jsx_runtime.jsx)(e$8, {}), "AI 创建技能"]
 										})]
 									})
 								}), (0, react_jsx_runtime.jsxs)("label", {
 									className: QuantSkillsApp_module_css_default.searchBox,
-									children: [(0, react_jsx_runtime.jsx)(o$11, {}), (0, react_jsx_runtime.jsx)("input", {
+									children: [(0, react_jsx_runtime.jsx)(o$15, {}), (0, react_jsx_runtime.jsx)("input", {
 										value: search,
 										onChange: (event) => {
 											props.actions.setSearch(event.target.value);
@@ -123587,7 +124699,7 @@ void main() {
 													children: "分类排序"
 												})
 											]
-										}), (0, react_jsx_runtime.jsx)(e$20, {})]
+										}), (0, react_jsx_runtime.jsx)(e$24, {})]
 									})
 								]
 							}),
@@ -123635,7 +124747,7 @@ void main() {
 								}, asset.name)), skills.length === 0 && (0, react_jsx_runtime.jsxs)("div", {
 									className: QuantSkillsApp_module_css_default.emptyState,
 									children: [
-										(0, react_jsx_runtime.jsx)(o$11, { size: 30 }),
+										(0, react_jsx_runtime.jsx)(o$15, { size: 30 }),
 										(0, react_jsx_runtime.jsx)("h2", { children: libraryPhase === "loading" ? "正在读取技能" : libraryPhase === "error" || libraryPhase === "stale" ? "技能读取失败，请重试" : search.trim() || selectedCategory !== "all" ? "没有匹配的技能" : librarySource === "mine" ? "还没有创建技能" : librarySource === "installed" ? "还没有安装技能" : "暂无技能" }),
 										libraryPhase === "ready" && (0, react_jsx_runtime.jsx)("button", {
 											onClick: () => {
@@ -123735,7 +124847,7 @@ void main() {
 					}),
 					(0, react_jsx_runtime.jsxs)("span", {
 						className: QuantSkillsApp_module_css_default.installStatus,
-						children: [installed ? (0, react_jsx_runtime.jsx)(c$2, { weight: "fill" }) : updateAvailable ? (0, react_jsx_runtime.jsx)(c$1, {}) : (0, react_jsx_runtime.jsx)(o$24, {}), status]
+						children: [installed ? (0, react_jsx_runtime.jsx)(c$3, { weight: "fill" }) : updateAvailable ? (0, react_jsx_runtime.jsx)(c$2, {}) : (0, react_jsx_runtime.jsx)(o$30, {}), status]
 					}),
 					(0, react_jsx_runtime.jsx)("button", {
 						type: "button",
@@ -123916,7 +125028,7 @@ void main() {
 									href: `${asset.url}/blob/${asset.commitSha}/${readme.phase === "ready" ? readme.value.path.split("/").map(encodeURIComponent).join("/") : "README.md"}`,
 									target: "_blank",
 									rel: "noreferrer",
-									children: ["查看仓库原文 ", (0, react_jsx_runtime.jsx)(o$31, {})]
+									children: ["查看仓库原文 ", (0, react_jsx_runtime.jsx)(o$37, {})]
 								})]
 							}),
 							readme.phase === "loading" && (0, react_jsx_runtime.jsx)("p", {
@@ -123946,7 +125058,7 @@ void main() {
 						className: QuantSkillsApp_module_css_default.notice,
 						role: "status",
 						children: [
-							(0, react_jsx_runtime.jsx)(o$6, {}),
+							(0, react_jsx_runtime.jsx)(o$8, {}),
 							"更新会安装不可变的新版本；已有会话继续使用原版本，新会话才使用 ",
 							asset.commitSha.slice(0, 7),
 							"。"
@@ -123963,7 +125075,7 @@ void main() {
 						children: [(0, react_jsx_runtime.jsxs)("li", { children: ["标准 ", asset.declarationFile] }), (0, react_jsx_runtime.jsx)("li", { children: asset.requires.join("、") || "本地工作区" })]
 					}),
 					(0, react_jsx_runtime.jsx)(InfoGroup, {
-						icon: (0, react_jsx_runtime.jsx)(e$8, {}),
+						icon: (0, react_jsx_runtime.jsx)(e$10, {}),
 						title: "权限",
 						children: (0, react_jsx_runtime.jsx)("li", { children: "使用会话当前授权；保存技能不会额外授予执行权限。" })
 					}),
@@ -123972,7 +125084,7 @@ void main() {
 						children: [
 							(0, react_jsx_runtime.jsx)("h3", { children: "运行要求" }),
 							(0, react_jsx_runtime.jsxs)("p", { children: [
-								(0, react_jsx_runtime.jsx)(e$12, {}),
+								(0, react_jsx_runtime.jsx)(e$16, {}),
 								"运行环境 ",
 								(0, react_jsx_runtime.jsx)("span", { children: "使用当前工作区与用户环境" })
 							] }),
@@ -123982,7 +125094,7 @@ void main() {
 								(0, react_jsx_runtime.jsx)("span", { children: "按当前环境使用，缺失时由任务给出修复建议" })
 							] }),
 							(0, react_jsx_runtime.jsxs)("p", { children: [
-								(0, react_jsx_runtime.jsx)(e$11, {}),
+								(0, react_jsx_runtime.jsx)(e$15, {}),
 								"网络 ",
 								(0, react_jsx_runtime.jsx)("span", { children: "按运行授权" })
 							] })
@@ -124001,15 +125113,15 @@ void main() {
 					}),
 					(0, react_jsx_runtime.jsxs)("div", {
 						className: QuantSkillsApp_module_css_default.archiveList,
-						children: [(0, react_jsx_runtime.jsxs)("h3", { children: ["会话存档 ", (0, react_jsx_runtime.jsx)("mark", { children: archives.length })] }), archives.length === 0 ? (0, react_jsx_runtime.jsxs)("p", { children: [(0, react_jsx_runtime.jsx)(o$26, {}), "还没有该 技能 的会话存档。"] }) : archives.map((archive) => (0, react_jsx_runtime.jsxs)("button", {
+						children: [(0, react_jsx_runtime.jsxs)("h3", { children: ["会话存档 ", (0, react_jsx_runtime.jsx)("mark", { children: archives.length })] }), archives.length === 0 ? (0, react_jsx_runtime.jsxs)("p", { children: [(0, react_jsx_runtime.jsx)(o$32, {}), "还没有该 技能 的会话存档。"] }) : archives.map((archive) => (0, react_jsx_runtime.jsxs)("button", {
 							type: "button",
 							onClick: () => {
 								onOpen(archive.sessionId);
 							},
 							children: [
-								(0, react_jsx_runtime.jsx)(o$26, {}),
+								(0, react_jsx_runtime.jsx)(o$32, {}),
 								(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: archive.title ?? "未命名会话" }), (0, react_jsx_runtime.jsx)("small", { children: formatUpdated(archive.updatedAt) })] }),
-								archive.running ? (0, react_jsx_runtime.jsx)(StatusDot, { status: "running" }) : (0, react_jsx_runtime.jsx)(e$19, {})
+								archive.running ? (0, react_jsx_runtime.jsx)(StatusDot, { status: "running" }) : (0, react_jsx_runtime.jsx)(e$23, {})
 							]
 						}, archive.sessionId))]
 					}),
@@ -124124,7 +125236,7 @@ void main() {
 									onClick: () => {
 										startSession();
 									},
-									children: [(0, react_jsx_runtime.jsx)(e$6, {}), creatingSession ? "正在创建…" : "新建会话"]
+									children: [(0, react_jsx_runtime.jsx)(e$8, {}), creatingSession ? "正在创建…" : "新建会话"]
 								}),
 								(0, react_jsx_runtime.jsx)("button", {
 									type: "button",
@@ -124141,7 +125253,7 @@ void main() {
 										props.actions.setSettingsSection("archives");
 										props.actions.navigate("settings");
 									},
-									children: [(0, react_jsx_runtime.jsx)(r$14, {}), "归档会话"]
+									children: [(0, react_jsx_runtime.jsx)(r$15, {}), "归档会话"]
 								})
 							]
 						})
@@ -124164,7 +125276,7 @@ void main() {
 					archiveCount === 0 ? (0, react_jsx_runtime.jsxs)("div", {
 						className: QuantSkillsApp_module_css_default.settingsPlaceholder,
 						children: [
-							(0, react_jsx_runtime.jsx)(o$26, { size: 42 }),
+							(0, react_jsx_runtime.jsx)(o$32, { size: 42 }),
 							(0, react_jsx_runtime.jsx)("h2", { children: "还没有 QuantSkills 会话" }),
 							(0, react_jsx_runtime.jsx)("p", { children: "普通会话可直接使用；需要 Python 或 PandaData 时，专家会使用当前工作区和用户环境，并在缺失时给出修复建议。" }),
 							(0, react_jsx_runtime.jsxs)("button", {
@@ -124174,7 +125286,7 @@ void main() {
 								onClick: () => {
 									startSession();
 								},
-								children: [(0, react_jsx_runtime.jsx)(e$6, {}), creatingSession ? "正在创建…" : "新建会话"]
+								children: [(0, react_jsx_runtime.jsx)(e$8, {}), creatingSession ? "正在创建…" : "新建会话"]
 							})
 						]
 					}) : (0, react_jsx_runtime.jsx)("div", {
@@ -124206,7 +125318,7 @@ void main() {
 								children: [
 									(0, react_jsx_runtime.jsx)(CapabilityIcon, { kind: "agent-team" }),
 									(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: row.archive.title ?? "新会话" }), (0, react_jsx_runtime.jsxs)("small", { children: ["普通会话 · ", formatUpdated(row.archive.updatedAt)] })] }),
-									row.archive.running ? (0, react_jsx_runtime.jsx)(StatusDot, { status: "running" }) : (0, react_jsx_runtime.jsx)(e$19, {})
+									row.archive.running ? (0, react_jsx_runtime.jsx)(StatusDot, { status: "running" }) : (0, react_jsx_runtime.jsx)(e$23, {})
 								]
 							}),
 							(0, react_jsx_runtime.jsx)("button", {
@@ -124216,7 +125328,7 @@ void main() {
 								onClick: () => {
 									props.startSession();
 								},
-								children: (0, react_jsx_runtime.jsx)(e$6, {})
+								children: (0, react_jsx_runtime.jsx)(e$8, {})
 							}),
 							(0, react_jsx_runtime.jsx)(SessionHistoryMenu, {
 								id: row.archive.sessionId,
@@ -124246,7 +125358,7 @@ void main() {
 											" · ",
 											formatUpdated(row.archive.updatedAt)
 										] })] }),
-										row.archive.running ? (0, react_jsx_runtime.jsx)(StatusDot, { status: "running" }) : (0, react_jsx_runtime.jsx)(e$19, {})
+										row.archive.running ? (0, react_jsx_runtime.jsx)(StatusDot, { status: "running" }) : (0, react_jsx_runtime.jsx)(e$23, {})
 									]
 								}),
 								(0, react_jsx_runtime.jsx)("button", {
@@ -124256,7 +125368,7 @@ void main() {
 									onClick: () => {
 										props.startBoundSession(row.archive.binding, label);
 									},
-									children: (0, react_jsx_runtime.jsx)(e$6, {})
+									children: (0, react_jsx_runtime.jsx)(e$8, {})
 								}),
 								(0, react_jsx_runtime.jsx)(SessionHistoryMenu, {
 									id: row.archive.sessionId,
@@ -124280,7 +125392,7 @@ void main() {
 								children: [
 									(0, react_jsx_runtime.jsx)("span", {
 										className: QuantSkillsApp_module_css_default.agentMark,
-										children: row.kind === "agent" ? (0, react_jsx_runtime.jsx)(CapabilityIcon, { kind: "agent" }) : (0, react_jsx_runtime.jsx)(o$26, {})
+										children: row.kind === "agent" ? (0, react_jsx_runtime.jsx)(CapabilityIcon, { kind: "agent" }) : (0, react_jsx_runtime.jsx)(o$32, {})
 									}),
 									(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: row.archive.title ?? ownerName }), (0, react_jsx_runtime.jsxs)("small", { children: [
 										ownerLabel,
@@ -124289,7 +125401,7 @@ void main() {
 										" · ",
 										formatUpdated(row.archive.updatedAt)
 									] })] }),
-									row.archive.running ? (0, react_jsx_runtime.jsx)(StatusDot, { status: "running" }) : (0, react_jsx_runtime.jsx)(e$19, {})
+									row.archive.running ? (0, react_jsx_runtime.jsx)(StatusDot, { status: "running" }) : (0, react_jsx_runtime.jsx)(e$23, {})
 								]
 							}),
 							(0, react_jsx_runtime.jsx)("button", {
@@ -124303,7 +125415,7 @@ void main() {
 									if (row.kind === "agent" && "agentId" in definition) props.startAgentSession(definition);
 									else if (row.kind === "team" && "teamId" in definition) props.startAgentTeamSession(definition);
 								},
-								children: (0, react_jsx_runtime.jsx)(e$6, {})
+								children: (0, react_jsx_runtime.jsx)(e$8, {})
 							}),
 							(0, react_jsx_runtime.jsx)(SessionHistoryMenu, {
 								id: row.archive.sessionId,
@@ -124378,7 +125490,7 @@ void main() {
 				}), (0, react_jsx_runtime.jsxs)("div", {
 					className: QuantSkillsApp_module_css_default.settingsPlaceholder,
 					children: [
-						(0, react_jsx_runtime.jsx)(o$26, { size: 42 }),
+						(0, react_jsx_runtime.jsx)(o$32, { size: 42 }),
 						(0, react_jsx_runtime.jsx)("h2", { children: "暂无并行会话" }),
 						(0, react_jsx_runtime.jsx)("p", { children: "创建多个真实 技能 会话后，可在这里统一查看运行和可继续状态。" }),
 						(0, react_jsx_runtime.jsxs)("button", {
@@ -124412,10 +125524,10 @@ void main() {
 									setReplyDrawerOpen(true);
 								},
 								children: [
-									(0, react_jsx_runtime.jsx)(o$26, {}),
+									(0, react_jsx_runtime.jsx)(o$32, {}),
 									(0, react_jsx_runtime.jsx)("span", { children: "等待回复" }),
 									(0, react_jsx_runtime.jsx)("b", { children: waiting.length }),
-									(0, react_jsx_runtime.jsx)(e$19, {})
+									(0, react_jsx_runtime.jsx)(e$23, {})
 								]
 							}), (0, react_jsx_runtime.jsx)("button", {
 								className: QuantSkillsApp_module_css_default.primaryButton,
@@ -124433,7 +125545,7 @@ void main() {
 									kind: "skill",
 									size: 18,
 									bare: true
-								}), "选择 技能 或 专家"] }) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(e$6, {}), "新会话"] })
+								}), "选择 技能 或 专家"] }) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(e$8, {}), "新会话"] })
 							})]
 						})
 					}),
@@ -124488,7 +125600,7 @@ void main() {
 							children: [
 								row.kind === "skill" ? (0, react_jsx_runtime.jsx)(SkillMark, { small: true }) : (0, react_jsx_runtime.jsx)(CapabilityIcon, { kind: "agent" }),
 								(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)("b", { children: row.archive.title ?? (row.kind === "skill" ? row.archive.binding.assetId : row.archive.agent.name) }), (0, react_jsx_runtime.jsx)("small", { children: pendingInteractions.get(row.archive.sessionId)?.kind ?? "需要你的输入" })] }),
-								(0, react_jsx_runtime.jsx)(e$19, {})
+								(0, react_jsx_runtime.jsx)(e$23, {})
 							]
 						}, row.archive.sessionId))]
 					})
@@ -124541,7 +125653,7 @@ void main() {
 						type: "button",
 						onClick: onOpen,
 						children: "打开"
-					}), (0, react_jsx_runtime.jsx)(o$20, {})] })
+					}), (0, react_jsx_runtime.jsx)(o$26, {})] })
 				]
 			});
 		}
@@ -124672,7 +125784,7 @@ void main() {
 											if (entry.recent) props.openSession(entry.recent);
 											else run(entry.id, entry.start);
 										},
-										children: [(0, react_jsx_runtime.jsx)(o$26, {}), busy === entry.id ? "正在打开…" : entry.recent ? "继续对话" : entry.action]
+										children: [(0, react_jsx_runtime.jsx)(o$32, {}), busy === entry.id ? "正在打开…" : entry.recent ? "继续对话" : entry.action]
 									}), entry.recent && (0, react_jsx_runtime.jsxs)("button", {
 										type: "button",
 										className: QuantSkillsApp_module_css_default.outlineButton,
@@ -124680,7 +125792,7 @@ void main() {
 										onClick: () => {
 											run(entry.id, entry.start);
 										},
-										children: [(0, react_jsx_runtime.jsx)(e$6, {}), "新对话"]
+										children: [(0, react_jsx_runtime.jsx)(e$8, {}), "新对话"]
 									})]
 								})
 							]
@@ -125103,13 +126215,13 @@ void main() {
 								className: QuantSkillsApp_module_css_default.primaryButton,
 								disabled: busy,
 								onClick: startAgentAuthoring,
-								children: [(0, react_jsx_runtime.jsx)(o$12, {}), "AI 创建 专家"]
+								children: [(0, react_jsx_runtime.jsx)(o$16, {}), "AI 创建 专家"]
 							}), (0, react_jsx_runtime.jsxs)("button", {
 								type: "button",
 								className: QuantSkillsApp_module_css_default.outlineButton,
 								disabled: busy,
 								onClick: beginCreate,
-								children: [(0, react_jsx_runtime.jsx)(e$6, {}), "手动配置 专家"]
+								children: [(0, react_jsx_runtime.jsx)(e$8, {}), "手动配置 专家"]
 							})]
 						}) : void 0
 					}),
@@ -125304,10 +126416,10 @@ void main() {
 										(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("h2", { children: creating ? "创建专家" : `设置 · ${selected?.name ?? "专家"}` }), (0, react_jsx_runtime.jsx)("small", { children: selected === void 0 ? "新定义" : `Host 版本 ${selected.revision}` })] }),
 										selected && !dirty && authoritativeReady ? (0, react_jsx_runtime.jsxs)("span", {
 											className: QuantSkillsApp_module_css_default.success,
-											children: [(0, react_jsx_runtime.jsx)(c$2, {}), "Host 已保存"]
+											children: [(0, react_jsx_runtime.jsx)(c$3, {}), "Host 已保存"]
 										}) : (0, react_jsx_runtime.jsxs)("span", {
 											className: QuantSkillsApp_module_css_default.warning,
-											children: [(0, react_jsx_runtime.jsx)(o$24, { weight: "fill" }), authoritativeReady ? "有未保存更改" : "Host 投影已过期"]
+											children: [(0, react_jsx_runtime.jsx)(o$30, { weight: "fill" }), authoritativeReady ? "有未保存更改" : "Host 投影已过期"]
 										})
 									]
 								}),
@@ -125401,7 +126513,7 @@ void main() {
 																	setRoleAssistantOpen(true);
 																	setRoleAssistantError(void 0);
 																},
-																children: [(0, react_jsx_runtime.jsx)(o$12, {}), "AI 帮写"]
+																children: [(0, react_jsx_runtime.jsx)(o$16, {}), "AI 帮写"]
 															})]
 														}),
 														(0, react_jsx_runtime.jsx)("textarea", {
@@ -125448,7 +126560,7 @@ void main() {
 														(0, react_jsx_runtime.jsxs)("header", { children: [
 															(0, react_jsx_runtime.jsx)("span", {
 																className: QuantSkillsApp_module_css_default.agentMark,
-																children: (0, react_jsx_runtime.jsx)(o$12, {})
+																children: (0, react_jsx_runtime.jsx)(o$16, {})
 															}),
 															(0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("h2", {
 																id: "agent-role-assistant-title",
@@ -125491,7 +126603,7 @@ void main() {
 																onClick: () => {
 																	generateRole();
 																},
-																children: [(0, react_jsx_runtime.jsx)(o$12, {}), roleAssistantBusy ? "正在生成…" : roleAssistantDraft === "" ? "生成草稿" : "重新生成"]
+																children: [(0, react_jsx_runtime.jsx)(o$16, {}), roleAssistantBusy ? "正在生成…" : roleAssistantDraft === "" ? "生成草稿" : "重新生成"]
 															}), (0, react_jsx_runtime.jsx)("small", { children: "生成过程使用当前会话模型，并记录在临时会话后自动归档。" })]
 														}),
 														roleAssistantError !== void 0 && (0, react_jsx_runtime.jsx)("p", {
@@ -125571,7 +126683,7 @@ void main() {
 													className: QuantSkillsApp_module_css_default.outlineButton,
 													disabled: candidateVersionId === "",
 													onClick: addVersion,
-													children: [(0, react_jsx_runtime.jsx)(e$6, {}), "添加 技能"]
+													children: [(0, react_jsx_runtime.jsx)(e$8, {}), "添加 技能"]
 												})]
 											}),
 											installedVersions.length === 0 && (0, react_jsx_runtime.jsx)("p", {
@@ -125607,7 +126719,7 @@ void main() {
 																		onClick: () => {
 																			moveVersion(index, -1);
 																		},
-																		children: (0, react_jsx_runtime.jsx)(r$19, {})
+																		children: (0, react_jsx_runtime.jsx)(r$20, {})
 																	}),
 																	(0, react_jsx_runtime.jsx)("button", {
 																		type: "button",
@@ -125616,7 +126728,7 @@ void main() {
 																		onClick: () => {
 																			moveVersion(index, 1);
 																		},
-																		children: (0, react_jsx_runtime.jsx)(r$22, {})
+																		children: (0, react_jsx_runtime.jsx)(r$23, {})
 																	}),
 																	(0, react_jsx_runtime.jsx)("button", {
 																		type: "button",
@@ -125838,7 +126950,7 @@ void main() {
 											onClick: () => {
 												saveAndRun(true);
 											},
-											children: [(0, react_jsx_runtime.jsx)(o$6, {}), dirty ? "保存并隔离测试" : "隔离测试"]
+											children: [(0, react_jsx_runtime.jsx)(o$8, {}), dirty ? "保存并隔离测试" : "隔离测试"]
 										}),
 										(0, react_jsx_runtime.jsxs)("button", {
 											type: "button",
@@ -125847,7 +126959,7 @@ void main() {
 											onClick: () => {
 												saveAndRun(false);
 											},
-											children: [(0, react_jsx_runtime.jsx)(o$26, {}), dirty ? "保存并新建对话" : "新建专家对话"]
+											children: [(0, react_jsx_runtime.jsx)(o$32, {}), dirty ? "保存并新建对话" : "新建专家对话"]
 										})
 									]
 								})
@@ -125894,13 +127006,13 @@ void main() {
 								className: QuantSkillsApp_module_css_default.primaryButton,
 								disabled: busy,
 								onClick: onAuthoring,
-								children: [(0, react_jsx_runtime.jsx)(o$12, {}), "AI 创建 专家"]
+								children: [(0, react_jsx_runtime.jsx)(o$16, {}), "AI 创建 专家"]
 							}), (0, react_jsx_runtime.jsxs)("button", {
 								type: "button",
 								className: QuantSkillsApp_module_css_default.outlineButton,
 								disabled: busy,
 								onClick: onCreate,
-								children: [(0, react_jsx_runtime.jsx)(e$6, {}), "手动配置 专家"]
+								children: [(0, react_jsx_runtime.jsx)(e$8, {}), "手动配置 专家"]
 							})]
 						})
 					]
@@ -125936,7 +127048,7 @@ void main() {
 											onClick: () => {
 												onEdit(definition);
 											},
-											children: (0, react_jsx_runtime.jsx)(o$14, {})
+											children: (0, react_jsx_runtime.jsx)(o$19, {})
 										})]
 									})
 								]
@@ -125944,7 +127056,7 @@ void main() {
 							(0, react_jsx_runtime.jsx)("p", { children: capabilitySummary(definition.role) }),
 							(0, react_jsx_runtime.jsxs)("div", {
 								className: QuantSkillsApp_module_css_default.agentLaunchMeta,
-								children: [(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)(o$26, {}), recent === void 0 ? "还没有对话" : `${recent.title ?? "未命名对话"} · ${formatUpdated(recent.updatedAt)}`] }), (0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)(o$6, {}), definition.permission === "read-only" ? "只读分析" : definition.permission === "workspace-write" ? "有限权限" : "完全权限"] })]
+								children: [(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)(o$32, {}), recent === void 0 ? "还没有对话" : `${recent.title ?? "未命名对话"} · ${formatUpdated(recent.updatedAt)}`] }), (0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsx)(o$8, {}), definition.permission === "read-only" ? "只读分析" : definition.permission === "workspace-write" ? "有限权限" : "完全权限"] })]
 							}),
 							(0, react_jsx_runtime.jsxs)("footer", { children: [
 								(0, react_jsx_runtime.jsxs)("button", {
@@ -125954,7 +127066,7 @@ void main() {
 									onClick: () => {
 										onOpen(definition);
 									},
-									children: [(0, react_jsx_runtime.jsx)(o$26, {}), recent === void 0 ? "开始对话" : "继续对话"]
+									children: [(0, react_jsx_runtime.jsx)(o$32, {}), recent === void 0 ? "开始对话" : "继续对话"]
 								}),
 								(0, react_jsx_runtime.jsxs)("button", {
 									type: "button",
@@ -125963,7 +127075,7 @@ void main() {
 									onClick: () => {
 										onStart(definition);
 									},
-									children: [(0, react_jsx_runtime.jsx)(e$6, {}), "新对话"]
+									children: [(0, react_jsx_runtime.jsx)(e$8, {}), "新对话"]
 								}),
 								onArrange && (0, react_jsx_runtime.jsx)("button", {
 									type: "button",
@@ -126282,7 +127394,7 @@ void main() {
 								onClick: () => {
 									startAuthoring("agent-team");
 								},
-								children: [(0, react_jsx_runtime.jsx)(o$12, {}), "AI 创建 专家团"]
+								children: [(0, react_jsx_runtime.jsx)(o$16, {}), "AI 创建 专家团"]
 							}), (0, react_jsx_runtime.jsxs)("button", {
 								type: "button",
 								className: QuantSkillsApp_module_css_default.outlineButton,
@@ -126290,7 +127402,7 @@ void main() {
 								onClick: () => {
 									beginCreate();
 								},
-								children: [(0, react_jsx_runtime.jsx)(e$6, {}), "手动编排"]
+								children: [(0, react_jsx_runtime.jsx)(e$8, {}), "手动编排"]
 							})]
 						})]
 					}),
@@ -126308,7 +127420,7 @@ void main() {
 								onClick: () => {
 									startAuthoring("agent");
 								},
-								children: [(0, react_jsx_runtime.jsx)(o$12, {}), "AI 创建 专家"]
+								children: [(0, react_jsx_runtime.jsx)(o$16, {}), "AI 创建 专家"]
 							})
 						})]
 					}),
@@ -126476,7 +127588,7 @@ void main() {
 															}]
 														}));
 													},
-													children: [(0, react_jsx_runtime.jsx)(e$6, {}), "添加成员"]
+													children: [(0, react_jsx_runtime.jsx)(e$8, {}), "添加成员"]
 												})]
 											}),
 											(0, react_jsx_runtime.jsx)("div", {
@@ -126580,7 +127692,7 @@ void main() {
 											}),
 											(0, react_jsx_runtime.jsxs)("p", {
 												className: QuantSkillsApp_module_css_default.notice,
-												children: [(0, react_jsx_runtime.jsx)(o$6, {}), "每个角色可以跟随会话默认模型，也可以分别指定模型和推理强度；团队成员仍需与 Lead 使用相同权限。角色和 技能 按每个成员冻结的 专家 版本独立加载。"]
+												children: [(0, react_jsx_runtime.jsx)(o$8, {}), "每个角色可以跟随会话默认模型，也可以分别指定模型和推理强度；团队成员仍需与 Lead 使用相同权限。角色和 技能 按每个成员冻结的 专家 版本独立加载。"]
 											})
 										]
 									})]
@@ -126649,7 +127761,7 @@ void main() {
 											onClick: () => {
 												saveAndStart();
 											},
-											children: [(0, react_jsx_runtime.jsx)(o$26, {}), "保存并新建团队会话"]
+											children: [(0, react_jsx_runtime.jsx)(o$32, {}), "保存并新建团队会话"]
 										})
 									]
 								})
@@ -126674,7 +127786,7 @@ void main() {
 											onClick: () => {
 												startAuthoring("agent-team");
 											},
-											children: [(0, react_jsx_runtime.jsx)(o$12, {}), "AI 创建 专家团"]
+											children: [(0, react_jsx_runtime.jsx)(o$16, {}), "AI 创建 专家团"]
 										})
 									})
 								]
@@ -126708,7 +127820,7 @@ void main() {
 														onClick: () => {
 															beginEdit(team);
 														},
-														children: (0, react_jsx_runtime.jsx)(o$14, {})
+														children: (0, react_jsx_runtime.jsx)(o$19, {})
 													})]
 												})
 											]
@@ -126731,7 +127843,7 @@ void main() {
 											onClick: () => {
 												open(team);
 											},
-											children: [(0, react_jsx_runtime.jsx)(o$26, {}), recent === void 0 ? "开始团队会话" : "继续团队会话"]
+											children: [(0, react_jsx_runtime.jsx)(o$32, {}), recent === void 0 ? "开始团队会话" : "继续团队会话"]
 										}), (0, react_jsx_runtime.jsxs)("button", {
 											type: "button",
 											className: QuantSkillsApp_module_css_default.outlineButton,
@@ -126739,7 +127851,7 @@ void main() {
 											onClick: () => {
 												start(team);
 											},
-											children: [(0, react_jsx_runtime.jsx)(e$6, {}), "新团队会话"]
+											children: [(0, react_jsx_runtime.jsx)(e$8, {}), "新团队会话"]
 										})] })
 									] }, team.teamId);
 								})
@@ -126789,22 +127901,22 @@ void main() {
 			const sections = [
 				[
 					"workspace",
-					(0, react_jsx_runtime.jsx)(e$12, {}),
+					(0, react_jsx_runtime.jsx)(e$16, {}),
 					"工作区"
 				],
 				[
 					"archives",
-					(0, react_jsx_runtime.jsx)(r$14, {}),
+					(0, react_jsx_runtime.jsx)(r$15, {}),
 					"归档会话"
 				],
 				[
 					"updates",
-					(0, react_jsx_runtime.jsx)(c$1, {}),
+					(0, react_jsx_runtime.jsx)(c$2, {}),
 					"自动更新"
 				],
 				[
 					"permissions",
-					(0, react_jsx_runtime.jsx)(o$6, {}),
+					(0, react_jsx_runtime.jsx)(o$8, {}),
 					"模型与权限"
 				],
 				[
@@ -126824,12 +127936,12 @@ void main() {
 				],
 				[
 					"panda-data",
-					(0, react_jsx_runtime.jsx)(e$16, {}),
+					(0, react_jsx_runtime.jsx)(e$20, {}),
 					"PandaData"
 				],
 				[
 					"brand-support",
-					(0, react_jsx_runtime.jsx)(e$11, {}),
+					(0, react_jsx_runtime.jsx)(e$15, {}),
 					"品牌与支持"
 				]
 			];
@@ -127054,7 +128166,7 @@ void main() {
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: QuantSkillsApp_module_css_default.settingsPanel,
 				children: [
-					(0, react_jsx_runtime.jsx)(e$16, { size: 34 }),
+					(0, react_jsx_runtime.jsx)(e$20, { size: 34 }),
 					(0, react_jsx_runtime.jsx)("h2", { children: "PandaData" }),
 					(0, react_jsx_runtime.jsx)("p", { children: "登录后，模型可通过公网 MCP 调用行情数据。QuantSkills 不会收集密码，也不会把 token 发给模型。" }),
 					(0, react_jsx_runtime.jsxs)("dl", {
@@ -127089,7 +128201,7 @@ void main() {
 								onClick: () => {
 									run(refresh);
 								},
-								children: [(0, react_jsx_runtime.jsx)(r$24, {}), "刷新状态"]
+								children: [(0, react_jsx_runtime.jsx)(r$25, {}), "刷新状态"]
 							}),
 							(0, react_jsx_runtime.jsx)("button", {
 								type: "button",
@@ -127110,7 +128222,7 @@ void main() {
 			return (0, react_jsx_runtime.jsxs)("p", {
 				className: !error && status === "ready" && writable ? QuantSkillsApp_module_css_default.success : QuantSkillsApp_module_css_default.warning,
 				role: "status",
-				children: [!error && status === "ready" && writable ? (0, react_jsx_runtime.jsx)(c$2, {}) : (0, react_jsx_runtime.jsx)(c$1, {}), label]
+				children: [!error && status === "ready" && writable ? (0, react_jsx_runtime.jsx)(c$3, {}) : (0, react_jsx_runtime.jsx)(c$2, {}), label]
 			});
 		}
 		function UpdateSettings({ catalog, catalogEnabled, catalogWritable, onCatalogChange, onRefresh }) {
@@ -127118,7 +128230,7 @@ void main() {
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: QuantSkillsApp_module_css_default.settingsPanel,
 				children: [
-					(0, react_jsx_runtime.jsx)(c$1, { size: 34 }),
+					(0, react_jsx_runtime.jsx)(c$2, { size: 34 }),
 					(0, react_jsx_runtime.jsx)("h2", { children: "自动更新" }),
 					(0, react_jsx_runtime.jsx)("p", { children: "这里只控制公开 技能 目录的自动检查。QuantSkills 应用版本不会自动联网或更新。" }),
 					(0, react_jsx_runtime.jsx)("div", {
@@ -127205,7 +128317,7 @@ void main() {
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: QuantSkillsApp_module_css_default.settingsPanel,
 				children: [
-					(0, react_jsx_runtime.jsx)(e$12, { size: 34 }),
+					(0, react_jsx_runtime.jsx)(e$16, { size: 34 }),
 					(0, react_jsx_runtime.jsx)("h2", { children: "工作区" }),
 					(0, react_jsx_runtime.jsx)("p", { children: "QuantSkills 只管理会话的工作区归属。Python、PandaData SDK 和登录状态由用户环境负责，不在插件设置中保存或自动安装。" }),
 					(0, react_jsx_runtime.jsxs)("dl", {
@@ -127280,7 +128392,7 @@ void main() {
 					}),
 					(0, react_jsx_runtime.jsxs)("p", {
 						className: QuantSkillsApp_module_css_default.notice,
-						children: [(0, react_jsx_runtime.jsx)(o$6, {}), "技能、专家 和 专家团 的安装与启动不依赖 PandaData 登录检查。需要 Python 或 PandaData 的任务会使用当前工作区和用户环境，缺失时只终止该任务并提供修复建议。"]
+						children: [(0, react_jsx_runtime.jsx)(o$8, {}), "技能、专家 和 专家团 的安装与启动不依赖 PandaData 登录检查。需要 Python 或 PandaData 的任务会使用当前工作区和用户环境，缺失时只终止该任务并提供修复建议。"]
 					})
 				]
 			});
@@ -127291,7 +128403,7 @@ void main() {
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: QuantSkillsApp_module_css_default.settingsPanel,
 				children: [
-					(0, react_jsx_runtime.jsx)(o$6, { size: 34 }),
+					(0, react_jsx_runtime.jsx)(o$8, { size: 34 }),
 					(0, react_jsx_runtime.jsx)("h2", { children: "模型与权限" }),
 					(0, react_jsx_runtime.jsx)("p", { children: "这些值是“新建 专家”的真实默认值；已有 专家 和已有会话不会被改写。" }),
 					(0, react_jsx_runtime.jsxs)("div", {
@@ -127464,7 +128576,7 @@ void main() {
 					onClick: () => {
 						setOpen((value) => !value);
 					},
-					children: ["创建", (0, react_jsx_runtime.jsx)(e$20, { size: 14 })]
+					children: ["创建", (0, react_jsx_runtime.jsx)(e$24, { size: 14 })]
 				})
 			});
 		}
@@ -127510,7 +128622,7 @@ void main() {
 					open(event.currentTarget);
 				},
 				children: [
-					(0, react_jsx_runtime.jsx)(o$27, { size: 15 }),
+					(0, react_jsx_runtime.jsx)(o$33, { size: 15 }),
 					(0, react_jsx_runtime.jsx)("span", { children: "结果" }),
 					running && (0, react_jsx_runtime.jsx)("span", {
 						className: QuantSkillsApp_module_css_default.resultActionLive,
@@ -127557,8 +128669,8 @@ void main() {
 		];
 		function ProducedFileIcon({ path }) {
 			const extension = path.slice(path.lastIndexOf(".") + 1).toLowerCase();
-			if (extension === "pdf") return (0, react_jsx_runtime.jsx)(o$16, {});
-			if (extension === "csv") return (0, react_jsx_runtime.jsx)(o$17, {});
+			if (extension === "pdf") return (0, react_jsx_runtime.jsx)(o$22, {});
+			if (extension === "csv") return (0, react_jsx_runtime.jsx)(o$23, {});
 			if ([
 				"docx",
 				"epub",
@@ -127568,8 +128680,8 @@ void main() {
 				"pptx",
 				"rtf",
 				"xlsx"
-			].includes(extension)) return (0, react_jsx_runtime.jsx)(o$15, {});
-			return (0, react_jsx_runtime.jsx)(o$18, {});
+			].includes(extension)) return (0, react_jsx_runtime.jsx)(o$21, {});
+			return (0, react_jsx_runtime.jsx)(o$24, {});
 		}
 		function primaryResultFile(files) {
 			return files.reduce((preferred, file) => {
@@ -127656,7 +128768,7 @@ void main() {
 			if (files.length === 0) return (0, react_jsx_runtime.jsxs)("div", {
 				className: QuantSkillsApp_module_css_default.resultEmpty,
 				children: [
-					(0, react_jsx_runtime.jsx)(e$12, { size: 30 }),
+					(0, react_jsx_runtime.jsx)(e$16, { size: 30 }),
 					(0, react_jsx_runtime.jsx)("h3", { children: "还没有可打开的产物" }),
 					(0, react_jsx_runtime.jsx)("p", { children: "只有成功写入或修改并由工具报告位置的文件才会显示在这里。" })
 				]
@@ -127684,7 +128796,7 @@ void main() {
 							openFile(file.path);
 						},
 						"aria-label": `在 IDE 中打开 ${file.name}`,
-						children: (0, react_jsx_runtime.jsx)(o$31, { "aria-hidden": "true" })
+						children: (0, react_jsx_runtime.jsx)(o$37, { "aria-hidden": "true" })
 					})]
 				}, file.sourcePath))
 			});
@@ -127760,7 +128872,7 @@ void main() {
 				className: QuantSkillsApp_module_css_default.resultTablePreview,
 				children: [(0, react_jsx_runtime.jsxs)("div", {
 					className: QuantSkillsApp_module_css_default.resultTableToolbar,
-					children: [(0, react_jsx_runtime.jsxs)("label", { children: [(0, react_jsx_runtime.jsx)(o$11, {}), (0, react_jsx_runtime.jsx)("input", {
+					children: [(0, react_jsx_runtime.jsxs)("label", { children: [(0, react_jsx_runtime.jsx)(o$15, {}), (0, react_jsx_runtime.jsx)("input", {
 						"aria-label": "搜索表格",
 						value: search,
 						placeholder: "搜索当前表格",
@@ -127770,7 +128882,7 @@ void main() {
 					})] }), (0, react_jsx_runtime.jsxs)("span", { children: [visibleRows.length.toLocaleString("zh-CN"), " 行"] })]
 				}), headers.length === 0 ? (0, react_jsx_runtime.jsxs)("div", {
 					className: QuantSkillsApp_module_css_default.resultEmpty,
-					children: [(0, react_jsx_runtime.jsx)(e$16, { size: 30 }), (0, react_jsx_runtime.jsx)("h3", { children: "表格没有可显示的数据" })]
+					children: [(0, react_jsx_runtime.jsx)(e$20, { size: 30 }), (0, react_jsx_runtime.jsx)("h3", { children: "表格没有可显示的数据" })]
 				}) : (0, react_jsx_runtime.jsx)("div", {
 					className: QuantSkillsApp_module_css_default.resultTableScroll,
 					children: (0, react_jsx_runtime.jsxs)("table", { children: [(0, react_jsx_runtime.jsx)("thead", { children: (0, react_jsx_runtime.jsx)("tr", { children: headers.map((header, index) => (0, react_jsx_runtime.jsx)("th", { children: header || `列 ${String(index + 1)}` }, `${header}-${String(index)}`)) }) }), (0, react_jsx_runtime.jsx)("tbody", { children: visibleRows.map((row, rowIndex) => (0, react_jsx_runtime.jsx)("tr", { children: headers.map((_, columnIndex) => (0, react_jsx_runtime.jsx)("td", { children: row[columnIndex] ?? "" }, String(columnIndex))) }, String(rowIndex))) })] })
@@ -127782,7 +128894,7 @@ void main() {
 				className: QuantSkillsApp_module_css_default.resultPreview,
 				children: (0, react_jsx_runtime.jsxs)("div", {
 					className: QuantSkillsApp_module_css_default.resultEmpty,
-					children: [(0, react_jsx_runtime.jsx)(o$15, { size: 30 }), (0, react_jsx_runtime.jsx)("h3", { children: "选择一个产物开始预览" })]
+					children: [(0, react_jsx_runtime.jsx)(o$21, { size: 30 }), (0, react_jsx_runtime.jsx)("h3", { children: "选择一个产物开始预览" })]
 				})
 			});
 			if (state.status === "loading") return (0, react_jsx_runtime.jsxs)("section", {
@@ -127830,19 +128942,19 @@ void main() {
 								disabled: goBack === void 0,
 								"aria-label": "后退",
 								onClick: goBack,
-								children: (0, react_jsx_runtime.jsx)(r$21, {})
+								children: (0, react_jsx_runtime.jsx)(r$22, {})
 							}), (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
 								disabled: goForward === void 0,
 								"aria-label": "前进",
 								onClick: goForward,
-								children: (0, react_jsx_runtime.jsx)(r$20, {})
+								children: (0, react_jsx_runtime.jsx)(r$21, {})
 							})]
 						}),
 						(0, react_jsx_runtime.jsxs)("div", {
 							className: mode === "browser" ? QuantSkillsApp_module_css_default.resultBrowserAddress : void 0,
 							children: [
-								mode === "browser" && (0, react_jsx_runtime.jsx)(e$11, { "aria-hidden": "true" }),
+								mode === "browser" && (0, react_jsx_runtime.jsx)(e$15, { "aria-hidden": "true" }),
 								(0, react_jsx_runtime.jsx)("h3", {
 									ref: titleRef,
 									tabIndex: -1,
@@ -127864,7 +128976,7 @@ void main() {
 							},
 							"aria-label": `刷新当前产物 ${preview.path}`,
 							title: "刷新当前产物",
-							children: (0, react_jsx_runtime.jsx)(r$24, {})
+							children: (0, react_jsx_runtime.jsx)(r$25, {})
 						}),
 						mode === "browser" && revealFile !== void 0 && (0, react_jsx_runtime.jsx)("button", {
 							type: "button",
@@ -127874,7 +128986,7 @@ void main() {
 							},
 							"aria-label": `在文件夹中显示 ${preview.path}`,
 							title: "在文件夹中显示",
-							children: (0, react_jsx_runtime.jsx)(e$12, {})
+							children: (0, react_jsx_runtime.jsx)(e$16, {})
 						}),
 						mode === "browser" && saveFileAs !== void 0 && (0, react_jsx_runtime.jsx)("button", {
 							type: "button",
@@ -127894,7 +129006,7 @@ void main() {
 							},
 							"aria-label": `使用系统应用完整打开 ${preview.path}`,
 							title: "使用系统应用完整打开",
-							children: [(0, react_jsx_runtime.jsx)(o$31, {}), mode === "browser" ? null : "完整打开"]
+							children: [(0, react_jsx_runtime.jsx)(o$37, {}), mode === "browser" ? null : "完整打开"]
 						})
 					]
 				}), (0, react_jsx_runtime.jsx)("div", {
@@ -127930,7 +129042,7 @@ void main() {
 						}), (0, react_jsx_runtime.jsx)("pre", { children: preview.text })]
 					}) : preview.kind === "directory" ? preview.entries.length === 0 ? (0, react_jsx_runtime.jsxs)("div", {
 						className: QuantSkillsApp_module_css_default.resultEmpty,
-						children: [(0, react_jsx_runtime.jsx)(e$12, { size: 30 }), (0, react_jsx_runtime.jsx)("h3", { children: "此文件夹为空" })]
+						children: [(0, react_jsx_runtime.jsx)(e$16, { size: 30 }), (0, react_jsx_runtime.jsx)("h3", { children: "此文件夹为空" })]
 					}) : (0, react_jsx_runtime.jsx)("div", {
 						className: QuantSkillsApp_module_css_default.resultDirectoryList,
 						role: "list",
@@ -127941,9 +129053,9 @@ void main() {
 								selectPath(entry.path);
 							},
 							children: [
-								entry.type === "directory" ? (0, react_jsx_runtime.jsx)(e$12, { "aria-hidden": "true" }) : (0, react_jsx_runtime.jsx)(o$15, { "aria-hidden": "true" }),
+								entry.type === "directory" ? (0, react_jsx_runtime.jsx)(e$16, { "aria-hidden": "true" }) : (0, react_jsx_runtime.jsx)(o$21, { "aria-hidden": "true" }),
 								(0, react_jsx_runtime.jsxs)("span", { children: [(0, react_jsx_runtime.jsxs)("b", { children: [entry.name, entry.type === "directory" ? "/" : ""] }), (0, react_jsx_runtime.jsx)("small", { children: entry.type === "directory" ? "文件夹" : entry.bytes === void 0 ? "文件" : `${entry.bytes.toLocaleString("zh-CN")} 字节` })] }),
-								(0, react_jsx_runtime.jsx)(r$20, { "aria-hidden": "true" })
+								(0, react_jsx_runtime.jsx)(r$21, { "aria-hidden": "true" })
 							]
 						}, entry.path))
 					}) : preview.kind === "resource" && preview.presentation === "image" ? (0, react_jsx_runtime.jsx)(ZoomableImage, {
@@ -127973,7 +129085,7 @@ void main() {
 					}) : preview.kind === "resource" ? (0, react_jsx_runtime.jsxs)("div", {
 						className: QuantSkillsApp_module_css_default.resultEmpty,
 						children: [
-							(0, react_jsx_runtime.jsx)(o$15, { size: 30 }),
+							(0, react_jsx_runtime.jsx)(o$21, { size: 30 }),
 							(0, react_jsx_runtime.jsx)("h3", { children: "使用本机应用完整查看" }),
 							(0, react_jsx_runtime.jsx)("p", { children: "此类型不由浏览器直接渲染，但文件没有大小限制，可交给系统默认应用打开。" }),
 							(0, react_jsx_runtime.jsxs)("button", {
@@ -127981,7 +129093,7 @@ void main() {
 								onClick: () => {
 									openFile(preview.path);
 								},
-								children: [(0, react_jsx_runtime.jsx)(o$31, {}), "完整打开"]
+								children: [(0, react_jsx_runtime.jsx)(o$37, {}), "完整打开"]
 							})
 						]
 					}) : preview.kind === "binary" && preview.mediaType.startsWith("image/") ? (0, react_jsx_runtime.jsx)(ZoomableImage, {
@@ -127993,7 +129105,7 @@ void main() {
 					}) : (0, react_jsx_runtime.jsxs)("div", {
 						className: QuantSkillsApp_module_css_default.resultEmpty,
 						children: [
-							(0, react_jsx_runtime.jsx)(o$15, { size: 30 }),
+							(0, react_jsx_runtime.jsx)(o$21, { size: 30 }),
 							(0, react_jsx_runtime.jsx)("h3", { children: "暂不支持内嵌预览" }),
 							(0, react_jsx_runtime.jsx)("p", { children: preview.reason })
 						]
@@ -128268,7 +129380,7 @@ void main() {
 								"aria-hidden": "true"
 							}),
 							(0, react_jsx_runtime.jsx)("span", { children: panelTitle }),
-							(0, react_jsx_runtime.jsx)(e$20, { "aria-hidden": "true" })
+							(0, react_jsx_runtime.jsx)(e$24, { "aria-hidden": "true" })
 						]
 					}), (0, react_jsx_runtime.jsxs)("span", {
 						className: QuantSkillsApp_module_css_default.resultRailTools,
@@ -128280,7 +129392,7 @@ void main() {
 								onClick: () => {
 									expandTo("browser");
 								},
-								children: (0, react_jsx_runtime.jsx)(e$11, {})
+								children: (0, react_jsx_runtime.jsx)(e$15, {})
 							}),
 							(0, react_jsx_runtime.jsx)("button", {
 								type: "button",
@@ -128289,7 +129401,7 @@ void main() {
 								onClick: () => {
 									expandTo("files");
 								},
-								children: (0, react_jsx_runtime.jsx)(e$12, {})
+								children: (0, react_jsx_runtime.jsx)(e$16, {})
 							}),
 							(0, react_jsx_runtime.jsx)("button", {
 								type: "button",
@@ -128312,7 +129424,7 @@ void main() {
 							onClick: () => {
 								setRailProgressOpen((current) => !current);
 							},
-							children: [(0, react_jsx_runtime.jsx)("span", { children: "进度" }), (0, react_jsx_runtime.jsx)(e$20, { "aria-hidden": "true" })]
+							children: [(0, react_jsx_runtime.jsx)("span", { children: "进度" }), (0, react_jsx_runtime.jsx)(e$24, { "aria-hidden": "true" })]
 						}), railProgressOpen && (0, react_jsx_runtime.jsxs)("div", {
 							className: QuantSkillsApp_module_css_default.resultRailProgress,
 							children: [(0, react_jsx_runtime.jsx)("span", {
@@ -128328,7 +129440,7 @@ void main() {
 							onClick: () => {
 								setRailFilesOpen((current) => !current);
 							},
-							children: [(0, react_jsx_runtime.jsxs)("span", { children: ["交付物 ", (0, react_jsx_runtime.jsx)("small", { children: preparedFileCount })] }), (0, react_jsx_runtime.jsx)(e$20, { "aria-hidden": "true" })]
+							children: [(0, react_jsx_runtime.jsxs)("span", { children: ["交付物 ", (0, react_jsx_runtime.jsx)("small", { children: preparedFileCount })] }), (0, react_jsx_runtime.jsx)(e$24, { "aria-hidden": "true" })]
 						}), railFilesOpen && (0, react_jsx_runtime.jsxs)("div", {
 							className: QuantSkillsApp_module_css_default.resultRailFiles,
 							children: [currentPreparation.status === "loading" ? (0, react_jsx_runtime.jsx)("p", { children: "正在同步当前对话的文件…" }) : previewableFiles.length === 0 ? (0, react_jsx_runtime.jsx)("p", { children: "生成完成后，文件会显示在这里。" }) : previewableFiles.slice(0, 8).map((file) => (0, react_jsx_runtime.jsxs)("button", {
@@ -128412,14 +129524,14 @@ void main() {
 									onClick: () => {
 										loadPreview(".", "files");
 									},
-									children: (0, react_jsx_runtime.jsx)(e$9, {})
+									children: (0, react_jsx_runtime.jsx)(e$13, {})
 								}),
 								(0, react_jsx_runtime.jsxs)("details", {
 									className: QuantSkillsApp_module_css_default.resultMoreActions,
 									children: [(0, react_jsx_runtime.jsx)("summary", {
 										"aria-label": "更多产物操作与说明",
 										title: "更多产物操作与说明",
-										children: (0, react_jsx_runtime.jsx)(o$20, {})
+										children: (0, react_jsx_runtime.jsx)(o$26, {})
 									}), (0, react_jsx_runtime.jsxs)("div", { children: [
 										(0, react_jsx_runtime.jsx)("button", {
 											type: "button",
@@ -128479,7 +129591,7 @@ void main() {
 									"aria-label": maximized ? "退出全屏结果工作台" : "全屏显示结果工作台",
 									title: maximized ? "退出全屏" : "全屏显示",
 									onClick: toggleMaximized,
-									children: maximized ? (0, react_jsx_runtime.jsx)(r$16, {}) : (0, react_jsx_runtime.jsx)(r$15, {})
+									children: maximized ? (0, react_jsx_runtime.jsx)(r$17, {}) : (0, react_jsx_runtime.jsx)(r$16, {})
 								}),
 								(0, react_jsx_runtime.jsx)("button", {
 									ref: drawer.closeButtonRef,
@@ -128513,26 +129625,26 @@ void main() {
 							children: [
 								openState === "cold" || openState === "loading" ? (0, react_jsx_runtime.jsxs)("div", {
 									className: QuantSkillsApp_module_css_default.resultEmpty,
-									children: [(0, react_jsx_runtime.jsx)(c$1, { size: 30 }), (0, react_jsx_runtime.jsx)("h3", { children: "正在读取会话记录" })]
+									children: [(0, react_jsx_runtime.jsx)(c$2, { size: 30 }), (0, react_jsx_runtime.jsx)("h3", { children: "正在读取会话记录" })]
 								}) : openState === "error" ? (0, react_jsx_runtime.jsxs)("div", {
 									className: QuantSkillsApp_module_css_default.resultEmpty,
-									children: [(0, react_jsx_runtime.jsx)(o$24, { size: 30 }), (0, react_jsx_runtime.jsx)("h3", { children: "会话记录暂时无法读取" })]
+									children: [(0, react_jsx_runtime.jsx)(o$30, { size: 30 }), (0, react_jsx_runtime.jsx)("h3", { children: "会话记录暂时无法读取" })]
 								}) : currentPreparation.status === "loading" ? (0, react_jsx_runtime.jsxs)("div", {
 									className: QuantSkillsApp_module_css_default.resultEmpty,
 									"aria-live": "polite",
 									children: [
-										(0, react_jsx_runtime.jsx)(c$1, { size: 30 }),
+										(0, react_jsx_runtime.jsx)(c$2, { size: 30 }),
 										(0, react_jsx_runtime.jsx)("h3", { children: "正在准备工作台" }),
 										(0, react_jsx_runtime.jsx)("p", { children: "正在校验当前会话的文件。" })
 									]
 								}) : tab === "overview" ? (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 									(0, react_jsx_runtime.jsxs)("div", {
 										className: QuantSkillsApp_module_css_default.resultOverviewHeader,
-										children: [(0, react_jsx_runtime.jsx)("span", { children: (0, react_jsx_runtime.jsx)(e$12, { weight: "duotone" }) }), (0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("h3", { children: "这次对话的产物" }), (0, react_jsx_runtime.jsx)("p", { children: "报告、图表与文件，集中在这里。" })] })]
+										children: [(0, react_jsx_runtime.jsx)("span", { children: (0, react_jsx_runtime.jsx)(e$16, { weight: "duotone" }) }), (0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("h3", { children: "这次对话的产物" }), (0, react_jsx_runtime.jsx)("p", { children: "报告、图表与文件，集中在这里。" })] })]
 									}),
 									running && (0, react_jsx_runtime.jsxs)("p", {
 										className: QuantSkillsApp_module_css_default.resultRunning,
-										children: [(0, react_jsx_runtime.jsx)(c$1, {}), "研究仍在进行，文件完成后会自动出现在这里。"]
+										children: [(0, react_jsx_runtime.jsx)(c$2, {}), "研究仍在进行，文件完成后会自动出现在这里。"]
 									}),
 									files.length > 0 && (0, react_jsx_runtime.jsx)("h3", { children: "最近文件" }),
 									files.length > 0 && (0, react_jsx_runtime.jsx)(ResultFiles, {
@@ -128555,7 +129667,7 @@ void main() {
 									files.length === 0 && (0, react_jsx_runtime.jsxs)("div", {
 										className: QuantSkillsApp_module_css_default.resultEmpty,
 										children: [
-											(0, react_jsx_runtime.jsx)(e$12, {
+											(0, react_jsx_runtime.jsx)(e$16, {
 												size: 40,
 												weight: "duotone"
 											}),
@@ -128574,7 +129686,7 @@ void main() {
 								] }) : tab === "files" ? files.length === 0 && preview.status === "idle" ? (0, react_jsx_runtime.jsxs)("div", {
 									className: QuantSkillsApp_module_css_default.resultEmpty,
 									children: [
-										(0, react_jsx_runtime.jsx)(e$12, {
+										(0, react_jsx_runtime.jsx)(e$16, {
 											size: 36,
 											weight: "duotone"
 										}),
@@ -128620,7 +129732,7 @@ void main() {
 								}) : tab === "browser" ? htmlFiles.length === 0 ? (0, react_jsx_runtime.jsxs)("div", {
 									className: QuantSkillsApp_module_css_default.resultEmpty,
 									children: [
-										(0, react_jsx_runtime.jsx)(e$11, { size: 30 }),
+										(0, react_jsx_runtime.jsx)(e$15, { size: 30 }),
 										(0, react_jsx_runtime.jsx)("h3", { children: "还没有可浏览页面" }),
 										(0, react_jsx_runtime.jsx)("p", { children: "会话生成 HTML 页面后，可在这里安全预览。" })
 									]
@@ -128650,7 +129762,7 @@ void main() {
 								}) : files.length === 0 ? (0, react_jsx_runtime.jsxs)("div", {
 									className: QuantSkillsApp_module_css_default.resultEmpty,
 									children: [
-										(0, react_jsx_runtime.jsx)(o$18, { size: 30 }),
+										(0, react_jsx_runtime.jsx)(o$24, { size: 30 }),
 										(0, react_jsx_runtime.jsx)("h3", { children: "还没有文件变更" }),
 										(0, react_jsx_runtime.jsx)("p", { children: "当前会话写入文件后，变更会集中显示在这里。" })
 									]
@@ -130036,7 +131148,7 @@ void main() {
 			if (parsed.kind === "agents") return (0, react_jsx_runtime.jsxs)("div", {
 				className: QuantSkillsApp_module_css_default.teamDraftCompact,
 				children: [
-					(0, react_jsx_runtime.jsx)(c$2, {}),
+					(0, react_jsx_runtime.jsx)(c$3, {}),
 					"已读取 ",
 					parsed.count,
 					" 个可用于编排的 专家。"
@@ -130057,7 +131169,7 @@ void main() {
 						type: "button",
 						className: QuantSkillsApp_module_css_default.outlineButton,
 						onClick: focusComposer,
-						children: [(0, react_jsx_runtime.jsx)(o$8, {}), "继续修改"]
+						children: [(0, react_jsx_runtime.jsx)(o$12, {}), "继续修改"]
 					})
 				]
 			});
@@ -130129,7 +131241,7 @@ void main() {
 					saved !== void 0 && (0, react_jsx_runtime.jsxs)("p", {
 						className: QuantSkillsApp_module_css_default.teamDraftSaved,
 						children: [
-							(0, react_jsx_runtime.jsx)(c$2, {}),
+							(0, react_jsx_runtime.jsx)(c$3, {}),
 							"已保存 专家团“",
 							saved.name,
 							"”。"
@@ -130145,7 +131257,7 @@ void main() {
 								onClick: () => {
 									commit(true);
 								},
-								children: [(0, react_jsx_runtime.jsx)(o$26, {}), busy === "start" ? "正在启动…" : "创建并启动团队"]
+								children: [(0, react_jsx_runtime.jsx)(o$32, {}), busy === "start" ? "正在启动…" : "创建并启动团队"]
 							}),
 							(0, react_jsx_runtime.jsx)("button", {
 								type: "button",
@@ -130163,7 +131275,7 @@ void main() {
 								onClick: () => {
 									openAgentTeamBuilder(seedFromDraft(draft));
 								},
-								children: [(0, react_jsx_runtime.jsx)(o$8, {}), "打开手动编排"]
+								children: [(0, react_jsx_runtime.jsx)(o$12, {}), "打开手动编排"]
 							}),
 							(0, react_jsx_runtime.jsx)("button", {
 								type: "button",
@@ -130580,7 +131692,7 @@ void main() {
 			if (parsed.kind === "skills") return (0, react_jsx_runtime.jsxs)("div", {
 				className: QuantSkillsApp_module_css_default.teamDraftCompact,
 				children: [
-					(0, react_jsx_runtime.jsx)(c$2, {}),
+					(0, react_jsx_runtime.jsx)(c$3, {}),
 					"已读取 ",
 					parsed.count,
 					" 个精确 技能 版本。"
@@ -130635,7 +131747,7 @@ void main() {
 					saved !== void 0 && (0, react_jsx_runtime.jsxs)("p", {
 						className: QuantSkillsApp_module_css_default.teamDraftSaved,
 						children: [
-							(0, react_jsx_runtime.jsx)(c$2, {}),
+							(0, react_jsx_runtime.jsx)(c$3, {}),
 							"已保存“",
 							draft.assetId,
 							"”。"
@@ -130651,7 +131763,7 @@ void main() {
 								onClick: () => {
 									commit(true);
 								},
-								children: [(0, react_jsx_runtime.jsx)(o$26, {}), busy === "start" ? "正在启动…" : saved ? "开始使用" : "保存并新建会话"]
+								children: [(0, react_jsx_runtime.jsx)(o$32, {}), busy === "start" ? "正在启动…" : saved ? "开始使用" : "保存并新建会话"]
 							}),
 							saved === void 0 && (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
@@ -130669,7 +131781,7 @@ void main() {
 								onClick: () => {
 									openManualAgent(saved?.kind === "agent" ? saved.agent : void 0);
 								},
-								children: [(0, react_jsx_runtime.jsx)(o$8, {}), "打开手动配置"]
+								children: [(0, react_jsx_runtime.jsx)(o$12, {}), "打开手动配置"]
 							}),
 							(0, react_jsx_runtime.jsx)("button", {
 								type: "button",
@@ -131076,7 +132188,7 @@ void main() {
 										}),
 										(0, react_jsx_runtime.jsx)("span", {
 											className: CapabilityLibraryPicker_module_css_default.action,
-											children: busyId === row.id ? "正在准备…" : attached ? (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(o$25, { size: 14 }), "移除"] }) : row.kind === "skill" ? "加载" : row.kind === "agent-team" ? "开始团队会话" : "开始对话"
+											children: busyId === row.id ? "正在准备…" : attached ? (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(o$31, { size: 14 }), "移除"] }) : row.kind === "skill" ? "加载" : row.kind === "agent-team" ? "开始团队会话" : "开始对话"
 										})
 									]
 								}, row.id);
@@ -131326,7 +132438,7 @@ void main() {
 										setOpen(false);
 										openPicker(sessionId);
 									},
-									children: [(0, react_jsx_runtime.jsx)(e$6, { size: 14 }), "添加技能、专家或专家团"]
+									children: [(0, react_jsx_runtime.jsx)(e$8, { size: 14 }), "添加技能、专家或专家团"]
 								})
 							] })
 						]

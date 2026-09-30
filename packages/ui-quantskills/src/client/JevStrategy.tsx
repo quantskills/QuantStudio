@@ -1,21 +1,23 @@
 import { useState, type Dispatch, type SetStateAction } from 'react'
+import { ListChecksIcon, FilesIcon } from '@phosphor-icons/react'
 import type { ContestWatchAction, ContestWatchConfig } from './plugin-types.ts'
 import { watchActions } from './ContestWatchVisuals.tsx'
 import css from './ContestPage.module.css'
+import { JevSettingsDisclosure } from './JevSettingsDisclosure.tsx'
 
 const defaults: Record<ContestWatchAction, string> = { hold: '证据不足、信号不清或维持持仓更合适时观望。', open_long: '空仓且现有证据支持时建议开多。', open_short: '空仓且现有证据支持时建议开空。', close_long: '多头依据失效或已有证据支持退出时建议平多。', close_short: '空头依据失效或已有证据支持退出时建议平空。' }
 
 export function JevStrategy({ config, onChange }: { config: ContestWatchConfig; onChange: Dispatch<SetStateAction<ContestWatchConfig>> }) {
   const [error, setError] = useState('')
-  return <div className={css.watchInstructions}>
-    <label>研究目标和约束<textarea rows={5} required maxLength={2000} value={config.instructions} onChange={event => onChange({ ...config, instructions: event.target.value })}/></label>
-    <details className={css.jevHistory}><summary>定制各动作判断标准</summary>
+  return <div className="qs-jev-strategy-fields">
+    <label className="qs-jev-instructions-field">研究目标和约束<textarea rows={4} required maxLength={2000} value={config.instructions} onChange={event => onChange({ ...config, instructions: event.target.value })}/></label>
+    <JevSettingsDisclosure title="定制各动作判断标准" description="分别定义观望、开仓和平仓的条件" icon={<ListChecksIcon size={19}/> }>
       <label>策略名称<input maxLength={80} value={config.strategyName ?? '自定义策略'} onChange={event => onChange({ ...config, strategyName: event.target.value })}/></label>
       {Object.entries(watchActions).map(([action, label]) => <label key={action}>{label}标准<textarea required maxLength={1000}
         value={config.actionCriteria?.[action as ContestWatchAction] ?? defaults[action as ContestWatchAction]}
         onChange={event => onChange({ ...config, actionCriteria: { ...config.actionCriteria, [action]: event.target.value } })}/></label>)}
-    </details>
-    <details className={css.jevHistory}><summary>补充参考资料（可选）</summary><label>参考资料<textarea maxLength={12000} value={config.referenceMaterial ?? ''} placeholder="粘贴策略说明、带日期的研究记录或退出条件。请写明来源和时间；不会自动读取链接。"
+    </JevSettingsDisclosure>
+    <JevSettingsDisclosure title="补充参考资料" description="粘贴研究记录，或导入 TXT / Markdown 文本" badge="可选" icon={<FilesIcon size={19}/> }><label>参考资料<textarea maxLength={12000} value={config.referenceMaterial ?? ''} placeholder="粘贴策略说明、带日期的研究记录或退出条件。请写明来源和时间；不会自动读取链接。"
       onChange={event => onChange({ ...config, referenceMaterial: event.target.value })}/></label>
     <label>导入文本资料（.txt / .md，最多 12000 字符）<input type="file" accept=".txt,.md,text/plain,text/markdown" onChange={event => {
       const file = event.target.files?.[0]; event.target.value = ''; setError('')
@@ -27,6 +29,6 @@ export function JevStrategy({ config, onChange }: { config: ContestWatchConfig; 
       }).catch(() => setError('文件读取失败，请重试。'))
     }}/></label>
     {error && <p className={css.error} role="alert">{error}</p>}
-    <p className={css.jevFine}>参考资料会随决策发送给 TypeSafe。历史 K 线来自「高级设置」中的数据源；不会自动抓取参考文本中的链接或新闻。模型固定为 jev-1.13.0；当前 API 未提供 temperature、top_p 或训练参数。</p></details>
+    <p className={css.jevFine}>参考资料会随决策发送给 TypeSafe。历史 K 线来自「高级设置」中的数据源；不会自动抓取参考文本中的链接或新闻。模型固定为 jev-1.13.0；当前 API 未提供 temperature、top_p 或训练参数。</p></JevSettingsDisclosure>
   </div>
 }

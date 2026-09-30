@@ -35,6 +35,15 @@ async function fixture() {
 }
 
 describe('fly contest bridge', () => {
+  it('delivers the actual competition profit fields and official night-session trading day', async () => {
+    const f = await fixture()
+    Object.assign(f.snapshot.account.data, { totalProfit: 101080, staticProfit: 100000,
+      dailyPnl: 1080, positionPnl: 100, cost: 20, tradeDate: '20260930' })
+    const result = await f.call('market', { identity: f.input.identity, instruments: [f.input.instrument] })
+    expect(result).toMatchObject({ account: { day_source: 'official', reward_evidence_complete: false,
+      official: { Balance: 101080, CloseProfit: 1000, PositionProfit: 100, Commission: 20, TradingDay: '20260930' } } })
+    expect(f.execute).not.toHaveBeenCalled()
+  })
   it('reads the official CLI account cost as billed commission and preserves per-fill cost', async () => {
     const f = await fixture()
     Object.assign(f.snapshot.account.data, { cost: 12.34 })

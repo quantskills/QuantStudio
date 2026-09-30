@@ -9,7 +9,7 @@ import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 
 export interface FlyRuntimeStatus { supported: boolean; installed: boolean; running: boolean; installing: boolean; message: string }
 export interface FlyRequest { path: string; body?: JsonValue }
-const routes = /^(?:state|settings|control|trade-filters|events(?:\?after=\d+)?|statistics(?:\?[^#]*)?|analytics(?:\?[^#]*)?|learning(?:\?[^#]*)?|oracle|report|models|models\/test|jev\/test|layout|layout\/reset|environment\/(?:prepare|config)|homes|homes\/restore|asset\/(?:default|[a-zA-Z0-9]+)\/(?:home\.glb|preview\.png))$/
+const routes = /^(?:state|settings|control|trade-filters|events(?:\?after=\d+)?|journal(?:\?[^#]*|\/delete)?|statistics(?:\?[^#]*)?|analytics(?:\?[^#]*)?|learning(?:\?[^#]*)?|oracle|report|models|models\/test|jev\/test|layout|layout\/reset|environment\/(?:prepare|config)|homes|homes\/restore|asset\/(?:default|[a-zA-Z0-9]+)\/(?:home\.glb|preview\.png))$/
 const source = join(dirname(createRequire(import.meta.url).resolve('@deepseek-ai/dsh-quantskills-session/package.json')), 'fly-runtime')
 const exists = (path: string) => access(path).then(() => true, () => false)
 

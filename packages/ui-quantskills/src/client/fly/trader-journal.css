@@ -1,0 +1,36 @@
+.fv-journal.qs-trader-journal { min-width: 0; min-height: 0; align-self: start; padding: 22px 24px 0; overflow: hidden; }
+.qs-trader-journal>header { gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+.qs-trader-journal>header h2 { font-weight: 600; }
+.qs-trader-journal>header p { font-size: 12px; color: var(--qs-muted); margin: 5px 0 0; }
+.qs-journal-tools,.qs-journal-selection,.qs-journal-selection label,.qs-journal-pagination,.qs-journal-pagination nav { display: flex; align-items: center; gap: 12px; }
+.qs-journal-tools { margin-left: auto; gap: 8px; }
+.qs-trader-journal .qs-journal-tools>button,.qs-trader-journal .qs-journal-pagination button { display: grid; place-items: center; padding: 7px; min-width: 32px; }
+.qs-journal-selection { padding: 10px 0; border-block: 1px solid var(--qs-line); font-size: 12px; color: var(--qs-muted); flex-wrap: wrap; }
+.qs-trader-journal input[type=checkbox] { width: 15px; height: 15px; margin: 0; flex-shrink: 0; accent-color: var(--qs-accent); cursor: pointer; }
+.qs-journal-selection label { gap: 8px; cursor: pointer; }
+.qs-trader-journal .qs-journal-selection button { border: 0; background: transparent; font-size: 12px; padding: 4px 6px; }
+.qs-journal-clear-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.qs-trader-journal .qs-journal-selection button.qs-journal-clear { display: inline-flex; align-items: center; gap: 5px; color: var(--fv-danger); }
+.qs-journal-list { max-height: 620px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-gutter: stable; }
+.qs-trader-journal .qs-journal-list article { display: flex; align-items: flex-start; gap: 12px; padding: 17px 0; border-bottom: 1px solid var(--qs-line); }
+.qs-journal-list article:last-child { border-bottom: 0; }
+.qs-journal-list article:before { display: none; }
+.qs-journal-list article>input { margin-top: 3px!important; }
+.qs-journal-entry { min-width: 0; flex: 1; overflow-wrap: anywhere; }
+.qs-journal-entry .fv-event-meta { flex-wrap: wrap; gap: 3px 10px; }
+.qs-journal-entry .fv-event-meta b { color: var(--qs-ink); }
+.qs-trader-journal button.qs-journal-delete { display: grid; place-items: center; flex-shrink: 0; padding: 6px; background: transparent; border: 0; color: var(--qs-muted); }
+.qs-trader-journal button.qs-journal-delete:hover { color: var(--fv-danger); background: color-mix(in srgb, var(--fv-danger) 7%, transparent); }
+.qs-trader-journal .qs-journal-new { width: 100%; border: 0; background: var(--qs-tint); color: var(--qs-accent); font-size: 12px; margin: 10px 0 0; }
+.qs-journal-pagination { justify-content: space-between; gap: 12px; border-top: 1px solid var(--qs-line); padding: 15px 0; font-size: 12px; color: var(--qs-muted); flex-wrap: wrap; }
+.qs-journal-pagination nav { gap: 10px; margin-left: auto; }
+.qs-journal-pagination nav>span { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.qs-trader-journal .qs-journal-error { color: var(--fv-danger); font-size: 12px; }
+.qs-trader-journal .qs-journal-message { color: var(--qs-muted); font-size: 12px; }
+.qs-journal-confirm { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+.fv-page .qs-journal-confirm>button.qs-journal-confirm-delete { color: #fff; background: var(--fv-danger, #c62828); border-color: var(--fv-danger, #c62828); }
+@media(max-width: 680px) {
+  .fv-journal.qs-trader-journal { padding: 18px 16px 0; }
+  .qs-journal-list { max-height: 60vh; }
+  .qs-journal-pagination { font-size: 11px; }
+}

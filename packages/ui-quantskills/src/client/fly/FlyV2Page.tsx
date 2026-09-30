@@ -1,4 +1,4 @@
-import { GearSixIcon, RobotIcon } from '@phosphor-icons/react'
+import { ChartBarIcon, ChartLineIcon, GearSixIcon, ListBulletsIcon, QuestionIcon, RobotIcon } from '@phosphor-icons/react'
 import { futuresProduct, futuresContractPattern, products } from '@deepseek-ai/dsh-quantskills-session/contracts'
 import { TradingEngineSettings, type TradingEngineConfig } from './TradingEngineSettings.tsx'
 import { FlyInstruments } from './FlyInstruments.tsx'
@@ -13,11 +13,12 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { BodyState } from './FlyHomeV2'
 import { FlyReplayLab } from './FlyReplay.tsx'
 import './fly-v2.css'
-import { collapseNeuralWaits } from './flyJournal'
+import { TraderJournal } from './TraderJournal.tsx'
 import { lifeGoals } from './LifeTrace'
 import { type TradeMarket } from './TradeLoop'
 import { TradeStatistics } from './TradeStatistics'
 import { TraderOverview, type TraderActivity } from './TraderOverview.tsx'
+import { TraderDisclosure } from './TraderDisclosure.tsx'
 import { TradeLearning } from './TradeLearning'
 import { TradeAnalytics } from './TradeAnalytics'
 import { RuntimeContinuity, type Continuity } from './RuntimeContinuity'
@@ -87,7 +88,7 @@ export default function FlyV2Page({ active, contest, openContest, openModelSetti
   const [draft, setDraft] = useState<Settings>()
   const [models, setModels] = useState<{ profiles: { provider_id: string; label: string; configured: boolean }[]; jev_configured: boolean; jev_providers: { id: string; label: string; model: string; configured: boolean }[] }>()
   const [oracle, setOracle] = useState('')
-  const [report, setReport] = useState(''); const [filter, setFilter] = useState('all')
+  const [report, setReport] = useState('')
   const loaded = useRef(false)
   const tradingRef = useRef<HTMLDivElement>(null)
   function showTrading() {
@@ -156,7 +157,6 @@ export default function FlyV2Page({ active, contest, openContest, openModelSetti
   const isLLM = s.settings.decision_engine === 'llm'
   const executionMode = s.settings.execution_mode ?? 'automatic'
   const automatic = executionMode === 'automatic'
-    const events = collapseNeuralWaits(s.events).filter(e => filter === 'all' || e.actor === filter).reverse()
   const issueList = (value: Settings) => {
     const issues: { key: string; label: string; step: number }[] = []
     if (value.decision_engine !== 'llm' && !s.environment.brain_ready) issues.push({ key: 'environment', label: '准备神经运行环境', step: 0 })
@@ -195,7 +195,7 @@ export default function FlyV2Page({ active, contest, openContest, openModelSetti
     else if (!later && s.onboarding) await control('start')
     setSetup(false); setTab('dashboard')
   }
-  const guide = <TradingGuide compact name="AI 交易员" steps={[
+  const guide = <TradingGuide compact triggerIcon={<QuestionIcon size={17} aria-hidden="true"/>} name="AI 交易员" steps={[
       { title: '选择决策方式', status: isLLM ? '使用 QS 大模型' : s.environment.brain_ready ? '神经环境已就绪' : '运行环境待准备', ready: isLLM ? !!s.settings.trade_model : s.environment.brain_ready,
         body: '打开「交易设置 → 决策引擎」。大模型模式选择 QS 已配置的模型，再写几句交易要求；神经模式先准备本地神经环境。两种引擎都支持逐笔确认或自动下单。',
         note: '大模型模式直接使用 QS 模型服务，无需安装神经依赖。', action: { label: '选择决策方式', run: () => configureAt(5) } },
@@ -229,7 +229,9 @@ export default function FlyV2Page({ active, contest, openContest, openModelSetti
     })
   const runningLabel = s.control.trading ? s.control.close_only ? '仅平仓运行中' : automatic ? '自动交易中' : '生成计划中' : automatic ? '自动交易已暂停' : '计划生成已暂停'
   function startTrading() { setRiskAccepted(false); setStartReview(true) }
-  const navigation = <nav className="fv-nav qs-trader-sections" aria-label="AI 交易员栏目">{[['dashboard', '交易'], ['analysis', '表现'], ['talk', '记录']].map(([key, label]) => <button type="button" className={tab === key ? 'selected' : ''} aria-current={tab === key ? 'page' : undefined} onClick={() => setTab(key as typeof tab)} key={key}>{label}</button>)}</nav>
+  const navigation = <nav className="fv-nav qs-trader-sections" aria-label="AI 交易员栏目">{([
+    ['dashboard', '交易', ChartLineIcon], ['analysis', '表现', ChartBarIcon], ['talk', '记录', ListBulletsIcon],
+  ] as const).map(([key, label, Icon]) => <button type="button" className={tab === key ? 'selected' : ''} aria-current={tab === key ? 'page' : undefined} onClick={() => setTab(key)} key={key}><Icon size={17} aria-hidden="true"/><span>{label}</span></button>)}</nav>
   return <div className="fv-page fv-workspace qs-workspace-refined qs-trader-dashboard">
     <header className="fv-header qs-trader-identity-header"><div className="fv-identity"><div className="fv-avatar" aria-hidden="true"><RobotIcon size={30} weight="duotone"/></div><div><div className="qs-trader-name-line"><h1>{s.name || 'AI 交易员'}</h1><span className="qs-trader-running" data-running={s.control.trading}><span className="qs-state-dot" data-active={s.control.trading}/>{runningLabel}</span></div><p className="qs-trader-subtitle">{isLLM ? '大模型' : '神经模型'} · {s.settings.trade_period_minutes || 1} 分钟 · {s.settings.instruments.length} 个合约</p></div></div><div className="fv-header-actions"><button type="button" aria-label="AI 交易员运行设置" onClick={openSetup}><GearSixIcon size={18}/><span>编辑</span></button>
       <button type="button" className={s.control.trading ? 'fv-pause' : 'fv-primary'} disabled={pending} onClick={() => {
@@ -247,16 +249,19 @@ export default function FlyV2Page({ active, contest, openContest, openModelSetti
       {!!missing.length && <div className="fv-setup-needed" role="status"><strong>开始前，补齐必要设置</strong><span>{missing.map(i => i.label).join(' · ')}</span><button type="button" onClick={() => configureAt(missing[0]!.step)}>继续设置 →</button></div>}
       {s.control.trading && s.connection?.status !== 'ready' && <div className="fv-runtime-note" role="status">{s.connection?.message || '等待比赛行情恢复，暂不生成新计划。'}<button type="button" onClick={() => setDetails(true)}>检查连接</button></div>}
       <div ref={tradingRef} tabIndex={-1} className="qs-trader-overview-anchor"><TraderOverview activities={activities} onRecords={() => setTab('talk')} onManage={() => configureAt(2)}/></div>
-      <details className="qs-trader-market-fold">
-        <summary>行情与连接 <span>· {displayedMarkets.filter(m => m.readiness === 'ready').length}/{displayedMarkets.length} 就绪</span></summary>
+      <section className="qs-trader-support" aria-label="交易运行详情">
+      <TraderDisclosure kind="market" title="行情与连接" description="合约行情、连接状态与运行诊断"
+        status={`${displayedMarkets.filter(m => m.readiness === 'ready').length} / ${displayedMarkets.length} 就绪`}
+        tone={displayedMarkets.length > 0 && displayedMarkets.every(m => m.readiness === 'ready') ? 'ready' : 'neutral'}>
         <FlyContractList markets={displayedMarkets} selected={currentMarket?.product} trading={s.control.trading && !s.control.paused} onSelect={product => { setSelected(product); setMarketOpen(true) }} onManage={() => configureAt(2)}/>
         <div className="qs-trader-connection-actions"><button type="button" onClick={() => setDetails(true)}>连接与诊断 ↗</button><span>存档{s.persistence?.ok === false ? '异常' : s.persistence?.ok ? '已保存' : '待确认'}</span></div>
-      </details>
-      <section className="fv-plans-focus" aria-label="交易计划与回执">{tradePlans || <details><summary>交易计划与回执</summary><p>{automatic ? '暂无委托。有有效信号后自动提交，回执显示在这里。' : '暂无计划。有有效信号后生成计划，核对并确认后才会下单。'}</p></details>}</section>
-      {s.account?.official && <details className="qs-trader-account-fold"><summary>比赛账户 <span>· 权益 {fmt(s.account.official.Balance)} 元</span></summary><div className="fv-account-strip" aria-label="账户上次快照"><div><small>账户权益 · 上次快照</small><strong>{fmt(s.account.official.Balance)}</strong></div><div><small>可用资金</small><strong>{fmt(s.account.official.Available)}</strong></div><div><small>当日手续费</small><strong>{fmt(s.account.official.Commission)}</strong></div></div></details>}
+      </TraderDisclosure>
+      {tradePlans || <TraderDisclosure kind="plans" title="交易计划与回执" description="核对交易计划，查看委托与成交回执" status="暂无待处理"><p>{automatic ? '暂无委托。有有效信号后自动提交，回执显示在这里。' : '暂无计划。有有效信号后生成计划，核对并确认后才会下单。'}</p></TraderDisclosure>}
+      {s.account?.official && <TraderDisclosure kind="account" title="比赛账户" description="账户权益 · 上次快照" status={<>{fmt(s.account.official.Balance)} <small>元</small></>}><div className="fv-account-strip" aria-label="账户上次快照"><div><small>账户权益 · 上次快照</small><strong>{fmt(s.account.official.Balance)}</strong></div><div><small>可用资金</small><strong>{fmt(s.account.official.Available)}</strong></div><div><small>当日手续费</small><strong>{fmt(s.account.official.Commission)}</strong></div></div></TraderDisclosure>}
+      </section>
     </>}
-    {tab === 'talk' && <div className="fv-talk-layout"><section className="fv-oracle"><span className="fv-kicker">A MESSAGE FROM ABOVE</span><h2>给交易员留一条记录</h2><p>信息、建议和长期偏好会进入记忆。<br />因果验证期间，神谕保存为记忆，不直接改动作分数。</p><textarea value={oracle} onChange={e => setOracle(e.target.value)} maxLength={2000} placeholder="记录你的观察与长期偏好。" /><button type="button" className="fv-primary" disabled={pending || !oracle.trim()} onClick={() => void run(async () => { await api('oracle', { text: oracle }); setOracle('') })}>送入记忆</button><small className="fv-note">暂停和交易额度请使用独立控制按钮。</small><hr /><h3>最近发生了什么</h3><button type="button" disabled={pending} onClick={() => void run(async () => setReport((await api<{ text: string }>('report', {})).text))}>生成事实报告</button>{report && <p className="fv-report">{report}</p>}</section><section className="fv-journal"><header><h2>运行与交易记录</h2><select aria-label="记录来源" value={filter} onChange={e => setFilter(e.target.value)}><option value="all">所有来源</option>{Object.entries(actors).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select></header>{events.length ? events.map(e => <article key={e.seq}><div className={`fv-event-dot ${e.actor}`} /><div><div className="fv-event-meta"><b>{actors[e.actor] || e.actor}</b><time>{new Date(e.at * 1000).toLocaleTimeString()}</time><small>#{e.seq}</small></div><p>{eventText(e)}</p>{e.decision_id && <small className="fv-note">决策 {e.decision_id.slice(0, 12)}</small>}</div></article>) : <div className="fv-empty">唤醒后，这里会记录它的选择与经历。</div>}</section></div>}
-    {tab === 'analysis' && <><TradeStatistics/><TradeAnalytics active={active}/>{!isLLM && <details className="fv-data-details"><summary>学习反馈</summary><TradeLearning/></details>}</>}
+    {tab === 'talk' && <div className="fv-talk-layout"><section className="fv-oracle"><span className="fv-kicker">A MESSAGE FROM ABOVE</span><h2>给交易员留一条记录</h2><p>信息、建议和长期偏好会进入记忆。<br />因果验证期间，神谕保存为记忆，不直接改动作分数。</p><textarea value={oracle} onChange={e => setOracle(e.target.value)} maxLength={2000} placeholder="记录你的观察与长期偏好。" /><button type="button" className="fv-primary" disabled={pending || !oracle.trim()} onClick={() => void run(async () => { await api('oracle', { text: oracle }); setOracle('') })}>送入记忆</button><small className="fv-note">暂停和交易额度请使用独立控制按钮。</small><hr /><h3>最近发生了什么</h3><button type="button" disabled={pending} onClick={() => void run(async () => setReport((await api<{ text: string }>('report', {})).text))}>生成事实报告</button>{report && <p className="fv-report">{report}</p>}</section><TraderJournal actors={actors} formatEvent={eventText}/></div>}
+    {tab === 'analysis' && <><TradeAnalytics active={active} traderDetails={<TradeStatistics/>}/>{!isLLM && <details className="fv-data-details"><summary>学习反馈</summary><TradeLearning/></details>}</>}
     {tab === 'replay' && <FlyReplayLab active={active} />}
     {marketOpen && <ActionDialog drawer title={`${currentMarket?.symbol || '合约'} · 行情与决策`} onClose={() => setMarketOpen(false)}>
       <FlyMarketView automatic={automatic} market={currentMarket} observing={!s.control.trading} onDetails={() => { setMarketOpen(false); setDetails(true) }}/>

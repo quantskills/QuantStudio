@@ -17,6 +17,7 @@ import { translationModels } from './contest-jev-english.ts'
 import { jevSettings } from './contest-jev-settings.ts'
 import { historyFailure } from './contest-watch-history.ts'
 import { FlyRuntime, type FlyRequest } from './fly-runtime.ts'
+import { flyAccount } from './fly-account.ts'
 
 const identitySchema = z.object({ accountId: z.string().min(1), contestId: z.string().min(1) })
 export const flyInstrumentSchema = z.object({ product: z.string().trim().regex(futuresProductPattern),
@@ -175,8 +176,8 @@ export class FlyService {
     }
     const { snapshot, trades } = this.observation
     const account = record(snapshot.account.data), positions = rows(snapshot.positions.data)
-    const fees = amount(account.commission ?? account.Commission ?? account.cost)
-    const equity = amount(account.totalProfit ?? account.equity ?? account.balance ?? account.Balance)
+    const { official, knownDay } = flyAccount(account, day(snapshot.fetchedAt))
+    const fees = official.Commission, equity = official.Balance
     if (equity !== null && equity > 0) await this.equityPeak(identity, equity)
     const notionals = positions.map(p => amount(p.openMarketValue))
     const occupied = notionals.every(n => n !== null && n >= 0) ? notionals.reduce<number>((sum, n) => sum + n!, 0) : null
@@ -201,12 +202,6 @@ export class FlyService {
           || rows(snapshot.openOrders.data).some(order => !order.contractCode || contract(order.contractCode) === contract(instrument.symbol)) }
     }
     await this.identity(identity, false)
-    const tradingDay = String(account.tradingDay ?? account.TradingDay ?? '').replaceAll('-', '')
-    const knownDay = /^\d{8}$/.test(tradingDay)
-    const official = { Balance: equity, Available: amount(account.availableFunds), Commission: fees,
-      Deposit: amount(account.deposit ?? account.Deposit), Withdraw: amount(account.withdraw ?? account.Withdraw),
-      CloseProfit: amount(account.closeProfit ?? account.CloseProfit), PositionProfit: amount(account.positionProfit ?? account.PositionProfit),
-      TradingDay: knownDay ? tradingDay : day(snapshot.fetchedAt) }
     return safeData({ identity, feeds, plans: (await this.contest.status()).plans,
       account: { official, trading_account_id: identity.accountId, day_source: knownDay ? 'official' : 'observation',
         official_updated_at: new Date(snapshot.fetchedAt).toISOString(),

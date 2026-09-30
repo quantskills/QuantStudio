@@ -1,8 +1,10 @@
 import { useEffect, useState, type Dispatch, type SetStateAction } from 'react'
+import { ChartLineIcon } from '@phosphor-icons/react'
 import type { ContestWatchConfig, ContestWatchDataset } from './plugin-types.ts'
 import type { ContestAccess } from './contest.ts'
 import { waitForCompetition } from './competition-async.ts'
 import css from './ContestPage.module.css'
+import { JevSettingsDisclosure } from './JevSettingsDisclosure.tsx'
 
 const defaultRules: NonNullable<ContestWatchConfig['rangeRules']> = { lookbackBars: 30, tickSize: 0, minWidthTicks: 8, minTouches: 2, edgeFraction: .2,
   reboundTicks: 2, roundTripCostTicks: 0, minRewardCostRatio: 2, stopLossTicks: 8, takeProfitTicks: 12 }
@@ -35,9 +37,9 @@ export function JevEvidenceSettings({ access, config, onChange, onBusy }: { acce
       columns: { time: column('datetime', 'timestamp', 'time', '日期'), symbol: column('symbol', 'contractcode', 'contract'), open: column('open'), high: column('high'), low: column('low'), close: column('close') } } }))
   }
   return <div className={css.watchInstructions}>
-    <details className={css.jevHistory} open={Boolean(config.history || config.rangeRules || config.signalRules)}><summary>历史行情与策略条件</summary>
-      <label className={css.jevCheckLabel}><input type="checkbox" checked={Boolean(config.autoHistory)} onChange={event => onChange({ ...config, autoHistory: event.target.checked ? { exchange: config.instrument?.exchange ?? 'SHF', barSeconds: 60 } : undefined })}/>启动时自动准备 PandaData 行情</label>
-      {config.autoHistory && <div className={css.watchFields}>
+    <JevSettingsDisclosure title="历史行情与策略条件" description="配置历史数据来源、参考指标与信号参数" icon={<ChartLineIcon size={19}/>} open={Boolean(config.history || config.rangeRules || config.signalRules)}>
+      <label className="qs-jev-checkbox"><input type="checkbox" checked={Boolean(config.autoHistory)} onChange={event => onChange({ ...config, autoHistory: event.target.checked ? { exchange: config.instrument?.exchange ?? 'SHF', barSeconds: 60 } : undefined })}/>启动时自动准备 PandaData 行情</label>
+      {config.autoHistory && <div className={`${css.watchFields} qs-jev-parameter-grid`}>
         <label>自动行情周期<select value={config.autoHistory.barSeconds} onChange={event => onChange({ ...config, autoHistory: { ...config.autoHistory!, barSeconds: Number(event.target.value) as 60 | 300 } })}><option value={60}>1 分钟</option><option value={300}>5 分钟</option></select></label>
         <p className={css.jevFine}>自动匹配上方实际合约、创建或复用分钟数据源，并开启刷新。首次需在设置中连接 PandaData。</p>
       </div>}
@@ -62,30 +64,30 @@ export function JevEvidenceSettings({ access, config, onChange, onBusy }: { acce
       <button type="button" onClick={() => setRevision(value => value + 1)}>重新读取数据集列表</button>
       {!datasets.length && <p className={css.jevFine}>暂无可用行情时间序列。请先在数据库页导入 CSV/JSON，或配置 PandaData 行情源，并将分类设为「行情」。需要合约、时间及 OHLC 列。</p>}
       {error && <p className={css.error}>{error}</p>}
-      {config.history && <div className={css.watchFields}>
+      {config.history && <div className={`${css.watchFields} qs-jev-parameter-grid`}>
         <label>K 线周期<select value={config.history.barSeconds} onChange={event => onChange({ ...config, history: { ...config.history!, barSeconds: Number(event.target.value) as 60 | 300 } })}><option value={60}>1 分钟</option><option value={300}>5 分钟</option></select></label>
         <label>时间列代表<select value={config.history.timeMeaning} onChange={event => onChange({ ...config, history: { ...config.history!, timeMeaning: event.target.value as 'open' | 'close' } })}><option value="open">K 线开始时间</option><option value="close">K 线结束时间</option></select></label>
         {(Object.entries({ time: '时间', symbol: '实际合约', open: '开盘价', high: '最高价', low: '最低价', close: '收盘价' }) as [keyof NonNullable<ContestWatchConfig['history']>['columns'], string][]).map(([key, label]) => <label key={key}>{label}数据列<select required value={config.history!.columns[key]}
           onChange={event => onChange({ ...config, history: { ...config.history!, columns: { ...config.history!.columns, [key]: event.target.value } } })}>
           <option value="">请选择对应列</option>{selected?.columns.map(column => <option key={column}>{column}</option>)}
         </select></label>)}
-        <label className={css.watchInstructions}>允许刷新所选远程数据源<input type="checkbox" checked={config.history.refresh} onChange={event => onChange({ ...config, history: { ...config.history!, refresh: event.target.checked } })}/></label>
+        <label className="qs-jev-checkbox">允许刷新所选远程数据源<input type="checkbox" checked={config.history.refresh} onChange={event => onChange({ ...config, history: { ...config.history!, refresh: event.target.checked } })}/></label>
       </div>}
       </>}
-      {!config.signalRules && <label className={css.jevCheckLabel}><input type="checkbox" checked={Boolean(config.rangeRules)} onChange={event => onChange({ ...config, builtInTemplate: undefined, customStrategy: !event.target.checked, rangeRules: event.target.checked ? { ...defaultRules, tickSize: config.instrument?.tickSize ?? 0 } : undefined })}/>{config.decisionMode === 'jev' ? '提供区间参考指标（由 Jev 综合判断）' : '启用明确区间规则（不满足时阻止开仓）'}</label>}
+      {!config.signalRules && <label className="qs-jev-checkbox"><input type="checkbox" checked={Boolean(config.rangeRules)} onChange={event => onChange({ ...config, builtInTemplate: undefined, customStrategy: !event.target.checked, rangeRules: event.target.checked ? { ...defaultRules, tickSize: config.instrument?.tickSize ?? 0 } : undefined })}/>{config.decisionMode === 'jev' ? '提供区间参考指标（由 Jev 综合判断）' : '启用明确区间规则（不满足时阻止开仓）'}</label>}
       {config.rangeRules && <>
         <p className={css.jevFine}>以下初值是待验证示例，未经收益回测。自主模式中数值条件只作为 Jev 参考，严格模式中用于程序筛选。止损/目标仅生成待确认的平仓建议，不是柜台止损单。</p>
-        <div className={css.watchFields}>{fields.filter(item => item[0] !== 'tickSize').map(([key, label, min, max, step]) => <label key={key}>{label}<input type="number" required min={min} max={max} step={step} value={config.rangeRules![key] || ''}
+        <div className={`${css.watchFields} qs-jev-parameter-grid`}>{fields.filter(item => item[0] !== 'tickSize').map(([key, label, min, max, step]) => <label key={key}>{label}<input type="number" required min={min} max={max} step={step} value={config.rangeRules![key] || ''}
           onChange={event => onChange({ ...config, rangeRules: { ...config.rangeRules!, [key]: Number(event.target.value) } })}/></label>)}</div>
         {!config.history && !config.autoHistory && <p className={css.jevFine}>尚未选择历史行情；启用此规则后，会等待历史数据，期间不生成开仓计划。</p>}
       </>}
       {config.signalRules && <>
         <p className={css.jevFine}>{config.decisionMode === 'jev' ? '以下信号由程序计算并发送给 Jev 参考；不以信号未满足为由取消模型请求。' : '以下信号作为硬性入场条件，由程序逐项校验。'}</p>
         <p className={css.jevFine}>{config.signalRules.kind === 'trend' ? '趋势回调：快均线周期 < 慢均线周期 < 回看根数；趋势、回踩及报价恢复按方向分别校验。' : '突破跟随：末根收盘与最新价共同确认，前序窗口不包含确认 K 线；突破幅度须小于追价上限。'} 止损和目标仅生成待确认平仓建议。</p>
-        <div className={css.watchFields}>{signalFields.filter(item => config.signalRules!.kind === 'trend' ? !['bufferTicks', 'maxChaseTicks'].includes(item[0]) : !['fastBars', 'slowBars', 'pullbackTicks', 'reboundTicks'].includes(item[0])).map(([key, label, min, max, step]) => <label key={key}>{label}<input type="number" required min={min} max={max} step={step}
+        <div className={`${css.watchFields} qs-jev-parameter-grid`}>{signalFields.filter(item => config.signalRules!.kind === 'trend' ? !['bufferTicks', 'maxChaseTicks'].includes(item[0]) : !['fastBars', 'slowBars', 'pullbackTicks', 'reboundTicks'].includes(item[0])).map(([key, label, min, max, step]) => <label key={key}>{label}<input type="number" required min={min} max={max} step={step}
           value={config.signalRules![key as keyof Omit<NonNullable<ContestWatchConfig['signalRules']>, 'kind'>] || ''}
           onChange={event => onChange({ ...config, signalRules: { ...config.signalRules!, [key]: Number(event.target.value) } })}/></label>)}</div>
       </>}
-    </details>
+    </JevSettingsDisclosure>
   </div>
 }

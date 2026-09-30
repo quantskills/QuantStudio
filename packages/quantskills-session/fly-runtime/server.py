@@ -41,6 +41,11 @@ def dispatch(manager, path, body=None):
         return filters.model_dump()
     if route == 'events' and body is None:
         return {'events': item.store.events(max(0, int(query.get('after', 0))))}
+    if route == 'journal' and body is None:
+        return item.store.journal_page(query.get('actor', 'all'), int(query.get('page', 1)),
+                                       int(query['snapshot']) if 'snapshot' in query else None)
+    if route == 'journal/delete' and body is not None:
+        return item.store.delete_journal(body)
     if route in ('statistics','analytics','learning') and body is None:
         state = item.status(); account = state.get('account') or {}
         day = query.get('day') or (account.get('official') or {}).get('TradingDay') or datetime.now().strftime('%Y%m%d')

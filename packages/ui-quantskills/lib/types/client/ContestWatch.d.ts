@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import type { ContestAccess } from './contest.ts';
+import './JevWorkspace.css';
 export declare function ContestWatch({ access, connected, openModelSettings, plans, onSummary, accountId }: {
     accountId?: string | undefined;
     onSummary?: ((value: {

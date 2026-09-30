@@ -1,0 +1,116 @@
+/* Shared disclosure treatment for JEV's quick and full settings. */
+.qs-jev-workspace .qs-jev-settings-disclosure {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--qs-line);
+  border-radius: 12px;
+  background: var(--qs-surface);
+}
+.qs-jev-workspace .qs-jev-settings-disclosure > summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 66px;
+  box-sizing: border-box;
+  padding: 13px 15px;
+  border-radius: 12px;
+  list-style: none;
+  color: var(--qs-ink);
+  cursor: pointer;
+}
+.qs-jev-settings-disclosure > summary::-webkit-details-marker { display: none; }
+.qs-jev-workspace .qs-jev-settings-disclosure > summary:hover { background: color-mix(in srgb, var(--qs-tint) 38%, var(--qs-surface)); }
+.qs-jev-disclosure-icon { display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; border-radius: 9px; background: var(--qs-tint); color: var(--qs-accent); }
+.qs-jev-disclosure-copy { display: grid; gap: 3px; min-width: 0; flex: 1; }
+.qs-jev-workspace .qs-jev-disclosure-copy strong { color: var(--qs-ink); font-size: 13px; font-weight: 550; line-height: 1.5; }
+.qs-jev-workspace .qs-jev-disclosure-copy small { color: var(--qs-muted); font-size: 11px; line-height: 1.6; }
+.qs-jev-disclosure-badge { flex-shrink: 0; padding: 3px 7px; border-radius: 6px; background: color-mix(in srgb, var(--qs-muted) 7%, var(--qs-surface)); color: var(--qs-muted); font-size: 11px; font-weight: 400; }
+.qs-jev-disclosure-chevron { flex-shrink: 0; color: var(--qs-muted); transition: transform .15s ease; }
+.qs-jev-settings-disclosure[open] > summary .qs-jev-disclosure-chevron { transform: rotate(180deg); }
+.qs-jev-workspace .qs-jev-disclosure-body { display: grid; gap: 16px; min-width: 0; margin: 0 16px; padding: 18px 0; border-top: 1px solid var(--qs-line); }
+.qs-jev-workspace .qs-jev-disclosure-body > :is(p, div, label) { margin-block: 0; }
+.qs-jev-workspace .qs-jev-disclosure-body p { font-size: 12px; line-height: 1.75; color: var(--qs-muted); }
+.qs-jev-workspace .qs-jev-disclosure-body > button { justify-self: start; }
+.qs-jev-workspace .qs-jev-settings-disclosure > summary:focus-visible { outline: 2px solid var(--qs-accent); outline-offset: -2px; }
+.qs-jev-workspace .qs-jev-settings-disclosure[data-compact] > summary { min-height: 44px; padding: 9px 10px; gap: 8px; }
+.qs-jev-settings-disclosure[data-compact] .qs-jev-disclosure-icon { width: 24px; height: 24px; flex-basis: 24px; background: transparent; }
+.qs-jev-workspace .qs-jev-settings-disclosure[data-compact] .qs-jev-disclosure-copy strong { font-size: 12px; }
+
+.qs-jev-workspace dialog.qs-settings-sheet { height: min(820px, calc(100dvh / var(--qs-interface-scale, 1) - 48px)); }
+.qs-jev-workspace .qs-settings-sheet > header { padding: 19px 24px; }
+.qs-jev-workspace .qs-settings-sheet > header h2 { font-size: 20px; margin: 0; letter-spacing: -.02em; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-content { padding: 24px; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-intro { margin-bottom: 20px; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-intro h3 { font-size: 21px; margin-bottom: 6px; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-intro p { font-size: 12px; line-height: 1.7; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-group { gap: 16px; padding: 18px; background: var(--qs-surface); }
+.qs-jev-workspace .qs-settings-sheet label { font-size: 12px; gap: 7px; line-height: 1.6; }
+.qs-jev-workspace .qs-settings-sheet :is(input, select, textarea) { width: 100%; font-size: 13px; line-height: 1.7; min-width: 0; }
+.qs-jev-workspace .qs-settings-sheet textarea { resize: vertical; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-navigation { padding: 16px 10px; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-navigation button { padding: 12px; margin-bottom: 4px; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-navigation button strong { font-size: 13px; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-footer { padding: 15px 22px; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-footer button { font-size: 13px; min-height: 38px; padding: 8px 14px; }
+.qs-jev-workspace .qs-settings-sheet .qs-settings-note { margin: 12px 0 0; line-height: 1.7; }
+.qs-jev-strategy-editor, .qs-jev-strategy-fields { display: grid; gap: 10px; min-width: 0; }
+.qs-jev-strategy-editor { margin-bottom: 10px; }
+.qs-jev-workspace .qs-jev-instructions-field { margin: 6px 0 10px; }
+.qs-jev-workspace .qs-jev-strategy-editor > button { justify-self: start; }
+.qs-jev-workspace .qs-settings-sheet .qs-template-picker { align-items: end; gap: 10px; margin-bottom: 2px; }
+.qs-jev-workspace .qs-settings-sheet .qs-template-picker button { font-size: 12px; padding: 9px 12px; min-height: 40px; border: 1px solid var(--qs-line); border-radius: 9px; background: var(--qs-surface); }
+.qs-jev-workspace .qs-jev-strategy-editor > section { display: grid; gap: 14px; padding: 16px; border: 1px solid var(--qs-line); border-radius: 12px; background: color-mix(in srgb, var(--qs-tint) 25%, var(--qs-surface)); }
+.qs-jev-workspace .qs-jev-strategy-editor > section > p { margin: 0; font-size: 12px; line-height: 1.7; }
+.qs-jev-workspace .qs-jev-strategy-editor > section > button { justify-self: start; }
+.qs-jev-contract-editor { margin-bottom: 12px; }
+.qs-jev-workspace .qs-jev-instruments { gap: 12px; }
+.qs-jev-workspace .qs-jev-instruments .qs-product-filters { margin: 0; }
+.qs-jev-workspace .qs-jev-instruments .qs-product-checklist { padding: 4px; max-height: 220px; border: 0; border-radius: 8px; background: color-mix(in srgb, var(--qs-tint) 20%, var(--qs-surface)); }
+.qs-jev-workspace .qs-jev-instruments .qs-product-checklist > label { gap: 9px; padding: 9px; border: 1px solid transparent; font-size: 12px; }
+.qs-jev-workspace .qs-jev-instruments .qs-product-checklist > label:has(:checked) { border-color: color-mix(in srgb, var(--qs-accent) 20%, var(--qs-line)); }
+.qs-jev-workspace .qs-jev-instruments .qs-product-checklist input { width: 16px; height: 16px; }
+.qs-jev-workspace .qs-selected-contract { padding: 14px; background: var(--qs-surface); }
+.qs-jev-workspace .qs-selected-contract .qs-jev-settings-disclosure { margin-top: 12px; }
+.qs-jev-workspace .qs-selected-contracts > strong { font-size: 12px; font-weight: 550; }
+.qs-jev-workspace .qs-jev-parameter-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 16px; padding: 0; border: 0; margin: 0; }
+.qs-jev-parameter-grid > p { grid-column: 1 / -1; }
+.qs-jev-workspace label.qs-jev-checkbox { display: flex; align-items: flex-start; gap: 10px; grid-column: 1 / -1; padding: 12px; border: 1px solid var(--qs-line); border-radius: 9px; background: color-mix(in srgb, var(--qs-tint) 25%, var(--qs-surface)); }
+.qs-jev-workspace label.qs-jev-checkbox input { width: 16px; height: 16px; min-height: 16px; margin: 2px 0 0; padding: 0; flex: 0 0 16px; accent-color: var(--qs-accent); }
+.qs-jev-workspace .qs-settings-sheet .qs-execution-choice { margin: 0 0 20px; }
+.qs-jev-workspace .qs-settings-sheet .qs-execution-choice h3 { font-size: 13px; margin: 0 0 10px; }
+.qs-jev-workspace .qs-settings-sheet .qs-execution-options > button { position: relative; padding: 14px 34px 14px 14px; border: 1px solid var(--qs-line); border-radius: 12px; }
+.qs-jev-workspace .qs-settings-sheet .qs-execution-options > button[aria-pressed=true] { border-color: color-mix(in srgb, var(--qs-accent) 35%, var(--qs-line)); background: var(--qs-tint); }
+.qs-jev-workspace .qs-settings-sheet .qs-execution-options > button::after { content: ''; position: absolute; right: 12px; top: 17px; width: 13px; height: 13px; border: 1px solid var(--qs-line); border-radius: 50%; }
+.qs-jev-workspace .qs-settings-sheet .qs-execution-options > button[aria-pressed=true]::after { border-color: var(--qs-accent); background: var(--qs-accent); box-shadow: inset 0 0 0 3px var(--qs-surface); }
+.qs-jev-workspace .qs-settings-sheet .qs-execution-options strong { font-size: 13px; }
+.qs-jev-workspace .qs-settings-sheet .qs-execution-options span { font-size: 11px; }
+.qs-jev-workspace .qs-settings-sheet .qs-execution-choice > p { margin: 10px 0 0; font-size: 12px; line-height: 1.7; }
+.qs-jev-connection-card { border: 1px solid var(--qs-line); border-radius: 14px; padding: 20px; background: var(--qs-surface); }
+.qs-jev-connection-card > header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+.qs-jev-connection-card > header > div { display: grid; gap: 3px; }
+.qs-jev-connection-card strong { font-size: 16px; }
+.qs-jev-connection-card small { font-size: 11px; color: var(--qs-muted); }
+.qs-jev-connection-state { margin-left: auto; font-size: 11px; padding: 5px 9px; border-radius: 7px; background: color-mix(in srgb, var(--qs-muted) 8%, var(--qs-surface)); color: var(--qs-muted); }
+.qs-jev-connection-state[data-ready=true] { background: var(--qs-tint); color: var(--qs-accent); }
+.qs-jev-workspace .qs-jev-connection-card > p { margin: 0; font-size: 12px; line-height: 1.8; }
+.qs-jev-connection-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 18px; margin-top: 18px; border-top: 1px solid var(--qs-line); }
+.qs-jev-workspace .qs-jev-connection-actions button { font-size: 12px; border: 1px solid var(--qs-line); border-radius: 9px; padding: 9px 12px; background: var(--qs-surface); }
+.qs-jev-workspace .qs-jev-connection-actions button:first-child { color: var(--qs-accent); }
+@media (max-width: 760px) {
+  .qs-jev-workspace dialog.qs-settings-sheet { height: calc(100dvh / var(--qs-interface-scale, 1) - 20px); }
+  .qs-jev-workspace .qs-settings-sheet .qs-settings-content { padding: 18px; }
+  .qs-jev-workspace .qs-settings-sheet .qs-settings-navigation { padding: 8px; }
+  .qs-jev-workspace .qs-settings-sheet .qs-settings-navigation button { padding: 10px 12px; margin: 0; }
+  .qs-jev-workspace .qs-settings-sheet .qs-settings-footer { padding: 12px 16px; }
+}
+@media (max-width: 540px) {
+  .qs-jev-workspace .qs-jev-settings-disclosure > summary { gap: 9px; padding: 12px; flex-wrap: wrap; }
+  .qs-jev-disclosure-copy { flex-basis: calc(100% - 76px); }
+  .qs-jev-disclosure-badge { order: 2; margin-left: 41px; }
+  .qs-jev-workspace .qs-jev-disclosure-body { margin-inline: 12px; }
+  .qs-jev-workspace .qs-jev-parameter-grid, .qs-jev-workspace .qs-jev-instruments .qs-product-filters { grid-template-columns: minmax(0, 1fr); }
+  .qs-jev-workspace .qs-settings-sheet .qs-settings-content { padding: 16px; }
+  .qs-jev-workspace .qs-settings-sheet .qs-template-picker { grid-template-columns: minmax(0, 1fr) auto; }
+}
+@media (prefers-reduced-motion: reduce) { .qs-jev-disclosure-chevron { transition: none; } }
