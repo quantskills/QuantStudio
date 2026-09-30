@@ -14,12 +14,20 @@ From QuantSkills, an open-source community under PandaAI
 
 <a id="agent-install"></a>
 
-## Install with a local agent: complete macOS / Windows prompts
+## Install with an agent
 
-Copy the appropriate prompt into an agent **with terminal and file access on the target computer**. It will check prerequisites, install dependencies, run checks and start the app, explaining any system authorization or manual steps it needs. Each prompt includes the repository URLs and can be copied on its own.
+**Choose your OS → Copy the prompt → Give it to your agent**
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### macOS
+
+Apple Silicon · Intel
 
 <details>
-<summary><strong>macOS: expand and copy the complete installation prompt</strong></summary>
+<summary><strong>Expand and copy the full prompt</strong></summary>
 
 ```text
 Install, verify and start QuantStudio on this Mac. Leave a working local service running when finished.
@@ -82,8 +90,15 @@ Mirror: https://gitee.com/quantskills/QuantStudio.git
 
 </details>
 
+</td>
+<td width="50%" valign="top">
+
+### Windows
+
+PowerShell · Windows
+
 <details>
-<summary><strong>Windows: expand and copy the complete installation prompt</strong></summary>
+<summary><strong>Expand and copy the full prompt</strong></summary>
 
 ```text
 Use PowerShell to install, verify and start QuantStudio on this Windows computer. Leave a working local service running when finished.
@@ -147,6 +162,12 @@ Mirror: https://gitee.com/quantskills/QuantStudio.git
 ```
 
 </details>
+
+</td>
+</tr>
+</table>
+
+<sub>Use an agent with terminal and file access on this computer. Each prompt includes repository URLs, prerequisites, installation and startup checks.</sub>
 
 ![QuantStudio: describe a task and choose skills, specialists or teams](docs/images/launch-white/hero.png)
 

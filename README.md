@@ -14,12 +14,20 @@
 
 <a id="agent-install"></a>
 
-## 让本地 Agent 安装：macOS / Windows 完整提示词
+## 用 Agent 安装
 
-在**目标电脑上能操作终端和文件的 Agent** 中，复制对应平台下方的完整提示词。Agent 会检查环境、安装依赖、运行检查并启动页面；需要系统授权或人工操作时会说明具体步骤。两个提示词都自带仓库地址，可以单独复制使用。
+**选择系统 → 复制提示词 → 交给 Agent**
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### macOS
+
+Apple Silicon · Intel
 
 <details>
-<summary><strong>macOS：展开并复制完整安装提示词</strong></summary>
+<summary><strong>展开并复制完整提示词</strong></summary>
 
 ```text
 请在这台 macOS 电脑上安装、验证并启动 QuantStudio，完成后保留可用的本地服务。
@@ -77,8 +85,15 @@
 
 </details>
 
+</td>
+<td width="50%" valign="top">
+
+### Windows
+
+PowerShell · Windows
+
 <details>
-<summary><strong>Windows：展开并复制完整安装提示词</strong></summary>
+<summary><strong>展开并复制完整提示词</strong></summary>
 
 ```text
 请在这台 Windows 电脑上使用 PowerShell 安装、验证并启动 QuantStudio，完成后保留可用的本地服务。
@@ -139,6 +154,12 @@
 ```
 
 </details>
+
+</td>
+</tr>
+</table>
+
+<sub>适用于能操作本机终端和文件的 Agent。提示词已包含仓库地址、环境检查、安装与启动验收步骤。</sub>
 
 ![QuantStudio 首页：描述任务，选择技能、专家或专家团](docs/images/launch-white/hero.png)
 
