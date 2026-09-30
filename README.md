@@ -112,8 +112,8 @@ AI 交易员的「交易」页先显示平仓净盈亏、持仓浮盈与当日�
 git clone -c core.longpaths=true https://github.com/quantskills/QuantStudio.git
 cd QuantStudio
 corepack enable
-pnpm install --frozen-lockfile
-pnpm run web
+corepack pnpm install --frozen-lockfile
+corepack pnpm run web
 ```
 
 国内网络可将克隆地址替换为：
@@ -122,11 +122,26 @@ pnpm run web
 git clone -c core.longpaths=true https://gitee.com/quantskills/QuantStudio.git
 ```
 
+### macOS：让本地 Agent 安装
+
+macOS 用户可以把项目地址和下面这段话交给本机的 Agent，让它代为完成安装、检查和启动：
+
+项目地址：<https://github.com/quantskills/QuantStudio>
+
+```text
+请在这台 macOS 电脑上安装并启动 QuantStudio：
+1. 先阅读仓库 README 和 package.json，检查 Git、Node.js（22.19+ 的 22.x，或 24+）以及 pnpm 11.7.0 是否可用；缺少依赖时按当前系统方式安装，无法自动安装时再报告具体原因和步骤。
+2. 将 https://github.com/quantskills/QuantStudio 克隆到合适的本地目录；如果目录已存在，先检查它是否为该仓库，再决定更新或使用新的干净目录。
+3. 在仓库目录执行 corepack enable，并确认 corepack pnpm --version 为 11.7.0；之后使用 corepack pnpm install --frozen-lockfile。默认使用新的 ~/.dsh-quantstudio 数据目录，不要删除或覆盖 ~/.dsh、~/.dsh-quantstudio 或其他个人数据，除非我明确要求。
+4. 使用 corepack pnpm run check、corepack pnpm run test 和 corepack pnpm run test:update；遇到失败时先定位原因并报告，不要跳过检查。
+5. 使用 corepack pnpm run web，确认本地服务成功启动后，把终端显示的访问地址发给我。保持服务运行，并汇报实际使用的目录、Node/pnpm 版本、测试结果和启动地址。
+```
+
 打开终端显示的地址，例如 `http://127.0.0.1:3198/`。在「设置 → 模型服务」配置模型，再新建会话开始任务。处理已有材料不要求先连接行情服务。
 
 新安装的配置与凭据放在 `~/.dsh-quantstudio`，使用独立的 `quantstudio` profile，不改动普通 DSH 的 `web` profile。如果检测到旧版 QuantStudio 的启动器，会继续使用原有 `~/.dsh` 数据目录，保留会话与模型配置；原来的 `web` profile 也会保留。
 
-可用 `DSH_HOME` 指定数据目录，用 `QUANTSKILLS_PROFILE` 指定独立的 profile 名。插件安装直接使用项目固定的 pnpm 11.7.0，先在临时目录完成，再切换；旧 profile 备份位于数据目录的 `profiles/.qs-backups/`，启动失败会恢复切换前的 profile。请通过 `pnpm run web` 启动，以使用这套检查与恢复流程。
+可用 `DSH_HOME` 指定数据目录，用 `QUANTSKILLS_PROFILE` 指定独立的 profile 名。插件安装直接使用项目固定的 pnpm 11.7.0，先在临时目录完成，再切换；旧 profile 备份位于数据目录的 `profiles/.qs-backups/`，启动失败会恢复切换前的 profile。请通过 `corepack pnpm run web` 启动，以使用这套检查与恢复流程。
 
 工作区在设置中查看和选择。按 `Ctrl+C` 关闭本地服务，再运行启动命令即可继续。Windows 建议使用较短的安装路径，避免依赖目录超过系统路径限制。
 
@@ -139,10 +154,10 @@ git clone -c core.longpaths=true https://gitee.com/quantskills/QuantStudio.git
 `.DS_Store`、`Thumbs.db`、`desktop.ini` 等系统文件不会阻断托管安装与更新。真正的源码修改仍会保留，并使当前目录按开发模式运行；终端会显示实际运行目录。
 
 ```sh
-pnpm run check
-pnpm run test
-pnpm run test:update
-pnpm run ci:smoke
+corepack pnpm run check
+corepack pnpm run test
+corepack pnpm run test:update
+corepack pnpm run ci:smoke
 ```
 
 源码位于 `src/` 与 `packages/`，构建产物位于各包的 `lib/`，能力快照位于 `assets/library-v2/`。[运行时基线](SOURCE_BASELINE.md) · [版本记录](RELEASE_NOTES.md) · [宣传素材](docs/launch/README.md)

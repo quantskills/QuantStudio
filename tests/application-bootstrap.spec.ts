@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { copyFile, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, mkdtemp, readFile, readdir, rm, stat, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -13,6 +13,7 @@ import {
   recoverApplicationState,
   rejectPendingState,
   repairApplicationState,
+  isDirectInvocation,
   windowsLauncherSource,
 } from '../scripts/application-bootstrap.mjs'
 
@@ -25,6 +26,19 @@ afterEach(async () => {
 })
 
 describe('stable application bootstrap', () => {
+  it('recognizes direct invocation through a symlinked directory', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'quantskills-launcher-path-'))
+    roots.push(root)
+    const realRoot = join(root, 'real')
+    const aliasRoot = join(root, 'alias')
+    await mkdir(realRoot)
+    await symlink(realRoot, aliasRoot, 'dir')
+    const modulePath = join(realRoot, 'launcher.mjs')
+    await writeFile(modulePath, '')
+
+    expect(isDirectInvocation(`file://${modulePath}`, join(aliasRoot, 'launcher.mjs'))).toBe(true)
+  })
+
   it.each([
     ['https://github.com/quantskills/QuantStudio.git', 'main'],
     ['https://github.com/songshuquant/QuantStudio.git', 'v2'],

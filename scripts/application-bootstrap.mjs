@@ -3,7 +3,7 @@
 import { spawn, spawnSync } from 'node:child_process'
 import { open, readFile, readdir, realpath, rename, rm, stat, unlink, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
-import { existsSync } from 'node:fs'
+import { existsSync, realpathSync } from 'node:fs'
 import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { resolveDshHome, resolveProfile, restoreProfileTransaction } from './profile-state.mjs'
@@ -488,7 +488,15 @@ function isCode(error, code) {
   return error instanceof Error && 'code' in error && error.code === code
 }
 
-const invokedPath = process.argv[1] === undefined ? undefined : pathToFileURL(resolve(process.argv[1])).href
-if (invokedPath === import.meta.url) {
+export function isDirectInvocation(moduleURL, argvPath = process.argv[1]) {
+  if (argvPath === undefined) return false
+  try {
+    return realpathSync.native(fileURLToPath(moduleURL)) === realpathSync.native(argvPath)
+  } catch (_unresolvedPath) {
+    return pathToFileURL(resolve(argvPath)).href === moduleURL
+  }
+}
+
+if (isDirectInvocation(import.meta.url)) {
   process.exitCode = await main()
 }

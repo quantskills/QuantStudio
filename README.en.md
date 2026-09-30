@@ -102,8 +102,8 @@ Install **Git** and **Node.js 22.x starting at 22.19, or Node.js 24+**. The proj
 git clone -c core.longpaths=true https://github.com/quantskills/QuantStudio.git
 cd QuantStudio
 corepack enable
-pnpm install --frozen-lockfile
-pnpm run web
+corepack pnpm install --frozen-lockfile
+corepack pnpm run web
 ```
 
 You can use the Gitee mirror instead:
@@ -112,11 +112,26 @@ You can use the Gitee mirror instead:
 git clone -c core.longpaths=true https://gitee.com/quantskills/QuantStudio.git
 ```
 
+### macOS: have a local agent install it
+
+macOS users can give their local agent the repository URL and the following instructions so it can install, verify and start QuantStudio:
+
+Repository URL: <https://github.com/quantskills/QuantStudio>
+
+```text
+Install and start QuantStudio on this Mac:
+1. Read the repository README and package.json first. Check that Git, Node.js (22.19+ in the 22.x line, or 24+), and pnpm 11.7.0 are available; install missing prerequisites using the normal method for this system, and report specific steps only if automatic installation is not possible.
+2. Clone https://github.com/quantskills/QuantStudio into a suitable local directory. If the directory already exists, verify that it is this repository before updating it or choosing a new clean directory.
+3. In the repository, run corepack enable and confirm that corepack pnpm --version is 11.7.0; then use corepack pnpm install --frozen-lockfile. Use the new ~/.dsh-quantstudio data directory by default. Do not delete or overwrite ~/.dsh, ~/.dsh-quantstudio, or other personal data unless I explicitly ask you to.
+4. Run corepack pnpm run check, corepack pnpm run test, and corepack pnpm run test:update. If anything fails, locate the cause and report it instead of skipping the check.
+5. Run corepack pnpm run web. Once the local service is healthy, send me the URL printed by the terminal. Keep the service running and report the actual directory, Node/pnpm versions, test results, and URL.
+```
+
 Open the URL printed in the terminal, such as `http://127.0.0.1:3198/`. Configure a model in Settings and start a conversation. Tasks using existing materials do not require a market-data connection.
 
 New installations store configuration and credentials in `~/.dsh-quantstudio` and use a dedicated `quantstudio` profile, leaving the ordinary DSH `web` profile unchanged. A recognized older QuantStudio launcher keeps using its existing `~/.dsh` data directory, preserving sessions and model settings; its original `web` profile is retained.
 
-Override the data directory with `DSH_HOME` and the profile name with `QUANTSKILLS_PROFILE`. Plugin installation calls the project's pinned pnpm 11.7.0 directly, prepares a staging profile, and switches only after installation succeeds. Previous profiles are backed up under `profiles/.qs-backups/` in the data directory. Failed startup restores the previous profile. Start with `pnpm run web` to use these checks and recovery.
+Override the data directory with `DSH_HOME` and the profile name with `QUANTSKILLS_PROFILE`. Plugin installation calls the project's pinned pnpm 11.7.0 directly, prepares a staging profile, and switches only after installation succeeds. Previous profiles are backed up under `profiles/.qs-backups/` in the data directory. Failed startup restores the previous profile. Start with `corepack pnpm run web` to use these checks and recovery.
 
 Select your workspace in Settings. Stop the local service with `Ctrl+C`, then run the startup command again to continue. On Windows, prefer a short installation path to avoid system path-length limits. OS metadata files (`.DS_Store`, `Thumbs.db`, `desktop.ini`) no longer block managed installation or updates. Actual source changes still select development mode; the terminal reports the source directory used.
 
@@ -127,10 +142,10 @@ Local conversations, configuration and files remain on your computer; configured
 Choose GitHub or Gitee as the application update source. Official releases are validated in a separate directory and switched on a normal restart. Updates preserve personal capabilities, conversations, credentials, caches and work products. Syncing `main` alone does not trigger installation of an official release. [Publishing and mirrors](docs/publishing.md)
 
 ```sh
-pnpm run check
-pnpm run test
-pnpm run test:update
-pnpm run ci:smoke
+corepack pnpm run check
+corepack pnpm run test
+corepack pnpm run test:update
+corepack pnpm run ci:smoke
 ```
 
 Source lives in `src/` and `packages/`; each package contains its distributed `lib/` output. Capability snapshots live in `assets/library-v2/`. [Runtime baseline](SOURCE_BASELINE.md) · [Release notes](RELEASE_NOTES.md)
