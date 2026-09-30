@@ -3,18 +3,15 @@
 import { spawn, spawnSync } from 'node:child_process'
 import { open, readFile, readdir, realpath, rename, rm, stat, unlink, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
-import { homedir } from 'node:os'
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path'
-import { pathToFileURL } from 'node:url'
+import { existsSync } from 'node:fs'
+import { basename, dirname, isAbsolute, join, relative, resolve } from 'node:path'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { resolveDshHome, resolveProfile, restoreProfileTransaction } from './profile-state.mjs'
+export { resolveDshHome } from './profile-state.mjs'
 
 const SHA_PATTERN = /^[a-f0-9]{40}$/
 const STATE_SCHEMA_VERSION = 1
 const BOOTSTRAP_SCHEMA_VERSION = 1
-
-/** @returns the default DSH home without consulting a source checkout. */
-export function resolveDshHome(environment = process.env) {
-  return resolve(environment.DSH_HOME || join(homedir(), '.dsh'))
-}
 
 /**
  * Parse and validate durable launcher state.
@@ -100,7 +97,11 @@ export function rejectPendingState(state, errorCode, failedAt) {
 
 /** Run the stable launcher. */
 export async function main(argv = process.argv.slice(2), environment = process.env) {
-  const dshHome = resolveDshHome(environment)
+  // A copied launcher belongs to its persisted home, even when launched by a shortcut.
+  const modulePath = fileURLToPath(import.meta.url)
+  const installedHome = basename(modulePath) === 'launcher.mjs' && basename(dirname(modulePath)) === 'bootstrap'
+    ? resolve(dirname(modulePath), '../../..') : undefined
+  const dshHome = resolveDshHome({ ...environment, DSH_HOME: environment.DSH_HOME || installedHome })
   const applicationRoot = join(dshHome, 'quantskills', 'application')
   const bootstrapRoot = join(applicationRoot, 'bootstrap')
   const versionsRoot = join(applicationRoot, 'versions')
@@ -130,7 +131,6 @@ export async function main(argv = process.argv.slice(2), environment = process.e
       let candidate
       try {
         candidate = await startSelected(selected.root, config, hostArgs, dshHome)
-        await waitForHealthyHost(candidate, port, config.healthTimeoutMs)
         state = commitPendingState(state)
         await writeState(statePath, state)
         await cleanUnusedVersions(versionsRoot, state)
@@ -143,6 +143,7 @@ export async function main(argv = process.argv.slice(2), environment = process.e
         if (selected.pending) throw new Error('QuantSkills rollback selected another pending version.', { cause: error })
       }
     }
+    if (selected.root === config.fallbackSourceRoot) console.log(`[QuantStudio] Running from source: ${selected.root}`)
     const host = await startSelected(selected.root, config, hostArgs, dshHome)
     return await waitForExit(host)
   } finally {
@@ -218,20 +219,41 @@ export async function repairApplicationState(state, versionsRoot) {
 }
 
 async function startSelected(root, config, hostArgs, dshHome) {
-  await runPnpm(config, ['run', 'install:plugin'], root, dshHome)
-  return spawn(config.nodeExecutable, [config.pnpmCli, 'exec', 'dsh', '--profile', 'web', ...hostArgs], {
-    cwd: root,
-    env: { ...process.env, DSH_HOME: dshHome, QUANTSKILLS_PNPM_CLI: config.pnpmCli },
-    stdio: 'inherit',
-    windowsHide: true,
-  })
+  // Retain the old profile only when rolling back to a version predating isolation.
+  const profile = existsSync(join(root, 'scripts', 'install-profile.mjs'))
+    ? resolveProfile({ QUANTSKILLS_PROFILE: config.profile }) : 'web'
+  const receipt = join(dshHome, 'quantskills', 'application', `.profile-${randomUUID()}.json`)
+  const environment = { DSH_HOME: dshHome, QUANTSKILLS_PNPM_CLI: config.pnpmCli,
+    QUANTSKILLS_PROFILE: profile, QUANTSKILLS_PROFILE_RECEIPT: receipt }
+  let host
+  try {
+    await runPnpm(config, ['run', 'install:plugin'], root, dshHome, environment)
+    host = spawn(config.nodeExecutable, [config.pnpmCli, 'exec', 'dsh', '--profile', profile, ...hostArgs], {
+      cwd: root,
+      env: { ...process.env, ...environment },
+      stdio: 'inherit',
+      windowsHide: true,
+    })
+    await waitForHealthyHost(host, readPort(hostArgs, config.defaultPort), config.healthTimeoutMs)
+    return host
+  } catch (error) {
+    stopProcessTree(host)
+    let transaction
+    try { transaction = await readJson(receipt) } catch (missing) { if (!isCode(missing, 'ENOENT')) throw missing }
+    if (transaction) {
+      if (transaction.home !== resolve(dshHome) || transaction.profile !== profile) throw new Error('Invalid profile startup receipt.', { cause: error })
+      await restoreProfileTransaction(transaction)
+      console.error('[QuantStudio] Startup failed; the previous profile was restored.')
+    }
+    throw error
+  } finally { await unlink(receipt).catch(() => undefined) }
 }
 
-async function runPnpm(config, args, cwd, dshHome) {
+async function runPnpm(config, args, cwd, dshHome, environment = {}) {
   await new Promise((resolvePromise, rejectPromise) => {
     const child = spawn(config.nodeExecutable, [config.pnpmCli, ...args], {
       cwd,
-      env: { ...process.env, DSH_HOME: dshHome, QUANTSKILLS_PNPM_CLI: config.pnpmCli },
+      env: { ...process.env, DSH_HOME: dshHome, QUANTSKILLS_PNPM_CLI: config.pnpmCli, ...environment },
       stdio: 'inherit',
       windowsHide: true,
     })
@@ -269,11 +291,11 @@ async function waitForExit(child) {
 }
 
 function stopProcessTree(child) {
-  if (child === undefined || child.exitCode !== null) return
+  if (child === undefined) return
   if (process.platform === 'win32') {
     spawnSync('taskkill', ['/pid', String(child.pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true })
   } else {
-    child.kill('SIGTERM')
+    if (child.exitCode === null) child.kill('SIGTERM')
   }
 }
 
@@ -367,6 +389,7 @@ export function windowsLauncherSource(bootstrap, launcherConfig) {
 $ErrorActionPreference = 'Stop'
 $nodePath = '${escapePowerShell(launcherConfig.nodeExecutable)}'
 $launcherPath = '${escapePowerShell(launcher)}'
+$env:DSH_HOME = '${escapePowerShell(resolve(bootstrap, '../../..'))}'
 $edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
 $appPort = ${String(launcherConfig.defaultPort)}
 $logDirectory = Join-Path $env:LOCALAPPDATA 'QuantSkills\\logs'

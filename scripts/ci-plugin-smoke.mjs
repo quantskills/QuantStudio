@@ -2,6 +2,7 @@ import { spawn, spawnSync } from 'node:child_process'
 import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
+import { resolveProfile } from './profile-state.mjs'
 
 const pnpmCli = process.env.npm_execpath
 const port = Number.parseInt(process.env.QUANTSKILLS_CI_PORT ?? '39157', 10)
@@ -32,7 +33,7 @@ try {
 
   host = spawn(
     process.execPath,
-    [pnpmCli, 'exec', 'dsh', '--profile', 'web', '--port', String(port), '--no-open'],
+    [pnpmCli, 'exec', 'dsh', '--profile', resolveProfile(environment), '--port', String(port), '--no-open'],
     {
       env: environment,
       stdio: ['ignore', 'pipe', 'pipe'],

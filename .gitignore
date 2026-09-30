@@ -4,9 +4,13 @@ release/
 coverage/
 *.tsbuildinfo
 .idea/
+.DS_Store
+Thumbs.db
+desktop.ini
 
 # Local state must not be published.
 .dsh/
+.dsh-quantstudio/
 .env
 .env.*
 !.env.example

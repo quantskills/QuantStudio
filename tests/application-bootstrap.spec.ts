@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { copyFile, mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, mkdtemp, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -36,9 +36,10 @@ describe('stable application bootstrap', () => {
     const home = join(root, 'home')
     await mkdir(join(source, 'scripts'), { recursive: true })
     await mkdir(join(source, 'assets'), { recursive: true })
-    for (const file of ['application-bootstrap.mjs', 'install-application-bootstrap.mjs']) {
+    for (const file of ['application-bootstrap.mjs', 'install-application-bootstrap.mjs', 'profile-state.mjs']) {
       await copyFile(resolve('scripts', file), join(source, 'scripts', file))
     }
+    await copyFile(resolve('.gitignore'), join(source, '.gitignore'))
     await writeFile(join(source, 'assets', 'quantskills.ico'), 'test icon')
     await writeFile(join(source, 'package.json'), '{"version":"0.1.0"}')
     const fakePnpm = join(root, 'pnpm.mjs')
@@ -55,6 +56,10 @@ describe('stable application bootstrap', () => {
     git(['commit', '-qm', 'Fixture'])
     git(['remote', 'add', 'origin', repository])
     const commit = git(['rev-parse', 'HEAD'])
+    for (const file of ['.DS_Store', 'Thumbs.db', 'desktop.ini', 'assets/.DS_Store']) {
+      await writeFile(join(source, file), 'OS metadata')
+    }
+    expect(git(['status', '--porcelain=v1', '--untracked-files=normal'])).toBe('')
     // Windows environment names are case-insensitive; remove inherited npm_execpath aliases.
     const environment = Object.fromEntries(Object.entries(process.env)
       .filter(([key]) => key.toLowerCase() !== 'npm_execpath'))
@@ -73,6 +78,31 @@ describe('stable application bootstrap', () => {
     expect(git(['config', '--get', 'remote.origin.url'], target)).toBe(repository)
     expect(git(['rev-parse', 'HEAD'], target)).toBe(commit)
     expect(git(['status', '--porcelain'], target)).toBe('')
+    // A failed first installation must not leave a version that a retry can activate unfinished.
+    const retryHome = join(root, 'retry-home')
+    await writeFile(fakePnpm, 'process.exitCode = 7\n')
+    const seed = () => spawnSync(process.execPath, ['scripts/install-application-bootstrap.mjs'], {
+      cwd: source, env: { ...environment, DSH_HOME: retryHome, npm_execpath: fakePnpm,
+        QUANTSKILLS_SKIP_DESKTOP_SHORTCUT: '1', QUANTSKILLS_SKIP_MANAGED_SEED: '0' },
+      encoding: 'utf8', windowsHide: true,
+    })
+    expect(seed().status).not.toBe(0)
+    expect(await readdir(join(retryHome, 'quantskills/application/versions'))).toEqual([])
+    await expect(readFile(join(retryHome, 'quantskills/application/state.json'))).rejects.toMatchObject({ code: 'ENOENT' })
+    await writeFile(fakePnpm, '// Installation succeeded on retry.\n')
+    expect(seed().status).toBe(0)
+    expect(JSON.parse(await readFile(join(retryHome, 'quantskills/application/state.json'), 'utf8')).active).toBe(commit)
+    // Genuine source edits must still prevent automatic installation from this checkout.
+    await writeFile(join(source, 'package.json'), '{"version":"0.1.1"}')
+    const dirtyHome = join(root, 'dirty-home')
+    const dirtyResult = spawnSync(process.execPath, ['scripts/install-application-bootstrap.mjs'], {
+      cwd: source, env: { ...environment, DSH_HOME: dirtyHome, npm_execpath: fakePnpm,
+        QUANTSKILLS_SKIP_DESKTOP_SHORTCUT: '1', QUANTSKILLS_SKIP_MANAGED_SEED: '0' },
+      encoding: 'utf8', windowsHide: true,
+    })
+    expect(dirtyResult.status).toBe(0)
+    expect(dirtyResult.stderr).toContain('dirty=true')
+    await expect(readFile(join(dirtyHome, 'quantskills/application/state.json'))).rejects.toMatchObject({ code: 'ENOENT' })
   })
 
   it('installs a source-independent entry and configuration under DSH_HOME', async () => {

@@ -2,12 +2,12 @@
 
 import { spawnSync } from 'node:child_process'
 import { existsSync, realpathSync } from 'node:fs'
-import { copyFile, mkdir, readFile, realpath, rename, stat, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, readFile, realpath, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
-import { homedir } from 'node:os'
 import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { managedVersionPath, parseApplicationState, windowsLauncherSource } from './application-bootstrap.mjs'
+import { resolveDshHome, resolveProfile } from './profile-state.mjs'
 
 const OFFICIAL_REPOSITORIES = [
   'https://github.com/quantskills/QuantStudio.git',
@@ -17,7 +17,7 @@ const OFFICIAL_REPOSITORIES = [
 const SHA_PATTERN = /^[a-f0-9]{40}$/
 const scriptRoot = dirname(fileURLToPath(import.meta.url))
 const sourceRoot = resolve(scriptRoot, '..')
-const dshHome = resolve(process.env.DSH_HOME || join(homedir(), '.dsh'))
+const dshHome = resolveDshHome()
 const applicationRoot = join(dshHome, 'quantskills', 'application')
 const bootstrapRoot = join(applicationRoot, 'bootstrap')
 const versionsRoot = join(applicationRoot, 'versions')
@@ -35,6 +35,7 @@ await Promise.all([
   mkdir(stagingRoot, { recursive: true, mode: 0o700 }),
 ])
 await copyFile(join(scriptRoot, 'application-bootstrap.mjs'), join(bootstrapRoot, 'launcher.mjs'))
+await copyFile(join(scriptRoot, 'profile-state.mjs'), join(bootstrapRoot, 'profile-state.mjs'))
 await copyFile(join(sourceRoot, 'assets', 'quantskills.ico'), join(bootstrapRoot, 'quantskills.ico'))
 
 const existingPort = process.platform === 'win32' ? await readExistingPort(dshHome) : undefined
@@ -42,6 +43,7 @@ const config = {
   schemaVersion: 1,
   nodeExecutable: process.execPath,
   pnpmCli: resolve(pnpmCli),
+  profile: resolveProfile(),
   fallbackSourceRoot: sourceRoot,
   defaultPort: existingPort ?? 3097,
   healthTimeoutMs: 120_000,
@@ -54,12 +56,21 @@ if (state.active === undefined && process.env.QUANTSKILLS_SKIP_MANAGED_SEED !== 
   if (source !== undefined) {
     const target = managedVersionPath(versionsRoot, source.commit)
     if (!await isDirectory(target)) {
-      run('git', ['clone', '-c', 'core.longpaths=true', '-c', 'core.autocrlf=false', '--quiet', '--no-hardlinks', '--no-checkout', sourceRoot, target], applicationRoot)
-      // A local seed clone must retain the official update source, not the checkout path.
-      run('git', ['remote', 'set-url', 'origin', source.repository], target)
-      run('git', ['checkout', '--quiet', '--detach', source.commit], target)
-      run(process.execPath, [resolve(pnpmCli), 'install', '--frozen-lockfile'], target)
-    }
+      let installed = false
+      try {
+        run('git', ['clone', '-c', 'core.longpaths=true', '-c', 'core.autocrlf=false', '--quiet', '--no-hardlinks', '--no-checkout', sourceRoot, target], applicationRoot)
+        run('git', ['remote', 'set-url', 'origin', source.repository], target)
+        run('git', ['checkout', '--quiet', '--detach', source.commit], target)
+        // pnpm records absolute paths: install at the final location, then publish the state pointer.
+        run(process.execPath, [resolve(pnpmCli), 'install', '--frozen-lockfile'], target)
+        installed = true
+      } finally {
+        if (!installed) {
+          if (managedVersionPath(versionsRoot, source.commit) !== resolve(target)) throw new Error('Invalid seed cleanup path.')
+          await rm(target, { recursive: true, force: true })
+        }
+      }
+    } else run(process.execPath, [resolve(pnpmCli), 'install', '--frozen-lockfile'], target)
     state = { ...state, active: source.commit }
     await writeAtomic(statePath, state)
   }
@@ -107,7 +118,7 @@ function run(command, args, cwd, inspectCheckout = false) {
     windowsHide: true,
   })
   if (result.error) throw result.error
-  if (result.status !== 0) throw new Error(result.stderr.trim() || `${command} failed with ${String(result.status)}`)
+  if (result.status !== 0) throw new Error(result.stderr.trim() || result.stdout.trim().slice(-6000) || `${command} failed with ${String(result.status)}`)
   return result.stdout
 }
 

@@ -124,13 +124,19 @@ git clone -c core.longpaths=true https://gitee.com/quantskills/QuantStudio.git
 
 打开终端显示的地址，例如 `http://127.0.0.1:3198/`。在「设置 → 模型服务」配置模型，再新建会话开始任务。处理已有材料不要求先连接行情服务。
 
-配置与凭据目录默认是 `~/.dsh`，可用 `DSH_HOME` 指定；工作区在设置中查看和选择。按 `Ctrl+C` 关闭本地服务，再运行启动命令即可继续。
+新安装的配置与凭据放在 `~/.dsh-quantstudio`，使用独立的 `quantstudio` profile，不改动普通 DSH 的 `web` profile。如果检测到旧版 QuantStudio 的启动器，会继续使用原有 `~/.dsh` 数据目录，保留会话与模型配置；原来的 `web` profile 也会保留。
+
+可用 `DSH_HOME` 指定数据目录，用 `QUANTSKILLS_PROFILE` 指定独立的 profile 名。插件安装直接使用项目固定的 pnpm 11.7.0，先在临时目录完成，再切换；旧 profile 备份位于数据目录的 `profiles/.qs-backups/`，启动失败会恢复切换前的 profile。请通过 `pnpm run web` 启动，以使用这套检查与恢复流程。
+
+工作区在设置中查看和选择。按 `Ctrl+C` 关闭本地服务，再运行启动命令即可继续。Windows 建议使用较短的安装路径，避免依赖目录超过系统路径限制。
 
 本地运行时，会话、配置与文件保存在本机，模型与数据服务按你的配置联网。团队部署可共享工作区和产物，**共享部署不提供成员间的数据隔离**。
 
 ## 更新与开发
 
 应用支持 GitHub / Gitee 更新来源。正式版本在独立目录验证，正常重启后切换；更新保留自建能力、会话、模型配置、凭据、缓存和产物。仅同步 `main` 不会触发正式版本自动安装。[发布与镜像说明](docs/publishing.md)
+
+`.DS_Store`、`Thumbs.db`、`desktop.ini` 等系统文件不会阻断托管安装与更新。真正的源码修改仍会保留，并使当前目录按开发模式运行；终端会显示实际运行目录。
 
 ```sh
 pnpm run check

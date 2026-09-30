@@ -74,6 +74,7 @@ const candidate = join(applicationRoot, 'versions', ready.candidateCommit)
 const bootstrap = join(applicationRoot, 'bootstrap')
 await mkdir(bootstrap, { recursive: true })
 await cp(join(candidate, 'scripts/application-bootstrap.mjs'), join(bootstrap, 'launcher.mjs'))
+await cp(join(candidate, 'scripts/profile-state.mjs'), join(bootstrap, 'profile-state.mjs'))
 await writeFile(join(bootstrap, 'config.json'), JSON.stringify({ schemaVersion: 1, nodeExecutable: process.execPath, pnpmCli, fallbackSourceRoot: current, defaultPort: 39158, healthTimeoutMs: 90000 }))
 const launched = spawn(process.execPath, [join(bootstrap, 'launcher.mjs'), '--port', '39158', '--no-open'], { env: environment, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] })
 let launchLog = ''

@@ -1,10 +1,10 @@
 /** Delegate `pnpm run web` to the stable launcher installed under DSH_HOME. */
 
 import { spawn } from 'node:child_process'
-import { homedir } from 'node:os'
-import { join, resolve } from 'node:path'
+import { join } from 'node:path'
+import { resolveDshHome } from './profile-state.mjs'
 
-const dshHome = resolve(process.env.DSH_HOME || join(homedir(), '.dsh'))
+const dshHome = resolveDshHome()
 const launcher = join(dshHome, 'quantskills', 'application', 'bootstrap', 'launcher.mjs')
 const child = spawn(process.execPath, [
   launcher,
@@ -13,7 +13,7 @@ const child = spawn(process.execPath, [
   ...process.argv.slice(2),
 ], {
   cwd: join(dshHome, 'quantskills', 'application', 'bootstrap'),
-  env: process.env,
+  env: { ...process.env, DSH_HOME: dshHome },
   stdio: 'inherit',
   windowsHide: true,
 })

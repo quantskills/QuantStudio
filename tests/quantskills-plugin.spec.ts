@@ -162,8 +162,8 @@ describe('dsh-quantskills-plugin bundle', () => {
     expect(manifest.dsh?.bundle?.patch).toBe('./cordis.patch.yml')
     expect(manifest.files).toContain('cordis.patch.yml')
     expect(manifest.scripts).toMatchObject({
-      'install:plugin': 'node ./scripts/retire-context-plugin.mjs && dsh plugin --profile web add . ./packages/agent-team ./packages/tool-agent-team ./packages/quantskills-host ./packages/quantskills-session ./packages/panda-mcp ./packages/client-ui-layout ./packages/client-ui-input-trigger ./packages/client-ui-conversation ./packages/client-ui-chat ./packages/client-remotes-quantskills ./node_modules/dsh-file-upload ./packages/ui-quantskills ./node_modules/dshmarket',
-      'uninstall:plugin': 'dsh plugin --profile web remove @quantskills/dsh-plugin @deepseek-ai/dsh-agent-team @deepseek-ai/dsh-tool-agent-team @deepseek-ai/dsh-quantskills-host @deepseek-ai/dsh-quantskills-session @deepseek-ai/dsh-panda-mcp @deepseek-ai/dsh-client-ui-layout @deepseek-ai/dsh-client-ui-input-trigger @deepseek-ai/dsh-client-ui-conversation @deepseek-ai/dsh-client-ui-chat @deepseek-ai/dsh-client-remotes-quantskills dsh-file-upload @deepseek-ai/dsh-client-ui-quantskills dshmarket',
+      'install:plugin': 'node ./scripts/install-profile.mjs',
+      'uninstall:plugin': 'node ./scripts/install-profile.mjs --remove',
       preweb: 'node ./scripts/install-application-bootstrap.mjs',
       web: 'node ./scripts/launch-quantskills.mjs',
     })

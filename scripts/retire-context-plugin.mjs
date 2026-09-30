@@ -1,12 +1,12 @@
 /** Retire the former bundled context dashboard before reconciling profile plugins. */
 import { readFile, rename, writeFile } from 'node:fs/promises'
-import { homedir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { randomUUID } from 'node:crypto'
+import { resolveDshHome, resolveProfile } from './profile-state.mjs'
 
-export async function retireContextPlugin(home) {
-  const file = join(home, 'profiles', 'web', 'package.json')
+export async function retireContextPlugin(home, profileName = resolveProfile()) {
+  const file = join(home, 'profiles', resolveProfile({ QUANTSKILLS_PROFILE: profileName }), 'package.json')
   let manifest
   try {
     manifest = JSON.parse(await readFile(file, 'utf8'))
@@ -30,5 +30,5 @@ export async function retireContextPlugin(home) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  await retireContextPlugin(resolve(process.env.DSH_HOME || join(homedir(), '.dsh')))
+  await retireContextPlugin(resolveDshHome())
 }

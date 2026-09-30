@@ -12,7 +12,7 @@ afterEach(async () => {
 it('retires only the context plugin, preserving custom plugins and profile settings', async () => {
   const home = await mkdtemp(join(tmpdir(), 'qs-retire-'))
   homes.push(home)
-  const dir = join(home, 'profiles', 'web')
+  const dir = join(home, 'profiles', 'quantstudio')
   await mkdir(dir, { recursive: true })
   const file = join(dir, 'package.json')
   const manifest = {
@@ -38,13 +38,13 @@ it('does not create a profile on a fresh install', async () => {
   const home = await mkdtemp(join(tmpdir(), 'qs-retire-'))
   homes.push(home)
   expect(await retireContextPlugin(home)).toBe(false)
-  await expect(readFile(join(home, 'profiles', 'web', 'package.json'))).rejects.toMatchObject({ code: 'ENOENT' })
+  await expect(readFile(join(home, 'profiles', 'quantstudio', 'package.json'))).rejects.toMatchObject({ code: 'ENOENT' })
 })
 
 it('fails without overwriting an invalid existing profile', async () => {
   const home = await mkdtemp(join(tmpdir(), 'qs-retire-'))
   homes.push(home)
-  const dir = join(home, 'profiles', 'web')
+  const dir = join(home, 'profiles', 'quantstudio')
   await mkdir(dir, { recursive: true })
   const file = join(dir, 'package.json')
   await writeFile(file, '{broken')
