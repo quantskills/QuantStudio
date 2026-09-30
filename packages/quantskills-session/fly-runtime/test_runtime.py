@@ -214,6 +214,12 @@ class RuntimeTests(unittest.TestCase):
         self.assertEqual(events[0]['payload']['trading_day'],'20260922')
         self.assertEqual(events[0]['at'],events[0]['payload']['at'])
         self.assertEqual(item.store.get('last_close:rb'),events[0]['at'])
+        result['account']['trades']=[{'symbol':'RB2610.SHF','trade_id':'t','order_id':'o','cost':3.25,'tradeTime':'2026-09-22 10:00:00'}]
+        with patch('fly.contest.bridge.call', return_value=result):sync(item)
+        recovered=item.store.fills_since(0)
+        self.assertEqual(len(recovered),1)
+        self.assertEqual(recovered[0]['payload']['commission'],3.25)
+        self.assertEqual(recovered[0]['payload']['trade_time'],'2026-09-22 10:00:00')
 
 
 if __name__ == '__main__': unittest.main()

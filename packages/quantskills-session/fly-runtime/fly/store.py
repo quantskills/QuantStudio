@@ -140,6 +140,17 @@ class Store:
                              (time.time() if at is None else at, kind, actor, decision_id, encode(payload), dedupe))
             return row.lastrowid if row.rowcount else None
 
+    def enrich_trade_receipt(self, dedupe, fields):
+        """Fill delayed billing metadata without duplicating or rewriting trades."""
+        allowed={k:v for k,v in fields.items() if k in ('commission','trade_time') and v is not None}
+        if not allowed:return
+        with self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            row=db.execute("SELECT seq,payload FROM events WHERE kind='trade' AND dedupe=?",(dedupe,)).fetchone()
+            if not row:return
+            previous=json.loads(row['payload']);updated={**previous,**allowed}
+            if updated!=previous:db.execute('UPDATE events SET payload=? WHERE seq=?',(encode(updated),row['seq']))
+
     def events(self, after=0, limit=100):
         with self.connect() as db:
             rows = db.execute('SELECT * FROM events WHERE seq>? ORDER BY seq LIMIT ?', (after, min(500, limit))).fetchall()

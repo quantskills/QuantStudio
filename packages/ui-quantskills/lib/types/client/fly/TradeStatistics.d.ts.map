@@ -1,1 +1,1 @@
-{"version":3,"file":"TradeStatistics.d.ts","sourceRoot":"","sources":["../../../../src/client/fly/TradeStatistics.tsx"],"names":[],"mappings":"AAYA,wBAAgB,eAAe,gCAqD9B"}
+{"version":3,"file":"TradeStatistics.d.ts","sourceRoot":"","sources":["../../../../src/client/fly/TradeStatistics.tsx"],"names":[],"mappings":"AAQA,wBAAgB,eAAe,CAAC,EAAE,UAAsB,EAAE,GAAE;IAAE,UAAU,CAAC,EAAE,SAAS,GAAG,OAAO,CAAA;CAAO,+BAuCpG"}

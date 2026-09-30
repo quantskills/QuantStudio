@@ -143,29 +143,28 @@ it('starts automatic trading after complete first setup without a per-order UI c
   await waitFor(() => expect(calls.some(c => c.body.action === 'trade')).toBe(true))
   expect(calls.map(c => c.path.split('/').pop())).toEqual(['settings', 'control'])
   expect(screen.queryByRole('dialog')).toBeNull()
-  expect(screen.getByRole('region', { name: '当前合约行情' })).toBeTruthy()
+  expect(screen.getByRole('region', { name: '交易员概览' })).toBeTruthy()
 })
 
-it('keeps the trading dashboard ordered and life widgets in the life page', async () => {
+it('keeps only trading, performance and records navigation', async () => {
   mount({ onboarding: false })
-  await screen.findByRole('region', { name: '当前合约行情' })
+  await screen.findByRole('region', { name: '交易员概览' })
   expect(screen.queryByText('成交统计内容')).toBeNull()
   expect(screen.queryByText('交易学习内容')).toBeNull()
   expect(screen.queryByRole('region', { name: 'AI 交易员新手引导' })).toBeNull()
   expect(screen.queryByText('生活因果链')).toBeNull()
   expect(screen.queryByRole('button', { name: '编辑看板' })).toBeNull()
-  fireEvent.click(screen.getByRole('button', { name: '生活' }))
-  expect(screen.getByText('生活场景')).toBeTruthy()
+  expect(screen.queryByRole('button', { name: '生活' })).toBeNull()
+  expect(screen.getByRole('navigation', { name: 'AI 交易员栏目' }).textContent).toBe('交易表现记录')
   expect(screen.queryByRole('heading', { name: '成交与盈亏' })).toBeNull()
 })
 
-it('opens the decision engine first and keeps life auxiliary models separate', async () => {
+it('opens the decision engine and removes life auxiliary settings', async () => {
   const calls = mount()
   fireEvent.click(await screen.findByRole('button', { name: 'AI 交易员运行设置' }))
   expect(screen.getByRole('button', { name: '决策引擎' }).getAttribute('aria-current')).toBe('page')
   expect(screen.queryByRole('combobox', { name: 'QuantStudio 已接入模型' })).toBeNull()
-  fireEvent.click(screen.getByRole('button', { name: '生活辅助' }))
-  expect(screen.getByRole('combobox', { name: 'QuantStudio 已接入模型' })).toBeTruthy()
+  expect(screen.queryByRole('button', { name: '生活辅助' })).toBeNull()
   expect(calls).toEqual([])
 })
 
@@ -215,16 +214,20 @@ it('saves filter changes together with the draft and never automatically resumes
 
 it('switches configured contract details without trading calls and excludes old-month market data', async () => {
   const calls = mount({ complete: true, onboarding: false, connected: true, trading: true, markets: true })
-  await screen.findByRole('button', { name: '查看合约 rb2610' })
+  fireEvent.click(await screen.findByText(/行情与连接/))
+  fireEvent.click(screen.getByRole('button', { name: '查看合约 rb2610' }))
   const quote = () => within(screen.getByRole('region', { name: '当前合约行情' }))
   expect(quote().getByText('3,010')).toBeTruthy()
+  fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: /^关闭/ }))
   fireEvent.click(screen.getByRole('button', { name: '查看合约 au2612' }))
   expect(quote().getByRole('heading', { name: 'au2612' })).toBeTruthy()
   expect(quote().getByText('持仓待同步')).toBeTruthy()
   expect(quote().queryByRole('img')).toBeNull()
   expect(quote().queryByText('999')).toBeNull()
+  fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: /^关闭/ }))
   fireEvent.click(screen.getByRole('button', { name: '查看合约 rb2610' }))
   expect(quote().getByText('3,010')).toBeTruthy()
+  fireEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: /^关闭/ }))
   expect(screen.getByRole('button', { name: '暂停自动交易' })).toBeTruthy()
   expect(calls).toEqual([])
 })

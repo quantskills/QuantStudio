@@ -35,6 +35,17 @@ async function fixture() {
 }
 
 describe('fly contest bridge', () => {
+  it('reads the official CLI account cost as billed commission and preserves per-fill cost', async () => {
+    const f = await fixture()
+    Object.assign(f.snapshot.account.data, { cost: 12.34 })
+    f.mock.query.mockImplementation(async request => ({ data: (request.kind === 'quote' ? f.quote : [
+      { contractCode: 'RB2610.SHF', tradeId: 't', orderId: 'o', cost: 2.34, price: 3300, volume: 1, tradeTime: '2026-09-29 21:00:01' },
+    ]) as never }))
+    const result = await f.call('market', { identity: f.input.identity, instruments: [f.input.instrument] })
+    expect(result).toMatchObject({ account: { official: { Commission: 12.34 }, trades: [{ cost: 2.34 }] } })
+    expect(f.mock.query).toHaveBeenCalledWith({ kind: 'trades' }, f.input.identity, expect.any(AbortSignal))
+    expect(f.execute).not.toHaveBeenCalled()
+  })
   it('revalidates a persisted binding after restart before reading market data', async () => {
     const f = await fixture(); f.state.phase = 'disconnected'
     await f.call('market', { identity: f.input.identity, instruments: [f.input.instrument] })

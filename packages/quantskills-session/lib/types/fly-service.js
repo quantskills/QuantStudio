@@ -176,12 +176,14 @@ export class FlyService {
         }
         if (!this.observation || !same(this.observation.identity, identity) || Date.now() - this.observation.at >= 30000) {
             const snapshot = await this.contest.observe(identity, signal);
-            const trades = rows((await this.contest.query({ kind: 'trades', date: 'today' }, identity, signal)).data);
+            // Recent fills include earlier opening legs so their billed costs survive
+            // the night-session rollover. This replaces the existing query, no extra poll.
+            const trades = rows((await this.contest.query({ kind: 'trades' }, identity, signal)).data);
             this.observation = { identity, snapshot, trades, at: Date.now() };
         }
         const { snapshot, trades } = this.observation;
         const account = record(snapshot.account.data), positions = rows(snapshot.positions.data);
-        const fees = amount(account.commission ?? account.Commission);
+        const fees = amount(account.commission ?? account.Commission ?? account.cost);
         const equity = amount(account.totalProfit ?? account.equity ?? account.balance ?? account.Balance);
         if (equity !== null && equity > 0)
             await this.equityPeak(identity, equity);

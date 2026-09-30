@@ -7,6 +7,7 @@ from .trade_filters import opening_filter
 from .settlement import Settlement
 from .llm_trading import MAX_AGE, engine_config
 from .position_sync import reconcile_positions
+from .trade_receipts import commission, receipt_index, matched_receipt
 
 def receipt_message(status, result=None):
     if status=='failed' and isinstance(result,dict):
@@ -41,6 +42,7 @@ def sync(organism):
     plans = result['plans']
     mapping = organism.store.get('contest_plans', {})
     owned_orders = {}
+    receipts = receipt_index(result['account'].get('trades', []))
     for plan in plans:
         decision_id = mapping.get(plan['id'])
         if not decision_id and plan.get('sessionId', '').startswith('fly:'):
@@ -59,14 +61,16 @@ def sync(organism):
             owned_orders[fill['orderId']] = 'fly-contest'
             at = timestamp(fill['time'])
             symbol = decision.get('symbol') or parameters['contractCode'].split('.')[0]
-            matching = next((t for t in result['account'].get('trades', []) if t.get('trade_id') == fill['tradeId'] and t.get('order_id') == fill['orderId']), {})
+            matching = matched_receipt(receipts, {**fill, 'symbol': symbol})
+            billed = {'commission': commission(matching), 'trade_time': matching.get('trade_time') or matching.get('tradeTime') or fill['time']}
             day = matching.get('trading_day') or datetime.fromtimestamp(at, TZ).strftime('%Y%m%d')
             organism.store.event('trade', {'product': product, 'symbol': symbol,
                 'trade_id': fill['tradeId'], 'trading_day': day, 'order_id': fill['orderId'],
                 'price': fill['price'], 'volume': fill['volume'], 'direction': '0' if parameters['side'] == 'buy' else '1',
                 'offset': '0' if parameters['offset'] == 'open' else '1', 'runtime_id': 'fly-contest',
-                'at': at, 'multiplier': result['feeds'].get(product, {}).get('multiplier', 0)},
+                'at': at, 'multiplier': result['feeds'].get(product, {}).get('multiplier', 0), **billed},
                 actor='counter', decision_id=decision_id, dedupe='contest-fill:' + fill['id'], at=at)
+            organism.store.enrich_trade_receipt('contest-fill:' + fill['id'], billed)
             if parameters['offset'] != 'open':
                 organism.store.put('last_close:' + product, max(at, organism.store.get('last_close:' + product, 0)))
     reconcile_positions(organism, result)

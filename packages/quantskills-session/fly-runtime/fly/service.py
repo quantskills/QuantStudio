@@ -489,7 +489,7 @@ class Organism:
                                 'period_minutes':minutes,
                                 'readiness':'history_gap' if missing_minutes(bars,product,minutes) else readiness(bars,feed.get('quote_at',0),minutes=minutes), 'last_bar':bars[-1]['datetime'] if bars else None,
                                 'chart':[b['close'] for b in bars], 'long':feed.get('long',0),'short':feed.get('short',0),
-                                'quote_at':feed.get('quote_at'),
+                                'quote_at':feed.get('quote_at'),'multiplier':feed.get('multiplier'),
                                 'decision':self.store.get('signal:'+product), 'decision_status':self.store.get('model_status:'+product) if self.settings.decision_engine == 'llm' else None, 'execution':self.store.get('execution_status:'+product),
                                 'signal_filter':self.store.get('trade_filter_status:'+product),
                                 'pending':(self.store.get('execution:'+product) or {}).get('pending')})

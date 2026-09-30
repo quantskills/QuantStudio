@@ -36,7 +36,7 @@ export function TradingEngineSettings({ value, models, onChange, openModels, ava
       <label>交易要求<textarea aria-label="交易要求" rows={5} maxLength={4000} value={value.trade_instructions ?? defaultTradingInstructions}
         onChange={e => onChange({ ...value, trade_instructions: e.target.value })}
         placeholder="例如：顺势交易，不追涨杀跌。趋势变弱时退出，没有把握就等待。" /></label>
-      <p>每轮读取最近 60 根完整 K 线、报价和持仓，给出目标手数与原因，再由 CLI 自动执行。生活形象独立运行。</p>
+      <p>每轮读取最近 60 根完整 K 线、报价和持仓，给出目标手数与原因，再按所选执行方式提交交易。</p>
       <details className="fv-data-details"><summary>手数与调用额度</summary><div className="fv-form-grid">
         <label>单合约最大持仓（手）<input aria-label="大模型最大持仓手数" type="number" min={1} max={500} step={1} value={value.llm_max_lots ?? 1} onChange={e => onChange({ ...value, llm_max_lots: Number(e.target.value) })}/></label>
         <label>每日模型调用上限<input aria-label="交易模型每日调用上限" type="number" min={0} max={100000} step={1} value={value.trade_daily_calls ?? 0} onChange={e => onChange({ ...value, trade_daily_calls: Number(e.target.value) })}/></label>

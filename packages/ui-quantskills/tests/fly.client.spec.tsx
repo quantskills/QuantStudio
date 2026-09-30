@@ -6,7 +6,7 @@ import type { FlyAccess } from '../src/client/fly/transport.ts'
 import type { ContestAccess } from '../src/client/contest.ts'
 import type { ContestPlan, ContestStatus } from '../src/client/plugin-types.ts'
 
-vi.mock('../src/client/fly/FlyV2Page.tsx', () => ({ default: ({ tradePlans, openContest, openModelSettings, onOpenLife }: { onOpenLife?: () => void; tradePlans?: import('react').ReactNode; openContest?: () => void; openModelSettings?: () => void }) => <div>AI 交易员家园<button onClick={onOpenLife}>生活</button><button onClick={openContest}>比赛账户</button><button onClick={openModelSettings}>前往模型服务配置 Jev</button>{tradePlans}</div> }))
+vi.mock('../src/client/fly/FlyV2Page.tsx', () => ({ default: ({ tradePlans, openContest, openModelSettings }: { tradePlans?: import('react').ReactNode; openContest?: () => void; openModelSettings?: () => void }) => <div>AI 交易员家园<button onClick={openContest}>比赛账户</button><button onClick={openModelSettings}>前往模型服务配置 Jev</button>{tradePlans}</div> }))
 vi.mock('../src/client/fly/LifeGarden.tsx', () => ({ LifeGarden: () => <div>独立生命花园</div> }))
 afterEach(cleanup)
 const ready = { supported: true, installed: true, installing: false, running: true, message: '' }
@@ -80,28 +80,14 @@ describe('fly entry and automatic receipts', () => {
   })
 })
 
-  it('opens life without any installed runtime or account, and stops status polling', async () => {
-    vi.useFakeTimers()
-    try {
-      const api = access()
-      vi.mocked(api.status).mockResolvedValue({ ...ready, installed: false })
-      render(<FlyPage access={api} openContest={() => {}} />)
-      await act(async () => {})
-      fireEvent.click(screen.getByRole('button', { name: '生活', exact: true }))
-      expect(screen.getByText('独立生命花园')).toBeTruthy()
-      vi.mocked(api.status).mockClear()
-      await act(async () => { await vi.advanceTimersByTimeAsync(6000) })
-      expect(api.status).not.toHaveBeenCalled()
-      expect(api.install).not.toHaveBeenCalled()
-      expect(api.request).not.toHaveBeenCalled()
-      fireEvent.click(screen.getByRole('button', { name: '交易', exact: true }))
-      expect(screen.queryByText('独立生命花园')).toBeNull()
-      expect(api.status).toHaveBeenCalledOnce()
-    } finally { vi.useRealTimers() }
-  })
-
-  it('keeps life accessible even when the host service is unavailable', () => {
-    render(<FlyPage openContest={() => {}} />)
-    fireEvent.click(screen.getByRole('button', { name: '生活', exact: true }))
-    expect(screen.getByText('独立生命花园')).toBeTruthy()
+  it('removes life navigation before runtime setup and when disconnected', async () => {
+    const api = access()
+    vi.mocked(api.status).mockResolvedValue({ ...ready, installed: false })
+    const view = render(<FlyPage access={api} openContest={() => {}} />)
+    await screen.findByRole('button', { name: '准备交易环境' })
+    expect(screen.queryByRole('button', { name: '生活', exact: true })).toBeNull()
+    view.rerender(<FlyPage openContest={() => {}} />)
+    expect(screen.queryByText('独立生命花园')).toBeNull()
+    expect(screen.queryByRole('button', { name: '生活', exact: true })).toBeNull()
+    expect(screen.getByText('交易服务尚未连接，请重新连接后查看交易状态。')).toBeTruthy()
   })
