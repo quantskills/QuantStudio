@@ -1,7 +1,11 @@
 import { access, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const root = new URL('..', import.meta.url).pathname.replace(/^\/(?:([A-Za-z]:))\//u, '$1/')
+// fileURLToPath decodes percent-encoding, so a repository path containing a space
+// or non-ASCII character still resolves to the real directory. URL.pathname keeps
+// the encoding and previously produced paths such as `.../with%20space/...`.
+const root = fileURLToPath(new URL('..', import.meta.url))
 const packageDirs = [
   'agent-team',
   'client-remotes-quantskills',
