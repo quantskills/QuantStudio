@@ -39,7 +39,7 @@ export function registerComposerKeymap(editor, handlers) {
         prevRoot?.removeEventListener('compositionend', onCompositionEnd);
         root?.addEventListener('compositionstart', onCompositionStart);
         root?.addEventListener('compositionend', onCompositionEnd);
-    }), editor.registerCommand(KEY_ARROW_UP_COMMAND, arrow('up'), COMMAND_PRIORITY_CRITICAL), editor.registerCommand(KEY_ARROW_DOWN_COMMAND, arrow('down'), COMMAND_PRIORITY_CRITICAL),
+    }), editor.registerCommand(KEY_ARROW_UP_COMMAND, arrow('up'), COMMAND_PRIORITY_CRITICAL), editor.registerCommand(KEY_ARROW_DOWN_COMMAND, arrow('down'), COMMAND_PRIORITY_CRITICAL), 
     // Tab drills into a drillable highlighted row; otherwise it passes so the
     // browser keeps its native focus traversal.
     editor.registerCommand(KEY_TAB_COMMAND, arrow('tab'), COMMAND_PRIORITY_CRITICAL), editor.registerCommand(KEY_ESCAPE_COMMAND, (event) => {

@@ -334,7 +334,7 @@ export interface SubmitAttempt {
  * mutation lives in the editor; the machine only observes the draft through
  * event payloads (claim integrity, enter snapshots, settlement decisions).
  */
-export type InputEvent =
+export type InputEvent = 
 /** Clipboard projection changed: the claimed integrity watch runs (zero effects). */
 {
     readonly type: 'draft-changed';

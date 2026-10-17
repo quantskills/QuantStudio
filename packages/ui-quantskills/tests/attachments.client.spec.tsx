@@ -27,6 +27,7 @@ function props(overrides: Partial<QuantSkillsAttachmentControlProps> = {}): Quan
       attachedAt: 1,
     })),
     appendDraft: vi.fn(),
+    editDraft: vi.fn(),
     useSession: vi.fn() as never,
     useProjection: vi.fn() as never,
     useInput: vi.fn() as never,
@@ -73,5 +74,25 @@ describe('QuantSkills generic-file composer control', () => {
 
     await waitFor(() => { expect(screen.getByRole('status').textContent).toBe('Session attachment limit exceeded.') })
     expect(appendDraft).not.toHaveBeenCalled()
+  })
+
+it('uploads a non-image dropped on the composer and shows its name', async () => {
+    const upload = vi.fn(async (_id: typeof sessionId, file: File) => ({
+      file: {
+        attachmentId: `sha256:${'c'.repeat(64)}` as never,
+        mediaType: file.type,
+        bytes: file.size,
+        name: file.name,
+      },
+      parsing: { status: 'unsupported' as const, reason: 'binary' },
+      attachedAt: 3,
+    }))
+    const appendDraft = vi.fn()
+    render(<QuantSkillsAttachmentControl {...props({ upload, appendDraft })}/>)
+    const file = new File(['%PDF'], 'strategy.pdf', { type: 'application/pdf' })
+    window.dispatchEvent(new CustomEvent('qs-composer-files', { detail: { sessionId, files: [file] } }))
+    await waitFor(() => { expect(appendDraft).toHaveBeenCalledTimes(1) })
+    expect(appendDraft.mock.calls[0]?.[1]).toContain(`sha256:${'c'.repeat(64)}`)
+    expect(screen.getByText('strategy.pdf')).toBeTruthy()
   })
 })

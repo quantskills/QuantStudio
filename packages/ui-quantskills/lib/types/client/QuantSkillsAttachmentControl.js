@@ -1,7 +1,10 @@
-import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 /** QuantSkills generic-file uploader mounted in the stock conversation tool row. */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import css from './QuantSkillsApp.module.css';
+/** Dropped non-image files dispatched by the stock composer. */
+export const COMPOSER_FILE_EVENT = 'qs-composer-files';
 /** Session-addressed bridge from the shared composer launcher to the hidden native file input. */
 export class QuantSkillsAttachmentController {
     openers = new Map();
@@ -50,19 +53,42 @@ function parsingLabel(attached) {
         case 'failed': return `已保留，解析失败：${attached.parsing.reason}`;
     }
 }
+function referenceLine(item) {
+    return [
+        `- ${item.file.name}`,
+        `媒体类型 ${item.file.mediaType}`,
+        `附件 id ${item.file.attachmentId}`,
+        parsingLabel(item),
+    ].join('；');
+}
 /** Upload selected files and append only their durable references to the current draft. */
-export function QuantSkillsAttachmentControl({ sessionId, controller, upload, appendDraft, }) {
+export function QuantSkillsAttachmentControl({ sessionId, controller, upload, appendDraft, editDraft, }) {
     const inputRef = useRef(null);
+    const anchorRef = useRef(null);
     const [busy, setBusy] = useState(false);
     const [status, setStatus] = useState();
+    const [chips, setChips] = useState([]);
+    const [card, setCard] = useState(null);
     const choose = useCallback(() => {
         if (!busy)
             inputRef.current?.click();
     }, [busy]);
     useEffect(() => controller.register(sessionId, choose), [controller, sessionId, choose]);
-    const changed = async (event) => {
-        const files = [...(event.target.files ?? [])];
-        event.target.value = '';
+    useEffect(() => {
+        const found = anchorRef.current?.closest('[data-composer-card]');
+        if (found instanceof HTMLElement)
+            setCard(found);
+    }, []);
+    useEffect(() => {
+        if (card === null)
+            return;
+        if (chips.length > 0)
+            card.setAttribute('data-composer-files', 'true');
+        else
+            card.removeAttribute('data-composer-files');
+        return () => { card.removeAttribute('data-composer-files'); };
+    }, [card, chips.length]);
+    const attach = useCallback(async (files) => {
         if (files.length === 0)
             return;
         setBusy(true);
@@ -73,18 +99,21 @@ export function QuantSkillsAttachmentControl({ sessionId, controller, upload, ap
                 const data = await readCanonicalBase64(file);
                 attached.push(await upload(sessionId, file, data));
             }
-            const rows = attached.map(item => [
-                `- ${item.file.name}`,
-                `媒体类型 ${item.file.mediaType}`,
-                `附件 id ${item.file.attachmentId}`,
-                parsingLabel(item),
-            ].join('；'));
+            const rows = attached.map(referenceLine);
             appendDraft(sessionId, [
                 '',
                 '[QuantSkills 附件]',
                 ...rows,
                 '需要读取可用文本时，请使用 quantskills_read_attachment，并传入上面的附件 id。',
             ].join('\n'));
+            setChips(current => [
+                ...current,
+                ...attached.map((item, index) => ({
+                    id: item.file.attachmentId,
+                    name: item.file.name,
+                    line: rows[index] ?? referenceLine(item),
+                })),
+            ]);
             setStatus(`已附加 ${String(attached.length)} 个文件`);
         }
         catch (error) {
@@ -93,7 +122,27 @@ export function QuantSkillsAttachmentControl({ sessionId, controller, upload, ap
         finally {
             setBusy(false);
         }
+    }, [appendDraft, sessionId, upload]);
+    useEffect(() => {
+        const onFiles = (event) => {
+            const detail = event.detail;
+            if (detail?.sessionId !== sessionId || detail.files === undefined || detail.files.length === 0)
+                return;
+            void attach(detail.files);
+        };
+        window.addEventListener(COMPOSER_FILE_EVENT, onFiles);
+        return () => { window.removeEventListener(COMPOSER_FILE_EVENT, onFiles); };
+    }, [attach, sessionId]);
+    const changed = (event) => {
+        const files = [...(event.target.files ?? [])];
+        event.target.value = '';
+        void attach(files);
     };
-    return _jsxs(_Fragment, { children: [_jsx("input", { ref: inputRef, className: css.attachmentInput, type: "file", multiple: true, tabIndex: -1, "aria-hidden": true, onChange: (event) => { void changed(event); } }), status && _jsx("span", { className: css.attachmentStatus, role: "status", children: status })] });
+    const removeChip = (chip) => {
+        setChips(current => current.filter(item => item.id !== chip.id));
+        editDraft(sessionId, draft => draft.replace(chip.line, '').replace(/\n{3,}/g, '\n\n').trimEnd());
+    };
+    const chipRow = chips.length === 0 ? null : (_jsx("div", { className: css.composerFileChips, "data-composer-file-chips": "", children: chips.map(chip => (_jsxs("span", { className: css.composerFileChip, children: [_jsx("span", { children: chip.name }), _jsx("button", { type: "button", "aria-label": `移除文件 ${chip.name}`, onClick: () => { removeChip(chip); }, children: "\u00D7" })] }, chip.id))) }));
+    return _jsxs(_Fragment, { children: [_jsx("span", { ref: anchorRef, hidden: true }), card !== null && chipRow !== null ? createPortal(chipRow, card) : chipRow, _jsx("input", { ref: inputRef, className: css.attachmentInput, type: "file", multiple: true, tabIndex: -1, "aria-hidden": true, onChange: changed }), status && _jsx("span", { className: css.attachmentStatus, role: "status", children: status })] });
 }
 //# sourceMappingURL=QuantSkillsAttachmentControl.js.map

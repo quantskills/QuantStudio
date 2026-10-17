@@ -1,6 +1,7 @@
 import type { SessionHistoryAccess, SessionFileDeletionAccess } from './ArchivedSessions.tsx'
 import { createElement, type ComponentType } from 'react'
 import { artifactDownload } from './artifact-resource.ts'
+import { bindComposerSubagentMenu } from './composer-subagents.ts'
 import { retryHostRead } from './remote-read.ts'
 import { FinalDeliverables } from './FinalDeliverables.tsx'
 /** QuantSkills browser application assembled over the existing DSH layout, sessions, and conversation services. */
@@ -1293,6 +1294,13 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
           const input = conversation.input.for(binding.ctx)
           input.setDraft(`${input.state.getSnapshot().draft}${text}`)
         },
+        editDraft: (sessionId, update) => {
+          if (conversation === undefined) throw new Error('QuantSkills：会话输入器尚未就绪。')
+          const binding = ctx.sessions.binding(sessionId)
+          if (binding === undefined) throw new Error('QuantSkills：附件所属会话不可用。')
+          const input = conversation.input.for(binding.ctx)
+          input.setDraft(update(input.state.getSnapshot().draft))
+        },
       }),
     }, QuantSkillsAttachmentControl),
   )
@@ -2188,6 +2196,8 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
     window.addEventListener('focus', refresh)
     return () => { window.removeEventListener('focus', refresh) }
   }, 'ui-quantskills: refresh Agents when the browser regains focus')
+
+  ctx.effect(() => bindComposerSubagentMenu(document, ctx.sessions), 'ui-quantskills: open a subagent chat in a dialog and return to the main session')
 
 }
 
