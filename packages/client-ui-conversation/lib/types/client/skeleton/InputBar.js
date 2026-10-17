@@ -197,33 +197,49 @@ export function InputBar({ useSession, useInput, inputActions, keyboard, addImag
     // back. The host enforces the same limits at submit for callers that bypass
     // this composer.
     const intakeImages = useCallback((files) => {
-        if (addImages === undefined || files.length === 0)
+        if (files.length === 0)
+            return;
+        const allowed = (imageLimits?.mediaTypes ?? ['image/png', 'image/jpeg', 'image/webp', 'image/gif']);
+        const images = [];
+        const others = [];
+        for (const file of files) {
+            if (allowed.includes(file.type))
+                images.push(file);
+            else
+                others.push(file);
+        }
+        // Images stay on the image rail. Every other file is handed to the
+        // QuantSkills composer control, which already uploads arbitrary files.
+        if (others.length > 0) {
+            if (sessionId === undefined)
+                showToast(t('image.dropBlocked'));
+            else {
+                window.dispatchEvent(new CustomEvent('qs-composer-files', {
+                    detail: { sessionId, files: others },
+                }));
+            }
+        }
+        if (images.length === 0 || addImages === undefined)
             return;
         const rejected = (() => {
             if (imageLimits !== undefined) {
-                // Format precedes limits: a batch with
-                // a non-image must announce the format problem, not a count or size
-                // it could never pass anyway — addImages rejects it authoritatively.
-                if (files.some(file => !imageLimits.mediaTypes.includes(file.type))) {
-                    return addImages(files);
-                }
-                if (attachments.length + files.length > imageLimits.maxImagesPerMessage) {
+                if (attachments.length + images.length > imageLimits.maxImagesPerMessage) {
                     return t('image.tooMany', { count: imageLimits.maxImagesPerMessage });
                 }
-                if (files.some(file => file.size > imageLimits.maxImageBytes)) {
+                if (images.some(file => file.size > imageLimits.maxImageBytes)) {
                     return t('image.fileTooLarge', { size: imageSizeText(imageLimits.maxImageBytes) });
                 }
                 const total = attachments.reduce((sum, attachment) => sum + attachment.file.size, 0)
-                    + files.reduce((sum, file) => sum + file.size, 0);
+                    + images.reduce((sum, file) => sum + file.size, 0);
                 if (total > imageLimits.maxMessageImageBytes) {
                     return t('image.totalTooLarge', { size: imageSizeText(imageLimits.maxMessageImageBytes) });
                 }
             }
-            return addImages(files);
+            return addImages(images);
         })();
         if (rejected !== null)
             showToast(rejected);
-    }, [addImages, attachments, imageLimits, showToast, t]);
+    }, [addImages, attachments, imageLimits, sessionId, showToast, t]);
     const canAcceptDrop = !locked && !machineBusy && addImages !== undefined;
     // The keymap handlers read live bar state through this ref so the editor
     // registration survives re-renders without re-arming per keystroke.
@@ -337,7 +353,7 @@ export function InputBar({ useSession, useInput, inputActions, keyboard, addImag
             : canSteerQueue
                 ? t('placeholder.steerQueue')
                 : planActive ? t('placeholder.plan') : t('placeholder.default'));
-    return (_jsxs("div", { className: clsx(css.root, variant === 'hero' && css.hero), children: [toast !== null && (_jsx(Toast, { text: toast.text, icon: _jsx(IconWarningOutline16, {}), anchor: cardRef.current, onDone: dismissToast }, toast.seq)), notice?.level === 'info' && (_jsx("div", { className: css.notice, role: "status", children: notice.text })), _jsxs("div", { ref: cardRef, className: clsx(css.card, workspaceTrigger && css.cardWorkspaceTrigger), "data-composer-card": true, onClick: workspaceTrigger ? onRequestWorkspace : undefined, onPointerDown: workspaceTrigger ? (e) => { e.stopPropagation(); } : undefined, children: [overlay !== undefined && _jsx("div", { className: css.overlayAnchor, children: overlay }), accessory !== undefined && _jsx("div", { className: css.accessory, children: accessory }), renderSlot('conversation.input.attachments', {
+    return (_jsxs("div", { className: clsx(css.root, variant === 'hero' && css.hero), children: [toast !== null && (_jsx(Toast, { text: toast.text, icon: _jsx(IconWarningOutline16, {}), anchor: cardRef.current, onDone: dismissToast }, toast.seq)), notice?.level === 'info' && (_jsx("div", { className: css.notice, role: "status", children: notice.text })), _jsxs("div", { ref: cardRef, className: clsx(css.card, workspaceTrigger && css.cardWorkspaceTrigger), "data-composer-card": true, "data-composer-variant": variant === 'hero' ? 'hero' : 'docked', "data-composer-empty": empty && variant !== 'hero' ? 'true' : 'false', onClick: workspaceTrigger ? onRequestWorkspace : undefined, onPointerDown: workspaceTrigger ? (e) => { e.stopPropagation(); } : undefined, children: [overlay !== undefined && _jsx("div", { className: css.overlayAnchor, children: overlay }), accessory !== undefined && _jsx("div", { className: css.accessory, children: accessory }), renderSlot('conversation.input.attachments', {
                         attachments,
                         canAcceptDrop,
                         onAddImages: intakeImages,
@@ -346,6 +362,6 @@ export function InputBar({ useSession, useInput, inputActions, keyboard, addImag
                             count: imageLimits.maxImagesPerMessage,
                             size: imageSizeText(imageLimits.maxImageBytes),
                         },
-                    }), _jsx("div", { ref: scrollRef, className: css.scroll, "data-input-scroll": true, children: _jsxs("div", { className: css.grow, children: [_jsx(ComposerContentEditable, { editor: workspaceTrigger ? null : editor, editable: editable, className: clsx(css.input, editorDisabled && css.inputDisabled), "data-phase": input?.phase ?? 'inert', "aria-disabled": editorDisabled || undefined, "data-placeholder": placeholderText, "aria-label": workspaceTrigger ? t('hero.chooseWorkspace') : placeholderText, "aria-haspopup": workspaceTrigger ? 'menu' : undefined, "aria-expanded": workspaceTrigger ? workspacePickerOpen : undefined, tabIndex: workspaceTrigger ? 0 : undefined, onKeyDown: workspaceTrigger ? onWorkspaceKeyDown : undefined, style: hint === null ? undefined : { '--dsh-composer-hint': JSON.stringify(hint) } }), empty && !claimActive && (_jsx("div", { "aria-hidden": true, className: css.placeholder, "data-composer-placeholder": true, children: placeholderText })), _jsx(DecoratorPortals, { editor: workspaceTrigger ? null : editor })] }) }), _jsxs("div", { className: css.row, children: [_jsxs("div", { className: css.tools, children: [_jsx(Tooltip, { label: t('input.commands'), side: "top", delayMs: 500, children: _jsx("button", { type: "button", className: css.add, "aria-label": t('input.commands'), "aria-haspopup": "listbox", "aria-expanded": commandMenuOpen, disabled: locked || toggleCommandMenu === undefined, onMouseDown: keepFocus, onClick: onToggleCommandMenu, children: _jsx(IconPlusOutline16, { size: 14 }) }) }), _jsxs("div", { className: css.modes, children: [accessSelect, sessionId === undefined ? null : renderSlot('conversation.input.plan', { locked })] }), leftItems] }), _jsxs("div", { className: css.trailing, children: [rightItems, sessionId === undefined ? null : renderSlot('conversation.input.model', { locked: modelSeatLocked }), _jsx(ContextMeter, { useProjection: useProjection, t: t }), interruptible && (_jsx(Tooltip, { label: t('input.stop'), side: "top", delayMs: 500, children: _jsx("button", { type: "button", className: css.primary, "data-composer-primary-action": true, "aria-label": t('input.stop'), disabled: stop === undefined, onMouseDown: keepFocus, onClick: stop, children: _jsx("svg", { viewBox: "0 0 16 16", width: "16", height: "16", "aria-hidden": true, children: _jsx("rect", { x: "3", y: "3", width: "10", height: "10", rx: "3", fill: "currentColor" }) }) }) })), _jsx(Tooltip, { label: primaryLabel, side: "top", delayMs: 500, children: _jsx("button", { type: "button", className: css.primary, "data-composer-primary-action": true, "aria-label": primaryLabel, disabled: primaryStops ? stop === undefined : empty || disabled || machineBusy, onMouseDown: keepFocus, onClick: onPrimary, children: primaryStops ? (_jsx("svg", { viewBox: "0 0 16 16", width: "16", height: "16", "aria-hidden": true, children: _jsx("rect", { x: "3", y: "3", width: "10", height: "10", rx: "3", fill: "currentColor" }) })) : (_jsx("svg", { viewBox: "0 0 16 16", width: "16", height: "16", "aria-hidden": true, children: _jsx("path", { d: "M8.3125 0.980183C8.66767 1.0531 8.97902 1.20418 9.2627 1.43233C9.48724 1.61297 9.73029 1.85793 9.97949 2.10714L14.707 6.83468L13.293 8.24874L9 3.95577V15.0417H7V3.95577L2.70703 8.24874L1.29297 6.83468L6.02051 2.10714C6.26971 1.85793 6.51277 1.61297 6.7373 1.43233C6.97662 1.23986 7.28445 1.04402 7.6875 0.980183C7.8973 0.947006 8.1031 0.95516 8.3125 0.980183Z", fill: "currentColor" }) })) }) })] })] })] }), footer] }));
+                    }), _jsx("div", { ref: scrollRef, className: css.scroll, "data-input-scroll": true, children: _jsxs("div", { className: css.grow, children: [_jsx(ComposerContentEditable, { editor: workspaceTrigger ? null : editor, editable: editable, className: clsx(css.input, editorDisabled && css.inputDisabled), "data-phase": input?.phase ?? 'inert', "aria-disabled": editorDisabled || undefined, "data-placeholder": placeholderText, "aria-label": workspaceTrigger ? t('hero.chooseWorkspace') : placeholderText, "aria-haspopup": workspaceTrigger ? 'menu' : undefined, "aria-expanded": workspaceTrigger ? workspacePickerOpen : undefined, tabIndex: workspaceTrigger ? 0 : undefined, onKeyDown: workspaceTrigger ? onWorkspaceKeyDown : undefined, style: hint === null ? undefined : { '--dsh-composer-hint': JSON.stringify(hint) } }), empty && !claimActive && (_jsx("div", { "aria-hidden": true, className: css.placeholder, "data-composer-placeholder": true, children: placeholderText })), _jsx(DecoratorPortals, { editor: workspaceTrigger ? null : editor })] }) }), _jsxs("div", { className: css.row, "data-composer-toolbar": "", children: [_jsx("div", { "data-composer-subagents": "" }), _jsxs("div", { className: css.tools, children: [_jsx(Tooltip, { label: t('input.commands'), side: "top", delayMs: 500, children: _jsx("button", { type: "button", className: css.add, "aria-label": t('input.commands'), "aria-haspopup": "listbox", "aria-expanded": commandMenuOpen, disabled: locked || toggleCommandMenu === undefined, onMouseDown: keepFocus, onClick: onToggleCommandMenu, children: _jsx(IconPlusOutline16, { size: 14 }) }) }), _jsxs("div", { className: css.modes, children: [accessSelect, sessionId === undefined ? null : renderSlot('conversation.input.plan', { locked })] }), leftItems] }), _jsxs("div", { className: css.trailing, children: [rightItems, sessionId === undefined ? null : renderSlot('conversation.input.model', { locked: modelSeatLocked }), _jsx(ContextMeter, { useProjection: useProjection, t: t }), interruptible && (_jsx(Tooltip, { label: t('input.stop'), side: "top", delayMs: 500, children: _jsx("button", { type: "button", className: css.primary, "data-composer-primary-action": true, "aria-label": t('input.stop'), disabled: stop === undefined, onMouseDown: keepFocus, onClick: stop, children: _jsx("svg", { viewBox: "0 0 16 16", width: "16", height: "16", "aria-hidden": true, children: _jsx("rect", { x: "3", y: "3", width: "10", height: "10", rx: "3", fill: "currentColor" }) }) }) })), _jsx(Tooltip, { label: primaryLabel, side: "top", delayMs: 500, children: _jsx("button", { type: "button", className: css.primary, "data-composer-primary-action": true, "aria-label": primaryLabel, disabled: primaryStops ? stop === undefined : empty || disabled || machineBusy, onMouseDown: keepFocus, onClick: onPrimary, children: primaryStops ? (_jsx("svg", { viewBox: "0 0 16 16", width: "16", height: "16", "aria-hidden": true, children: _jsx("rect", { x: "3", y: "3", width: "10", height: "10", rx: "3", fill: "currentColor" }) })) : (_jsx("svg", { viewBox: "0 0 16 16", width: "16", height: "16", "aria-hidden": true, children: _jsx("path", { d: "M8.3125 0.980183C8.66767 1.0531 8.97902 1.20418 9.2627 1.43233C9.48724 1.61297 9.73029 1.85793 9.97949 2.10714L14.707 6.83468L13.293 8.24874L9 3.95577V15.0417H7V3.95577L2.70703 8.24874L1.29297 6.83468L6.02051 2.10714C6.26971 1.85793 6.51277 1.61297 6.7373 1.43233C6.97662 1.23986 7.28445 1.04402 7.6875 0.980183C7.8973 0.947006 8.1031 0.95516 8.3125 0.980183Z", fill: "currentColor" }) })) }) })] })] })] }), footer] }));
 }
 //# sourceMappingURL=InputBar.js.map

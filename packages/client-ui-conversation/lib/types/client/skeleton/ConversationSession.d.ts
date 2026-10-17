@@ -9,12 +9,6 @@ export type ConversationSessionHeaderProps = ConversationSessionHeaderSlotProps;
  * @param props - Strict Session store, view ledger, navigation, render, and locale shares.
  * @returns the hidden blank-session header or visible title and tabs.
  */
-export declare function ConversationSessionHeader({ sessionId, useSession, useSessions, useConversation, useConversationViews, useStore, actions, renderSlot, open, t, }: ConversationSessionHeaderProps): import("react").JSX.Element;
-/**
- * Renders the active Session view inside the resident scrollport and keeps
- * the input draft mirrored while blank Hero chrome is visible.
- * @param props - Strict Session input/store, view ledger, and render shares.
- * @returns the active view area, or null while the Session remains blank.
- */
+export declare function ConversationSessionHeader({ sessionId, useSession, useSessions, useConversation, renderSlot, }: ConversationSessionHeaderProps): import("react").JSX.Element;
 export declare function ConversationSession({ useSession, useConversation, useConversationViews, useInput, inputActions, useStore, actions, renderSlot, bindDraftMirror, }: ConversationSessionProps): import("react").JSX.Element | null;
 //# sourceMappingURL=ConversationSession.d.ts.map

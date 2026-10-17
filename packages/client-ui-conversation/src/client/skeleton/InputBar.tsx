@@ -218,31 +218,43 @@ export function InputBar({
   // back. The host enforces the same limits at submit for callers that bypass
   // this composer.
   const intakeImages = useCallback((files: readonly File[]): void => {
-    if (addImages === undefined || files.length === 0) return
+    if (files.length === 0) return
+    const allowed = (imageLimits?.mediaTypes ?? ['image/png', 'image/jpeg', 'image/webp', 'image/gif']) as readonly string[]
+    const images: File[] = []
+    const others: File[] = []
+    for (const file of files) {
+      if (allowed.includes(file.type)) images.push(file)
+      else others.push(file)
+    }
+    // Images stay on the image rail. Every other file is handed to the
+    // QuantSkills composer control, which already uploads arbitrary files.
+    if (others.length > 0) {
+      if (sessionId === undefined) showToast(t('image.dropBlocked'))
+      else {
+        window.dispatchEvent(new CustomEvent('qs-composer-files', {
+          detail: { sessionId, files: others },
+        }))
+      }
+    }
+    if (images.length === 0 || addImages === undefined) return
     const rejected = ((): string | null => {
       if (imageLimits !== undefined) {
-        // Format precedes limits: a batch with
-        // a non-image must announce the format problem, not a count or size
-        // it could never pass anyway — addImages rejects it authoritatively.
-        if (files.some(file => !(imageLimits.mediaTypes as readonly string[]).includes(file.type))) {
-          return addImages(files)
-        }
-        if (attachments.length + files.length > imageLimits.maxImagesPerMessage) {
+        if (attachments.length + images.length > imageLimits.maxImagesPerMessage) {
           return t('image.tooMany', { count: imageLimits.maxImagesPerMessage })
         }
-        if (files.some(file => file.size > imageLimits.maxImageBytes)) {
+        if (images.some(file => file.size > imageLimits.maxImageBytes)) {
           return t('image.fileTooLarge', { size: imageSizeText(imageLimits.maxImageBytes) })
         }
         const total = attachments.reduce((sum, attachment) => sum + attachment.file.size, 0)
-          + files.reduce((sum, file) => sum + file.size, 0)
+          + images.reduce((sum, file) => sum + file.size, 0)
         if (total > imageLimits.maxMessageImageBytes) {
           return t('image.totalTooLarge', { size: imageSizeText(imageLimits.maxMessageImageBytes) })
         }
       }
-      return addImages(files)
+      return addImages(images)
     })()
     if (rejected !== null) showToast(rejected)
-  }, [addImages, attachments, imageLimits, showToast, t])
+  }, [addImages, attachments, imageLimits, sessionId, showToast, t])
 
   const canAcceptDrop = !locked && !machineBusy && addImages !== undefined
 
@@ -388,6 +400,8 @@ export function InputBar({
         ref={cardRef}
         className={clsx(css.card, workspaceTrigger && css.cardWorkspaceTrigger)}
         data-composer-card
+        data-composer-variant={variant === 'hero' ? 'hero' : 'docked'}
+        data-composer-empty={empty && variant !== 'hero' ? 'true' : 'false'}
         onClick={workspaceTrigger ? onRequestWorkspace : undefined}
         onPointerDown={workspaceTrigger ? (e) => { e.stopPropagation() } : undefined}
       >
@@ -434,7 +448,8 @@ export function InputBar({
             <DecoratorPortals editor={workspaceTrigger ? null : editor} />
           </div>
         </div>
-        <div className={css.row}>
+        <div className={css.row} data-composer-toolbar="">
+          <div data-composer-subagents="" />
           <div className={css.tools}>
             <Tooltip label={t('input.commands')} side="top" delayMs={500}>
               <button
