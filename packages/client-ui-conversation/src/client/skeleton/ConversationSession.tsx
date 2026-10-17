@@ -1,7 +1,7 @@
 /** Strict per-session header/body content inserted into the resident conversation layout. */
 
-import { useEffect } from 'react'
-import clsx from 'clsx'
+import { useEffect, useLayoutEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { SessionListState, SessionSummary } from '@deepseek-ai/dsh-api-session-controller/client'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import type {
@@ -65,112 +65,31 @@ function equalBreadcrumbs(left: readonly Breadcrumb[], right: readonly Breadcrum
  * @returns the hidden blank-session header or visible title and tabs.
  */
 export function ConversationSessionHeader({
-  sessionId, useSession, useSessions, useConversation, useConversationViews, useStore, actions,
-  renderSlot, open, t,
+  sessionId, useSession, useSessions, useConversation, renderSlot,
 }: ConversationSessionHeaderProps) {
-  const tabs = useConversationViews(value => value)
-  const selectedId = useStore(s => s.view)
-  const active = resolveActiveView(tabs, selectedId)
   const ancestry = useSessions(s => deriveAncestry(s, sessionId), equalBreadcrumbs)
   const session = useSession(s => s)
   const conversation = useConversation(s => s)
   const hideChrome = session.blank && conversationPhase(session, conversation) === 'blank'
-
+  const [seat, setSeat] = useState<HTMLElement | null>(null)
+  useLayoutEffect(() => {
+    const next = document.querySelector('[data-composer-subagents]')
+    setSeat(current => current === next ? current : next instanceof HTMLElement ? next : null)
+  })
+  const current = ancestry.at(-1)
+  const lineage = hideChrome || current === undefined ? null : renderSlot(
+    'conversation.session.header.lineage',
+    { lineageSessionId: current.id, displayTitle: current.displayTitle },
+    { fallback: null },
+  )
   return (
-    <header
-      data-conversation-header
-      className={clsx(css.header, hideChrome && css.headerHidden)}
-      aria-hidden={hideChrome || undefined}
-    >
-      {!hideChrome && (
-        <>
-          <div className={css.titleRow}>
-            <div className={css.titleCluster}>
-              <nav className={css.crumbs} aria-label={t('session.hierarchy')}>
-                {ancestry.map((summary, index) => {
-                  const last = index === ancestry.length - 1
-                  const title = (
-                    <button
-                      type="button"
-                      className={clsx(
-                        css.crumb,
-                        summary.subagent && css.crumbSubagent,
-                        last && css.crumbCurrent,
-                      )}
-                      disabled={last}
-                      onClick={() => { open(summary.id) }}
-                    >
-                      {summary.displayTitle}
-                    </button>
-                  )
-                  const lineage = last || summary.subagent
-                  const lineageOwner = {
-                    lineageSessionId: summary.id,
-                    displayTitle: summary.displayTitle,
-                    ...last ? {} : { openTitle: () => { open(summary.id) } },
-                  }
-                  return (
-                    <span key={summary.id} className={css.crumbSeg}>
-                      {index > 0 && <span className={css.crumbSep}>/</span>}
-                      {lineage
-                        ? summary.subagent
-                          ? renderSlot(
-                            'conversation.session.header.lineage',
-                            lineageOwner,
-                            { fallback: title },
-                          )
-                          : (
-                            <>
-                              {title}
-                              {renderSlot(
-                                'conversation.session.header.lineage',
-                                lineageOwner,
-                                { fallback: null },
-                              )}
-                            </>
-                          )
-                        : title}
-                    </span>
-                  )
-                })}
-                {ancestry.length === 0 && <span className={css.crumbCurrent}>{sessionId}</span>}
-              </nav>
-              <div className={css.headerActions}>
-                {renderSlot('conversation.session.header.actions', {})}
-              </div>
-            </div>
-            <div className={css.headerUtilities}>
-              {renderSlot('conversation.session.header.utilities', {})}
-            </div>
-          </div>
-          {tabs.length > 1 && (
-            <div className={css.tabs} role="tablist">
-              {tabs.map(viewTab => (
-                <button
-                  key={viewTab.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={viewTab.id === active?.id}
-                  className={clsx(css.tab, viewTab.id === active?.id && css.tabActive)}
-                  onClick={() => { actions.setView(viewTab.id) }}
-                >
-                  {viewTab.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </>
-      )}
-    </header>
+    <>
+      <header data-conversation-header hidden className={css.headerHidden} />
+      {seat !== null && lineage !== null ? createPortal(lineage, seat) : null}
+    </>
   )
 }
 
-/**
- * Renders the active Session view inside the resident scrollport and keeps
- * the input draft mirrored while blank Hero chrome is visible.
- * @param props - Strict Session input/store, view ledger, and render shares.
- * @returns the active view area, or null while the Session remains blank.
- */
 export function ConversationSession({
   useSession, useConversation, useConversationViews, useInput, inputActions, useStore, actions,
   renderSlot, bindDraftMirror,

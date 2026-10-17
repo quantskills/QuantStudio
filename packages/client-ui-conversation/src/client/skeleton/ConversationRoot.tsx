@@ -166,8 +166,19 @@ export function ConversationRoot({
     seatObserver.current = null
     const scroller = seat?.parentElement ?? null
     if (seat === null || scroller === null) return
+    let previousHeight = seat.offsetHeight
     seatObserver.current = new ResizeObserver(() => {
-      scroller.style.setProperty('--dsh-composer-height', `${seat.offsetHeight}px`)
+      const nextHeight = seat.offsetHeight
+      const growth = nextHeight - previousHeight
+      // A docked composer grows upward inside this same scroller. If the
+      // reader is already at the floor, keep the latest message above the
+      // grown seat; a reader who scrolled up stays where they are.
+      if (growth > 1) {
+        const uncovered = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight
+        if (uncovered >= growth - 2 && uncovered <= growth + 48) scroller.scrollTop += uncovered
+      }
+      previousHeight = nextHeight
+      scroller.style.setProperty('--dsh-composer-height', `${nextHeight}px`)
       scroller.style.setProperty(
         '--dsh-conversation-viewport-height',
         `${scroller.clientHeight}px`,

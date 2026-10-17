@@ -26,7 +26,7 @@ export function ComposerContentEditable({ editor, editable, ...rest }) {
         if (editor !== null)
             editor.setEditable(editable);
     }, [editor, editable]);
-    return (_jsx("div", { ref: ref,
+    return (_jsx("div", { ref: ref, 
         // Lexical's setRootElement never touches contenteditable; the binding
         // renders it, and setEditable above keeps the editor's own gate in step.
         contentEditable: editor !== null && editable, suppressContentEditableWarning: true, role: "textbox", "aria-multiline": "true", "data-composer-input": true, ...rest }));

@@ -1,5 +1,6 @@
 import { createElement } from 'react';
 import { artifactDownload } from "./artifact-resource.js";
+import { bindComposerSubagentMenu } from "./composer-subagents.js";
 import { retryHostRead } from "./remote-read.js";
 import { FinalDeliverables } from "./FinalDeliverables.js";
 import { QuantSkillsPreferences } from "./preferences.js";
@@ -1114,6 +1115,15 @@ export function mountQuantSkillsApplication(ctx, options) {
                 const input = conversation.input.for(binding.ctx);
                 input.setDraft(`${input.state.getSnapshot().draft}${text}`);
             },
+            editDraft: (sessionId, update) => {
+                if (conversation === undefined)
+                    throw new Error('QuantSkills：会话输入器尚未就绪。');
+                const binding = ctx.sessions.binding(sessionId);
+                if (binding === undefined)
+                    throw new Error('QuantSkills：附件所属会话不可用。');
+                const input = conversation.input.for(binding.ctx);
+                input.setDraft(update(input.state.getSnapshot().draft));
+            },
         }),
     }, QuantSkillsAttachmentControl));
     const createBoundSession = async (versionId, initialTask) => {
@@ -1933,6 +1943,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         window.addEventListener('focus', refresh);
         return () => { window.removeEventListener('focus', refresh); };
     }, 'ui-quantskills: refresh Agents when the browser regains focus');
+    ctx.effect(() => bindComposerSubagentMenu(document, ctx.sessions), 'ui-quantskills: open a subagent chat in a dialog and return to the main session');
 }
 /**
  * Mount QuantSkills in the composition selected by the surrounding DSH shell.
