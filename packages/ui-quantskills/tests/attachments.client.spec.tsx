@@ -156,4 +156,12 @@ describe('QuantSkills generic-file composer control', () => {
     view.rerender(<QuantSkillsAttachmentControl {...first} />)
     expect(screen.getByRole('button', { name: '移除文件 notes.txt' })).toBeTruthy()
   })
+
+  it('removes the empty attachment block after a draft is pasted with paragraph spacing', () => {
+    render(<Composer control={props()} initialDraft={`请分析${reference.replaceAll('\n', '\n\n')}\n\n保留这段补充说明`} />)
+    fireEvent.click(screen.getByRole('button', { name: '移除文件 notes.txt' }))
+    const draft = (screen.getByRole('textbox', { name: '草稿' }) as HTMLTextAreaElement).value
+    expect(draft).toBe('请分析\n\n保留这段补充说明')
+    expect(screen.queryByRole('button', { name: '移除文件 notes.txt' })).toBeNull()
+  })
 })

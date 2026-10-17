@@ -3067,6 +3067,10 @@ body[data-qs-subagent-popup] [data-conversation-root] {
   background: var(--qs-surface);
   box-shadow: 0 24px 80px #00000055;
 }
+/* Keep the modal opaque above the wallpaper's transparent conversation rule. */
+body[data-qs-plugin-theme][data-qs-background][data-qs-subagent-popup] [data-conversation-root] {
+  background-color: var(--qs-surface) !important;
+}
 body[data-qs-subagent-popup] [data-qs-subagent-popup-bar] {
   position: fixed;
   z-index: 81;

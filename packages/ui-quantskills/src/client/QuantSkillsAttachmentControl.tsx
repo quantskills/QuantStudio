@@ -171,7 +171,7 @@ export function QuantSkillsAttachmentControl({
   const removeChip = (chip: ComposerFileChip): void => {
     editDraft(sessionId, current => current.split('\n')
       .filter(line => fileReference(line)?.id !== chip.id).join('\n')
-      .replaceAll(`${FILE_HEADER}\n${FILE_HINT}`, '')
+      .replace(/\[QuantSkills 附件\][ \t]*(?:\r?\n[ \t]*)+需要读取可用文本时，请使用 quantskills_read_attachment，并传入上面的附件 id。/g, '')
       .replace(/\n{3,}/g, '\n\n').trimEnd())
   }
   const chipRow = chips.length === 0 ? null : (

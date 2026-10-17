@@ -150,7 +150,7 @@ export function QuantSkillsAttachmentControl({ sessionId, controller, upload, ap
     const removeChip = (chip) => {
         editDraft(sessionId, current => current.split('\n')
             .filter(line => fileReference(line)?.id !== chip.id).join('\n')
-            .replaceAll(`${FILE_HEADER}\n${FILE_HINT}`, '')
+            .replace(/\[QuantSkills 附件\][ \t]*(?:\r?\n[ \t]*)+需要读取可用文本时，请使用 quantskills_read_attachment，并传入上面的附件 id。/g, '')
             .replace(/\n{3,}/g, '\n\n').trimEnd());
     };
     const chipRow = chips.length === 0 ? null : (_jsx("div", { className: css.composerFileChips, "data-composer-file-chips": "", children: chips.map(chip => (_jsxs("span", { className: css.composerFileChip, children: [_jsx("span", { children: chip.name }), _jsx("button", { type: "button", "aria-label": `移除文件 ${chip.name}`, onClick: () => { removeChip(chip); }, children: "\u00D7" })] }, chip.id))) }));
