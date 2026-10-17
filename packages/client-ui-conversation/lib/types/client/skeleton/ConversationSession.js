@@ -1,7 +1,7 @@
 import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
 /** Strict per-session header/body content inserted into the resident conversation layout. */
-import { useEffect } from 'react';
-import clsx from 'clsx';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { conversationPhase } from "../contract/snapshot.js";
 import css from './ConversationRoot.module.css';
 const DEFAULT_VIEW_ID = 'chat';
@@ -44,36 +44,20 @@ function equalBreadcrumbs(left, right) {
  * @param props - Strict Session store, view ledger, navigation, render, and locale shares.
  * @returns the hidden blank-session header or visible title and tabs.
  */
-export function ConversationSessionHeader({ sessionId, useSession, useSessions, useConversation, useConversationViews, useStore, actions, renderSlot, open, t, }) {
-    const tabs = useConversationViews(value => value);
-    const selectedId = useStore(s => s.view);
-    const active = resolveActiveView(tabs, selectedId);
+export function ConversationSessionHeader({ sessionId, useSession, useSessions, useConversation, renderSlot, }) {
     const ancestry = useSessions(s => deriveAncestry(s, sessionId), equalBreadcrumbs);
     const session = useSession(s => s);
     const conversation = useConversation(s => s);
     const hideChrome = session.blank && conversationPhase(session, conversation) === 'blank';
-    return (_jsx("header", { "data-conversation-header": true, className: clsx(css.header, hideChrome && css.headerHidden), "aria-hidden": hideChrome || undefined, children: !hideChrome && (_jsxs(_Fragment, { children: [_jsxs("div", { className: css.titleRow, children: [_jsxs("div", { className: css.titleCluster, children: [_jsxs("nav", { className: css.crumbs, "aria-label": t('session.hierarchy'), children: [ancestry.map((summary, index) => {
-                                            const last = index === ancestry.length - 1;
-                                            const title = (_jsx("button", { type: "button", className: clsx(css.crumb, summary.subagent && css.crumbSubagent, last && css.crumbCurrent), disabled: last, onClick: () => { open(summary.id); }, children: summary.displayTitle }));
-                                            const lineage = last || summary.subagent;
-                                            const lineageOwner = {
-                                                lineageSessionId: summary.id,
-                                                displayTitle: summary.displayTitle,
-                                                ...last ? {} : { openTitle: () => { open(summary.id); } },
-                                            };
-                                            return (_jsxs("span", { className: css.crumbSeg, children: [index > 0 && _jsx("span", { className: css.crumbSep, children: "/" }), lineage
-                                                        ? summary.subagent
-                                                            ? renderSlot('conversation.session.header.lineage', lineageOwner, { fallback: title })
-                                                            : (_jsxs(_Fragment, { children: [title, renderSlot('conversation.session.header.lineage', lineageOwner, { fallback: null })] }))
-                                                        : title] }, summary.id));
-                                        }), ancestry.length === 0 && _jsx("span", { className: css.crumbCurrent, children: sessionId })] }), _jsx("div", { className: css.headerActions, children: renderSlot('conversation.session.header.actions', {}) })] }), _jsx("div", { className: css.headerUtilities, children: renderSlot('conversation.session.header.utilities', {}) })] }), tabs.length > 1 && (_jsx("div", { className: css.tabs, role: "tablist", children: tabs.map(viewTab => (_jsx("button", { type: "button", role: "tab", "aria-selected": viewTab.id === active?.id, className: clsx(css.tab, viewTab.id === active?.id && css.tabActive), onClick: () => { actions.setView(viewTab.id); }, children: viewTab.label }, viewTab.id))) }))] })) }));
+    const [seat, setSeat] = useState(null);
+    useLayoutEffect(() => {
+        const next = document.querySelector('[data-composer-subagents]');
+        setSeat(current => current === next ? current : next instanceof HTMLElement ? next : null);
+    });
+    const current = ancestry.at(-1);
+    const lineage = hideChrome || current === undefined ? null : renderSlot('conversation.session.header.lineage', { lineageSessionId: current.id, displayTitle: current.displayTitle }, { fallback: null });
+    return (_jsxs(_Fragment, { children: [_jsx("header", { "data-conversation-header": true, hidden: true, className: css.headerHidden }), seat !== null && lineage !== null ? createPortal(lineage, seat) : null] }));
 }
-/**
- * Renders the active Session view inside the resident scrollport and keeps
- * the input draft mirrored while blank Hero chrome is visible.
- * @param props - Strict Session input/store, view ledger, and render shares.
- * @returns the active view area, or null while the Session remains blank.
- */
 export function ConversationSession({ useSession, useConversation, useConversationViews, useInput, inputActions, useStore, actions, renderSlot, bindDraftMirror, }) {
     const tabs = useConversationViews(value => value);
     const selectedId = useStore(s => s.view);
