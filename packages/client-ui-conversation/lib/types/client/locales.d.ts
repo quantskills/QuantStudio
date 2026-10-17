@@ -62,6 +62,7 @@ export declare const zh: {
     'hero.preview': string;
     'hero.chooseWorkspace': string;
     'session.hierarchy': string;
+    'session.views': string;
     'todo.title': string;
     'todo.progress.done': string;
     'todo.progress.active': string;
@@ -210,6 +211,7 @@ export declare const en: {
     'hero.preview': string;
     'hero.chooseWorkspace': string;
     'session.hierarchy': string;
+    'session.views': string;
     'todo.title': string;
     'todo.progress.done': string;
     'todo.progress.active': string;

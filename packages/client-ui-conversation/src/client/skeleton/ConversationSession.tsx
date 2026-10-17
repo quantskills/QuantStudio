@@ -60,13 +60,17 @@ function equalBreadcrumbs(left: readonly Breadcrumb[], right: readonly Breadcrum
 }
 
 /**
- * Renders Session header chrome above the resident conversation scrollport.
+ * Keeps session actions and view navigation reachable without the title bar.
  * @param props - Strict Session store, view ledger, navigation, render, and locale shares.
- * @returns the hidden blank-session header or visible title and tabs.
+ * @returns compact controls and the composer-mounted subagent catalog.
  */
 export function ConversationSessionHeader({
-  sessionId, useSession, useSessions, useConversation, renderSlot,
+  sessionId, useSession, useSessions, useConversation, useConversationViews, useStore,
+  actions, renderSlot, t,
 }: ConversationSessionHeaderProps) {
+  const tabs = useConversationViews(value => value)
+  const selectedId = useStore(s => s.view)
+  const active = resolveActiveView(tabs, selectedId)
   const ancestry = useSessions(s => deriveAncestry(s, sessionId), equalBreadcrumbs)
   const session = useSession(s => s)
   const conversation = useConversation(s => s)
@@ -85,6 +89,22 @@ export function ConversationSessionHeader({
   return (
     <>
       <header data-conversation-header hidden className={css.headerHidden} />
+      {!hideChrome && <div data-conversation-controls className={css.sessionControls}>
+        {tabs.length > 1 && <div className={css.sessionViews} role="tablist" aria-label={t('session.views')}>
+          {tabs.map(viewTab => <button
+            key={viewTab.id}
+            type="button"
+            role="tab"
+            aria-selected={viewTab.id === active?.id}
+            className={css.sessionViewTab}
+            onClick={() => { actions.setView(viewTab.id) }}
+          >{viewTab.label}</button>)}
+        </div>}
+        <div className={css.sessionActions}>
+          {renderSlot('conversation.session.header.actions', {})}
+          {renderSlot('conversation.session.header.utilities', {})}
+        </div>
+      </div>}
       {seat !== null && lineage !== null ? createPortal(lineage, seat) : null}
     </>
   )

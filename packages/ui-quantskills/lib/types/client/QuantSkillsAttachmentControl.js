@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 /** QuantSkills generic-file uploader mounted in the stock conversation tool row. */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import css from './QuantSkillsApp.module.css';
 /** Dropped non-image files dispatched by the stock composer. */
@@ -24,6 +24,22 @@ export class QuantSkillsAttachmentController {
         open();
         return true;
     }
+}
+const FILE_HEADER = '[QuantSkills 附件]';
+const FILE_HINT = '需要读取可用文本时，请使用 quantskills_read_attachment，并传入上面的附件 id。';
+function fileReference(line) {
+    const match = /^- (.+)；媒体类型 [^；]+；附件 id (sha256:[a-f0-9]{64})；.+$/.exec(line);
+    return match?.[1] && match[2] ? { name: match[1], id: match[2] } : undefined;
+}
+/** The draft is authoritative, including restored drafts and failed submissions. */
+function draftFileChips(draft) {
+    const chips = new Map();
+    for (const line of draft.split('\n')) {
+        const chip = fileReference(line);
+        if (chip !== undefined)
+            chips.set(chip.id, chip);
+    }
+    return [...chips.values()];
 }
 function readCanonicalBase64(file) {
     return new Promise((resolve, reject) => {
@@ -62,12 +78,13 @@ function referenceLine(item) {
     ].join('；');
 }
 /** Upload selected files and append only their durable references to the current draft. */
-export function QuantSkillsAttachmentControl({ sessionId, controller, upload, appendDraft, editDraft, }) {
+export function QuantSkillsAttachmentControl({ sessionId, controller, upload, appendDraft, editDraft, useInput, }) {
     const inputRef = useRef(null);
     const anchorRef = useRef(null);
     const [busy, setBusy] = useState(false);
     const [status, setStatus] = useState();
-    const [chips, setChips] = useState([]);
+    const draft = useInput(state => state.draft);
+    const chips = useMemo(() => draftFileChips(draft), [draft]);
     const [card, setCard] = useState(null);
     const choose = useCallback(() => {
         if (!busy)
@@ -102,18 +119,10 @@ export function QuantSkillsAttachmentControl({ sessionId, controller, upload, ap
             const rows = attached.map(referenceLine);
             appendDraft(sessionId, [
                 '',
-                '[QuantSkills 附件]',
+                FILE_HEADER,
                 ...rows,
-                '需要读取可用文本时，请使用 quantskills_read_attachment，并传入上面的附件 id。',
+                FILE_HINT,
             ].join('\n'));
-            setChips(current => [
-                ...current,
-                ...attached.map((item, index) => ({
-                    id: item.file.attachmentId,
-                    name: item.file.name,
-                    line: rows[index] ?? referenceLine(item),
-                })),
-            ]);
             setStatus(`已附加 ${String(attached.length)} 个文件`);
         }
         catch (error) {
@@ -139,8 +148,10 @@ export function QuantSkillsAttachmentControl({ sessionId, controller, upload, ap
         void attach(files);
     };
     const removeChip = (chip) => {
-        setChips(current => current.filter(item => item.id !== chip.id));
-        editDraft(sessionId, draft => draft.replace(chip.line, '').replace(/\n{3,}/g, '\n\n').trimEnd());
+        editDraft(sessionId, current => current.split('\n')
+            .filter(line => fileReference(line)?.id !== chip.id).join('\n')
+            .replaceAll(`${FILE_HEADER}\n${FILE_HINT}`, '')
+            .replace(/\n{3,}/g, '\n\n').trimEnd());
     };
     const chipRow = chips.length === 0 ? null : (_jsx("div", { className: css.composerFileChips, "data-composer-file-chips": "", children: chips.map(chip => (_jsxs("span", { className: css.composerFileChip, children: [_jsx("span", { children: chip.name }), _jsx("button", { type: "button", "aria-label": `移除文件 ${chip.name}`, onClick: () => { removeChip(chip); }, children: "\u00D7" })] }, chip.id))) }));
     return _jsxs(_Fragment, { children: [_jsx("span", { ref: anchorRef, hidden: true }), card !== null && chipRow !== null ? createPortal(chipRow, card) : chipRow, _jsx("input", { ref: inputRef, className: css.attachmentInput, type: "file", multiple: true, tabIndex: -1, "aria-hidden": true, onChange: changed }), status && _jsx("span", { className: css.attachmentStatus, role: "status", children: status })] });

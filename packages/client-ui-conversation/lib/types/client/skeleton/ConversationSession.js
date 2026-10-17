@@ -1,4 +1,4 @@
-import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 /** Strict per-session header/body content inserted into the resident conversation layout. */
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -40,11 +40,14 @@ function equalBreadcrumbs(left, right) {
         });
 }
 /**
- * Renders Session header chrome above the resident conversation scrollport.
+ * Keeps session actions and view navigation reachable without the title bar.
  * @param props - Strict Session store, view ledger, navigation, render, and locale shares.
- * @returns the hidden blank-session header or visible title and tabs.
+ * @returns compact controls and the composer-mounted subagent catalog.
  */
-export function ConversationSessionHeader({ sessionId, useSession, useSessions, useConversation, renderSlot, }) {
+export function ConversationSessionHeader({ sessionId, useSession, useSessions, useConversation, useConversationViews, useStore, actions, renderSlot, t, }) {
+    const tabs = useConversationViews(value => value);
+    const selectedId = useStore(s => s.view);
+    const active = resolveActiveView(tabs, selectedId);
     const ancestry = useSessions(s => deriveAncestry(s, sessionId), equalBreadcrumbs);
     const session = useSession(s => s);
     const conversation = useConversation(s => s);
@@ -56,7 +59,7 @@ export function ConversationSessionHeader({ sessionId, useSession, useSessions, 
     });
     const current = ancestry.at(-1);
     const lineage = hideChrome || current === undefined ? null : renderSlot('conversation.session.header.lineage', { lineageSessionId: current.id, displayTitle: current.displayTitle }, { fallback: null });
-    return (_jsxs(_Fragment, { children: [_jsx("header", { "data-conversation-header": true, hidden: true, className: css.headerHidden }), seat !== null && lineage !== null ? createPortal(lineage, seat) : null] }));
+    return (_jsxs(_Fragment, { children: [_jsx("header", { "data-conversation-header": true, hidden: true, className: css.headerHidden }), !hideChrome && _jsxs("div", { "data-conversation-controls": true, className: css.sessionControls, children: [tabs.length > 1 && _jsx("div", { className: css.sessionViews, role: "tablist", "aria-label": t('session.views'), children: tabs.map(viewTab => _jsx("button", { type: "button", role: "tab", "aria-selected": viewTab.id === active?.id, className: css.sessionViewTab, onClick: () => { actions.setView(viewTab.id); }, children: viewTab.label }, viewTab.id)) }), _jsxs("div", { className: css.sessionActions, children: [renderSlot('conversation.session.header.actions', {}), renderSlot('conversation.session.header.utilities', {})] })] }), seat !== null && lineage !== null ? createPortal(lineage, seat) : null] }));
 }
 export function ConversationSession({ useSession, useConversation, useConversationViews, useInput, inputActions, useStore, actions, renderSlot, bindDraftMirror, }) {
     const tabs = useConversationViews(value => value);

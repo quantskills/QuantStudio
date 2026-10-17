@@ -1,6 +1,6 @@
 /** QuantSkills generic-file uploader mounted in the stock conversation tool row. */
 
-import { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { createPortal } from 'react-dom'
 import type { QuantSkillsSessionFileAttachment } from './plugin-types.ts'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
@@ -42,7 +42,24 @@ export interface QuantSkillsAttachmentControlInjected {
 interface ComposerFileChip {
   readonly id: string
   readonly name: string
-  readonly line: string
+}
+
+const FILE_HEADER = '[QuantSkills 附件]'
+const FILE_HINT = '需要读取可用文本时，请使用 quantskills_read_attachment，并传入上面的附件 id。'
+
+function fileReference(line: string): ComposerFileChip | undefined {
+  const match = /^- (.+)；媒体类型 [^；]+；附件 id (sha256:[a-f0-9]{64})；.+$/.exec(line)
+  return match?.[1] && match[2] ? { name: match[1], id: match[2] } : undefined
+}
+
+/** The draft is authoritative, including restored drafts and failed submissions. */
+function draftFileChips(draft: string): readonly ComposerFileChip[] {
+  const chips = new Map<string, ComposerFileChip>()
+  for (const line of draft.split('\n')) {
+    const chip = fileReference(line)
+    if (chip !== undefined) chips.set(chip.id, chip)
+  }
+  return [...chips.values()]
 }
 
 /** Complete framework and application props for the generic-file input control. */
@@ -90,13 +107,14 @@ function referenceLine(item: QuantSkillsSessionFileAttachment): string {
 
 /** Upload selected files and append only their durable references to the current draft. */
 export function QuantSkillsAttachmentControl({
-  sessionId, controller, upload, appendDraft, editDraft,
+  sessionId, controller, upload, appendDraft, editDraft, useInput,
 }: QuantSkillsAttachmentControlProps) {
   const inputRef = useRef<HTMLInputElement | null>(null)
   const anchorRef = useRef<HTMLSpanElement | null>(null)
   const [busy, setBusy] = useState(false)
   const [status, setStatus] = useState<string | undefined>()
-  const [chips, setChips] = useState<readonly ComposerFileChip[]>([])
+  const draft = useInput(state => state.draft)
+  const chips = useMemo(() => draftFileChips(draft), [draft])
   const [card, setCard] = useState<HTMLElement | null>(null)
   const choose = useCallback((): void => {
     if (!busy) inputRef.current?.click()
@@ -125,18 +143,10 @@ export function QuantSkillsAttachmentControl({
       const rows = attached.map(referenceLine)
       appendDraft(sessionId, [
         '',
-        '[QuantSkills 附件]',
+        FILE_HEADER,
         ...rows,
-        '需要读取可用文本时，请使用 quantskills_read_attachment，并传入上面的附件 id。',
+        FILE_HINT,
       ].join('\n'))
-      setChips(current => [
-        ...current,
-        ...attached.map((item, index) => ({
-          id: item.file.attachmentId,
-          name: item.file.name,
-          line: rows[index] ?? referenceLine(item),
-        })),
-      ])
       setStatus(`已附加 ${String(attached.length)} 个文件`)
     } catch (error: unknown) {
       setStatus(error instanceof Error ? error.message : '附件上传失败')
@@ -159,8 +169,10 @@ export function QuantSkillsAttachmentControl({
     void attach(files)
   }
   const removeChip = (chip: ComposerFileChip): void => {
-    setChips(current => current.filter(item => item.id !== chip.id))
-    editDraft(sessionId, draft => draft.replace(chip.line, '').replace(/\n{3,}/g, '\n\n').trimEnd())
+    editDraft(sessionId, current => current.split('\n')
+      .filter(line => fileReference(line)?.id !== chip.id).join('\n')
+      .replaceAll(`${FILE_HEADER}\n${FILE_HINT}`, '')
+      .replace(/\n{3,}/g, '\n\n').trimEnd())
   }
   const chipRow = chips.length === 0 ? null : (
     <div className={css.composerFileChips} data-composer-file-chips="">

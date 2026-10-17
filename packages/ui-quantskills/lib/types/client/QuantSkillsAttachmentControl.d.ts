@@ -22,5 +22,5 @@ export interface QuantSkillsAttachmentControlInjected {
 /** Complete framework and application props for the generic-file input control. */
 export type QuantSkillsAttachmentControlProps = PropsRuntime<'conversation.input.left'> & InjectFace<QuantSkillsAttachmentControlInjected>;
 /** Upload selected files and append only their durable references to the current draft. */
-export declare function QuantSkillsAttachmentControl({ sessionId, controller, upload, appendDraft, editDraft, }: QuantSkillsAttachmentControlProps): import("react").JSX.Element;
+export declare function QuantSkillsAttachmentControl({ sessionId, controller, upload, appendDraft, editDraft, useInput, }: QuantSkillsAttachmentControlProps): import("react").JSX.Element;
 //# sourceMappingURL=QuantSkillsAttachmentControl.d.ts.map
