@@ -1,0 +1,45 @@
+diff --git a/lib/index.js b/lib/index.js
+index f010583bb639cdbaaeedce029b9df1d95ebe6331..2ed1f24058bede39c94309cf761b411e62b25dd1 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -1270,7 +1270,24 @@ var __esDecorate = function(ctor, descriptorIn, decorators, contextIn, initializ
+ };
+ /** An http(s) URL, as pnpm's `--registry` takes it. */
+ const REGISTRY_URL = /^https?:\/\/\S+$/;
++// QS application packages are upgraded together by the application launcher.
++const applicationCorePackages = new Set([
++	"@quantskills/dsh-plugin",
++	"@deepseek-ai/dsh-agent-team",
++	"@deepseek-ai/dsh-client-remotes-quantskills",
++	"@deepseek-ai/dsh-client-ui-chat",
++	"@deepseek-ai/dsh-client-ui-conversation",
++	"@deepseek-ai/dsh-client-ui-input-trigger",
++	"@deepseek-ai/dsh-client-ui-layout",
++	"@deepseek-ai/dsh-panda-connector",
++	"@deepseek-ai/dsh-panda-mcp",
++	"@deepseek-ai/dsh-quantskills-host",
++	"@deepseek-ai/dsh-quantskills-session",
++	"@deepseek-ai/dsh-tool-agent-team",
++	"@deepseek-ai/dsh-client-ui-quantskills"
++]);
+ const protectedModules = new Set([
++	...applicationCorePackages,
+ 	"@deepseek-ai/dsh-plugin-manager",
+ 	"@deepseek-ai/cordis-plugin-loader",
+ 	"@deepseek-ai/cordis-plugin-include",
+@@ -1988,6 +2005,7 @@ let PluginManager = (() => {
+ 				if (stopped()) throw new InstallCancelledError();
+ 				const before = readProfileManifest("dsh", this.profile.dir).dependencies ?? {};
+ 				const known = specPackageName(spec, before, this.profile.dir);
++				if (known !== void 0 && applicationCorePackages.has(known)) throw new ManagementFailure("management-required");
+ 				if (this.ownerContext.get("hmr") !== void 0 && known !== void 0 && Object.hasOwn(before, known)) throw new ManagementFailure("already-installed");
+ 				if (options?.approvedBuilds !== void 0) {
+ 					await approveBuilds(this.profile.dir, options.approvedBuilds);
+@@ -2310,6 +2328,7 @@ let PluginManager = (() => {
+ 			return flatten(composeEntries([bundlePatchPaths(resolveBundleDir("dsh", name, this.profile.installAnchor, this.profile.dir), info.dsh.bundle).flatMap((file) => loadOverlayPatches("dsh", file))]));
+ 		}
+ 		protectsManager(name) {
++			if (applicationCorePackages.has(name)) return true;
+ 			if (this.managementBundles.has(name)) return true;
+ 			let rows;
+ 			try {

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "target": "0.2.1-rc.2",
   "upstreamCommit": "687f282e8625c6b8d11ff58211a90524be2e4317",
-  "lockSha256": "34eec5b0a0498f36368634af7bf53911c3c7ddfba7511944de453b65fe6b00b1",
+  "lockSha256": "217e92eac5190521cc6d141e50f88069b43ce5b09a8d6cf396ea5d7be55bcb58",
   "templates": {
     "acp": {
       "bundles": [

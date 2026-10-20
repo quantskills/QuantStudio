@@ -17,7 +17,7 @@ it('collects background CLI output and cancels its process tree without opening 
       stdio: { stdin: 'ignore', stdout: { maxBytes: 1024 }, stderr: { maxBytes: 1024 } } })
     let ids: { parent: number; child: number } | undefined
     let outcome = 'running'
-    void handle.done.then(result => { outcome = JSON.stringify(result) }, () => { outcome = 'provider rejected launch' })
+    void handle.done.then(result => { outcome = JSON.stringify(result) }, error => { outcome = `provider rejected launch: ${error instanceof Error ? error.message.slice(0, 1024) : 'unknown error'}` })
     try {
       await vi.waitFor(() => {
         const output = handle.collected.stdout?.readFrom(0)?.text ?? ''

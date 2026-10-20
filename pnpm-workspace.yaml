@@ -312,3 +312,4 @@ packageExtensions:
     dependencies:
       zustand: 4.5.7
       immer: 10.1.1
+  '@deepseek-ai/dsh-plugin-manager@0.2.1-rc.2': patches/@deepseek-ai__dsh-plugin-manager@0.2.1-rc.2.patch
