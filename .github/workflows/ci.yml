@@ -66,8 +66,33 @@ jobs:
       - name: Test the complete candidate including migration, Team recovery and Trade
         run: pnpm exec vitest run
 
+      - name: Check out fixed upstream UI test support
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: deepseek-ai/deepseek-harness
+          ref: 687f282e8625c6b8d11ff58211a90524be2e4317
+          path: .ci-dsh-upstream
+          persist-credentials: false
+
+      - name: Test the customized UI against the target upstream behavior
+        run: pnpm exec vitest run --config vitest.upstream-ui.config.ts
+        env:
+          QS_UPSTREAM_SOURCE: .ci-dsh-upstream
+
       - name: Smoke-test clean DSH installation
         run: pnpm run ci:smoke
+
+      - name: Activate a migrated whole home without credentials or external execution paths
+        run: pnpm run ci:smoke -- --whole-home --legacy-market
+
+      - name: Verify optional bundle settings through the official manager and service restart
+        run: node scripts/ci-optional-bundles.mjs
+
+      - name: Install the pinned Chromium test runtime
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Exercise the candidate in a real browser with isolated model and attachment fixtures
+        run: pnpm run ci:smoke -- --whole-home --legacy-market --all-optional --browser-e2e
 
       - name: Check out the fixed pre-upgrade baseline
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -81,3 +106,6 @@ jobs:
 
       - name: Verify the new launcher can still run the old core
         run: pnpm run ci:legacy -- .ci-legacy-core
+
+      - name: Read and start a recovered old generation after preserving candidate increments
+        run: pnpm run ci:legacy -- .ci-legacy-core --restore
