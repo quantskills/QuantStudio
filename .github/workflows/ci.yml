@@ -18,7 +18,7 @@ jobs:
   validate:
     name: ${{ matrix.os }} / Node 22.19
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -50,17 +50,11 @@ jobs:
       - name: Check source and types
         run: pnpm run check
 
-      - name: Run plugin tests
-        run: pnpm run test
-
-      - name: Test managed updates and rollback
-        run: pnpm run test:update
-
-      - name: Test workspace platform compatibility
-        run: pnpm exec vitest run packages/quantskills-session/tests/managed-workspace.spec.ts
-
       - name: Build publishable output
         run: pnpm run build
+
+      - name: Test the complete candidate including migration, Team recovery and Trade
+        run: pnpm exec vitest run
 
       - name: Smoke-test clean DSH installation
         run: pnpm run ci:smoke

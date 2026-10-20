@@ -2,6 +2,8 @@
 
 # QuantStudio
 
+> **Upgrade candidate:** this branch pins DSH to `0.2.1-rc.2` and is not approved for an existing daily data directory. See the [upgrade status and merge blockers](docs/dsh-upgrade/README.md), [migration/rollback guide](docs/dsh-upgrade/migration-rollback.md), and [isolated macOS/Windows Agent prompts](docs/dsh-upgrade/agent-install.md). Keep the PR in Draft until the listed gates pass.
+
 ### QUANT × Work × Trade
 
 **Quantitative research, everyday work and trade execution in one open-source workspace.**

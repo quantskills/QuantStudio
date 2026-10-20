@@ -1,0 +1,1314 @@
+{
+  "baseline": "0a53fb55bea101816fa226bb964ae2bed71c343b",
+  "target": "687f282e8625c6b8d11ff58211a90524be2e4317",
+  "files": [
+    {
+      "file": "packages/client-ui-chat/src/chat-settings.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/apply.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ApprovalCommand.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/AssistantMarkdown.module.css",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/AssistantMarkdown.tsx",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/AssistantNodeView.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatNodeSeat.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatView.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatView.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/CommandNodeView.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/CompactionCommandCard.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/CompactionItem.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ContextBody.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ContextBody.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ContextInjectionRow.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ContextInjectionRow.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/GenericCommandCard.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/GenericCommandCard.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/MessageIconActions.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/MessageIconActions.tsx",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/MessageItem.module.css",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/MessageItem.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ReasoningRow.module.css",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ReasoningRow.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/StatsLine.module.css",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/StatsLine.tsx",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/SystemPromptRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnNavigator.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnNavigator.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnProcessNodeView.module.css",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnProcessNodeView.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnTailNodeView.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnTailNodeView.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnUsagePanel.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnUsagePanel.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/accessibility.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/message-chrome.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/register-node-renderers.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/searchable-hidden.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/token-format.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/turn-assistant.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-calendar-day.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-throttled-visual-update.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/assistant-content.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/chat-nodes.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/slots.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/snapshot.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/store.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/turn-metrics.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/turn-process.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/assistant.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/chat-snapshot-builder.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/command.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/common.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/compaction.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/event-projection.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/fallback.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/inbox.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/message.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/partial.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/register.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/request-prompt.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/retry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/tool.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-error.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-max-tokens.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-navigation.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-process.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-tail.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/details/DetailsPanel.module.css",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/details/DetailsPanel.tsx",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/details/tool-node-reader.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/index.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/locale.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/markdown-labels.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/model/conversation-context.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/model/steering-history.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/model/tool-call-tree.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/TranscriptViewRow.module.css",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/TranscriptViewRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/stores.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/transcript-view.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/css-modules.d.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/invariant.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/locale/en.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/locale/zh.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatFlow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatGroupSeat.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatGroupSeat.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/QuotaNoticeHost.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ReasoningContent.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/RunningStatus.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/RunningWhaleTail.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/StatsPills.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/StatsPills.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnTriggerNodeView.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnTriggerNodeView.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/UserContent.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/flow-motion.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/render-entry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/running-whale@2x.png",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/stat-dialog.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/stat-dialog.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/step-process.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/turn-rail-items.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/turn-trigger.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-chat-navigation.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-chat-reading.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-chat-scroll.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-chat-viewport.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-disclosure.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-process-scroll.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-scroll-follow.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-turn-data.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/chat-visibility.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/group-tree.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/process-groups.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/README.i18n.yaml",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/README.md",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/README.zh.md",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/group-tree-segments.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/process-activity.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/process-groups.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-process-presentation.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/performance-usage.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/presentation-policy.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/LinkOpeningRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/PerformanceUsageRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/PreferenceRow.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/PreferenceRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/apply.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/context-occupancy.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/composer-blocks.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/composer-submission.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/context-provenance.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/conversation.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/input.ts",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/queue.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/records.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/request-inspection.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/slots.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/snapshot.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/views.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/assembler.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/assembly.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/definition-registry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/event-registry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/historical-images.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/location-index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/view-registry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/image-labels.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/index.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/blocks.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/decorations.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/ComposerContentEditable.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/DecoratorPortals.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/ReferenceChip.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/ReferenceChip.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/chip-node.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/claim-decor.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/composer-editor.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/keymap.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/projection.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/span-map.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/text-ref.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/facade.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/hub.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/machine.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/queue-store.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/submission-policy.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/locales.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/queue/QueueDock.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/queue/QueueDock.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/service.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/settings/EnterBehaviorRow.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/settings/EnterBehaviorRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ContextMeter.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ContextMeter.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationRoot.module.css",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationRoot.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationSession.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/EmptyHero.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/HeroShell.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/InputBar.module.css",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/InputBar.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/PermissionSelect.module.css",
+      "outcome": "removed-replaced-by-native-permission-component",
+      "custom": true,
+      "verification": "permissions.client.spec.tsx; actual bundle validation pending"
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/PermissionSelect.tsx",
+      "outcome": "removed-replaced-by-native-permission-component",
+      "custom": true,
+      "verification": "permissions.client.spec.tsx; actual bundle validation pending"
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/TodoPanel.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/TodoPanel.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/safari.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/stores.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/css-modules.d.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/invariant.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/submission-settings.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/locale/en.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/locale/zh.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/context-producer.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/draft-editor.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/groups.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/system-prompt.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/user-text.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/group-registry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/group-store.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/user-text-document.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/user-text-registry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/draft.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/CommandChip.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/DraftEditor.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/command-chip-node.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/command-chip-selection.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/reference-activation.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/runtime.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/view-binding.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/submission-analytics.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationContent.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationHeader.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationMainPanel.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationPanel.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationWidthControls.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/DefaultConversationViews.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/control-row-layout.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/stop-sequence.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/stop-shortcut.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/user-text/UserText.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/user-text/UserText.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/user-text/session-reference-rule.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/user-text/whitespace-rules.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/view-selection.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/MenuView.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/MenuView.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/contract.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/controller.ts",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/locales.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/service.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/slots.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/core/contract.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/core/detect.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/core/menu.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/css-modules.d.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/invariant.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/types.ts",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-input-trigger/locale/en.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/locale/zh.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/AppFrame.module.css",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/AppFrame.tsx",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/DocumentTitle.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/columns.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/index.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/service.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/stores.ts",
+      "outcome": "upstream-contract-ported-custom-review-pending",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/theme-presenter.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/css-modules.d.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/invariant.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/locale/en.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/locale/zh.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/shortcut-locales.ts",
+      "outcome": "upstream",
+      "custom": false
+    }
+  ],
+  "acceptance": "partial: types/build/unit tests pass; 27 conflict files require full browser behavior review"
+}

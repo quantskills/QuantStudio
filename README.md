@@ -12,6 +12,8 @@
 
 </div>
 
+> **升级候选分支提示：** 本分支正在将 DSH 固定升级到 `0.2.1-rc.2`，尚未通过全部迁移及平台验收。请先阅读 [升级状态与阻塞项](docs/dsh-upgrade/README.md)；测试此分支使用 [macOS / Windows 隔离验收 Agent 提示词](docs/dsh-upgrade/agent-install.md)。不要将候选启动到现有日常数据目录。下方 `main` 提示词仍用于正式版。
+
 <a id="agent-install"></a>
 
 ## 用 Agent 安装
