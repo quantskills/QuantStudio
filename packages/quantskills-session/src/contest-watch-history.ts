@@ -9,7 +9,9 @@ import type { ContestWatchConfig, ContestWatchDataset, ContestWatchHistory } fro
 export function historyFailure(error: unknown, stage: string) {
   const value = error as { message?: string; code?: string; status?: number; name?: string }
   const text = `${value?.code ?? ''} ${value?.status ?? ''} ${value?.name ?? ''} ${value?.message ?? ''}`
-  const [code, retryable, help] = /401|403|unauthori|forbidden|登录|权限|认证|token.*expir/i.test(text) ? ['AUTH_REQUIRED', false, '请检查 PandaData 登录与数据权限。'] as const
+  const [code, retryable, help] = /\bhttp[_ ](?:500|502|503|504)\b/i.test(text) || [500, 502, 503, 504].includes(value?.status ?? 0)
+    ? ['SERVICE_UNAVAILABLE', true, '数据服务暂时不可用，等待服务恢复后重试。'] as const
+    : /401|403|unauthori|forbidden|登录|权限|认证|token.*expir/i.test(text) ? ['AUTH_REQUIRED', false, '请检查 PandaData 登录与数据权限。'] as const
     : /timeout|timed?out|ETIMEDOUT|超时/i.test(text) ? ['TIMEOUT', true, '数据源响应超时，将自动重试。'] as const
     : /429|rate.limit|频率|限流/i.test(text) ? ['RATE_LIMIT', true, '数据源限流，将稍后重试。'] as const
     : /network|fetch failed|ECONN|ENOTFOUND|offline|网络|连接失败/i.test(text) ? ['NETWORK', true, '网络或数据源暂时不可用，将自动重试。'] as const

@@ -92,6 +92,16 @@ describe('fly contest bridge', () => {
     await expect(f.call('history', { identity: f.input.identity, instrument: f.input.instrument, minutes: 1 })).rejects.toMatchObject({ source: 'pandadata', code: 'RATE_LIMIT', retryAfterSeconds: 120 })
   })
 
+  it('reports a competition outage without misclassifying it as an authorization failure or submitting trades', async () => {
+    const f = await fixture()
+    f.mock.observe.mockRejectedValue(Object.assign(new Error('upstream authorization gateway private details'), { code: 'http_503' }))
+    await expect(f.call('market', { identity: f.input.identity, instruments: [f.input.instrument] }))
+      .rejects.toMatchObject({ source: 'competition', code: 'SERVICE_UNAVAILABLE', retryable: true,
+        message: '比赛接口服务暂时不可用，等待服务恢复后重试。' })
+    expect(f.prepare).not.toHaveBeenCalled()
+    expect(f.execute).not.toHaveBeenCalled()
+  })
+
   it('refreshes a still-cached bar window after publication lag without fetching twice', async () => {
     const f = await fixture(), now = Date.now(), latest = Math.floor(now / 60000) * 60000
     const result = (close: number, fetchedAt: number) => ({ status: 'hit', total: 1,
