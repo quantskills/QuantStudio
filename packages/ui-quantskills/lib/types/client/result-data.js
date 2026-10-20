@@ -1,5 +1,8 @@
 /** Read-only result facts derived from one loaded Conversation window. */
-import { producedForClosing } from '@deepseek-ai/dsh-client-ui-deliverables/client';
+// QS consumes the public turn-data projection, not an unexported upstream helper.
+function producedForClosing(data) {
+    return [...new Set((data?.produced ?? []).map(item => item.path))];
+}
 const RESULT_CODE_EXTENSIONS = new Set([
     'bat', 'c', 'cc', 'cjs', 'conf', 'cpp', 'cs', 'css', 'cts', 'dart', 'fish', 'go', 'h', 'hpp',
     'ini', 'java', 'js', 'jsx', 'kt', 'kts', 'lua', 'm', 'mjs', 'mm', 'mts', 'php', 'pl', 'ps1',

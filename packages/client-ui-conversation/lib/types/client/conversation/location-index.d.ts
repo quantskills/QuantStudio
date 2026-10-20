@@ -1,4 +1,4 @@
-import { type SessionEventLike, type SessionEventLikeEntry } from '@deepseek-ai/dsh-api-session-controller/client';
+import { type AssistantLiveChunkEvent, type SessionEventLike, type SessionEventLikeEntry } from '@deepseek-ai/dsh-api-session-controller/client';
 import type { SessionEvent } from '@deepseek-ai/dsh-session/types';
 import type { ConversationLocation, ConversationLocationData, ConversationTimelineSnapshot } from '../contract/conversation.ts';
 /** One Context's previous and next Location-data publication. */
@@ -10,11 +10,13 @@ export interface ConversationLocationDataChange {
 /** Session-owned Turn/Step timeline and event-to-Location index. */
 export declare class ConversationLocationIndex {
     private coordinates;
-    private locations;
     private seqsByTurn;
+    private readonly stepsByTurn;
     private timeline;
     private readonly turnDataStores;
     private readonly stepDataStores;
+    private readonly dirtyDataStores;
+    private readonly changedTurns;
     private currentTurn;
     private currentStep;
     /**
@@ -22,6 +24,11 @@ export declare class ConversationLocationIndex {
      * @returns current timeline snapshot.
      */
     snapshot(): ConversationTimelineSnapshot;
+    /**
+     * Drain the Turn changes accumulated for one assembly flush.
+     * @returns Turn identities changed since the preceding drain.
+     */
+    takeChangedTurns(): readonly number[];
     /**
      * Replace all Definition-owned Location values while preserving reader identities.
      * @param entries - complete current set of Definition-owned Location values.
@@ -37,6 +44,8 @@ export declare class ConversationLocationIndex {
      * @returns whether any published Location data changed.
      */
     applyData(changes: readonly ConversationLocationDataChange[]): boolean;
+    /** Publish committed Location-data changes to their keyed sources. */
+    publishData(): void;
     /**
      * Resolve the latest Location for one event.
      * @param event - event already ingested into this index.
@@ -56,15 +65,26 @@ export declare class ConversationLocationIndex {
      */
     appendBoundary(event: SessionEvent): ReadonlySet<number>;
     /**
-     * Index one non-boundary tail event without rescanning the window.
+     * Index one non-boundary tail event without scanning the window or the Turn's Steps.
      * @param event - contiguous appended event.
      */
-    appendNonBoundary(event: SessionEvent): void;
+    appendNonBoundary(event: SessionEventLike): void;
+    /**
+     * Remove indexed Assistant transients without rebuilding the Turn/Step timeline.
+     * @param events - transient events retired by one Assistant settlement.
+     */
+    removeAssistantTransients(events: readonly AssistantLiveChunkEvent[]): void;
+    /**
+     * Index one durable Assistant settlement inserted before an already visible tail.
+     * @param event - message or attempt settlement with explicit Turn and Step coordinates.
+     */
+    insertAssistantSettlement(event: SessionEvent<'assistant/message'> | SessionEvent<'assistant/attempt'>): void;
     private indexTurnSeq;
     private turnData;
     private stepData;
     private mutableTurnData;
     private mutableStepData;
+    private createDataStore;
     private storeFor;
     private resolve;
 }

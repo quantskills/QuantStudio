@@ -265,7 +265,7 @@ describe('contest mode interaction', () => {
 
 describe('competition conversation isolation', () => {
   const sessions = (purpose: 'ordinary' | 'contest', account = identity) => createSnapshotStore<SessionListState>({
-    current: 'session-1', byId: { 'session-1': { id: 'session-1', running: false,
+    current: 'session-1', byId: { 'session-1': { id: 'session-1', retainedBy: { mainView: 1 }, running: false,
       projectionValues: { quantSkillsPlainSession: { purpose, ...(purpose === 'contest' ? { contest: account } : {}) } } } },
   } as unknown as SessionListState)
   it('mounts no contest calls or controls in an ordinary session even when contest mode is on', async () => {

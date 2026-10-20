@@ -6,16 +6,23 @@
  * controllers by session scope, and relays roster changes.
  */
 import { Service } from '@deepseek-ai/cordis';
+import { WeakMapWithValues } from '@deepseek-ai/dsh-util-values';
 import { InputTriggerController } from "./controller.js";
 /** The `ctx.inputTriggers` trigger pipeline service (root registry + controller resolution). */
 export class InputTriggerService extends Service {
     static inject = ['sessions'];
-    live = { sources: [], controllers: new Map() };
+    live = {
+        sources: [], controllers: new WeakMapWithValues(),
+    };
     /**
      * @param ctx - owning root context (the service registers itself as `slash`).
      */
     constructor(ctx) {
         super(ctx, 'inputTriggers');
+        ctx.on('locale/change', () => {
+            for (const controller of this.live.controllers.values)
+                controller.refreshOpenMenu();
+        });
     }
     /**
      * Register one trigger source. Live session controllers are notified so a
@@ -30,7 +37,7 @@ export class InputTriggerService extends Service {
             throw new Error(`slash source "${src.trigger}${src.name}" is already registered`);
         }
         live.sources.push(src);
-        for (const controller of live.controllers.values()) {
+        for (const controller of live.controllers.values) {
             try {
                 controller.sourceAdded(src);
             }
@@ -46,7 +53,7 @@ export class InputTriggerService extends Service {
             if (at < 0)
                 return;
             live.sources.splice(at, 1);
-            for (const controller of live.controllers.values())
+            for (const controller of live.controllers.values)
                 controller.sourceRemoved(src);
         };
     }
@@ -57,28 +64,32 @@ export class InputTriggerService extends Service {
      * single prewarm moment.
      * @param actx - session-scope ctx.
      * @returns the resident controller.
+     * @throws when the Context no longer belongs to a retained Session generation.
      */
     sessionOf(actx) {
         const sessions = this.sessions();
-        const id = sessions.scopeOf(actx);
-        if (id === undefined)
-            throw new Error('slash.sessionOf requires a session scope');
+        const session = sessions.sessionOf(actx);
+        const binding = session === undefined ? undefined : sessions.binding(session.sessionId);
+        if (binding === undefined || binding.session !== session) {
+            throw new Error('slash.sessionOf requires a retained Session scope');
+        }
+        const id = binding.sessionId;
         const { live } = this;
-        const existing = live.controllers.get(id);
+        const existing = live.controllers.get(binding);
         if (existing !== undefined)
             return existing;
         const controller = new InputTriggerController({
-            actx,
+            actx: binding.ctx,
             sessionId: id,
             roster: {
                 sources: trigger => live.sources.filter(s => s.trigger === trigger).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
                 all: () => live.sources,
             },
         });
-        live.controllers.set(id, controller);
-        actx.effect(() => () => {
+        live.controllers.set(binding, controller);
+        binding.ctx.effect(() => () => {
             controller.dispose();
-            live.controllers.delete(id);
+            live.controllers.delete(binding);
         }, 'slash: session controller');
         return controller;
     }

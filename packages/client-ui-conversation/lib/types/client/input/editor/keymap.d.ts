@@ -11,9 +11,11 @@
  * keydown AFTER compositionend, so a root-element composition watch holds the
  * guard for 10ms more (the old textarea's proven window); keyCode
  * 229 is the legacy signal engines emit without isComposing.
+ * The root's composition attribute suppresses placeholders until both the
+ * native composition and the editor's final text reconciliation finish.
  */
 import type { LexicalEditor } from 'lexical';
-import type { ArbitrateKey, ArbitrateOutcome } from '../../contract/input.ts';
+import type { ArbitrateKey, ArbitrateOutcome } from '../../contract/draft-editor.ts';
 /** The bar-supplied behavior behind each intercepted gesture. */
 export interface ComposerKeymapHandlers {
     /** Keyboard arbitration while the menu is open ('pass' when no pipeline). */
@@ -24,10 +26,14 @@ export interface ComposerKeymapHandlers {
     dismissPopup(): void;
     /** Whether Enter may submit right now (locked/busy states refuse). */
     canSubmit(): boolean;
-    /** The Enter gesture after every guard passed; `accelerated` = Ctrl/Cmd held. */
+    /** Plain Enter submits; exactly Ctrl+Enter or Cmd+Enter selects accelerated delivery. */
     submit(accelerated: boolean): void;
-    /** Pasted files (image intake). */
-    intakeFiles(files: readonly File[]): void;
+    /**
+     * Pasted files with directory metadata supplied by the clipboard entry API.
+     * @param files - browser files in clipboard order.
+     * @param directories - known directory members; absent when no entry identifies a directory.
+     */
+    intakeFiles(files: readonly File[], directories?: ReadonlySet<File>): void;
     /** Pasted plain text (sanitized insertion through the shell). */
     pasteText(text: string): void;
 }

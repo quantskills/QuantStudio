@@ -1,4 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { selectedSession } from "./selected-session.js";
 import { ArchivedSessions, ArchiveSessionConfirmation, DeleteSessionConfirmation, SessionHistoryMenu } from "./ArchivedSessions.js";
 import { SessionActionsMenu } from "./SessionActionsMenu.js";
 import { ArchiveBoxIcon } from '@phosphor-icons/react';
@@ -131,10 +132,11 @@ function useQuantSkillsDocumentAppearance(enabled, scheme, background, conversat
     }, [background, conversationBrightness, conversationOverlayOpacity, enabled, scheme, preset]);
 }
 /** DSH-compatible root frame that keeps the stock conversation services while replacing the stock visual shell. */
-export function QuantSkillsFrame({ useStore, actions, useSessions, useView, useCatalog, useBoundSessions, useAgents, useNotifications, renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, }) {
+export function QuantSkillsFrame({ useStore, actions, useSessions, usePanelInfo, useView, useCatalog, useBoundSessions, useAgents, useNotifications, renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, }) {
+    const activeMainPanel = usePanelInfo(state => state.activePanelId);
     const sidebarOpen = useStore(state => state.sidebarOpen);
     const detailsOpen = useStore(state => state.detailsOpen);
-    const currentSessionId = useSessions(state => state.current);
+    const currentSessionId = useSessions(state => selectedSession(state));
     const plainArchives = useBoundSessions(state => state.plainArchives);
     const archives = useBoundSessions(state => state.archives);
     const boundSessionsReady = useBoundSessions(state => state.phase === 'ready');
@@ -234,8 +236,8 @@ export function QuantSkillsFrame({ useStore, actions, useSessions, useView, useC
         '--dsh-conversation-text-base-size': `${String(16 * resolvedConversationScale)}px`,
     };
     return _jsxs("div", { className: css.rootFrame, style: style, "data-details-open": detailsVisible || undefined, "data-interface-scale": interfaceScale, "data-qs-theme": colorScheme, "data-qs-background": background.id, children: [_jsx("div", { className: css.rootSidebar, children: renderSlot('sidebar', { collapsed: !sidebarOpen, width: sidebarWidth }) }), _jsx("div", { className: css.rootConversation, style: conversationStyle, "data-conversation-scale": conversationScale, "data-stock-conversation": conversationVisible || undefined, children: conversationVisible
-                    ? _jsx(ConversationFrame, { currentPlain: currentPlainArchive, currentSkill: currentArchive, currentAgent: currentAgentArchive, currentTeam: currentTeamArchive, plainArchives: plainArchives, skillArchives: archives, agentArchives: agentArchives, teamArchives: teamArchives, catalog: catalog, unreadBySession: unreadBySession, archivesOpen: !resultsVisible, openSession: openNotifiedSession, renameSession: renameSession, removeSessions: removeSessions, archiveSessions: archiveSessions, sessionFiles: sessionFiles, startSession: startSession, startAuthoringSession: startAuthoringSession, openAgentTeamBuilder: openAgentTeamBuilder, children: renderSlot('conversation', {}) })
-                    : renderSlot('quantskills.page', {}) }), _jsx("div", { className: css.rootDetails, children: renderSlot('details', {}) }), _jsx("div", { className: css.rootResults, "data-open": resultsVisible || undefined, onPointerDown: (event) => {
+                    ? _jsx(ConversationFrame, { currentPlain: currentPlainArchive, currentSkill: currentArchive, currentAgent: currentAgentArchive, currentTeam: currentTeamArchive, plainArchives: plainArchives, skillArchives: archives, agentArchives: agentArchives, teamArchives: teamArchives, catalog: catalog, unreadBySession: unreadBySession, archivesOpen: !resultsVisible, openSession: openNotifiedSession, renameSession: renameSession, removeSessions: removeSessions, archiveSessions: archiveSessions, sessionFiles: sessionFiles, startSession: startSession, startAuthoringSession: startAuthoringSession, openAgentTeamBuilder: openAgentTeamBuilder, children: renderSlot('main', {}, { entryKey: activeMainPanel ?? 'conversation' }) })
+                    : renderSlot('quantskills.page', {}) }), _jsx("div", { className: css.rootDetails, children: renderSlot('rightbar', { width: detailsReservation || 400, viewportWidth: window.innerWidth, canShow: detailsOpen }) }), _jsx("div", { className: css.rootResults, "data-open": resultsVisible || undefined, onPointerDown: (event) => {
                     if (event.target === event.currentTarget)
                         actions.closeResults();
                 }, children: resultsVisible ? renderSlot('quantskills.results', {}) : null }), _jsx("div", { className: css.rootOverlay, children: renderSlot('shell.overlay', {}) })] });
@@ -710,7 +712,7 @@ export function QuantSkillsPluginFrame({ useView, useLayout, useCatalog, useBoun
     const background = useMemo(() => resolveQuantSkillsBackground(colorScheme, lightBackground, darkBackground), [colorScheme, darkBackground, lightBackground]);
     const displayNameOverrides = useView(state => state.assetDisplayNameOverrides);
     const resultsOpen = useLayout(state => state.resultsOpen);
-    const currentSessionId = useSessions(state => state.current);
+    const currentSessionId = useSessions(state => selectedSession(state));
     const catalogSnapshot = useCatalog(snapshot => snapshot);
     const catalog = useMemo(() => applyAssetDisplayNameOverrides(catalogSnapshot, displayNameOverrides), [catalogSnapshot, displayNameOverrides]);
     const plainArchives = useBoundSessions(state => state.plainArchives);
@@ -1130,7 +1132,7 @@ function HomePage(props) {
     const [applicationUpdateError, setApplicationUpdateError] = useState();
     const [featuredActionError, setFeaturedActionError] = useState();
     const [featuredCategory, setFeaturedCategory] = useState('all');
-    const currentSessionId = props.useSessions(state => state.current);
+    const currentSessionId = props.useSessions(state => selectedSession(state));
     const currentBound = props.boundSessions.archives.find(archive => archive.sessionId === currentSessionId);
     const currentAgent = props.agents.archives.find(archive => archive.sessionId === currentSessionId);
     const activeSkills = props.boundSessions.archives.filter(archive => archive.running && !archive.archived);
@@ -1687,25 +1689,24 @@ function ConversationArchiveGroup({ title, rows, props, open }) {
 function ParallelPage(props) {
     const [filter, setFilter] = useState('all');
     const [replyDrawerOpen, setReplyDrawerOpen] = useState(false);
-    const currentSessionId = props.useSessions(state => state.current);
-    const sessionById = props.useSessions(state => state.byId);
-    const pendingInteractions = props.useSessionPendingInteraction(state => state);
+    const currentSessionId = props.useSessions(state => selectedSession(state));
+    const pendingInteractions = props.useSessionStatus(state => state);
     const rows = [
         ...props.boundSessions.archives.filter(archive => !archive.archived).map(archive => ({
             kind: 'skill',
             archive,
-            state: pendingInteractions.has(archive.sessionId)
+            state: pendingInteractions.get(archive.sessionId)?.pendingInteraction !== undefined
                 ? 'waiting'
-                : sessionById[archive.sessionId]?.completed === true
+                : pendingInteractions.get(archive.sessionId)?.completionUnread === true
                     ? 'completed'
                     : archive.runState,
         })),
         ...props.agents.archives.filter(archive => !archive.archived).map(archive => ({
             kind: 'agent',
             archive,
-            state: pendingInteractions.has(archive.sessionId)
+            state: pendingInteractions.get(archive.sessionId)?.pendingInteraction !== undefined
                 ? 'waiting'
-                : sessionById[archive.sessionId]?.completed === true
+                : pendingInteractions.get(archive.sessionId)?.completionUnread === true
                     ? 'completed'
                     : archive.runState,
         })),
@@ -1757,7 +1758,7 @@ function ParallelPage(props) {
                     ? _jsx("p", { className: css.muted, children: "\u5F53\u524D\u6CA1\u6709\u6B64\u72B6\u6001\u7684\u4F1A\u8BDD\u3002" })
                     : group.rows.map(row => _jsx(ParallelRow, { row: row, label: row.kind === 'skill'
                             ? assetTitle(props.catalog, row.archive.binding.assetId)
-                            : row.archive.agent.name, onOpen: () => { open(row.archive.sessionId); }, state: row.state }, row.archive.sessionId)) }, group.id))), replyDrawerOpen && _jsxs("aside", { className: css.replyDrawer, "aria-label": "\u7B49\u5F85\u56DE\u590D\u4F1A\u8BDD", children: [_jsxs("header", { children: [_jsxs("div", { children: [_jsx("h2", { children: "\u7B49\u5F85\u4F60\u7684\u56DE\u590D" }), _jsx("p", { children: "\u8FD9\u4E9B\u4F1A\u8BDD\u76F8\u4E92\u72EC\u7ACB\uFF0C\u53EF\u9010\u4E2A\u5904\u7406\u3002" })] }), _jsx("button", { type: "button", "aria-label": "\u5173\u95ED\u7B49\u5F85\u56DE\u590D", onClick: () => { setReplyDrawerOpen(false); }, children: _jsx(X, {}) })] }), waiting.map(row => _jsxs("button", { type: "button", onClick: () => { setReplyDrawerOpen(false); open(row.archive.sessionId); }, children: [row.kind === 'skill' ? _jsx(SkillMark, { small: true }) : _jsx(CapabilityIcon, { kind: "agent" }), _jsxs("span", { children: [_jsx("b", { children: row.archive.title ?? (row.kind === 'skill' ? row.archive.binding.assetId : row.archive.agent.name) }), _jsx("small", { children: pendingInteractions.get(row.archive.sessionId)?.kind ?? '需要你的输入' })] }), _jsx(CaretRight, {})] }, row.archive.sessionId))] })] });
+                            : row.archive.agent.name, onOpen: () => { open(row.archive.sessionId); }, state: row.state }, row.archive.sessionId)) }, group.id))), replyDrawerOpen && _jsxs("aside", { className: css.replyDrawer, "aria-label": "\u7B49\u5F85\u56DE\u590D\u4F1A\u8BDD", children: [_jsxs("header", { children: [_jsxs("div", { children: [_jsx("h2", { children: "\u7B49\u5F85\u4F60\u7684\u56DE\u590D" }), _jsx("p", { children: "\u8FD9\u4E9B\u4F1A\u8BDD\u76F8\u4E92\u72EC\u7ACB\uFF0C\u53EF\u9010\u4E2A\u5904\u7406\u3002" })] }), _jsx("button", { type: "button", "aria-label": "\u5173\u95ED\u7B49\u5F85\u56DE\u590D", onClick: () => { setReplyDrawerOpen(false); }, children: _jsx(X, {}) })] }), waiting.map(row => _jsxs("button", { type: "button", onClick: () => { setReplyDrawerOpen(false); open(row.archive.sessionId); }, children: [row.kind === 'skill' ? _jsx(SkillMark, { small: true }) : _jsx(CapabilityIcon, { kind: "agent" }), _jsxs("span", { children: [_jsx("b", { children: row.archive.title ?? (row.kind === 'skill' ? row.archive.binding.assetId : row.archive.agent.name) }), _jsx("small", { children: pendingInteractions.get(row.archive.sessionId)?.pendingInteraction?.kind ?? '需要你的输入' })] }), _jsx(CaretRight, {})] }, row.archive.sessionId))] })] });
 }
 function ParallelSection({ title, count, children }) {
     return _jsxs("section", { className: css.parallelSection, children: [_jsxs("h2", { children: [title, " ", _jsx("mark", { children: count })] }), _jsxs("div", { className: css.parallelHead, children: [_jsx("span", { children: "\u4F1A\u8BDD" }), _jsx("span", { children: "\u6280\u80FD" }), _jsx("span", { children: "\u72B6\u6001" }), _jsx("span", { children: "\u5F53\u524D\u72B6\u6001" }), _jsx("span", { children: "\u66F4\u65B0\u65F6\u95F4" }), _jsx("span", {})] }), children] });
@@ -2678,7 +2679,7 @@ function WorkspaceSettings({ props }) {
     const [workspaceError, setWorkspaceError] = useState();
     const defaultWorkspaceId = props.useStore(state => state.defaultWorkspaceId);
     const settingsWritable = props.useStore(state => state.settingsWritable);
-    const currentSessionId = sessions.current;
+    const currentSessionId = selectedSession(sessions);
     const current = currentSessionId === undefined ? undefined : sessions.byId[currentSessionId];
     const workspace = currentSessionId === undefined
         ? workspaces.items.at(0)

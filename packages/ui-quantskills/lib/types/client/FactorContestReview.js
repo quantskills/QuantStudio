@@ -1,4 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { selectedSession } from "./selected-session.js";
 import { useEffect, useRef, useState } from 'react';
 import { useFactorContest } from "./factor-contest.js";
 import { FactorPlans } from "./FactorPlans.js";
@@ -7,7 +8,7 @@ import { asRecord, contestTime, display } from "./contest.js";
 import css from './ContestPage.module.css';
 import { waitForCompetition } from "./competition-async.js";
 export function FactorContestReview({ useSessions, access, openContest }) {
-    const session = useSessions(s => s.current ? s.byId[s.current] : undefined), binding = session?.projectionValues?.quantSkillsPlainSession;
+    const session = useSessions(s => { const id = selectedSession(s); return id ? s.byId[id] : undefined; }), binding = session?.projectionValues?.quantSkillsPlainSession;
     if (!session || binding?.purpose !== 'factor-contest')
         return null;
     return _jsx(SessionFactorReview, { sessionId: session.id, binding: binding, running: session.running, access: access, openContest: openContest }, session.id);

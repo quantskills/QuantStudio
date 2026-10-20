@@ -1,7 +1,10 @@
 /** Read-only result facts derived from one loaded Conversation window. */
 
 import type { ChatSnapshot, ToolCallBlock, ToolResultNode } from '@deepseek-ai/dsh-client-ui-chat/client'
-import { producedForClosing } from '@deepseek-ai/dsh-client-ui-deliverables/client'
+// QS consumes the public turn-data projection, not an unexported upstream helper.
+function producedForClosing(data: DeliverablesTurnData | undefined): readonly string[] {
+  return [...new Set((data?.produced ?? []).map(item => item.path))]
+}
 import type { TurnLocation } from '@deepseek-ai/dsh-client-ui-conversation/client'
 
 interface DeliverablesTurnData {

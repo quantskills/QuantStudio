@@ -3,7 +3,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-settings'
 import {
-  QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE, QuantSkillsSettingsSchema,
+  QuantSkillsSettingsSchema,
 } from './appearance-settings.ts'
 
 export {
@@ -29,12 +29,6 @@ export {
   type QuantSkillsLightBackground, type QuantSkillsSettings,
 } from './appearance-settings.ts'
 
-/** Register the durable QuantSkills appearance section when settings are composed. */
-export function apply(ctx: Context): void {
-  ctx.inject(['settings'], (settingsCtx) => {
-    settingsCtx.settings.register(
-      QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE,
-      QuantSkillsSettingsSchema,
-    )
-  })
-}
+/** Settings are owned by the mounted Profile entry in DSH 0.2. */
+export const Config = QuantSkillsSettingsSchema.volatile()
+export function apply(_ctx: Context): void {}

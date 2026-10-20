@@ -3,7 +3,7 @@ import { createRequire } from 'node:module'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 
-const bundle = clientBundle('@deepseek-ai/dsh-client-ui-quantskills', ['lib/types/index.js', 'lib/types/invariant.js'])
+const bundle = clientBundle('@deepseek-ai/dsh-client-ui-quantskills', ['lib/types/index.js'])
 const require = createRequire(import.meta.url)
 export default (options: Parameters<typeof bundle>[0]) => bundle(options).map(config => ({
   ...config,

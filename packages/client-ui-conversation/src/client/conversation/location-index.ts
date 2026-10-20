@@ -1,11 +1,12 @@
 import {
-  type SessionEventLike, type SessionEventLikeEntry,
+  type AssistantLiveChunkEvent, type SessionEventLike, type SessionEventLikeEntry,
 } from '@deepseek-ai/dsh-api-session-controller/client'
+import { notifySubscribers } from '@deepseek-ai/dsh-client-store'
 import type { SessionEvent } from '@deepseek-ai/dsh-session/types'
 import type {
   ConversationLocation, ConversationLocationData,
-  ConversationLocationDataStore, ConversationStepDataMap, ConversationTimelineSnapshot,
-  ConversationTurnDataMap, StepLocation, TurnLocation,
+  ConversationLocationDataSource, ConversationLocationDataStore, ConversationStepDataMap,
+  ConversationTimelineSnapshot, ConversationTurnDataMap, StepLocation, TurnLocation,
 } from '../contract/conversation.ts'
 
 interface OwnedLocationData {
@@ -20,17 +21,57 @@ export interface ConversationLocationDataChange {
   readonly next: ConversationLocationData | null
 }
 
+class MutableLocationDataSource implements ConversationLocationDataSource<unknown> {
+  private readonly listeners = new Set<() => void>()
+  private published: unknown
+
+  constructor(
+    private readonly store: MutableLocationDataStore,
+    private readonly key: string,
+  ) {
+    this.published = store.get(key)
+  }
+
+  readonly getSnapshot = (): unknown => this.store.get(this.key)
+
+  readonly subscribe = (listener: () => void): (() => void) => {
+    this.listeners.add(listener)
+    return () => { this.listeners.delete(listener) }
+  }
+
+  publish(): void {
+    const next = this.getSnapshot()
+    if (this.published === next) return
+    this.published = next
+    notifySubscribers(this.listeners, `[ui-conversation] Location data ${this.key}`)
+  }
+}
+
 class MutableLocationDataStore {
   private entries = new Map<string, OwnedLocationData>()
+  private readonly sources = new Map<string, MutableLocationDataSource>()
+  private readonly dirtyKeys = new Set<string>()
+
+  constructor(private readonly markDirty: (store: MutableLocationDataStore) => void) {}
 
   get(key: string): unknown {
     return this.entries.get(key)?.value
+  }
+
+  source(key: string): ConversationLocationDataSource<unknown> {
+    let source = this.sources.get(key)
+    if (source === undefined) {
+      source = new MutableLocationDataSource(this, key)
+      this.sources.set(key, source)
+    }
+    return source
   }
 
   remove(owner: string, key: string): boolean {
     const current = this.entries.get(key)
     if (current?.owner !== owner) return false
     this.entries.delete(key)
+    this.changed(key)
     return true
   }
 
@@ -41,22 +82,32 @@ class MutableLocationDataStore {
     }
     if (current?.value === value) return false
     this.entries.set(key, { owner, value })
+    this.changed(key)
     return true
   }
 
   replace(entries: ReadonlyMap<string, OwnedLocationData>): boolean {
-    let changed = this.entries.size !== entries.size
-    if (!changed) {
-      for (const [key, value] of entries) {
-        const current = this.entries.get(key)
-        if (current?.owner !== value.owner || current.value !== value.value) {
-          changed = true
-          break
-        }
-      }
+    const changedKeys: string[] = []
+    for (const key of new Set([...this.entries.keys(), ...entries.keys()])) {
+      const current = this.entries.get(key)
+      const next = entries.get(key)
+      if (current?.owner !== next?.owner || current?.value !== next?.value) changedKeys.push(key)
     }
-    if (changed) this.entries = new Map(entries)
-    return changed
+    if (changedKeys.length === 0) return false
+    this.entries = new Map(entries)
+    for (const key of changedKeys) this.changed(key)
+    return true
+  }
+
+  publish(): void {
+    const dirty = [...this.dirtyKeys]
+    this.dirtyKeys.clear()
+    for (const key of dirty) this.sources.get(key)?.publish()
+  }
+
+  private changed(key: string): void {
+    this.dirtyKeys.add(key)
+    this.markDirty(this)
   }
 }
 
@@ -64,6 +115,7 @@ interface Coordinates {
   readonly turn?: number
   readonly step?: number
   readonly session?: true
+  location: ConversationLocation | undefined
 }
 
 interface StepDraft {
@@ -87,14 +139,19 @@ const UNRESOLVED_LOCATION = { kind: 'unresolved' } as const
 
 function payloadCoordinates(event: SessionEventLike): Coordinates {
   const data = event.data as unknown as { turn?: unknown; step?: unknown }
-  if (data.turn === null) return { session: true }
+  if (data.turn === null) return { session: true, location: undefined }
   const turn = Number.isSafeInteger(data.turn) && (data.turn as number) >= 0
     ? data.turn as number
     : undefined
   const step = Number.isSafeInteger(data.step) && (data.step as number) >= 0
     ? data.step as number
     : undefined
-  return { ...turn === undefined ? {} : { turn }, ...step === undefined ? {} : { step } }
+  if (turn === undefined) return step === undefined
+    ? { location: undefined }
+    : { step, location: undefined }
+  return step === undefined
+    ? { turn, location: undefined }
+    : { turn, step, location: undefined }
 }
 
 function sameReferences<T>(left: readonly T[], right: readonly T[]): boolean {
@@ -126,11 +183,13 @@ function sameLocation(left: ConversationLocation | undefined, right: Conversatio
 /** Session-owned Turn/Step timeline and event-to-Location index. */
 export class ConversationLocationIndex {
   private coordinates = new Map<number, Coordinates>()
-  private locations = new Map<number, ConversationLocation>()
   private seqsByTurn = new Map<number, Set<number>>()
+  private readonly stepsByTurn = new Map<number, Map<number, StepLocation>>()
   private timeline: ConversationTimelineSnapshot = { turnOrder: [], turns: new Map() }
   private readonly turnDataStores = new Map<number, MutableLocationDataStore>()
   private readonly stepDataStores = new Map<string, MutableLocationDataStore>()
+  private readonly dirtyDataStores = new Set<MutableLocationDataStore>()
+  private readonly changedTurns = new Set<number>()
   private currentTurn: number | undefined
   private currentStep: number | undefined
 
@@ -140,6 +199,16 @@ export class ConversationLocationIndex {
    */
   snapshot(): ConversationTimelineSnapshot {
     return this.timeline
+  }
+
+  /**
+   * Drain the Turn changes accumulated for one assembly flush.
+   * @returns Turn identities changed since the preceding drain.
+   */
+  takeChangedTurns(): readonly number[] {
+    const turns = [...this.changedTurns]
+    this.changedTurns.clear()
+    return turns
   }
 
   /**
@@ -192,13 +261,20 @@ export class ConversationLocationIndex {
     return changed
   }
 
+  /** Publish committed Location-data changes to their keyed sources. */
+  publishData(): void {
+    const dirty = [...this.dirtyDataStores]
+    this.dirtyDataStores.clear()
+    for (const store of dirty) store.publish()
+  }
+
   /**
    * Resolve the latest Location for one event.
    * @param event - event already ingested into this index.
    * @returns current Location, falling back to session when it has no Turn/Step affinity.
    */
   locationOf(event: SessionEventLike): ConversationLocation {
-    return this.locations.get(event.seq) ?? SESSION_LOCATION
+    return this.coordinates.get(event.seq)?.location ?? SESSION_LOCATION
   }
 
   /**
@@ -207,7 +283,7 @@ export class ConversationLocationIndex {
    * @returns seqs whose resolved Location changed.
    */
   rebuild(entries: readonly SessionEventLikeEntry[]): ReadonlySet<number> {
-    const previousLocations = this.locations
+    const previousCoordinates = this.coordinates
     const turns = new Map<number, TurnDraft>()
     const coordinates = new Map<number, Coordinates>()
     let currentTurn: number | undefined
@@ -257,6 +333,7 @@ export class ConversationLocationIndex {
       coordinates.set(event.seq, {
         ...turn === undefined ? {} : { turn },
         ...turn === undefined || step === undefined ? {} : { step },
+        location: undefined,
       })
       if (turn !== undefined) turnDraft(turn, event.seq)
       if (turn !== undefined && step !== undefined) stepDraft(turn, step, event.seq)
@@ -327,23 +404,32 @@ export class ConversationLocationIndex {
         }
       }
     }
+    for (const turn of new Set([...previousTurns.keys(), ...nextTurns.keys()])) {
+      if (previousTurns.get(turn) !== nextTurns.get(turn)) this.changedTurns.add(turn)
+    }
     this.timeline = sameMap && turnOrder === this.timeline.turnOrder
       ? this.timeline
       : { turnOrder, turns: nextTurns }
+    this.stepsByTurn.clear()
+    for (const [number, turn] of this.timeline.turns) {
+      this.stepsByTurn.set(number, new Map(turn.steps.map(step => [step.step, step])))
+    }
     this.coordinates = coordinates
-    this.locations = new Map()
     this.seqsByTurn = new Map()
     for (const { event } of entries) {
-      const coordinates = this.coordinates.get(event.seq)
-      if (coordinates?.turn !== undefined) this.indexTurnSeq(coordinates.turn, event.seq)
-      this.locations.set(event.seq, this.resolve(event.seq))
+      const coordinates = this.coordinates.get(event.seq) as Coordinates
+      if (coordinates.turn !== undefined) this.indexTurnSeq(coordinates.turn, event.seq)
+      coordinates.location = this.resolve(event.seq)
     }
     this.currentTurn = currentTurn
     this.currentStep = currentStep
 
     const changed = new Set<number>()
     for (const { event } of entries) {
-      if (!sameLocation(previousLocations.get(event.seq), this.locations.get(event.seq))) {
+      if (!sameLocation(
+        previousCoordinates.get(event.seq)?.location,
+        this.coordinates.get(event.seq)?.location,
+      )) {
         changed.add(event.seq)
       }
     }
@@ -382,6 +468,7 @@ export class ConversationLocationIndex {
     this.coordinates.set(event.seq, {
       turn: turnNumber,
       ...stepNumber === undefined ? {} : { step: stepNumber },
+      location: this.coordinates.get(event.seq)?.location,
     })
     this.indexTurnSeq(turnNumber, event.seq)
 
@@ -389,7 +476,8 @@ export class ConversationLocationIndex {
     let steps = previousTurn?.steps ?? []
     if (event.type === 'step/start' || event.type === 'step/end') {
       const number = event.data.step
-      const previousStep = steps.find(candidate => candidate.step === number)
+      const indexedSteps = this.stepsByTurn.get(turnNumber) ?? new Map<number, StepLocation>()
+      const previousStep = indexedSteps.get(number)
       const candidate: StepLocation = {
         turn: turnNumber,
         step: number,
@@ -399,6 +487,8 @@ export class ConversationLocationIndex {
         data: this.stepData(turnNumber, number),
       }
       const nextStep = sameStep(previousStep, candidate) ? previousStep as StepLocation : candidate
+      indexedSteps.set(number, nextStep)
+      this.stepsByTurn.set(turnNumber, indexedSteps)
       const index = steps.findIndex(step => step.step === number)
       steps = index < 0
         ? [...steps, nextStep]
@@ -421,12 +511,14 @@ export class ConversationLocationIndex {
       ? [...this.timeline.turnOrder, turnNumber]
       : this.timeline.turnOrder
     this.timeline = { turnOrder, turns }
+    if (turn !== previousTurn) this.changedTurns.add(turnNumber)
 
     const changed = new Set<number>()
     for (const seq of this.seqsByTurn.get(turnNumber) ?? []) {
-      const previous = this.locations.get(seq)
+      const coordinates = this.coordinates.get(seq) as Coordinates
+      const previous = coordinates.location
       const next = this.resolve(seq)
-      this.locations.set(seq, next)
+      coordinates.location = next
       if (!sameLocation(previous, next)) changed.add(seq)
     }
 
@@ -441,14 +533,13 @@ export class ConversationLocationIndex {
   }
 
   /**
-   * Index one non-boundary tail event without rescanning the window.
+   * Index one non-boundary tail event without scanning the window or the Turn's Steps.
    * @param event - contiguous appended event.
    */
-  appendNonBoundary(event: SessionEvent): void {
+  appendNonBoundary(event: SessionEventLike): void {
     const explicit = payloadCoordinates(event)
     if (explicit.session === true) {
-      this.coordinates.set(event.seq, {})
-      this.locations.set(event.seq, SESSION_LOCATION)
+      this.coordinates.set(event.seq, { location: SESSION_LOCATION })
       return
     }
     if (explicit.turn !== undefined) {
@@ -458,18 +549,56 @@ export class ConversationLocationIndex {
     }
     const turn = explicit.turn ?? this.currentTurn
     const step = explicit.step ?? (turn === this.currentTurn ? this.currentStep : undefined)
-    this.coordinates.set(event.seq, {
+    const coordinates: Coordinates = explicit.turn !== undefined && explicit.step !== undefined ? explicit : {
       ...turn === undefined ? {} : { turn },
       ...turn === undefined || step === undefined ? {} : { step },
-    })
+      location: undefined,
+    }
+    this.coordinates.set(event.seq, coordinates)
     if (turn !== undefined) this.indexTurnSeq(turn, event.seq)
-    this.locations.set(event.seq, this.resolve(event.seq))
+    coordinates.location = this.resolve(event.seq)
+  }
+
+  /**
+   * Remove indexed Assistant transients without rebuilding the Turn/Step timeline.
+   * @param events - transient events retired by one Assistant settlement.
+   */
+  removeAssistantTransients(events: readonly AssistantLiveChunkEvent[]): void {
+    for (const event of events) {
+      const turn = this.coordinates.get(event.seq)?.turn
+      if (turn !== undefined) {
+        const seqs = this.seqsByTurn.get(turn)
+        seqs?.delete(event.seq)
+        if (seqs?.size === 0) this.seqsByTurn.delete(turn)
+      }
+      this.coordinates.delete(event.seq)
+    }
+  }
+
+  /**
+   * Index one durable Assistant settlement inserted before an already visible tail.
+   * @param event - message or attempt settlement with explicit Turn and Step coordinates.
+   */
+  insertAssistantSettlement(
+    event: SessionEvent<'assistant/message'> | SessionEvent<'assistant/attempt'>,
+  ): void {
+    const coordinates: Coordinates = {
+      turn: event.data.turn,
+      step: event.data.step,
+      location: undefined,
+    }
+    this.coordinates.set(event.seq, coordinates)
+    this.indexTurnSeq(event.data.turn, event.seq)
+    coordinates.location = this.resolve(event.seq)
   }
 
   private indexTurnSeq(turn: number, seq: number): void {
-    const current = this.seqsByTurn.get(turn) ?? new Set<number>()
+    let current = this.seqsByTurn.get(turn)
+    if (current === undefined) {
+      current = new Set<number>()
+      this.seqsByTurn.set(turn, current)
+    }
     current.add(seq)
-    this.seqsByTurn.set(turn, current)
   }
 
   private turnData(turn: number): ConversationLocationDataStore<ConversationTurnDataMap> {
@@ -481,15 +610,22 @@ export class ConversationLocationIndex {
   }
 
   private mutableTurnData(turn: number): MutableLocationDataStore {
-    const current = this.turnDataStores.get(turn) ?? new MutableLocationDataStore()
+    const current = this.turnDataStores.get(turn) ?? this.createDataStore(turn)
     this.turnDataStores.set(turn, current)
     return current
   }
 
   private mutableStepData(key: string): MutableLocationDataStore {
-    const current = this.stepDataStores.get(key) ?? new MutableLocationDataStore()
+    const current = this.stepDataStores.get(key) ?? this.createDataStore(Number(key.slice(0, key.indexOf(':'))))
     this.stepDataStores.set(key, current)
     return current
+  }
+
+  private createDataStore(turn: number): MutableLocationDataStore {
+    return new MutableLocationDataStore((store) => {
+      this.dirtyDataStores.add(store)
+      this.changedTurns.add(turn)
+    })
   }
 
   private storeFor(data: ConversationLocationData): MutableLocationDataStore {
@@ -504,7 +640,7 @@ export class ConversationLocationIndex {
     const turn = this.timeline.turns.get(coordinates.turn)
     if (turn === undefined) return UNRESOLVED_LOCATION
     if (coordinates.step === undefined) return { kind: 'turn', turn }
-    const step = turn.steps.find(candidate => candidate.step === coordinates.step)
+    const step = this.stepsByTurn.get(coordinates.turn)?.get(coordinates.step)
     return step === undefined ? { kind: 'turn', turn } : { kind: 'step', turn, step }
   }
 }

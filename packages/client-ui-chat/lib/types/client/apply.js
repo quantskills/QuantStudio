@@ -1,42 +1,95 @@
-import { resolveWorkspacePath } from '@deepseek-ai/dsh-util-workspace-path';
+import { createSnapshotStore } from '@deepseek-ai/dsh-client-store';
+import { fileAddressFor } from '@deepseek-ai/dsh-util-workspace-path';
 import { EMPTY_CHAT_SNAPSHOT } from "./contract/snapshot.js";
 import { ApprovalCommand } from "./chat/ApprovalCommand.js";
 import { ChatView } from "./chat/ChatView.js";
+import { ChatFlow } from "./chat/ChatFlow.js";
 import { registerChatNodeRenderers } from "./chat/register-node-renderers.js";
-import { StatsLine } from "./chat/StatsLine.js";
+import { UserContent } from "./chat/UserContent.js";
+import { ActivityPill, UsagePill } from "./chat/StatsPills.js";
 import { registerConversationNodes } from "./conversation-nodes/register.js";
-import { DetailsPanel } from "./details/DetailsPanel.js";
+import { QuotaNoticeHost } from "./chat/QuotaNoticeHost.js";
 import { en, NS, zh } from "./locale.js";
 import { TranscriptViewRow } from "./settings/TranscriptViewRow.js";
 import { createChatStore } from "./stores.js";
 import { TranscriptViewPolicy } from "./transcript-view.js";
-import { CHAT_SETTINGS_NAMESPACE } from "../chat-settings.js";
-const CHAT_NODE_INJECT = {
+import { derivePresentationPolicy } from "./presentation-policy.js";
+import { CHAT_SETTINGS_NAMESPACE, DEFAULT_LINK_OPENING, DEFAULT_TRANSCRIPT_VIEW_MODE } from "../chat-settings.js";
+import { LinkOpeningRow } from "./settings/LinkOpeningRow.js";
+import { PerformanceUsageRow } from "./settings/PerformanceUsageRow.js";
+import { PerformanceUsagePolicy } from "./performance-usage.js";
+import { useTurnDataValue } from "./chat/use-turn-data.js";
+import { bindDisclosure } from "./chat/use-disclosure.js";
+import { useFlowHidden, useMotionHidden } from "./chat/flow-motion.js";
+/** Bind group and header visibility to the viewport of one flow render. */
+export const CHAT_FLOW_INJECT = {
     hooks: {
-        turnData: ({ useChat }, nodeKey) => function useTurnData(key) {
-            return useChat((snapshot) => {
-                const location = snapshot.nodes.get(nodeKey)?.location;
-                return location?.kind === 'turn' || location?.kind === 'step'
-                    ? location.turn.data.get(key)
-                    : undefined;
-            });
+        groupAction: (_standard, { motion }) => function useGroupAction(hidden, reveal) {
+            return useFlowHidden(hidden, reveal, motion);
         },
+        groupHeaderAction: (_standard, { motion }) => function useGroupHeaderAction(ref, hidden) {
+            useMotionHidden(ref, hidden, motion);
+        },
+    },
+};
+/** Bind node-local sources and forward the flow's existing visibility hook. */
+export const CHAT_NODE_INJECT = {
+    hooks: {
+        turnData: (_standard, { turnData }) => function useTurnData(key) {
+            return useTurnDataValue(turnData, key);
+        },
+        disclosure: (_standard, { disclosureReset }) => bindDisclosure(disclosureReset),
+        groupAction: (_standard, { useGroupAction }) => useGroupAction,
     },
 };
 /** Services required by the Chat target and its presentation registrations. */
 export const inject = [
-    'slots', 'sessions', 'uiSession', 'uiConversation', 'layout', 'locale',
-    'settingsScope', 'remote', 'remote.session',
+    'slots', 'sessions', 'uiWorkspace', 'uiSession', 'uiConversation', 'locale',
+    'configForms', 'remote', 'remote.session', 'sidebarRight',
 ];
 /**
  * Mount all Chat-owned contributions.
  * @param ctx - Client root context.
  */
 export function apply(ctx) {
+    const quotaNotice = createSnapshotStore(null);
+    let quotaNoticeSeq = 0;
+    // Each hold is its own token, so a release can only drop the hold it was
+    // issued for: one arriving after a dismissal or a later acquisition leaves
+    // that newer hold alone.
+    const quotaNoticeHolds = new Set();
     const chatSources = new WeakMap();
+    const quotaSubscriptions = new Set();
+    ctx.effect(() => async () => {
+        await Promise.all([...quotaSubscriptions].map(dispose => dispose()));
+    }, 'ui-chat: live quota notices');
     const chatSource = (binding) => {
         let source = chatSources.get(binding);
         if (source === undefined) {
+            // One live quota failure publishes one frame-wide notice; history
+            // replacement or paging never does, because an old failure scrolling
+            // back into view is not news.
+            const dispose = binding.ctx.effect(() => {
+                const stop = binding.eventSource.subscribe(() => {
+                    const { change } = binding.eventSource.getSnapshot();
+                    if (change.kind !== 'append')
+                        return;
+                    for (const { event } of change.entries) {
+                        if (event.type !== 'turn/end' || event.data.reason.kind !== 'error')
+                            continue;
+                        const { code } = event.data.reason.error;
+                        if (quotaNoticeHolds.size > 0 || (code !== 'QUOTA' && code !== 'ACCOUNT_QUOTA'))
+                            continue;
+                        quotaNotice.set({ code, seq: ++quotaNoticeSeq });
+                    }
+                });
+                return () => {
+                    stop();
+                    chatSources.delete(binding);
+                    quotaSubscriptions.delete(dispose);
+                };
+            }, 'ui-chat: Provider binding quota notices');
+            quotaSubscriptions.add(dispose);
             const target = ctx.uiConversation.binding(binding).target('chat');
             source = {
                 getSnapshot: () => target.getSnapshot() ?? EMPTY_CHAT_SNAPSHOT,
@@ -47,7 +100,6 @@ export function apply(ctx) {
         return source;
     };
     registerConversationNodes(ctx);
-    registerChatNodeRenderers(ctx);
     ctx.uiSession.provide({
         hooks: ['chat'],
         resolve: binding => ({ hooks: { chat: chatSource(binding) } }),
@@ -56,17 +108,92 @@ export function apply(ctx) {
     const t = ctx.locale.bind(NS);
     const chatStore = createChatStore();
     const chatScrollPositions = new Map();
-    const transcriptView = new TranscriptViewPolicy(ctx.settingsScope.bind({ namespace: CHAT_SETTINGS_NAMESPACE }));
+    const chatSettings = ctx.configForms.get(CHAT_SETTINGS_NAMESPACE);
+    const linkOpening = createSnapshotStore(chatSettings.getSnapshot().value?.linkOpening ?? DEFAULT_LINK_OPENING);
+    ctx.effect(() => chatSettings.subscribe(() => {
+        const accepted = chatSettings.getSnapshot().value?.linkOpening;
+        if (accepted !== undefined)
+            linkOpening.set(accepted);
+    }));
+    ctx.inject(['sidebarRightTabs'], (scope) => {
+        const tabs = scope.sidebarRightTabs;
+        const browserAvailable = {
+            getSnapshot: () => tabs.get('browser') !== undefined,
+            subscribe: listener => tabs.subscribe(listener),
+        };
+        scope.slots.inject('settings.general.item', () => scope.slots.register({
+            name: 'settings.general.item',
+            id: 'link-opening',
+            order: 17,
+            locale: NS,
+            inject: () => ({
+                hooks: { linkOpening, browserAvailable },
+                setLinkOpening: (destination) => {
+                    linkOpening.set(destination);
+                    void chatSettings.set('linkOpening', destination).catch((_error) => {
+                        // The local choice remains usable when persistence is unavailable.
+                    });
+                },
+            }),
+        }, LinkOpeningRow));
+    });
+    const transcriptView = new TranscriptViewPolicy(chatSettings, 'dshDesktop' in globalThis ? 'standard' : DEFAULT_TRANSCRIPT_VIEW_MODE);
+    const presentation = derivePresentationPolicy(transcriptView.mode, transcriptView.collapseTiming);
+    const performancePolicy = new PerformanceUsagePolicy(chatSettings);
+    ctx.effect(() => () => { transcriptView.dispose(); performancePolicy.dispose(); });
+    const performanceUsage = performancePolicy.mode;
+    registerChatNodeRenderers(ctx, performanceUsage, presentation);
+    ctx.slots.registerFactory({
+        name: 'conversation.chat.user.content', scope: 'session', locale: NS,
+        children: { 'conversation.chat.user.images': { kind: 'single', scope: 'session' } },
+    }, UserContent);
+    ctx.slots.inject('settings.general.item', () => ctx.slots.register({
+        name: 'settings.general.item',
+        id: 'performance-usage',
+        order: 30,
+        locale: NS,
+        inject: () => ({
+            hooks: { performanceUsage },
+            setPerformanceUsage: (mode) => { performancePolicy.setMode(mode); },
+        }),
+    }, PerformanceUsageRow));
     ctx.slots.inject('settings.general.item', () => ctx.slots.register({
         name: 'settings.general.item',
         id: 'transcript-view',
         order: 12,
         locale: NS,
         inject: () => ({
-            hooks: { transcriptView: transcriptView.mode },
+            hooks: { transcriptView: transcriptView.mode, collapseTiming: transcriptView.collapseTiming },
             setTranscriptView: (mode) => { transcriptView.setMode(mode); },
+            setCollapseTiming: (timing) => { transcriptView.setCollapseTiming(timing); },
         }),
     }, TranscriptViewRow));
+    const nodeSources = (binding) => {
+        const chat = chatSource(binding);
+        const conversation = ctx.uiConversation.binding(binding);
+        return {
+            hooks: { presentation },
+            keyedHooks: {
+                chatNode: key => chat.getSnapshot().nodes.source(key),
+                chatNodeBottom: key => chat.getSnapshot().nodes.bottomSource(key),
+                chatNodeProcess: key => chat.getSnapshot().nodes.processSource(key),
+                chatGroup: key => conversation.snapshot.getSnapshot().views.grouped('chat')?.groupSource(key),
+            },
+        };
+    };
+    ctx.slots.inject('conversation.chat.flow', () => ctx.slots.register({
+        name: 'conversation.chat.flow', locale: NS, store: chatStore,
+        children: {
+            'conversation.chat.turnStatus': { kind: 'single', scope: 'root' },
+            'conversation.chat.node': { kind: 'keyed', scope: 'session', inject: CHAT_NODE_INJECT },
+        },
+        inject: (sessionId) => {
+            const binding = ctx.sessions.binding(sessionId);
+            if (binding === undefined)
+                throw new Error(`ui-chat: unknown session "${sessionId}"`);
+            return nodeSources(binding);
+        },
+    }, ChatFlow));
     ctx.slots.inject('conversation.view', () => {
         const disposeView = ctx.slots.register({
             name: 'conversation.view',
@@ -75,31 +202,49 @@ export function apply(ctx) {
             label: () => t('view.chat'),
             locale: NS,
             children: {
-                'conversation.chat.node': { kind: 'keyed', scope: 'session', inject: CHAT_NODE_INJECT },
-                'conversation.chat.turnStatus': { kind: 'single', scope: 'root' },
-                'conversation.message.images': { kind: 'single', scope: 'session' },
+                'conversation.chat.flow': { kind: 'single', scope: 'session', inject: CHAT_FLOW_INJECT },
             },
             store: chatStore,
-            inject: (sessionId, actions) => {
-                const session = ctx.sessions.binding(sessionId)?.session;
-                if (session === undefined)
+            inject: (sessionId) => {
+                const binding = ctx.sessions.binding(sessionId);
+                if (binding === undefined)
                     throw new Error(`ui-chat: unknown session "${sessionId}"`);
+                const session = binding.session;
+                const chat = chatSource(binding);
                 return {
-                    hooks: { transcriptView: transcriptView.mode },
-                    openDetails: (target) => {
-                        actions.select(target);
-                        ctx.layout.openDetails();
-                    },
-                    fileMentions: (owner) => ctx.get('chatFileMentions')?.forClosing(owner),
-                    openFile: async (path) => {
+                    ...nodeSources(binding),
+                    fileMentions: (owner) => ctx.get('chatFileMentions')?.forClosing(owner, sessionId),
+                    // Files open in the right Sidebar, not in a desktop application: the
+                    // content stays in the product, beside the conversation that produced
+                    // it. A relative path, or an absolute one inside the session's
+                    // workspace, is addressed under this session's scope,
+                    // `dsh-resource://file/session/<id>/<path>`; an absolute path
+                    // elsewhere keeps its absolute spelling in the same Session's address.
+                    // Which tab type claims the
+                    // address is the Sidebar's decision, not this call site's.
+                    // A line travels as a navigation parameter, not as part of the
+                    // address: the file is one piece of content whether it is opened at
+                    // its top or at line 400, so the same tab is revealed and told where
+                    // to land.
+                    openFile: async (path, options) => {
                         const cwd = ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd;
-                        const result = await ctx.remote.session.openWorkspacePath({
-                            path: resolveWorkspacePath(cwd, path),
-                        });
-                        if (!result.ok)
-                            throw new Error(`path open failed: ${result.error.message}`);
+                        const url = fileAddressFor(sessionId, cwd, path);
+                        if (options?.line === undefined)
+                            ctx.sidebarRight.openResource(url);
+                        else
+                            ctx.sidebarRight.openResource(url, { params: { line: options.line } });
+                        await Promise.resolve();
+                    },
+                    openExternalLink: (url) => {
+                        if (linkOpening.getSnapshot() === 'sidebar' && ctx.get('sidebarRightTabs')?.get('browser') !== undefined) {
+                            ctx.sidebarRight.openTab('browser', { params: { url } });
+                        }
+                        else {
+                            window.open(url, '_blank', 'noopener,noreferrer');
+                        }
                     },
                     loadOlder: () => { void session.loadOlder(); },
+                    loadThrough: seq => session.loadThrough(seq),
                     loadImage: Object.assign((attachment) => ctx.uiConversation.imageUrl(sessionId, attachment), { peek: (attachment) => ctx.uiConversation.peekImageUrl(sessionId, attachment) }),
                     chatScroll: {
                         save: (position) => {
@@ -111,8 +256,12 @@ export function apply(ctx) {
                         read: () => chatScrollPositions.get(sessionId) ?? null,
                     },
                     forkAt: (seq) => {
-                        ctx.sessions.fork({ sessionId, atSeq: seq, increaseTitle: true })
-                            .then((childId) => { ctx.sessions.open(childId); })
+                        const turn = [...chat.getSnapshot().timeline.turns.values()].find(turn => turn.end?.seq === seq);
+                        const messageId = turn?.data.get('turn-tail')?.closing?.finalNode.messageId;
+                        ctx.sessions.fork({ sessionId, atSeq: seq, increaseTitle: true, onCreated: (childId) => {
+                                ctx.get('productAnalytics')?.track('branch_session_click', { session_id: childId, parent_session_id: sessionId, ...messageId === undefined ? {} : { parent_message_id: messageId }, click_position: 'footer' });
+                            } })
+                            .then((childId) => { ctx.uiWorkspace.openSession(childId); })
                             .catch(() => {
                             // Fork or child-title failure leaves the source view unchanged.
                         });
@@ -122,16 +271,35 @@ export function apply(ctx) {
         }, ChatView);
         return disposeView;
     });
-    ctx.slots.inject('conversation.composer.dock', () => ctx.slots.register({
-        name: 'conversation.composer.dock', id: 'stats', order: 0, locale: NS,
-    }, StatsLine));
+    // The quota notice host lives in the frame-wide layer so a notice outlives
+    // the Chat panel that reported it. Its chain child lets a package with a
+    // billing surface claim the one live notice without importing Chat.
+    ctx.slots.inject('shell.overlay', () => ctx.slots.register({
+        name: 'shell.overlay', id: 'chat.quota-notice', locale: NS,
+        children: { 'shell.quota-notice': { kind: 'chain', scope: 'root' } },
+        inject: () => ({
+            hooks: { notice: quotaNotice },
+            dismissNotice: () => { quotaNoticeHolds.clear(); quotaNotice.set(null); },
+            keepNoticeOpen: () => {
+                // Nothing live to retain: later failures must still publish.
+                if (quotaNotice.getSnapshot() === null)
+                    return () => { };
+                const token = Symbol('ui-chat quota notice hold');
+                quotaNoticeHolds.add(token);
+                return () => { quotaNoticeHolds.delete(token); };
+            },
+        }),
+    }, QuotaNoticeHost));
+    // One dock entry per pill, so a plugin replaces or adds a single pill by id.
+    const statPillInject = () => ({ hooks: { performanceUsage } });
+    ctx.slots.inject('conversation.composer.dock', function* () {
+        yield ctx.slots.register({
+            name: 'conversation.composer.dock', id: 'activity', order: 0, locale: NS, inject: statPillInject,
+        }, ActivityPill);
+        yield ctx.slots.register({
+            name: 'conversation.composer.dock', id: 'usage', order: 1, locale: NS, inject: statPillInject,
+        }, UsagePill);
+    });
     ctx.slots.inject('conversation.approval.detail', () => ctx.slots.register({ name: 'conversation.approval.detail' }, ApprovalCommand));
-    ctx.slots.inject('details', () => ctx.slots.register({
-        name: 'details',
-        locale: NS,
-        children: { 'conversation.details.tool': { kind: 'single', scope: 'session' } },
-        store: chatStore,
-        inject: () => ({ closeDetails: () => { ctx.layout.closeDetails(); } }),
-    }, DetailsPanel));
 }
 //# sourceMappingURL=apply.js.map

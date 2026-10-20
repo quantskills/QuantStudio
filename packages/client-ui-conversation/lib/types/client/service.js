@@ -9,7 +9,8 @@
  */
 import { Service } from '@deepseek-ai/cordis';
 import { randomUUID } from '@deepseek-ai/dsh-util-crypto';
-/** Create one browser-only draft descriptor; only its id enters input state. */
+import { createSnapshotStore } from '@deepseek-ai/dsh-client-store';
+/** Create one browser-only image draft descriptor; only its id enters input state. */
 function browserDraftAttachment(file) {
     return {
         kind: 'image',
@@ -60,8 +61,8 @@ function nextPaint() {
         }
     });
 }
-/** Native canonical base64 of one browser file (FileReader data-URL encode; no main-thread byte loop). */
-function base64Of(file) {
+/** Native canonical base64 of one browser image (FileReader data-URL encode; no main-thread byte loop). */
+function base64ImageOf(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => {
@@ -91,7 +92,14 @@ export class ConversationController extends Service {
     input;
     /** The per-session composer-block registry. */
     blocks;
+    /** Live upload state per file-kind draft; images never appear here. */
+    fileUploads = createSnapshotStore({});
     draftAttachments = new Map();
+    fileUploadOperations = new Map();
+    pendingFileUploads = new Set();
+    fileUploadQueue = [];
+    activeFileUploads = 0;
+    maxConcurrentFileUploads;
     /**
      * @param ctx - owning root context (the plugin apply context; the service
      * registers itself and follows that fiber's lifetime).
@@ -103,11 +111,20 @@ export class ConversationController extends Service {
         super(ctx, 'conversation');
         this.input = config.input;
         this.blocks = config.blocks;
-        ctx.effect(() => () => {
+        this.maxConcurrentFileUploads = config.maxConcurrentFileUploads;
+        ctx.effect(() => async () => {
+            const operations = [...this.fileUploadOperations.values()];
+            for (const operation of operations)
+                operation.controller.abort();
+            await Promise.allSettled([...this.pendingFileUploads]);
+            this.fileUploadOperations.clear();
+            this.fileUploadQueue.length = 0;
             for (const attachment of this.draftAttachments.values()) {
-                revokePreview(attachment.previewUrl);
+                if (attachment.kind === 'image')
+                    revokePreview(attachment.previewUrl);
             }
             this.draftAttachments.clear();
+            this.fileUploads.set({});
         }, 'conversation draft attachments');
     }
     /**
@@ -123,51 +140,63 @@ export class ConversationController extends Service {
             throw new Error(`conversation.send failed: ${result.error.code}: ${result.error.message}`);
     }
     /**
-     * Submit ordered draft images with text through one host admission. A local
+     * Submit ordered draft attachments with text through one host admission. A local
      * submission echo enters the session snapshot synchronously; serialization
      * and the prompt round-trip start after the browser can paint it. On the
-     * echo's observed retirement the draft images hand their preview URLs to
-     * the durable image cache and leave the registry; on failure they stay
-     * registered so the composer can restore them.
+     * echo's observed retirement seeds admitted image previews into the durable
+     * cache and removes every attachment from the draft registry. On failure,
+     * every attachment remains registered so the composer can restore it.
      * @param session - target session.
      * @param text - serialized prompt text.
-     * @param imageIds - ordered draft-local attachment ids.
+     * @param attachmentIds - ordered draft-local attachment ids.
      * @param mode - queue or steer delivery selected by composer policy.
      * @param signal - optional cancellation for the complete Host admission.
      * @returns the Host admission outcome; local attachment preparation failures reject.
      */
-    async sendSession(session, text, imageIds, mode, signal) {
-        const attachments = this.draftImages(imageIds);
-        if (attachments.length !== imageIds.length) {
-            throw new Error('conversation.sendSession: one or more draft images are no longer available');
+    async sendSession(session, text, attachmentIds, mode, signal) {
+        const attachments = this.resolveDraftAttachments(attachmentIds);
+        if (attachments.length !== attachmentIds.length) {
+            throw new Error('conversation.sendSession: one or more draft attachments are no longer available');
         }
-        if (session.getSnapshot().subagent !== null) {
-            const uploaded = await this.serializeImages(attachments.map(attachment => attachment.file));
-            const content = [...uploaded, ...(text === '' ? [] : [{ type: 'text', text }])];
-            const result = await session.prompt(content, mode, signal);
-            return result.ok ? { kind: 'success' } : { kind: 'error' };
-        }
+        const uploads = this.fileUploads.getSnapshot();
+        const uploadFor = (attachment) => {
+            const upload = uploads[attachment.id];
+            if (upload === undefined || upload.status !== 'ready') {
+                throw new Error('conversation.sendSession: one or more files have not finished uploading');
+            }
+            return upload;
+        };
+        const pendingAttachments = attachments.map(attachment => attachment.kind === 'image'
+            ? {
+                type: 'image',
+                value: {
+                    previewUrl: attachment.previewUrl,
+                    ...(attachment.file.name === '' ? {} : { name: attachment.file.name }),
+                    ...(attachment.width === undefined ? {} : { width: attachment.width }),
+                    ...(attachment.height === undefined ? {} : { height: attachment.height }),
+                },
+            }
+            : { type: 'file', value: uploadFor(attachment).file });
+        const serializeAttachments = () => Promise.all(attachments.map(async (attachment) => attachment.kind === 'image'
+            ? { type: 'image', ...await this.encodeImage(attachment.file) }
+            : { type: 'file', receiptId: uploadFor(attachment).receiptId }));
         let finishRetirement;
         const retirement = attachments.length === 0
             ? undefined
             : new Promise((resolve) => { finishRetirement = resolve; });
         const submission = session.beginSubmission({
+            mode,
             text,
-            images: attachments.map(attachment => ({
-                previewUrl: attachment.previewUrl,
-                ...(attachment.file.name === '' ? {} : { name: attachment.file.name }),
-                ...(attachment.width === undefined ? {} : { width: attachment.width }),
-                ...(attachment.height === undefined ? {} : { height: attachment.height }),
-            })),
+            attachments: pendingAttachments,
             onRetire: (settlement) => {
-                this.settleSubmittedImages(session.sessionId, attachments, settlement);
+                this.settleSubmittedAttachments(session.sessionId, attachments, settlement);
                 finishRetirement?.(settlement);
             },
         });
         let content;
         try {
             await nextPaint();
-            const uploaded = await this.serializeImages(attachments.map(attachment => attachment.file));
+            const uploaded = await serializeAttachments();
             content = [...uploaded, ...(text === '' ? [] : [{ type: 'text', text }])];
         }
         catch (error) {
@@ -182,26 +211,138 @@ export class ConversationController extends Service {
         return { kind: 'success' };
     }
     /**
-     * Create runtime-only draft images and their object URLs.
-     * @param files - browser files to register after MIME validation.
+     * Create runtime-only draft attachments. Files whose browser MIME is an
+     * accepted image type become image drafts (object URL preview, bytes sent
+     * with the prompt); every other file becomes a file draft whose background
+     * upload starts immediately and remains owned by this service across Session
+     * navigation until completion or explicit removal.
+     * @param sessionId - target Agent-scope identity.
+     * @param files - browser files to register.
      * @returns ordered draft descriptors.
      */
-    createDraftImages(files) {
-        for (const file of files)
-            imageMediaType(file.type);
+    createDrafts(sessionId, files) {
         return files.map((file) => {
-            const attachment = browserDraftAttachment(file);
+            if (isImageMediaType(file.type)) {
+                const attachment = browserDraftAttachment(file);
+                this.draftAttachments.set(attachment.id, attachment);
+                probeDimensions(attachment);
+                return attachment;
+            }
+            const attachment = {
+                kind: 'file',
+                id: randomUUID(),
+                file,
+            };
             this.draftAttachments.set(attachment.id, attachment);
-            probeDimensions(attachment);
+            this.beginFileUpload(sessionId, attachment);
             return attachment;
         });
     }
     /**
-     * Resolve ordered input-state ids to runtime-owned draft images.
+     * Restart one failed file upload.
+     * @param sessionId - target Agent-scope identity.
+     * @param id - draft attachment id whose upload previously failed.
+     */
+    retryFileUpload(sessionId, id) {
+        const attachment = this.draftAttachments.get(id);
+        if (attachment === undefined || attachment.kind !== 'file')
+            return;
+        if (this.fileUploads.getSnapshot()[id]?.status !== 'error')
+            return;
+        this.beginFileUpload(sessionId, attachment);
+    }
+    /**
+     * Stage carried file drafts again for a new Session.
+     * @param sessionId - target Agent-scope identity after a Workspace switch.
+     * @param ids - carried draft attachment ids.
+     */
+    rebindDraftFiles(sessionId, ids) {
+        for (const id of ids) {
+            const attachment = this.draftAttachments.get(id);
+            if (attachment?.kind === 'file')
+                this.beginFileUpload(sessionId, attachment);
+        }
+    }
+    beginFileUpload(sessionId, attachment) {
+        this.fileUploadOperations.get(attachment.id)?.controller.abort();
+        const controller = new AbortController();
+        this.fileUploads.update((draft) => {
+            draft[attachment.id] = { status: 'uploading', loaded: 0 };
+        });
+        let settle;
+        const done = new Promise((resolve) => { settle = resolve; });
+        this.fileUploadOperations.set(attachment.id, { controller, done });
+        this.pendingFileUploads.add(done);
+        void done.then(() => { this.pendingFileUploads.delete(done); });
+        const run = async () => {
+            try {
+                if (controller.signal.aborted
+                    || this.fileUploadOperations.get(attachment.id)?.controller !== controller)
+                    return;
+                const result = await this.ctx.fileUpload.upload(sessionId, attachment.file, attachment.file.name === '' ? undefined : attachment.file.name, controller.signal, (progress) => {
+                    if (this.fileUploadOperations.get(attachment.id)?.controller !== controller)
+                        return;
+                    this.fileUploads.update((draft) => {
+                        if (!(attachment.id in draft))
+                            return;
+                        draft[attachment.id] = {
+                            status: 'uploading',
+                            loaded: progress.loaded,
+                            ...(progress.total === undefined ? {} : { total: progress.total }),
+                        };
+                    });
+                });
+                if (this.fileUploadOperations.get(attachment.id)?.controller !== controller)
+                    return;
+                this.fileUploads.update((draft) => {
+                    if (!(attachment.id in draft))
+                        return;
+                    draft[attachment.id] = result.ok
+                        ? { status: 'ready', receiptId: result.value.receiptId, file: result.value.file }
+                        : { status: 'error', message: result.error.message };
+                });
+            }
+            catch (error) {
+                if (this.fileUploadOperations.get(attachment.id)?.controller !== controller)
+                    return;
+                this.fileUploads.update((draft) => {
+                    if (!(attachment.id in draft))
+                        return;
+                    draft[attachment.id] = {
+                        status: 'error',
+                        message: error instanceof Error ? error.message : String(error),
+                    };
+                });
+            }
+            finally {
+                if (this.fileUploadOperations.get(attachment.id)?.controller === controller) {
+                    this.fileUploadOperations.delete(attachment.id);
+                }
+            }
+        };
+        this.fileUploadQueue.push({ run, settle });
+        this.pumpFileUploads();
+    }
+    /** Start queued upload Workers until the configured concurrency is occupied. */
+    pumpFileUploads() {
+        while (this.activeFileUploads < this.maxConcurrentFileUploads) {
+            const task = this.fileUploadQueue.shift();
+            if (task === undefined)
+                return;
+            this.activeFileUploads += 1;
+            void task.run().finally(() => {
+                this.activeFileUploads -= 1;
+                task.settle();
+                this.pumpFileUploads();
+            });
+        }
+    }
+    /**
+     * Resolve ordered input-state ids to runtime-owned draft attachments.
      * @param ids - draft attachment ids.
      * @returns descriptors that remain live, in requested order.
      */
-    draftImages(ids) {
+    resolveDraftAttachments(ids) {
         const attachments = [];
         for (const id of ids) {
             const attachment = this.draftAttachments.get(id);
@@ -211,37 +352,56 @@ export class ConversationController extends Service {
         return attachments;
     }
     /**
-     * Serialize ordered draft images to command-submit wire payloads without
-     * sending or releasing them (the composer releases only after the command
-     * settles successfully).
-     * @param imageIds - ordered draft-local attachment ids.
-     * @returns base64 payloads in id order.
+     * Serialize ordered draft attachments to command-submit wire payloads without
+     * sending or releasing them. Images are encoded; generic files cite receipts
+     * from their completed background uploads and never reread browser bytes.
+     * @param attachmentIds - ordered draft-local attachment ids.
+     * @returns wire payloads in id order.
      */
-    async serializeDraftImages(imageIds) {
-        const attachments = this.draftImages(imageIds);
-        if (attachments.length !== imageIds.length) {
-            throw new Error('conversation.serializeDraftImages: one or more draft images are no longer available');
+    async serializeDraftAttachments(attachmentIds) {
+        const attachments = this.resolveDraftAttachments(attachmentIds);
+        if (attachments.length !== attachmentIds.length) {
+            throw new Error('conversation.serializeDraftAttachments: one or more draft attachments are no longer available');
         }
-        return Promise.all(attachments.map(attachment => this.encodeImage(attachment.file)));
+        const uploads = this.fileUploads.getSnapshot();
+        return {
+            attachments: await Promise.all(attachments.map(async (attachment) => {
+                if (attachment.kind === 'image')
+                    return { type: 'image', ...await this.encodeImage(attachment.file) };
+                const upload = uploads[attachment.id];
+                if (upload === undefined || upload.status !== 'ready') {
+                    throw new Error('conversation.serializeDraftAttachments: one or more files have not finished uploading');
+                }
+                return { type: 'file', receiptId: upload.receiptId };
+            })),
+        };
     }
     /**
-     * Release one browser-owned draft image and preview URL.
+     * Release one browser-owned draft attachment, aborting its active upload.
      * @param id - draft attachment id.
      */
-    releaseDraftImage(id) {
+    releaseDraftAttachment(id) {
         const attachment = this.draftAttachments.get(id);
         if (attachment === undefined)
             return;
+        const operation = this.fileUploadOperations.get(id);
+        this.fileUploadOperations.delete(id);
+        operation?.controller.abort();
         this.draftAttachments.delete(id);
-        revokePreview(attachment.previewUrl);
+        if (attachment.kind === 'image') {
+            revokePreview(attachment.previewUrl);
+            return;
+        }
+        // The stored Host object stays durable; only the draft's upload state ends.
+        this.fileUploads.set(Object.fromEntries(Object.entries(this.fileUploads.getSnapshot()).filter(([key]) => key !== id)));
     }
     /**
-     * Release a set of browser-owned draft images.
+     * Release a set of browser-owned draft attachments.
      * @param attachments - descriptors to release.
      */
-    releaseDraftImages(attachments) {
+    releaseDraftAttachments(attachments) {
         for (const attachment of attachments)
-            this.releaseDraftImage(attachment.id);
+            this.releaseDraftAttachment(attachment.id);
     }
     /** Apply one operation to a pending queue occurrence. */
     async updateQueue(itemId, action) {
@@ -290,37 +450,39 @@ export class ConversationController extends Service {
         return sessions;
     }
     /**
-     * Settle one submission's draft images when its echo retires. Observed:
+     * Settle one submission's draft attachments when its echo retires. Observed:
      * each image leaves the registry, handing its preview URL to the durable
      * image cache (seeded under the admitted reference so the transcript node
      * renders immediately while the cache reads canonical bytes) or revoking it
      * when the cache already holds that reference. Failed: nothing changes;
      * the ids stay registered for the composer's rail restore.
      */
-    settleSubmittedImages(sessionId, attachments, retirement) {
+    settleSubmittedAttachments(sessionId, attachments, retirement) {
         if (retirement.reason !== 'observed')
             return;
         const uiConversation = this.ctx.get('uiConversation');
-        attachments.forEach((attachment, index) => {
+        let observedIndex = 0;
+        for (const attachment of attachments) {
             const live = this.draftAttachments.get(attachment.id);
+            const ref = retirement.attachments[observedIndex++];
             if (live === undefined)
-                return;
+                continue;
+            if (attachment.kind === 'file') {
+                this.releaseDraftAttachment(attachment.id);
+                continue;
+            }
             this.draftAttachments.delete(attachment.id);
-            const ref = retirement.attachments[index];
-            if (ref !== undefined && uiConversation?.seedImageUrl(sessionId, ref, attachment.previewUrl) === true)
-                return;
+            if (ref !== undefined && 'mediaType' in ref
+                && uiConversation?.seedImageUrl(sessionId, ref, attachment.previewUrl) === true)
+                continue;
             revokePreview(attachment.previewUrl);
-        });
-    }
-    /** Convert browser files to canonical base64 prompt parts. */
-    serializeImages(images) {
-        return Promise.all(images.map(async (file) => ({ type: 'image', ...await this.encodeImage(file) })));
+        }
     }
     /** Canonical base64 wire form of one browser image file. */
     async encodeImage(file) {
         return {
             mediaType: imageMediaType(file.type),
-            data: await base64Of(file),
+            data: await base64ImageOf(file),
             ...(file.name === '' ? {} : { name: file.name }),
         };
     }
@@ -335,6 +497,14 @@ function imageMediaType(value) {
         default:
             throw new UnsupportedImageMediaTypeError(value);
     }
+}
+/**
+ * Whether a browser-declared MIME selects the image draft path (all other files upload verbatim).
+ * @param value - the browser's declared MIME type.
+ * @returns whether the file is an accepted raster image.
+ */
+export function isImageMediaType(value) {
+    return value === 'image/png' || value === 'image/jpeg' || value === 'image/webp' || value === 'image/gif';
 }
 function revokePreview(url) {
     if (url.startsWith('blob:'))

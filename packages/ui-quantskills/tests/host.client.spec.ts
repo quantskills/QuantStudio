@@ -1,8 +1,13 @@
-import { Context } from '@deepseek-ai/cordis'
-import { describe, expect, it } from 'vitest'
-import { SettingsProvider, type SettingsNamespace } from '@deepseek-ai/dsh-settings'
+import type { Context } from '@deepseek-ai/cordis'
+import { mkdtempSync, mkdirSync, realpathSync, writeFileSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { boot, initProfile, readProfilePatches } from '@deepseek-ai/dsh-app-boot'
+import ConfigEditor from '@deepseek-ai/dsh-config-editor'
+import { describe, expect, it, onTestFinished } from 'vitest'
+import Settings from '@deepseek-ai/dsh-settings'
 import { DEFAULT_QUANTSKILLS_CONVERSATION_OVERLAY_OPACITY } from '../src/appearance-settings.ts'
-import { apply } from '../src/index.ts'
+import * as Appearance from '../src/index.ts'
 import {
   DEFAULT_QUANTSKILLS_SCALE,
   DEFAULT_QUANTSKILLS_AGENT_PERMISSION,
@@ -16,51 +21,55 @@ import {
   QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE,
 } from '@deepseek-ai/dsh-client-ui-quantskills'
 
-class MemorySettings extends SettingsProvider {
-  readonly writable = true
-  protected load(): Promise<Record<string, unknown>> { return Promise.resolve({}) }
-  protected persist(_ns: SettingsNamespace, _section: Record<string, unknown>): Promise<void> {
-    return Promise.resolve()
+/** Real Loader + settings writer, with a private Profile for every test. */
+async function fixture() {
+  const home = realpathSync(mkdtempSync(join(tmpdir(), 'qs-preferences-'))), dir = join(home, 'profiles/web')
+  onTestFinished(() => rmSync(home, { recursive: true, force: true }))
+  initProfile(dir, ['test-bundle'])
+  const bundle = join(dir, 'node_modules/test-bundle')
+  mkdirSync(bundle, { recursive: true })
+  writeFileSync(join(home, 'package.json'), '{"name":"qs-test-installation"}')
+  writeFileSync(join(bundle, 'package.json'), JSON.stringify({ name: 'test-bundle', version: '1.0.0', dsh: { bundle: { patch: 'cordis.patch.yml' } } }))
+  writeFileSync(join(bundle, 'cordis.patch.yml'), JSON.stringify([{ insert: [
+    { id: 'config-editor', name: 'cordis:editor' }, { id: 'settings', name: 'cordis:settings' },
+    { id: 'ui-quantskills', name: 'cordis:appearance' },
+  ] }]))
+  writeFileSync(join(dir, 'cordis.yml'), '[]')
+  const profile = { name: 'web', startedBundles: ['test-bundle'], dir, patchPath: join(dir, 'cordis.patch.yml'),
+    installAnchor: join(home, 'package.json'), cwd: home, home, overlays: [], telemetryDisabledEnv: undefined }
+  async function start(): Promise<Context> {
+    const ctx = await boot('test', join(dir, 'cordis.yml'), readProfilePatches('test', profile), ctx => {
+      ctx.provide('profileContext', profile)
+      ctx.provide('appReady', { onReady: (listener: () => void) => { listener(); return () => {} } })
+      Object.assign(ctx.loader.builtins, { editor: ConfigEditor, settings: Settings, appearance: Appearance })
+    })
+    onTestFinished(async () => { await ctx.fiber.dispose() })
+    return ctx
   }
+  return { start }
 }
+const value = (ctx: Context, ns: string) => ctx.settings.describe().find(row => row.ns === ns)?.value
 
 describe('ui-quantskills host', () => {
   it.each(['motion-glass-blue', 'motion-glass-ink'])('restores %s and the separate rainy profile after a Host restart', async lightBackground => {
-    let durable: Record<string, unknown> = {}
-    class DurableSettings extends SettingsProvider {
-      readonly writable = true
-      protected load() { return Promise.resolve(structuredClone(durable)) }
-      protected persist(ns: SettingsNamespace, section: Record<string, unknown>) {
-        durable = { ...durable, [ns]: structuredClone(section) }
-        return Promise.resolve()
-      }
-    }
+    const { start } = await fixture()
     const ns = QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE
-    const original = new Context()
-    await original.plugin(DurableSettings).await()
-    const registration = original.plugin({ apply })
-    await registration.await()
+    const original = await start()
     await original.settings.update(ns, { colorScheme: 'dark', darkBackground: 'motion-glass-rain', conversationOverlayOpacity: .64 })
     await original.settings.update(ns, { colorScheme: 'light', lightBackground })
     await expect(original.settings.update(ns, { darkBackground: lightBackground })).rejects.toThrow()
     await expect(original.settings.update(ns, { lightBackground: 'motion-glass-rain' })).rejects.toThrow()
-    await registration.dispose()
-
-    const restored = new Context()
-    await restored.plugin(DurableSettings).await()
-    const restoredRegistration = restored.plugin({ apply })
-    await restoredRegistration.await()
-    expect(restored.settings.get(ns)).toMatchObject({ colorScheme: 'light', lightBackground, darkBackground: 'motion-glass-rain', conversationOverlayOpacity: .64 })
-    await restoredRegistration.dispose()
+    await original.fiber.dispose()
+    const restored = await start()
+    expect(value(restored, ns)).toMatchObject({ colorScheme: 'light', lightBackground, darkBackground: 'motion-glass-rain', conversationOverlayOpacity: .64 })
+    await restored.fiber.dispose()
   })
 
   it('registers, validates, updates, and disposes every durable application preference', async () => {
-    const ctx = new Context()
-    await ctx.plugin(MemorySettings).await()
-    const fiber = ctx.plugin({ apply })
-    await fiber.await()
+    const { start } = await fixture()
+    const ctx = await start()
     const ns = QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE
-    expect(ctx.settings.get(ns)).toEqual({
+    expect(value(ctx, ns)).toEqual({
       interfaceScale: DEFAULT_QUANTSKILLS_SCALE,
       conversationScale: DEFAULT_QUANTSKILLS_SCALE,
       conversationBrightness: DEFAULT_QUANTSKILLS_CONVERSATION_BRIGHTNESS,
@@ -96,7 +105,7 @@ describe('ui-quantskills host', () => {
       defaultAgentReasoningEffort: 'high',
       defaultAgentPermission: 'read-only',
     })
-    expect(ctx.settings.get(ns)).toEqual({
+    expect(value(ctx, ns)).toEqual({
       conversationOverlayOpacity: 0.63,
       interfaceScale: 1.15,
       conversationScale: 0.95,
@@ -115,7 +124,7 @@ describe('ui-quantskills host', () => {
       defaultAgentPermission: 'read-only',
     })
     await ctx.settings.update(ns, { interfaceScale: 0.6, conversationScale: 1.5 })
-    expect(ctx.settings.get(ns)).toMatchObject({ interfaceScale: 0.6, conversationScale: 1.5 })
+    expect(value(ctx, ns)).toMatchObject({ interfaceScale: 0.6, conversationScale: 1.5 })
     await expect(ctx.settings.update(ns, { interfaceScale: 0.55 })).rejects.toThrow()
     await expect(ctx.settings.update(ns, { interfaceScale: 1.55 })).rejects.toThrow()
     await expect(ctx.settings.update(ns, { favoriteAssetIds: [''] })).rejects.toThrow()
@@ -123,7 +132,7 @@ describe('ui-quantskills host', () => {
     await expect(ctx.settings.update(ns, { colorScheme: 'system' })).rejects.toThrow()
     await expect(ctx.settings.update(ns, { conversationBrightness: 0.55 })).rejects.toThrow()
     await expect(ctx.settings.update(ns, { conversationOverlayOpacity: 1.1 })).rejects.toThrow()
-    await fiber.dispose()
-    expect(ctx.settings.describe().map(row => row.ns)).not.toContain(ns)
+    await ctx.fiber.dispose()
+    expect(ctx.get('settings')).toBeUndefined()
   })
 })

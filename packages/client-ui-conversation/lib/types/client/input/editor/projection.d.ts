@@ -8,7 +8,8 @@
  * All $-functions must run inside `editor.read()` / `editor.update()`.
  */
 import type { LexicalNode, NodeKey, Point } from 'lexical';
-import type { Occurrence } from '../../contract/input.ts';
+import type { Occurrence } from '../../contract/draft-editor.ts';
+import type { CommandClaim } from '../../contract/input.ts';
 /** The detect-projection stand-in for one chip (object replacement character). */
 export declare const ATOMIC_CHAR = "\uFFFC";
 /** One leaf (or gap) of the composer document in projection coordinates. */
@@ -75,6 +76,8 @@ export interface EditorProjection {
     } | null;
     /** Collapsed caret in detect coordinates; null while the selection is absent or ranged. */
     readonly caret: number | null;
+    /** Claim of the command chip opening the document; undefined without one. */
+    readonly command: CommandClaim | undefined;
 }
 /**
  * Fold one selection point to a detect offset.

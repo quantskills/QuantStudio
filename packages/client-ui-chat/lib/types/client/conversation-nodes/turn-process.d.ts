@@ -1,6 +1,6 @@
 import type { Context } from '@deepseek-ai/cordis';
 import type { ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
-import { type TurnProcessSignature } from '../contract/turn-process.ts';
+import { type TurnProcessSpec } from '../contract/turn-process.ts';
 declare module '../contract/chat-nodes.ts' {
     interface ChatNodeDataMap {
         /** Turn-level disclosure controlling process rows before the finalized answer. */
@@ -9,8 +9,8 @@ declare module '../contract/chat-nodes.ts' {
 }
 declare module '@deepseek-ai/dsh-client-ui-conversation/client' {
     interface ConversationTurnDataMap {
-        /** Encoded process range and finalized answer boundary for this Turn. */
-        'turn-process': TurnProcessSignature;
+        /** Process range and finalized answer boundary for this Turn. */
+        'turn-process': TurnProcessSpec;
     }
 }
 interface TurnProcessState {
@@ -18,6 +18,8 @@ interface TurnProcessState {
     readonly assistantStartByStep: ReadonlyMap<number, number>;
     readonly messageCountByStep: ReadonlyMap<number, number>;
     readonly otherStartSeq?: number;
+    readonly controlAnchorSeq?: number;
+    readonly messageCount: number;
     readonly toolCallCount: number;
     readonly subagentCount: number;
 }

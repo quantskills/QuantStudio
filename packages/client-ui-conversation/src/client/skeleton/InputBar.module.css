@@ -7,7 +7,20 @@
      the sides narrow with the shared width axis); the bottom gradient mask
      is owned by the chat scroller. No top pad: the composer stack's gap owns
      the space above; the status strip still carries its own margin. */
-  padding: 0 var(--dsh-composer-side-clearance) 8px;
+  padding: 0 var(--dsh-composer-side-clearance) 4px;
+}
+
+.dock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  max-width: 100%;
+  padding-top: 4px;
+}
+
+.hero .dock:empty {
+  display: none;
 }
 
 .hero {
@@ -22,7 +35,7 @@
   max-width: var(--dsh-composer-card-max-width);
   margin-bottom: 6px;
   padding: 4px 8px;
-  border-radius: 8px;
+  border-radius: var(--dsw-radius-md);
   background: var(--dsw-alias-interactive-bg-hover);
   color: var(--dsw-alias-label-secondary);
   font-size: 12px;
@@ -34,19 +47,20 @@
   position: relative; /* overlay anchor positioning context */
   display: flex;
   flex-direction: column;
-  /* figma Input 75:8208: 12px between the text area and the button row; 10px
-     top pad on the card before .InputText. */
+  /* figma Input 75:8208: 12px between the text area and the button row; the
+     card's top pad before .InputText tightened from the drawn 10 to 8. */
   gap: 12px;
   width: 100%;
   max-width: var(--dsh-composer-card-max-width);
-  padding-top: 10px;
-  /* Input stroke: black/0.10 light, white/0.06 dark (figma darkmode note says
-     the input border is one notch weaker than buttons) — exactly the
-     l2-darkmode-thin pair. Fill: the input surface token (elevated in dark). */
-  border: 1px solid var(--dsw-alias-border-l2-darkmode-thin);
-  border-radius: 22px;
+  padding-top: 8px;
+  /* Input stroke: the light neutral (l2, one step above the menus' l1),
+     drawn as the elevation hairline so it costs no layout; the shadow is the
+     soft elevation tier. Fill: the input surface token (elevated in dark). */
+  border: 0;
+  --dsw-elevation-stroke-color: var(--dsw-alias-border-l2);
+  border-radius: var(--dsw-radius-panel);
   background: var(--dsw-specific-input-major);
-  box-shadow: var(--dsw-shadow-lv2);
+  box-shadow: var(--dsw-elevation-soft);
   /* The draft text follows the Settings font-size preference (the textarea,
      mirror, and backdrop all inherit from here, so the three layers stay in
      step); the line height keeps the default 10px leading via the shared px
@@ -62,38 +76,35 @@
   --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
 }
 
-/* No-workspace trigger state: dashed l4 stroke marks the card as a pick-a-
-   workspace affordance rather than a live composer; hover answers in the
-   business blue to invite the click. Native `dashed` has a fixed browser
-   pattern, so the stroke is an ::after overlay: theme-token background masked
-   by an SVG dash ring (stroke-width 2 centered on the box edge = 1px visible
-   inside), which keeps the 22px radius and both themes. */
+/* No-workspace trigger state: an inset 1px dashed outline marks the card as a
+   workspace picker rather than a live composer. Keeping the complete stroke
+   inside the rounded box prevents clipped corner pixels from reading heavier. */
 .cardWorkspaceTrigger {
-  border-color: transparent;
+  --dsw-elevation-stroke-color: transparent;
   cursor: pointer;
 }
 
 .cardWorkspaceTrigger::after {
   content: '';
   position: absolute;
-  inset: -1px;
-  border-radius: 22px;
-  background: var(--dsw-alias-border-l4);
-  transition: background-color 100ms ease;
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='none' rx='22' ry='22' stroke='black' stroke-width='2' stroke-dasharray='4 4'/%3E%3C/svg%3E");
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='none' rx='22' ry='22' stroke='black' stroke-width='2' stroke-dasharray='4 4'/%3E%3C/svg%3E");
+  inset: 0;
+  box-sizing: border-box;
+  border: 1px dashed currentColor;
+  border-radius: var(--dsw-radius-panel);
+  color: var(--dsw-alias-border-l4);
+  transition: color 100ms ease;
   pointer-events: none;
 }
 
 /* Disabled toolbar controls neither receive nor swallow clicks in the trigger
    state: pointer events fall through to the card's own click handler, making
-   the full capsule one pick target. */
+   the whole card one pick target. */
 .cardWorkspaceTrigger :disabled {
   pointer-events: none;
 }
 
 .cardWorkspaceTrigger:hover::after {
-  background: var(--dsw-alias-state-business-primary);
+  color: var(--dsw-alias-state-business-primary);
 }
 
 .accessory {
@@ -122,8 +133,8 @@
   margin-right: 4px;
 }
 
-/* The card's 22px corner arc still overlaps the scrollport's top (10px top
-   pad reaches only y=10): start the thumb's travel below the arc so it never
+/* The card's corner arc still overlaps the scrollport's top (8px top
+   pad reaches only y=8): start the thumb's travel below the arc so it never
    pokes outside the capsule. WebKit-path only; Firefox's thin bar has no
    track margin, an accepted remainder. */
 .scroll::-webkit-scrollbar-track {
@@ -141,6 +152,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  corner-shape: round;
   background: var(--dsw-alias-state-business-primary);
   animation: input-pending 1s ease-in-out infinite alternate;
 }
@@ -151,11 +163,15 @@
 }
 
 /* The contenteditable draft surface (grows with its content; .scroll caps
-   and scrolls it). figma .InputText 34:10434: pl 16 / pr 12 / pt 4 — the
-   right pad is 8 here plus .scroll's 4px bar inset. */
+   and scrolls it). figma .InputText 34:10434 drew pl 16 / pr 12 / pt 4; the
+   left pad tightened to 14, and the right pad is 8 here plus .scroll's 4px
+   bar inset. */
 .input {
   box-sizing: border-box;
-  padding: 4px 8px 0 16px;
+  /* Docked floor: one 24px line + 4px top pad = 28 content height; 36 leaves
+     an 8px breath below the line (the hero keeps its own 52px floor below). */
+  min-height: 36px;
+  padding: 4px 8px 0 14px;
   font-family: var(--dsw-font-family);
   font-size: inherit;
   line-height: inherit;
@@ -182,12 +198,30 @@
   color: var(--dsw-alias-label-caption);
 }
 
+.input[data-composer-composing] p:last-child::after {
+  content: none;
+}
+
+/* A selected command chip stands in for the caret until the next key. */
+.input[data-composer-chip-selected] {
+  caret-color: transparent;
+}
+
+.input[data-composer-composing] + .placeholder {
+  visibility: hidden;
+}
+
 /* figma 34:10434: #ADB2B8 light / #81858C dark — the caption pair exactly.
-   Right inset mirrors .input's 8px pad (the other 4px sits on .scroll). */
+   Insets mirror .input's pads (the other right 4px sits on .scroll). One
+   ellipsized line: a wrapped second line would clip against the docked
+   36px floor. */
 .placeholder {
   position: absolute;
-  inset: 4px 8px auto 16px;
+  inset: 4px 8px auto 14px;
   color: var(--dsw-alias-label-caption);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   pointer-events: none;
   user-select: none;
 }
@@ -207,6 +241,16 @@
   min-height: 52px;
 }
 
+/* The hero's 52px floor fits two lines, so its placeholder clamps at two
+   instead of the docked single line. */
+.hero .placeholder {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
 /* Toolbar: attach + Plan + Read-only on the left; model + send on the right
    (figma Input_Bottom chrome). */
 .row {
@@ -216,8 +260,8 @@
   justify-content: space-between;
   gap: 12px;
   /* 2px moved from the bottom pad to the top: the whole control row sits 2px
-     lower in the card (it read too high against the textarea) while the card
-     height and the controls' own centering stay untouched. */
+     lower in the card (it read too high against the textarea) while the
+     controls' own centering stays untouched. */
   padding: 2px 8px 6px;
   min-width: 0;
   /* Size container so the chips inside can collapse to icon-only when the
@@ -232,6 +276,11 @@ body[data-qs-plugin-theme] .modes { gap:6px; }
 body[data-qs-plugin-theme] .trailing { gap:6px; }
 body[data-qs-plugin-theme] .add { width:34px; height:34px; border-radius:11px; background:var(--qs-chrome); color:var(--qs-secondary); }
 
+.row[data-model-compact] {
+  --dsh-composer-model-text-display: none;
+  --dsh-composer-model-icon-display: block;
+}
+
 .tools,
 .modes,
 .trailing {
@@ -241,10 +290,10 @@ body[data-qs-plugin-theme] .add { width:34px; height:34px; border-radius:11px; b
 }
 
 /* figma 75:8208 drew 16 between + and the mode chips and 4 between Plan /
-   Read-only; the chip gap widened to 12 so the pill chips read as separate
-   controls. */
+   Read-only; both gaps settled on 12 so the pill chips read as separate
+   controls without drifting from the + control. */
 .tools {
-  gap: 16px;
+  gap: 12px;
 }
 
 .modes {
@@ -262,6 +311,15 @@ body[data-qs-plugin-theme] .add { width:34px; height:34px; border-radius:11px; b
   gap: 12px;
 }
 
+/* Compact spacing preserves room for the fixed-width controls in narrow cards. */
+@container (max-width: 560px) {
+  .tools,
+  .modes,
+  .trailing {
+    gap: 8px;
+  }
+}
+
 /* Attach circle (figma + control): 28px, selector fill, primary glyph. */
 .add {
   display: grid;
@@ -271,6 +329,7 @@ body[data-qs-plugin-theme] .add { width:34px; height:34px; border-radius:11px; b
   height: 28px;
   border: none;
   border-radius: 999px;
+  corner-shape: round;
   background: var(--dsw-specific-selector);
   color: var(--dsw-alias-label-primary);
   cursor: pointer;
@@ -292,7 +351,7 @@ body[data-qs-plugin-theme] .add { width:34px; height:34px; border-radius:11px; b
   height: 28px;
   padding: 0 20px 0 8px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--dsw-radius-sm);
   outline: none;
   background-color: transparent;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2381858C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -328,6 +387,7 @@ body[data-qs-plugin-theme] .add { width:34px; height:34px; border-radius:11px; b
   height: 34px;
   border: none;
   border-radius: 999px;
+  corner-shape: round;
   background: var(--dsw-alias-button-info-fill);
   /* Static white, not the foreground token: the arrow stays white on the blue
      fill in both themes (design 34:10465). */
@@ -353,19 +413,16 @@ body[data-qs-plugin-theme] .add { width:34px; height:34px; border-radius:11px; b
   margin-left: 8px;
   padding: 1px 8px;
   border: 1px solid currentColor;
-  border-radius: 4px;
+  border-radius: var(--dsw-radius-sm);
   background: transparent;
   color: inherit;
   font-size: 12px;
   cursor: pointer;
 }
 
-@media (max-width:840px) {
-  body[data-qs-mobile] .card { border-radius:20px;gap:6px; }
-  body[data-qs-mobile] .input { font-size:16px;line-height:24px;padding-inline:14px; }
-  body[data-qs-mobile] .row { gap:6px;padding:4px 8px 8px; }
-  body[data-qs-mobile] .tools { gap:6px; }
-  body[data-qs-mobile] .modes { gap:4px; }
-  body[data-qs-mobile] .trailing { max-width:100%;gap:6px; }
-  body[data-qs-mobile] :is(.add,.primary) { width:40px;height:40px; }
-}
+.standardControls { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.tools[hidden], .standardControls[hidden] { display: none; }
+.trailingActive { flex: 1; margin-left: 0; }
+.activity { display: flex; align-items: center; flex: none; }
+.activity:empty { display: none; }
+.activityExpanded { flex: 1; min-width: 0; }

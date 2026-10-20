@@ -1,3 +1,4 @@
+import { selectedSession } from './selected-session.ts'
 import { useEffect, useState } from 'react'
 import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
 import type { SessionListState } from '@deepseek-ai/dsh-api-session-controller/client'
@@ -17,7 +18,7 @@ export interface AuthoringReviewInjected {
 
 /** Always mounted in the session header, independent of collapsed tool history. */
 export function AuthoringReview({ useSessions, commit, start, focusComposer, openLibrary }: InjectFace<AuthoringReviewInjected>) {
-  const session = useSessions(state => state.current === undefined ? undefined : state.byId[state.current])
+  const session = useSessions(state => { const id = selectedSession(state); return id === undefined ? undefined : state.byId[id] })
   const projected = session?.projectionValues?.quantSkillsAuthoringPending
   const [dismissed, setDismissed] = useState<string>()
   const [reopened, setReopened] = useState<string>()

@@ -4,12 +4,39 @@ window.__ModuleLoader__.load({
 		var module = { exports: {} };
 		var exports = module.exports;
 		Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+		let _deepseek_ai_dsh_client_store = require("@deepseek-ai/dsh-client-store");
 		let react_jsx_runtime = require("react/jsx-runtime");
 		let react = require("react");
 		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
-		let _deepseek_ai_dsh_client_store = require("@deepseek-ai/dsh-client-store");
+		let _tanstack_react_virtual = require("@tanstack/react-virtual");
 		let react_dom = require("react-dom");
 		//#region ../../node_modules/@deepseek-ai/dsh-util-workspace-path/lib/index.js
+		/**
+		* The `dsh-resource://file/…` address grammar: how a file is named across the
+		* Sidebar and the resource model, built and parsed without touching a
+		* filesystem.
+		* @module
+		*/
+		/** The scheme and type every file address opens with. */
+		const FILE_ADDRESS_PREFIX = "dsh-resource://file/";
+		/** Component-encode one id or path segment, keeping `:` literal for drive letters. */
+		function encodeSegment(segment) {
+			return encodeURIComponent(segment).replace(/%3A/gi, ":");
+		}
+		/** Encode a `/`-separated path segment by segment. */
+		function encodePath(path) {
+			return path.split("/").map(encodeSegment).join("/");
+		}
+		/**
+		* Build the address of a file read through one Session.
+		* @param sessionId - the Session whose Host workspace resolves the path.
+		* @param path - absolute or workspace-relative path; backslashes are normalized to `/`, and leading `./` prefixes are dropped.
+		* @returns the `dsh-resource://file/session/<sessionId>/<path>` address.
+		*/
+		function sessionFileAddress(sessionId, path) {
+			const normalized = path.replace(/\\/g, "/").replace(/^(?:\.\/)+/, "");
+			return `${FILE_ADDRESS_PREFIX}session/${encodeSegment(sessionId)}/${encodePath(normalized)}`;
+		}
 		/**
 		* Browser-safe Workspace path and display helpers.
 		* @module @deepseek-ai/dsh-util-workspace-path
@@ -19,24 +46,85 @@ window.__ModuleLoader__.load({
 			return /^[A-Za-z]:[/\\]/.test(value) || value.startsWith("\\\\");
 		}
 		/**
+		* Whether a path is absolute in either spelling the Host accepts: POSIX (`/a/b`) or Windows drive or UNC.
+		* @param path - the path to classify.
+		* @returns `true` for an absolute path; `false` for a Workspace-relative one.
+		*/
+		function isAbsoluteWorkspacePath(path) {
+			return path.startsWith("/") || isWindowsStylePath(path);
+		}
+		/**
 		* Resolve a Workspace-relative path into the Host-facing spelling used by path operations.
 		* @param cwd - Session Workspace root, when known.
 		* @param path - Absolute or Workspace-relative path.
 		* @returns an absolute path when a Workspace root is available, otherwise the original path.
 		*/
 		function resolveWorkspacePath(cwd, path) {
-			if (path.startsWith("/") || isWindowsStylePath(path)) return path;
+			if (isAbsoluteWorkspacePath(path)) return path;
 			if (cwd === void 0 || cwd === "") return path;
-			return `${cwd.replace(/[/\\]+$/, "")}/${path.replace(/^[/\\]+/, "")}`;
+			const separator = isWindowsStylePath(cwd) && cwd.includes("\\") ? "\\" : "/";
+			return `${cwd.replace(/[/\\]+$/, "")}${separator}${path.replace(/^[/\\]+/, "")}`;
+		}
+		/**
+		* The address for a path as a caller holds it: a relative path, or an absolute
+		* path inside the Session's workspace, becomes a `session`-scoped address; an
+		* absolute path outside it, or one whose workspace root is unknown, keeps its
+		* absolute path in that Session's address.
+		* @param sessionId - the Session the path is read in.
+		* @param cwd - that Session's workspace root, when known.
+		* @param path - absolute or workspace-relative path, in either separator spelling.
+		* @returns the `dsh-resource://file/…` address.
+		*/
+		function fileAddressFor(sessionId, cwd, path) {
+			const normalized = path.replace(/\\/g, "/");
+			if (!isAbsoluteWorkspacePath(normalized)) return sessionFileAddress(sessionId, normalized);
+			const root = cwd === void 0 ? "" : cwd.replace(/\\/g, "/").replace(/\/+$/, "");
+			if (root !== "" && normalized === root) return sessionFileAddress(sessionId, "");
+			if (root !== "" && normalized.startsWith(`${root}/`)) return sessionFileAddress(sessionId, normalized.slice(root.length + 1));
+			return sessionFileAddress(sessionId, normalized);
+		}
+		/**
+		* Address a decoded absolute file path through the authenticated file route.
+		* @param base - HTTP(S) application base, including its deployment prefix, or `dsh-app://app/`.
+		* @param path - Native file path; URL escapes in authored Markdown must already be decoded.
+		* @returns File URL, or undefined for unsupported transports and non-absolute paths.
+		*/
+		function fileMediaUrl(base, path) {
+			if (!/^https?:/u.test(base) && !base.startsWith("dsh-app://app/") || !isAbsoluteWorkspacePath(path) || /^[/\\]{2}/u.test(path) || /[\u0000-\u001f\u007f]/u.test(path)) return void 0;
+			return new URL(`api/file?path=${encodeURIComponent(path)}`, base).href;
 		}
 		//#endregion
 		//#region lib/types/client/contract/snapshot.js
 		const EMPTY_LIST$1 = [];
+		const EMPTY_TIMELINE = {
+			turnOrder: EMPTY_LIST$1,
+			turns: /* @__PURE__ */ new Map()
+		};
+		const EMPTY_NODE_SOURCE = {
+			getSnapshot: () => void 0,
+			subscribe: () => () => {}
+		};
+		const EMPTY_BOTTOM_SOURCE = {
+			getSnapshot: () => false,
+			subscribe: () => () => {}
+		};
+		const EMPTY_NODE_PROCESS_SOURCE = {
+			getSnapshot: () => void 0,
+			subscribe: () => () => {}
+		};
+		const EMPTY_TURN_NODE_SOURCE = {
+			getSnapshot: () => EMPTY_LIST$1,
+			subscribe: () => () => {}
+		};
 		/** Empty Chat target used before a view builder is registered. */
 		const EMPTY_CHAT_SNAPSHOT = {
 			order: EMPTY_LIST$1,
 			nodes: {
 				get: () => void 0,
+				source: () => EMPTY_NODE_SOURCE,
+				bottomSource: () => EMPTY_BOTTOM_SOURCE,
+				turnDataSource: () => EMPTY_TURN_NODE_SOURCE,
+				processSource: () => EMPTY_NODE_PROCESS_SOURCE,
 				values: () => EMPTY_LIST$1
 			},
 			locations: {
@@ -44,10 +132,7 @@ window.__ModuleLoader__.load({
 				getStep: () => EMPTY_LIST$1
 			},
 			navigation: { items: () => EMPTY_LIST$1 },
-			timeline: {
-				turnOrder: EMPTY_LIST$1,
-				turns: /* @__PURE__ */ new Map()
-			},
+			timeline: EMPTY_TIMELINE,
 			legacy: {
 				nodes: EMPTY_LIST$1,
 				turnTimings: /* @__PURE__ */ new Map(),
@@ -81,10 +166,4086 @@ window.__ModuleLoader__.load({
 			return useChat((snapshot) => {
 				for (const node of snapshot.nodes.values()) {
 					const root = node.kind === "tool-call" ? node.data.root : void 0;
-					if (root !== void 0 && root.callId === callId && !("kind" in root)) return commandOf(root);
+					if (root !== void 0 && root.callId === callId && !("kind" in root) && root.phase === "start") return commandOf(root);
 				}
 			}) ?? null;
 		}
+		//#endregion
+		//#region lib/types/client/contract/group-tree.js
+		const DEPTH = {
+			exchange: 0,
+			input: 1,
+			turn: 2,
+			process: 3
+		};
+		/**
+		* Test whether a Node stands at a group-tree position or outside it.
+		* @param node - Chat Node.
+		* @param position - group-tree position to compare against.
+		* @returns whether the Node's position is `position` or an outer one.
+		*/
+		function isAtOrOutside(node, position) {
+			return node.groupTree !== void 0 && DEPTH[node.groupTree] <= DEPTH[position];
+		}
+		//#endregion
+		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/TurnNavigator.module.css.mjs
+		const css$17 = ".RBY-Qq_slot{z-index:7;height:0;padding-inline:calc(var(--dsh-composer-side-clearance) + 16px);pointer-events:none;position:absolute;top:0;left:0;right:0;container-type:inline-size}[data-conversation-scroll] .RBY-Qq_slot{position:sticky}.RBY-Qq_frame{--turn-rail-band:calc(var(--dsh-conversation-viewport-height,100dvh) - var(--dsh-composer-height,152px));--turn-preview-height:100px;top:calc(var(--turn-rail-band) / 2);width:28px;max-height:min(max(0px, calc(var(--turn-rail-band) - 64px)), 420px);contain:layout;cursor:pointer;pointer-events:auto;position:absolute;right:12px;transform:translateY(-50%)}.RBY-Qq_scroller{max-height:inherit;overscroll-behavior:contain;scrollbar-width:none;position:relative;overflow-y:auto}.RBY-Qq_scroller::-webkit-scrollbar{display:none}.RBY-Qq_fadeTop{mask-image:linear-gradient(#0000 0,#000 24px 100%)}.RBY-Qq_fadeBottom{mask-image:linear-gradient(#000 0 calc(100% - 24px),#0000 100%)}.RBY-Qq_fadeTop.RBY-Qq_fadeBottom{mask-image:linear-gradient(#0000 0,#000 24px calc(100% - 24px),#0000 100%)}.RBY-Qq_marks{position:relative}.RBY-Qq_mark{cursor:pointer;background:0 0;border:0;border-radius:8px;height:10px;padding:0;position:absolute;top:0;left:0;right:0}.RBY-Qq_mark:before{background:var(--dsw-alias-border-l4);content:\"\";transform-origin:100%;border-radius:2px;width:20px;height:2px;transition:transform .14s,background-color .14s;position:absolute;top:50%;right:0;transform:translateY(-50%)scaleX(.6)}.RBY-Qq_markUnloaded:before{opacity:.6;transform:translateY(-50%)scaleX(.4)}.RBY-Qq_markPreview:before{background:var(--dsw-alias-label-tertiary);transform:translateY(-50%)scaleX(.9)}.RBY-Qq_markBusy:before{animation:1s ease-in-out infinite RBY-Qq_dsh-turn-mark-busy}.RBY-Qq_markActive:before{background:var(--dsw-alias-label-primary);transform:translateY(-50%)scaleX(1)}.RBY-Qq_mark:focus-visible:before{background:var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));transform:translateY(-50%)scaleX(1)}.RBY-Qq_mark:focus-visible{outline:none}.RBY-Qq_mark:focus-visible:after{border-radius:inherit;outline:1px solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:-1px;content:\"\";width:20px;position:absolute;inset:0 0 0 auto}.RBY-Qq_preview{top:clamp(0px, calc(var(--turn-preview-center) - var(--turn-preview-height) / 2), calc(100% - var(--turn-preview-height)));box-sizing:border-box;width:min(300px,100cqw - 120px);max-height:var(--turn-preview-height);border-radius:var(--dsw-radius-lg);color:var(--dsw-alias-label-primary);background:var(--dsw-alias-bg-layer-1);box-shadow:var(--dsw-elevation-panel);pointer-events:none;border:0;padding:10px 12px;transition:top .14s cubic-bezier(.2,.8,.2,1);animation:.12s ease-out RBY-Qq_dsh-turn-preview-enter;position:absolute;right:calc(100% + 10px);overflow:hidden}.RBY-Qq_previewPrompt,.RBY-Qq_previewResponse{-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}.RBY-Qq_previewPrompt{font:var(--dsw-font-xs-strong-13);-webkit-line-clamp:1}.RBY-Qq_previewResponse{color:var(--dsw-alias-label-caption);font:var(--dsw-font-xxs-12);-webkit-line-clamp:3;margin-top:4px}@keyframes RBY-Qq_dsh-turn-preview-enter{0%{opacity:0;transform:translate(4px)}to{opacity:1;transform:translate(0)}}@keyframes RBY-Qq_dsh-turn-mark-busy{0%,to{opacity:1}50%{opacity:.35}}@container (width<=900px){.RBY-Qq_frame{display:none}}@media (prefers-reduced-motion:reduce){.RBY-Qq_frame,.RBY-Qq_scroller,.RBY-Qq_mark:before,.RBY-Qq_markBusy:before,.RBY-Qq_preview{scroll-behavior:auto;transition:none;animation:none}}";
+		const tagId$17 = "@deepseek-ai/dsh-client-ui-chat/TurnNavigator.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$17) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
+			tag.dataset.pluginCss = tagId$17;
+			tag.textContent = css$17;
+			document.head.appendChild(tag);
+		}
+		var TurnNavigator_module_css_default = {
+			"dsh-turn-mark-busy": "RBY-Qq_dsh-turn-mark-busy",
+			"dsh-turn-preview-enter": "RBY-Qq_dsh-turn-preview-enter",
+			"fadeBottom": "RBY-Qq_fadeBottom",
+			"fadeTop": "RBY-Qq_fadeTop",
+			"frame": "RBY-Qq_frame",
+			"mark": "RBY-Qq_mark",
+			"markActive": "RBY-Qq_markActive",
+			"markBusy": "RBY-Qq_markBusy",
+			"markPreview": "RBY-Qq_markPreview",
+			"marks": "RBY-Qq_marks",
+			"markUnloaded": "RBY-Qq_markUnloaded",
+			"preview": "RBY-Qq_preview",
+			"previewPrompt": "RBY-Qq_previewPrompt",
+			"previewResponse": "RBY-Qq_previewResponse",
+			"scroller": "RBY-Qq_scroller",
+			"slot": "RBY-Qq_slot"
+		};
+		//#endregion
+		//#region lib/types/client/chat/TurnNavigator.js
+		/** Fixed-pitch virtual turn rail with independent activation and scroll controls. */
+		/** Fixed pitch between neighbouring marks; overflow scrolls inside the frame. */
+		const TURN_SPACING_PX = 10;
+		/** Rail padding above the first mark and below the last one, per end. */
+		const RAIL_INSET_PX = 6;
+		/** Fade band the mask reserves at a scrollable end. */
+		const FADE_PX = 24;
+		function preferredScrollBehavior() {
+			return typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+		}
+		const TurnMark = (0, react.memo)(function TurnMark({ item, index, active, busy, previewId, registerElement, onNavigate, onPreview, onFocusChange, t }) {
+			const classes = [TurnNavigator_module_css_default.mark];
+			if (item.anchor.kind === "unloaded") classes.push(TurnNavigator_module_css_default.markUnloaded);
+			if (active) classes.push(TurnNavigator_module_css_default.markActive);
+			else if (previewId !== void 0) classes.push(TurnNavigator_module_css_default.markPreview);
+			if (busy) classes.push(TurnNavigator_module_css_default.markBusy);
+			return (0, react_jsx_runtime.jsx)("button", {
+				ref: registerElement,
+				"data-index": index,
+				type: "button",
+				className: classes.join(" "),
+				"aria-label": t(item.anchor.kind === "loaded" ? "chat.turnNavigation.jump" : "chat.turnNavigation.jumpLoad", { turn: item.turn }),
+				"aria-current": active ? "true" : void 0,
+				"aria-busy": busy ? "true" : void 0,
+				"aria-describedby": previewId,
+				onPointerMove: () => {
+					onPreview(item.turn);
+				},
+				onClick: () => {
+					onNavigate(item);
+				},
+				onFocus: () => {
+					onFocusChange(item.turn);
+				},
+				onBlur: () => {
+					onFocusChange(null);
+				}
+			});
+		});
+		function TurnNavigatorRail({ items, activeTurn, busyTurn, onNavigate, t }, ref) {
+			const [previewTurn, setPreviewTurn] = (0, react.useState)(null);
+			const [focusedTurn, setFocusedTurn] = (0, react.useState)(null);
+			const scrollerRef = (0, react.useRef)(null);
+			const initialization = (0, react.useRef)({
+				placed: false,
+				index: 0,
+				follow: null,
+				publishOffset: null
+			});
+			/** While the pointer works the rail, follow must not move it under the hand. */
+			const pointerInsideRef = (0, react.useRef)(false);
+			const previewId = (0, react.useId)();
+			const turnIndexes = (0, react.useMemo)(() => {
+				const indexes = /* @__PURE__ */ new Map();
+				items.forEach((item, index) => {
+					indexes.set(item.turn, index);
+				});
+				return indexes;
+			}, [items]);
+			const activeIndex = activeTurn === null ? void 0 : turnIndexes.get(activeTurn);
+			(0, react.useLayoutEffect)(() => {
+				initialization.current.index = activeIndex ?? 0;
+			}, [activeIndex]);
+			const focusedIndex = focusedTurn === null ? void 0 : turnIndexes.get(focusedTurn);
+			const previewIndex = previewTurn === null ? void 0 : turnIndexes.get(previewTurn);
+			const onFocusChange = (0, react.useCallback)((turn) => {
+				setFocusedTurn(turn);
+				setPreviewTurn(turn);
+			}, []);
+			const virtualizer = (0, _tanstack_react_virtual.useVirtualizer)({
+				count: items.length,
+				enabled: items.length >= 2,
+				directDomUpdates: true,
+				directDomUpdatesMode: "transform",
+				useScrollendEvent: true,
+				getScrollElement: (0, react.useCallback)(() => scrollerRef.current, []),
+				getItemKey: (0, react.useCallback)((index) => items[index]?.turn ?? index, [items]),
+				estimateSize: () => TURN_SPACING_PX,
+				measureElement: () => TURN_SPACING_PX,
+				initialRect: {
+					width: 0,
+					height: 0
+				},
+				initialOffset: 0,
+				scrollToFn: (offset, options, instance) => {
+					if (initialization.current.placed) (0, _tanstack_react_virtual.elementScroll)(offset, options, instance);
+				},
+				observeElementOffset: (instance, notify) => {
+					initialization.current.publishOffset = notify;
+					const dispose = (0, _tanstack_react_virtual.observeElementOffset)(instance, notify);
+					return () => {
+						dispose?.();
+						initialization.current.placed = false;
+						initialization.current.follow = null;
+						initialization.current.publishOffset = null;
+					};
+				},
+				observeElementRect: (instance, notify) => {
+					const element = instance.scrollElement;
+					const Observer = instance.targetWindow?.ResizeObserver;
+					if (element === null || Observer === void 0) return;
+					const observer = new Observer(([entry]) => {
+						if (entry === void 0) return;
+						const box = entry.borderBoxSize[0];
+						const rect = {
+							width: Math.round(box?.inlineSize ?? entry.contentRect.width),
+							height: Math.round(box?.blockSize ?? entry.contentRect.height)
+						};
+						const initial = initialization.current;
+						if (!initial.placed && rect.height > 0) {
+							const max = Math.max(0, instance.getTotalSize() - rect.height);
+							const center = initial.index * TURN_SPACING_PX + RAIL_INSET_PX;
+							const target = Math.max(0, Math.min(max, center - rect.height / 2));
+							initial.placed = true;
+							initial.follow = {
+								index: initial.index,
+								count: instance.options.count,
+								height: rect.height
+							};
+							element.scrollTop = target;
+							initial.publishOffset?.(target, false);
+						}
+						notify(rect);
+					});
+					observer.observe(element, { box: "border-box" });
+					return () => {
+						observer.disconnect();
+					};
+				},
+				paddingStart: RAIL_INSET_PX - TURN_SPACING_PX / 2,
+				paddingEnd: RAIL_INSET_PX - TURN_SPACING_PX / 2,
+				scrollPaddingStart: FADE_PX,
+				scrollPaddingEnd: FADE_PX,
+				overscan: 3,
+				rangeExtractor: (0, react.useCallback)((range) => {
+					const indexes = (0, _tanstack_react_virtual.defaultRangeExtractor)(range);
+					if (focusedIndex !== void 0) {
+						const last = Math.min(range.count - 1, focusedIndex + 1);
+						for (let index = Math.max(0, focusedIndex - 1); index <= last; index++) if (!indexes.includes(index)) indexes.push(index);
+						indexes.sort((left, right) => left - right);
+					}
+					return indexes;
+				}, [focusedIndex])
+			});
+			const scrollTop = virtualizer.scrollOffset ?? 0;
+			const viewHeight = virtualizer.scrollRect?.height ?? 0;
+			const virtualItems = virtualizer.getVirtualItems();
+			const scrollToIndex = (0, react.useCallback)((index, reveal, behavior = preferredScrollBehavior()) => {
+				const item = virtualizer.measurementsCache[index];
+				const height = virtualizer.scrollRect?.height ?? 0;
+				if (item === void 0 || height <= 0) return;
+				const current = virtualizer.scrollOffset ?? 0;
+				const center = item.start + item.size / 2;
+				if (reveal === "if-needed") {
+					const { scrollPaddingStart, scrollPaddingEnd } = virtualizer.options;
+					if (center >= current + scrollPaddingStart && center <= current + height - scrollPaddingEnd) return;
+				}
+				const target = center - height / 2;
+				const max = Math.max(0, virtualizer.getTotalSize() - height);
+				const delta = Math.max(0, Math.min(max, target)) - current;
+				if (delta !== 0) virtualizer.scrollBy(delta, { behavior });
+			}, [virtualizer]);
+			(0, react.useImperativeHandle)(ref, () => ({
+				activateTurn(turn) {
+					const index = turnIndexes.get(turn);
+					const item = index === void 0 ? void 0 : items[index];
+					if (item !== void 0) onNavigate(item);
+				},
+				scrollToTurn(turn) {
+					const index = turnIndexes.get(turn);
+					if (index !== void 0) scrollToIndex(index, "always");
+				}
+			}), [
+				items,
+				turnIndexes,
+				onNavigate,
+				scrollToIndex
+			]);
+			(0, react.useEffect)(() => {
+				if (viewHeight <= 0) {
+					initialization.current.follow = null;
+					return;
+				}
+				if (activeIndex === void 0 || pointerInsideRef.current) return;
+				const previous = initialization.current.follow;
+				if (previous?.index === activeIndex && previous.count === items.length && previous.height === viewHeight) return;
+				initialization.current.follow = {
+					index: activeIndex,
+					count: items.length,
+					height: viewHeight
+				};
+				const behavior = previous?.count === items.length && previous.height === viewHeight ? preferredScrollBehavior() : "instant";
+				scrollToIndex(activeIndex, "if-needed", behavior);
+			}, [
+				activeIndex,
+				items.length,
+				viewHeight,
+				scrollToIndex
+			]);
+			if (items.length < 2) return null;
+			const preview = previewIndex === void 0 ? void 0 : items[previewIndex];
+			const previewPosition = virtualItems.find((item) => item.index === previewIndex);
+			const fadeClasses = [TurnNavigator_module_css_default.scroller];
+			if (scrollTop > 1) fadeClasses.push(TurnNavigator_module_css_default.fadeTop);
+			if (scrollTop < virtualizer.getTotalSize() - viewHeight - 1) fadeClasses.push(TurnNavigator_module_css_default.fadeBottom);
+			return (0, react_jsx_runtime.jsx)("div", {
+				className: TurnNavigator_module_css_default.slot,
+				children: (0, react_jsx_runtime.jsxs)("nav", {
+					className: TurnNavigator_module_css_default.frame,
+					"aria-label": t("chat.turnNavigation.label"),
+					onPointerEnter: () => {
+						pointerInsideRef.current = true;
+					},
+					onPointerLeave: () => {
+						pointerInsideRef.current = false;
+						setPreviewTurn(null);
+					},
+					children: [(0, react_jsx_runtime.jsx)("div", {
+						ref: scrollerRef,
+						className: fadeClasses.join(" "),
+						children: (0, react_jsx_runtime.jsx)("div", {
+							ref: virtualizer.containerRef,
+							className: TurnNavigator_module_css_default.marks,
+							children: virtualItems.map(({ index, key }) => {
+								const item = items[index];
+								if (item === void 0) return null;
+								return (0, react_jsx_runtime.jsx)(TurnMark, {
+									item,
+									index,
+									active: item.turn === activeTurn,
+									busy: item.turn === busyTurn,
+									previewId: item.turn === previewTurn ? previewId : void 0,
+									registerElement: virtualizer.measureElement,
+									onNavigate,
+									onPreview: setPreviewTurn,
+									onFocusChange,
+									t
+								}, key);
+							})
+						})
+					}), preview !== void 0 && previewPosition !== void 0 && (0, react_jsx_runtime.jsxs)("div", {
+						id: previewId,
+						role: "tooltip",
+						className: TurnNavigator_module_css_default.preview,
+						style: { "--turn-preview-center": `${String(previewPosition.start + previewPosition.size / 2 - scrollTop)}px` },
+						children: [(0, react_jsx_runtime.jsx)("div", {
+							className: TurnNavigator_module_css_default.previewPrompt,
+							children: preview.prompt || t("chat.turnNavigation.turn", { turn: preview.turn })
+						}), preview.response !== "" && (0, react_jsx_runtime.jsx)("div", {
+							className: TurnNavigator_module_css_default.previewResponse,
+							children: preview.response
+						})]
+					})]
+				})
+			});
+		}
+		/**
+		* Fixed-pitch rail of every known Turn — loaded marks scroll, unloaded marks
+		* page history in first — with hover and focus previews. Overflow scrolls
+		* inside the frame, gradient fades marking each scrollable end, and the
+		* active mark centers only outside the fade-free band while the pointer is
+		* elsewhere. Previews follow pointer movement or focus, not scrolling under
+		* a stationary pointer.
+		*/
+		const TurnNavigator = (0, react.memo)((0, react.forwardRef)(TurnNavigatorRail));
+		//#endregion
+		//#region ../../node_modules/@deepseek-ai/dsh-brand/lib/index.js
+		/**
+		* Duplicate-install-safe nominal primitive helpers.
+		*
+		* A brand makes structurally identical strings or numbers non-interchangeable
+		* at the type level: a `SessionId` cannot be passed where a `ToolCallId` is
+		* expected, and an event sequence cannot be passed as a log offset. Comparison,
+		* logging, and serialization retain the underlying primitive behavior.
+		*
+		* This package owns no concrete domain value and keeps no runtime identity or mutable
+		* state, so independently installed copies produce interchangeable values.
+		*
+		* @module @deepseek-ai/dsh-brand
+		*/
+		/**
+		* Apply a compile-time string brand without changing the value.
+		* @param value - string admitted by the domain that owns the target brand.
+		* @returns the same string with the requested compile-time brand.
+		*/
+		function brandString(value) {
+			return value;
+		}
+		/**
+		* Apply a compile-time number brand without changing the value.
+		* @param value - number admitted by the domain that owns the target brand.
+		* @returns the same number with the requested compile-time brand.
+		*/
+		function brandNumber(value) {
+			return value;
+		}
+		//#endregion
+		//#region ../../node_modules/@deepseek-ai/dsh-session/lib/types/types.js
+		/**
+		* Admit a numeric value as an existing Session event position.
+		* @param value - non-negative safe integer admitted by the owning log operation.
+		* @returns the same number with the Session-sequence brand.
+		*/
+		function SessionSeq(value) {
+			if (!Number.isSafeInteger(value) || value < 0 || Object.is(value, -0)) throw new TypeError(`SessionSeq must be a non-negative safe integer, got ${String(value)}`);
+			return brandNumber(value);
+		}
+		//#endregion
+		//#region lib/types/client/chat/turn-rail-items.js
+		/**
+		* View-layer union of the host turn outline and the loaded rail items. The
+		* conversation snapshot never carries projection values, so this merge is the
+		* one place the rail's two sources meet: the `turnOutline` projection names
+		* every turn of the session, and the loaded window supplies anchors and
+		* richer previews for the turns it holds.
+		*/
+		const EMPTY_ITEMS$1 = [];
+		/**
+		* Structurally narrow one wire outline entry (projection values cross the
+		* wire). `turn` and `seq` are the load-bearing fields — a mark cannot exist
+		* or jump without them — so their damage drops the entry; the previews are
+		* decorative, so a malformed one degrades to `''` and the turn stays
+		* navigable by number.
+		*/
+		function outlineEntry(value) {
+			if (typeof value !== "object" || value === null) return void 0;
+			const entry = value;
+			if (typeof entry.turn !== "number" || !Number.isSafeInteger(entry.turn) || entry.turn < 0) return void 0;
+			if (typeof entry.seq !== "number" || !Number.isSafeInteger(entry.seq) || entry.seq < 0 || Object.is(entry.seq, -0)) return void 0;
+			return {
+				turn: entry.turn,
+				seq: SessionSeq(entry.seq),
+				prompt: typeof entry.prompt === "string" ? entry.prompt : "",
+				response: typeof entry.response === "string" ? entry.response : ""
+			};
+		}
+		/** Wire outline entries, or none when the projection is absent or malformed. */
+		function outlineEntries(outline) {
+			return Array.isArray(outline) ? outline : EMPTY_ITEMS$1;
+		}
+		/**
+		* Merge the host outline with the loaded rail items into the full ladder.
+		* A turn present in both sides keeps the loaded anchor, taking an outline
+		* preview only where the window's own is empty (a mid-Turn window head, or a
+		* turn whose loaded nodes carry no text); turns on one side only pass
+		* through. Result ascends by turn.
+		* @param loaded - loaded-window rail items (timeline order).
+		* @param outline - `turnOutline` projection value, treated as wire data.
+		* @returns every known turn, ascending; a stable empty array when none.
+		*/
+		function mergeTurnRailItems(loaded, outline) {
+			const byTurn = /* @__PURE__ */ new Map();
+			for (const raw of outlineEntries(outline)) {
+				const entry = outlineEntry(raw);
+				if (entry === void 0) continue;
+				byTurn.set(entry.turn, {
+					turn: entry.turn,
+					prompt: entry.prompt,
+					response: entry.response,
+					anchor: {
+						kind: "unloaded",
+						seq: entry.seq
+					}
+				});
+			}
+			for (const item of loaded) {
+				const preview = byTurn.get(item.turn);
+				byTurn.set(item.turn, {
+					turn: item.turn,
+					prompt: item.prompt !== "" ? item.prompt : preview?.prompt ?? "",
+					response: item.response !== "" ? item.response : preview?.response ?? "",
+					anchor: {
+						kind: "loaded",
+						key: item.anchorKey
+					}
+				});
+			}
+			if (byTurn.size === 0) return EMPTY_ITEMS$1;
+			return [...byTurn.values()].sort((left, right) => left.turn - right.turn);
+		}
+		//#endregion
+		//#region lib/types/client/chat/use-chat-navigation.js
+		/** Turn jumps and history-prepend anchoring, independent of DOM measurement. */
+		/** Owns one replaceable turn jump and the anchor retained while history loads. */
+		var ChatNavigation = class {
+			viewport;
+			reading;
+			input;
+			onBusyTurn;
+			jump = null;
+			settleFrame = null;
+			constructor(viewport, reading, input, onBusyTurn) {
+				this.viewport = viewport;
+				this.reading = reading;
+				this.input = input;
+				this.onBusyTurn = onBusyTurn;
+			}
+			/**
+			* Adopt committed history availability without starting a request.
+			* @param input - history state from the latest committed render.
+			*/
+			setInput(input) {
+				this.input = input;
+			}
+			/** Cancel navigation when opening a Chat view. */
+			reset() {
+				this.cancel();
+			}
+			/** Cancel local callbacks; late history completions cannot revive a task. */
+			dispose() {
+				this.clearTask();
+			}
+			/** Release the jump, paging anchor, and busy indicator without cancelling shared history I/O. */
+			cancel() {
+				this.clearTask();
+				this.onBusyTurn(null);
+			}
+			clearTask() {
+				this.cancelFrame();
+				this.jump = null;
+				this.viewport.stopPreserving();
+			}
+			/**
+			* Replace the current jump with an explicit turn selection.
+			* @param item - loaded anchor or unloaded turn to fetch before landing.
+			*/
+			navigateToTurn = (item) => {
+				if (item.anchor.kind === "loaded") {
+					this.cancel();
+					const landing = this.viewport.scrollToTurn(item.turn);
+					if (landing === null) return;
+					this.reading.acceptNavigation(landing);
+					if (this.input.loadingOlder) this.viewport.beginPreserving(landing.position);
+					return;
+				}
+				this.cancel();
+				this.viewport.beginPreserving();
+				this.reading.pauseFollowing();
+				const jump = {
+					turn: item.turn,
+					seq: item.anchor.seq,
+					phase: "loading",
+					landing: "pending",
+					repageHead: null
+				};
+				this.jump = jump;
+				this.onBusyTurn(jump.turn);
+				this.request(jump);
+			};
+			/** Request one older page while retaining the current semantic position. */
+			loadEarlier = () => {
+				this.cancel();
+				this.viewport.beginPaging();
+				this.reading.pauseFollowing();
+				this.input.loadOlder();
+			};
+			/**
+			* Preserve reader ownership across pending history work.
+			* @param sample - settled reader movement that can update or interrupt an anchor.
+			*/
+			readerSampled(sample) {
+				if (sample.movedByReader && this.jump?.landing === "landed") this.jump.landing = "interrupted";
+				if (sample.followingTail || sample.movedByReader) this.viewport.stopPreserving();
+			}
+			/**
+			* Preserve one paging anchor after a commit or a later size change, regardless of head identity.
+			* @returns whether the retained anchor handled the layout change.
+			*/
+			contentCommitted() {
+				if (!this.viewport.preserving || this.reading.pending) return false;
+				if (this.landJump(false)) return true;
+				const landing = this.viewport.preserve();
+				if (landing === null) return false;
+				this.reading.preservePosition(landing);
+				return true;
+			}
+			/** Retarget a still-loading page only after inner or outer reader scrolling ends. */
+			readerSettled() {
+				if (this.input.loadingOlder && this.jump === null && !this.viewport.preserving && !this.reading.followingTail) this.viewport.beginPreserving();
+			}
+			/** Land, retry, or complete the current jump against the committed window. */
+			reconcile() {
+				const jump = this.jump;
+				if (jump === null || this.reading.pending) return;
+				if (jump.phase === "loading") {
+					if (jump.landing === "pending") this.landJump(false);
+					return;
+				}
+				if (this.input.loadingOlder) return;
+				if (this.landJump(true)) return;
+				if ((this.input.firstSeq === null || this.input.firstSeq > jump.seq) && this.input.hasMore && jump.repageHead !== this.input.firstSeq) {
+					jump.repageHead = this.input.firstSeq;
+					this.viewport.beginPreserving();
+					this.request(jump);
+					return;
+				}
+				const fallback = this.viewport.scrollToTurnAtOrAfter(jump.turn);
+				this.cancel();
+				if (fallback !== null) this.reading.acceptNavigation(fallback);
+			}
+			landJump(settle) {
+				const jump = this.jump;
+				if (jump === null) return false;
+				if (jump.landing === "interrupted") {
+					if (settle) {
+						this.cancel();
+						return true;
+					}
+					return false;
+				}
+				const landing = this.viewport.scrollToTurn(jump.turn);
+				if (landing === null) return false;
+				this.reading.acceptNavigation(landing);
+				if (settle) this.cancel();
+				else {
+					this.viewport.beginPreserving(landing.position);
+					jump.landing = "landed";
+				}
+				return true;
+			}
+			request(jump) {
+				jump.phase = "loading";
+				const settled = () => {
+					if (this.jump !== jump) return;
+					jump.phase = "settled";
+					this.cancelFrame();
+					if (typeof requestAnimationFrame !== "function") this.reconcile();
+					else this.settleFrame = requestAnimationFrame(() => {
+						this.settleFrame = null;
+						if (this.jump === jump) this.reconcile();
+					});
+				};
+				this.input.loadThrough(jump.seq).then(settled, settled);
+			}
+			cancelFrame() {
+				if (this.settleFrame !== null && typeof cancelAnimationFrame === "function") cancelAnimationFrame(this.settleFrame);
+				this.settleFrame = null;
+			}
+		};
+		/**
+		* Retain one navigation owner for the component's lifetime.
+		* @param viewport - turn-aware DOM operations.
+		* @param reading - reading and follow policy receiving navigation landings.
+		* @param input - committed history state and load operations.
+		* @returns the navigation owner and its visible busy turn.
+		*/
+		function useChatNavigation(viewport, reading, input) {
+			const [busyTurn, setBusyTurn] = (0, react.useState)(null);
+			const [navigation] = (0, react.useState)(() => new ChatNavigation(viewport, reading, input, setBusyTurn));
+			(0, react.useLayoutEffect)(() => {
+				navigation.setInput(input);
+			}, [navigation, input]);
+			(0, react.useLayoutEffect)(() => () => {
+				navigation.dispose();
+			}, [navigation]);
+			return {
+				navigation,
+				busyTurn
+			};
+		}
+		//#endregion
+		//#region lib/types/client/chat/use-scroll-follow.js
+		/** Independent bottom-follow intent and native scrolling, without paging or DOM observers. */
+		/**
+		* Read one scrollport without measuring its children.
+		* @param element - scrolling element.
+		* @returns current position and range.
+		*/
+		function scrollMetrics(element) {
+			const height = element.clientHeight;
+			return {
+				top: element.scrollTop,
+				height,
+				floor: Math.max(0, element.scrollHeight - height)
+			};
+		}
+		/** One scrollport's follow intent; native animation progress does not count as reader movement. */
+		var ScrollFollow = class ScrollFollow {
+			following;
+			threshold;
+			static owners = /* @__PURE__ */ new WeakMap();
+			target = null;
+			sampledTop;
+			/**
+			* @param following - initial follow intent.
+			* @param threshold - accepted distance from the floor, in pixels.
+			*/
+			constructor(following, threshold) {
+				this.following = following;
+				this.threshold = threshold;
+			}
+			/**
+			* Find the mounted controller for reading-position compensation.
+			* @param element - scrollport with an optional follow owner.
+			* @returns its controller, when bound.
+			*/
+			static forElement(element) {
+				return this.owners.get(element);
+			}
+			/**
+			* Share this controller with reading-position compensation for the same scrollport.
+			* @param element - owned scrollport.
+			* @returns release the association on unmount or close.
+			*/
+			bind(element) {
+				ScrollFollow.owners.set(element, this);
+				return () => {
+					if (ScrollFollow.owners.get(element) === this) ScrollFollow.owners.delete(element);
+				};
+			}
+			/**
+			* Expose follow intent independently of the current offset.
+			* @returns whether content growth should follow the floor.
+			*/
+			get active() {
+				return this.following;
+			}
+			/**
+			* Expose outstanding native motion before accepting reader input.
+			* @returns whether a native follow animation has an outstanding target.
+			*/
+			get animating() {
+				return this.target !== null;
+			}
+			/**
+			* Classify bottom arrivals using this scrollport's own tolerance.
+			* @param metrics - current scroll geometry.
+			* @returns whether the position is within the follow threshold.
+			*/
+			nearBottom(metrics) {
+				return Math.abs(metrics.floor - metrics.top) <= this.threshold;
+			}
+			/**
+			* Commit caller-owned follow decisions without moving the scrollport.
+			* @param active - externally committed follow intent.
+			*/
+			setFollowing(active) {
+				this.following = active;
+				if (!active) this.target = null;
+			}
+			/** Adopt the next visible layout as a fresh reader position. */
+			reset() {
+				this.setFollowing(false);
+				this.sampledTop = void 0;
+			}
+			/**
+			* Adopt delivered scrolling while retaining intent during native animation.
+			* @param metrics - current geometry.
+			* @param movedByReader - caller attribution; omitted callers compare the last sampled position.
+			* @returns updated follow intent.
+			*/
+			sample(metrics, movedByReader = this.sampledTop === void 0 || Math.abs(metrics.top - this.sampledTop) > .5) {
+				this.sampledTop = metrics.top;
+				if (!this.animating && movedByReader) this.following = this.nearBottom(metrics);
+				return this.active;
+			}
+			/**
+			* Settle native scrolling; an off-target stop releases follow intent.
+			* @param metrics - actual geometry delivered at scrollend.
+			* @returns follow intent after completing or interrupting native motion.
+			*/
+			settle(metrics) {
+				const target = this.target;
+				this.target = null;
+				return this.sample(metrics, target === null ? void 0 : Math.abs(metrics.top - Math.min(target, metrics.floor)) > this.threshold);
+			}
+			/**
+			* Position immediately and adopt the resulting follow intent.
+			* @param element - scrolling element.
+			* @param metrics - geometry before positioning.
+			* @param top - requested offset, clamped to the measured range.
+			* @returns geometry after positioning.
+			*/
+			jump(element, metrics, top) {
+				const animated = this.animating;
+				this.target = null;
+				const target = Math.max(0, Math.min(metrics.floor, top));
+				if (animated) element.scrollTo({
+					top: target,
+					behavior: "instant"
+				});
+				else if (target !== metrics.top) element.scrollTop = target;
+				const landed = {
+					...metrics,
+					top: element.scrollTop
+				};
+				this.sampledTop = landed.top;
+				this.following = this.nearBottom(landed);
+				return landed;
+			}
+			/**
+			* Follow the measured floor, respecting reduced motion for smooth requests.
+			* Smooth requests preserve an outstanding target; immediate follow updates
+			* retarget active motion when content changes the floor.
+			* Within-tolerance positioning is immediate while no animation is outstanding.
+			* @param element - scrolling element.
+			* @param metrics - current geometry.
+			* @param behavior - native animation for growth, or immediate positioning unless motion is already active.
+			* @returns current geometry; smooth requests retain their starting position until native scroll delivery.
+			*/
+			toBottom(element, metrics, behavior) {
+				this.following = true;
+				if (metrics.top === metrics.floor) return this.jump(element, metrics, metrics.floor);
+				if (behavior === "instant" && this.animating) {
+					if (this.target !== metrics.floor) {
+						this.target = metrics.floor;
+						element.scrollTo({
+							top: metrics.floor,
+							behavior: "smooth"
+						});
+					}
+					return metrics;
+				}
+				if (behavior === "instant" || !this.animating && this.nearBottom(metrics)) return this.jump(element, metrics, metrics.floor);
+				if (typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches) return this.jump(element, metrics, metrics.floor);
+				if (this.target === null) {
+					this.target = metrics.floor;
+					element.scrollTo({
+						top: metrics.floor,
+						behavior: "smooth"
+					});
+				}
+				return metrics;
+			}
+			/**
+			* Cancel native motion before a reader gesture; only subsequent actual movement changes follow intent.
+			* @param element - scrolling element.
+			* @param metrics - position at interruption.
+			*/
+			interrupt(element, metrics) {
+				if (!this.animating) return;
+				this.target = null;
+				this.sampledTop = metrics.top;
+				element.scrollTo({
+					top: metrics.top,
+					behavior: "instant"
+				});
+			}
+		};
+		/**
+		* Retain one independent follow controller without React updates for scroll samples.
+		* @param initial - initial follow intent.
+		* @param threshold - accepted distance from the floor, in pixels.
+		* @returns the stable controller shared by the caller's scroll and resize handlers.
+		*/
+		function useScrollFollow(initial, threshold) {
+			const [follow] = (0, react.useState)(() => new ScrollFollow(initial, threshold));
+			return follow;
+		}
+		//#endregion
+		//#region lib/types/client/chat/use-chat-reading.js
+		/** Follow-tail ownership, saved-position restoration, and sampled reader movement. */
+		const SCROLL_SAMPLE_INTERVAL_MS = 500;
+		/** Owns reading policy and its cancellable sampling work, without DOM access. */
+		var ChatReading = class {
+			viewport;
+			store;
+			state;
+			onChange;
+			follow;
+			sampleTimer = null;
+			probeFrame = null;
+			sampled = null;
+			constructor(viewport, store, state, onChange, follow) {
+				this.viewport = viewport;
+				this.store = store;
+				this.state = state;
+				this.onChange = onChange;
+				this.follow = follow;
+			}
+			/**
+			* Expose pending reader ownership to navigation and resize handlers.
+			* @returns whether reader input still awaits interval or scrollend sampling.
+			*/
+			get pending() {
+				return this.sampleTimer !== null;
+			}
+			/**
+			* Expose the active follow policy.
+			* @returns whether content growth retains bottom-follow ownership.
+			*/
+			get followingTail() {
+				return this.state.followingTail;
+			}
+			/**
+			* Adopt the committed Session's scroll memory.
+			* @param store - scroll memory for the current Session.
+			*/
+			setStore(store) {
+				this.store = store;
+			}
+			/**
+			* Connect history policy to settled reading observations.
+			* @param sampled - receives settled reader positions.
+			* @returns a disposer that disconnects only this listener.
+			*/
+			connect(sampled) {
+				this.sampled = sampled;
+				return () => {
+					if (this.sampled === sampled) this.sampled = null;
+				};
+			}
+			/** Cancel timers and animation frames and detach the sample listener. */
+			dispose() {
+				this.cancelPending();
+				this.sampled = null;
+			}
+			/** Release bottom follow and pending sampling for an explicit navigation. */
+			pauseFollowing() {
+				this.cancelPending();
+				this.publish({
+					...this.state,
+					followingTail: false
+				});
+			}
+			/**
+			* Land at the current floor and clear saved reader position.
+			* @param behavior - immediate positioning, or one native animation when the reader's own input moved the tail.
+			*/
+			followTail(behavior = "instant") {
+				const landing = this.viewport.scrollToBottom(this.follow, behavior);
+				if (landing === null) return;
+				this.cancelPending();
+				this.commit(landing, true, this.viewport.latestTurn);
+			}
+			/**
+			* Follow the tail on the active fold's animation clock.
+			* @returns whether a fold batch owns the tail movement instead of a separate scroll animation.
+			*/
+			followInputFold() {
+				this.cancelPending();
+				return this.viewport.followInputFold(this.follow);
+			}
+			/**
+			* Let fold batches read follow intent and commit their tail landings.
+			* @returns a disposer that disconnects this reading policy from the viewport.
+			*/
+			bindFolds() {
+				return this.viewport.bindReader({
+					follow: this.follow,
+					landedAtTail: (landing) => {
+						this.cancelPending();
+						this.commit(landing, true, this.viewport.latestTurn);
+					},
+					pending: () => this.pending
+				});
+			}
+			/** Stop a native follow animation where it is; the next sampled position decides follow intent. */
+			interruptFollow() {
+				this.viewport.interruptFollow(this.follow);
+			}
+			/** Restore the Session's semantic position, or follow the tail when none is saved. */
+			restore() {
+				const saved = this.store.read();
+				if (saved === null) {
+					this.followTail();
+					return;
+				}
+				const landing = this.viewport.restore(saved);
+				if (landing === null) return;
+				this.cancelPending();
+				const following = this.follow.nearBottom(landing.metrics);
+				this.commit(landing, following, following ? this.viewport.latestTurn : this.state.activeTurn, following);
+				if (!this.state.followingTail && landing.position === null) {
+					const position = this.viewport.capturePosition();
+					if (position !== null) this.store.save(position);
+				}
+				this.refreshActiveTurn();
+			}
+			/**
+			* Adopt a known landing without rediscovering its anchor.
+			* @param landing - measured navigation result that replaces pending reader input.
+			*/
+			acceptNavigation(landing) {
+				this.cancelPending();
+				const following = this.follow.nearBottom(landing.metrics);
+				this.commit(landing, following, landing.turn ?? (following ? this.viewport.latestTurn : this.state.activeTurn));
+			}
+			/**
+			* Retain reading policy while history changes the anchor's geometry.
+			* @param landing - compensated position that retains the current reading policy.
+			*/
+			preservePosition(landing) {
+				this.cancelPending();
+				this.commit(landing, this.state.followingTail, this.state.activeTurn);
+			}
+			/**
+			* Handle pinned layout movement and reader arrivals at the floor immediately.
+			* @param scroll - attributed scroll delivery; other reader movement remains pending until sampled.
+			*/
+			onScroll = (scroll) => {
+				if (this.follow.animating) return;
+				if (!scroll.movedByReader && this.state.followingTail || scroll.movedByReader && Math.abs(scroll.metrics.top - scroll.metrics.floor) < 1) {
+					this.followTail();
+					this.sampled?.({
+						position: null,
+						movedByReader: scroll.movedByReader,
+						followingTail: true
+					});
+					return;
+				}
+				this.sampleTimer ??= window.setTimeout(this.flushSample, SCROLL_SAMPLE_INTERVAL_MS);
+			};
+			/**
+			* Settle pending reader movement; only the outer scroller can finish its native follow animation.
+			* @param outer - whether the event belongs to the outer scroller rather than a process body.
+			*/
+			onScrollEnd = (outer = true) => {
+				if (this.follow.animating) {
+					if (!outer) return;
+					const scroll = this.viewport.readScroll();
+					if (scroll === null) return;
+					if (this.follow.settle(scroll.metrics)) {
+						this.followTail();
+						return;
+					}
+					this.viewport.acknowledge(scroll.metrics);
+					this.publish({
+						...this.state,
+						followingTail: false
+					});
+					this.refreshActiveTurn();
+					return;
+				}
+				this.flushSample();
+			};
+			/** Reconcile a layout change without overriding unsampled reader input. */
+			onResize() {
+				if (this.pending) return;
+				if (this.state.followingTail) this.followTail();
+				else this.refreshActiveTurn();
+			}
+			/** Resolve the active turn from tail ownership or a coalesced reading-line probe. */
+			refreshActiveTurn() {
+				if (this.pending) return;
+				if (this.state.followingTail) {
+					this.publish({
+						...this.state,
+						initialized: true,
+						activeTurn: this.viewport.latestTurn
+					});
+					return;
+				}
+				if (this.probeFrame !== null) return;
+				if (typeof requestAnimationFrame !== "function") this.probe();
+				else this.probeFrame = requestAnimationFrame(this.probe);
+			}
+			commit(landing, followingTail, activeTurn, initialized = true) {
+				if (followingTail) this.store.save(null);
+				else if (landing.position !== null) this.store.save(landing.position);
+				this.publish({
+					initialized,
+					followingTail,
+					activeTurn
+				});
+			}
+			publish(state) {
+				this.follow.setFollowing(state.followingTail);
+				if (state.initialized === this.state.initialized && state.followingTail === this.state.followingTail && state.activeTurn === this.state.activeTurn) return;
+				this.state = state;
+				this.onChange(state);
+			}
+			cancelPending() {
+				if (this.sampleTimer !== null) window.clearTimeout(this.sampleTimer);
+				if (this.probeFrame !== null && typeof cancelAnimationFrame === "function") cancelAnimationFrame(this.probeFrame);
+				this.sampleTimer = null;
+				this.probeFrame = null;
+			}
+			probe = () => {
+				this.probeFrame = null;
+				if (this.pending) return;
+				const scroll = this.viewport.readScroll();
+				if (scroll === null) return;
+				const activeTurn = this.follow.nearBottom(scroll.metrics) ? this.viewport.latestTurn : this.viewport.readVisibleTurn(scroll.metrics);
+				this.publish({
+					...this.state,
+					initialized: true,
+					activeTurn
+				});
+			};
+			flushSample = () => {
+				if (!this.pending) return;
+				this.cancelPending();
+				const scroll = this.viewport.readScroll();
+				if (scroll === null) return;
+				const followingTail = this.follow.sample(scroll.metrics, scroll.movedByReader);
+				let position = null;
+				if (!scroll.movedByReader && followingTail) this.followTail();
+				else {
+					position = followingTail ? null : this.viewport.capturePosition();
+					this.viewport.acknowledge(scroll.metrics);
+					if (followingTail || position !== null) this.store.save(position);
+					const activeTurn = this.follow.nearBottom(scroll.metrics) ? this.viewport.latestTurn : this.viewport.readVisibleTurn(scroll.metrics);
+					this.publish({
+						initialized: true,
+						followingTail,
+						activeTurn
+					});
+				}
+				this.sampled?.({
+					position,
+					movedByReader: scroll.movedByReader,
+					followingTail
+				});
+			};
+		};
+		/**
+		* Retain reading policy and expose only changes in visible reading state.
+		* @param viewport - turn-aware DOM operations.
+		* @param store - Session-owned semantic scroll memory.
+		* @param initialTurn - latest loaded turn before the first landing.
+		* @returns the reading owner and its React-visible state.
+		*/
+		function useChatReading(viewport, store, initialTurn) {
+			const [state, setState] = (0, react.useState)(() => ({
+				initialized: false,
+				followingTail: store.read() === null,
+				activeTurn: initialTurn
+			}));
+			const follow = useScrollFollow(state.followingTail, 25);
+			const [reading] = (0, react.useState)(() => new ChatReading(viewport, store, state, setState, follow));
+			(0, react.useLayoutEffect)(() => {
+				reading.setStore(store);
+			}, [reading, store]);
+			(0, react.useLayoutEffect)(() => reading.bindFolds(), [reading]);
+			(0, react.useLayoutEffect)(() => () => {
+				reading.dispose();
+			}, [reading]);
+			return {
+				reading,
+				state
+			};
+		}
+		//#endregion
+		//#region lib/types/client/chat/searchable-hidden.js
+		/**
+		* Apply searchable hidden state without unmounting a stable subtree.
+		* @param hidden - whether the subtree is currently hidden.
+		* @param reveal - callback for browser find's beforematch reveal.
+		* @param transition - optional caller-owned visibility operation; otherwise apply synchronously.
+		* @returns ref for the stable subtree root.
+		*/
+		function useSearchableHidden(hidden, reveal, transition) {
+			const ref = (0, react.useRef)(null);
+			(0, react.useLayoutEffect)(() => {
+				const element = ref.current;
+				if (element === null) return;
+				if (hidden && element.contains(element.ownerDocument.activeElement)) {
+					reveal();
+					return;
+				}
+				const commit = () => {
+					if (hidden) element.setAttribute("hidden", "until-found");
+					else element.removeAttribute("hidden");
+				};
+				if (transition === void 0) commit();
+				else transition(element, hidden, commit);
+			}, [
+				hidden,
+				reveal,
+				transition
+			]);
+			(0, react.useEffect)(() => {
+				const element = ref.current;
+				if (element === null) return;
+				element.addEventListener("beforematch", reveal);
+				return () => {
+					element.removeEventListener("beforematch", reveal);
+				};
+			}, [reveal]);
+			return ref;
+		}
+		//#endregion
+		//#region lib/types/client/chat/flow-motion.js
+		/**
+		* Fold transitions owned by one Chat viewport. Every batch containing a closing row moves its boxes and
+		* the scrollport on one frame clock; a batch that only reveals rows, or a viewport without a reading
+		* policy, uses CSS transitions. Motion is opt-in under `[data-chat-motion]`, respects reduced motion,
+		* and clears temporary styles.
+		*/
+		const FADE_OUT_MS = 70;
+		/** The box starts closing while the fade finishes; by then the row is nearly transparent. */
+		const CLOSE_DELAY_MS = 50;
+		const CLOSE_MS = 110;
+		const MOTION_SCOPE = "[data-chat-motion]";
+		const EASING = "cubic-bezier(0.4, 0, 0.2, 1)";
+		/**
+		* Decide whether a row may animate: inside a live scope and not under reduced motion.
+		* @param element - row about to be hidden.
+		* @returns whether the fade-then-close transition applies.
+		*/
+		function motionEnabled(element) {
+			if (element.closest(MOTION_SCOPE) === null) return false;
+			return typeof matchMedia !== "function" || !matchMedia("(prefers-reduced-motion: reduce)").matches;
+		}
+		/**
+		* Whether a row is already hidden or on its way there.
+		* @param element - row under Turn-level visibility control.
+		* @returns hidden attribute present or a collapse transition outstanding.
+		*/
+		function hiddenOrCollapsing(element) {
+			return element.hasAttribute("hidden") || element.dataset.chatMotion === "collapse";
+		}
+		/**
+		* Opacity of a revealing box at batch progress, continuing from the share its own transition reached.
+		* @param box - revealing box.
+		* @param progress - shared eased progress from zero to one.
+		* @returns opacity from zero to one.
+		*/
+		function revealedShare(box, progress) {
+			const start = box.height === 0 ? 0 : box.fromHeight / box.height;
+			return start + (1 - start) * progress;
+		}
+		/**
+		* Create animation coordination without cross-viewport broadcasts.
+		* @param driver - the viewport's driver for the next batch; null while detached.
+		* @param foldingChanged - disable or restore this viewport's native scroll anchoring.
+		* @returns stable callbacks and cleanup for this viewport's animations.
+		*/
+		function createFlowMotion(driver, foldingChanged) {
+			const running = /* @__PURE__ */ new Map();
+			let folding = 0;
+			const foldIdleListeners = /* @__PURE__ */ new Set();
+			let batchScheduled = false;
+			const boxes = /* @__PURE__ */ new Map();
+			let frameRequest = null;
+			let batch = false;
+			let cancelled = false;
+			let clearEpoch = 0;
+			let batchCleanup = null;
+			let cancelEmptyBatch = null;
+			/** The batch is committing hidden rows and its final geometry; idle listeners wait until both land. */
+			let settling = false;
+			let anchoringDisabled = false;
+			function cancelInput() {
+				if (batch) cancelled = true;
+			}
+			function resumeInput() {
+				if (batch) cancelled = false;
+			}
+			/** Rows inside a closing ancestor change with it and never join a batch on their own. */
+			function batchMember(box) {
+				return box.element.parentElement?.closest("[data-chat-motion=\"collapse\"]") === null;
+			}
+			function runBatch(current) {
+				for (const box of [...boxes.values()]) {
+					if (!batchMember(box)) continue;
+					const height = box.element.offsetHeight;
+					const marginTop = Number.parseFloat(getComputedStyle(box.element).marginTop) || 0;
+					if (!box.closing) {
+						box.fromHeight = Math.min(height, box.height);
+						box.fromMarginTop = Math.min(marginTop, box.marginTop);
+						continue;
+					}
+					box.height = height;
+					box.marginTop = marginTop;
+					if (height === 0 && marginTop === 0) box.finish();
+				}
+				const owned = [...boxes.values()];
+				const members = owned.filter(batchMember).sort((left, right) => left.element.compareDocumentPosition(right.element) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
+				if (!members.some((box) => box.closing)) return;
+				batch = true;
+				cancelled = false;
+				const travelling = current.begin(members.map((box) => box.closing ? box : {
+					element: box.element,
+					height: box.height - box.fromHeight,
+					marginTop: box.marginTop - box.fromMarginTop,
+					closing: false
+				}));
+				batchCleanup = () => {
+					current.finish(true);
+				};
+				for (const box of owned) box.take();
+				for (const box of members) {
+					box.element.style.transition = "none";
+					box.element.style.height = `${box.closing ? box.height : box.fromHeight}px`;
+					box.element.style.marginTop = `${box.closing ? box.marginTop : box.fromMarginTop}px`;
+					box.element.style.opacity = box.closing ? "1" : String(revealedShare(box, 0));
+				}
+				const memberSet = new Set(members);
+				const settledTravel = /* @__PURE__ */ new Set();
+				const freezeTravelling = () => {
+					for (const element of travelling) {
+						if (settledTravel.has(element)) continue;
+						settledTravel.add(element);
+						element.style.translate = "";
+						for (const box of owned) {
+							if (memberSet.has(box) || !element.contains(box.element)) continue;
+							box.element.style.transition = "none";
+							box.element.style.height = `${box.height}px`;
+							box.element.style.marginTop = `${box.marginTop}px`;
+							box.element.style.opacity = "1";
+						}
+					}
+				};
+				freezeTravelling();
+				const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+				let started;
+				let displacement = 0;
+				const settle = (finishCancelled) => {
+					batch = false;
+					batchCleanup = null;
+					cancelEmptyBatch = null;
+					settling = true;
+					try {
+						for (const box of owned) if (boxes.get(box.element) === box) box.finish();
+						current.finish(finishCancelled);
+					} finally {
+						settling = false;
+					}
+					if (folding === 0) notifyIdle();
+					if ([...boxes.values()].some((box) => box.held)) flushBatch();
+				};
+				cancelEmptyBatch = () => {
+					if (members.some((box) => box.closing && boxes.get(box.element) === box)) return;
+					if (frameRequest !== null) cancelAnimationFrame(frameRequest);
+					frameRequest = null;
+					settle(true);
+				};
+				const tick = (now) => {
+					frameRequest = null;
+					started ??= now;
+					const elapsed = reduced ? 160 : now - started;
+					const linear = Math.min(1, Math.max(0, (elapsed - CLOSE_DELAY_MS) / CLOSE_MS));
+					const progress = linear * linear * (3 - 2 * linear);
+					current.prepare(progress, cancelled);
+					freezeTravelling();
+					for (const box of members) {
+						if (boxes.get(box.element) !== box) continue;
+						if (box.closing) {
+							box.element.style.height = `${box.height * (1 - progress)}px`;
+							box.element.style.marginTop = `${box.marginTop * (1 - progress)}px`;
+							box.element.style.opacity = travelling.has(box.element) ? "1" : String(Math.max(0, 1 - elapsed / FADE_OUT_MS));
+						} else {
+							box.element.style.height = `${box.fromHeight + (box.height - box.fromHeight) * progress}px`;
+							box.element.style.marginTop = `${box.fromMarginTop + (box.marginTop - box.fromMarginTop) * progress}px`;
+							box.element.style.opacity = String(revealedShare(box, progress));
+						}
+					}
+					displacement = current.frame(progress, cancelled);
+					let removedBefore = 0;
+					for (const box of members) {
+						if (boxes.get(box.element) !== box) continue;
+						if (box.closing) {
+							if (!travelling.has(box.element)) box.element.style.translate = `0 ${displacement + removedBefore}px`;
+							removedBefore += (box.height + box.marginTop) * progress;
+						} else removedBefore -= (box.height - box.fromHeight + box.marginTop - box.fromMarginTop) * progress;
+					}
+					if (linear < 1) {
+						frameRequest = requestAnimationFrame(tick);
+						return;
+					}
+					settle(cancelled);
+				};
+				if (reduced) tick(0);
+				else frameRequest = requestAnimationFrame(tick);
+			}
+			function foldActive() {
+				return folding > 0;
+			}
+			function onFoldIdle(listener) {
+				if (folding === 0) listener();
+				else foldIdleListeners.add(listener);
+				return () => {
+					foldIdleListeners.delete(listener);
+				};
+			}
+			function flushBatch() {
+				batchScheduled = false;
+				if (batch) return;
+				const current = [...boxes.values()].some((box) => box.closing) ? driver() : null;
+				if (current !== null) {
+					runBatch(current);
+					return;
+				}
+				const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+				for (const box of [...boxes.values()]) if (reduced || box.held && box.closing) box.finish();
+				else if (box.held) box.release();
+			}
+			function scheduleBatch() {
+				if (batchScheduled) return;
+				batchScheduled = true;
+				const epoch = clearEpoch;
+				queueMicrotask(() => {
+					if (epoch === clearEpoch) flushBatch();
+				});
+			}
+			function foldStarted() {
+				folding += 1;
+				if (folding !== 1 || anchoringDisabled) return;
+				anchoringDisabled = true;
+				foldingChanged(true);
+			}
+			function foldEnded() {
+				folding = Math.max(0, folding - 1);
+				if (folding === 0 && !settling) notifyIdle();
+			}
+			function notifyIdle() {
+				if (anchoringDisabled) {
+					anchoringDisabled = false;
+					foldingChanged(false);
+				}
+				const listeners = [...foldIdleListeners];
+				foldIdleListeners.clear();
+				for (const listener of listeners) listener();
+			}
+			function clearMotion(element, onEnd, timer) {
+				element.removeEventListener("transitionend", onEnd);
+				clearTimeout(timer);
+				running.delete(element);
+				boxes.delete(element);
+				const { style } = element;
+				style.height = "";
+				style.marginTop = "";
+				style.opacity = "";
+				style.overflow = "";
+				style.transition = "";
+				style.translate = "";
+				delete element.dataset.chatMotion;
+			}
+			function cancelMotion(element) {
+				running.get(element)?.();
+				cancelEmptyBatch?.();
+			}
+			function collapse(element, done) {
+				cancelMotion(element);
+				const height = element.offsetHeight;
+				const marginTop = Number.parseFloat(getComputedStyle(element).marginTop) || 0;
+				if (height === 0 && marginTop === 0) {
+					done();
+					return;
+				}
+				const { style } = element;
+				const held = batch;
+				element.dataset.chatMotion = "collapse";
+				foldStarted();
+				scheduleBatch();
+				style.transition = "none";
+				style.overflow = "hidden";
+				style.height = `${height}px`;
+				style.marginTop = `${marginTop}px`;
+				if (!held) {
+					element.offsetHeight;
+					style.transition = `opacity ${FADE_OUT_MS}ms ${EASING}, height ${CLOSE_MS}ms ${EASING} ${CLOSE_DELAY_MS}ms, margin-top ${CLOSE_MS}ms ${EASING} ${CLOSE_DELAY_MS}ms`;
+					style.opacity = "0";
+					style.height = "0px";
+					style.marginTop = "0px";
+				}
+				const finish = () => {
+					if (running.get(element) !== cancel) return;
+					clearMotion(element, onEnd, timer);
+					done();
+					foldEnded();
+				};
+				const onEnd = (event) => {
+					if (event.target === element && event.propertyName === "height") finish();
+				};
+				const timer = held ? void 0 : setTimeout(finish, 240);
+				const cancel = () => {
+					clearMotion(element, onEnd, timer);
+					foldEnded();
+				};
+				if (!held) element.addEventListener("transitionend", onEnd);
+				running.set(element, cancel);
+				boxes.set(element, {
+					element,
+					height,
+					marginTop,
+					fromHeight: height,
+					fromMarginTop: marginTop,
+					closing: true,
+					held,
+					finish,
+					release: () => {},
+					take: () => {
+						element.removeEventListener("transitionend", onEnd);
+						clearTimeout(timer);
+					}
+				});
+			}
+			function reveal(element) {
+				cancelMotion(element);
+				const height = element.offsetHeight;
+				if (height === 0) return;
+				const marginTop = Number.parseFloat(getComputedStyle(element).marginTop) || 0;
+				scheduleBatch();
+				const { style } = element;
+				element.dataset.chatMotion = "reveal";
+				style.transition = "none";
+				style.overflow = "hidden";
+				style.opacity = "0";
+				style.height = "0px";
+				style.marginTop = "0px";
+				const finish = () => {
+					if (running.get(element) !== finish) return;
+					clearMotion(element, onEnd, timer);
+				};
+				const onEnd = (event) => {
+					if (event.target === element && event.propertyName === "height") finish();
+				};
+				let timer;
+				const startTransition = () => {
+					element.offsetHeight;
+					style.transition = `height ${CLOSE_MS}ms ${EASING} ${CLOSE_DELAY_MS}ms, margin-top ${CLOSE_MS}ms ${EASING} ${CLOSE_DELAY_MS}ms, opacity ${CLOSE_MS}ms ${EASING} ${CLOSE_DELAY_MS}ms`;
+					style.height = `${height}px`;
+					style.marginTop = `${marginTop}px`;
+					style.opacity = "1";
+					timer = setTimeout(finish, 240);
+					element.addEventListener("transitionend", onEnd);
+				};
+				const held = batch;
+				if (!held) startTransition();
+				running.set(element, finish);
+				const box = {
+					element,
+					height,
+					marginTop,
+					fromHeight: 0,
+					fromMarginTop: 0,
+					closing: false,
+					held,
+					finish,
+					release: () => {
+						box.held = false;
+						startTransition();
+					},
+					take: () => {
+						element.removeEventListener("transitionend", onEnd);
+						clearTimeout(timer);
+					}
+				};
+				boxes.set(element, box);
+			}
+			function clear() {
+				clearEpoch++;
+				batchScheduled = false;
+				batch = false;
+				cancelled = false;
+				if (frameRequest !== null) cancelAnimationFrame(frameRequest);
+				frameRequest = null;
+				batchCleanup?.();
+				batchCleanup = null;
+				cancelEmptyBatch = null;
+				foldIdleListeners.clear();
+				for (const cancel of [...running.values()]) cancel();
+			}
+			return {
+				collapse,
+				reveal,
+				cancelMotion,
+				foldActive,
+				onFoldIdle,
+				cancelInput,
+				resumeInput,
+				clear,
+				inputActive: () => batch || batchScheduled && [...boxes.values()].some((box) => box.closing && batchMember(box))
+			};
+		}
+		function useFlowTransition(motion, grow) {
+			const current = (0, react.useRef)(null);
+			(0, react.useLayoutEffect)(() => () => {
+				if (current.current !== null) motion?.cancelMotion(current.current);
+				current.current = null;
+			}, [motion]);
+			const transition = (0, react.useCallback)((element, hidden, commit) => {
+				const mounted = current.current === element;
+				const animate = mounted && motionEnabled(element);
+				current.current = element;
+				if (hidden) {
+					if (hiddenOrCollapsing(element)) return;
+					if (mounted && element.closest(MOTION_SCOPE) !== null && motion !== void 0) motion.collapse(element, commit);
+					else commit();
+					return;
+				}
+				motion?.cancelMotion(element);
+				const wasHidden = element.hasAttribute("hidden");
+				commit();
+				if (wasHidden && animate && grow) motion?.reveal(element);
+			}, [motion, grow]);
+			return motion === void 0 ? void 0 : transition;
+		}
+		/**
+		* Apply searchable hiding with the containing Chat viewport's optional fold animation.
+		* @param hidden - desired visibility.
+		* @param reveal - browser-find and focus-protection callback.
+		* @param motion - owning viewport's row callbacks; undefined applies visibility synchronously.
+		* @returns the stable subtree ref.
+		*/
+		function useFlowHidden(hidden, reveal, motion) {
+			return useSearchableHidden(hidden, reveal, useFlowTransition(motion, false));
+		}
+		/**
+		* Toggle a plain hidden attribute on the fold clock, growing newly revealed headers.
+		* @param ref - element whose visibility follows hidden.
+		* @param hidden - desired hidden state.
+		* @param motion - containing viewport's row callbacks.
+		*/
+		function useMotionHidden(ref, hidden, motion) {
+			const transition = useFlowTransition(motion, true);
+			(0, react.useLayoutEffect)(() => {
+				const element = ref.current;
+				if (element === null) return;
+				transition?.(element, hidden, () => {
+					if (hidden) element.setAttribute("hidden", "");
+					else element.removeAttribute("hidden");
+				});
+			}, [
+				ref,
+				hidden,
+				transition
+			]);
+		}
+		//#endregion
+		//#region lib/types/client/chat/use-chat-viewport.js
+		/** Turn-aware DOM scrolling and geometry, without history-loading or follow policy. */
+		const READING_INTENTS = [
+			"wheel",
+			"touchstart",
+			"pointerdown",
+			"keydown",
+			"beforematch"
+		];
+		const SCROLL_KEYS$1 = /* @__PURE__ */ new Set([
+			"ArrowUp",
+			"ArrowDown",
+			"PageUp",
+			"PageDown",
+			"Home",
+			"End",
+			" "
+		]);
+		/** Owns one Chat scrollport's DOM operations, event listeners, and size observer. */
+		var ChatViewport = class {
+			elements = null;
+			observer = null;
+			events = null;
+			turns = [];
+			observation = {
+				top: 0,
+				landing: null
+			};
+			paging = null;
+			reader = null;
+			/** The pending or running fold batch lands at the tail. */
+			tailRequested = false;
+			/** Switches the running batch to a tail landing; null while no batch runs. */
+			retarget = null;
+			/** Transition state and row callbacks owned by this viewport's attachment. */
+			motion = createFlowMotion(() => this.foldDriver(), (active) => {
+				if (this.elements !== null) this.elements.scroller.style.overflowAnchor = active ? "none" : "";
+			});
+			/**
+			* Bind to the containing scrollport and observe content and viewport sizes.
+			* @param list - Chat root inside an optional shared conversation scrollport.
+			* @param column - ordered outer Node/Group boxes; its size changes invalidate cached landings.
+			*/
+			attach(list, column) {
+				this.detach();
+				const scroller = list.closest("[data-conversation-scroll]") ?? list;
+				const composer = scroller.querySelector("[data-composer-seat]");
+				const spacer = list.querySelector("[data-chat-turn-spacer]");
+				const elements = {
+					list,
+					column,
+					scroller,
+					composer,
+					spacer
+				};
+				this.elements = elements;
+				if (spacer !== null) spacer.style.height = "";
+				scroller.addEventListener("scroll", this.onScroll, { passive: true });
+				scroller.addEventListener("scrollend", this.onScrollEnd, {
+					passive: true,
+					capture: true
+				});
+				for (const type of READING_INTENTS) scroller.addEventListener(type, this.onIntent, {
+					passive: true,
+					capture: true
+				});
+				if (typeof ResizeObserver !== "undefined") {
+					this.observer = new ResizeObserver(() => {
+						if (this.elements !== elements) return;
+						this.reclaimBelow();
+						this.invalidate();
+						this.events?.resize();
+					});
+					this.observer.observe(column);
+					this.observer.observe(scroller);
+					if (composer !== null) this.observer.observe(composer);
+				}
+			}
+			/** Disconnect DOM resources and clear observations for the detached view. */
+			detach() {
+				this.stopPreserving();
+				this.motion.clear();
+				if (this.elements !== null) this.elements.scroller.style.overflowAnchor = "";
+				this.elements?.scroller.removeEventListener("scroll", this.onScroll);
+				this.elements?.scroller.removeEventListener("scrollend", this.onScrollEnd, true);
+				for (const type of READING_INTENTS) this.elements?.scroller.removeEventListener(type, this.onIntent, true);
+				this.observer?.disconnect();
+				this.observer = null;
+				this.elements = null;
+				this.events = null;
+				this.tailRequested = false;
+				this.retarget = null;
+				this.turns = [];
+				this.observation = {
+					top: 0,
+					landing: null
+				};
+			}
+			/**
+			* Connect business policy without changing DOM listener ownership.
+			* @param events - business handlers for scroll and layout changes.
+			* @returns a disposer that disconnects only these handlers.
+			*/
+			connect(events) {
+				this.events = events;
+				return () => {
+					if (this.events === events) this.events = null;
+				};
+			}
+			/**
+			* Adopt the loaded turn anchors without querying the DOM.
+			* @param turns - ordered loaded turns from the committed Chat snapshot.
+			*/
+			updateTurns(turns) {
+				this.turns = turns;
+			}
+			/**
+			* Resolve the tail from the committed turn index.
+			* @returns the latest loaded turn, or null for an empty window.
+			*/
+			get latestTurn() {
+				return this.turns.at(-1)?.turn ?? null;
+			}
+			/** Discard geometry-dependent landing knowledge while retaining scroll attribution. */
+			invalidate() {
+				this.observation.landing = null;
+			}
+			spacerHeight() {
+				const spacer = this.elements?.spacer;
+				return spacer == null ? 0 : Number.parseFloat(spacer.style.height) || 0;
+			}
+			setSpacer(height) {
+				const spacer = this.elements?.spacer;
+				if (spacer == null) return;
+				const next = height <= 0 ? "" : `${Math.ceil(height)}px`;
+				if (spacer.style.height !== next) spacer.style.height = next;
+			}
+			/**
+			* Connect the reading policy that fold batches consult.
+			* @param reader - follow intent and the tail-landing commit.
+			* @returns a disposer that disconnects only this reader.
+			*/
+			bindReader(reader) {
+				this.reader = reader;
+				return () => {
+					if (this.reader === reader) this.reader = null;
+				};
+			}
+			/**
+			* Land the pending or running fold batch at the tail instead of starting a separate scroll.
+			* @param follow - follow controller whose native animation yields to the batch.
+			* @returns whether a fold owns the tail movement.
+			*/
+			followInputFold(follow) {
+				if (this.elements === null || this.reader === null || !this.motion.inputActive()) return false;
+				this.interruptFollow(follow);
+				this.tailRequested = true;
+				this.retarget?.();
+				return true;
+			}
+			/**
+			* Drive one fold batch on its frame clock. A tail landing ends at the floor, never above the reader's
+			* compensated position; a reader landing keeps the visible content still. Both install only the room
+			* the landing lacks.
+			* @returns the batch driver, or null while detached or without a reading policy.
+			*/
+			foldDriver() {
+				const elements = this.elements;
+				const reader = this.reader;
+				if (elements === null || reader === null) return null;
+				const { follow } = reader;
+				let tail = false;
+				let start = 0;
+				let base = 0;
+				let target = 0;
+				let removed = 0;
+				let growth = 0;
+				let initialHeight = 0;
+				let finalRoom = 0;
+				let previousColumnHeight = 0;
+				let previousProgress = 0;
+				let segmentProgress = 0;
+				let segmentTop = 0;
+				let written = 0;
+				const closing = [];
+				const travelling = /* @__PURE__ */ new Set();
+				let reference = null;
+				let referenceTop = 0;
+				let viewportTop = 0;
+				const screenTop = (element) => element.getBoundingClientRect().top - viewportTop;
+				const aim = () => {
+					const finalHeight = initialHeight - removed + growth;
+					const height = elements.scroller.clientHeight;
+					target = tail ? Math.max(base, finalHeight - height, 0) : base;
+					finalRoom = target === 0 ? 0 : Math.max(0, target + height - finalHeight);
+				};
+				const restart = () => {
+					segmentTop = elements.scroller.scrollTop;
+					segmentProgress = previousProgress;
+				};
+				const automatic = (cancelled) => !(cancelled && tail);
+				const position = (progress, cancelled) => {
+					if (!automatic(cancelled)) return elements.scroller.scrollTop;
+					const remaining = segmentProgress === 1 ? 1 : (progress - segmentProgress) / (1 - segmentProgress);
+					return segmentTop + (target - segmentTop) * remaining;
+				};
+				const room = (top, progress, cancelled) => Math.max(automatic(cancelled) ? finalRoom : 0, top + elements.scroller.clientHeight - (initialHeight + (growth - removed) * progress));
+				return {
+					begin: (boxes) => {
+						tail = this.tailRequested || follow.active && !reader.pending();
+						this.tailRequested = false;
+						viewportTop = elements.scroller.getBoundingClientRect().top;
+						start = elements.scroller.scrollTop;
+						const originalRoom = this.spacerHeight();
+						initialHeight = Math.max(elements.column.offsetHeight, elements.scroller.scrollHeight - originalRoom);
+						let above = 0;
+						const below = [];
+						for (const box of boxes) {
+							const amount = box.height + box.marginTop;
+							const top = box.element.getBoundingClientRect().top - box.marginTop;
+							if (box.closing) {
+								removed += amount;
+								above += Math.max(0, Math.min(amount, viewportTop - top));
+								if (top >= viewportTop) below.push(box.element);
+								closing.push(box);
+							} else {
+								growth += amount;
+								if (top < viewportTop) above -= amount;
+							}
+						}
+						if (!tail) reference = this.readingReference();
+						const referenceBefore = reference === null ? 0 : screenTop(reference);
+						elements.column.dataset.inputFold = "";
+						if (reference !== null) {
+							referenceTop = screenTop(reference);
+							above -= referenceTop - referenceBefore;
+						}
+						base = Math.max(0, start - above);
+						segmentTop = start;
+						written = start;
+						previousColumnHeight = elements.column.offsetHeight;
+						aim();
+						this.setSpacer(Math.max(originalRoom, finalRoom, removed));
+						if (tail) follow.setFollowing(true);
+						this.retarget = () => {
+							tail = true;
+							follow.setFollowing(true);
+							this.motion.resumeInput();
+							aim();
+							restart();
+							if (target <= segmentTop) return;
+							for (const box of closing) {
+								const shift = Number.parseFloat(box.element.style.translate.split(" ")[1] ?? "") || 0;
+								if (box.element.getBoundingClientRect().top - shift - box.marginTop >= viewportTop) travelling.add(box.element);
+							}
+						};
+						if (tail && target > start) for (const element of below) travelling.add(element);
+						return travelling;
+					},
+					prepare: (progress, cancelled) => {
+						if (this.elements !== elements) return;
+						if (!tail) {
+							const drift = elements.scroller.scrollTop - written;
+							if (Math.abs(drift) > .5) {
+								base = Math.max(0, base + drift);
+								segmentTop += drift;
+								referenceTop -= drift;
+								aim();
+							}
+						}
+						const added = elements.column.offsetHeight - previousColumnHeight;
+						if (added !== 0) {
+							initialHeight += added;
+							aim();
+							restart();
+						}
+						const top = position(progress, cancelled);
+						this.setSpacer(Math.max(this.spacerHeight(), room(top, progress, cancelled)));
+					},
+					frame: (progress, cancelled) => {
+						if (this.elements !== elements) return 0;
+						const top = position(progress, cancelled);
+						elements.scroller.scrollTop = top;
+						this.setSpacer(room(top, progress, cancelled));
+						written = elements.scroller.scrollTop;
+						if (reference !== null && progress === 1) referenceTop = screenTop(reference);
+						if (automatic(cancelled)) this.observation = {
+							top: written,
+							landing: null
+						};
+						previousColumnHeight = elements.column.offsetHeight;
+						previousProgress = progress;
+						return written - start;
+					},
+					finish: (cancelled) => {
+						this.retarget = null;
+						this.tailRequested = false;
+						if (this.elements !== elements) return;
+						elements.column.offsetHeight;
+						delete elements.column.dataset.inputFold;
+						if (!tail || cancelled) {
+							if (!tail && reference?.isConnected === true && reference.closest("[hidden]") === null) {
+								const shift = screenTop(reference) - referenceTop;
+								if (Math.abs(shift) > .5) {
+									const top = elements.scroller.scrollTop + shift;
+									const content = elements.scroller.scrollHeight - this.spacerHeight();
+									this.setSpacer(Math.max(this.spacerHeight(), top + elements.scroller.clientHeight - content));
+									elements.scroller.scrollTop = top;
+								}
+							}
+							const metrics = scrollMetrics(elements.scroller);
+							const height = elements.scroller.scrollHeight - this.spacerHeight();
+							this.setSpacer(metrics.top === 0 ? 0 : Math.max(0, metrics.top + metrics.height - height));
+							if (tail) this.invalidate();
+							else this.observation = {
+								top: elements.scroller.scrollTop,
+								landing: null
+							};
+							return;
+						}
+						const content = elements.scroller.scrollHeight - this.spacerHeight();
+						const clientHeight = elements.scroller.clientHeight;
+						const top = Math.max(target, content - clientHeight, 0);
+						this.setSpacer(top === 0 ? 0 : Math.max(0, top + clientHeight - content));
+						elements.scroller.scrollTop = top;
+						const metrics = scrollMetrics(elements.scroller);
+						const landing = {
+							metrics,
+							position: null,
+							turn: this.latestTurn
+						};
+						this.observation = {
+							top: metrics.top,
+							landing
+						};
+						reader.landedAtTail(landing);
+					}
+				};
+			}
+			/**
+			* Find the first visible top-level row at or below the scrollport top that holds no batch box.
+			* Binary search over the ordered top-level rows reads O(log n) boxes.
+			* @returns the reference row, or null when every visible row folds.
+			*/
+			readingReference() {
+				const elements = this.elements;
+				if (elements === null) return null;
+				const viewport = elements.scroller.getBoundingClientRect();
+				const rows = (elements.column.querySelector(":scope > [data-slot=\"conversation.chat.flow\"]") ?? elements.column).children;
+				let low = 0;
+				let high = rows.length;
+				while (low < high) {
+					const middle = low + high >>> 1;
+					if (rows[middle].getBoundingClientRect().bottom > viewport.top) high = middle;
+					else low = middle + 1;
+				}
+				for (let index = low; index < rows.length; index++) {
+					const row = rows[index];
+					if (row.hasAttribute("hidden")) continue;
+					const rect = row.getBoundingClientRect();
+					if (rect.top >= viewport.bottom) return null;
+					if (rect.height === 0 || rect.bottom <= viewport.top) continue;
+					if (row.hasAttribute("data-chat-motion") || row.querySelector("[data-chat-motion]") !== null) continue;
+					return row;
+				}
+				return null;
+			}
+			/** Clear fold reservations after a display-mode change, allowing the scroll range to shrink. */
+			resetBelow() {
+				this.setSpacer(0);
+				this.invalidate();
+			}
+			/**
+			* Give reserved room back after acknowledged scrolling or content growth without clamping the reader.
+			* Holds still during folds and unsampled movement; following includes the room that remains.
+			*/
+			reclaimBelow() {
+				const elements = this.elements;
+				if (elements === null || elements.spacer === null) return;
+				const current = this.spacerHeight();
+				if (current === 0 || this.motion.foldActive()) return;
+				const scroll = this.readScroll();
+				if (scroll === null || scroll.movedByReader) return;
+				const floorWithoutSpacer = scroll.metrics.floor - current;
+				this.setSpacer(Math.min(current, Math.max(0, scroll.metrics.top - floorWithoutSpacer)));
+			}
+			/**
+			* Stop an outstanding native follow animation at its current position before a reading gesture.
+			* @param follow - follow controller bound to this scrollport.
+			*/
+			interruptFollow(follow) {
+				if (!follow.animating) return;
+				const metrics = this.metrics();
+				if (metrics === null || this.elements === null) return;
+				follow.interrupt(this.elements.scroller, metrics);
+				this.observation = {
+					top: metrics.top,
+					landing: null
+				};
+			}
+			/**
+			* Accept a sampled reader position without retaining a known landing.
+			* @param metrics - settled reader position used as the next attribution baseline.
+			*/
+			acknowledge(metrics) {
+				this.observation = {
+					top: metrics.top,
+					landing: null
+				};
+				this.reclaimBelow();
+			}
+			/**
+			* Compare the current scroll geometry with the last acknowledged position.
+			* @returns current metrics and movement attribution, or null while detached.
+			*/
+			readScroll() {
+				const metrics = this.metrics();
+				if (metrics === null) return null;
+				return {
+					metrics,
+					movedByReader: Math.abs(metrics.top - Math.min(this.observation.top, metrics.floor)) > .5
+				};
+			}
+			metrics() {
+				const scroller = this.elements?.scroller;
+				if (scroller === void 0) return null;
+				return scrollMetrics(scroller);
+			}
+			anchor(key, identity = "position") {
+				if (this.elements === null) return null;
+				let nodePart = null;
+				for (const row of this.elements.list.querySelectorAll("[data-chat-anchor-key]:not([hidden]):not([hidden] *)")) {
+					if (row.dataset.chatAnchorKey === key || identity === "node" && row.dataset.chatNodeKey === key) return row;
+					if (nodePart === null && row.dataset.chatNodeKey === key) nodePart = row;
+				}
+				return nodePart;
+			}
+			/**
+			* Capture visible transcript content, excluding Turn controls that relocate when history expands.
+			* @returns a visible semantic anchor, or null when no anchor can be resolved.
+			*/
+			capturePosition() {
+				const elements = this.elements;
+				if (elements === null) return null;
+				const { list, scroller, composer } = elements;
+				const viewport = scroller.getBoundingClientRect();
+				const bottom = composer?.getBoundingClientRect().top ?? viewport.bottom;
+				let anchor = null;
+				if (typeof document.elementsFromPoint === "function" && bottom > viewport.top) {
+					const content = list.getBoundingClientRect();
+					const left = Math.max(viewport.left, content.left);
+					const right = Math.min(viewport.right, content.right);
+					for (const element of document.elementsFromPoint(left + Math.max(0, right - left) / 2, viewport.top + 1)) {
+						const row = element instanceof HTMLElement ? element.closest("[data-chat-anchor-key]") : null;
+						if (row !== null && row.dataset.chatFlowKind !== "turn-process" && list.contains(row)) {
+							anchor = row.dataset.chatGroupKey === void 0 ? row : row.querySelector("[data-step-process-content] > [data-chat-anchor-key]:not(:empty):not([hidden]):not([hidden] *)") ?? row;
+							break;
+						}
+					}
+				}
+				if (anchor === null) {
+					const rows = list.querySelectorAll("[data-chat-flow-key]:not([data-chat-group-key]):not([data-chat-flow-kind=\"turn-process\"]):not(:empty):not([hidden]):not([hidden] *)");
+					let low = 0;
+					let high = rows.length;
+					while (low < high) {
+						const middle = low + high >>> 1;
+						if (rows.item(middle).getBoundingClientRect().bottom > viewport.top) high = middle;
+						else low = middle + 1;
+					}
+					const row = rows[low];
+					anchor = row !== void 0 && row.getBoundingClientRect().top < bottom ? row : rows[0] ?? null;
+				}
+				const key = anchor?.dataset.chatAnchorKey;
+				return anchor === null || key === void 0 ? null : {
+					anchorKey: key,
+					anchorTop: anchor.getBoundingClientRect().top - viewport.top,
+					scrollTop: scroller.scrollTop
+				};
+			}
+			/**
+			* Approximate the active Turn by binary-searching outer Node/Group boxes.
+			* Gaps retain the last visited Turn candidate, not necessarily the immediate predecessor.
+			* A known landing bypasses measurement while its position is unchanged.
+			* @param metrics - reusable scroll metrics; omitted callers request a fresh read.
+			* @returns the Turn near the reading line, or null while detached or empty.
+			*/
+			readVisibleTurn(metrics = this.metrics()) {
+				const knownTurn = this.observation.landing?.turn;
+				if (knownTurn != null && metrics?.top === this.observation.top) return knownTurn;
+				const elements = this.elements;
+				const first = this.turns[0];
+				if (elements === null || metrics === null || first === void 0) return null;
+				const line = elements.scroller.getBoundingClientRect().top + Math.min(96, metrics.height * .2);
+				const rows = (elements.column.querySelector(":scope > [data-slot=\"conversation.chat.flow\"]") ?? elements.column).children;
+				let low = 0;
+				let high = rows.length;
+				let reading = first.turn;
+				while (low < high) {
+					const middle = low + high >>> 1;
+					const row = rows[middle];
+					if (row.getBoundingClientRect().top > line) high = middle;
+					else {
+						const value = row.getAttribute("data-chat-turn");
+						const turn = value === null ? NaN : Number(value);
+						if (Number.isSafeInteger(turn)) reading = turn;
+						low = middle + 1;
+					}
+				}
+				return reading;
+			}
+			/**
+			* Align a known loaded turn and return its actual clamped position.
+			* A split Node anchor selects its first visible part.
+			* @param turn - loaded turn to align below the scrollport's top edge.
+			* @returns the actual landing, or null when its anchor is unavailable.
+			*/
+			scrollToTurn(turn) {
+				const item = this.turns.find((candidate) => candidate.turn === turn);
+				if (item === void 0) return null;
+				const row = this.anchor(item.anchorKey, "node");
+				return row === null ? null : this.align(row, 24, turn);
+			}
+			/**
+			* Align the nearest available fallback for an unavailable turn anchor.
+			* @param turn - minimum turn number for a mounted fallback row.
+			* @returns the fallback landing, or null when no eligible row exists.
+			*/
+			scrollToTurnAtOrAfter(turn) {
+				if (this.elements === null) return null;
+				for (const row of this.elements.list.querySelectorAll("[data-chat-turn]:not([hidden]):not([hidden] *)")) {
+					const candidate = Number(row.dataset.chatTurn);
+					if (Number.isSafeInteger(candidate) && candidate >= turn) return this.align(row, 24, candidate);
+				}
+				return null;
+			}
+			/**
+			* Restore a semantic anchor with a raw-position fallback.
+			* @param position - semantic scroll memory; raw top is used only if its row is absent.
+			* @returns the actual landing, or null while detached.
+			*/
+			restore(position) {
+				const row = this.anchor(position.anchorKey);
+				if (row !== null) return this.align(row, position.anchorTop, null);
+				const metrics = this.metrics();
+				return metrics === null ? null : this.write(position.scrollTop, metrics, null);
+			}
+			/** Retain the first eligible transcript seat in DOM order; selection reads no geometry. */
+			beginPaging() {
+				this.stopPreserving();
+				const row = this.elements?.list.querySelector("[data-chat-paging-anchor]:not(:empty):not([hidden]):not([hidden] *)");
+				if (row != null) this.retain(row);
+			}
+			/**
+			* Retain one old row and its inner/outer offsets for paging and later content growth.
+			* @param position - an explicit landing to retain; omitted callers capture the current reading position.
+			*/
+			beginPreserving(position = this.capturePosition()) {
+				this.stopPreserving();
+				if (position === null) return;
+				const row = this.anchor(position.anchorKey);
+				if (row === null) return;
+				this.retain(row, position);
+			}
+			retain(row, position, groupTop) {
+				const elements = this.elements;
+				const key = row.dataset.chatAnchorKey;
+				if (elements === null || key === void 0) return null;
+				const previous = this.paging?.group;
+				if (previous != null) this.observer?.unobserve(previous.content);
+				const top = row.getBoundingClientRect().top;
+				const body = row.closest("[data-step-process-body]");
+				const content = body?.querySelector("[data-step-process-content]");
+				const group = body === null || content == null ? null : {
+					body,
+					content,
+					top: groupTop ?? top - body.getBoundingClientRect().top
+				};
+				this.paging = {
+					row,
+					group,
+					position: position ?? {
+						anchorKey: key,
+						anchorTop: top - elements.scroller.getBoundingClientRect().top,
+						scrollTop: elements.scroller.scrollTop
+					}
+				};
+				if (group !== null) this.observer?.observe(group.content);
+				return this.paging;
+			}
+			/** Release paging ownership and its content-size observation. */
+			stopPreserving() {
+				const group = this.paging?.group;
+				if (group != null) this.observer?.unobserve(group.content);
+				this.paging = null;
+			}
+			/**
+			* Expose retained paging ownership to navigation and resize policy.
+			* @returns whether a paging row is retained for subsequent layout changes.
+			*/
+			get preserving() {
+				return this.paging !== null;
+			}
+			/**
+			* Compensate inner scrolling first, then the outer scrollport, within their actual scroll ranges.
+			* An inner write pauses its bound follow controller so the reading anchor takes priority.
+			* @returns the actual landing, or null when no visible retained row remains.
+			*/
+			preserve() {
+				let paging = this.paging;
+				const elements = this.elements;
+				if (paging === null || elements === null) return null;
+				if (!elements.list.contains(paging.row)) {
+					const replacement = this.anchor(paging.position.anchorKey);
+					if (replacement === null) {
+						this.stopPreserving();
+						return null;
+					}
+					paging = this.retain(replacement, paging.position, paging.group?.top);
+					if (paging === null) return null;
+				}
+				const { row, group, position } = paging;
+				if (row.closest("[hidden]") !== null || row.matches(":empty")) {
+					this.stopPreserving();
+					return null;
+				}
+				if (group !== null && group.body.contains(row)) {
+					const top = row.getBoundingClientRect().top - group.body.getBoundingClientRect().top;
+					const metrics = scrollMetrics(group.body);
+					const target = Math.max(0, Math.min(metrics.floor, metrics.top + top - group.top));
+					if (metrics.top !== target) {
+						const follow = ScrollFollow.forElement(group.body);
+						if (follow === void 0) group.body.scrollTop = target;
+						else {
+							follow.jump(group.body, metrics, target);
+							follow.setFollowing(false);
+						}
+					}
+				}
+				const metrics = this.metrics();
+				if (metrics === null) return null;
+				const top = row.getBoundingClientRect().top - elements.scroller.getBoundingClientRect().top;
+				const target = metrics.top + top - position.anchorTop;
+				return this.write(target, metrics, null, {
+					key: position.anchorKey,
+					top
+				});
+			}
+			/**
+			* Align with the physical floor, including fold room that newer content has not yet filled.
+			* @param follow - independent follow intent and scrolling controller.
+			* @param behavior - immediate positioning, or one native animation for a reader-caused tail change.
+			* @returns the actual floor landing, or null while detached. A smooth landing reports the starting
+			* position; native scroll delivery moves it.
+			*/
+			scrollToBottom(follow, behavior = "instant") {
+				const metrics = this.metrics();
+				if (metrics === null || this.elements === null) return null;
+				this.observation = {
+					top: metrics.top,
+					landing: null
+				};
+				this.reclaimBelow();
+				const landing = {
+					metrics: follow.toBottom(this.elements.scroller, scrollMetrics(this.elements.scroller), behavior),
+					position: null,
+					turn: this.latestTurn
+				};
+				this.observation = {
+					top: landing.metrics.top,
+					landing
+				};
+				return landing;
+			}
+			align(row, offset, turn) {
+				const metrics = this.metrics();
+				if (metrics === null || this.elements === null) return null;
+				const top = row.getBoundingClientRect().top - this.elements.scroller.getBoundingClientRect().top;
+				return this.write(metrics.top + top - offset, metrics, turn, {
+					key: row.dataset.chatAnchorKey,
+					top
+				});
+			}
+			write(target, metrics, turn, anchor) {
+				if (this.elements === null) return null;
+				const top = Math.max(0, Math.min(metrics.floor, target));
+				if (top !== metrics.top) this.elements.scroller.scrollTop = top;
+				const actual = this.elements.scroller.scrollTop;
+				const landing = {
+					metrics: {
+						...metrics,
+						top: actual
+					},
+					turn,
+					position: anchor?.key === void 0 ? null : {
+						anchorKey: anchor.key,
+						anchorTop: anchor.top - (actual - metrics.top),
+						scrollTop: actual
+					}
+				};
+				this.observation = {
+					top: actual,
+					landing
+				};
+				return landing;
+			}
+			onScroll = (event) => {
+				if (this.elements === null || event.target !== this.elements.scroller) return;
+				if (this.observation.landing !== null && this.elements.scroller.scrollTop === this.observation.top) return;
+				this.invalidate();
+				if (this.paging !== null) {
+					this.events?.resize();
+					return;
+				}
+				const scroll = this.readScroll();
+				if (scroll !== null) this.events?.scroll(scroll);
+			};
+			onScrollEnd = (event) => {
+				if (event.target === this.elements?.scroller) {
+					this.events?.scrollEnd(true);
+					this.reclaimBelow();
+				} else if (event.target instanceof HTMLElement && event.target.hasAttribute("data-step-process-body")) this.events?.scrollEnd(false);
+			};
+			onIntent = (event) => {
+				if (event.type === "keydown" || event.type === "pointerdown") {
+					if (event.target instanceof Element && event.target.closest("[data-composer-seat]") !== null) return;
+					if (event.type === "keydown" && (!(event instanceof KeyboardEvent) || !SCROLL_KEYS$1.has(event.key))) return;
+				}
+				this.events?.intent?.();
+				if (this.paging === null) return;
+				this.stopPreserving();
+				this.events?.interact();
+			};
+		};
+		/**
+		* Bind viewport resource ownership to the component's layout lifetime.
+		* @returns one viewport owner and the element refs attached for this mount.
+		*/
+		function useChatViewport() {
+			const listRef = (0, react.useRef)(null);
+			const columnRef = (0, react.useRef)(null);
+			const [viewport] = (0, react.useState)(() => new ChatViewport());
+			(0, react.useLayoutEffect)(() => {
+				if (listRef.current === null || columnRef.current === null) return;
+				viewport.attach(listRef.current, columnRef.current);
+				return () => {
+					viewport.detach();
+				};
+			}, [viewport]);
+			return {
+				viewport,
+				listRef,
+				columnRef
+			};
+		}
+		//#endregion
+		//#region lib/types/client/chat/use-chat-scroll.js
+		/** Composes viewport operations, reading policy, and history navigation for Chat. */
+		/**
+		* Coordinate scroll policy after Chat content commits. Initial history must be ready
+		* before automatic scroll or resize handling can initialize reading state and fold motion.
+		* New submitted input supersedes pending reader sampling.
+		* @param input - current Chat content, scroll memory, and history operations.
+		* @returns element refs, visible reading state, and navigation callbacks.
+		*/
+		function useChatScroll(input) {
+			const { ready, order, firstSeq, lastKey, lastIsUser, steeringId, submissionId, running, deferCompletedTurns, loadedTurns, chatScroll, hasMore, loadingOlder, loadOlder, loadThrough, transcriptView } = input;
+			const { viewport, listRef, columnRef } = useChatViewport();
+			const { reading, state } = useChatReading(viewport, chatScroll, loadedTurns.at(-1)?.turn ?? null);
+			const navigationInput = (0, react.useMemo)(() => ({
+				firstSeq,
+				loadingOlder,
+				hasMore,
+				loadOlder,
+				loadThrough
+			}), [
+				firstSeq,
+				loadingOlder,
+				hasMore,
+				loadOlder,
+				loadThrough
+			]);
+			const { navigation, busyTurn } = useChatNavigation(viewport, reading, navigationInput);
+			const content = (0, react.useRef)({
+				input,
+				applied: null,
+				opened: false
+			});
+			const cancelPendingFollow = (0, react.useCallback)(() => {
+				viewport.motion.cancelInput();
+			}, [viewport]);
+			const processContent = (0, react.useCallback)(() => {
+				const current = content.current.input;
+				if (!current.ready && !content.current.opened) return;
+				const previous = content.current.applied;
+				const ownInput = current.lastIsUser && current.lastKey !== previous?.lastKey || current.steeringId !== null && current.steeringId !== previous?.steeringId && current.steeringId !== previous?.submissionId || current.submissionId !== null && current.submissionId !== previous?.submissionId && current.submissionId !== previous?.steeringId;
+				if (reading.pending && !ownInput) return;
+				content.current.applied = current;
+				if (current.ready && !content.current.opened) {
+					content.current.opened = true;
+					navigation.reset();
+					reading.restore();
+					return;
+				}
+				if (ownInput) {
+					navigation.cancel();
+					if (current.deferCompletedTurns && reading.followInputFold()) return;
+					reading.followTail(current.deferCompletedTurns ? "smooth" : "instant");
+					return;
+				}
+				if (navigation.contentCommitted()) {
+					navigation.reconcile();
+					return;
+				}
+				if ((previous === null || current.ready !== previous.ready || current.firstSeq !== previous.firstSeq || current.lastKey !== previous.lastKey || current.order.length !== previous.order.length || current.running !== previous.running || current.steeringId !== previous.steeringId || current.submissionId !== previous.submissionId) && reading.followingTail) {
+					navigation.cancel();
+					if (current.deferCompletedTurns && reading.followInputFold()) return;
+					reading.followTail();
+				} else navigation.reconcile();
+			}, [reading, navigation]);
+			(0, react.useLayoutEffect)(() => {
+				const disconnectViewport = viewport.connect({
+					scroll: (event) => {
+						if (!content.current.opened) return;
+						if (!event.movedByReader && viewport.motion.foldActive()) return;
+						reading.onScroll(event);
+					},
+					scrollEnd: (outer) => {
+						reading.onScrollEnd(outer);
+						navigation.readerSettled();
+					},
+					interact: () => {
+						navigation.cancel();
+					},
+					intent: () => {
+						cancelPendingFollow();
+						reading.interruptFollow();
+					},
+					resize: () => {
+						if (!content.current.opened) return;
+						if (navigation.contentCommitted()) {
+							navigation.reconcile();
+							return;
+						}
+						if (!content.current.input.deferCompletedTurns || !viewport.motion.foldActive()) reading.onResize();
+						navigation.reconcile();
+					}
+				});
+				const disconnectReading = reading.connect((sample) => {
+					navigation.readerSampled(sample);
+					processContent();
+				});
+				return () => {
+					disconnectViewport();
+					disconnectReading();
+					content.current.opened = false;
+					content.current.applied = null;
+				};
+			}, [
+				viewport,
+				reading,
+				navigation,
+				processContent,
+				cancelPendingFollow
+			]);
+			(0, react.useLayoutEffect)(() => {
+				const previous = content.current.input;
+				content.current.input = {
+					ready,
+					order,
+					lastKey,
+					lastIsUser,
+					steeringId,
+					submissionId,
+					running,
+					loadedTurns,
+					chatScroll,
+					deferCompletedTurns,
+					transcriptView,
+					...navigationInput
+				};
+				if (!deferCompletedTurns) {
+					cancelPendingFollow();
+					reading.interruptFollow();
+				}
+				viewport.updateTurns(loadedTurns);
+				const layoutChanged = previous.order !== order || previous.ready !== ready;
+				if (layoutChanged) viewport.invalidate();
+				viewport.reclaimBelow();
+				processContent();
+				if (layoutChanged && content.current.opened) reading.refreshActiveTurn();
+			}, [
+				viewport,
+				reading,
+				processContent,
+				navigationInput,
+				ready,
+				order,
+				lastKey,
+				lastIsUser,
+				steeringId,
+				submissionId,
+				running,
+				loadedTurns,
+				chatScroll,
+				deferCompletedTurns,
+				transcriptView,
+				cancelPendingFollow
+			]);
+			const previousView = (0, react.useRef)(transcriptView);
+			(0, react.useLayoutEffect)(() => {
+				if (previousView.current === transcriptView) return;
+				previousView.current = transcriptView;
+				cancelPendingFollow();
+				reading.interruptFollow();
+				return viewport.motion.onFoldIdle(() => {
+					viewport.resetBelow();
+					if (content.current.opened) reading.onResize();
+				});
+			}, [
+				transcriptView,
+				viewport,
+				reading,
+				cancelPendingFollow
+			]);
+			const returnToBottom = (0, react.useCallback)(() => {
+				cancelPendingFollow();
+				navigation.cancel();
+				reading.followTail();
+			}, [
+				navigation,
+				reading,
+				cancelPendingFollow
+			]);
+			return {
+				listRef,
+				columnRef,
+				...state,
+				busyTurn,
+				motion: viewport.motion,
+				navigateToTurn: navigation.navigateToTurn,
+				loadEarlier: navigation.loadEarlier,
+				returnToBottom
+			};
+		}
+		//#endregion
+		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/ChatView.module.css.mjs
+		const css$16 = "._8-J87G_frame{flex-direction:column;flex:auto;min-height:0;display:flex;position:relative;container-type:inline-size}._8-J87G_root{flex-direction:column;flex:auto;min-height:0;display:flex;position:relative;overflow:visible clip}._8-J87G_scroll{min-height:0;padding:16px calc(var(--dsh-composer-side-clearance) + 16px);flex:auto;overflow-y:auto;container-type:inline-size}._8-J87G_root[data-chat-following-tail] ._8-J87G_scroll,[data-conversation-scroll]:has(._8-J87G_root[data-chat-following-tail]){overflow-anchor:none}[data-conversation-scroll] ._8-J87G_frame,[data-conversation-scroll] ._8-J87G_root{flex:none;height:auto;min-height:auto}[data-conversation-scroll] ._8-J87G_scroll{flex:none;min-height:auto;overflow:visible}._8-J87G_column{max-width:var(--dsh-chat-content-width);flex-direction:column;width:100%;margin:0 auto;display:flex}:is(._8-J87G_column,[data-slot=\"conversation.chat.flow\"])>:not([hidden]):not(._8-J87G_flowItem:is(:empty,:has(>[data-slot=\"conversation.chat.node\"]:empty)))~:not([hidden]):not(._8-J87G_flowItem:is(:empty,:has(>[data-slot=\"conversation.chat.node\"]:empty))),._8-J87G_column:has(>._8-J87G_older)>[data-slot=\"conversation.chat.flow\"]>:not([hidden]):not(._8-J87G_flowItem:is(:empty,:has(>[data-slot=\"conversation.chat.node\"]:empty))){margin-top:var(--dsh-chat-flow-gap,6px)}._8-J87G_flowItem[data-chat-group-part=response],:is(._8-J87G_column,[data-slot=\"conversation.chat.flow\"])>[data-chat-group-part=response]:not([hidden]):not(:empty)+:not([hidden]):not(._8-J87G_flowItem:is(:empty,:has(>[data-slot=\"conversation.chat.node\"]:empty))):not(._8-J87G_running){--dsh-chat-flow-gap:12px}._8-J87G_flowItem{min-width:0}._8-J87G_turnSpacer{height:0}._8-J87G_column[data-chat-motion]>:not([data-chat-motion]),._8-J87G_column[data-chat-motion]>[data-slot=\"conversation.chat.flow\"]>:not([data-chat-motion]){transition:margin-top .16s cubic-bezier(.4,0,.2,1)}._8-J87G_column[data-input-fold]>:not([data-chat-motion]),._8-J87G_column[data-input-fold]>[data-slot=\"conversation.chat.flow\"]>:not([data-chat-motion]){transition:none}@media (prefers-reduced-motion:reduce){._8-J87G_column[data-chat-motion]>:not([data-chat-motion]),._8-J87G_column[data-chat-motion]>[data-slot=\"conversation.chat.flow\"]>:not([data-chat-motion]){transition:none}}._8-J87G_flowItem[data-chat-flow-kind=turn-process],._8-J87G_flowItem[data-turn-process-answer],:is(._8-J87G_column,[data-slot=\"conversation.chat.flow\"])>[data-chat-flow-kind=turn-process]+:not([hidden]):not(._8-J87G_flowItem:is(:empty,:has(>[data-slot=\"conversation.chat.node\"]:empty))):not(._8-J87G_running){--dsh-chat-flow-gap:16px}._8-J87G_flowItem:is(:empty,:has(>[data-slot=\"conversation.chat.node\"]:empty)){height:0}._8-J87G_callRow{border-radius:var(--dsw-radius-sm)}._8-J87G_hint{color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(18px + var(--dsh-content-font-delta-secondary,0px))}._8-J87G_running{--dsh-chat-flow-gap:12px;--dsw-alias-label-shimmer:var(--dsw-alias-label-deep-diving-shimmer);color:var(--dsw-alias-label-deep-diving);font-size:calc(var(--dsh-content-font-size,14px) - 2px);line-height:calc(22px + var(--dsh-content-font-delta,0px));flex-direction:column;align-items:flex-start;display:flex}:is(._8-J87G_column,[data-slot=\"conversation.chat.flow\"])>:nth-last-child(2 of :not([hidden]):not(._8-J87G_flowItem:is(:empty,:has(>[data-slot=\"conversation.chat.node\"]:empty)))):is(._8-J87G_flowItem:not([data-chat-flow-kind=user]):not([data-chat-flow-kind=steering]):not([data-chat-flow-kind=turn-trigger]),[data-chat-group-key])~._8-J87G_running>._8-J87G_runningDivider{display:block}._8-J87G_runningDivider{background:color-mix(in srgb, var(--dsw-alias-border-l1) 75%, var(--dsw-alias-border-l2));pointer-events:none;width:100%;height:.5px;margin:8px 0 10px;display:none}._8-J87G_runningContent{align-items:center;gap:6px;min-width:0;display:inline-flex}._8-J87G_runningText{font-variant-numeric:tabular-nums;min-width:0}._8-J87G_runningIcon{width:calc(14px + var(--dsh-content-font-delta,0px));height:calc(14px + var(--dsh-content-font-delta,0px));contain:strict;flex:none;display:inline-flex;position:relative;overflow:hidden}._8-J87G_runningWhaleAnimated{display:none;position:absolute;inset:0}._8-J87G_runningWhaleStill{display:initial}@supports (mask-mode:alpha) and (mask-image:url('')){@media (prefers-reduced-motion:no-preference) and (forced-colors:none){._8-J87G_runningWhaleAnimated{will-change:transform;background:currentColor;display:block;mask:url(./running-whale@2x.png) 50%/100% 100% no-repeat alpha}._8-J87G_runningWhaleStill{display:none}}}._8-J87G_openError{color:var(--dsw-alias-state-error-primary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(18px + var(--dsh-content-font-delta-secondary,0px))}._8-J87G_older{justify-content:center;display:flex}._8-J87G_older button{border-radius:var(--dsw-radius-sm);color:var(--dsw-alias-label-secondary);background:var(--dsw-alias-interactive-bg-hover-solid);cursor:pointer;border:none;padding:4px 12px;font-size:12px}._8-J87G_older button:disabled{cursor:default;opacity:.6}._8-J87G_toBottomSlot{z-index:8;height:0;padding-right:max(calc(var(--dsh-composer-side-clearance) + 16px), calc((100% - var(--dsh-chat-content-width)) / 2));pointer-events:none;justify-content:flex-end;display:flex;position:absolute;bottom:16px;left:0;right:0}[data-conversation-scroll] ._8-J87G_toBottomSlot{bottom:calc(var(--dsh-composer-height,152px) + 16px);position:sticky}._8-J87G_toBottom{--dsw-elevation-stroke-color:var(--dsw-alias-border-l3);corner-shape:round;width:34px;height:34px;color:var(--dsw-alias-label-primary);background:var(--dsw-alias-button-floating-fill);box-shadow:var(--dsw-elevation-panel);cursor:pointer;pointer-events:auto;border:0;border-radius:100px;justify-content:center;align-items:center;margin-top:-34px;padding:0;display:flex}._8-J87G_toBottom:hover{background:var(--dsw-alias-button-floating-hover)}._8-J87G_modalAction{min-width:72px}";
+		const tagId$16 = "@deepseek-ai/dsh-client-ui-chat/ChatView.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$16) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
+			tag.dataset.pluginCss = tagId$16;
+			tag.textContent = css$16;
+			document.head.appendChild(tag);
+		}
+		var ChatView_module_css_default = {
+			"callRow": "_8-J87G_callRow",
+			"column": "_8-J87G_column",
+			"flowItem": "_8-J87G_flowItem",
+			"frame": "_8-J87G_frame",
+			"hint": "_8-J87G_hint",
+			"modalAction": "_8-J87G_modalAction",
+			"older": "_8-J87G_older",
+			"openError": "_8-J87G_openError",
+			"root": "_8-J87G_root",
+			"running": "_8-J87G_running",
+			"runningContent": "_8-J87G_runningContent",
+			"runningDivider": "_8-J87G_runningDivider",
+			"runningIcon": "_8-J87G_runningIcon",
+			"runningText": "_8-J87G_runningText",
+			"runningWhaleAnimated": "_8-J87G_runningWhaleAnimated",
+			"runningWhaleStill": "_8-J87G_runningWhaleStill",
+			"scroll": "_8-J87G_scroll",
+			"toBottom": "_8-J87G_toBottom",
+			"toBottomSlot": "_8-J87G_toBottomSlot",
+			"turnSpacer": "_8-J87G_turnSpacer"
+		};
+		//#endregion
+		//#region lib/types/client/chat/ChatView.js
+		/** Host/OS refusal text for the file-open dialog; empty throws keep a locale fallback. */
+		function openFailureMessage(error, fallback) {
+			const message = error instanceof Error ? error.message : String(error);
+			return message === "" ? fallback : message;
+		}
+		/**
+		* Durable input identities suppress matching echoes in the same render.
+		* The last input's Turn also distinguishes an empty opening control from
+		* one whose human input or trigger notice is already present.
+		*/
+		function observedInputs(order, nodes) {
+			const observed = /* @__PURE__ */ new Set();
+			let lastInputTurn;
+			for (const key of order) {
+				const node = nodes.get(key);
+				if (node === void 0 || !isAtOrOutside(node, "input")) continue;
+				if (node.location.kind === "turn" || node.location.kind === "step") lastInputTurn = node.location.turn.turn;
+				const data = node.data;
+				const source = typeof data === "object" && data !== null && "source" in data ? data.source : void 0;
+				if (typeof source === "object" && source !== null && "kind" in source && source.kind === "user" && "rpcId" in source && typeof source.rpcId === "string") observed.add(source.rpcId);
+			}
+			return {
+				rpcIds: observed,
+				lastInputTurn
+			};
+		}
+		/** How long fold transitions stay enabled after a Turn stops running. */
+		const MOTION_TAIL_MS = 800;
+		/**
+		* The chat view slot entry: pure component over the composed props; each
+		* ordered business Node crosses the keyed renderer seat.
+		*/
+		function ChatView({ useSession, useChat, useConversation, useSessions, renderSlot, sessionId, openFile, openExternalLink, loadOlder, loadThrough, loadImage, inspectCall, chatScroll, forkAt, fileMentions, usePresentation, useProjection, t }) {
+			const order = useChat((s) => s.order);
+			const groupedEntries = useConversation((snapshot) => snapshot.views.grouped("chat")?.entries);
+			const entries = (0, react.useMemo)(() => groupedEntries ?? order.map((key) => ({
+				kind: "node",
+				key
+			})), [groupedEntries, order]);
+			const nodeStore = useChat((s) => s.nodes);
+			const deferCompletedTurns = usePresentation((policy) => policy.collapseTiming === "next-input");
+			const transcriptView = usePresentation((policy) => policy.mode);
+			const turnNavigationItems = useChat((s) => s.navigation.items());
+			const turnOutline = useProjection("turnOutline");
+			const railItems = (0, react.useMemo)(() => mergeTurnRailItems(turnNavigationItems, turnOutline), [turnNavigationItems, turnOutline]);
+			const inbox = useProjection("inbox");
+			const cwd = useSessions((s) => s.byId[sessionId]?.cwd);
+			const fileImages = (0, react.useMemo)(() => ({
+				resolve: (path) => fileMediaUrl(document.baseURI, resolveWorkspacePath(cwd, path)),
+				labels: {
+					open: t("image.open"),
+					loading: t("image.loading"),
+					failed: t("image.failed"),
+					dialog: t("image.dialog"),
+					close: t("image.close")
+				}
+			}), [cwd, t]);
+			const running = useSession((s) => s.running);
+			const [motionTail, setMotionTail] = (0, react.useState)(false);
+			(0, react.useEffect)(() => {
+				if (!deferCompletedTurns) {
+					setMotionTail(false);
+					return;
+				}
+				if (running) {
+					setMotionTail(true);
+					return;
+				}
+				const timer = setTimeout(() => {
+					setMotionTail(false);
+				}, MOTION_TAIL_MS);
+				return () => {
+					clearTimeout(timer);
+				};
+			}, [running, deferCompletedTurns]);
+			const openState = useSession((s) => s.openState);
+			const openError = useSession((s) => s.openError);
+			const hasMore = useSession((s) => s.hasMore);
+			const loadingOlder = useSession((s) => s.loadingOlder);
+			const [fileOpenError, setFileOpenError] = (0, react.useState)(null);
+			const [fileOpenBusy, setFileOpenBusy] = (0, react.useState)(false);
+			const fileOpenRequest = (0, react.useRef)(0);
+			const requestOpenFile = (0, react.useCallback)((path, options) => {
+				const id = ++fileOpenRequest.current;
+				setFileOpenBusy(true);
+				(options === void 0 ? openFile(path) : openFile(path, options)).then(() => {
+					if (id !== fileOpenRequest.current) return;
+					setFileOpenError(null);
+					setFileOpenBusy(false);
+				}, (error) => {
+					if (id !== fileOpenRequest.current) return;
+					setFileOpenError({
+						path,
+						message: openFailureMessage(error, t("fileOpen.unknown"))
+					});
+					setFileOpenBusy(false);
+				});
+			}, [openFile, t]);
+			const closeFileOpenError = (0, react.useCallback)(() => {
+				fileOpenRequest.current += 1;
+				setFileOpenError(null);
+				setFileOpenBusy(false);
+			}, []);
+			const inboxSteering = (0, react.useMemo)(() => inbox?.["next-step"].filter((message) => message.source.kind === "user") ?? [], [inbox]);
+			const pendingSubmissions = useSession((s) => s.pendingSubmissions);
+			const [visibleSubmissions, lastInputTurn] = (0, react.useMemo)(() => {
+				if (pendingSubmissions.length === 0) return [pendingSubmissions, void 0];
+				const observed = observedInputs(order, nodeStore);
+				return [pendingSubmissions.filter((submission) => submission.placement !== "queued" && !observed.rpcIds.has(submission.requestId)), observed.lastInputTurn];
+			}, [
+				pendingSubmissions,
+				order,
+				nodeStore
+			]);
+			const pendingInputs = (0, react.useMemo)(() => {
+				const local = new Map(visibleSubmissions.map((submission) => [submission.requestId, submission]));
+				const localIds = new Set(pendingSubmissions.filter((submission) => submission.placement !== "queued").map((submission) => submission.requestId));
+				return [...inboxSteering.flatMap((item) => {
+					const source = item.source;
+					if (source.kind !== "user" || !("rpcId" in source)) return [item];
+					const submission = local.get(source.rpcId);
+					if (submission === void 0) return localIds.has(source.rpcId) ? [] : [item];
+					local.delete(source.rpcId);
+					return [submission];
+				}), ...local.values()];
+			}, [
+				inboxSteering,
+				pendingSubmissions,
+				visibleSubmissions
+			]);
+			const deferCollapse = deferCompletedTurns && !pendingInputs.some((item) => "requestId" in item && item.placement === "transcript");
+			const firstKey = order[0];
+			const firstSeq = firstKey === void 0 ? null : nodeStore.get(firstKey)?.anchorSeq ?? null;
+			const lastKey = order.at(-1) ?? null;
+			const latestSteering = pendingInputs.findLast((item) => "source" in item);
+			const steeringId = latestSteering?.source.kind === "user" && "rpcId" in latestSteering.source ? latestSteering.source.rpcId : latestSteering?.id ?? null;
+			const scroll = useChatScroll({
+				ready: openState === "open",
+				order,
+				firstSeq,
+				lastKey,
+				running,
+				loadingOlder,
+				hasMore,
+				chatScroll,
+				loadOlder,
+				loadThrough,
+				deferCompletedTurns,
+				lastIsUser: lastKey !== null && nodeStore.get(lastKey)?.kind === "user",
+				steeringId,
+				submissionId: visibleSubmissions.at(-1)?.requestId ?? null,
+				loadedTurns: turnNavigationItems,
+				transcriptView
+			});
+			const flowContext = (0, react.useMemo)(() => ({ motion: scroll.motion }), [scroll.motion]);
+			return (0, react_jsx_runtime.jsxs)("div", {
+				className: ChatView_module_css_default.frame,
+				children: [
+					scroll.initialized && (0, react_jsx_runtime.jsx)(TurnNavigator, {
+						items: railItems,
+						activeTurn: scroll.activeTurn,
+						busyTurn: scroll.busyTurn,
+						onNavigate: scroll.navigateToTurn,
+						t
+					}),
+					(0, react_jsx_runtime.jsx)("div", {
+						className: ChatView_module_css_default.root,
+						"data-chat-following-tail": scroll.followingTail ? "" : void 0,
+						children: (0, react_jsx_runtime.jsxs)("div", {
+							ref: scroll.listRef,
+							className: ChatView_module_css_default.scroll,
+							children: [(0, react_jsx_runtime.jsxs)("div", {
+								ref: scroll.columnRef,
+								className: ChatView_module_css_default.column,
+								"data-chat-flow": "",
+								"data-chat-motion": deferCompletedTurns && scroll.initialized && (running || motionTail || pendingInputs.length > 0) ? "" : void 0,
+								children: [
+									openState === "loading" && (0, react_jsx_runtime.jsx)("div", {
+										className: ChatView_module_css_default.hint,
+										children: t("chat.loadingHistory")
+									}),
+									openState === "error" && openError !== null && (0, react_jsx_runtime.jsx)("div", {
+										className: ChatView_module_css_default.openError,
+										children: t("chat.loadError", {
+											message: openError.message,
+											code: openError.code
+										})
+									}),
+									hasMore && (0, react_jsx_runtime.jsx)("div", {
+										className: ChatView_module_css_default.older,
+										children: (0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											disabled: loadingOlder,
+											onClick: scroll.loadEarlier,
+											children: loadingOlder ? t("loading") : t("chat.loadOlder")
+										})
+									}),
+									(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.MarkdownDelegateProvider, {
+										openFile: requestOpenFile,
+										openExternalLink,
+										fileImages,
+										children: renderSlot("conversation.chat.flow", {
+											entries,
+											pendingInputs,
+											lastInputTurn,
+											deferCollapse,
+											cwd,
+											openFile: requestOpenFile,
+											inspectCall,
+											forkAt,
+											loadImage,
+											fileMentions
+										}, { hookContext: flowContext })
+									})
+								]
+							}), (0, react_jsx_runtime.jsx)("div", {
+								className: ChatView_module_css_default.turnSpacer,
+								"data-chat-turn-spacer": true,
+								"aria-hidden": "true"
+							})]
+						})
+					}),
+					!scroll.followingTail && (0, react_jsx_runtime.jsx)("div", {
+						className: ChatView_module_css_default.toBottomSlot,
+						children: (0, react_jsx_runtime.jsx)("button", {
+							type: "button",
+							className: ChatView_module_css_default.toBottom,
+							"aria-label": t("chat.toBottom"),
+							onClick: scroll.returnToBottom,
+							children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutlineRegular, {})
+						})
+					}),
+					fileOpenError !== null && (0, react_jsx_runtime.jsx)(FileOpenErrorDialog, {
+						message: fileOpenError.message,
+						busy: fileOpenBusy,
+						onClose: closeFileOpenError,
+						onRetry: () => {
+							requestOpenFile(fileOpenError.path);
+						},
+						t
+					})
+				]
+			});
+		}
+		/** In-page Host open-path refusal: the wire reason plus a retry of the same path. */
+		function FileOpenErrorDialog({ message, busy, onClose, onRetry, t }) {
+			return (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Modal, {
+				open: true,
+				onClose,
+				closeLabel: t("close"),
+				title: t("fileOpen.title"),
+				description: message,
+				footer: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+					variant: "outline",
+					className: ChatView_module_css_default.modalAction,
+					onClick: onClose,
+					children: t("cancel")
+				}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
+					variant: "primary",
+					className: ChatView_module_css_default.modalAction,
+					disabled: busy,
+					onClick: onRetry,
+					children: t("retry")
+				})] })
+			});
+		}
+		//#endregion
+		//#region ../../node_modules/@deepseek-ai/dsh-util-values/lib/index.js
+		/**
+		* Lazily scanned view of one JSON object's top-level fields, built from text
+		* that may still be streaming or from an already parsed object. Nothing is
+		* scanned until a reader asks; the view remembers every question it answered
+		* and reports changed answers when the owner refreshes for publication.
+		* Used for model tool-call arguments: a row reads the fields it
+		* cares about at whatever granularity it displays, at every stage of the call.
+		* @module @deepseek-ai/dsh-util-values/src/partial-json
+		*/
+		const SIMPLE_ESCAPES = {
+			"\"": "\"",
+			"\\": "\\",
+			"/": "/",
+			b: "\b",
+			f: "\f",
+			n: "\n",
+			r: "\r",
+			t: "	"
+		};
+		const CONTENT_ESCAPE = /[\\\u0000-\u001f]/u;
+		function isWhitespace(c) {
+			return c === " " || c === "\n" || c === "\r" || c === "	";
+		}
+		function isHex(c) {
+			return c >= "0" && c <= "9" || c >= "a" && c <= "f" || c >= "A" && c <= "F";
+		}
+		/**
+		* The view. A streaming instance grows through {@link PartialArguments.append};
+		* {@link PartialArguments.fromText} and {@link PartialArguments.fromObject} build
+		* sealed instances over a finished call. Every reader is total: an absent or
+		* differently typed field answers `undefined` (or `false`), never throws.
+		*/
+		var PartialArguments = class PartialArguments {
+			/** The view of a call with no arguments available. */
+			static EMPTY = PartialArguments.fromObject({});
+			/**
+			* View finished argument text without scanning it until a reader asks.
+			* @param text - the complete argument JSON text.
+			* @returns a sealed view.
+			*/
+			static fromText(text) {
+				const view = new PartialArguments();
+				view.append(text);
+				view.sealed = true;
+				return view;
+			}
+			/**
+			* View an already parsed argument payload, such as a PTC dispatch object.
+			* @param value - the parsed argument value.
+			* @returns a sealed view; a non-object payload has no fields.
+			*/
+			static fromObject(value) {
+				const view = new PartialArguments();
+				view.object = typeof value === "object" && value !== null && !Array.isArray(value) ? value : {};
+				view.sealed = true;
+				return view;
+			}
+			/**
+			* The source: text so far or a parsed object, plus whether it can still grow.
+			* These are the only enumerable fields, so two views over the same source
+			* compare equal structurally however far each has been read.
+			*/
+			chunks = [];
+			object;
+			sealed = false;
+			#ends = [];
+			#size = 0;
+			#consumed = 0;
+			#mode = "root";
+			#escape = false;
+			#keyStart = 0;
+			#keyEscaped = false;
+			#key = "";
+			#current = null;
+			#nestedEnds = [];
+			#nestedInString = false;
+			#invalidAt;
+			#invalidValue = false;
+			#entries = /* @__PURE__ */ new Map();
+			#order = [];
+			#reads = /* @__PURE__ */ new Map();
+			/** Whether this view rejects further appends; does not scan text or register reads. */
+			get isSealed() {
+				return this.sealed;
+			}
+			/** Whether indexing or a content read found invalid JSON; unread value contents are not validated. */
+			get invalid() {
+				this.scan();
+				return this.#mode === "invalid" || this.#invalidValue;
+			}
+			/**
+			* Retain streamed argument text without scanning or comparing observed answers.
+			* @param fragment - the text following every fragment appended before.
+			*/
+			append(fragment) {
+				if (this.sealed) throw new Error("PartialArguments: cannot append to a sealed view");
+				if (fragment.length === 0) return;
+				this.chunks.push(fragment);
+				this.#size += fragment.length;
+				this.#ends.push(this.#size);
+			}
+			/**
+			* Reconcile a streamed prefix with authoritative complete text without joining the fragments.
+			* @param text - the final argument text, which replaces missing or conflicting deltas.
+			* @returns this view sealed with its caches retained when every character matches; otherwise a new sealed view.
+			*/
+			settle(text) {
+				if (this.object !== void 0 || text.length !== this.#size) return PartialArguments.fromText(text);
+				let offset = 0;
+				for (const chunk of this.chunks) {
+					if (!text.startsWith(chunk, offset)) return PartialArguments.fromText(text);
+					offset += chunk.length;
+				}
+				this.chunks = text.length === 0 ? [] : [text];
+				this.#ends = text.length === 0 ? [] : [text.length];
+				this.sealed = true;
+				return this;
+			}
+			/**
+			* Compare observed answers and advance their publication baseline. Unread views remain unscanned.
+			* @returns whether any observed answer changed since its first read or the preceding refresh.
+			*/
+			refresh() {
+				if (this.#reads.size === 0) return false;
+				this.scan();
+				let changed = false;
+				let completions = false;
+				for (const read of this.#reads.values()) {
+					if (read.completion) {
+						completions = true;
+						continue;
+					}
+					changed = this.refreshRead(read) || changed;
+				}
+				if (completions) {
+					for (const read of this.#reads.values()) if (read.completion) changed = this.refreshRead(read) || changed;
+				}
+				if (this.sealed) this.#reads.clear();
+				return changed;
+			}
+			refreshRead(read) {
+				const now = read.answer();
+				if (Object.is(now, read.last)) return false;
+				read.last = now;
+				return true;
+			}
+			/**
+			* Check whether no further fields can arrive.
+			* @returns whether the outer object closed, indexing failed, or the view is sealed; unread values are not validated.
+			*/
+			closed() {
+				return this.remember("closed", "", () => this.closedNow());
+			}
+			/**
+			* List discovered fields in first-appearance order.
+			* @returns top-level keys seen so far, in first-appearance order.
+			*/
+			keys() {
+				return this.remember("keys", "", () => this.keysNow(), (keys) => keys.length);
+			}
+			/**
+			* Check whether a top-level field has appeared.
+			* @param key - argument name.
+			* @returns whether the field has appeared (a string opened or another value began).
+			*/
+			has(key) {
+				return this.remember("has", key, () => this.hasNow(key));
+			}
+			/**
+			* Check whether a field's closing delimiter has arrived, without validating its contents.
+			* @param key - argument name.
+			* @returns whether its delimiter arrived and no content reader has reported an error for this value.
+			*/
+			complete(key) {
+				return this.remember("complete", key, () => this.completeNow(key));
+			}
+			/**
+			* Read string length without materializing its text.
+			* @param key - argument name.
+			* @param options - change granularity for a streaming string.
+			* @returns decoded UTF-16 length of the string field so far; undefined when absent or not a string.
+			*/
+			stringLength(key, options) {
+				const step = Math.max(1, Math.floor(options?.step ?? 1));
+				const offset = options?.offset ?? 0;
+				return this.remember(`length:${step}:${offset}`, key, () => this.lengthNow(key), (length) => length === void 0 ? void 0 : Math.ceil((length + offset) / step));
+			}
+			/**
+			* Check a string against a decoded UTF-16 length limit without materializing it.
+			* @param key - argument name.
+			* @param maxLength - decoded UTF-16 limit, floored to at least zero.
+			* @returns whether the string is longer than the limit; false when absent or not a string.
+			*/
+			stringExceeds(key, maxLength) {
+				const limit = Math.max(0, Math.floor(maxLength));
+				return this.remember(`exceeds:${limit}`, key, () => (this.lengthNow(key, limit + 1) ?? 0) > limit);
+			}
+			/**
+			* Read a decoded string, including a streaming prefix.
+			* @param key - argument name.
+			* @returns the string field's decoded text so far; undefined when absent or not a string.
+			*/
+			text(key) {
+				return this.remember("text", key, () => this.textNow(key));
+			}
+			/**
+			* Read at most the first decoded UTF-16 units of a string.
+			* @param key - argument name.
+			* @param maxLength - maximum decoded UTF-16 length, floored to at least one.
+			* @returns the bounded string prefix; undefined when absent or not a string.
+			*/
+			textPrefix(key, maxLength) {
+				const limit = Math.max(1, Math.floor(maxLength));
+				return this.remember(`prefix:${limit}`, key, () => this.textPrefixNow(key, limit));
+			}
+			/**
+			* Read a completed non-string argument.
+			* @param key - argument name.
+			* @returns the parsed non-string value once it closed; undefined while open, absent, or a string.
+			*/
+			value(key) {
+				return this.remember("value", key, () => this.valueNow(key));
+			}
+			/** Answer a question and, on a streaming view, remember it for change detection. */
+			remember(kind, key, read, comparison) {
+				this.scan();
+				const result = read();
+				if (!this.sealed) {
+					const id = `${kind}/${key}`;
+					if (!this.#reads.has(id)) this.#reads.set(id, {
+						completion: kind === "complete",
+						answer: comparison === void 0 ? read : () => comparison(read()),
+						last: comparison === void 0 ? result : comparison(result)
+					});
+				}
+				return result;
+			}
+			closedNow() {
+				return this.sealed || this.#mode === "closed" || this.#mode === "invalid";
+			}
+			keysNow() {
+				return this.object === void 0 ? this.#order : Object.keys(this.object);
+			}
+			hasNow(key) {
+				return this.object === void 0 ? this.#entries.has(key) : Object.hasOwn(this.object, key);
+			}
+			completeNow(key) {
+				if (this.object !== void 0) return Object.hasOwn(this.object, key);
+				const entry = this.#entries.get(key);
+				return entry !== void 0 && entry.end >= 0 && (entry.kind === "string" ? entry.invalidAt === void 0 : !entry.invalid);
+			}
+			lengthNow(key, limit = Number.POSITIVE_INFINITY) {
+				if (this.object !== void 0) {
+					const field = Object.hasOwn(this.object, key) ? this.object[key] : void 0;
+					return typeof field === "string" ? field.length : void 0;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "string") return void 0;
+				if (entry.text !== void 0 && entry.text.at === entry.end) return entry.text.length;
+				const read = entry.length ??= {
+					at: entry.start,
+					length: 0,
+					text: ""
+				};
+				this.readString(entry, read, limit, false);
+				return read.length;
+			}
+			textNow(key) {
+				if (this.object !== void 0) {
+					const field = Object.hasOwn(this.object, key) ? this.object[key] : void 0;
+					return typeof field === "string" ? field : void 0;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "string") return void 0;
+				if (entry.text === void 0 && entry.end >= 0 && entry.needsDecoding && entry.invalidAt === void 0) {
+					let text;
+					try {
+						text = JSON.parse(`"${this.slice(entry.start, entry.end)}"`);
+					} catch (_error) {}
+					if (text !== void 0) entry.text = {
+						at: entry.end,
+						length: text.length,
+						text
+					};
+				}
+				const read = entry.text ??= {
+					at: entry.start,
+					length: 0,
+					text: ""
+				};
+				this.readString(entry, read, Number.POSITIVE_INFINITY, true);
+				return read.text;
+			}
+			textPrefixNow(key, maxLength) {
+				if (this.object !== void 0) {
+					const field = Object.hasOwn(this.object, key) ? this.object[key] : void 0;
+					return typeof field === "string" ? field.slice(0, maxLength) : void 0;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "string") return void 0;
+				const prefixes = entry.prefixes ??= /* @__PURE__ */ new Map();
+				let read = prefixes.get(maxLength);
+				if (read === void 0) {
+					read = {
+						at: entry.start,
+						length: 0,
+						text: ""
+					};
+					prefixes.set(maxLength, read);
+				}
+				this.readString(entry, read, maxLength, true);
+				return read.text;
+			}
+			valueNow(key) {
+				if (this.object !== void 0) {
+					if (!Object.hasOwn(this.object, key)) return void 0;
+					const field = this.object[key];
+					return typeof field === "string" ? void 0 : field;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "value" || entry.end < 0 || entry.invalid) return void 0;
+				if (entry.parsed === void 0) try {
+					entry.parsed = JSON.parse(this.slice(entry.start, entry.end));
+				} catch (_error) {
+					entry.invalid = true;
+					this.#invalidValue = true;
+				}
+				return entry.parsed;
+			}
+			chunkAt(at) {
+				let low = 0;
+				let high = this.#ends.length;
+				while (low < high) {
+					const mid = low + high >>> 1;
+					if (this.#ends[mid] <= at) low = mid + 1;
+					else high = mid;
+				}
+				return low;
+			}
+			/** Materialize only a requested range, never the cumulative source. */
+			slice(start, end) {
+				if (start >= end) return "";
+				const first = this.chunkAt(start);
+				const last = this.chunkAt(end - 1);
+				const base = first === 0 ? 0 : this.#ends[first - 1];
+				if (first === last) return this.chunks[first].slice(start - base, end - base);
+				const parts = [this.chunks[first].slice(start - base)];
+				for (let i = first + 1; i < last; i++) parts.push(this.chunks[i]);
+				parts.push(this.chunks[last].slice(0, end - this.#ends[last - 1]));
+				return parts.join("");
+			}
+			readString(entry, read, limit, materialize) {
+				const end = Math.min(entry.end < 0 ? this.#consumed : entry.end, entry.invalidAt ?? Number.POSITIVE_INFINITY, this.#invalidAt ?? Number.POSITIVE_INFINITY);
+				if (!entry.needsDecoding) {
+					const length = Math.min(end - read.at, limit - read.length);
+					if (length <= 0) return;
+					if (materialize) read.text += this.slice(read.at, read.at + length);
+					read.at += length;
+					read.length += length;
+					return;
+				}
+				let chunkIndex = this.chunkAt(read.at);
+				while (read.at < end && read.length < limit) {
+					const base = chunkIndex === 0 ? 0 : this.#ends[chunkIndex - 1];
+					const chunk = this.chunks[chunkIndex];
+					const remaining = chunk.slice(read.at - base, Math.min(chunk.length, end - base));
+					const boundary = remaining.search(CONTENT_ESCAPE);
+					const length = Math.min(boundary < 0 ? remaining.length : boundary, limit - read.length);
+					if (length > 0) {
+						if (materialize) read.text += remaining.slice(0, length);
+						read.at += length;
+						read.length += length;
+						if (read.at === base + chunk.length) chunkIndex++;
+						continue;
+					}
+					const type = remaining.length > 1 ? remaining[1] : read.at + 1 < end ? this.chunks[chunkIndex + 1][0] : void 0;
+					let decoded;
+					let width = 2;
+					if (remaining[0] === "\\" && type === void 0 && entry.end < 0) return;
+					if (remaining[0] === "\\" && type === "u") {
+						const hex = this.slice(read.at + 2, Math.min(end, read.at + 6));
+						let valid = true;
+						for (let i = 0; i < hex.length; i++) if (!isHex(hex[i])) valid = false;
+						if (valid) {
+							if (hex.length < 4 && entry.end < 0) return;
+							if (hex.length === 4) decoded = String.fromCharCode(Number.parseInt(hex, 16));
+						}
+						width = 6;
+					} else if (remaining[0] === "\\" && type !== void 0) decoded = SIMPLE_ESCAPES[type];
+					if (decoded === void 0) {
+						entry.invalidAt = read.at;
+						this.#invalidValue = true;
+						return;
+					}
+					if (materialize) read.text += decoded;
+					read.length++;
+					read.at += width;
+					while (chunkIndex < this.chunks.length && read.at >= this.#ends[chunkIndex]) chunkIndex++;
+				}
+			}
+			/** Locate new field ranges without decoding or parsing their contents. */
+			scan() {
+				if (this.object !== void 0 || this.#consumed === this.#size) return;
+				for (let i = this.chunkAt(this.#consumed); i < this.chunks.length && this.#invalidAt === void 0; i++) {
+					const pending = this.chunks[i];
+					const base = i === 0 ? 0 : this.#ends[i - 1];
+					for (let index = this.#consumed - base; index < pending.length && this.#mode !== "invalid"; index++) {
+						if (this.#mode === "string" || this.#mode === "nested" && this.#nestedInString) {
+							const end = this.stringBoundary(pending, index);
+							this.#consumed += end - index;
+							index = end;
+							if (index === pending.length) break;
+						}
+						this.step(pending[index], this.#consumed);
+						this.#consumed++;
+					}
+				}
+			}
+			/** Only raw quotes and their preceding backslash runs can terminate a string. */
+			stringBoundary(fragment, start) {
+				let at = start;
+				while (true) {
+					const quote = fragment.indexOf("\"", at);
+					const end = quote < 0 ? fragment.length : quote;
+					if (this.#mode === "string") {
+						const entry = this.#current;
+						if (!entry.needsDecoding && CONTENT_ESCAPE.test(fragment.slice(at, end))) entry.needsDecoding = true;
+					}
+					let slashStart = end;
+					while (slashStart > at && fragment[slashStart - 1] === "\\") slashStart--;
+					const escaped = (end - slashStart) % 2 === 1 !== (slashStart === at && this.#escape);
+					this.#escape = quote < 0 && escaped;
+					if (quote < 0 || !escaped) return end;
+					at = quote + 1;
+				}
+			}
+			step(c, at) {
+				switch (this.#mode) {
+					case "root":
+						if (isWhitespace(c)) return;
+						if (c === "{") {
+							this.#mode = "key-or-end";
+							return;
+						}
+						this.fail();
+						return;
+					case "key-or-end":
+						if (isWhitespace(c)) return;
+						if (c === "}") {
+							this.#mode = "closed";
+							return;
+						}
+						if (c === "\"") {
+							this.beginKey(at);
+							return;
+						}
+						this.fail();
+						return;
+					case "key-only":
+						if (isWhitespace(c)) return;
+						if (c === "\"") {
+							this.beginKey(at);
+							return;
+						}
+						this.fail();
+						return;
+					case "key":
+						this.stepKey(c, at);
+						return;
+					case "colon":
+						if (isWhitespace(c)) return;
+						if (c === ":") {
+							this.#mode = "value";
+							return;
+						}
+						this.fail();
+						return;
+					case "value":
+						this.beginValue(c, at);
+						return;
+					case "string": {
+						const entry = this.#current;
+						entry.end = at;
+						this.#current = null;
+						this.#mode = "comma-or-end";
+						return;
+					}
+					case "scalar":
+						this.stepScalar(c, at);
+						return;
+					case "nested":
+						this.stepNested(c, at);
+						return;
+					case "comma-or-end":
+						if (isWhitespace(c)) return;
+						if (c === ",") {
+							this.#mode = "key-only";
+							return;
+						}
+						if (c === "}") {
+							this.#mode = "closed";
+							return;
+						}
+						this.fail();
+						return;
+					case "closed":
+						if (isWhitespace(c)) return;
+						this.fail();
+						return;
+					/* v8 ignore next 2 -- scan() stops stepping once the view is invalid. */
+					case "invalid": return;
+					/* v8 ignore next 2 -- Every scanner mode has a handler above. */
+					default: assertNever(this.#mode);
+				}
+			}
+			fail() {
+				this.#invalidAt = this.#consumed;
+				this.#mode = "invalid";
+				this.#current = null;
+			}
+			beginKey(at) {
+				this.#mode = "key";
+				this.#keyStart = at + 1;
+				this.#keyEscaped = false;
+				this.#escape = false;
+			}
+			stepKey(c, at) {
+				if (c < " ") {
+					this.fail();
+					return;
+				}
+				if (this.#escape) {
+					this.#escape = false;
+					return;
+				}
+				if (c === "\\") {
+					this.#escape = true;
+					this.#keyEscaped = true;
+					return;
+				}
+				if (c !== "\"") return;
+				const raw = this.slice(this.#keyStart, at);
+				if (this.#keyEscaped) try {
+					this.#key = JSON.parse(`"${raw}"`);
+				} catch (_error) {
+					this.fail();
+					return;
+				}
+				else this.#key = raw;
+				this.#mode = "colon";
+			}
+			open(entry) {
+				if (!this.#entries.has(this.#key)) this.#order.push(this.#key);
+				this.#entries.set(this.#key, entry);
+				this.#current = entry;
+			}
+			beginValue(c, at) {
+				if (isWhitespace(c)) return;
+				if (c === "\"") {
+					this.open({
+						kind: "string",
+						start: at + 1,
+						end: -1,
+						needsDecoding: false,
+						invalidAt: void 0,
+						length: void 0,
+						text: void 0,
+						prefixes: void 0
+					});
+					this.#escape = false;
+					this.#mode = "string";
+					return;
+				}
+				if (c === "}" || c === "," || c === ":" || c === "]") {
+					this.fail();
+					return;
+				}
+				this.open({
+					kind: "value",
+					start: at,
+					end: -1,
+					parsed: void 0,
+					invalid: false
+				});
+				if (c === "{" || c === "[") {
+					this.#mode = "nested";
+					this.#nestedEnds = [c === "{" ? "}" : "]"];
+					this.#nestedInString = false;
+					this.#escape = false;
+					return;
+				}
+				this.#mode = "scalar";
+			}
+			stepScalar(c, at) {
+				if (c !== "," && c !== "}" && !isWhitespace(c)) return;
+				this.closeValue(at);
+				this.#mode = c === "," ? "key-only" : c === "}" ? "closed" : "comma-or-end";
+			}
+			stepNested(c, at) {
+				if (this.#nestedInString) {
+					this.#nestedInString = false;
+					return;
+				}
+				if (c === "\"") {
+					this.#nestedInString = true;
+					return;
+				}
+				if (c === "{" || c === "[") {
+					this.#nestedEnds.push(c === "{" ? "}" : "]");
+					return;
+				}
+				if (c === "}" || c === "]") {
+					if (this.#nestedEnds.pop() !== c) {
+						this.fail();
+						return;
+					}
+					if (this.#nestedEnds.length === 0) {
+						this.closeValue(at + 1);
+						this.#mode = "comma-or-end";
+					}
+				}
+			}
+			closeValue(end) {
+				const entry = this.#current;
+				entry.end = end;
+				this.#current = null;
+			}
+		};
+		/** Duplicate-install-safe JSON and immutable-value helpers. @module @deepseek-ai/dsh-util-values */
+		/**
+		* Mark an unreachable closed-union branch.
+		* @param value - impossible value; an unhandled typed variant fails at the call site.
+		* @param context - optional switch-site label included in the failure message.
+		* @returns never; a runtime value that escaped its type always throws.
+		*/
+		function assertNever(value, context) {
+			const rendered = JSON.stringify(value) ?? String(value);
+			throw new Error(`unreachable variant${context ? ` in ${context}` : ""}: ${rendered}`);
+		}
+		//#endregion
+		//#region lib/types/client/contract/turn-process.js
+		/**
+		* Compare immutable Turn-process specifications by their published fields.
+		* @param left - previous specification.
+		* @param right - next specification.
+		* @returns whether both values describe the same process presentation.
+		*/
+		function sameTurnProcessSpec(left, right) {
+			return left.turn === right.turn && left.controlAnchorSeq === right.controlAnchorSeq && left.processStartSeq === right.processStartSeq && left.answerAnchorSeq === right.answerAnchorSeq && left.answerStep === right.answerStep && left.inlineReasoning === right.inlineReasoning && left.messageCount === right.messageCount && left.toolCallCount === right.toolCallCount && left.subagentCount === right.subagentCount;
+		}
+		/**
+		* Recognize the shipped subagent delegation name and its configured variants.
+		* Control tools use distinct names such as `send_message` and `list_agents`.
+		* @param name - durable Tool-call name.
+		* @returns whether the call creates or forks a subagent.
+		*/
+		function isSubagentDelegationTool(name) {
+			return name === "subagent" || name.startsWith("subagent_");
+		}
+		/**
+		* Keep live, stopped, and failed Turns open.
+		* @param node - Node carrying the owning Turn.
+		* @returns whether whole-Turn collapse is unavailable.
+		*/
+		function turnProcessAlwaysOpen(node) {
+			const location = node?.location;
+			if (location?.kind !== "turn" && location?.kind !== "step") return false;
+			const reason = location.turn.end?.data.reason.kind;
+			return location.turn.status === "open" || reason === "aborted" || reason === "interrupted" || reason === "error";
+		}
+		//#endregion
+		//#region lib/types/client/stores.js
+		/** Per-Session Chat view store. */
+		/**
+		* Resolve the manual disclosure choice for one Turn.
+		* @param state - Chat store snapshot.
+		* @param turn - owning Turn.
+		* @returns the Turn's stored entry, when present.
+		*/
+		function storedTurnProcessEntry(state, turn) {
+			return state.turnProcesses.find((entry) => entry.turn === turn);
+		}
+		/**
+		* Whether a foldable Turn's process is open: the reader's choice for the current answer generation
+		* wins; otherwise the latest completed Turn stays open until the next input, and older Turns fold.
+		* @param state - Chat store snapshot.
+		* @param spec - the Turn's process specification.
+		* @param defaultOpen - whether this Turn is exempt from automatic folding.
+		* @returns the effective open state.
+		*/
+		function turnProcessOpen(state, spec, defaultOpen) {
+			const stored = storedTurnProcessEntry(state, spec.turn);
+			if (stored === void 0 || stored.answerStep !== (spec.answerStep ?? 0)) return defaultOpen;
+			return stored.collapsed !== true;
+		}
+		/**
+		* Create the Chat view store handle.
+		* @returns a handle instantiated once per rendered Session scope.
+		*/
+		function createChatStore() {
+			return (0, _deepseek_ai_dsh_client_store.defineStore)({
+				init: () => ({ turnProcesses: [] }),
+				actions: { setTurnProcessOpen: (draft, turn, answerStep, open) => {
+					const index = draft.turnProcesses.findIndex((entry) => entry.turn === turn);
+					const next = open ? {
+						turn,
+						answerStep
+					} : {
+						turn,
+						answerStep,
+						collapsed: true
+					};
+					if (index < 0) draft.turnProcesses.push(next);
+					else draft.turnProcesses[index] = next;
+				} }
+			});
+		}
+		//#endregion
+		//#region lib/types/client/chat/ChatNodeSeat.js
+		function turnDataOf(node) {
+			const location = node?.location;
+			return location?.kind === "turn" || location?.kind === "step" ? location.turn.data : void 0;
+		}
+		function turnOf$1(node) {
+			const location = node?.location;
+			return location?.kind === "turn" || location?.kind === "step" ? location.turn.turn : void 0;
+		}
+		/**
+		* Subscribe, apply Turn-process visibility, and dispatch one stable Context key.
+		* Policy reads select this seat's own conclusion, so a mode change re-renders
+		* only seats whose visibility actually changes.
+		*/
+		const ChatNodeSeat = (0, react.memo)(function ChatNodeSeat({ nodeKey, groupPart, useChatNode, useChatNodeProcess, usePresentation, cwd, openFile, inspectCall, forkAt, loadImage, fileMentions, useStore, actions, renderSlot, t, useChatNodeBottom, deferCollapse, useGroupAction }) {
+			const bottom = useChatNodeBottom(nodeKey);
+			const node = useChatNode(nodeKey);
+			const routedNode = node;
+			const turn = turnOf$1(routedNode);
+			const processPresentation = useChatNodeProcess(nodeKey);
+			const processSpec = processPresentation?.spec;
+			const storedOpen = useStore((state) => processSpec !== void 0 && turnProcessOpen(state, processSpec, bottom === true && deferCollapse));
+			const liveProcess = processPresentation !== void 0 && !processPresentation.turnClosed;
+			const interleavedInput = processPresentation?.hasInterleavedInput === true;
+			const alwaysOpen = liveProcess || interleavedInput || turnProcessAlwaysOpen(routedNode);
+			const processOpen = alwaysOpen || storedOpen;
+			const setOpen = (0, react.useCallback)((open) => {
+				if (processSpec !== void 0 && !alwaysOpen) actions.setTurnProcessOpen(processSpec.turn, processSpec.answerStep ?? 0, open);
+			}, [
+				actions,
+				processSpec,
+				alwaysOpen
+			]);
+			const foldCompleted = usePresentation((policy) => policy.foldCompletedTurns);
+			const processWindowReady = processSpec !== void 0 && processPresentation !== void 0 && foldCompleted && processPresentation.turn === processSpec.turn && (processPresentation.turnStarted || processPresentation.turnClosed);
+			const processMember = routedNode !== void 0 && processWindowReady && !isAtOrOutside(routedNode, "turn") && routedNode.anchorSeq >= processSpec.processStartSeq && (liveProcess || processSpec.answerAnchorSeq === null || routedNode.anchorSeq < processSpec.answerAnchorSeq || groupPart === "reasoning" && routedNode.kind === "assistant-step" && routedNode.data.step === processSpec.answerStep);
+			const processAnswer = routedNode !== void 0 && processWindowReady && !liveProcess && groupPart !== "reasoning" && routedNode.kind === "assistant-step" && routedNode.data.step === processSpec.answerStep;
+			const ownsDisclosure = routedNode?.kind === "turn-process" || processAnswer;
+			const foldable = processWindowReady && (liveProcess || processMember || ownsDisclosure);
+			const turnProcess = (0, react.useMemo)(() => processSpec === void 0 ? void 0 : {
+				spec: processSpec,
+				foldable,
+				hasContent: !interleavedInput && (processPresentation?.hasExternalProcess === true || processSpec.inlineReasoning),
+				open: processOpen,
+				setOpen
+			}, [
+				foldable,
+				interleavedInput,
+				processOpen,
+				processSpec,
+				processPresentation?.hasExternalProcess,
+				setOpen
+			]);
+			const controllerInactive = routedNode?.kind === "turn-process" && foldCompleted && !foldable;
+			const compactAnswer = processAnswer && foldable && processPresentation.compactAnswer && !processOpen;
+			const processHidden = controllerInactive || foldable && processMember && !processOpen;
+			const wrapperRef = useGroupAction(processHidden, (0, react.useCallback)(() => {
+				if (processMember) setOpen(true);
+			}, [processMember, setOpen]));
+			const [disclosureReset] = (0, react.useState)(() => (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(0));
+			const turnData = turnDataOf(routedNode);
+			const hookContext = (0, react.useMemo)(() => ({
+				turnData,
+				disclosureReset,
+				useGroupAction
+			}), [
+				turnData,
+				disclosureReset,
+				useGroupAction
+			]);
+			(0, react.useEffect)(() => {
+				if (processMember && processHidden && wrapperRef.current !== null && hiddenOrCollapsing(wrapperRef.current)) disclosureReset.set(disclosureReset.getSnapshot() + 1);
+			}, [
+				processMember,
+				processHidden,
+				wrapperRef,
+				disclosureReset
+			]);
+			const owner = (0, react.useMemo)(() => node === void 0 ? null : {
+				...groupPart === void 0 ? {} : { groupPart },
+				cwd,
+				openFile,
+				inspectCall,
+				forkAt,
+				loadImage,
+				fileMentions,
+				turnProcess
+			}, [
+				node,
+				groupPart,
+				cwd,
+				openFile,
+				inspectCall,
+				forkAt,
+				loadImage,
+				fileMentions,
+				turnProcess
+			]);
+			if (routedNode === void 0 || owner === null) return null;
+			const routedOwner = {
+				...owner,
+				node: routedNode
+			};
+			const flowKey = groupPart === void 0 || groupPart === "response" ? routedNode.key : JSON.stringify([routedNode.key, groupPart]);
+			return (0, react_jsx_runtime.jsx)("div", {
+				ref: wrapperRef,
+				className: ChatView_module_css_default.flowItem,
+				"data-chat-anchor-key": flowKey,
+				"data-chat-flow-key": flowKey,
+				"data-chat-paging-anchor": routedNode.kind !== "turn-process" || void 0,
+				"data-chat-node-key": routedNode.key,
+				"data-chat-group-part": groupPart,
+				"data-chat-flow-kind": routedNode.kind,
+				"data-chat-turn": turn,
+				"data-turn-process-member": processMember || void 0,
+				"data-turn-process-hidden": processHidden || void 0,
+				"data-turn-process-answer": compactAnswer || void 0,
+				children: renderSlot("conversation.chat.node", routedOwner, {
+					entryKey: routedNode.kind,
+					hookContext,
+					fallback: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.JsonBlock, {
+						label: t("message.unknownSurface", { type: routedNode.kind }),
+						payload: routedNode.data,
+						truncatedLabel: (total) => t("json.truncated", { total })
+					})
+				})
+			});
+		});
+		//#endregion
+		//#region lib/types/client/chat/render-entry.js
+		/**
+		* Identify a rendering position independently of presentation mode.
+		* @param entry - mode-independent rendering reference.
+		* @returns its collision-free React key.
+		*/
+		function chatRenderKey(entry) {
+			switch (entry.kind) {
+				case "node": return JSON.stringify([
+					"node",
+					entry.key,
+					entry.groupPart ?? null
+				]);
+				case "group": return JSON.stringify(["group", entry.key]);
+				default: return assertNever(entry);
+			}
+		}
+		//#endregion
+		//#region lib/types/client/chat/step-process.js
+		/**
+		* Compose a closed group's localized title from its top three categories without counts.
+		* @param summary - ranked work and phase evidence for this range.
+		* @param t - Chat namespace translator.
+		* @returns the secondary disclosure title.
+		*/
+		function processTitle(summary, t) {
+			const labels = summary.counts.slice(0, 3).map(({ kind }) => t(`message.stepProcess.done.${kind}`));
+			const first = labels[0];
+			if (first === void 0) return t("message.stepProcess.done.thinking");
+			const continuation = (label) => label.charAt(0).toLowerCase() + label.slice(1);
+			const second = labels[1];
+			if (second === void 0) return first;
+			if (labels.length === 2) {
+				const prefix = t("message.stepProcess.sharedPrefix");
+				return t("message.stepProcess.joinTwo", {
+					first,
+					second: continuation(prefix !== "" && first.startsWith(prefix) && second.startsWith(prefix) ? second.slice(prefix.length) : second)
+				});
+			}
+			const title = [first, ...labels.slice(1).map(continuation)].join(t("message.stepProcess.comma"));
+			return summary.counts.length > 3 ? t("message.stepProcess.more", { title }) : title;
+		}
+		//#endregion
+		//#region lib/types/client/chat/use-disclosure.js
+		/** Bind independent disclosure state to a Chat seat's reset source. */
+		/**
+		* Own one initially collapsed disclosure without an external subscription.
+		* @param version - reset generation; unchanged generations retain local open state.
+		* @returns the open state, an explicit setter, and a toggle action.
+		*/
+		function useDisclosure(version = 0) {
+			const [expandedVersion, setExpandedVersion] = (0, react.useState)(null);
+			return {
+				expanded: expandedVersion === version,
+				setExpanded: (0, react.useCallback)((open) => {
+					setExpandedVersion(open ? version : null);
+				}, [version]),
+				toggle: (0, react.useCallback)(() => {
+					setExpandedVersion((previous) => previous === version ? null : version);
+				}, [version])
+			};
+		}
+		/**
+		* Bind a Hook without subscribing until a component calls it.
+		* @param reset - stable source whose version advances when the seat is hidden by its Turn.
+		* @returns a Hook with independent open state for each invocation.
+		*/
+		function bindDisclosure(reset) {
+			const subscribe = (listener) => reset.subscribe(listener);
+			const getSnapshot = () => reset.getSnapshot();
+			return function useBoundDisclosure() {
+				return useDisclosure((0, react.useSyncExternalStore)(subscribe, getSnapshot));
+			};
+		}
+		//#endregion
+		//#region lib/types/client/chat/use-process-scroll.js
+		/** Capped process-group scrolling and fades over the shared follow controller. */
+		const AT_REST = {
+			canScrollUp: false,
+			canScrollDown: false
+		};
+		const SCROLL_KEYS = /* @__PURE__ */ new Set([
+			"ArrowUp",
+			"ArrowDown",
+			"PageUp",
+			"PageDown",
+			"Home",
+			"End",
+			" "
+		]);
+		/**
+		* Observe one group's body and content without coupling its follow intent to the outer transcript.
+		* Wheel, touchstart, any pointerdown, and unprevented scroll keys interrupt active animations,
+		* including events from editable controls; subsequent position sampling determines follow intent.
+		* @param bodyRef - capped scrolling body.
+		* @param contentRef - uncapped content whose size reports growth.
+		* @param open - local disclosure state.
+		* @param grouped - whether the display mode retains the group's height cap.
+		* @returns edge fades, DOM event bindings, and one-shot positioning for manual opening.
+		*/
+		function useProcessScroll(bodyRef, contentRef, open, grouped) {
+			const follow = useScrollFollow(false, 1);
+			const initialPosition = (0, react.useRef)(null);
+			const [edges, setEdges] = (0, react.useState)(AT_REST);
+			const initialize = (0, react.useCallback)((position) => {
+				initialPosition.current = position;
+			}, []);
+			const sync = (0, react.useCallback)((cause) => {
+				const body = bodyRef.current;
+				let next = AT_REST;
+				if (body !== null && body.closest("[hidden], [data-group-expanded-mode]") === null) {
+					let metrics = scrollMetrics(body);
+					const initial = cause === "resize" ? initialPosition.current : null;
+					if (initial !== null) {
+						metrics = follow.jump(body, metrics, initial === "bottom" ? metrics.floor : 0);
+						if (initial === "top") follow.setFollowing(false);
+						initialPosition.current = null;
+					} else {
+						const wasAnimating = follow.animating;
+						if (cause === "scrollend") follow.settle(metrics);
+						else follow.sample(metrics);
+						if (follow.active && (cause === "resize" || cause === "scrollend" && wasAnimating)) metrics = follow.toBottom(body, metrics, "smooth");
+					}
+					next = {
+						canScrollUp: metrics.top > 1,
+						canScrollDown: metrics.top < metrics.floor - 1
+					};
+				} else follow.reset();
+				setEdges((previous) => previous.canScrollUp === next.canScrollUp && previous.canScrollDown === next.canScrollDown ? previous : next);
+			}, [bodyRef, follow]);
+			const interrupt = (0, react.useCallback)(() => {
+				const body = bodyRef.current;
+				if (body !== null && follow.animating) follow.interrupt(body, scrollMetrics(body));
+			}, [bodyRef, follow]);
+			const events = (0, react.useMemo)(() => ({
+				onScroll: () => {
+					sync("scroll");
+				},
+				onWheel: interrupt,
+				onTouchStart: interrupt,
+				onPointerDown: interrupt,
+				onKeyDown: (event) => {
+					if (!event.defaultPrevented && SCROLL_KEYS.has(event.key)) interrupt();
+				}
+			}), [interrupt, sync]);
+			(0, react.useLayoutEffect)(() => {
+				interrupt();
+				follow.reset();
+				if (!grouped || !open) initialPosition.current = null;
+			}, [
+				follow,
+				grouped,
+				interrupt,
+				open
+			]);
+			(0, react.useLayoutEffect)(() => {
+				const body = bodyRef.current;
+				if (body === null || !open || typeof ResizeObserver === "undefined") return;
+				const unbind = follow.bind(body);
+				const observer = new ResizeObserver(() => {
+					sync("resize");
+				});
+				const onScrollEnd = (event) => {
+					if (event.target === body) sync("scrollend");
+				};
+				body.addEventListener("scrollend", onScrollEnd);
+				observer.observe(body);
+				if (contentRef.current !== null) observer.observe(contentRef.current);
+				return () => {
+					unbind();
+					observer.disconnect();
+					body.removeEventListener("scrollend", onScrollEnd);
+				};
+			}, [
+				bodyRef,
+				contentRef,
+				follow,
+				open,
+				sync
+			]);
+			return {
+				edges,
+				events,
+				initialize
+			};
+		}
+		//#endregion
+		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/ChatGroupSeat.module.css.mjs
+		const css$15 = ".QPaNna_root{min-width:0}.QPaNna_title{max-width:100%;color:var(--dsw-alias-label-tertiary);font:inherit;font-size:var(--dsh-content-font-size,14px);text-align:left;cursor:pointer;background:0 0;border:0;align-items:center;gap:6px;padding:0;transition:color .1s;display:flex}.QPaNna_title:hover{color:var(--dsw-alias-label-secondary)}.QPaNna_leading{width:calc(16px + var(--dsh-content-font-delta,0px));height:calc(16px + var(--dsh-content-font-delta,0px));color:inherit;flex:none;justify-content:center;align-items:center;display:inline-flex;position:relative}.QPaNna_leading svg{width:calc(14px + var(--dsh-content-font-delta,0px));height:calc(14px + var(--dsh-content-font-delta,0px))}.QPaNna_leading svg[width=\"16\"]{width:calc(16px + var(--dsh-content-font-delta,0px));height:calc(16px + var(--dsh-content-font-delta,0px))}.QPaNna_activityIcon,.QPaNna_chevron{justify-content:center;align-items:center;transition:opacity .1s;display:inline-flex;position:absolute;inset:0}.QPaNna_activityIcon{opacity:1}.QPaNna_chevron,.QPaNna_title:is(:hover,:focus-visible) .QPaNna_activityIcon{opacity:0}.QPaNna_title:is(:hover,:focus-visible) .QPaNna_chevron{opacity:1}.QPaNna_title[aria-expanded=true] .QPaNna_activityIcon{opacity:0}.QPaNna_title[aria-expanded=true] .QPaNna_chevron{opacity:1}.QPaNna_title[aria-expanded=true]{padding-bottom:8px}.QPaNna_body{--dsh-chat-flow-gap:6px;overscroll-behavior-y:auto;scrollbar-gutter:stable;max-height:min(400px,50vh);overflow-y:auto}.QPaNna_label{text-overflow:ellipsis;white-space:nowrap;min-width:0;overflow:hidden}.QPaNna_fadeTop{mask-image:linear-gradient(#0000 0,#000 24px 100%)}.QPaNna_fadeBottom{mask-image:linear-gradient(#000 0 calc(100% - 24px),#0000 100%)}.QPaNna_fadeTop.QPaNna_fadeBottom{mask-image:linear-gradient(#0000 0,#000 24px calc(100% - 24px),#0000 100%)}@media (prefers-reduced-motion:reduce){.QPaNna_title,.QPaNna_activityIcon,.QPaNna_chevron{transition:none}}.QPaNna_content{flex-direction:column;display:flex}.QPaNna_content>*{flex-shrink:0}.QPaNna_content>:not([hidden]):not(:empty)~:not([hidden]):not(:empty){margin-top:var(--dsh-chat-flow-gap,6px)}.QPaNna_expandedBody{scrollbar-gutter:auto;max-height:none;overflow:visible}[data-chat-motion] .QPaNna_content>:not([data-chat-motion]){transition:margin-top .16s cubic-bezier(.4,0,.2,1)}@media (prefers-reduced-motion:reduce){[data-chat-motion] .QPaNna_content>:not([data-chat-motion]){transition:none}}";
+		const tagId$15 = "@deepseek-ai/dsh-client-ui-chat/ChatGroupSeat.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$15) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
+			tag.dataset.pluginCss = tagId$15;
+			tag.textContent = css$15;
+			document.head.appendChild(tag);
+		}
+		var ChatGroupSeat_module_css_default = {
+			"activityIcon": "QPaNna_activityIcon",
+			"body": "QPaNna_body",
+			"chevron": "QPaNna_chevron",
+			"content": "QPaNna_content",
+			"expandedBody": "QPaNna_expandedBody",
+			"fadeBottom": "QPaNna_fadeBottom",
+			"fadeTop": "QPaNna_fadeTop",
+			"label": "QPaNna_label",
+			"leading": "QPaNna_leading",
+			"root": "QPaNna_root",
+			"title": "QPaNna_title"
+		};
+		//#endregion
+		//#region lib/types/client/chat/ChatGroupSeat.js
+		/** Stable process container; display policy changes visibility, never member parents. */
+		const PROCESS_TITLE_MINIMUM_MS = 150;
+		const PROCESS_ICONS = {
+			thinking: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconThinkOutlineRegular, {}),
+			read: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconBrowseOutlineRegular, { size: 14 }),
+			readImage: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconBrowseOutlineRegular, { size: 14 }),
+			search: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSearchOutlineRegular, { size: 14 }),
+			edit: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconEditOutlineRegular, { size: 14 }),
+			write: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconEditOutlineRegular, { size: 14 }),
+			commands: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, {}),
+			code: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCodeOutlineRegular, { size: 14 }),
+			webSearch: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconGlobeOutlineRegular, {}),
+			webFetch: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconBrowseOutlineRegular, { size: 14 }),
+			subagents: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconAgentPresetOutlineRegular, { size: 14 }),
+			plan: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconPlanOutlineRegular, {}),
+			questions: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconQuestionOutlineRegular, {}),
+			tools: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSparkleRegular, { size: 14 })
+		};
+		function sameLiveProcessTitle(left, right) {
+			return left.activity === right.activity && left.detail === right.detail && left.preparing === right.preparing;
+		}
+		function useStableLiveProcessTitle(desired, active) {
+			const [displayed, setDisplayed] = (0, react.useState)(desired);
+			const displayedRef = (0, react.useRef)(displayed);
+			const desiredRef = (0, react.useRef)(desired);
+			const displayedAtRef = (0, react.useRef)(Date.now());
+			(0, react.useEffect)(() => {
+				desiredRef.current = desired;
+				if (!active || sameLiveProcessTitle(displayedRef.current, desired)) return;
+				const remaining = PROCESS_TITLE_MINIMUM_MS - (Date.now() - displayedAtRef.current);
+				const commit = () => {
+					const next = desiredRef.current;
+					displayedRef.current = next;
+					displayedAtRef.current = Date.now();
+					setDisplayed(next);
+				};
+				if (remaining <= 0) {
+					commit();
+					return;
+				}
+				const timer = setTimeout(commit, remaining);
+				return () => {
+					clearTimeout(timer);
+				};
+			}, [
+				active,
+				desired.activity,
+				desired.detail,
+				desired.preparing
+			]);
+			return active ? displayed : desired;
+		}
+		const GroupMembers = (0, react.memo)(function GroupMembers({ members, ...props }) {
+			return members.map((member) => (0, react.createElement)(ChatNodeSeat, {
+				...props,
+				key: chatRenderKey(member),
+				nodeKey: member.key,
+				...member.groupPart === void 0 ? {} : { groupPart: member.groupPart }
+			}));
+		});
+		const ProcessGroupHeader = (0, react.memo)(function ProcessGroupHeader({ groupKey, useChatGroup, usePresentation, t, open, bodyId, toggle }) {
+			const data = useChatGroup(groupKey, (group) => group?.data);
+			const detailed = usePresentation((policy) => data?.closed === false && policy.liveProcessDetail);
+			const live = useStableLiveProcessTitle({
+				activity: data?.summary.running ?? "thinking",
+				detail: data?.summary.runningDetail ?? "",
+				preparing: data?.summary.preparing === true
+			}, data !== void 0 && !data.closed);
+			if (data === void 0) return null;
+			const label = data.closed ? processTitle(data.summary, t) : live.preparing ? t(`message.stepProcess.prepare.${live.activity === "thinking" ? "tools" : live.activity}`) : t(`message.stepProcess.${live.activity}`);
+			const detail = detailed && !data.closed ? live.detail : "";
+			const title = detail === "" ? label : `${label}${t("message.turnProcess.separator")}${detail}`;
+			const activity = data.closed ? data.summary.counts[0]?.kind ?? "thinking" : live.activity;
+			return (0, react_jsx_runtime.jsxs)("button", {
+				type: "button",
+				className: ChatGroupSeat_module_css_default.title,
+				"aria-expanded": open,
+				"aria-controls": bodyId,
+				"data-process-activity": activity,
+				onClick: (event) => {
+					event.currentTarget.focus();
+					toggle();
+				},
+				children: [(0, react_jsx_runtime.jsxs)("span", {
+					className: ChatGroupSeat_module_css_default.leading,
+					"aria-hidden": "true",
+					children: [(0, react_jsx_runtime.jsx)("span", {
+						className: ChatGroupSeat_module_css_default.activityIcon,
+						"data-step-process-icon": true,
+						children: PROCESS_ICONS[activity]
+					}), (0, react_jsx_runtime.jsx)("span", {
+						className: ChatGroupSeat_module_css_default.chevron,
+						"data-step-process-chevron": true,
+						children: open ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronUpOutlineRegular, {}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutlineRegular, {})
+					})]
+				}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.TextShimmer, {
+					active: !data.closed,
+					children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.TextShimmer, {
+						className: ChatGroupSeat_module_css_default.label,
+						children: title
+					})
+				})]
+			});
+		});
+		/** Render a process group with local disclosure and the existing outer-Turn visibility. */
+		const ChatGroupSeat = (0, react.memo)(function ChatGroupSeat({ groupKey, useChatGroup, useGroupHeaderAction, ...props }) {
+			const members = useChatGroup(groupKey, (group) => group?.members);
+			const turn = useChatGroup(groupKey, (group) => group?.data.turn);
+			const closed = useChatGroup(groupKey, (group) => group?.data.closed);
+			const foldCompleted = props.usePresentation((policy) => policy.foldCompletedTurns);
+			const { expanded: open, setExpanded: setOpen } = useDisclosure();
+			const firstKey = members?.[0]?.key ?? "";
+			const deferCollapse = props.useChatNodeBottom(firstKey) === true && props.deferCollapse;
+			const presentation = props.useChatNodeProcess(firstKey);
+			const turnLocation = props.useChatNode(firstKey, (node) => {
+				const location = node?.location;
+				return location?.kind === "turn" || location?.kind === "step" ? location.turn : void 0;
+			});
+			const grouped = props.usePresentation((policy) => policy.stepGrouping === "collapsed" || policy.stepGrouping === "history" && turnLocation?.status !== "open" && !deferCollapse);
+			const reason = turnLocation?.end?.data.reason.kind;
+			const alwaysOpen = presentation?.turnClosed === false || presentation?.hasInterleavedInput === true || reason === "aborted" || reason === "interrupted" || reason === "error";
+			const spec = presentation?.spec;
+			const selectOpen = (0, react.useCallback)((state) => spec !== void 0 && turnProcessOpen(state, spec, deferCollapse), [spec, deferCollapse]);
+			const storedOpen = props.useStore(selectOpen);
+			const outerHidden = foldCompleted && presentation?.turnClosed === true && spec !== void 0 && !alwaysOpen && !storedOpen;
+			const revealOuter = (0, react.useCallback)(() => {
+				if (spec !== void 0 && !alwaysOpen) props.actions.setTurnProcessOpen(spec.turn, spec.answerStep ?? 0, true);
+			}, [
+				props.actions,
+				spec,
+				alwaysOpen
+			]);
+			const rootRef = props.useGroupAction(outerHidden, revealOuter);
+			const headerRef = (0, react.useRef)(null);
+			const deferCompletedTurns = props.usePresentation((policy) => policy.collapseTiming === "next-input");
+			useGroupHeaderAction(headerRef, !grouped || deferCompletedTurns && outerHidden);
+			(0, react.useEffect)(() => {
+				if (outerHidden && rootRef.current !== null && hiddenOrCollapsing(rootRef.current)) setOpen(false);
+			}, [
+				outerHidden,
+				rootRef,
+				setOpen
+			]);
+			const reveal = (0, react.useCallback)(() => {
+				setOpen(true);
+			}, [setOpen]);
+			const bodyRef = props.useGroupAction(grouped && !open, reveal);
+			const contentRef = (0, react.useRef)(null);
+			const bodyId = (0, react.useId)();
+			const { edges, events, initialize } = useProcessScroll(bodyRef, contentRef, open, grouped);
+			const toggle = (0, react.useCallback)(() => {
+				if (!open) initialize(closed === false ? "bottom" : "top");
+				setOpen(!open);
+			}, [
+				closed,
+				initialize,
+				open,
+				setOpen
+			]);
+			if (members === void 0) return null;
+			const capped = grouped && (!deferCompletedTurns || open);
+			const classes = [
+				ChatGroupSeat_module_css_default.body,
+				!capped ? ChatGroupSeat_module_css_default.expandedBody : "",
+				capped && edges.canScrollUp ? ChatGroupSeat_module_css_default.fadeTop : "",
+				capped && edges.canScrollDown ? ChatGroupSeat_module_css_default.fadeBottom : ""
+			];
+			return (0, react_jsx_runtime.jsxs)("div", {
+				ref: rootRef,
+				className: ChatGroupSeat_module_css_default.root,
+				"data-chat-group-key": groupKey,
+				"data-chat-flow-key": groupKey,
+				"data-chat-anchor-key": `group:${groupKey}`,
+				"data-chat-turn": turn,
+				"data-chat-paging-anchor": grouped && !open || void 0,
+				"data-step-process": true,
+				"data-group-expanded-mode": !grouped || void 0,
+				children: [(0, react_jsx_runtime.jsx)("div", {
+					ref: headerRef,
+					children: (0, react_jsx_runtime.jsx)(ProcessGroupHeader, {
+						groupKey,
+						useChatGroup,
+						usePresentation: props.usePresentation,
+						t: props.t,
+						open,
+						bodyId,
+						toggle
+					})
+				}), (0, react_jsx_runtime.jsx)("div", {
+					ref: bodyRef,
+					id: bodyId,
+					className: classes.join(" "),
+					"data-step-process-body": true,
+					"data-scroll-up": edges.canScrollUp || void 0,
+					"data-scroll-down": edges.canScrollDown || void 0,
+					...events,
+					children: (0, react_jsx_runtime.jsx)("div", {
+						ref: contentRef,
+						className: ChatGroupSeat_module_css_default.content,
+						"data-step-process-content": true,
+						"data-chat-flow": "",
+						children: (0, react_jsx_runtime.jsx)(GroupMembers, {
+							...props,
+							members
+						})
+					})
+				})]
+			});
+		});
 		//#endregion
 		//#region lib/types/client/markdown-labels.js
 		/** Localized copy adapters for Cordis-free Markdown primitives. */
@@ -97,50 +4258,60 @@ window.__ModuleLoader__.load({
 			return {
 				code: {
 					copyLabel: t("copy"),
-					copiedLabel: t("copied")
+					copiedLabel: t("copied"),
+					toolbarLabels: {
+						codeLabel: t("codeBlock.title"),
+						wrapLabel: t("codeBlock.wrap"),
+						unwrapLabel: t("codeBlock.unwrap")
+					}
 				},
 				footnotes: t("markdown.footnotes")
 			};
 		}
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/MessageItem.module.css.mjs
-		const css$15 = ".QYeBnG_userRow{flex-direction:column;align-items:flex-end;gap:6px;display:flex}.QYeBnG_userStack{min-width:0;max-width:min(calc(var(--dsh-chat-content-width,748px) * .702), 82%);flex-direction:column;align-items:flex-end;gap:8px;display:flex}.QYeBnG_bubble{background:var(--dsw-specific-bubble);max-width:100%;font-size:var(--dsh-conversation-text-base-size,16px);color:var(--dsw-alias-label-primary);white-space:pre-wrap;word-break:break-word;border-radius:22px;padding:10px 16px;line-height:1.5}.QYeBnG_referenceSummary{color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(18px + var(--dsh-content-font-delta-secondary,0px))}.QYeBnG_contextRow,.QYeBnG_compactionRow{padding:2px 0}.QYeBnG_compactionButton{width:100%;height:calc(24px + var(--dsh-content-font-delta,0px));min-width:0;color:inherit;font:inherit;text-align:left;background:0 0;border:none;border-radius:6px;align-items:center;padding:0;display:flex}.QYeBnG_compactionButton:not(:disabled){cursor:pointer}.QYeBnG_compactionButton:not(:disabled):hover{background:var(--dsw-alias-interactive-bg-hover)}.QYeBnG_compactionLeading{width:calc(16px + var(--dsh-content-font-delta,0px));height:calc(16px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-secondary);flex:none;place-items:center;margin-right:6px;display:inline-grid}.QYeBnG_compactionLeading svg{width:calc(14px + var(--dsh-content-font-delta,0px));height:calc(14px + var(--dsh-content-font-delta,0px))}.QYeBnG_compactionContextIcon,.QYeBnG_compactionDisclosureIcon{grid-area:1/1;justify-content:center;align-items:center;display:inline-flex}.QYeBnG_compactionDisclosureIcon,.QYeBnG_compactionButton:not(:disabled):hover .QYeBnG_compactionContextIcon,.QYeBnG_compactionButton:not(:disabled):focus-visible .QYeBnG_compactionContextIcon{opacity:0}.QYeBnG_compactionButton:not(:disabled):hover .QYeBnG_compactionDisclosureIcon,.QYeBnG_compactionButton:not(:disabled):focus-visible .QYeBnG_compactionDisclosureIcon{opacity:1}.QYeBnG_compactionTitle{font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-primary-dimmed);flex:none}.QYeBnG_compactionSep{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}.QYeBnG_compactionSummary{min-width:0;color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;flex:auto;overflow:hidden}.QYeBnG_compactionBody{padding:4px 0 4px calc(22px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px))}.QYeBnG_retryRow{color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px))}.QYeBnG_retrySummary{width:fit-content;color:inherit;cursor:pointer;user-select:none;border-radius:3px;align-items:center;gap:7px;padding:2px 0;list-style:none;display:inline-flex}.QYeBnG_retrySummary::-webkit-details-marker{display:none}.QYeBnG_retrySummary:after{content:\"\";opacity:.8;border-bottom:1.5px solid;border-right:1.5px solid;width:6px;height:6px;transition:transform .12s;transform:rotate(-45deg)}.QYeBnG_retrySummary:hover{color:var(--dsw-alias-label-secondary)}.QYeBnG_retrySummary:focus-visible{outline:1.5px solid var(--dsw-alias-button-info-fill);outline-offset:2px}.QYeBnG_retryText{color:inherit}.QYeBnG_retryRow[data-active] .QYeBnG_retryText{background:linear-gradient(90deg, var(--dsw-alias-label-tertiary) 0%, var(--dsw-alias-label-tertiary) 40%, var(--dsw-alias-label-secondary) 50%, var(--dsw-alias-label-tertiary) 60%, var(--dsw-alias-label-tertiary) 100%);color:#0000;background-position:100%;background-size:200% 100%;background-clip:text;animation:1.6s ease-in-out infinite QYeBnG_retry-shimmer}.QYeBnG_retryRow[open] .QYeBnG_retrySummary:after{transform:rotate(45deg)}.QYeBnG_retryDetails{overflow-wrap:anywhere;font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(18px + var(--dsh-content-font-delta-secondary,0px));gap:2px;margin-top:3px;padding-left:14px;display:grid}.QYeBnG_retryDetailLabel{color:var(--dsw-alias-label-secondary)}.QYeBnG_turnErrorRow{font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));grid-template-columns:10px minmax(0,1fr) auto;align-items:start;gap:8px;padding:2px 0;display:grid}.QYeBnG_turnErrorDot{margin-top:5px}.QYeBnG_turnErrorCopy{overflow-wrap:anywhere;min-width:0}.QYeBnG_turnErrorTitle{color:var(--dsw-alias-state-error-primary);margin-right:6px;font-weight:600}.QYeBnG_turnErrorMessage{color:var(--dsw-alias-label-secondary)}.QYeBnG_turnErrorCode{color:var(--dsw-alias-label-tertiary);font:var(--dsw-font-markdown-code-block-small)}.QYeBnG_maxTokensTitle{color:var(--dsw-alias-state-warn-primary);margin-right:6px;font-weight:600}@keyframes QYeBnG_retry-shimmer{0%{background-position:100%}to{background-position:0}}@media (prefers-reduced-motion:reduce){.QYeBnG_retryRow[data-active] .QYeBnG_retryText{color:inherit;background:0 0;animation:none}}";
-		const tagId$15 = "@deepseek-ai/dsh-client-ui-chat/MessageItem.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$15) + "]") === null) {
+		const css$14 = "._zqa-G_userRow{flex-direction:column;align-items:flex-end;gap:6px;display:flex}._zqa-G_userStack{min-width:0;max-width:min(calc(var(--dsh-chat-content-width,748px) * .702), 82%);flex-direction:column;align-items:flex-end;gap:8px;display:flex}._zqa-G_bubble{background:var(--dsw-specific-bubble);border-radius:var(--dsw-radius-xl);max-width:100%;font-size:var(--dsh-conversation-text-base-size,16px);color:var(--dsw-alias-label-primary);white-space:pre-wrap;word-break:break-word;padding:10px 16px;line-height:1.5}._zqa-G_referenceSummary{color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(18px + var(--dsh-content-font-delta-secondary,0px))}._zqa-G_contextRow{padding:2px 0}._zqa-G_compactionRow{--dsh-compaction-header-height:calc(24px + var(--dsh-content-font-delta,0px));padding:2px 0}._zqa-G_compactionButton{width:100%;height:var(--dsh-compaction-header-height);border-radius:var(--dsw-radius-sm);min-width:0;color:var(--dsw-alias-label-tertiary);font:inherit;text-align:left;background:0 0;border:none;align-items:center;padding:0;transition:color .1s;display:flex}._zqa-G_compactionRow:has(._zqa-G_compactionBody) ._zqa-G_compactionButton{z-index:7;background:var(--dsw-alias-bg-base);border-radius:0;position:sticky;top:0}._zqa-G_compactionBody :has(>[data-code-block-banner]){top:var(--dsh-compaction-header-height)}._zqa-G_compactionRow:has(._zqa-G_compactionBody) ._zqa-G_compactionButton:hover{background:var(--dsw-alias-interactive-bg-hover-solid)}._zqa-G_compactionButton:not(:disabled){cursor:pointer}._zqa-G_compactionButton:hover{color:var(--dsw-alias-label-secondary)}._zqa-G_compactionButton:not(:disabled):hover{background:var(--dsw-alias-interactive-bg-hover)}._zqa-G_compactionLeading{width:calc(16px + var(--dsh-content-font-delta,0px));height:calc(16px + var(--dsh-content-font-delta,0px));color:inherit;flex:none;place-items:center;margin-right:6px;display:inline-grid}._zqa-G_compactionLeading svg{width:calc(14px + var(--dsh-content-font-delta,0px));height:calc(14px + var(--dsh-content-font-delta,0px))}._zqa-G_compactionContextIcon,._zqa-G_compactionDisclosureIcon{grid-area:1/1;justify-content:center;align-items:center;display:inline-flex}._zqa-G_compactionDisclosureIcon,._zqa-G_compactionButton:not(:disabled):hover ._zqa-G_compactionContextIcon,._zqa-G_compactionButton:not(:disabled):focus-visible ._zqa-G_compactionContextIcon{opacity:0}._zqa-G_compactionButton:not(:disabled):hover ._zqa-G_compactionDisclosureIcon,._zqa-G_compactionButton:not(:disabled):focus-visible ._zqa-G_compactionDisclosureIcon{opacity:1}._zqa-G_compactionTitle{font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));color:inherit;flex:none}._zqa-G_compactionSep{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}._zqa-G_compactionSummary{min-width:0;color:inherit;font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;flex:auto;overflow:hidden}._zqa-G_compactionBody{padding:4px 0 4px calc(22px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px))}._zqa-G_retryRow{color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px))}._zqa-G_retrySummary{border-radius:var(--dsw-radius-sm);width:fit-content;max-width:100%;color:inherit;cursor:pointer;user-select:none;align-items:center;gap:7px;padding:2px 0;list-style:none;display:inline-flex}._zqa-G_retrySummary::-webkit-details-marker{display:none}._zqa-G_retrySummary:after{content:\"\";border-bottom:1.5px solid;border-right:1.5px solid;flex:none;width:6px;height:6px;margin-right:2px;transition:transform .12s;transform:rotate(-45deg)}._zqa-G_retrySummary:hover{color:var(--dsw-alias-label-secondary)}@media (prefers-reduced-motion:reduce){._zqa-G_compactionButton{transition:none}}._zqa-G_retrySummary:focus-visible{outline:1.5px solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:2px}._zqa-G_retryText{overflow-wrap:anywhere;min-width:0}._zqa-G_retryRow[open] ._zqa-G_retrySummary:after{transform:rotate(45deg)}._zqa-G_retryDetails{overflow-wrap:anywhere;font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(18px + var(--dsh-content-font-delta-secondary,0px));gap:2px;margin-top:3px;padding-left:14px;display:grid}._zqa-G_retryDetailLabel{color:var(--dsw-alias-label-secondary)}._zqa-G_turnErrorRow{font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));grid-template-columns:10px minmax(0,1fr) auto;align-items:start;gap:8px;padding:2px 0;display:grid}._zqa-G_turnErrorDot{margin-top:5px}._zqa-G_turnErrorCopy{overflow-wrap:anywhere;min-width:0}._zqa-G_turnErrorTitle{color:var(--dsw-alias-state-error-primary);margin-right:6px;font-weight:600}._zqa-G_turnErrorMessage{color:var(--dsw-alias-label-secondary)}._zqa-G_turnErrorCode{color:var(--dsw-alias-label-tertiary);font:var(--dsw-font-markdown-code-block-small)}._zqa-G_maxTokensTitle{color:var(--dsw-alias-state-warn-primary);margin-right:6px;font-weight:600}._zqa-G_attachmentRow{flex-wrap:wrap;justify-content:flex-end;gap:8px;max-width:100%;display:flex}._zqa-G_fileCard{border:.5px solid var(--dsw-alias-border-l2,#0000001f);border-radius:var(--dsw-radius-lg);background:var(--dsw-specific-input-major,transparent);box-sizing:border-box;flex:0 0 240px;align-items:center;gap:10px;width:240px;min-height:64px;padding:8px 12px;display:inline-flex}._zqa-G_fileIcon{flex:none;width:28px;height:28px}._zqa-G_fileContent{flex-direction:column;flex:1;min-width:0;display:flex}._zqa-G_fileName{white-space:nowrap;text-overflow:ellipsis;color:var(--dsw-alias-label-primary);font-size:14px;font-weight:500;line-height:22px;overflow:hidden}._zqa-G_fileMeta{white-space:nowrap;text-overflow:ellipsis;color:var(--dsw-alias-label-tertiary,#00000073);font-size:12px;line-height:15px;overflow:hidden}";
+		const tagId$14 = "@deepseek-ai/dsh-client-ui-chat/MessageItem.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$14) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$15;
-			tag.textContent = css$15;
+			tag.dataset.pluginCss = tagId$14;
+			tag.textContent = css$14;
 			document.head.appendChild(tag);
 		}
 		var MessageItem_module_css_default = {
-			"bubble": "QYeBnG_bubble",
-			"compactionBody": "QYeBnG_compactionBody",
-			"compactionButton": "QYeBnG_compactionButton",
-			"compactionContextIcon": "QYeBnG_compactionContextIcon",
-			"compactionDisclosureIcon": "QYeBnG_compactionDisclosureIcon",
-			"compactionLeading": "QYeBnG_compactionLeading",
-			"compactionRow": "QYeBnG_compactionRow",
-			"compactionSep": "QYeBnG_compactionSep",
-			"compactionSummary": "QYeBnG_compactionSummary",
-			"compactionTitle": "QYeBnG_compactionTitle",
-			"contextRow": "QYeBnG_contextRow",
-			"maxTokensTitle": "QYeBnG_maxTokensTitle",
-			"referenceSummary": "QYeBnG_referenceSummary",
-			"retry-shimmer": "QYeBnG_retry-shimmer",
-			"retryDetailLabel": "QYeBnG_retryDetailLabel",
-			"retryDetails": "QYeBnG_retryDetails",
-			"retryRow": "QYeBnG_retryRow",
-			"retrySummary": "QYeBnG_retrySummary",
-			"retryText": "QYeBnG_retryText",
-			"turnErrorCode": "QYeBnG_turnErrorCode",
-			"turnErrorCopy": "QYeBnG_turnErrorCopy",
-			"turnErrorDot": "QYeBnG_turnErrorDot",
-			"turnErrorMessage": "QYeBnG_turnErrorMessage",
-			"turnErrorRow": "QYeBnG_turnErrorRow",
-			"turnErrorTitle": "QYeBnG_turnErrorTitle",
-			"userRow": "QYeBnG_userRow",
-			"userStack": "QYeBnG_userStack"
+			"attachmentRow": "_zqa-G_attachmentRow",
+			"bubble": "_zqa-G_bubble",
+			"compactionBody": "_zqa-G_compactionBody",
+			"compactionButton": "_zqa-G_compactionButton",
+			"compactionContextIcon": "_zqa-G_compactionContextIcon",
+			"compactionDisclosureIcon": "_zqa-G_compactionDisclosureIcon",
+			"compactionLeading": "_zqa-G_compactionLeading",
+			"compactionRow": "_zqa-G_compactionRow",
+			"compactionSep": "_zqa-G_compactionSep",
+			"compactionSummary": "_zqa-G_compactionSummary",
+			"compactionTitle": "_zqa-G_compactionTitle",
+			"contextRow": "_zqa-G_contextRow",
+			"fileCard": "_zqa-G_fileCard",
+			"fileContent": "_zqa-G_fileContent",
+			"fileIcon": "_zqa-G_fileIcon",
+			"fileMeta": "_zqa-G_fileMeta",
+			"fileName": "_zqa-G_fileName",
+			"maxTokensTitle": "_zqa-G_maxTokensTitle",
+			"referenceSummary": "_zqa-G_referenceSummary",
+			"retryDetailLabel": "_zqa-G_retryDetailLabel",
+			"retryDetails": "_zqa-G_retryDetails",
+			"retryRow": "_zqa-G_retryRow",
+			"retrySummary": "_zqa-G_retrySummary",
+			"retryText": "_zqa-G_retryText",
+			"turnErrorCode": "_zqa-G_turnErrorCode",
+			"turnErrorCopy": "_zqa-G_turnErrorCopy",
+			"turnErrorDot": "_zqa-G_turnErrorDot",
+			"turnErrorMessage": "_zqa-G_turnErrorMessage",
+			"turnErrorRow": "_zqa-G_turnErrorRow",
+			"turnErrorTitle": "_zqa-G_turnErrorTitle",
+			"userRow": "_zqa-G_userRow",
+			"userStack": "_zqa-G_userStack"
 		};
 		//#endregion
 		//#region lib/types/client/chat/CompactionItem.js
@@ -175,11 +4346,11 @@ window.__ModuleLoader__.load({
 							children: [(0, react_jsx_runtime.jsx)("span", {
 								className: MessageItem_module_css_default.compactionContextIcon,
 								"data-compaction-icon": "context",
-								children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutline14, {})
+								children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, {})
 							}), (0, react_jsx_runtime.jsx)("span", {
 								className: MessageItem_module_css_default.compactionDisclosureIcon,
 								"data-compaction-disclosure": open ? "expanded" : "collapsed",
-								children: open ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, {}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronRightOutline14, {})
+								children: open ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutlineRegular, {}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronRightOutlineRegular, {})
 							})]
 						}),
 						(0, react_jsx_runtime.jsx)("span", {
@@ -206,39 +4377,39 @@ window.__ModuleLoader__.load({
 		});
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/ContextBody.module.css.mjs
-		const css$14 = ".b1hTzG_text{color:var(--dsw-alias-label-secondary);font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}.b1hTzG_fields{border-top:1px solid var(--dsw-alias-line-secondary);flex-direction:column;gap:2px;margin:8px 0 0;padding-top:8px;display:flex}.b1hTzG_field{gap:8px;min-width:0;display:flex}.b1hTzG_fieldKey{min-width:96px;color:var(--dsw-alias-label-caption);flex:none}.b1hTzG_fieldValue{min-width:0;color:var(--dsw-alias-label-tertiary);overflow-wrap:anywhere;flex:auto;margin:0}.b1hTzG_files{flex-wrap:wrap;gap:4px 12px;margin:0 0 8px;padding:0;list-style:none;display:flex}.b1hTzG_file{align-items:baseline;gap:6px;min-width:0;display:flex}.b1hTzG_filePath{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}.b1hTzG_fileAction{color:var(--dsw-alias-label-caption)}.b1hTzG_catalogNotice{color:var(--dsw-alias-label-caption);margin:0 0 6px}.b1hTzG_entries{flex-direction:column;gap:4px;margin:0;padding:0;list-style:none;display:flex}.b1hTzG_entry{gap:8px;min-width:0;display:flex}.b1hTzG_entryName{color:var(--dsw-alias-label-secondary);flex:none}.b1hTzG_entryDescription{min-width:0;color:var(--dsw-alias-label-tertiary);text-overflow:ellipsis;white-space:nowrap;flex:auto;overflow:hidden}.b1hTzG_sections{flex-direction:column;gap:8px;margin:0;display:flex}.b1hTzG_section{flex-direction:column;gap:2px;min-width:0;display:flex}.b1hTzG_sectionName{color:var(--dsw-alias-label-caption)}.b1hTzG_sectionText{color:var(--dsw-alias-label-secondary);white-space:pre-wrap;overflow-wrap:anywhere;margin:0}.b1hTzG_relaySender{color:var(--dsw-alias-label-caption);overflow-wrap:anywhere;margin:0 0 6px}.b1hTzG_recalls{flex-direction:column;gap:2px;margin:0 0 8px;padding:0;list-style:none;display:flex}.b1hTzG_recall{gap:8px;min-width:0;display:flex}.b1hTzG_recallLabel{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}.b1hTzG_recallCounts{color:var(--dsw-alias-label-caption);flex:none}";
-		const tagId$14 = "@deepseek-ai/dsh-client-ui-chat/ContextBody.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$14) + "]") === null) {
+		const css$13 = ".j-vccW_text{color:var(--dsw-alias-label-secondary);font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}.j-vccW_fields{border-top:.5px solid var(--dsw-alias-border-l2);flex-direction:column;gap:2px;margin:8px 0 0;padding-top:8px;display:flex}.j-vccW_field{gap:8px;min-width:0;display:flex}.j-vccW_fieldKey{min-width:96px;color:var(--dsw-alias-label-caption);flex:none}.j-vccW_fieldValue{min-width:0;color:var(--dsw-alias-label-tertiary);overflow-wrap:anywhere;flex:auto;margin:0}.j-vccW_files{flex-wrap:wrap;gap:4px 12px;margin:0 0 8px;padding:0;list-style:none;display:flex}.j-vccW_file{align-items:baseline;gap:6px;min-width:0;display:flex}.j-vccW_filePath{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}.j-vccW_fileAction{color:var(--dsw-alias-label-caption)}.j-vccW_catalogNotice{color:var(--dsw-alias-label-caption);margin:0 0 6px}.j-vccW_entries{flex-direction:column;gap:4px;margin:0;padding:0;list-style:none;display:flex}.j-vccW_entry{gap:8px;min-width:0;display:flex}.j-vccW_entryName{color:var(--dsw-alias-label-secondary);flex:none}.j-vccW_entryDescription{min-width:0;color:var(--dsw-alias-label-tertiary);text-overflow:ellipsis;white-space:nowrap;flex:auto;overflow:hidden}.j-vccW_sections{flex-direction:column;gap:8px;margin:0;display:flex}.j-vccW_section{flex-direction:column;gap:2px;min-width:0;display:flex}.j-vccW_sectionName{color:var(--dsw-alias-label-caption)}.j-vccW_sectionText{color:var(--dsw-alias-label-secondary);white-space:pre-wrap;overflow-wrap:anywhere;margin:0}.j-vccW_relaySender{color:var(--dsw-alias-label-caption);overflow-wrap:anywhere;margin:0 0 6px}.j-vccW_recalls{flex-direction:column;gap:2px;margin:0 0 8px;padding:0;list-style:none;display:flex}.j-vccW_recall{gap:8px;min-width:0;display:flex}.j-vccW_recallLabel{color:var(--dsw-alias-label-secondary);overflow-wrap:anywhere}.j-vccW_recallCounts{color:var(--dsw-alias-label-caption);flex:none}";
+		const tagId$13 = "@deepseek-ai/dsh-client-ui-chat/ContextBody.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$13) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$14;
-			tag.textContent = css$14;
+			tag.dataset.pluginCss = tagId$13;
+			tag.textContent = css$13;
 			document.head.appendChild(tag);
 		}
 		var ContextBody_module_css_default = {
-			"catalogNotice": "b1hTzG_catalogNotice",
-			"entries": "b1hTzG_entries",
-			"entry": "b1hTzG_entry",
-			"entryDescription": "b1hTzG_entryDescription",
-			"entryName": "b1hTzG_entryName",
-			"field": "b1hTzG_field",
-			"fieldKey": "b1hTzG_fieldKey",
-			"fields": "b1hTzG_fields",
-			"fieldValue": "b1hTzG_fieldValue",
-			"file": "b1hTzG_file",
-			"fileAction": "b1hTzG_fileAction",
-			"filePath": "b1hTzG_filePath",
-			"files": "b1hTzG_files",
-			"recall": "b1hTzG_recall",
-			"recallCounts": "b1hTzG_recallCounts",
-			"recallLabel": "b1hTzG_recallLabel",
-			"recalls": "b1hTzG_recalls",
-			"relaySender": "b1hTzG_relaySender",
-			"section": "b1hTzG_section",
-			"sectionName": "b1hTzG_sectionName",
-			"sections": "b1hTzG_sections",
-			"sectionText": "b1hTzG_sectionText",
-			"text": "b1hTzG_text"
+			"catalogNotice": "j-vccW_catalogNotice",
+			"entries": "j-vccW_entries",
+			"entry": "j-vccW_entry",
+			"entryDescription": "j-vccW_entryDescription",
+			"entryName": "j-vccW_entryName",
+			"field": "j-vccW_field",
+			"fieldKey": "j-vccW_fieldKey",
+			"fields": "j-vccW_fields",
+			"fieldValue": "j-vccW_fieldValue",
+			"file": "j-vccW_file",
+			"fileAction": "j-vccW_fileAction",
+			"filePath": "j-vccW_filePath",
+			"files": "j-vccW_files",
+			"recall": "j-vccW_recall",
+			"recallCounts": "j-vccW_recallCounts",
+			"recallLabel": "j-vccW_recallLabel",
+			"recalls": "j-vccW_recalls",
+			"relaySender": "j-vccW_relaySender",
+			"section": "j-vccW_section",
+			"sectionName": "j-vccW_sectionName",
+			"sections": "j-vccW_sections",
+			"sectionText": "j-vccW_sectionText",
+			"text": "j-vccW_text"
 		};
 		//#endregion
 		//#region lib/types/client/chat/ContextBody.js
@@ -763,22 +4934,23 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/ContextInjectionRow.module.css.mjs
-		const css$13 = ".tUYnwa_root{min-width:0}.tUYnwa_root[data-open]{padding-bottom:4px}.tUYnwa_chevron{color:var(--dsw-alias-label-secondary)}.tUYnwa_sep{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}.tUYnwa_source{min-width:0;color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;flex:none;overflow:hidden}.tUYnwa_summary{min-width:0;color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;flex:auto;overflow:hidden}.tUYnwa_body{box-sizing:border-box;width:calc(100% - 22px - var(--dsh-content-font-delta,0px));max-height:141px;margin:4px 0 0 calc(22px + var(--dsh-content-font-delta,0px));background:var(--dsw-alias-markdown-code-block);color:var(--dsw-alias-label-tertiary);font:400 11px/16px var(--ds-font-family-code);border:none;border-radius:8px;padding:10px 16px 12px 12px;overflow:auto}";
-		const tagId$13 = "@deepseek-ai/dsh-client-ui-chat/ContextInjectionRow.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$13) + "]") === null) {
+		const css$12 = ".rFtHvG_root{min-width:0}.rFtHvG_root[data-open]{padding-bottom:4px}.rFtHvG_chevron{color:var(--dsw-alias-label-secondary)}.rFtHvG_sep{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}.rFtHvG_source{min-width:0;color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;flex:none;overflow:hidden}.rFtHvG_summary{min-width:0;color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;flex:auto;overflow:hidden}.rFtHvG_body{box-sizing:border-box;width:calc(100% - 22px - var(--dsh-content-font-delta,0px));max-height:141px;margin:4px 0 0 calc(22px + var(--dsh-content-font-delta,0px));border-radius:var(--dsw-radius-md);background:var(--dsw-alias-markdown-code-block);color:var(--dsw-alias-label-tertiary);font:400 11px/16px var(--ds-font-family-code);border:none;padding:10px 16px 12px 12px;overflow:auto}.rFtHvG_toolChanges{white-space:nowrap}";
+		const tagId$12 = "@deepseek-ai/dsh-client-ui-chat/ContextInjectionRow.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$12) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$13;
-			tag.textContent = css$13;
+			tag.dataset.pluginCss = tagId$12;
+			tag.textContent = css$12;
 			document.head.appendChild(tag);
 		}
 		var ContextInjectionRow_module_css_default = {
-			"body": "tUYnwa_body",
-			"chevron": "tUYnwa_chevron",
-			"root": "tUYnwa_root",
-			"sep": "tUYnwa_sep",
-			"source": "tUYnwa_source",
-			"summary": "tUYnwa_summary"
+			"body": "rFtHvG_body",
+			"chevron": "rFtHvG_chevron",
+			"root": "rFtHvG_root",
+			"sep": "rFtHvG_sep",
+			"source": "rFtHvG_source",
+			"summary": "rFtHvG_summary",
+			"toolChanges": "rFtHvG_toolChanges"
 		};
 		//#endregion
 		//#region lib/types/client/chat/ContextInjectionRow.js
@@ -793,23 +4965,36 @@ window.__ModuleLoader__.load({
 		* @param props - Durable content, its projected producer role/name and form, and the locale seat.
 		* @returns A collapsed context row with a bounded, form-specific body.
 		*/
-		function ContextInjectionRow({ content, source, provenance, form, t }) {
+		function ContextInjectionRow({ content, source, producer, form, t }) {
 			const [open, setOpen] = (0, react.useState)(false);
 			const { rendered, summary, body } = contextBody(form, {
 				content,
 				source,
 				t
 			});
-			const readableSource = provenance.label === "@deepseek-ai/dsh-system-prompt" ? "运行规则" : provenance.label === "skill-catalog" ? "可用技能" : provenance.label;
+			const toolBlocks = content.length > 0 && content.every((block) => block.type === "tool-addition" || block.type === "tool-removal") ? content : void 0;
+			const added = toolBlocks?.flatMap((block) => block.type === "tool-addition" ? [block.toolName] : []) ?? [];
+			const removed = toolBlocks?.flatMap((block) => block.type === "tool-removal" ? [block.toolName] : []) ?? [];
+			const single = toolBlocks?.length === 1 ? toolBlocks[0] : void 0;
+			const toolSummary = toolBlocks === void 0 || single !== void 0 ? null : added.length > 0 && removed.length > 0 ? t("message.toolsChanged", {
+				added: added.length,
+				removed: removed.length
+			}) : added.length > 0 ? t("message.toolsAddedCount", { count: added.length }) : t("message.toolsRemovedCount", { count: removed.length });
 			return (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.DisclosureRow, {
 				className: ContextInjectionRow_module_css_default.root,
-				icon: provenance.role === "recall" ? (0, react_jsx_runtime.jsx)("span", {
+				icon: toolBlocks !== void 0 ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconBrowseOutlineRegular, { size: 14 }) : producer.role === "recall" ? (0, react_jsx_runtime.jsx)("span", {
 					"data-context-recall-icon": true,
-					children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.ReferenceIcon, { kind: "session" })
-				}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconContextInjectionOutline16, { size: 14 }),
+					children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.ReferenceIconRegular, { kind: "session" })
+				}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconContextInjectionOutlineRegular, { size: 14 }),
 				chevronClassName: ContextInjectionRow_module_css_default.chevron,
-				title: t(provenance.role === "recall" ? "message.contextRecall" : "message.contextInjection"),
-				collapsedContent: provenance.label === null ? void 0 : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+				title: single !== void 0 ? t(single.type === "tool-addition" ? "message.toolAdded" : "message.toolRemoved", { name: single.toolName }) : t(toolBlocks !== void 0 ? "message.toolsUpdated" : producer.role === "recall" ? "message.contextRecall" : "message.contextInjection"),
+				collapsedContent: toolSummary !== null ? (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("span", {
+					className: ContextInjectionRow_module_css_default.sep,
+					"aria-hidden": true
+				}), (0, react_jsx_runtime.jsx)("span", {
+					className: ContextInjectionRow_module_css_default.summary,
+					children: toolSummary
+				})] }) : toolBlocks !== void 0 || producer.label === null ? void 0 : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 					(0, react_jsx_runtime.jsx)("span", {
 						className: ContextInjectionRow_module_css_default.sep,
 						"aria-hidden": true
@@ -817,7 +5002,7 @@ window.__ModuleLoader__.load({
 					(0, react_jsx_runtime.jsx)("span", {
 						className: ContextInjectionRow_module_css_default.source,
 						"data-context-source": true,
-						children: readableSource
+						children: producer.label
 					}),
 					summary !== null && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("span", {
 						className: ContextInjectionRow_module_css_default.sep,
@@ -829,8 +5014,8 @@ window.__ModuleLoader__.load({
 					})] })
 				] }),
 				keepContentWhenOpen: true,
-				open,
-				expandable: true,
+				open: open && single === void 0,
+				expandable: single === void 0,
 				expandOnRowClick: true,
 				onToggle: () => {
 					setOpen((value) => !value);
@@ -839,12 +5024,17 @@ window.__ModuleLoader__.load({
 					className: ContextInjectionRow_module_css_default.body,
 					"data-context-injection-body": true,
 					"data-context-form": rendered ?? void 0,
-					children: body
+					children: toolBlocks === void 0 ? body : (0, react_jsx_runtime.jsxs)("div", {
+						className: ContextInjectionRow_module_css_default.toolChanges,
+						children: [added.length > 0 && (0, react_jsx_runtime.jsx)("div", { children: t("message.toolsAdded", { names: added.join(", ") }) }), removed.length > 0 && (0, react_jsx_runtime.jsx)("div", { children: t("message.toolsRemoved", { names: removed.join(", ") }) })]
+					})
 				})
 			});
 		}
 		//#endregion
 		//#region lib/types/client/chat/message-chrome.js
+		/** Refresh interval for whole-second live run clocks. */
+		const LIVE_RUN_CLOCK_INTERVAL_MS = 1e3;
 		function pad2(n) {
 			return String(n).padStart(2, "0");
 		}
@@ -869,29 +5059,40 @@ window.__ModuleLoader__.load({
 			return Math.max(next.getTime() - ms, 1);
 		}
 		/**
-		* Localized elapsed-time label shared by running and settled turn chrome.
-		* @param ms - Elapsed duration in milliseconds (negatives clamp to zero).
-		* @param t - Translate seat supplying the duration templates.
-		* @returns Display string in whole seconds.
+		* Build elapsed-time fragments for both live and completed Turn labels.
+		* @param ms - elapsed milliseconds; negatives clamp to zero and fractions floor.
+		* @param t - translate seat supplying units and their trailing spacing.
+		* @returns numbers and localized units in display order, without leading zeros;
+		* minutes start at 60 seconds and hours at 60 minutes.
 		*/
 		function formatRunDuration(ms, t) {
 			const total = Math.max(0, Math.floor(ms / 1e3));
-			const minutes = Math.floor(total / 60);
+			const hours = Math.floor(total / 3600);
+			const minutes = Math.floor(total / 60) % 60;
 			const seconds = total % 60;
-			return minutes > 0 ? t("duration.minutes", {
-				minutes,
-				seconds: String(seconds).padStart(2, "0")
-			}) : t("duration.seconds", { seconds });
-		}
-		/**
-		* Sub-turn latency figure: one decimal under ten seconds, whole seconds
-		* beyond. Unit-less so the locale template owns the second suffix.
-		* @param ms - Latency in milliseconds (negatives clamp to zero).
-		* @returns Display number in seconds without unit.
-		*/
-		function formatLatencySeconds(ms) {
-			const s = Math.max(0, ms) / 1e3;
-			return s < 10 ? String(Math.round(s * 10) / 10) : String(Math.round(s));
+			const parts = [];
+			if (hours > 0) parts.push({
+				text: String(hours),
+				numeric: true
+			}, {
+				text: t("duration.hourUnit"),
+				numeric: false
+			});
+			if (total >= 60) parts.push({
+				text: String(minutes),
+				numeric: true
+			}, {
+				text: t("duration.minuteUnit"),
+				numeric: false
+			});
+			parts.push({
+				text: String(seconds),
+				numeric: true
+			}, {
+				text: t("duration.secondUnit"),
+				numeric: false
+			});
+			return parts;
 		}
 		/**
 		* Decode-throughput figure: whole tokens from ten up, one decimal below.
@@ -948,21 +5149,22 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/MessageIconActions.module.css.mjs
-		const css$12 = "._3uEGVa_actions{height:calc(28px + var(--dsh-content-font-delta,0px));align-items:center;gap:8px;display:flex}._3uEGVa_timeStart{font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-tertiary);white-space:nowrap;padding-right:12px}._3uEGVa_timeEnd{font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-tertiary);white-space:nowrap}@media (hover:hover){[data-actions-reveal=hover] ._3uEGVa_actions{opacity:0;transition:opacity 80ms}[data-actions-reveal=hover]:hover ._3uEGVa_actions,[data-actions-reveal=hover]:focus-within ._3uEGVa_actions{opacity:1}}._3uEGVa_action{width:calc(28px + var(--dsh-content-font-delta,0px));height:calc(28px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-tertiary);cursor:pointer;background:0 0;border:none;border-radius:28px;justify-content:center;align-items:center;padding:6px;display:inline-flex}._3uEGVa_action svg{width:calc(15px + var(--dsh-content-font-delta,0px));height:calc(15px + var(--dsh-content-font-delta,0px))}._3uEGVa_action:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-secondary)}._3uEGVa_action[data-unavailable]{cursor:default;opacity:.4}._3uEGVa_action[data-unavailable]:hover{color:var(--dsw-alias-label-tertiary);background:0 0}._3uEGVa_visuallyHidden{clip:rect(0 0 0 0);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}";
-		const tagId$12 = "@deepseek-ai/dsh-client-ui-chat/MessageIconActions.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$12) + "]") === null) {
+		const css$11 = ".KMA1KG_actions{height:calc(28px + var(--dsh-content-font-delta,0px));align-items:center;gap:8px;display:flex}.KMA1KG_timeStart{font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-tertiary);white-space:nowrap;padding-right:12px}.KMA1KG_timeEnd{font-size:calc(var(--dsh-content-font-size-secondary,13px) - 1px);line-height:calc(24px + var(--dsh-content-font-delta,0px));color:inherit;white-space:nowrap}.KMA1KG_endInfo{min-width:0;color:var(--dsw-alias-label-tertiary);align-items:center;gap:8px;margin-left:8px;display:inline-flex}@media (hover:hover){[data-actions-reveal=hover] .KMA1KG_actions,:is([data-chat-flow-kind=user],[data-chat-flow-kind=steering]):has(~:is([data-chat-flow-kind=user],[data-chat-flow-kind=steering])) .KMA1KG_actions{opacity:0;transition:opacity 80ms}[data-actions-reveal=hover]:hover .KMA1KG_actions,[data-actions-reveal=hover]:focus-within .KMA1KG_actions,:is([data-chat-flow-kind=user],[data-chat-flow-kind=steering]):has(~:is([data-chat-flow-kind=user],[data-chat-flow-kind=steering])):hover .KMA1KG_actions,:is([data-chat-flow-kind=user],[data-chat-flow-kind=steering]):has(~:is([data-chat-flow-kind=user],[data-chat-flow-kind=steering])):focus-within .KMA1KG_actions{opacity:1}}.KMA1KG_action{width:calc(28px + var(--dsh-content-font-delta,0px));height:calc(28px + var(--dsh-content-font-delta,0px));border-radius:var(--dsw-radius-sm);color:var(--dsw-alias-label-tertiary);cursor:pointer;background:0 0;border:none;justify-content:center;align-items:center;padding:6px;display:inline-flex}.KMA1KG_action svg{width:calc(15px + var(--dsh-content-font-delta,0px));height:calc(15px + var(--dsh-content-font-delta,0px))}.KMA1KG_actions[data-clock=end] .KMA1KG_action svg{width:calc(17px + var(--dsh-content-font-delta,0px));height:calc(17px + var(--dsh-content-font-delta,0px))}.KMA1KG_action:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-secondary)}.KMA1KG_action[data-unavailable]{cursor:default;opacity:.4}.KMA1KG_action[data-unavailable]:hover{color:var(--dsw-alias-label-tertiary);background:0 0}.KMA1KG_visuallyHidden{clip:rect(0 0 0 0);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}";
+		const tagId$11 = "@deepseek-ai/dsh-client-ui-chat/MessageIconActions.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$11) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$12;
-			tag.textContent = css$12;
+			tag.dataset.pluginCss = tagId$11;
+			tag.textContent = css$11;
 			document.head.appendChild(tag);
 		}
 		var MessageIconActions_module_css_default = {
-			"action": "_3uEGVa_action",
-			"actions": "_3uEGVa_actions",
-			"timeEnd": "_3uEGVa_timeEnd",
-			"timeStart": "_3uEGVa_timeStart",
-			"visuallyHidden": "_3uEGVa_visuallyHidden"
+			"action": "KMA1KG_action",
+			"actions": "KMA1KG_actions",
+			"endInfo": "KMA1KG_endInfo",
+			"timeEnd": "KMA1KG_timeEnd",
+			"timeStart": "KMA1KG_timeStart",
+			"visuallyHidden": "KMA1KG_visuallyHidden"
 		};
 		//#endregion
 		//#region lib/types/client/chat/MessageIconActions.js
@@ -1004,6 +5206,7 @@ window.__ModuleLoader__.load({
 			});
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: className === void 0 ? MessageIconActions_module_css_default.actions : `${MessageIconActions_module_css_default.actions} ${className}`,
+				"data-clock": clock,
 				children: [
 					clock === "start" ? clockEl : null,
 					(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
@@ -1014,7 +5217,7 @@ window.__ModuleLoader__.load({
 							className: MessageIconActions_module_css_default.action,
 							"aria-label": copied ? t("copied") : t("copy"),
 							onClick: onCopy,
-							children: copied ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCheckOutline16, {}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCopyOutline16, {})
+							children: copied ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCheckOutlineRegular, {}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCopyOutlineRegular, {})
 						})
 					}),
 					extraActions,
@@ -1029,7 +5232,7 @@ window.__ModuleLoader__.load({
 							"aria-describedby": branchUnavailable ? reasonId : void 0,
 							"data-unavailable": branchUnavailable || void 0,
 							onClick: branchUnavailable ? void 0 : onBranch,
-							children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconBranchOutline16, {})
+							children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconBranchOutlineRegular, {})
 						})
 					}),
 					onBranch !== void 0 && branchUnavailable && (0, react_jsx_runtime.jsx)("span", {
@@ -1037,26 +5240,36 @@ window.__ModuleLoader__.load({
 						className: MessageIconActions_module_css_default.visuallyHidden,
 						children: t("message.branchUnavailable")
 					}),
-					usageAction,
-					clock === "end" ? clockEl : null
+					clock === "end" ? (0, react_jsx_runtime.jsxs)("span", {
+						className: MessageIconActions_module_css_default.endInfo,
+						children: [usageAction, clockEl]
+					}) : usageAction
 				]
 			});
 		}
 		//#endregion
 		//#region lib/types/client/chat/MessageItem.js
+		const EMPTY_TEXT_FACTS = {};
 		function contentParts(content) {
 			const texts = [];
-			const images = [];
+			const attachments = [];
 			const rest = [];
 			for (const block of content) {
 				const b = block;
 				if (b.type === "text" && typeof b.text === "string") texts.push(b.text);
-				else if (b.type === "image" && b.attachment !== void 0) images.push({ attachment: b.attachment });
+				else if (b.type === "image" && b.attachment !== void 0) attachments.push({
+					type: "image",
+					image: { attachment: b.attachment }
+				});
+				else if (b.type === "file" && b.attachment !== void 0) attachments.push({
+					type: "file",
+					file: b.attachment
+				});
 				else rest.push(block);
 			}
 			return {
 				text: texts.join(""),
-				images,
+				attachments,
 				rest
 			};
 		}
@@ -1064,6 +5277,10 @@ window.__ModuleLoader__.load({
 			return Math.max(1, Math.ceil(milliseconds / 1e3));
 		}
 		function failureMessage(message, code, t) {
+			if (code === "ACCOUNT_SIGNED_OUT") return t("message.failure.accountSignedOut");
+			if (code === "INTERRUPTED") return t("message.failure.interrupted");
+			if (code === "ACCOUNT_SIGN_IN_REQUIRED") return t("message.failure.accountSignInRequired");
+			if (code === "QUOTA" || code === "ACCOUNT_QUOTA") return t("message.failure.quota");
 			return code === "AUTH" ? t("message.failure.auth") : message;
 		}
 		function ModelRetryItem({ node, active, t }) {
@@ -1103,11 +5320,14 @@ window.__ModuleLoader__.load({
 					children: (0, react_jsx_runtime.jsx)("span", {
 						className: MessageItem_module_css_default.retryText,
 						role: "status",
-						children: t("message.retry.status", {
-							label,
-							retry: node.retry,
-							maximum,
-							seconds
+						children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.TextShimmer, {
+							active,
+							children: t("message.retry.status", {
+								label,
+								retry: node.retry,
+								maximum,
+								seconds
+							})
 						})
 					})
 				}), (0, react_jsx_runtime.jsxs)("div", {
@@ -1136,13 +5356,13 @@ window.__ModuleLoader__.load({
 						className: MessageItem_module_css_default.turnErrorCopy,
 						children: [(0, react_jsx_runtime.jsx)("span", {
 							className: MessageItem_module_css_default.turnErrorTitle,
-							children: t("message.turnError")
+							children: node.code === "ACCOUNT_SIGNED_OUT" || node.code === "INTERRUPTED" ? t("message.taskStopped") : t("message.turnError")
 						}), (0, react_jsx_runtime.jsx)("span", {
 							className: MessageItem_module_css_default.turnErrorMessage,
 							children: failureMessage(node.message, node.code, t)
 						})]
 					}),
-					node.code !== void 0 && (0, react_jsx_runtime.jsx)("code", {
+					node.code !== void 0 && node.code !== "INTERRUPTED" && (0, react_jsx_runtime.jsx)("code", {
 						className: MessageItem_module_css_default.turnErrorCode,
 						children: node.code
 					})
@@ -1170,52 +5390,51 @@ window.__ModuleLoader__.load({
 			});
 		}
 		/** Right-aligned bubble shared by user and steering rows. */
-		function UserStyleBubble({ content, renderMessageImages, actions, pending = false, echo = false, referenceLabels = [], previewImages, reveal = "always", t }) {
-			const { text, images: contentImages, rest } = contentParts(content);
-			const images = previewImages ?? contentImages;
-			const truncated = (total) => t("json.truncated", { total });
-			const showBubble = text !== "" || rest.length > 0;
+		function UserStyleBubble({ content, loadImage, renderFactorySlot, actions, pending = false, echo = false, referenceLabels, skillNames, previewAttachments, facts: inputFacts = EMPTY_TEXT_FACTS, interactive = false }) {
+			const parts = (0, react.useMemo)(() => contentParts(content), [content]);
+			const prepared = (0, react.useMemo)(() => ({
+				text: parts.text,
+				attachments: previewAttachments ?? parts.attachments,
+				extraBlocks: parts.rest,
+				...referenceLabels === void 0 ? {} : { referenceLabels }
+			}), [
+				parts,
+				previewAttachments,
+				referenceLabels
+			]);
+			const facts = (0, react.useMemo)(() => ({
+				...inputFacts,
+				...referenceLabels === void 0 ? {} : { sessionLabels: referenceLabels },
+				...skillNames === void 0 ? {} : { skillNames }
+			}), [
+				inputFacts,
+				referenceLabels,
+				skillNames
+			]);
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: MessageItem_module_css_default.userRow,
 				"data-pending-steering": pending || void 0,
 				"data-submission-echo": echo || void 0,
-				"data-actions-reveal": reveal,
-				children: [(0, react_jsx_runtime.jsxs)("div", {
-					className: MessageItem_module_css_default.userStack,
-					children: [
-						renderMessageImages({
-							images,
-							align: "end"
-						}),
-						showBubble && (0, react_jsx_runtime.jsxs)("div", {
-							className: MessageItem_module_css_default.bubble,
-							"data-qs-user-bubble": true,
-							children: [(0, _deepseek_ai_dsh_client_ui_primitives.projectUserText)(text, referenceLabels), rest.map((block, i) => (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.JsonBlock, {
-								label: t("message.extraBlock"),
-								payload: block,
-								truncatedLabel: truncated
-							}, i))]
-						}),
-						referenceLabels.length > 0 && (0, react_jsx_runtime.jsx)("div", {
-							className: MessageItem_module_css_default.referenceSummary,
-							children: t("message.referenceSummary", { labels: referenceLabels.join(t("message.referenceSeparator")) })
-						})
-					]
-				}), actions?.(text)]
+				children: [renderFactorySlot("conversation.chat.user.content", {
+					content: prepared,
+					loadImage,
+					facts,
+					interactive
+				}), actions?.(prepared.text)]
 			});
 		}
 		/**
 		* Render one Host-authoritative pending steering item with the same visual
 		* language as its eventual durable transcript node.
-		* @param props - Pending message content and conversation translator.
+		* @param props - pending content, authorized image loader, and Factory/locale seats.
 		* @returns the pending steering bubble.
 		*/
-		function PendingSteeringBubble({ content, renderMessageImages, t }) {
+		function PendingSteeringBubble({ content, loadImage, renderFactorySlot, t }) {
 			return (0, react_jsx_runtime.jsx)(UserStyleBubble, {
 				content,
-				renderMessageImages,
+				renderFactorySlot,
+				loadImage,
 				pending: true,
-				t,
 				actions: (text) => (0, react_jsx_runtime.jsx)(MessageIconActions, {
 					text,
 					clock: "start",
@@ -1225,28 +5444,35 @@ window.__ModuleLoader__.load({
 			});
 		}
 		/**
-		* Render one local submission echo with the exact visual language of the
-		* durable user node that replaces it: draft text plus object-URL previews,
-		* visible from the submit click until the durable `user/message` (or its
-		* queue occurrence) renders.
-		* @param props - the session snapshot's pending submission and render seats.
+		* Render one local transcript or steering submission echo with the same
+		* visual language and surface marker as the Host occurrence that replaces
+		* it: draft text plus object-URL previews, visible from the submit click
+		* until the durable `user/message` or steering occurrence renders.
+		* @param props - the pending submission, authorized image loader, and render seats.
 		* @returns the echoed user bubble.
 		*/
-		function PendingSubmissionBubble({ submission, renderMessageImages, t }) {
+		function PendingSubmissionBubble({ submission, loadImage, renderFactorySlot, t }) {
 			return (0, react_jsx_runtime.jsx)(UserStyleBubble, {
 				content: (0, react.useMemo)(() => submission.text === "" ? [] : [{
 					type: "text",
 					text: submission.text
 				}], [submission.text]),
-				previewImages: (0, react.useMemo)(() => submission.images.map((image) => ({ preview: {
-					url: image.previewUrl,
-					...image.name === void 0 ? {} : { name: image.name },
-					...image.width === void 0 ? {} : { width: image.width },
-					...image.height === void 0 ? {} : { height: image.height }
-				} })), [submission.images]),
-				renderMessageImages,
+				previewAttachments: (0, react.useMemo)(() => submission.attachments.map((attachment) => attachment.type === "image" ? {
+					type: "image",
+					image: { preview: {
+						url: attachment.value.previewUrl,
+						...attachment.value.name === void 0 ? {} : { name: attachment.value.name },
+						...attachment.value.width === void 0 ? {} : { width: attachment.value.width },
+						...attachment.value.height === void 0 ? {} : { height: attachment.value.height }
+					} }
+				} : {
+					type: "file",
+					file: attachment.value
+				}), [submission.attachments]),
+				renderFactorySlot,
+				loadImage,
+				pending: submission.placement === "steering",
 				echo: true,
-				t,
 				actions: (text) => (0, react_jsx_runtime.jsx)(MessageIconActions, {
 					text,
 					time: submission.time,
@@ -1257,21 +5483,15 @@ window.__ModuleLoader__.load({
 			});
 		}
 		/** User and admitted-steering keyed Chat renderer. */
-		const UserMessageNodeView = (0, react.memo)(function UserMessageNodeView({ node, renderMessageImages, useChat, t }) {
+		const UserMessageNodeView = (0, react.memo)(function UserMessageNodeView({ node, renderFactorySlot, loadImage, t }) {
 			const data = node.data;
-			const isLatestUserRow = useChat((snapshot) => {
-				for (let index = snapshot.order.length - 1; index >= 0; index -= 1) {
-					const candidate = snapshot.nodes.get(snapshot.order[index] ?? "");
-					if (candidate?.kind === "user" || candidate?.kind === "steering") return candidate.key === node.key;
-				}
-				return true;
-			});
 			return (0, react_jsx_runtime.jsx)(UserStyleBubble, {
 				content: data.content,
-				renderMessageImages,
+				interactive: true,
+				renderFactorySlot,
+				loadImage,
 				...data.referenceLabels === void 0 ? {} : { referenceLabels: data.referenceLabels },
-				reveal: isLatestUserRow ? "always" : "hover",
-				t,
+				...data.skillNames === void 0 ? {} : { skillNames: data.skillNames },
 				actions: (text) => (0, react_jsx_runtime.jsx)(MessageIconActions, {
 					text,
 					time: data.time,
@@ -1287,7 +5507,7 @@ window.__ModuleLoader__.load({
 			return (0, react_jsx_runtime.jsx)(ContextInjectionRow, {
 				content: data.content,
 				source: data.source,
-				provenance: data.provenance,
+				producer: data.producer,
 				form: data.form,
 				t
 			});
@@ -1331,306 +5551,36 @@ window.__ModuleLoader__.load({
 				})
 			});
 		});
-		/** Chat Node kinds that remain independent of a Turn's process disclosure. */
-		const TURN_PROCESS_INDEPENDENT_KINDS = /* @__PURE__ */ new Set([
-			"system-prompt",
-			"user",
-			"steering",
-			"turn-process",
-			"turn-error",
-			"turn-max-tokens",
-			"turn-tail"
-		]);
-		/**
-		* Identify one finalized answer generation without using its ordering anchor.
-		* @param spec - current Turn process specification.
-		* @returns stable identity until the finalized answer Step is withdrawn or replaced.
-		*/
-		function turnProcessGeneration(spec) {
-			return `${String(spec.turn)}|${spec.answerStep === null ? "" : String(spec.answerStep)}`;
-		}
-		/**
-		* Encode one process specification as a primitive Location-data value.
-		* @param spec - current Turn process specification.
-		* @returns reference-stable scalar for equal specifications.
-		*/
-		function encodeTurnProcess(spec) {
-			return [
-				spec.turn,
-				spec.controlAnchorSeq,
-				spec.processStartSeq,
-				spec.answerAnchorSeq ?? "",
-				spec.answerStep ?? "",
-				spec.inlineReasoning ? 1 : 0,
-				spec.messageCount,
-				spec.toolCallCount,
-				spec.subagentCount
-			].join("|");
-		}
-		/**
-		* Decode a same-process signature produced by {@link encodeTurnProcess}.
-		* @param signature - encoded Turn process value.
-		* @returns decoded process specification.
-		*/
-		function decodeTurnProcess(signature) {
-			const [turn, controlAnchorSeq, processStartSeq, answerAnchorSeq, answerStep, inlineReasoning, messageCount, toolCallCount, subagentCount] = signature.split("|");
-			return {
-				turn: Number(turn),
-				controlAnchorSeq: Number(controlAnchorSeq),
-				processStartSeq: Number(processStartSeq),
-				answerAnchorSeq: answerAnchorSeq === "" ? null : Number(answerAnchorSeq),
-				answerStep: answerStep === "" ? null : Number(answerStep),
-				inlineReasoning: inlineReasoning === "1",
-				messageCount: Number(messageCount),
-				toolCallCount: Number(toolCallCount),
-				subagentCount: Number(subagentCount)
-			};
-		}
-		/**
-		* Recognize the shipped subagent delegation name and its configured variants.
-		* Control tools use distinct names such as `send_message` and `list_agents`.
-		* @param name - durable Tool-call name.
-		* @returns whether the call creates or forks a subagent.
-		*/
-		function isSubagentDelegationTool(name) {
-			return name === "subagent" || name.startsWith("subagent_");
-		}
 		//#endregion
-		//#region lib/types/client/stores.js
-		/** Per-Session Chat selection store shared by the transcript and details panel. */
+		//#region lib/types/client/chat/RunningWhaleTail.js
+		/** Animated whale mask and static SVG fallback for the running Chat status. */
+		const REST_PATH = "M8.844 13.742C8.967 12.328 8.45 10.4 8.45 9.65C8.45 8.94 8.88 8.43 9.6 8.43C11.285 8.43 12.106 8.281 12.685 8.104C13.71 7.791 14.585 6.768 15.055 5.945C15.137 5.803 14.99 5.641 14.829 5.671C13.829 5.86 12.828 5.376 11.827 4.978C10.659 4.514 9.491 4.707 8.935 4.876C8.805 4.915 8.658 4.819 8.636 4.686C8.468 3.643 7.405 2.615 5.498 2.238C4.54 2.048 3.748 1.574 3.347 1.202C3.252 1.113 3.088 1.125 3.03 1.242C2.628 2.059 2.168 3.82 5.248 6.115C5.82 6.494 6.31 6.785 6.574 7.637C6.72 8.104 6.157 9.168 6.061 9.368C5.157 11.27 5.089 12.19 4.926 13.742";
 		/**
-		* Resolve any stored generation for one Turn.
-		* @param state - Chat store snapshot.
-		* @param turn - owning Turn.
-		* @returns the Turn's stored entry, when present.
+		* Render the decorative running icon; the APNG asset owns its animation timing.
+		* @returns mask and static SVG selected by browser capabilities and accessibility preferences.
 		*/
-		function storedTurnProcessEntry(state, turn) {
-			return state.turnProcesses.find((entry) => entry.turn === turn);
-		}
-		/**
-		* Create the Chat selection store handle.
-		* @returns a handle instantiated once per rendered Session scope.
-		*/
-		function createChatStore() {
-			return (0, _deepseek_ai_dsh_client_store.defineStore)({
-				init: () => ({
-					selection: null,
-					turnProcesses: []
-				}),
-				actions: {
-					select: (draft, target) => {
-						draft.selection = target;
-					},
-					setTurnProcessOpen: (draft, turn, generation, open) => {
-						const index = draft.turnProcesses.findIndex((entry) => entry.turn === turn);
-						if (!open) {
-							if (index >= 0) draft.turnProcesses.splice(index, 1);
-							return;
-						}
-						const next = {
-							turn,
-							generation
-						};
-						if (index < 0) draft.turnProcesses.push(next);
-						else draft.turnProcesses[index] = next;
-					}
-				}
-			});
-		}
-		//#endregion
-		//#region lib/types/client/chat/searchable-hidden.js
-		/**
-		* Apply searchable hidden state without unmounting a stable subtree.
-		* @param hidden - whether the subtree is currently hidden.
-		* @param reveal - callback for browser find's `beforematch` reveal.
-		* @returns ref for the stable subtree root.
-		*/
-		function useSearchableHidden(hidden, reveal) {
-			const ref = (0, react.useRef)(null);
-			(0, react.useLayoutEffect)(() => {
-				const element = ref.current;
-				if (element === null) return;
-				if (hidden && element.contains(element.ownerDocument.activeElement)) {
-					reveal();
-					return;
-				}
-				if (hidden) element.setAttribute("hidden", "until-found");
-				else element.removeAttribute("hidden");
-			}, [hidden, reveal]);
-			(0, react.useEffect)(() => {
-				const element = ref.current;
-				if (element === null) return;
-				element.addEventListener("beforematch", reveal);
-				return () => {
-					element.removeEventListener("beforematch", reveal);
-				};
-			}, [reveal]);
-			return ref;
-		}
-		//#endregion
-		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/ChatView.module.css.mjs
-		const css$11 = ".DnYLAW_root{flex-direction:column;flex:auto;min-height:0;display:flex;position:relative}.DnYLAW_scroll{min-height:0;padding:16px calc(var(--dsh-composer-side-clearance) + 16px);flex:auto;overflow-y:auto;container-type:inline-size}[data-conversation-scroll] .DnYLAW_root{flex:none;height:auto;min-height:auto}[data-conversation-scroll] .DnYLAW_scroll{flex:none;min-height:auto;overflow:visible}.DnYLAW_column{max-width:var(--dsh-chat-content-width);flex-direction:column;width:100%;margin:0 auto;display:flex}.DnYLAW_column>:not([hidden]):not(.DnYLAW_flowItem:empty)~:not([hidden]):not(.DnYLAW_flowItem:empty){margin-top:var(--dsh-chat-flow-gap,16px)}.DnYLAW_flowItem{min-width:0}.DnYLAW_flowItem[data-turn-process-answer]{--dsh-chat-flow-gap:8px}.DnYLAW_flowItem:empty{display:none}.DnYLAW_callRow{border-radius:6px}.DnYLAW_turnStatus{height:calc(26px + var(--dsh-content-font-delta,0px));font:var(--dsw-font-s-strong-14);font-size:var(--dsh-content-font-size,14px);line-height:calc(22px + var(--dsh-content-font-delta,0px));white-space:nowrap;background:linear-gradient(90deg, var(--dsw-static-deepseek-500) 0%, var(--dsw-static-deepseek-500) 40%, var(--dsw-static-deepseek-200) 50%, var(--dsw-static-deepseek-500) 60%, var(--dsw-static-deepseek-500) 100%);color:#0000;-webkit-text-fill-color:transparent;background-position:100% 0;background-size:250% 100%;-webkit-background-clip:text;background-clip:text;flex:none;align-self:flex-start;align-items:center;animation:1.8s linear infinite DnYLAW_dsh-turn-status-shimmer;display:inline-flex}.DnYLAW_turnStatusClock{font:var(--dsw-font-xs-13);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-caption);-webkit-text-fill-color:var(--dsw-alias-label-caption);margin-left:8px;font-weight:400}@keyframes DnYLAW_dsh-turn-status-shimmer{to{background-position:0 0}}@media (prefers-reduced-motion:reduce){.DnYLAW_turnStatus{background-position:0 0;background-size:100% 100%;animation:none}}.DnYLAW_hint{color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(18px + var(--dsh-content-font-delta-secondary,0px))}.DnYLAW_openError{color:var(--dsw-alias-state-error-primary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(18px + var(--dsh-content-font-delta-secondary,0px))}.DnYLAW_older{justify-content:center;display:flex}.DnYLAW_older button{color:var(--dsw-alias-label-secondary);background:var(--dsw-alias-interactive-bg-hover-solid);cursor:pointer;border:none;border-radius:14px;padding:4px 12px;font-size:12px}.DnYLAW_older button:disabled{cursor:default;opacity:.6}.DnYLAW_toBottomSlot{z-index:8;height:0;padding-right:max(0px, calc((100% - var(--dsh-chat-content-width)) / 2));pointer-events:none;justify-content:flex-end;display:flex;position:sticky;bottom:16px}[data-conversation-scroll] .DnYLAW_toBottomSlot{bottom:calc(var(--dsh-composer-height,152px) + 16px)}.DnYLAW_toBottom{border:1px solid var(--dsw-alias-border-l2);width:34px;height:34px;color:var(--dsw-alias-label-primary);background:var(--dsw-alias-button-floating-fill);box-shadow:var(--dsw-shadow-lv2);cursor:pointer;pointer-events:auto;border-radius:100px;justify-content:center;align-items:center;margin-top:-34px;padding:0;display:flex}.DnYLAW_toBottom:hover{background:var(--dsw-alias-button-floating-hover)}.DnYLAW_modalAction{min-width:72px}";
-		const tagId$11 = "@deepseek-ai/dsh-client-ui-chat/ChatView.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$11) + "]") === null) {
-			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$11;
-			tag.textContent = css$11;
-			document.head.appendChild(tag);
-		}
-		var ChatView_module_css_default = {
-			"callRow": "DnYLAW_callRow",
-			"column": "DnYLAW_column",
-			"dsh-turn-status-shimmer": "DnYLAW_dsh-turn-status-shimmer",
-			"flowItem": "DnYLAW_flowItem",
-			"hint": "DnYLAW_hint",
-			"modalAction": "DnYLAW_modalAction",
-			"older": "DnYLAW_older",
-			"openError": "DnYLAW_openError",
-			"root": "DnYLAW_root",
-			"scroll": "DnYLAW_scroll",
-			"toBottom": "DnYLAW_toBottom",
-			"toBottomSlot": "DnYLAW_toBottomSlot",
-			"turnStatus": "DnYLAW_turnStatus",
-			"turnStatusClock": "DnYLAW_turnStatusClock"
-		};
-		//#endregion
-		//#region lib/types/client/chat/ChatNodeSeat.js
-		const EMPTY_PROCESS_KEYS = [];
-		function turnProcessOpeningHumanAnchor(keys, nodes, spec) {
-			let anchor;
-			for (const key of keys) {
-				const node = nodes.get(key);
-				if ((node?.kind === "user" || node?.kind === "steering") && node.anchorSeq < spec.controlAnchorSeq) anchor = Math.min(anchor ?? node.anchorSeq, node.anchorSeq);
-			}
-			return anchor;
-		}
-		/** Derive disclosure facts from one content-revisioned Turn index. */
-		function turnProcessLayout(keys, nodes, spec) {
-			let hasExternalProcess = false;
-			let compactAnswer = true;
-			const openingHumanAnchor = turnProcessOpeningHumanAnchor(keys, nodes, spec);
-			for (const key of keys) {
-				const node = nodes.get(key);
-				if (node === void 0 || node.kind === "turn-process") continue;
-				if ((node.kind === "user" || node.kind === "steering") && (openingHumanAnchor === void 0 || node.anchorSeq > openingHumanAnchor) && (spec.answerAnchorSeq === null || node.anchorSeq < spec.answerAnchorSeq)) compactAnswer = false;
-				if (TURN_PROCESS_INDEPENDENT_KINDS.has(node.kind) || node.anchorSeq < spec.processStartSeq || spec.answerAnchorSeq !== null && node.anchorSeq >= spec.answerAnchorSeq) continue;
-				if (node.kind !== "assistant-step" || spec.answerStep === null || node.data.step !== spec.answerStep) hasExternalProcess = true;
-			}
-			return {
-				hasExternalProcess,
-				compactAnswer
-			};
-		}
-		/** Subscribe, apply Turn-process visibility, and dispatch one stable Context key. */
-		const ChatNodeSeat = (0, react.memo)(function ChatNodeSeat({ nodeKey, historyIncomplete, compactTranscript, selectedCallId, cwd, openFile, inspectCall, forkAt, renderMessageImages, fileMentions, useChat, useStore, actions, renderSlot, t }) {
-			const node = useChat((snapshot) => snapshot.nodes.get(nodeKey));
-			const processSignature = useChat((snapshot) => {
-				const location = snapshot.nodes.get(nodeKey)?.location;
-				return location?.kind === "turn" || location?.kind === "step" ? location.turn.data.get("turn-process") : void 0;
-			});
-			const processSpec = (0, react.useMemo)(() => processSignature === void 0 ? void 0 : decodeTurnProcess(processSignature), [processSignature]);
-			const nodeStore = useChat((snapshot) => snapshot.nodes);
-			const processLayoutKeys = useChat((snapshot) => {
-				if (!compactTranscript || historyIncomplete || processSpec === void 0) return EMPTY_PROCESS_KEYS;
-				const current = snapshot.nodes.get(nodeKey);
-				const location = current?.location;
-				if (current === void 0 || location?.kind !== "turn" && location?.kind !== "step" || location.turn.status !== "closed" || location.turn.turn !== processSpec.turn) return EMPTY_PROCESS_KEYS;
-				return current.kind === "turn-process" || current.kind === "assistant-step" && current.data.step === processSpec.answerStep ? snapshot.locations.getTurn(processSpec.turn) : EMPTY_PROCESS_KEYS;
-			});
-			const processLayout = (0, react.useMemo)(() => processSpec === void 0 || processLayoutKeys.length === 0 ? void 0 : turnProcessLayout(processLayoutKeys, nodeStore, processSpec), [
-				nodeStore,
-				processLayoutKeys,
-				processSpec
-			]);
-			const processGeneration = (0, react.useMemo)(() => processSpec === void 0 ? void 0 : turnProcessGeneration(processSpec), [processSpec]);
-			const storedEntry = useStore((state) => processSpec === void 0 ? void 0 : storedTurnProcessEntry(state, processSpec.turn));
-			const processOpen = (storedEntry?.generation === processGeneration ? storedEntry : void 0) !== void 0;
-			const setOpen = (0, react.useCallback)((open) => {
-				if (processGeneration !== void 0 && processSpec !== void 0) actions.setTurnProcessOpen(processSpec.turn, processGeneration, open);
-			}, [
-				actions,
-				processGeneration,
-				processSpec
-			]);
-			const routedNode = node;
-			const sameTurn = routedNode !== void 0 && processSpec !== void 0 && (routedNode.location.kind === "turn" || routedNode.location.kind === "step") && routedNode.location.turn.turn === processSpec.turn;
-			const turnClosed = sameTurn && routedNode.location.turn.status === "closed";
-			const processWindowReady = processSpec !== void 0 && compactTranscript && processSpec.answerAnchorSeq !== null && turnClosed && !historyIncomplete;
-			const processMember = sameTurn && processWindowReady && !TURN_PROCESS_INDEPENDENT_KINDS.has(routedNode.kind) && routedNode.anchorSeq >= processSpec.processStartSeq && routedNode.anchorSeq < processSpec.answerAnchorSeq;
-			const processAnswer = sameTurn && processWindowReady && routedNode.kind === "assistant-step" && routedNode.data.step === processSpec.answerStep;
-			const ownsDisclosure = routedNode?.kind === "turn-process" || processAnswer;
-			const foldable = processWindowReady && (processMember || ownsDisclosure && ((processLayout?.hasExternalProcess ?? false) || processSpec.inlineReasoning));
-			const turnProcess = (0, react.useMemo)(() => processGeneration === void 0 || processSpec === void 0 ? void 0 : {
-				spec: processSpec,
-				foldable,
-				open: processOpen,
-				setOpen
-			}, [
-				foldable,
-				processGeneration,
-				processOpen,
-				processSpec,
-				setOpen
-			]);
-			const controllerInactive = routedNode?.kind === "turn-process" && !foldable;
-			const compactAnswer = processAnswer && foldable && processLayout?.compactAnswer === true && !processOpen;
-			const processHidden = controllerInactive || foldable && processMember && !processOpen;
-			const wrapperRef = useSearchableHidden(processHidden, (0, react.useCallback)(() => {
-				if (processMember) setOpen(true);
-			}, [processMember, setOpen]));
-			const owner = (0, react.useMemo)(() => node === void 0 ? null : {
-				selectedCallId,
-				cwd,
-				openFile,
-				inspectCall,
-				forkAt,
-				renderMessageImages,
-				fileMentions,
-				turnProcess
-			}, [
-				node,
-				selectedCallId,
-				cwd,
-				openFile,
-				inspectCall,
-				forkAt,
-				renderMessageImages,
-				fileMentions,
-				turnProcess
-			]);
-			if (routedNode === void 0 || owner === null) return null;
-			const location = routedNode.location;
-			const turn = location.kind === "turn" || location.kind === "step" ? location.turn.turn : void 0;
-			const routedOwner = {
-				...owner,
-				node: routedNode
-			};
-			return (0, react_jsx_runtime.jsx)("div", {
-				ref: wrapperRef,
-				className: ChatView_module_css_default.flowItem,
-				"data-chat-anchor-key": routedNode.key,
-				"data-chat-flow-key": routedNode.key,
-				"data-chat-flow-kind": routedNode.kind,
-				"data-chat-turn": turn,
-				"data-turn-process-member": processMember || void 0,
-				"data-turn-process-hidden": processHidden || void 0,
-				"data-turn-process-answer": compactAnswer || void 0,
-				children: renderSlot("conversation.chat.node", routedOwner, {
-					entryKey: routedNode.kind,
-					hookContext: nodeKey,
-					fallback: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.JsonBlock, {
-						label: t("message.unknownSurface", { type: routedNode.kind }),
-						payload: routedNode.data,
-						truncatedLabel: (total) => t("json.truncated", { total })
+		function RunningWhaleTail() {
+			return (0, react_jsx_runtime.jsxs)("span", {
+				className: ChatView_module_css_default.runningIcon,
+				"aria-hidden": "true",
+				children: [(0, react_jsx_runtime.jsx)("span", { className: ChatView_module_css_default.runningWhaleAnimated }), (0, react_jsx_runtime.jsx)("svg", {
+					className: ChatView_module_css_default.runningWhaleStill,
+					width: "100%",
+					height: "100%",
+					viewBox: "0 0 16 16",
+					fill: "none",
+					children: (0, react_jsx_runtime.jsx)("path", {
+						d: REST_PATH,
+						stroke: "currentColor",
+						strokeWidth: 1
 					})
-				})
+				})]
 			});
-		});
+		}
 		//#endregion
-		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/TurnNavigator.module.css.mjs
-		const css$10 = ".t5CU6q_slot{z-index:6;pointer-events:none;height:0;position:sticky;top:0}.t5CU6q_rail{--turn-rail-band:calc(var(--dsh-conversation-viewport-height,100dvh) - var(--dsh-composer-height,152px));--turn-preview-height:100px;top:calc(var(--turn-rail-band) / 2);right:calc(12px - (var(--dsh-composer-side-clearance) + 16px));width:28px;height:min(var(--turn-natural-height), max(0px, calc(var(--turn-rail-band) - 64px)), 420px);cursor:pointer;pointer-events:auto;transition:height .22s cubic-bezier(.2,.8,.2,1);position:absolute;transform:translateY(-50%)}.t5CU6q_marks{inset:var(--turn-rail-inset) 0;position:absolute}.t5CU6q_markPosition{top:min(var(--turn-natural-position), var(--turn-position));height:10px;transition:top .22s cubic-bezier(.2,.8,.2,1);animation:.15s ease-out t5CU6q_dsh-turn-mark-enter;position:absolute;left:0;right:0;transform:translateY(-50%)}.t5CU6q_mark{cursor:pointer;pointer-events:none;background:0 0;border:0;border-radius:8px;width:20px;padding:0;position:absolute;inset:0 0 0 auto}.t5CU6q_mark:before{background:var(--dsw-alias-border-l4);content:\"\";border-radius:2px;width:12px;height:2px;transition:width .14s,background-color .14s;position:absolute;top:50%;right:0;transform:translateY(-50%)}.t5CU6q_markPreview:before{background:var(--dsw-alias-label-tertiary);width:18px}.t5CU6q_markActive:before{background:var(--dsw-alias-label-primary);width:20px}.t5CU6q_mark:focus-visible:before{background:var(--dsw-alias-state-business-primary);width:20px}.t5CU6q_mark:focus-visible{outline:1px solid var(--dsw-alias-state-business-primary);outline-offset:2px}.t5CU6q_preview{top:clamp(0px, calc(min(var(--turn-natural-position), var(--turn-position)) + var(--turn-rail-inset) - var(--turn-preview-height) / 2), calc(100% - var(--turn-preview-height)));box-sizing:border-box;width:min(300px,100cqw - 120px);max-height:var(--turn-preview-height);border:1px solid var(--dsw-alias-border-l2);color:var(--dsw-alias-label-primary);background:var(--dsw-alias-bg-layer-1);box-shadow:var(--dsw-shadow-lv2);pointer-events:none;border-radius:10px;padding:10px 12px;transition:top .14s cubic-bezier(.2,.8,.2,1);animation:.12s ease-out t5CU6q_dsh-turn-preview-enter;position:absolute;right:calc(100% + 10px);overflow:hidden}.t5CU6q_previewPrompt,.t5CU6q_previewResponse{-webkit-box-orient:vertical;display:-webkit-box;overflow:hidden}.t5CU6q_previewPrompt{font:var(--dsw-font-xs-strong-13);-webkit-line-clamp:2}.t5CU6q_previewResponse{color:var(--dsw-alias-label-caption);font:var(--dsw-font-xxs-12);-webkit-line-clamp:2;margin-top:4px}@keyframes t5CU6q_dsh-turn-mark-enter{0%{opacity:0}to{opacity:1}}@keyframes t5CU6q_dsh-turn-preview-enter{0%{opacity:0;transform:translate(4px)}to{opacity:1;transform:translate(0)}}@container (width<=900px){.t5CU6q_slot{display:none}}@media (prefers-reduced-motion:reduce){.t5CU6q_rail,.t5CU6q_markPosition,.t5CU6q_mark:before,.t5CU6q_preview{transition:none;animation:none}}";
-		const tagId$10 = "@deepseek-ai/dsh-client-ui-chat/TurnNavigator.module.css";
+		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/accessibility.module.css.mjs
+		const css$10 = ".xPY1Ca_visuallyHidden{clip:rect(0 0 0 0);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}";
+		const tagId$10 = "@deepseek-ai/dsh-client-ui-chat/accessibility.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$10) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
@@ -1638,666 +5588,129 @@ window.__ModuleLoader__.load({
 			tag.textContent = css$10;
 			document.head.appendChild(tag);
 		}
-		var TurnNavigator_module_css_default = {
-			"dsh-turn-mark-enter": "t5CU6q_dsh-turn-mark-enter",
-			"dsh-turn-preview-enter": "t5CU6q_dsh-turn-preview-enter",
-			"mark": "t5CU6q_mark",
-			"markActive": "t5CU6q_markActive",
-			"markPosition": "t5CU6q_markPosition",
-			"markPreview": "t5CU6q_markPreview",
-			"marks": "t5CU6q_marks",
-			"preview": "t5CU6q_preview",
-			"previewPrompt": "t5CU6q_previewPrompt",
-			"previewResponse": "t5CU6q_previewResponse",
-			"rail": "t5CU6q_rail",
-			"slot": "t5CU6q_slot"
-		};
+		var accessibility_module_css_default = { "visuallyHidden": "xPY1Ca_visuallyHidden" };
 		//#endregion
-		//#region lib/types/client/chat/TurnNavigator.js
-		/** Resting gap between neighbouring marks before the rail compresses to fit. */
-		const TURN_SPACING_PX = 10;
-		/** Rail padding above the first mark and below the last one, per end. */
-		const RAIL_INSET_PX = 6;
-		function itemPosition(index, count) {
-			const ratio = count <= 1 ? 0 : index / (count - 1);
-			return {
-				"--turn-natural-position": `${String(index * TURN_SPACING_PX)}px`,
-				"--turn-position": `${String(ratio * 100)}%`
-			};
-		}
-		function railSize(count) {
-			return {
-				"--turn-natural-height": `${String((count - 1) * TURN_SPACING_PX + 2 * RAIL_INSET_PX)}px`,
-				"--turn-rail-inset": `${String(RAIL_INSET_PX)}px`
-			};
-		}
-		function itemAtPointer(items, rail, clientY) {
-			const rect = rail.getBoundingClientRect();
-			const usableHeight = Math.max(1, rect.height - 2 * RAIL_INSET_PX);
-			const ratio = Math.max(0, Math.min(1, (clientY - rect.top - RAIL_INSET_PX) / usableHeight));
-			return items[Math.round(ratio * (items.length - 1))];
-		}
-		function TurnNavigatorRail({ items, activeTurn, onNavigate, t }) {
-			const [previewTurn, setPreviewTurn] = (0, react.useState)(null);
-			const previewId = (0, react.useId)();
-			if (items.length < 2) return null;
-			const previewIndex = items.findIndex((item) => item.turn === previewTurn);
-			const preview = previewIndex < 0 ? void 0 : items[previewIndex];
-			const previewPosition = previewIndex < 0 ? void 0 : itemPosition(previewIndex, items.length);
-			const previewAtPointer = (event) => {
-				setPreviewTurn(itemAtPointer(items, event.currentTarget, event.clientY)?.turn ?? null);
-			};
-			const navigateAtPointer = (event) => {
-				const item = itemAtPointer(items, event.currentTarget, event.clientY);
-				if (item !== void 0) onNavigate(item);
-			};
-			return (0, react_jsx_runtime.jsx)("div", {
-				className: TurnNavigator_module_css_default.slot,
-				children: (0, react_jsx_runtime.jsxs)("nav", {
-					className: TurnNavigator_module_css_default.rail,
-					style: railSize(items.length),
-					"aria-label": t("chat.turnNavigation.label"),
-					onClick: navigateAtPointer,
-					onPointerMove: previewAtPointer,
-					onPointerLeave: () => {
-						setPreviewTurn(null);
-					},
-					children: [(0, react_jsx_runtime.jsx)("div", {
-						className: TurnNavigator_module_css_default.marks,
-						children: items.map((item, index) => {
-							const active = item.turn === activeTurn;
-							const showingPreview = item.turn === previewTurn;
-							const markClass = active ? `${TurnNavigator_module_css_default.mark} ${TurnNavigator_module_css_default.markActive}` : showingPreview ? `${TurnNavigator_module_css_default.mark} ${TurnNavigator_module_css_default.markPreview}` : TurnNavigator_module_css_default.mark;
-							return (0, react_jsx_runtime.jsx)("div", {
-								className: TurnNavigator_module_css_default.markPosition,
-								style: itemPosition(index, items.length),
-								children: (0, react_jsx_runtime.jsx)("button", {
-									type: "button",
-									className: markClass,
-									"aria-label": t("chat.turnNavigation.jump", { turn: item.turn }),
-									"aria-current": active ? "true" : void 0,
-									"aria-describedby": showingPreview ? previewId : void 0,
-									onClick: (event) => {
-										event.stopPropagation();
-										onNavigate(item);
-									},
-									onFocus: () => {
-										setPreviewTurn(item.turn);
-									},
-									onBlur: () => {
-										setPreviewTurn(null);
-									}
-								})
-							}, item.turn);
-						})
-					}), preview !== void 0 && previewPosition !== void 0 && (0, react_jsx_runtime.jsxs)("div", {
-						id: previewId,
-						role: "tooltip",
-						className: TurnNavigator_module_css_default.preview,
-						style: previewPosition,
-						children: [(0, react_jsx_runtime.jsx)("div", {
-							className: TurnNavigator_module_css_default.previewPrompt,
-							children: preview.prompt || t("chat.turnNavigation.turn", { turn: preview.turn })
-						}), preview.response !== "" && (0, react_jsx_runtime.jsx)("div", {
-							className: TurnNavigator_module_css_default.previewResponse,
-							children: preview.response
+		//#region lib/types/client/chat/RunningStatus.js
+		/** Running Turn clock isolated from the transcript's render cycle. */
+		/**
+		* Show live elapsed time after the current Turn's content without announcing ticks.
+		* @param props - Current Turn start time and localized copy.
+		* @returns the blue running indicator; mount only while the Session is running.
+		*/
+		const RunningStatus = (0, react.memo)(function RunningStatus({ startTime, renderSlot, t }) {
+			const [now, setNow] = (0, react.useState)(Date.now);
+			(0, react.useEffect)(() => {
+				if (startTime === void 0) return;
+				setNow(Date.now());
+				const timer = setInterval(() => {
+					setNow(Date.now());
+				}, LIVE_RUN_CLOCK_INTERVAL_MS);
+				return () => {
+					clearInterval(timer);
+				};
+			}, [startTime]);
+			const label = startTime === void 0 ? t("chat.deepDiving") : t("chat.deepDivingFor", { duration: formatRunDuration(Math.max(1e3, now - startTime), t).map((part) => part.text).join("") });
+			return (0, react_jsx_runtime.jsxs)("div", {
+				className: ChatView_module_css_default.running,
+				"data-chat-running": true,
+				children: [
+					(0, react_jsx_runtime.jsx)("span", {
+						className: accessibility_module_css_default.visuallyHidden,
+						role: "status",
+						"aria-live": "polite",
+						"aria-atomic": "true",
+						children: t("chat.deepDiving")
+					}),
+					(0, react_jsx_runtime.jsx)("span", {
+						className: ChatView_module_css_default.runningDivider,
+						"aria-hidden": "true"
+					}),
+					(0, react_jsx_runtime.jsxs)("span", {
+						className: ChatView_module_css_default.runningContent,
+						children: [(0, react_jsx_runtime.jsx)(RunningWhaleTail, {}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.TextShimmer, {
+							active: true,
+							className: ChatView_module_css_default.runningText,
+							children: renderSlot("conversation.chat.turnStatus", { defaultLabel: label }, { fallback: label })
 						})]
-					})]
-				})
+					})
+				]
 			});
-		}
-		/**
-		* Compact rail of the currently loaded Turns with hover and focus previews.
-		*
-		* Memoized because it renders two host elements per loaded Turn while the
-		* enclosing view re-renders on every streaming delta: without the guard a long
-		* session rebuilds hundreds of marks per commit for a rail that only changes
-		* when a Turn is added, removed, or becomes active. Its props must therefore
-		* stay referentially stable across those commits.
-		*/
-		const TurnNavigator = (0, react.memo)(TurnNavigatorRail);
+		});
 		//#endregion
-		//#region lib/types/client/chat/ChatView.js
-		/** Active column host when present; otherwise the view-local scroller. */
-		function scrollerOf(from) {
-			return from.closest("[data-conversation-scroll]") ?? from;
-		}
-		/** Find an already-rendered row without interpolating a selector. */
-		function anchorElement(list, key) {
-			for (const row of list.querySelectorAll("[data-chat-anchor-key]:not([hidden])")) if (row.dataset.chatAnchorKey === key) return row;
-			return null;
-		}
-		/**
-		* Turn owning the row at a scrollport line. Scroll frames are hot, so this
-		* hit-tests the line first and falls back to one row scan when layout cannot
-		* answer (jsdom, pre-paint); neither path queries per navigation item.
-		* @param list - the ChatView list element.
-		* @param line - viewport y of the reading line.
-		* @returns the Turn number, or null when no loaded row covers the line.
-		*/
-		function turnAtLine(list, line) {
-			const content = list.getBoundingClientRect();
-			if (typeof document.elementsFromPoint === "function" && content.width > 0) for (const element of document.elementsFromPoint(content.left + content.width / 2, line)) {
-				const row = element instanceof HTMLElement ? element.closest("[data-chat-turn]") : null;
-				const turn = Number(row?.dataset.chatTurn);
-				if (row !== null && list.contains(row) && Number.isSafeInteger(turn)) return turn;
-			}
-			let found = null;
-			for (const row of list.querySelectorAll("[data-chat-turn]")) {
-				if (row.getBoundingClientRect().top > line) break;
-				const turn = Number(row.dataset.chatTurn);
-				if (Number.isSafeInteger(turn)) found = turn;
-			}
-			return found;
-		}
-		/** Row position in scrollport coordinates (viewport-independent). */
-		function flowTop(row, scrollport) {
-			return row.getBoundingClientRect().top - scrollport.getBoundingClientRect().top;
-		}
-		/** Select a visible stable node/call identity, falling back only when layout
-		* has not exposed a visible box yet. */
-		function pagingAnchor(list, scrollport) {
-			const viewport = scrollport.getBoundingClientRect();
-			const visibleBottom = scrollport.querySelector("[data-composer-seat]")?.getBoundingClientRect().top ?? viewport.bottom;
-			if (typeof document.elementsFromPoint === "function" && visibleBottom > viewport.top) {
-				const content = list.getBoundingClientRect();
-				const left = Math.max(viewport.left, content.left);
-				const right = Math.min(viewport.right, content.right);
-				const x = left + Math.max(0, right - left) / 2;
-				for (const element of document.elementsFromPoint(x, viewport.top + 1)) {
-					const row = element instanceof HTMLElement ? element.closest("[data-chat-anchor-key]") : null;
-					if (row !== null && list.contains(row)) return row;
-				}
-			}
-			const rows = list.querySelectorAll("[data-chat-flow] > [data-chat-flow-key]:not(:empty):not([hidden])");
-			let low = 0;
-			let high = rows.length;
-			while (low < high) {
-				const middle = low + high >>> 1;
-				if (rows.item(middle).getBoundingClientRect().bottom > viewport.top) high = middle;
-				else low = middle + 1;
-			}
-			const row = rows[low];
-			return row !== void 0 && row.getBoundingClientRect().top < visibleBottom ? row : rows[0] ?? null;
-		}
-		/** Capture a reflow-resistant reader position from the current rendered window. */
-		function scrollPosition(list, scrollport) {
-			const row = pagingAnchor(list, scrollport);
-			const anchorKey = row?.dataset.chatAnchorKey;
-			if (row === null || anchorKey === void 0) return null;
-			return {
-				anchorKey,
-				anchorTop: flowTop(row, scrollport),
-				scrollTop: scrollport.scrollTop
-			};
-		}
-		/** Host/OS refusal text for the file-open dialog; empty throws keep a locale fallback. */
-		function openFailureMessage(error, fallback) {
-			const message = error instanceof Error ? error.message : String(error);
-			return message === "" ? fallback : message;
-		}
-		/** ProducedFiles opens the session workspace as `.`. */
-		function isFolderOpenPath(path) {
-			return path === ".";
-		}
-		/**
-		* Prompt-RPC identities already rendered by durable material: user/steering
-		* node sources plus queue occurrences. A submission echo whose identity
-		* appears here is hidden in the same render, so the echo→durable swap is
-		* atomic — no duplicate, no gap — regardless of when the echo leaves the
-		* session snapshot.
-		*/
-		function observedRpcIds(order, nodes, queue) {
-			const observed = /* @__PURE__ */ new Set();
-			for (const key of order) {
-				const node = nodes.get(key);
-				if (node === void 0 || node.kind !== "user" && node.kind !== "steering") continue;
-				const source = node.data.source;
-				if (source?.kind === "user" && typeof source.rpcId === "string") observed.add(source.rpcId);
-			}
-			for (const item of queue) if (item.rpcId !== void 0) observed.add(item.rpcId);
-			return observed;
-		}
-		function runningTurnStartTime(timeline) {
-			let latest = null;
-			for (const turn of timeline.turns.values()) if (turn.status === "open") latest = turn.start?.time ?? null;
-			return latest;
-		}
-		/** Turn-level model activity label retained across first-token, tool, and streaming phases. */
-		function TurnStatus({ startTime, renderSlot, t }) {
-			const [mountedAt] = (0, react.useState)(() => Date.now());
-			const anchor = startTime ?? mountedAt;
-			const [elapsedMs, setElapsedMs] = (0, react.useState)(() => Math.max(0, Date.now() - anchor));
-			(0, react.useEffect)(() => {
-				const tick = () => {
-					setElapsedMs(Math.max(0, Date.now() - anchor));
-				};
-				tick();
-				const id = setInterval(tick, 1e3);
-				return () => {
-					clearInterval(id);
-				};
-			}, [anchor]);
-			const showClock = elapsedMs >= 15e3;
-			return (0, react_jsx_runtime.jsxs)("div", {
-				className: ChatView_module_css_default.turnStatus,
-				role: "status",
-				"aria-live": "polite",
-				children: [renderSlot("conversation.chat.turnStatus", { defaultLabel: t("chat.deepDiving") }, { fallback: t("chat.deepDiving") }), showClock && (0, react_jsx_runtime.jsx)("span", {
-					className: ChatView_module_css_default.turnStatusClock,
-					"aria-hidden": true,
-					children: formatRunDuration(elapsedMs, t)
-				})]
+		//#region lib/types/client/chat/ChatFlow.js
+		/** Ordered Chat rows, local echoes, and running status share the flow slot's parent. */
+		/** Render the flow without adding a DOM parent or changing keyed row positions. */
+		const ChatFlow = (0, react.memo)(function ChatFlow({ entries, pendingInputs, lastInputTurn, deferCollapse, useSession, useChat, useChatNode, useChatNodeBottom, useChatNodeProcess, useChatGroup, usePresentation, useStore, actions, renderSlot, renderFactorySlot, t, useGroupAction, useGroupHeaderAction, cwd, openFile, inspectCall, forkAt, loadImage, fileMentions }) {
+			const nodeStore = useChat((snapshot) => snapshot.nodes);
+			const running = useSession((snapshot) => snapshot.running);
+			const runningStartTime = useChatNode(useChat((snapshot) => snapshot.navigation.items().at(-1)?.anchorKey) ?? "", (node) => {
+				const location = node?.location;
+				return location?.kind === "turn" || location?.kind === "step" ? location.turn.status === "open" ? location.turn.start?.time : void 0 : void 0;
 			});
-		}
-		/**
-		* The chat view slot entry: pure component over the composed props; each
-		* ordered business Node crosses the keyed renderer seat.
-		*/
-		function ChatView({ useSession, useChat, useSessions, useStore, actions, renderSlot, sessionId, openFile, loadOlder, loadImage, openView, chatScroll, forkAt, fileMentions, useTranscriptView, t }) {
-			const order = useChat((s) => s.order);
-			const nodeStore = useChat((s) => s.nodes);
-			const turnNavigationItems = useChat((s) => s.navigation.items());
-			const timeline = useChat((s) => s.timeline);
-			const inbox = useSession((s) => s.queue);
-			const cwd = useSessions((s) => s.byId[sessionId]?.cwd);
-			const running = useSession((s) => s.running);
-			const openState = useSession((s) => s.openState);
-			const openError = useSession((s) => s.openError);
-			const hasMore = useSession((s) => s.hasMore);
-			const loadingOlder = useSession((s) => s.loadingOlder);
-			const selectedCallId = useStore((s) => s.selection?.callId);
-			const compactTranscript = useTranscriptView((mode) => mode === "compact");
-			const inspectCall = (0, react.useCallback)((callId) => {
-				openView("trajectory", callId);
-			}, [openView]);
-			const [fileOpenError, setFileOpenError] = (0, react.useState)(null);
-			const [fileOpenBusy, setFileOpenBusy] = (0, react.useState)(false);
-			const fileOpenRequest = (0, react.useRef)(0);
-			const requestOpenFile = (0, react.useCallback)((path) => {
-				const id = ++fileOpenRequest.current;
-				setFileOpenBusy(true);
-				openFile(path).then(() => {
-					if (id !== fileOpenRequest.current) return;
-					setFileOpenError(null);
-					setFileOpenBusy(false);
-				}, (error) => {
-					if (id !== fileOpenRequest.current) return;
-					setFileOpenError({
-						path,
-						message: openFailureMessage(error, t(isFolderOpenPath(path) ? "fileOpen.folderUnknown" : "fileOpen.unknown"))
-					});
-					setFileOpenBusy(false);
-				});
-			}, [openFile, t]);
-			const closeFileOpenError = (0, react.useCallback)(() => {
-				fileOpenRequest.current += 1;
-				setFileOpenError(null);
-				setFileOpenBusy(false);
-			}, []);
-			const pendingSteering = (0, react.useMemo)(() => inbox.filter((item) => item.placement === "steering"), [inbox]);
-			const pendingSubmissions = useSession((s) => s.pendingSubmissions);
-			const visibleSubmissions = (0, react.useMemo)(() => {
-				if (pendingSubmissions.length === 0) return pendingSubmissions;
-				const observed = observedRpcIds(order, nodeStore, inbox);
-				return pendingSubmissions.filter((submission) => !observed.has(submission.requestId));
-			}, [
-				pendingSubmissions,
-				order,
+			const seatProps = {
 				nodeStore,
-				inbox
-			]);
-			const renderMessageImages = (0, react.useCallback)((owner) => renderSlot("conversation.message.images", {
-				...owner,
-				loadImage
-			}), [loadImage, renderSlot]);
-			const runningTurnStart = (0, react.useMemo)(() => runningTurnStartTime(timeline), [timeline]);
-			const listRef = (0, react.useRef)(null);
-			const columnRef = (0, react.useRef)(null);
-			const [atBottom, setAtBottom] = (0, react.useState)(() => chatScroll.read() === null);
-			const atBottomRef = (0, react.useRef)(atBottom);
-			const [activeTurn, setActiveTurn] = (0, react.useState)(() => turnNavigationItems.at(-1)?.turn ?? null);
-			/** Last position delivered or written on the main thread. */
-			const observedTopRef = (0, react.useRef)(0);
-			/** Paging anchor: semantic row/position at click, updated by reader scrolls
-			* while the request is pending and restored after the prepend lands. */
-			const anchorRef = (0, react.useRef)(null);
-			const firstSeqRef = (0, react.useRef)(null);
-			const openedRef = (0, react.useRef)(false);
-			const lastKeyRef = (0, react.useRef)(null);
-			const lastSteeringIdRef = (0, react.useRef)(null);
-			const lastSubmissionIdRef = (0, react.useRef)(null);
-			/** Flow tip signature — follow-scroll only when this moves, never on a
-			*  scroll-driven at-bottom chrome re-render (which would snap inertial
-			*  scrolls the rest of the way to the floor). */
-			const followSigRef = (0, react.useRef)(null);
-			const firstKey = order[0];
-			const firstSeq = firstKey === void 0 ? null : nodeStore.get(firstKey)?.anchorSeq ?? null;
-			const lastKey = order.at(-1) ?? null;
-			const lastNode = lastKey === null ? void 0 : nodeStore.get(lastKey);
-			const lastSteeringId = pendingSteering[pendingSteering.length - 1]?.id ?? null;
-			const lastSubmissionId = visibleSubmissions[visibleSubmissions.length - 1]?.requestId ?? null;
-			const followSig = `${openState}:${firstSeq}:${lastKey}:${order.length}:${running ? 1 : 0}:${lastSteeringId ?? ""}:${lastSubmissionId ?? ""}`;
-			const syncActiveTurn = (0, react.useCallback)(() => {
-				const local = listRef.current;
-				const first = turnNavigationItems[0];
-				if (local === null || first === void 0) {
-					setActiveTurn(null);
-					return;
-				}
-				const el = scrollerOf(local);
-				const reading = turnAtLine(local, el.getBoundingClientRect().top + Math.min(96, el.clientHeight * .2));
-				let next = first.turn;
-				if (reading !== null) for (const item of turnNavigationItems) {
-					if (item.turn > reading) break;
-					next = item.turn;
-				}
-				if (el.scrollHeight - el.scrollTop - el.clientHeight <= 25) next = turnNavigationItems.at(-1)?.turn ?? next;
-				setActiveTurn((current) => current === next ? current : next);
-			}, [turnNavigationItems]);
-			const activeTurnRef = (0, react.useRef)(null);
-			const activeFrameRef = (0, react.useRef)(null);
-			const scheduleActiveTurn = (0, react.useCallback)(() => {
-				if (activeFrameRef.current !== null) return;
-				if (typeof requestAnimationFrame === "undefined") {
-					syncActiveTurn();
-					return;
-				}
-				activeFrameRef.current = requestAnimationFrame(() => {
-					activeFrameRef.current = null;
-					syncActiveTurn();
-				});
-			}, [syncActiveTurn]);
-			(0, react.useEffect)(() => () => {
-				if (activeFrameRef.current !== null && typeof cancelAnimationFrame !== "undefined") cancelAnimationFrame(activeFrameRef.current);
-			}, []);
-			activeTurnRef.current = scheduleActiveTurn;
-			(0, react.useLayoutEffect)(() => {
-				scheduleActiveTurn();
-			}, [scheduleActiveTurn]);
-			const toBottom = (el) => {
-				anchorRef.current = null;
-				el.scrollTop = el.scrollHeight;
-				observedTopRef.current = el.scrollTop;
-				atBottomRef.current = true;
-				setAtBottom(true);
-				chatScroll.save(null);
-				setActiveTurn(turnNavigationItems.at(-1)?.turn ?? null);
+				useChatNode,
+				useChatNodeBottom,
+				useChatNodeProcess,
+				usePresentation,
+				useStore,
+				actions,
+				renderSlot,
+				t,
+				useGroupAction,
+				deferCollapse,
+				cwd,
+				openFile,
+				inspectCall,
+				forkAt,
+				loadImage,
+				fileMentions
 			};
-			(0, react.useLayoutEffect)(() => {
-				const local = listRef.current;
-				/* v8 ignore next -- ref-null guard: React attaches the ref before layout effects run. */
-				if (local === null) return;
-				const el = scrollerOf(local);
-				if (openState === "open" && !openedRef.current) {
-					openedRef.current = true;
-					const saved = chatScroll.read();
-					if (saved === null) toBottom(el);
-					else {
-						el.scrollTop = saved.scrollTop;
-						const row = anchorElement(local, saved.anchorKey);
-						if (row !== null) el.scrollTop += flowTop(row, el) - saved.anchorTop;
-						observedTopRef.current = el.scrollTop;
-						const isAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight <= 25;
-						atBottomRef.current = isAtBottom;
-						setAtBottom(isAtBottom);
-						const normalized = isAtBottom ? null : scrollPosition(local, el);
-						if (isAtBottom) chatScroll.save(null);
-						else if (normalized !== null) chatScroll.save(normalized);
-					}
-					firstSeqRef.current = firstSeq;
-					lastKeyRef.current = lastKey;
-					lastSteeringIdRef.current = lastSteeringId;
-					lastSubmissionIdRef.current = lastSubmissionId;
-					followSigRef.current = followSig;
-					return;
+			const rows = entries.map((entry) => {
+				switch (entry.kind) {
+					case "node": return (0, react.createElement)(ChatNodeSeat, {
+						...seatProps,
+						key: chatRenderKey(entry),
+						nodeKey: entry.key,
+						...entry.groupPart === void 0 ? {} : { groupPart: entry.groupPart }
+					});
+					case "group": return (0, react.createElement)(ChatGroupSeat, {
+						...seatProps,
+						key: chatRenderKey(entry),
+						groupKey: entry.key,
+						useChatGroup,
+						useGroupHeaderAction
+					});
+					default: return assertNever(entry);
 				}
-				if (anchorRef.current !== null && firstSeq !== null && firstSeqRef.current !== null && firstSeq < firstSeqRef.current) {
-					const anchor = anchorRef.current;
-					anchorRef.current = null;
-					const row = anchorElement(local, anchor.key);
-					if (row !== null) el.scrollTop += flowTop(row, el) - anchor.top;
-					observedTopRef.current = el.scrollTop;
-					firstSeqRef.current = firstSeq;
-					/* v8 ignore next -- ?? arm: a prepend adds nodes, so the flow list here is never empty. */
-					lastKeyRef.current = lastKey;
-					lastSteeringIdRef.current = lastSteeringId;
-					lastSubmissionIdRef.current = lastSubmissionId;
-					followSigRef.current = followSig;
-					return;
-				}
-				firstSeqRef.current = firstSeq;
-				const appendedUser = lastKey !== lastKeyRef.current && lastNode?.kind === "user";
-				const appendedSteering = lastSteeringId !== null && lastSteeringId !== lastSteeringIdRef.current;
-				const appendedSubmission = lastSubmissionId !== null && lastSubmissionId !== lastSubmissionIdRef.current;
-				const tipMoved = followSigRef.current !== followSig;
-				lastKeyRef.current = lastKey;
-				lastSteeringIdRef.current = lastSteeringId;
-				lastSubmissionIdRef.current = lastSubmissionId;
-				followSigRef.current = followSig;
-				if (appendedUser || appendedSteering || appendedSubmission || tipMoved && atBottomRef.current) toBottom(el);
 			});
-			const onScrollRef = (0, react.useRef)(() => {});
-			onScrollRef.current = () => {
-				const local = listRef.current;
-				/* v8 ignore next -- ref-null guard: the handler only fires while mounted. */
-				if (local === null) return;
-				const el = scrollerOf(local);
-				const floor = Math.max(0, el.scrollHeight - el.clientHeight);
-				const movedByReader = Math.abs(el.scrollTop - Math.min(observedTopRef.current, floor)) > .5;
-				const isAtBottom = movedByReader ? floor - el.scrollTop <= 25 : atBottomRef.current;
-				if (!movedByReader && isAtBottom) {
-					toBottom(el);
-					return;
-				}
-				atBottomRef.current = isAtBottom;
-				setAtBottom(isAtBottom);
-				const position = isAtBottom ? null : scrollPosition(local, el);
-				if (isAtBottom) anchorRef.current = null;
-				else if (anchorRef.current !== null && position !== null) anchorRef.current = {
-					key: position.anchorKey,
-					top: position.anchorTop
-				};
-				if (isAtBottom) chatScroll.save(null);
-				else if (position !== null) chatScroll.save(position);
-				observedTopRef.current = el.scrollTop;
-				scheduleActiveTurn();
-			};
-			(0, react.useEffect)(() => {
-				const local = listRef.current;
-				/* v8 ignore next -- ref-null guard: effect runs after the list node commits. */
-				if (local === null) return;
-				const el = scrollerOf(local);
-				const onScroll = () => {
-					onScrollRef.current();
-				};
-				el.addEventListener("scroll", onScroll, { passive: true });
-				return () => {
-					el.removeEventListener("scroll", onScroll);
-				};
-			}, []);
-			const followRef = (0, react.useRef)(null);
-			followRef.current = () => {
-				const local = listRef.current;
-				if (local !== null && atBottomRef.current) {
-					const el = scrollerOf(local);
-					el.scrollTop = el.scrollHeight;
-					observedTopRef.current = el.scrollTop;
-					chatScroll.save(null);
-				}
-			};
-			(0, react.useEffect)(() => {
-				const column = columnRef.current;
-				const local = listRef.current;
-				if (column === null || local === null || typeof ResizeObserver === "undefined") return;
-				const composer = scrollerOf(local).querySelector("[data-composer-seat]");
-				const observer = new ResizeObserver(() => {
-					followRef.current?.();
-					activeTurnRef.current?.();
-				});
-				observer.observe(column);
-				if (composer !== null) observer.observe(composer);
-				return () => {
-					observer.disconnect();
-				};
-			}, []);
-			(0, react.useEffect)(() => {
-				if (!loadingOlder) anchorRef.current = null;
-			}, [loadingOlder]);
-			const loadOlderAnchored = () => {
-				const local = listRef.current;
-				/* v8 ignore next -- ref-null guard: the paging button renders inside the list tree. */
-				if (local !== null) {
-					const el = scrollerOf(local);
-					const row = pagingAnchor(local, el);
-					if (row !== null && row.dataset.chatAnchorKey !== void 0) anchorRef.current = {
-						key: row.dataset.chatAnchorKey,
-						top: flowTop(row, el)
-					};
-				}
-				loadOlder();
-			};
-			const navigateToTurn = (0, react.useCallback)((item) => {
-				const local = listRef.current;
-				if (local === null) return;
-				const row = anchorElement(local, item.anchorKey);
-				if (row === null) return;
-				const el = scrollerOf(local);
-				el.scrollTop += flowTop(row, el) - 24;
-				observedTopRef.current = el.scrollTop;
-				const landed = loadingOlder ? pagingAnchor(local, el) : null;
-				anchorRef.current = landed === null || landed.dataset.chatAnchorKey === void 0 ? null : {
-					key: landed.dataset.chatAnchorKey,
-					top: flowTop(landed, el)
-				};
-				const isAtBottom = el.scrollHeight - el.scrollTop - el.clientHeight <= 25;
-				atBottomRef.current = isAtBottom;
-				setAtBottom(isAtBottom);
-				setActiveTurn(item.turn);
-				const position = isAtBottom ? null : scrollPosition(local, el);
-				if (isAtBottom) chatScroll.save(null);
-				else if (position !== null) chatScroll.save(position);
-			}, [loadingOlder, chatScroll]);
-			return (0, react_jsx_runtime.jsxs)("div", {
-				className: ChatView_module_css_default.root,
-				children: [(0, react_jsx_runtime.jsxs)("div", {
-					ref: listRef,
-					className: ChatView_module_css_default.scroll,
-					children: [
-						(0, react_jsx_runtime.jsx)(TurnNavigator, {
-							items: turnNavigationItems,
-							activeTurn,
-							onNavigate: navigateToTurn,
-							t
-						}),
-						(0, react_jsx_runtime.jsxs)("div", {
-							ref: columnRef,
-							className: ChatView_module_css_default.column,
-							"data-chat-flow": "",
-							children: [
-								openState === "loading" && (0, react_jsx_runtime.jsx)("div", {
-									className: ChatView_module_css_default.hint,
-									children: t("chat.loadingHistory")
-								}),
-								openState === "error" && openError !== null && (0, react_jsx_runtime.jsx)("div", {
-									className: ChatView_module_css_default.openError,
-									children: t("chat.loadError", {
-										message: openError.message,
-										code: openError.code
-									})
-								}),
-								hasMore && (0, react_jsx_runtime.jsx)("div", {
-									className: ChatView_module_css_default.older,
-									children: (0, react_jsx_runtime.jsx)("button", {
-										type: "button",
-										disabled: loadingOlder,
-										onClick: loadOlderAnchored,
-										children: loadingOlder ? t("loading") : t("chat.loadOlder")
-									})
-								}),
-								order.map((nodeKey) => (0, react_jsx_runtime.jsx)(ChatNodeSeat, {
-									nodeKey,
-									historyIncomplete: hasMore,
-									compactTranscript,
-									useChat,
-									useStore,
-									actions,
-									selectedCallId,
-									cwd,
-									openFile: requestOpenFile,
-									inspectCall,
-									forkAt,
-									renderMessageImages,
-									fileMentions,
-									renderSlot,
-									t
-								}, nodeKey)),
-								running && (0, react_jsx_runtime.jsx)(TurnStatus, {
-									startTime: runningTurnStart,
-									renderSlot,
-									t
-								}),
-								pendingSteering.map((item) => (0, react_jsx_runtime.jsx)(PendingSteeringBubble, {
-									content: item.content,
-									renderMessageImages,
-									t
-								}, item.id)),
-								visibleSubmissions.map((submission) => (0, react_jsx_runtime.jsx)(PendingSubmissionBubble, {
-									submission,
-									renderMessageImages,
-									t
-								}, submission.requestId))
-							]
-						}),
-						!atBottom && (0, react_jsx_runtime.jsx)("div", {
-							className: ChatView_module_css_default.toBottomSlot,
-							children: (0, react_jsx_runtime.jsx)("button", {
-								type: "button",
-								className: ChatView_module_css_default.toBottom,
-								"aria-label": t("chat.toBottom"),
-								onClick: () => {
-									const local = listRef.current;
-									/* v8 ignore next -- ref-null guard: the button only renders alongside the mounted list. */
-									if (local !== null) toBottom(scrollerOf(local));
-								},
-								children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, {})
-							})
-						})
-					]
-				}), fileOpenError !== null && (0, react_jsx_runtime.jsx)(FileOpenErrorDialog, {
-					path: fileOpenError.path,
-					message: fileOpenError.message,
-					busy: fileOpenBusy,
-					onClose: closeFileOpenError,
-					onRetry: () => {
-						requestOpenFile(fileOpenError.path);
-					},
+			const pendingRows = pendingInputs.map((item) => "requestId" in item ? (0, react_jsx_runtime.jsx)(PendingSubmissionBubble, {
+				submission: item,
+				loadImage,
+				renderFactorySlot,
+				t
+			}, item.requestId) : (0, react_jsx_runtime.jsx)(PendingSteeringBubble, {
+				content: item.content,
+				loadImage,
+				renderFactorySlot,
+				t
+			}, item.id));
+			const tail = entries.at(-1);
+			const node = tail?.kind === "node" ? nodeStore.get(tail.key) : void 0;
+			if (node?.kind === "turn-process" && node.location.kind === "turn" && node.location.turn.status === "open" && node.location.turn.turn !== lastInputTurn) {
+				const index = pendingInputs.findIndex((item) => "requestId" in item && item.placement === "transcript");
+				if (index !== -1) rows.splice(rows.length - 1, 0, ...pendingRows.splice(index, 1));
+			}
+			return [
+				...rows,
+				...pendingRows,
+				...running ? [(0, react_jsx_runtime.jsx)(RunningStatus, {
+					renderSlot,
+					startTime: runningStartTime,
 					t
-				})]
-			});
-		}
-		/** In-page Host open-path refusal: the wire reason plus a retry of the same path. */
-		function FileOpenErrorDialog({ path, message, busy, onClose, onRetry, t }) {
-			return (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Modal, {
-				open: true,
-				onClose,
-				closeLabel: t("close"),
-				title: t(isFolderOpenPath(path) ? "fileOpen.folderTitle" : "fileOpen.title"),
-				description: message,
-				footer: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-					variant: "outline",
-					className: ChatView_module_css_default.modalAction,
-					onClick: onClose,
-					children: t("cancel")
-				}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Button, {
-					variant: "primary",
-					className: ChatView_module_css_default.modalAction,
-					disabled: busy,
-					onClick: onRetry,
-					children: t("retry")
-				})] })
-			});
-		}
+				}, "running")] : []
+			];
+		});
 		//#endregion
 		//#region lib/types/client/locale.js
 		/** Chat-owned locale namespace and dictionaries. */
@@ -2305,43 +5718,124 @@ window.__ModuleLoader__.load({
 		const NS = "chat";
 		/** Simplified Chinese dictionary and key-set source of truth. */
 		const zh = {
+			"message.stepProcess.thinking": "正在分析请求",
+			"message.stepProcess.read": "正在读取文件",
+			"message.stepProcess.readImage": "正在读取图片",
+			"message.stepProcess.write": "正在写入文件",
+			"message.stepProcess.search": "正在搜索代码",
+			"message.stepProcess.edit": "正在编辑文件",
+			"message.stepProcess.commands": "正在运行命令",
+			"message.stepProcess.code": "正在运行代码",
+			"message.stepProcess.webSearch": "正在搜索网页",
+			"message.stepProcess.webFetch": "正在访问网页",
+			"message.stepProcess.subagents": "正在协调子智能体",
+			"message.stepProcess.plan": "正在更新计划",
+			"message.stepProcess.questions": "等待你的操作",
+			"message.stepProcess.tools": "正在调用工具",
+			"message.stepProcess.prepare.read": "准备读取文件",
+			"message.stepProcess.prepare.readImage": "准备读取图片",
+			"message.stepProcess.prepare.write": "准备写入文件",
+			"message.stepProcess.prepare.search": "准备搜索代码",
+			"message.stepProcess.prepare.edit": "准备编辑文件",
+			"message.stepProcess.prepare.commands": "准备运行命令",
+			"message.stepProcess.prepare.code": "准备运行代码",
+			"message.stepProcess.prepare.webSearch": "准备搜索网页",
+			"message.stepProcess.prepare.webFetch": "准备访问网页",
+			"message.stepProcess.prepare.subagents": "准备协调子智能体",
+			"message.stepProcess.prepare.plan": "准备更新计划",
+			"message.stepProcess.prepare.questions": "准备提问",
+			"message.stepProcess.prepare.tools": "准备调用工具",
+			"message.stepProcess.done.thinking": "已完成分析",
+			"message.stepProcess.done.read": "已读取文件",
+			"message.stepProcess.done.readImage": "已读取图片",
+			"message.stepProcess.done.write": "已写入文件",
+			"message.stepProcess.done.search": "已搜索代码",
+			"message.stepProcess.done.edit": "修改了文件",
+			"message.stepProcess.done.commands": "执行了命令",
+			"message.stepProcess.done.code": "运行了代码",
+			"message.stepProcess.done.webSearch": "已搜索网页",
+			"message.stepProcess.done.webFetch": "已访问网页",
+			"message.stepProcess.done.subagents": "已协调子智能体",
+			"message.stepProcess.done.plan": "更新了计划",
+			"message.stepProcess.done.questions": "向用户提出了问题",
+			"message.stepProcess.done.tools": "已调用工具",
+			"message.stepProcess.joinTwo": "{first}并{second}",
+			"message.stepProcess.comma": "，",
+			"message.stepProcess.sharedPrefix": "已",
+			"message.stepProcess.more": "{title}等",
+			"message.trigger.request": "收到执行请求",
+			"message.trigger.goal": "继续执行目标",
+			"message.trigger.agent": "收到任务消息",
+			"message.trigger.team": "收到团队消息",
+			"message.trigger.subagent": "子任务状态更新",
+			"message.trigger.github": "收到 GitHub 事件",
+			"message.trigger.webhook": "收到外部事件",
+			"message.trigger.schedule": "自动化任务",
+			"message.trigger.job": "后台任务状态更新",
+			"message.trigger.plugin": "插件状态更新",
+			"message.trigger.explanation": "这条通知触发了本轮回复。",
+			"message.turnProcess.worked": "已完成",
+			"message.turnProcess.took": "已完成，用时 ",
+			"message.turnProcess.failed": "处理失败",
 			"view.chat": "对话",
+			"image.open": "查看大图",
+			"image.loading": "加载图片…",
+			"image.failed": "图片无法预览",
+			"image.dialog": "图片预览",
+			"image.close": "关闭图片预览",
 			"number.groupSeparator": ",",
 			"duration.compactSeconds": "{seconds}秒",
 			"duration.compactMinutes": "{minutes}分{seconds}秒",
 			"duration.milliseconds": "{milliseconds}毫秒",
-			"stats.counts": "{turns} 轮 · {steps} 步",
-			"stats.llm": "LLM {duration}",
-			"stats.toolCall": "工具调用 {duration}",
-			"stats.ttftAverage": "首 token 平均 {duration}",
-			"stats.tokensPerSecond": "{throughput} tok/s",
+			"stats.counts": "{turns} 轮 {steps} 步",
 			"stats.cacheHit": "缓存命中 {percent}%",
-			"stats.tokens": "输入 {input} tok · 输出 {output} tok",
-			"details.title": "详情",
-			"details.close": "关闭详情",
-			"details.empty": "点击消息流中的工具行查看详情",
-			"details.notInWindow": "该调用不在当前窗口内",
-			"details.input": "输入",
-			"details.output": "输出",
-			"details.running": "运行中…",
+			"stats.dialog.title": "会话统计",
+			"stats.dialog.usageTitle": "Token 用量",
+			"stats.dialog.llmTime": "模型用时",
+			"stats.dialog.toolTime": "工具调用用时",
+			"stats.dialog.ttft": "首 token 平均（TTFT）",
+			"stats.dialog.speed": "输出速度（TPS）",
 			"chat.loadingHistory": "载入历史…",
 			"chat.loadError": "历史加载失败：{message}（{code}）",
 			"chat.loadOlder": "加载更早",
 			"chat.toBottom": "回到底部",
-			"chat.deepDiving": "深度求索中...",
+			"chat.deepDiving": "深度求索中",
+			"chat.deepDivingFor": "深度求索中，用时 {duration} ···",
 			"chat.turnNavigation.label": "轮次导航",
 			"chat.turnNavigation.jump": "跳转到第 {turn} 轮",
+			"chat.turnNavigation.jumpLoad": "加载并跳转到第 {turn} 轮",
 			"chat.turnNavigation.turn": "第 {turn} 轮",
-			"settings.transcript.title": "对话显示",
-			"settings.transcript.description": "控制已完成轮次的过程内容",
-			"settings.transcript.normal": "Normal",
-			"settings.transcript.compact": "Compact",
+			"settings.performance.title": "性能与用量",
+			"settings.performance.description": "选择性能与用量信息展示的详细程度",
+			"settings.performance.compact": "简洁",
+			"settings.performance.detailed": "详细",
+			"settings.links.title": "网页链接默认打开方式",
+			"settings.links.description": "对话中网页链接的打开位置",
+			"settings.links.sidebar": "应用内侧边栏",
+			"settings.links.newTab": "默认浏览器",
+			"settings.transcript.title": "工作步骤展示",
+			"settings.transcript.description": "选择希望看到多少工具调用细节",
+			"settings.collapse.title": "工作步骤收起时机",
+			"settings.collapse.description": "选择何时自动收起工作步骤",
+			"settings.collapse.completion": "回答结束后",
+			"settings.collapse.nextInput": "下次有新消息时",
+			"settings.transcript.compact": "简洁",
+			"settings.transcript.standard": "标准",
+			"settings.transcript.detailed": "详细",
+			"settings.transcript.verbose": "完全展开",
 			"fileOpen.title": "无法打开文件",
 			"fileOpen.unknown": "无法打开此文件",
-			"fileOpen.folderTitle": "无法打开文件夹",
-			"fileOpen.folderUnknown": "无法打开此文件夹",
 			"message.extraBlock": "附加内容块",
 			"message.systemPrompt": "系统提示词",
+			"message.systemPromptUpdate": "系统提示词更新",
+			"message.toolAdded": "已添加工具：{name}",
+			"message.toolRemoved": "已移除工具：{name}",
+			"message.toolsAdded": "新增：{names}",
+			"message.toolsAddedCount": "新增 {count} 个",
+			"message.toolsChanged": "新增 {added} 个，移除 {removed} 个",
+			"message.toolsRemoved": "移除：{names}",
+			"message.toolsRemovedCount": "移除 {count} 个",
+			"message.toolsUpdated": "工具已更新",
 			"message.contextInjection": "上下文注入",
 			"message.contextRecall": "跨会话召回",
 			"message.referenceSummary": "引用会话 · {labels}",
@@ -2384,10 +5878,14 @@ window.__ModuleLoader__.load({
 			"message.retry.delay": "重试延迟：",
 			"message.retry.failure": "失败原因：",
 			"message.failure.auth": "API 密钥无效",
+			"message.taskStopped": "任务已停止",
+			"message.failure.accountSignedOut": "任务已因退出 DeepSeek 登录而停止。",
+			"message.failure.interrupted": "DSH 进程在本轮完成前退出（例如被强制结束、崩溃或关闭超时），重新启动后本轮已中止。未完成的工具调用结果未知。",
+			"message.failure.accountSignInRequired": "请先登录 DeepSeek，并确认请求地址支持账号认证。",
+			"message.failure.quota": "当前请求的额度已用尽",
 			"message.turnError": "本轮运行失败",
 			"message.maxTokens": "已达到输出 token 上限",
 			"message.maxTokens.hint": "回答被截断，已有输出保留在对话中。发送“继续”可让模型接着输出。",
-			"message.ranFor": "用时 {duration}",
 			"message.tokensPerSecond": "{tps} tok/s",
 			"message.turnUsage.title": "本轮用量",
 			"message.turnUsage.consumed": "用量 {total}",
@@ -2399,12 +5897,9 @@ window.__ModuleLoader__.load({
 			"message.turnUsage.output": "输出",
 			"message.turnUsage.reasoning": "（其中推理 {tokens}）",
 			"message.turnUsage.count": "{count} tok",
-			"message.turnTime.title": "本轮用时和速度",
-			"message.turnTime.duration": "本轮总用时",
-			"message.turnTime.speed": "输出速度（TPS）",
-			"message.turnTime.ttft": "首 token 用时（TTFT）",
-			"duration.seconds": "{seconds}秒",
-			"duration.minutes": "{minutes}分{seconds}秒",
+			"duration.secondUnit": "秒",
+			"duration.minuteUnit": "分",
+			"duration.hourUnit": "小时",
 			"command.running": "执行中…",
 			"command.failed": "指令失败",
 			"command.done": "已完成",
@@ -2417,43 +5912,124 @@ window.__ModuleLoader__.load({
 		};
 		/** English dictionary, checked against the Chinese key set. */
 		const en = {
+			"message.stepProcess.thinking": "Analyzing the request",
+			"message.stepProcess.read": "Reading files",
+			"message.stepProcess.readImage": "Reading images",
+			"message.stepProcess.write": "Writing files",
+			"message.stepProcess.search": "Searching code",
+			"message.stepProcess.edit": "Editing files",
+			"message.stepProcess.commands": "Running commands",
+			"message.stepProcess.code": "Running code",
+			"message.stepProcess.webSearch": "Searching the web",
+			"message.stepProcess.webFetch": "Visiting web pages",
+			"message.stepProcess.subagents": "Coordinating subagents",
+			"message.stepProcess.plan": "Updating the plan",
+			"message.stepProcess.questions": "Waiting for your action",
+			"message.stepProcess.tools": "Calling tools",
+			"message.stepProcess.prepare.read": "Preparing to read files",
+			"message.stepProcess.prepare.readImage": "Preparing to read images",
+			"message.stepProcess.prepare.write": "Preparing to write files",
+			"message.stepProcess.prepare.search": "Preparing to search code",
+			"message.stepProcess.prepare.edit": "Preparing to edit files",
+			"message.stepProcess.prepare.commands": "Preparing to run commands",
+			"message.stepProcess.prepare.code": "Preparing to run code",
+			"message.stepProcess.prepare.webSearch": "Preparing to search the web",
+			"message.stepProcess.prepare.webFetch": "Preparing to visit web pages",
+			"message.stepProcess.prepare.subagents": "Preparing to coordinate subagents",
+			"message.stepProcess.prepare.plan": "Preparing to update the plan",
+			"message.stepProcess.prepare.questions": "Preparing questions",
+			"message.stepProcess.prepare.tools": "Preparing tool calls",
+			"message.stepProcess.done.thinking": "Analysis completed",
+			"message.stepProcess.done.read": "Read files",
+			"message.stepProcess.done.readImage": "Read images",
+			"message.stepProcess.done.write": "Wrote files",
+			"message.stepProcess.done.search": "Searched code",
+			"message.stepProcess.done.edit": "Edited files",
+			"message.stepProcess.done.commands": "Ran commands",
+			"message.stepProcess.done.code": "Ran code",
+			"message.stepProcess.done.webSearch": "Searched the web",
+			"message.stepProcess.done.webFetch": "Visited web pages",
+			"message.stepProcess.done.subagents": "Coordinated subagents",
+			"message.stepProcess.done.plan": "Updated the plan",
+			"message.stepProcess.done.questions": "Asked questions",
+			"message.stepProcess.done.tools": "Called tools",
+			"message.stepProcess.joinTwo": "{first} and {second}",
+			"message.stepProcess.comma": ", ",
+			"message.stepProcess.sharedPrefix": "",
+			"message.stepProcess.more": "{title}, etc.",
+			"message.trigger.request": "Execution requested",
+			"message.trigger.goal": "Continuing goal",
+			"message.trigger.agent": "Task message received",
+			"message.trigger.team": "Team message received",
+			"message.trigger.subagent": "Subtask status updated",
+			"message.trigger.github": "GitHub event received",
+			"message.trigger.webhook": "External event received",
+			"message.trigger.schedule": "Automation task",
+			"message.trigger.job": "Background task updated",
+			"message.trigger.plugin": "Plugin status updated",
+			"message.trigger.explanation": "This notification triggered this response.",
+			"message.turnProcess.worked": "Completed",
+			"message.turnProcess.took": "Completed in ",
+			"message.turnProcess.failed": "Failed",
 			"view.chat": "Chat",
+			"image.open": "View full image",
+			"image.loading": "Loading image…",
+			"image.failed": "Image preview unavailable",
+			"image.dialog": "Image preview",
+			"image.close": "Close image preview",
 			"number.groupSeparator": ",",
 			"duration.compactSeconds": "{seconds}s",
 			"duration.compactMinutes": "{minutes}m{seconds}s",
 			"duration.milliseconds": "{milliseconds}ms",
-			"stats.counts": "{turns} turns · {steps} steps",
-			"stats.llm": "LLM {duration}",
-			"stats.toolCall": "Tool call {duration}",
-			"stats.ttftAverage": "TTFT avg {duration}",
-			"stats.tokensPerSecond": "{throughput} tok/s",
+			"stats.counts": "{turns} turns {steps} steps",
 			"stats.cacheHit": "Cache hit {percent}%",
-			"stats.tokens": "Input {input} tok · Output {output} tok",
-			"details.title": "Details",
-			"details.close": "Close details",
-			"details.empty": "Click a tool row in the message flow to view its details",
-			"details.notInWindow": "This call is outside the current window",
-			"details.input": "Input",
-			"details.output": "Output",
-			"details.running": "Running…",
+			"stats.dialog.title": "Session statistics",
+			"stats.dialog.usageTitle": "Token usage",
+			"stats.dialog.llmTime": "LLM time",
+			"stats.dialog.toolTime": "Tool time",
+			"stats.dialog.ttft": "Avg time to first token (TTFT)",
+			"stats.dialog.speed": "Tokens per second (TPS)",
 			"chat.loadingHistory": "Loading history…",
 			"chat.loadError": "Failed to load history: {message} ({code})",
 			"chat.loadOlder": "Load earlier",
 			"chat.toBottom": "Back to bottom",
-			"chat.deepDiving": "Deep diving...",
+			"chat.deepDiving": "Deep diving",
+			"chat.deepDivingFor": "Deep diving for {duration} ···",
 			"chat.turnNavigation.label": "Turn navigation",
 			"chat.turnNavigation.jump": "Jump to turn {turn}",
+			"chat.turnNavigation.jumpLoad": "Load and jump to turn {turn}",
 			"chat.turnNavigation.turn": "Turn {turn}",
-			"settings.transcript.title": "Conversation display",
-			"settings.transcript.description": "Controls process content in completed turns",
-			"settings.transcript.normal": "Normal",
+			"settings.performance.title": "Performance & usage",
+			"settings.performance.description": "Choose how much performance and usage information to show",
+			"settings.performance.compact": "Compact",
+			"settings.performance.detailed": "Detailed",
+			"settings.links.title": "Open chat links in",
+			"settings.links.description": "Choose where to open web links",
+			"settings.links.sidebar": "In-App Sidebar",
+			"settings.links.newTab": "Default Browser",
+			"settings.transcript.title": "Work details",
+			"settings.transcript.description": "Choose how much detail to show for tool calls",
+			"settings.collapse.title": "When to Collapse Work Details",
+			"settings.collapse.description": "Choose when to automatically collapse work details",
+			"settings.collapse.completion": "On completion",
+			"settings.collapse.nextInput": "On next message",
 			"settings.transcript.compact": "Compact",
+			"settings.transcript.standard": "Standard",
+			"settings.transcript.detailed": "Detailed",
+			"settings.transcript.verbose": "Verbose",
 			"fileOpen.title": "Couldn’t open file",
 			"fileOpen.unknown": "Couldn’t open this file",
-			"fileOpen.folderTitle": "Couldn’t open folder",
-			"fileOpen.folderUnknown": "Couldn’t open this folder",
 			"message.extraBlock": "Extra content block",
 			"message.systemPrompt": "System prompt",
+			"message.systemPromptUpdate": "System prompt update",
+			"message.toolAdded": "Tool added: {name}",
+			"message.toolRemoved": "Tool removed: {name}",
+			"message.toolsAdded": "Added: {names}",
+			"message.toolsAddedCount": "{count} added",
+			"message.toolsChanged": "{added} added, {removed} removed",
+			"message.toolsRemoved": "Removed: {names}",
+			"message.toolsRemovedCount": "{count} removed",
+			"message.toolsUpdated": "Tools updated",
 			"message.contextInjection": "Context injection",
 			"message.contextRecall": "Session recall",
 			"message.referenceSummary": "Referenced session · {labels}",
@@ -2496,10 +6072,14 @@ window.__ModuleLoader__.load({
 			"message.retry.delay": "Retry delay: ",
 			"message.retry.failure": "Failure reason: ",
 			"message.failure.auth": "API key is invalid",
+			"message.taskStopped": "Task stopped",
+			"message.failure.accountSignedOut": "Stopped because you signed out of DeepSeek.",
+			"message.failure.interrupted": "The DSH process exited before this turn finished (for example, it was killed, crashed, or timed out while shutting down), so the turn was closed when DSH restarted. Unfinished tool calls have unknown outcomes.",
+			"message.failure.accountSignInRequired": "Sign in to DeepSeek and ensure the request destination supports account authentication.",
+			"message.failure.quota": "Request quota exhausted.",
 			"message.turnError": "This turn failed",
 			"message.maxTokens": "Output token limit reached",
 			"message.maxTokens.hint": "The reply was cut off; earlier output is preserved in the conversation. Send \"continue\" to let the model resume.",
-			"message.ranFor": "Ran for {duration}",
 			"message.tokensPerSecond": "{tps} tok/s",
 			"message.turnUsage.title": "Turn usage",
 			"message.turnUsage.consumed": "Usage {total}",
@@ -2511,12 +6091,9 @@ window.__ModuleLoader__.load({
 			"message.turnUsage.output": "Output",
 			"message.turnUsage.reasoning": " ({tokens} reasoning)",
 			"message.turnUsage.count": "{count} tok",
-			"message.turnTime.title": "Turn time and speed",
-			"message.turnTime.duration": "Total run time",
-			"message.turnTime.speed": "Tokens per second (TPS)",
-			"message.turnTime.ttft": "Time to first token (TTFT)",
-			"duration.seconds": "{seconds}s",
-			"duration.minutes": "{minutes}m {seconds}s",
+			"duration.secondUnit": "s",
+			"duration.minuteUnit": "m ",
+			"duration.hourUnit": "h ",
 			"command.running": "Running…",
 			"command.failed": "Command failed",
 			"command.done": "Completed",
@@ -2528,43 +6105,9 @@ window.__ModuleLoader__.load({
 			"clock.ymd": "{y}-{m}-{d}"
 		};
 		//#endregion
-		//#region lib/types/client/chat/use-throttled-visual-update.js
-		/** Frame-throttled scheduling for non-essential visual alignment. */
-		const DEFAULT_INTERVAL_FRAMES = 3;
-		/**
-		* Return a stable scheduler that coalesces visual updates over a frame interval.
-		* @param update - DOM alignment to run after the throttle interval.
-		* @param intervalFrames - frames to wait before applying the latest alignment.
-		* @returns a stable function that schedules the latest update.
-		*/
-		function useThrottledVisualUpdate(update, intervalFrames = DEFAULT_INTERVAL_FRAMES) {
-			const updateRef = (0, react.useRef)(update);
-			updateRef.current = update;
-			const pendingFrameRef = (0, react.useRef)(null);
-			(0, react.useLayoutEffect)(() => () => {
-				if (pendingFrameRef.current === null) return;
-				cancelAnimationFrame(pendingFrameRef.current);
-				pendingFrameRef.current = null;
-			}, []);
-			return (0, react.useCallback)(() => {
-				if (pendingFrameRef.current !== null) return;
-				let remainingFrames = intervalFrames;
-				const advance = () => {
-					remainingFrames -= 1;
-					if (remainingFrames > 0) {
-						pendingFrameRef.current = requestAnimationFrame(advance);
-						return;
-					}
-					pendingFrameRef.current = null;
-					updateRef.current();
-				};
-				pendingFrameRef.current = requestAnimationFrame(advance);
-			}, [intervalFrames]);
-		}
-		//#endregion
-		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/accessibility.module.css.mjs
-		const css$9 = ".ztQcka_visuallyHidden{clip:rect(0 0 0 0);white-space:nowrap;width:1px;height:1px;position:absolute;overflow:hidden}";
-		const tagId$9 = "@deepseek-ai/dsh-client-ui-chat/accessibility.module.css";
+		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/ReasoningRow.module.css.mjs
+		const css$9 = "._Itt_G_root{flex-direction:column;display:flex}._Itt_G_friendlySummary{display:none}body[data-qs-plugin-theme] ._Itt_G_friendlySummary{color:var(--qs-secondary);font-size:12px;display:inline}body[data-qs-plugin-theme] ._Itt_G_summary{display:none}body[data-qs-plugin-theme] ._Itt_G_root{background:var(--qs-chrome);border:1px solid var(--qs-line);border-radius:12px;margin:6px 0}body[data-qs-plugin-theme] ._Itt_G_row{padding:8px 12px}body[data-qs-plugin-theme] ._Itt_G_root[data-state=running] ._Itt_G_row:after{display:none}body[data-qs-plugin-theme] ._Itt_G_thinkBody{border-top:1px solid var(--qs-line);max-height:300px;color:var(--qs-secondary);padding:12px 16px;line-height:1.75;overflow:auto}._Itt_G_root:not([data-expanded]){contain:size layout;height:calc(24px + var(--dsh-content-font-delta,0px))}._Itt_G_row{overflow:hidden}._Itt_G_root[data-expanded] [data-open] [data-disclosure-header]{z-index:1;background:var(--dsw-alias-bg-base);position:sticky;top:0}._Itt_G_leading{flex-shrink:0}._Itt_G_title{font-weight:400}._Itt_G_separator{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}._Itt_G_summary{min-width:0;font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));white-space:nowrap;flex:auto;overflow:hidden}._Itt_G_summaryText{text-overflow:ellipsis;display:block;overflow:hidden}._Itt_G_summary[data-streaming]{mask-image:linear-gradient(90deg,#000 calc(100% - 48px),#0000)}._Itt_G_summary[data-streaming] ._Itt_G_summaryText{text-overflow:clip;overflow:visible}._Itt_G_root:not([data-preview]) ._Itt_G_separator,._Itt_G_root:not([data-preview]) ._Itt_G_summary{display:none}._Itt_G_thinkBody{padding:4px 0 4px calc(22px + var(--dsh-content-font-delta,0px));min-width:0}";
+		const tagId$9 = "@deepseek-ai/dsh-client-ui-chat/ReasoningRow.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$9) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
@@ -2572,69 +6115,90 @@ window.__ModuleLoader__.load({
 			tag.textContent = css$9;
 			document.head.appendChild(tag);
 		}
-		var accessibility_module_css_default = { "visuallyHidden": "ztQcka_visuallyHidden" };
-		//#endregion
-		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/ReasoningRow.module.css.mjs
-		const css$8 = "._5YA6yG_root{flex-direction:column;display:flex}._5YA6yG_friendlySummary{display:none}body[data-qs-plugin-theme] ._5YA6yG_friendlySummary{color:var(--qs-secondary);font-size:12px;display:inline}body[data-qs-plugin-theme] ._5YA6yG_summary{display:none}body[data-qs-plugin-theme] ._5YA6yG_root{background:var(--qs-chrome);border:1px solid var(--qs-line);border-radius:12px;margin:6px 0}body[data-qs-plugin-theme] ._5YA6yG_row{padding:8px 12px}body[data-qs-plugin-theme] ._5YA6yG_root[data-state=running] ._5YA6yG_row:after{display:none}body[data-qs-plugin-theme] ._5YA6yG_thinkBody{border-top:1px solid var(--qs-line);max-height:300px;color:var(--qs-secondary);padding:12px 16px;line-height:1.75;overflow:auto}._5YA6yG_row{position:relative;overflow:hidden}._5YA6yG_root[data-state=running] ._5YA6yG_row:after{content:\"\";inset-block:0;background:linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--dsw-alias-bg-base) 60%, transparent) 55%, transparent 100%);pointer-events:none;width:300px;animation:2.6s ease-out infinite _5YA6yG_dsh-reasoning-row-sweep;position:absolute;left:0}@keyframes _5YA6yG_dsh-reasoning-row-sweep{0%{left:-300px}90%,to{left:100%}}._5YA6yG_leading{flex-shrink:0}._5YA6yG_chevron{color:var(--dsw-alias-label-secondary)}._5YA6yG_title{font-weight:400}._5YA6yG_separator{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}._5YA6yG_summary{min-width:0;color:var(--dsw-alias-label-tertiary);text-overflow:ellipsis;white-space:nowrap;flex:auto;font-size:.875em;line-height:1.7143;overflow:hidden}._5YA6yG_summary[data-follow-end]{text-overflow:clip}._5YA6yG_thinkBody{padding:4px 0 4px calc(22px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-tertiary);white-space:pre-wrap;word-break:break-word;font-size:.875em;line-height:1.7143}@media (prefers-reduced-motion:reduce){._5YA6yG_root[data-state=running] ._5YA6yG_row:after{animation:none}}";
-		const tagId$8 = "@deepseek-ai/dsh-client-ui-chat/ReasoningRow.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$8) + "]") === null) {
-			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$8;
-			tag.textContent = css$8;
-			document.head.appendChild(tag);
-		}
 		var ReasoningRow_module_css_default = {
-			"chevron": "_5YA6yG_chevron",
-			"dsh-reasoning-row-sweep": "_5YA6yG_dsh-reasoning-row-sweep",
-			"friendlySummary": "_5YA6yG_friendlySummary",
-			"leading": "_5YA6yG_leading",
-			"root": "_5YA6yG_root",
-			"row": "_5YA6yG_row",
-			"separator": "_5YA6yG_separator",
-			"summary": "_5YA6yG_summary",
-			"thinkBody": "_5YA6yG_thinkBody",
-			"title": "_5YA6yG_title"
+			"friendlySummary": "_Itt_G_friendlySummary",
+			"leading": "_Itt_G_leading",
+			"root": "_Itt_G_root",
+			"row": "_Itt_G_row",
+			"separator": "_Itt_G_separator",
+			"summary": "_Itt_G_summary",
+			"summaryText": "_Itt_G_summaryText",
+			"thinkBody": "_Itt_G_thinkBody",
+			"title": "_Itt_G_title"
 		};
 		//#endregion
 		//#region lib/types/client/chat/ReasoningRow.js
 		/** Assistant reasoning disclosure, independent of Tool-call presentation. */
+		const THINK_ICON = (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconThinkOutlineRegular, { size: 14 });
 		function firstLine(text) {
 			const newline = text.indexOf("\n");
 			return newline === -1 ? text : text.slice(0, newline);
 		}
-		function latestLine(text) {
-			const visible = text.trimEnd();
-			const newline = visible.lastIndexOf("\n");
-			return newline === -1 ? visible : visible.slice(newline + 1);
+		function latestCompletedParagraphFirstLine(text) {
+			let summary = "";
+			let paragraphStart = 0;
+			const separator = /\r?\n(?:[\t ]*\r?\n)+/g;
+			while (true) {
+				const nextParagraph = separator.exec(text);
+				const paragraphEnd = nextParagraph === null ? text.length : nextParagraph.index + nextParagraph[0].indexOf("\n");
+				const newline = text.indexOf("\n", paragraphStart);
+				if (newline !== -1 && newline <= paragraphEnd) {
+					const candidate = text.slice(paragraphStart, newline).trim();
+					if (candidate !== "") summary = candidate;
+				}
+				if (nextParagraph === null) return summary;
+				paragraphStart = nextParagraph.index + nextParagraph[0].length;
+			}
 		}
 		/**
-		* Render one assistant reasoning block as the Think disclosure row.
+		* Render one assistant reasoning block collapsed until the reader opens it. The
+		* collapsed summary omits double-asterisk markers; expanded content renders
+		* the complete Markdown with secondary typography. A streaming preview advances
+		* when a paragraph's first line completes. Mode changes toggle CSS display without unmounting
+		* collapsed summaries.
 		* @param props.text - complete or streaming reasoning text.
 		* @param props.running - whether this block is the streaming tail.
-		* @param props.t - conversation locale seat for the running status.
+		* @param props.usePresentation - live display-policy selector for this reasoning row.
+		* @param props.useDisclosure - independent open state with enclosing-Turn resets.
+		* @param props.renderSlot - framework renderer for the standard reasoning Body Slot.
+		* @param props.t - conversation locale seat for the disclosure and running status.
 		* @returns the reasoning disclosure.
 		*/
-		function ReasoningRow({ text, running, t }) {
-			const [expanded, setExpanded] = (0, react.useState)(false);
-			const summaryRef = (0, react.useRef)(null);
-			const summary = running ? latestLine(text) : firstLine(text);
-			const scheduleSummaryScroll = useThrottledVisualUpdate(() => {
-				const element = summaryRef.current;
-				if (element === null) return;
-				element.scrollLeft = running ? element.scrollWidth - element.clientWidth : 0;
-			});
-			(0, react.useEffect)(() => {
-				scheduleSummaryScroll();
-			}, [
+		const ReasoningRow = (0, react.memo)(function ReasoningRow({ text, running, usePresentation, useDisclosure, renderSlot, t }) {
+			const { expanded, toggle } = useDisclosure();
+			const summaryText = running ? latestCompletedParagraphFirstLine(text) : firstLine(text);
+			const summary = (0, react.useMemo)(() => summaryText.replaceAll("**", ""), [summaryText]);
+			const preview = usePresentation((policy) => !expanded && summary !== "" && (running || policy.settledReasoningPreview));
+			const collapsedContent = (0, react.useMemo)(() => (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("span", {
+				className: ReasoningRow_module_css_default.separator,
+				"data-shimmer-decoration": true,
+				"aria-hidden": true
+			}), (0, react_jsx_runtime.jsx)("span", {
+				className: ReasoningRow_module_css_default.summary,
+				"data-streaming": running || void 0,
+				children: (0, react_jsx_runtime.jsx)("span", {
+					className: ReasoningRow_module_css_default.summaryText,
+					children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.TextShimmer, { children: summary })
+				})
+			})] }), [running, summary]);
+			const content = (0, react.useMemo)(() => expanded ? (0, react_jsx_runtime.jsx)("div", {
+				className: ReasoningRow_module_css_default.thinkBody,
+				children: renderSlot("conversation.chat.reasoning.body", {
+					text,
+					running
+				})
+			}) : void 0, [
+				expanded,
+				renderSlot,
 				running,
-				scheduleSummaryScroll,
-				summary
+				text
 			]);
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: ReasoningRow_module_css_default.root,
 				"data-variant": "think",
 				"data-state": running ? "running" : "ok",
+				"data-expanded": expanded || void 0,
+				"data-preview": preview || void 0,
 				children: [running && (0, react_jsx_runtime.jsx)("span", {
 					className: accessibility_module_css_default.visuallyHidden,
 					children: t("row.running")
@@ -2642,82 +6206,92 @@ window.__ModuleLoader__.load({
 					rowClassName: ReasoningRow_module_css_default.row,
 					leadingClassName: ReasoningRow_module_css_default.leading,
 					titleClassName: ReasoningRow_module_css_default.title,
-					chevronClassName: ReasoningRow_module_css_default.chevron,
-					icon: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconThinkOutline14, { size: 14 }),
+					icon: THINK_ICON,
 					title: t("message.think"),
+					running,
 					open: expanded,
 					expandable: true,
 					expandOnRowClick: true,
-					onToggle: () => {
-						setExpanded((value) => !value);
-					},
-					collapsedContent: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-						(0, react_jsx_runtime.jsx)("span", {
-							className: ReasoningRow_module_css_default.separator,
-							"aria-hidden": true
-						}),
-						(0, react_jsx_runtime.jsx)("span", {
-							className: ReasoningRow_module_css_default.friendlySummary,
-							children: "展开查看分析过程"
-						}),
-						(0, react_jsx_runtime.jsx)("span", {
-							ref: summaryRef,
-							className: ReasoningRow_module_css_default.summary,
-							"data-follow-end": running || void 0,
-							children: summary
-						})
-					] }),
-					children: (0, react_jsx_runtime.jsx)("div", {
-						className: ReasoningRow_module_css_default.thinkBody,
-						children: text
-					})
+					onToggle: toggle,
+					collapsedContent,
+					children: content
 				})]
 			});
-		}
+		});
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/AssistantMarkdown.module.css.mjs
-		const css$7 = ".chqFnq_root{--dsh-content-font-size:calc(14px * var(--dsh-conversation-text-scale,1));--dsh-content-font-delta:calc(var(--dsh-content-font-size) - 14px);--dsh-content-font-size-secondary:min(calc(var(--dsh-content-font-size) - 1px), max(13px, calc(var(--dsh-content-font-size) - 2px)));--dsh-content-font-delta-secondary:calc(var(--dsh-content-font-size-secondary) - 13px);--dsw-font-markdown-h1:700 calc(21px + var(--dsh-content-font-delta)) / calc(30px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-h2:700 calc(19px + var(--dsh-content-font-delta)) / calc(28px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-h3:700 calc(18px + var(--dsh-content-font-delta)) / calc(26px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-h4:600 var(--dsh-content-font-size) / calc(24px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-base:var(--dsh-content-font-size) / calc(24px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-base-strong:600 var(--dsh-content-font-size) / calc(24px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-table:var(--dsh-content-font-size-secondary) / calc(22px + var(--dsh-content-font-delta-secondary)) var(--dsw-font-family);--dsw-font-markdown-table-head:500 var(--dsh-content-font-size-secondary) / calc(22px + var(--dsh-content-font-delta-secondary)) var(--dsw-font-family);font-size:var(--dsh-conversation-text-base-size,16px);color:var(--dsw-alias-label-primary);flex-direction:column;line-height:1.75;display:flex}.chqFnq_body{flex-direction:column;gap:16px;display:flex}.chqFnq_body .md-table-wide{--dsh-table-spare:max(0px, calc((100cqw - var(--dsh-chat-content-width)) / 2));--dsh-table-lead:calc(var(--dsh-table-spare) + min(var(--dsh-chat-content-width), 100cqw) - 100%);box-sizing:border-box;width:calc(100% + var(--dsh-table-lead) + var(--dsh-table-spare));max-width:none;margin-left:calc(-1 * var(--dsh-table-lead));padding-left:var(--dsh-table-lead)}.chqFnq_body>[data-turn-process-inline][hidden]{margin-bottom:-16px}.chqFnq_stopped{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-tertiary);border-radius:6px;align-self:flex-start;padding:0 6px;font-size:11px;line-height:18px}.chqFnq_actions{margin-top:16px;margin-left:-6px}";
-		const tagId$7 = "@deepseek-ai/dsh-client-ui-chat/AssistantMarkdown.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$7) + "]") === null) {
+		const css$8 = ".xuxf8q_root{--dsh-content-font-size:calc(14px * var(--dsh-conversation-text-scale,1));--dsh-content-font-delta:calc(var(--dsh-content-font-size) - 14px);--dsh-content-font-size-secondary:min(calc(var(--dsh-content-font-size) - 1px), max(13px, calc(var(--dsh-content-font-size) - 2px)));--dsh-content-font-delta-secondary:calc(var(--dsh-content-font-size-secondary) - 13px);--dsw-font-markdown-h1:700 calc(21px + var(--dsh-content-font-delta)) / calc(30px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-h2:700 calc(19px + var(--dsh-content-font-delta)) / calc(28px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-h3:700 calc(18px + var(--dsh-content-font-delta)) / calc(26px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-h4:600 var(--dsh-content-font-size) / calc(24px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-base:var(--dsh-content-font-size) / calc(24px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-base-strong:600 var(--dsh-content-font-size) / calc(24px + var(--dsh-content-font-delta)) var(--dsw-font-family);--dsw-font-markdown-table:var(--dsh-content-font-size-secondary) / calc(22px + var(--dsh-content-font-delta-secondary)) var(--dsw-font-family);--dsw-font-markdown-table-head:500 var(--dsh-content-font-size-secondary) / calc(22px + var(--dsh-content-font-delta-secondary)) var(--dsw-font-family);font-size:var(--dsh-conversation-text-base-size,16px);color:var(--dsw-alias-label-primary);flex-direction:column;line-height:1.75;display:flex}.xuxf8q_body{flex-direction:column;gap:16px;display:flex}.xuxf8q_body .md-table-wide{--dsh-table-spare:max(0px, calc((100cqw - var(--dsh-chat-content-width)) / 2));--dsh-table-lead:calc(var(--dsh-table-spare) + min(var(--dsh-chat-content-width), 100cqw) - 100%);box-sizing:border-box;width:calc(100% + var(--dsh-table-lead) + var(--dsh-table-spare));max-width:none;margin-left:calc(-1 * var(--dsh-table-lead));padding-left:var(--dsh-table-lead)}.xuxf8q_body .md-table-wide>table{z-index:1;position:relative}.xuxf8q_body>[data-turn-process-inline][hidden]{margin-bottom:-16px}.xuxf8q_stopped{border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-tertiary);align-self:flex-start;padding:0 6px;font-size:11px;line-height:18px}.xuxf8q_actions{margin-top:16px;margin-left:-6px}";
+		const tagId$8 = "@deepseek-ai/dsh-client-ui-chat/AssistantMarkdown.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$8) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$7;
-			tag.textContent = css$7;
+			tag.dataset.pluginCss = tagId$8;
+			tag.textContent = css$8;
 			document.head.appendChild(tag);
 		}
 		var AssistantMarkdown_module_css_default = {
-			"actions": "chqFnq_actions",
-			"body": "chqFnq_body",
-			"root": "chqFnq_root",
-			"stopped": "chqFnq_stopped"
+			"actions": "xuxf8q_actions",
+			"body": "xuxf8q_body",
+			"root": "xuxf8q_root",
+			"stopped": "xuxf8q_stopped"
 		};
 		//#endregion
 		//#region lib/types/client/chat/AssistantMarkdown.js
-		/** Reasoning block as the Think variant summary row (figma 39:28304). */
-		const AssistantMarkdown = (0, react.memo)(function AssistantMarkdown({ blocks, streaming, interrupted, renderMessageImages, reasoningHidden = false, revealProcess, mentions, t }) {
+		/**
+		* Standalone fallback for image destinations (query/fragment suffixes are ignored).
+		* Chat fileImages resolves decoded file references against cwd; pathImages also
+		* serves this component outside that provider and accepts legacy image URL suffixes.
+		* Resolve an authored absolute image path against the document's file API.
+		* @param base - canonical `document.baseURI` at render time.
+		* @param value - authored Markdown destination; URL escapes are decoded once.
+		* @returns an absolute Web or Desktop file-API URL, or undefined for unsupported
+		* protocols and non-local paths.
+		*/
+		function localPathMediaUrl(base, value) {
+			let path;
+			try {
+				path = decodeURIComponent(value.split(/[?#]/u)[0] ?? "");
+			} catch {
+				return;
+			}
+			return fileMediaUrl(base, path);
+		}
+		/** Renders non-blank reasoning blocks as independent disclosures alongside the response. */
+		const AssistantMarkdown = (0, react.memo)(function AssistantMarkdown({ blocks, streaming, interrupted, loadImage, groupPart, useDisclosure, reasoningHidden = false, usePresentation, revealProcess, mentions, renderSlot, useGroupAction, t }) {
 			const labels = (0, react.useMemo)(() => markdownLabels(t), [t]);
+			const pathImages = (0, react.useMemo)(() => {
+				return { resolve: (value) => localPathMediaUrl(document.baseURI, value) };
+			}, []);
 			const last = blocks.length - 1;
 			if (!(streaming || interrupted === true || blocks.some((block) => block.kind !== "tool-call"))) return null;
 			const rendered = [];
 			for (let i = 0; i < blocks.length; i++) {
 				const block = blocks[i];
 				if (block === void 0) continue;
+				if (groupPart === "reasoning" && block.kind !== "reasoning") continue;
+				if (groupPart === "response" && block.kind === "reasoning") continue;
 				switch (block.kind) {
 					case "text":
 						rendered.push((0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.MarkdownText, {
 							text: block.text,
 							streaming,
 							labels,
-							fileMentions: mentions
+							fileMentions: mentions,
+							pathImages
 						}, i));
 						break;
 					case "reasoning":
+						if (block.text.trim() === "") break;
 						rendered.push((0, react_jsx_runtime.jsx)(ProcessReasoning, {
 							hidden: reasoningHidden,
 							reveal: revealProcess,
+							useGroupAction,
 							children: (0, react_jsx_runtime.jsx)(ReasoningRow, {
 								text: block.text,
 								running: streaming && i === last,
+								usePresentation,
+								useDisclosure,
+								renderSlot,
 								t
 							})
 						}, i));
@@ -2731,8 +6305,9 @@ window.__ModuleLoader__.load({
 							group.push(next);
 							i += 1;
 						}
-						rendered.push((0, react_jsx_runtime.jsx)(react.Fragment, { children: renderMessageImages({
+						rendered.push((0, react_jsx_runtime.jsx)(react.Fragment, { children: renderSlot("conversation.chat.message.images", {
 							images: group.map(({ attachment }) => ({ attachment })),
+							loadImage,
 							align: "start"
 						}) }, start));
 						break;
@@ -2751,16 +6326,16 @@ window.__ModuleLoader__.load({
 				"data-streaming": streaming || void 0,
 				children: (0, react_jsx_runtime.jsxs)("div", {
 					className: AssistantMarkdown_module_css_default.body,
-					children: [rendered, interrupted && (0, react_jsx_runtime.jsx)("span", {
+					children: [rendered, interrupted && (groupPart === void 0 || groupPart === "response" || !blocks.some((block) => block.kind !== "reasoning" && block.kind !== "tool-call")) && (0, react_jsx_runtime.jsx)("span", {
 						className: AssistantMarkdown_module_css_default.stopped,
 						children: t("message.stopped")
 					})]
 				})
 			});
 		});
-		function ProcessReasoning({ hidden, reveal, children }) {
+		function ProcessReasoning({ hidden, reveal, useGroupAction, children }) {
 			return (0, react_jsx_runtime.jsx)("div", {
-				ref: useSearchableHidden(hidden, reveal ?? NOOP),
+				ref: useGroupAction(hidden, reveal ?? NOOP),
 				"data-turn-process-inline": hidden || void 0,
 				children
 			});
@@ -2839,7 +6414,7 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region lib/types/client/chat/AssistantNodeView.js
 		/** Streaming, settled, and interrupted Assistant states share one keyed renderer instance. */
-		const AssistantNodeView = (0, react.memo)(function AssistantNodeView({ node, useTurnData, useSession, turnProcess, openFile, renderMessageImages, fileMentions, renderSlot, t }) {
+		const AssistantNodeView = (0, react.memo)(function AssistantNodeView({ node, groupPart, useDisclosure, useGroupAction, useTurnData, turnProcess, openFile, loadImage, fileMentions, usePresentation, useSession, renderSlot, t }) {
 			const data = node.data;
 			const sessionId = useSession((snapshot) => snapshot.sessionId);
 			const turn = node.location.kind === "turn" || node.location.kind === "step" ? node.location.turn : void 0;
@@ -2877,10 +6452,15 @@ window.__ModuleLoader__.load({
 			}, [turnProcess]);
 			return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(AssistantMarkdown, {
 				blocks: delivery.blocks,
+				groupPart,
+				useDisclosure,
 				streaming: data.status === "running",
 				interrupted: data.status === "interrupted",
-				renderMessageImages,
+				loadImage,
 				reasoningHidden,
+				useGroupAction,
+				usePresentation,
+				renderSlot,
 				revealProcess,
 				mentions,
 				t
@@ -2895,44 +6475,70 @@ window.__ModuleLoader__.load({
 		});
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/GenericCommandCard.module.css.mjs
-		const css$6 = "._1-xeRq_root{flex-direction:column;display:flex}._1-xeRq_row{position:relative;overflow:hidden}._1-xeRq_root[data-state=running] ._1-xeRq_row:after{content:\"\";inset-block:0;background:linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--dsw-alias-bg-base) 60%, transparent) 55%, transparent 100%);pointer-events:none;width:300px;animation:2.6s ease-out infinite _1-xeRq_dsh-command-row-sweep;position:absolute;left:0}@keyframes _1-xeRq_dsh-command-row-sweep{0%{left:-300px}90%,to{left:100%}}._1-xeRq_leading{flex-shrink:0}._1-xeRq_chevron{color:var(--dsw-alias-label-secondary)}._1-xeRq_title{font-weight:400}._1-xeRq_separator{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}._1-xeRq_summary{min-width:0;color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;flex:auto;overflow:hidden}._1-xeRq_summary[data-error],._1-xeRq_body[data-error]{color:var(--dsw-alias-state-error-primary)}._1-xeRq_body{border:1px solid var(--dsw-alias-border-l1);background:var(--dsw-alias-markdown-code-block);max-height:260px;color:var(--dsw-alias-label-primary);font:var(--dsw-font-markdown-code-block-small);white-space:pre-wrap;border-radius:12px;margin:4px 0 4px 4px;padding:12px 16px;overflow:auto}@media (prefers-reduced-motion:reduce){._1-xeRq_root[data-state=running] ._1-xeRq_row:after{animation:none}}";
-		const tagId$6 = "@deepseek-ai/dsh-client-ui-chat/GenericCommandCard.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$6) + "]") === null) {
+		const css$7 = ".Fl-ARq_root{flex-direction:column;display:flex}.Fl-ARq_leading{flex-shrink:0}.Fl-ARq_title{font-weight:400}.Fl-ARq_separator{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}.Fl-ARq_summary{min-width:0;font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;flex:auto;overflow:hidden}.Fl-ARq_summary[data-error],.Fl-ARq_body[data-error]{color:var(--dsw-alias-state-error-primary)}.Fl-ARq_body{border:.5px solid var(--dsw-alias-border-l1);border-radius:var(--dsw-radius-lg);background:var(--dsw-alias-markdown-code-block);max-height:260px;color:var(--dsw-alias-label-primary);font:var(--dsw-font-markdown-code-block-small);white-space:pre-wrap;margin:4px 0 4px 4px;padding:12px 16px;overflow:auto}";
+		const tagId$7 = "@deepseek-ai/dsh-client-ui-chat/GenericCommandCard.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$7) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$6;
-			tag.textContent = css$6;
+			tag.dataset.pluginCss = tagId$7;
+			tag.textContent = css$7;
 			document.head.appendChild(tag);
 		}
 		var GenericCommandCard_module_css_default = {
-			"body": "_1-xeRq_body",
-			"chevron": "_1-xeRq_chevron",
-			"dsh-command-row-sweep": "_1-xeRq_dsh-command-row-sweep",
-			"leading": "_1-xeRq_leading",
-			"root": "_1-xeRq_root",
-			"row": "_1-xeRq_row",
-			"separator": "_1-xeRq_separator",
-			"summary": "_1-xeRq_summary",
-			"title": "_1-xeRq_title"
+			"body": "Fl-ARq_body",
+			"leading": "Fl-ARq_leading",
+			"root": "Fl-ARq_root",
+			"separator": "Fl-ARq_separator",
+			"summary": "Fl-ARq_summary",
+			"title": "Fl-ARq_title"
 		};
 		//#endregion
 		//#region lib/types/client/chat/GenericCommandCard.js
+		const COMMAND_ICON = (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutlineRegular, { size: 14 });
 		/** Node state → row state semantic (running while unsettled; outcome kind after). */
 		function stateOf(outcome) {
 			if (outcome === null) return "running";
 			return outcome.kind === "error" ? "error" : "ok";
 		}
-		function leadingFor(state) {
-			return state === "error" ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.StateDot, { state: "error" }) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconApiOutline14, { size: 14 });
-		}
-		function GenericCommandCard({ node, t, runningSummary }) {
+		/**
+		* Render a command summary and its lazily mounted multiline output.
+		* @param props - command, locale, and optional running label.
+		* @returns the command disclosure.
+		*/
+		const GenericCommandCard = (0, react.memo)(function GenericCommandCard({ node, t, runningSummary }) {
 			const [expanded, setExpanded] = (0, react.useState)(false);
 			const text = node.outcome?.text;
 			const summary = node.outcome === null ? runningSummary ?? t("command.running") : text ?? (node.outcome.kind === "error" ? t("command.failed") : t("command.done"));
 			const title = node.name ?? t("command.title");
 			const state = stateOf(node.outcome);
+			const running = state === "running";
 			const body = text !== void 0 && text.includes("\n") ? text : null;
 			const open = expanded && body !== null;
+			const toggle = (0, react.useCallback)(() => {
+				setExpanded((value) => !value);
+			}, []);
+			const collapsedContent = (0, react.useMemo)(() => (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("span", {
+				className: GenericCommandCard_module_css_default.separator,
+				"data-shimmer-decoration": true,
+				"aria-hidden": true
+			}), (0, react_jsx_runtime.jsx)("span", {
+				className: GenericCommandCard_module_css_default.summary,
+				"data-error": state === "error" || void 0,
+				children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.TextShimmer, { children: summary })
+			})] }), [
+				running,
+				state,
+				summary
+			]);
+			const content = (0, react.useMemo)(() => open ? (0, react_jsx_runtime.jsx)("pre", {
+				className: GenericCommandCard_module_css_default.body,
+				"data-error": state === "error" || void 0,
+				children: body
+			}) : void 0, [
+				body,
+				open,
+				state
+			]);
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: GenericCommandCard_module_css_default.root,
 				"data-variant": "others",
@@ -2947,36 +6553,22 @@ window.__ModuleLoader__.load({
 						children: t("row.failed")
 					}),
 					(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.DisclosureRow, {
-						rowClassName: GenericCommandCard_module_css_default.row,
 						leadingClassName: GenericCommandCard_module_css_default.leading,
 						titleClassName: GenericCommandCard_module_css_default.title,
-						chevronClassName: GenericCommandCard_module_css_default.chevron,
-						icon: leadingFor(state),
+						icon: COMMAND_ICON,
 						title,
+						running,
 						open,
 						expandable: body !== null,
 						expandOnRowClick: true,
 						keepContentWhenOpen: true,
-						onToggle: () => {
-							setExpanded((value) => !value);
-						},
-						collapsedContent: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("span", {
-							className: GenericCommandCard_module_css_default.separator,
-							"aria-hidden": true
-						}), (0, react_jsx_runtime.jsx)("span", {
-							className: GenericCommandCard_module_css_default.summary,
-							"data-error": state === "error" || void 0,
-							children: summary
-						})] }),
-						children: (0, react_jsx_runtime.jsx)("pre", {
-							className: GenericCommandCard_module_css_default.body,
-							"data-error": state === "error" || void 0,
-							children: body
-						})
+						onToggle: toggle,
+						collapsedContent,
+						children: content
 					})
 				]
 			});
-		}
+		});
 		//#endregion
 		//#region lib/types/client/chat/CompactionCommandCard.js
 		/** Render one manual compaction lifecycle without duplicating its checkpoint marker. */
@@ -3027,21 +6619,49 @@ window.__ModuleLoader__.load({
 			});
 		});
 		//#endregion
+		//#region lib/types/client/chat/ReasoningContent.js
+		/** Official reasoning content and its default Body Slot adapter. */
+		/**
+		* Render compact reasoning with caller-supplied labels or Chat's defaults.
+		* @param props - display text, streaming state, optional localized labels, and the Factory's locale seat; no Session is required.
+		* @returns the standard reasoning content; supplied labels are used without merging defaults.
+		*/
+		const ReasoningContent = (0, react.memo)(function ReasoningContent({ text, running, labels, t }) {
+			return (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.MarkdownText, {
+				text,
+				streaming: running,
+				labels: (0, react.useMemo)(() => labels ?? markdownLabels(t), [labels, t]),
+				variant: "compact"
+			});
+		});
+		/**
+		* Render the default Body through the same Factory available to third-party wrappers.
+		* @param props - original reasoning and the framework's Factory renderer.
+		* @returns an occurrence of the official reasoning Content Factory.
+		*/
+		function DefaultReasoningBody({ text, running, renderFactorySlot }) {
+			return renderFactorySlot("conversation.chat.reasoning.content", {
+				text,
+				running
+			});
+		}
+		//#endregion
 		//#region lib/types/client/chat/SystemPromptRow.js
 		/**
 		* Render one complete system prompt as a collapsed disclosure whose expanded
 		* body is the same opaque context chrome: 141px code-block scrollport and
-		* model-facing text with its real line breaks.
-		* @param props - Complete prompt text and the locale seat.
+		* model-facing text with its real line breaks. An in-history update uses the
+		* same row under its own title.
+		* @param props - Complete prompt text, whether it is an update, and the locale seat.
 		* @returns The system-prompt disclosure row.
 		*/
-		function SystemPromptRow({ text, t }) {
+		function SystemPromptRow({ text, update = false, t }) {
 			const [open, setOpen] = (0, react.useState)(false);
 			return (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.DisclosureRow, {
 				className: ContextInjectionRow_module_css_default.root,
-				icon: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconBrowseOutline16, { size: 14 }),
+				icon: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconBrowseOutlineRegular, { size: 14 }),
 				chevronClassName: ContextInjectionRow_module_css_default.chevron,
-				title: t("message.systemPrompt"),
+				title: t(update ? "message.systemPromptUpdate" : "message.systemPrompt"),
 				open,
 				expandable: true,
 				expandOnRowClick: true,
@@ -3066,38 +6686,49 @@ window.__ModuleLoader__.load({
 		const SystemPromptNodeView = (0, react.memo)(function SystemPromptNodeView({ node, t }) {
 			return (0, react_jsx_runtime.jsx)(SystemPromptRow, {
 				text: node.data.text,
+				update: node.data.update === true,
 				t
 			});
 		});
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/TurnProcessNodeView.module.css.mjs
-		const css$5 = ".z9efRq_root{box-sizing:border-box;border:none;border-bottom:1px solid var(--dsw-alias-border-l2);width:100%;min-width:0;height:33px;color:var(--dsw-alias-label-secondary);cursor:pointer;text-align:left;background:0 0;align-items:center;padding:0 0 8px;display:flex}body[data-qs-plugin-theme] .z9efRq_root{border:1px solid var(--qs-line);background:var(--qs-chrome);width:max-content;max-width:100%;height:auto;min-height:36px;color:var(--qs-secondary);border-radius:11px;margin:10px 0 14px;padding:7px 12px}body[data-qs-plugin-theme] .z9efRq_root:hover{color:var(--qs-accent);border-color:var(--qs-accent)}body[data-qs-plugin-theme] .z9efRq_label{font-size:12px}.z9efRq_root:not([data-open]){margin-bottom:8px}.z9efRq_chevron{width:16px;height:16px;color:var(--dsw-alias-label-tertiary);flex:none;margin-left:6px;transition:transform .1s;transform:rotate(-90deg)}.z9efRq_root[data-open] .z9efRq_chevron{transform:rotate(0)}.z9efRq_label{text-overflow:ellipsis;white-space:nowrap;min-width:0;font-size:14px;line-height:24px;overflow:hidden}@media (prefers-reduced-motion:reduce){.z9efRq_chevron{transition:none}}";
-		const tagId$5 = "@deepseek-ai/dsh-client-ui-chat/TurnProcessNodeView.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$5) + "]") === null) {
+		const css$6 = ".FWDEAG_root{box-sizing:border-box;width:100%;min-width:0;height:calc(33px + var(--dsh-content-font-delta,0px));border:none;border-bottom:.5px solid var(--dsw-alias-border-l2);color:var(--dsw-alias-label-tertiary);font:inherit;font-size:var(--dsh-content-font-size,14px);cursor:pointer;text-align:left;background:0 0;align-items:center;padding:0 0 8px;transition:color .1s;display:flex}.FWDEAG_root:disabled{cursor:default}body[data-qs-plugin-theme] .FWDEAG_root{border:1px solid var(--qs-line);background:var(--qs-chrome);width:max-content;max-width:100%;height:auto;min-height:36px;color:var(--qs-secondary);border-radius:11px;margin:10px 0 14px;padding:7px 12px}body[data-qs-plugin-theme] .FWDEAG_root:hover{color:var(--qs-accent);border-color:var(--qs-accent)}body[data-qs-plugin-theme] .FWDEAG_label{font-size:12px}.FWDEAG_root:hover:not(:disabled){color:var(--dsw-alias-label-secondary)}.FWDEAG_chevron{width:14px;height:14px;color:inherit;flex:none;margin-left:4px;transition:transform .1s}.FWDEAG_root[data-open] .FWDEAG_chevron{transform:rotate(180deg)}.FWDEAG_label{min-width:0;font-size:inherit;line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.FWDEAG_durationNumber{font-family:var(--ds-font-family-code);font-variant-numeric:tabular-nums}@media (prefers-reduced-motion:reduce){.FWDEAG_root,.FWDEAG_chevron{transition:none}}";
+		const tagId$6 = "@deepseek-ai/dsh-client-ui-chat/TurnProcessNodeView.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$6) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$5;
-			tag.textContent = css$5;
+			tag.dataset.pluginCss = tagId$6;
+			tag.textContent = css$6;
 			document.head.appendChild(tag);
 		}
 		var TurnProcessNodeView_module_css_default = {
-			"chevron": "z9efRq_chevron",
-			"label": "z9efRq_label",
-			"root": "z9efRq_root"
+			"chevron": "FWDEAG_chevron",
+			"durationNumber": "FWDEAG_durationNumber",
+			"label": "FWDEAG_label",
+			"root": "FWDEAG_root"
 		};
 		//#endregion
 		//#region lib/types/client/chat/TurnProcessNodeView.js
-		/** Turn-level process disclosure controller. */
+		/** Settled Turn duration and process disclosure above its content. */
 		const TurnProcessNodeView = (0, react.memo)(function TurnProcessNodeView({ node, turnProcess, t }) {
 			if (turnProcess === void 0) throw new Error("turn-process node requires Turn process owner state");
-			if (!turnProcess.foldable) return null;
-			const open = turnProcess.open;
-			const labels = [];
-			if (node.data.toolCallCount > 0) labels.push(t(node.data.toolCallCount === 1 ? "message.turnProcess.toolCalls.one" : "message.turnProcess.toolCalls.other", { count: node.data.toolCallCount }));
-			if (node.data.messageCount > 0) labels.push(t(node.data.messageCount === 1 ? "message.turnProcess.messages.one" : "message.turnProcess.messages.other", { count: node.data.messageCount }));
-			if (node.data.subagentCount > 0) labels.push(t(node.data.subagentCount === 1 ? "message.turnProcess.subagents.one" : "message.turnProcess.subagents.other", { count: node.data.subagentCount }));
-			const label = labels.length === 0 ? t("message.turnProcess.thoughtForAWhile") : labels.join(t("message.turnProcess.separator"));
-			return (0, react_jsx_runtime.jsxs)("button", {
+			const open = !turnProcess.foldable || turnProcess.open;
+			const turn = node.location.kind === "turn" || node.location.kind === "step" ? node.location.turn : void 0;
+			if (turn?.status !== "closed") return null;
+			const canCollapse = turnProcess.foldable && turnProcess.hasContent && !turnProcessAlwaysOpen(node);
+			const reason = turn.end?.data.reason.kind;
+			const stopped = reason === "aborted" || reason === "interrupted";
+			const elapsedMs = turn.start === void 0 || turn.end === void 0 ? void 0 : Math.max(1e3, turn.end.time - turn.start.time);
+			const duration = elapsedMs === void 0 || stopped || reason === "error" ? void 0 : formatRunDuration(elapsedMs, t);
+			const label = stopped ? t("message.stopped") : reason === "error" ? t("message.turnProcess.failed") : duration === void 0 ? t("message.turnProcess.worked") : t("message.turnProcess.took");
+			const announcement = stopped ? t("message.stopped") : reason === "error" ? t("message.turnProcess.failed") : t("message.turnProcess.worked");
+			return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("span", {
+				className: accessibility_module_css_default.visuallyHidden,
+				role: "status",
+				"aria-live": "polite",
+				"aria-atomic": "true",
+				children: announcement
+			}), (0, react_jsx_runtime.jsxs)("button", {
 				type: "button",
 				className: TurnProcessNodeView_module_css_default.root,
 				"data-open": open || void 0,
@@ -3105,16 +6736,20 @@ window.__ModuleLoader__.load({
 				"data-turn-process-messages": node.data.messageCount,
 				"data-turn-process-tool-calls": node.data.toolCallCount,
 				"data-turn-process-subagents": node.data.subagentCount,
-				"aria-expanded": open,
+				disabled: !canCollapse,
+				"aria-expanded": turnProcess.hasContent ? open : void 0,
 				onClick: (event) => {
 					event.currentTarget.focus();
 					turnProcess.setOpen(!open);
 				},
-				children: [(0, react_jsx_runtime.jsx)("span", {
+				children: [(0, react_jsx_runtime.jsxs)("span", {
 					className: TurnProcessNodeView_module_css_default.label,
-					children: label
-				}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, { className: TurnProcessNodeView_module_css_default.chevron })]
-			});
+					children: [label, duration?.map((part, index) => (0, react_jsx_runtime.jsx)("span", {
+						className: part.numeric ? TurnProcessNodeView_module_css_default.durationNumber : void 0,
+						children: part.text
+					}, index))]
+				}), canCollapse && (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutlineRegular, { className: TurnProcessNodeView_module_css_default.chevron })]
+			})] });
 		});
 		//#endregion
 		//#region lib/types/client/chat/token-format.js
@@ -3198,37 +6833,7 @@ window.__ModuleLoader__.load({
 			return `99.${"9".repeat(distinguishingPlaces - 1)}${10 - roundedLoss}`;
 		}
 		//#endregion
-		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/TurnUsagePanel.module.css.mjs
-		const css$4 = ".clC_ta_root{min-width:0;display:inline-flex}.clC_ta_root+.clC_ta_root{margin-left:-6px}.clC_ta_trigger{min-width:0;height:calc(28px + var(--dsh-content-font-delta,0px));color:var(--dsw-alias-label-tertiary);font-size:var(--dsh-content-font-size-secondary,13px);font-variant-numeric:tabular-nums;line-height:calc(24px + var(--dsh-content-font-delta,0px));white-space:nowrap;cursor:pointer;background:0 0;border:none;border-radius:28px;align-items:center;gap:4px;padding:6px 8px;display:inline-flex}.clC_ta_label{text-overflow:ellipsis;min-width:0;overflow:hidden}.clC_ta_trigger svg{width:calc(15px + var(--dsh-content-font-delta,0px));height:calc(15px + var(--dsh-content-font-delta,0px));flex:none}.clC_ta_trigger:hover,.clC_ta_trigger[aria-expanded=true]{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-secondary)}@media (width<=480px){.clC_ta_trigger{width:calc(28px + var(--dsh-content-font-delta,0px));justify-content:center;padding:6px}.clC_ta_trigger .clC_ta_label{display:none}.clC_ta_root+.clC_ta_root{margin-left:0}}.clC_ta_panel{z-index:1100;box-sizing:border-box;border:1px solid var(--dsw-alias-border-inverted);background:var(--dsw-specific-menu);width:max-content;min-width:min(300px,100vw - 24px);max-width:min(440px,100vw - 24px);box-shadow:var(--dsw-shadow-lv3);color:var(--dsw-alias-label-secondary);cursor:default;border-radius:12px;padding:16px;font-size:12px;line-height:18px;position:fixed}.clC_ta_title{color:var(--dsw-alias-label-primary);justify-content:space-between;gap:16px;margin-bottom:8px;font-weight:500;display:flex}.clC_ta_titleRule{border-top:1px solid var(--dsw-alias-border-l2);margin-bottom:10px}.clC_ta_titleValue{font-variant-numeric:tabular-nums}.clC_ta_titleLabel{align-items:center;gap:6px;min-width:0;display:inline-flex}.clC_ta_titleLabel svg{flex:none;width:14px;height:14px}.clC_ta_details{color:var(--dsw-alias-label-tertiary);grid-template-columns:minmax(76px,auto) minmax(0,1fr);gap:6px 16px;margin:0;display:grid}.clC_ta_details dt,.clC_ta_details dd{min-width:0;margin:0}.clC_ta_details dd{color:var(--dsw-alias-label-secondary);font-variant-numeric:tabular-nums;text-align:right}.clC_ta_details .clC_ta_route{overflow-wrap:anywhere}.clC_ta_reasoning{color:var(--dsw-alias-label-tertiary);white-space:nowrap}";
-		const tagId$4 = "@deepseek-ai/dsh-client-ui-chat/TurnUsagePanel.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$4) + "]") === null) {
-			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$4;
-			tag.textContent = css$4;
-			document.head.appendChild(tag);
-		}
-		var TurnUsagePanel_module_css_default = {
-			"details": "clC_ta_details",
-			"label": "clC_ta_label",
-			"panel": "clC_ta_panel",
-			"reasoning": "clC_ta_reasoning",
-			"root": "clC_ta_root",
-			"route": "clC_ta_route",
-			"title": "clC_ta_title",
-			"titleLabel": "clC_ta_titleLabel",
-			"titleRule": "clC_ta_titleRule",
-			"titleValue": "clC_ta_titleValue",
-			"trigger": "clC_ta_trigger"
-		};
-		//#endregion
-		//#region lib/types/client/chat/TurnUsagePanel.js
-		function formatCompactCount(value, t) {
-			return t("message.turnUsage.count", { count: formatTokens(value, t) });
-		}
-		function formatExactCount(value, t) {
-			return t("message.turnUsage.count", { count: formatExactTokens(value, t) });
-		}
+		//#region lib/types/client/chat/stat-dialog.js
 		/** Viewport margin the placement clamp keeps (the Menu portal margin). */
 		const PANEL_MARGIN = 12;
 		/** Distance between the trigger's top edge and the panel's bottom. */
@@ -3242,7 +6847,10 @@ window.__ModuleLoader__.load({
 			left: 0,
 			top: 0
 		};
-		/** One trigger-anchored dialog seat: open state, viewport-clamped placement, outside-close. */
+		/**
+		* One trigger-anchored dialog seat: open state, viewport-clamped placement, outside-close.
+		* @returns the seat; spread `pos ?? MEASURE_STYLE` onto the portaled panel.
+		*/
 		function useStatDialog() {
 			const [open, setOpen] = (0, react.useState)(false);
 			const rootRef = (0, react.useRef)(null);
@@ -3261,11 +6869,16 @@ window.__ModuleLoader__.load({
 				const onKeyDown = (e) => {
 					if (e.key === "Escape") setOpen(false);
 				};
+				const onClick = (e) => {
+					if (e.target instanceof Node && rootRef.current?.contains(e.target) !== true && panelRef.current?.contains(e.target) !== true) setOpen(false);
+				};
 				document.addEventListener("keydown", onKeyDown);
+				document.addEventListener("click", onClick, true);
 				return () => {
 					document.removeEventListener("keydown", onKeyDown);
+					document.removeEventListener("click", onClick, true);
 				};
-			}, [open]);
+			}, [open, setOpen]);
 			return {
 				open,
 				setOpen,
@@ -3273,6 +6886,52 @@ window.__ModuleLoader__.load({
 				panelRef,
 				pos
 			};
+		}
+		//#endregion
+		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/TurnUsagePanel.module.css.mjs
+		const css$5 = ".nQE7AG_root{min-width:0;display:inline-flex}.nQE7AG_root+.nQE7AG_root{margin-left:-6px}.nQE7AG_trigger{min-width:0;height:calc(28px + var(--dsh-content-font-delta,0px));border-radius:var(--dsw-radius-sm);color:var(--dsw-alias-label-tertiary);font-size:calc(var(--dsh-content-font-size-secondary,13px) - 1px);font-variant-numeric:tabular-nums;line-height:calc(24px + var(--dsh-content-font-delta,0px));white-space:nowrap;cursor:pointer;background:0 0;border:none;align-items:center;gap:4px;padding:6px 8px;display:inline-flex}.nQE7AG_label{text-overflow:ellipsis;min-width:0;overflow:hidden}.nQE7AG_trigger svg{width:calc(15px + var(--dsh-content-font-delta,0px));height:calc(15px + var(--dsh-content-font-delta,0px));flex:none}.nQE7AG_trigger:hover,.nQE7AG_trigger[aria-expanded=true]{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-tertiary)}@media (width<=480px){.nQE7AG_trigger{width:calc(28px + var(--dsh-content-font-delta,0px));justify-content:center;padding:6px}.nQE7AG_trigger .nQE7AG_label{display:none}.nQE7AG_root+.nQE7AG_root{margin-left:0}}";
+		const tagId$5 = "@deepseek-ai/dsh-client-ui-chat/TurnUsagePanel.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$5) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
+			tag.dataset.pluginCss = tagId$5;
+			tag.textContent = css$5;
+			document.head.appendChild(tag);
+		}
+		var TurnUsagePanel_module_css_default = {
+			"label": "nQE7AG_label",
+			"root": "nQE7AG_root",
+			"trigger": "nQE7AG_trigger"
+		};
+		//#endregion
+		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/stat-dialog.module.css.mjs
+		const css$4 = ".NRRfva_panel{z-index:1100;box-sizing:border-box;border-radius:var(--dsw-radius-lg);background:var(--dsw-specific-menu);width:max-content;min-width:min(300px,100vw - 24px);max-width:min(440px,100vw - 24px);backdrop-filter:var(--dsw-menu-backdrop-filter);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);box-shadow:var(--dsw-elevation-prominent);color:var(--dsw-alias-label-secondary);cursor:default;border:0;padding:16px;font-size:12px;line-height:18px;position:fixed}.NRRfva_title{color:var(--dsw-alias-label-primary);justify-content:space-between;gap:16px;margin-bottom:8px;font-weight:500;display:flex}.NRRfva_titleRule{border-top:.5px solid var(--dsw-alias-border-l2);margin-bottom:10px}.NRRfva_titleValue{font-variant-numeric:tabular-nums}.NRRfva_titleLabel{align-items:center;gap:6px;min-width:0;display:inline-flex}.NRRfva_titleLabel svg{flex:none;width:14px;height:14px}.NRRfva_details{color:var(--dsw-alias-label-tertiary);grid-template-columns:minmax(76px,auto) minmax(0,1fr);gap:6px 16px;margin:0;display:grid}.NRRfva_details dt,.NRRfva_details dd{min-width:0;margin:0}.NRRfva_details dd{color:var(--dsw-alias-label-secondary);font-variant-numeric:tabular-nums;text-align:right}.NRRfva_details .NRRfva_route{overflow-wrap:anywhere}.NRRfva_reasoning{color:var(--dsw-alias-label-tertiary);white-space:nowrap}";
+		const tagId$4 = "@deepseek-ai/dsh-client-ui-chat/stat-dialog.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$4) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
+			tag.dataset.pluginCss = tagId$4;
+			tag.textContent = css$4;
+			document.head.appendChild(tag);
+		}
+		var stat_dialog_module_css_default = {
+			"details": "NRRfva_details",
+			"panel": "NRRfva_panel",
+			"reasoning": "NRRfva_reasoning",
+			"route": "NRRfva_route",
+			"title": "NRRfva_title",
+			"titleLabel": "NRRfva_titleLabel",
+			"titleRule": "NRRfva_titleRule",
+			"titleValue": "NRRfva_titleValue"
+		};
+		//#endregion
+		//#region lib/types/client/chat/TurnUsagePanel.js
+		/** Completed-Turn token usage action and its accounting details dialog. */
+		function formatCompactCount(value, t) {
+			return t("message.turnUsage.count", { count: formatTokens(value, t) });
+		}
+		function formatExactCount(value, t) {
+			return t("message.turnUsage.count", { count: formatExactTokens(value, t) });
 		}
 		/**
 		* Turn-usage IconActions pill with a click-open Turn-usage details dialog.
@@ -3295,37 +6954,37 @@ window.__ModuleLoader__.load({
 					onClick: () => {
 						setOpen(!open);
 					},
-					children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDatabaseOutline16, {}), (0, react_jsx_runtime.jsx)("span", {
+					children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDatabaseOutlineRegular, {}), (0, react_jsx_runtime.jsx)("span", {
 						className: TurnUsagePanel_module_css_default.label,
 						children: t("message.turnUsage.consumed", { total })
 					})]
 				}), open && (0, react_dom.createPortal)((0, react_jsx_runtime.jsxs)("div", {
 					ref: panelRef,
-					className: TurnUsagePanel_module_css_default.panel,
+					className: stat_dialog_module_css_default.panel,
 					role: "dialog",
 					"aria-label": t("message.turnUsage.title"),
 					style: pos ?? MEASURE_STYLE,
 					children: [
 						(0, react_jsx_runtime.jsxs)("div", {
-							className: TurnUsagePanel_module_css_default.title,
+							className: stat_dialog_module_css_default.title,
 							children: [(0, react_jsx_runtime.jsxs)("span", {
-								className: TurnUsagePanel_module_css_default.titleLabel,
-								children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDatabaseOutline16, {}), t("message.turnUsage.title")]
+								className: stat_dialog_module_css_default.titleLabel,
+								children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDatabaseOutlineRegular, {}), t("message.turnUsage.title")]
 							}), (0, react_jsx_runtime.jsx)("span", {
-								className: TurnUsagePanel_module_css_default.titleValue,
+								className: stat_dialog_module_css_default.titleValue,
 								children: formatExactCount(usage.totalTokens, t)
 							})]
 						}),
 						(0, react_jsx_runtime.jsx)("div", {
-							className: TurnUsagePanel_module_css_default.titleRule,
+							className: stat_dialog_module_css_default.titleRule,
 							"aria-hidden": true
 						}),
 						(0, react_jsx_runtime.jsxs)("dl", {
-							className: TurnUsagePanel_module_css_default.details,
+							className: stat_dialog_module_css_default.details,
 							"data-turn-usage-details": true,
 							children: [
 								routes !== "" && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnUsage.model") }), (0, react_jsx_runtime.jsx)("dd", {
-									className: TurnUsagePanel_module_css_default.route,
+									className: stat_dialog_module_css_default.route,
 									children: routes
 								})] }),
 								cacheHit !== null && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnUsage.cacheHit") }), (0, react_jsx_runtime.jsx)("dd", { children: `${cacheHit}%` })] }),
@@ -3335,63 +6994,9 @@ window.__ModuleLoader__.load({
 								usage.cacheWriteTokens !== void 0 && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnUsage.cacheWrite") }), (0, react_jsx_runtime.jsx)("dd", { children: formatExactCount(usage.cacheWriteTokens, t) })] }),
 								(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnUsage.output") }),
 								(0, react_jsx_runtime.jsxs)("dd", { children: [formatExactCount(usage.outputTokens, t), usage.reasoningTokens !== void 0 && (0, react_jsx_runtime.jsx)("span", {
-									className: TurnUsagePanel_module_css_default.reasoning,
+									className: stat_dialog_module_css_default.reasoning,
 									children: t("message.turnUsage.reasoning", { tokens: formatExactCount(usage.reasoningTokens, t) })
 								})] })
-							]
-						})
-					]
-				}), document.body)]
-			});
-		}
-		/**
-		* Turn-time IconActions pill with a click-open Turn-time details dialog.
-		* @param props - Turn timing facts and locale seat.
-		* @returns The clock-and-duration trigger and, while open, its portaled dialog anchored above the trigger.
-		*/
-		function TurnTimePanel({ runMs, tokensPerSecond, ttftMs, t }) {
-			const { open, setOpen, rootRef, panelRef, pos } = useStatDialog();
-			return (0, react_jsx_runtime.jsxs)("span", {
-				ref: rootRef,
-				className: TurnUsagePanel_module_css_default.root,
-				children: [(0, react_jsx_runtime.jsxs)("button", {
-					type: "button",
-					className: TurnUsagePanel_module_css_default.trigger,
-					"aria-haspopup": "dialog",
-					"aria-expanded": open,
-					onClick: () => {
-						setOpen(!open);
-					},
-					children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconClockOutline16, {}), (0, react_jsx_runtime.jsx)("span", {
-						className: TurnUsagePanel_module_css_default.label,
-						children: t("message.ranFor", { duration: formatRunDuration(runMs, t) })
-					})]
-				}), open && (0, react_dom.createPortal)((0, react_jsx_runtime.jsxs)("div", {
-					ref: panelRef,
-					className: TurnUsagePanel_module_css_default.panel,
-					role: "dialog",
-					"aria-label": t("message.turnTime.title"),
-					style: pos ?? MEASURE_STYLE,
-					children: [
-						(0, react_jsx_runtime.jsx)("div", {
-							className: TurnUsagePanel_module_css_default.title,
-							children: (0, react_jsx_runtime.jsxs)("span", {
-								className: TurnUsagePanel_module_css_default.titleLabel,
-								children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconClockOutline16, {}), t("message.turnTime.title")]
-							})
-						}),
-						(0, react_jsx_runtime.jsx)("div", {
-							className: TurnUsagePanel_module_css_default.titleRule,
-							"aria-hidden": true
-						}),
-						(0, react_jsx_runtime.jsxs)("dl", {
-							className: TurnUsagePanel_module_css_default.details,
-							"data-turn-time-details": true,
-							children: [
-								(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnTime.duration") }),
-								(0, react_jsx_runtime.jsx)("dd", { children: formatRunDuration(runMs, t) }),
-								tokensPerSecond !== void 0 && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnTime.speed") }), (0, react_jsx_runtime.jsx)("dd", { children: t("message.tokensPerSecond", { tps: formatTokensPerSecond(tokensPerSecond) }) })] }),
-								ttftMs !== void 0 && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnTime.ttft") }), (0, react_jsx_runtime.jsx)("dd", { children: t("duration.seconds", { seconds: formatLatencySeconds(ttftMs) }) })] })
 							]
 						})
 					]
@@ -3409,8 +7014,23 @@ window.__ModuleLoader__.load({
 			return blocks.flatMap((block) => block.kind === "text" ? [block.text] : []).join("");
 		}
 		//#endregion
+		//#region lib/types/client/contract/assistant-content.js
+		/**
+		* Test whether Assistant blocks contain a user-facing reply rather than only
+		* reasoning or Tool-call protocol material.
+		* @param blocks - Assistant content blocks.
+		* @returns whether the blocks contain visible reply content.
+		*/
+		function hasAssistantReplyContent(blocks) {
+			return blocks.some((block) => {
+				if (block.kind === "reasoning" || block.kind === "tool-call") return false;
+				if (block.kind === "text") return block.text.trim() !== "";
+				return true;
+			});
+		}
+		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/TurnTailNodeView.module.css.mjs
-		const css$3 = ".pNZkHa_root{flex-direction:column;gap:16px;display:flex}.pNZkHa_actions{margin-left:-6px}";
+		const css$3 = ".O6vlwa_root{flex-direction:column;gap:16px;display:flex}.O6vlwa_actions{margin-top:4px;margin-left:-6px}";
 		const tagId$3 = "@deepseek-ai/dsh-client-ui-chat/TurnTailNodeView.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$3) + "]") === null) {
 			const tag = document.createElement("style");
@@ -3420,21 +7040,36 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var TurnTailNodeView_module_css_default = {
-			"actions": "pNZkHa_actions",
-			"root": "pNZkHa_root"
+			"actions": "O6vlwa_actions",
+			"root": "O6vlwa_root"
 		};
 		//#endregion
 		//#region lib/types/client/chat/TurnTailNodeView.js
+		function lastContent(snapshot, turn, skipWarning) {
+			const keys = snapshot.locations.getTurn(turn);
+			for (let index = keys.length - 1; index >= 0; index--) {
+				const node = snapshot.nodes.get(keys[index]);
+				if (node === void 0 || node.kind === "turn-tail" || node.kind === "turn-process" || skipWarning && node.kind === "turn-max-tokens") continue;
+				return node;
+			}
+		}
 		/** Turn-local actions and feature tail over the Location index, independent of Assistant placement. */
-		const TurnTailNodeView = (0, react.memo)(function TurnTailNodeView({ node, openFile, forkAt, renderSlot, renderSlotChain, t, useChat, useSession }) {
+		const TurnTailNodeView = (0, react.memo)(function TurnTailNodeView({ node, useSession, openFile, forkAt, renderSlot, t, useAccess, useChat, usePerformanceUsage }) {
+			const detailed = usePerformanceUsage((mode) => mode) === "detailed";
+			const forkAllowed = useAccess("session/fork");
 			const data = node.data;
 			const sessionId = useSession((snapshot) => snapshot.sessionId);
-			const hasLaterChatNode = useChat((snapshot) => snapshot.locations.getTurn(data.turn).at(-1) !== node.key);
-			const isLatestTurn = useChat((snapshot) => snapshot.timeline.turnOrder.at(-1) === data.turn);
+			const hasLaterChatNode = useChat((snapshot) => (lastContent(snapshot, data.turn, true)?.anchorSeq ?? -1) > (data.closing?.finalNode.seq ?? data.seq));
+			const endsWithResponse = useChat((snapshot) => {
+				if (snapshot.timeline.turnOrder.at(-1) !== data.turn) return false;
+				const last = lastContent(snapshot, data.turn, false);
+				const block = last?.kind === "assistant-step" ? last.data.blocks.findLast((candidate) => candidate.kind !== "text" && candidate.kind !== "reasoning" || candidate.text.trim() !== "") : void 0;
+				return block !== void 0 && hasAssistantReplyContent([block]);
+			});
 			const turn = node.location.kind === "turn" || node.location.kind === "step" ? node.location.turn : void 0;
 			if (turn === void 0) return null;
 			const closing = data.closing;
-			const tail = renderSlotChain("conversation.chat.turnTail", {
+			const tail = renderSlot("conversation.chat.turnTail", {
 				sessionId,
 				turn,
 				seq: closing?.finalNode.seq ?? data.seq,
@@ -3442,45 +7077,207 @@ window.__ModuleLoader__.load({
 			});
 			if (closing === null) return tail === null ? null : (0, react_jsx_runtime.jsx)("div", {
 				className: TurnTailNodeView_module_css_default.root,
+				"data-turn-tail": data.turn,
 				children: tail
 			});
-			const runMs = turn.start === void 0 || turn.end === void 0 ? void 0 : Math.max(0, turn.end.time - turn.start.time);
 			const messageId = closing.finalNode.messageId;
 			const assistantActions = messageId === void 0 ? null : renderSlot("conversation.chat.assistant-actions", { messageId });
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: TurnTailNodeView_module_css_default.root,
 				"data-turn-tail": data.turn,
-				"data-actions-reveal": isLatestTurn ? "always" : "hover",
+				"data-actions-reveal": endsWithResponse ? "always" : "hover",
 				children: [tail, (0, react_jsx_runtime.jsx)(MessageIconActions, {
 					text: assistantText(closing.blocks),
 					time: closing.time,
 					clock: "end",
-					onBranch: () => {
-						forkAt(closing.finalNode.seq);
-					},
+					onBranch: forkAllowed ? () => {
+						forkAt(data.seq);
+					} : void 0,
 					branchUnavailable: data.branchUnavailable || hasLaterChatNode,
 					className: TurnTailNodeView_module_css_default.actions,
 					extraActions: assistantActions,
-					usageAction: (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [data.tokenUsage !== void 0 && (0, react_jsx_runtime.jsx)(TurnUsagePanel, {
+					usageAction: detailed && data.tokenUsage !== void 0 ? (0, react_jsx_runtime.jsx)(TurnUsagePanel, {
 						usage: data.tokenUsage,
 						t
-					}), runMs !== void 0 && (0, react_jsx_runtime.jsx)(TurnTimePanel, {
-						runMs,
-						tokensPerSecond: data.tokensPerSecond,
-						ttftMs: data.ttftMs,
-						t
-					})] }),
+					}) : null,
 					t
 				})]
 			});
 		});
 		//#endregion
+		//#region lib/types/client/chat/turn-trigger.js
+		function record(value) {
+			return typeof value === "object" && value !== null && !Array.isArray(value) ? value : {};
+		}
+		function field(source, key) {
+			return typeof source[key] === "string" ? source[key] : "";
+		}
+		/**
+		* Describe a waking message using its recorded source.
+		* @param node - durable context, including the original notification body.
+		* @returns localized title key and source-family icon.
+		*/
+		function turnTriggerDetails(node) {
+			const source = record(node.source);
+			const kind = field(source, "kind");
+			let title = "message.trigger.request";
+			let icon = "request";
+			switch (kind) {
+				case "goal":
+					title = "message.trigger.goal";
+					icon = "goal";
+					break;
+				case "agent-message":
+					title = "message.trigger.agent";
+					icon = "agent";
+					break;
+				case "team-message":
+					title = "message.trigger.team";
+					icon = "team";
+					break;
+				case "subagent-settled":
+					title = "message.trigger.subagent";
+					icon = "subagent";
+					break;
+				case "webhook": {
+					const github = field(source, "provider") === "github";
+					title = github ? "message.trigger.github" : "message.trigger.webhook";
+					icon = github ? "github" : "webhook";
+					break;
+				}
+				case "schedule":
+					title = "message.trigger.schedule";
+					icon = "schedule";
+					break;
+				case "tool-jobs":
+					title = "message.trigger.job";
+					icon = "job";
+					break;
+				case "cordis-host-runner":
+					title = "message.trigger.plugin";
+					icon = "plugin";
+					break;
+				default: break;
+			}
+			return {
+				title,
+				icon
+			};
+		}
+		//#endregion
+		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/TurnTriggerNodeView.module.css.mjs
+		const css$2 = ".VsM70q_root{border:.5px solid var(--dsw-alias-border-l1);border-radius:var(--dsw-radius-xl);background:var(--dsw-alias-turn-trigger-bg,var(--dsw-alias-markdown-code-block));min-width:0;transition:background-color .1s}.VsM70q_root:hover{background:var(--dsw-alias-turn-trigger-bg-hover,var(--dsw-alias-interactive-bg-hover))}.VsM70q_header{width:100%;color:var(--dsw-alias-label-tertiary);font:inherit;text-align:left;cursor:pointer;background:0 0;border:0;align-items:center;gap:10px;padding:12px 16px;transition:color .1s;display:flex}.VsM70q_header:hover{color:var(--dsw-alias-label-secondary)}.VsM70q_icon{color:inherit;flex:none;display:inline-flex}.VsM70q_title{font-size:var(--dsh-content-font-size,14px);flex:none}.VsM70q_time{color:inherit;font:var(--dsw-font-xxs-12);flex:none;margin-left:auto}.VsM70q_chevron,.VsM70q_openChevron{color:inherit;flex:none}.VsM70q_openChevron{transform:rotate(180deg)}.VsM70q_body{padding:0 16px 12px 40px}.VsM70q_explanation{color:var(--dsw-alias-label-secondary);font:var(--dsw-font-xxs-12);margin:8px 0}.VsM70q_content{white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;font:var(--dsw-font-xxs-12);overflow:auto}@media (prefers-reduced-motion:reduce){.VsM70q_root,.VsM70q_header{transition:none}}";
+		const tagId$2 = "@deepseek-ai/dsh-client-ui-chat/TurnTriggerNodeView.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$2) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
+			tag.dataset.pluginCss = tagId$2;
+			tag.textContent = css$2;
+			document.head.appendChild(tag);
+		}
+		var TurnTriggerNodeView_module_css_default = {
+			"body": "VsM70q_body",
+			"chevron": "VsM70q_chevron",
+			"content": "VsM70q_content",
+			"explanation": "VsM70q_explanation",
+			"header": "VsM70q_header",
+			"icon": "VsM70q_icon",
+			"openChevron": "VsM70q_openChevron",
+			"root": "VsM70q_root",
+			"time": "VsM70q_time",
+			"title": "VsM70q_title"
+		};
+		//#endregion
+		//#region lib/types/client/chat/TurnTriggerNodeView.js
+		/** An independent, expandable notice explaining a non-human Turn trigger. */
+		const TRIGGER_ICONS = {
+			request: _deepseek_ai_dsh_client_ui_primitives.IconContextInjectionOutlineRegular,
+			goal: _deepseek_ai_dsh_client_ui_primitives.IconGoalOutlineRegular,
+			agent: _deepseek_ai_dsh_client_ui_primitives.IconPaperPlaneOutlineRegular,
+			team: _deepseek_ai_dsh_client_ui_primitives.IconAgentPresetOutlineRegular,
+			subagent: _deepseek_ai_dsh_client_ui_primitives.IconAgentPresetOutlineRegular,
+			github: _deepseek_ai_dsh_client_ui_primitives.IconBranchOutlineRegular,
+			webhook: _deepseek_ai_dsh_client_ui_primitives.IconGlobeOutlineRegular,
+			schedule: _deepseek_ai_dsh_client_ui_primitives.IconClockOutlineRegular,
+			job: _deepseek_ai_dsh_client_ui_primitives.IconQueueOutlineRegular,
+			plugin: _deepseek_ai_dsh_client_ui_primitives.IconCordisPluginOutlineRegular
+		};
+		/** Render recorded trigger attribution above the whole-Turn disclosure. */
+		function TurnTriggerNodeView({ node, t }) {
+			const [open, setOpen] = (0, react.useState)(false);
+			const bodyId = (0, react.useId)();
+			const details = turnTriggerDetails(node.data);
+			const TriggerIcon = TRIGGER_ICONS[details.icon];
+			const date = new Date(node.data.time);
+			const time = formatMessageClock(node.data.time, t);
+			return (0, react_jsx_runtime.jsxs)("section", {
+				className: TurnTriggerNodeView_module_css_default.root,
+				"data-turn-trigger": true,
+				children: [(0, react_jsx_runtime.jsxs)("button", {
+					className: TurnTriggerNodeView_module_css_default.header,
+					type: "button",
+					"aria-expanded": open,
+					"aria-controls": bodyId,
+					onClick: () => {
+						setOpen(!open);
+					},
+					children: [
+						(0, react_jsx_runtime.jsx)("span", {
+							className: TurnTriggerNodeView_module_css_default.icon,
+							"aria-hidden": true,
+							children: (0, react_jsx_runtime.jsx)(TriggerIcon, { size: 14 })
+						}),
+						(0, react_jsx_runtime.jsx)("span", {
+							className: TurnTriggerNodeView_module_css_default.title,
+							children: t(details.title)
+						}),
+						(0, react_jsx_runtime.jsx)("time", {
+							className: TurnTriggerNodeView_module_css_default.time,
+							dateTime: date.toISOString(),
+							children: time
+						}),
+						(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutlineRegular, {
+							size: 12,
+							className: open ? TurnTriggerNodeView_module_css_default.openChevron : TurnTriggerNodeView_module_css_default.chevron
+						})
+					]
+				}), open && (0, react_jsx_runtime.jsxs)("div", {
+					id: bodyId,
+					className: TurnTriggerNodeView_module_css_default.body,
+					children: [(0, react_jsx_runtime.jsx)("p", {
+						className: TurnTriggerNodeView_module_css_default.explanation,
+						children: t("message.trigger.explanation")
+					}), (0, react_jsx_runtime.jsx)("div", {
+						className: TurnTriggerNodeView_module_css_default.content,
+						children: (0, react_jsx_runtime.jsx)(NoticeBody, {
+							content: node.data.content,
+							source: node.data.source,
+							t
+						})
+					})]
+				})]
+			});
+		}
+		//#endregion
 		//#region lib/types/client/chat/register-node-renderers.js
 		/**
 		* Register this package's business renderers behind the keyed Chat Node seat.
+		* Renderers whose output depends on the work-details mode receive the policy
+		* through their own registration; the seat and the other renderers do not.
 		* @param ctx - owning UI Conversation context.
+		* @param performanceUsage - live statistics detail preference.
+		* @param presentation - live presentation policy.
 		*/
-		function registerChatNodeRenderers(ctx) {
+		function registerChatNodeRenderers(ctx, performanceUsage, presentation) {
+			ctx.effect(() => ctx.slots.registerFactory({
+				name: "conversation.chat.reasoning.content",
+				scope: "root",
+				locale: NS
+			}, ReasoningContent));
+			ctx.slots.inject("conversation.chat.reasoning.body", () => ctx.slots.register({
+				name: "conversation.chat.reasoning.body",
+				priority: 100
+			}, DefaultReasoningBody));
 			ctx.slots.inject("conversation.chat.node", () => ctx.slots.register({
 				name: "conversation.chat.node",
 				key: "user",
@@ -3498,6 +7295,11 @@ window.__ModuleLoader__.load({
 			}, ContextMessageNodeView));
 			ctx.slots.inject("conversation.chat.node", () => ctx.slots.register({
 				name: "conversation.chat.node",
+				key: "turn-trigger",
+				locale: NS
+			}, TurnTriggerNodeView));
+			ctx.slots.inject("conversation.chat.node", () => ctx.slots.register({
+				name: "conversation.chat.node",
 				key: "system-prompt",
 				locale: NS
 			}, SystemPromptNodeView));
@@ -3505,10 +7307,21 @@ window.__ModuleLoader__.load({
 				name: "conversation.chat.node",
 				key: "assistant-step",
 				locale: NS,
-				children: { "conversation.chat.deliverables": {
-					kind: "single",
-					scope: "session"
-				} }
+				children: {
+					"conversation.chat.reasoning.body": {
+						kind: "single",
+						scope: "session"
+					},
+					"conversation.chat.deliverables": {
+						kind: "single",
+						scope: "session"
+					},
+					"conversation.chat.message.images": {
+						kind: "single",
+						scope: "session"
+					}
+				},
+				inject: () => ({ hooks: { presentation } })
 			}, AssistantNodeView));
 			ctx.slots.inject("conversation.chat.node", () => ctx.slots.register({
 				name: "conversation.chat.node",
@@ -3553,9 +7366,10 @@ window.__ModuleLoader__.load({
 				name: "conversation.chat.node",
 				key: "turn-tail",
 				locale: NS,
+				inject: () => ({ hooks: { performanceUsage } }),
 				children: {
 					"conversation.chat.turnTail": {
-						kind: "chain",
+						kind: "list",
 						scope: "session"
 					},
 					"conversation.chat.assistant-actions": {
@@ -3569,6 +7383,70 @@ window.__ModuleLoader__.load({
 				key: "unknown",
 				locale: NS
 			}, UnknownNodeView));
+		}
+		//#endregion
+		//#region lib/types/client/chat/UserContent.js
+		/** Reusable user contents inside a caller-owned message row. */
+		const EMPTY_LABELS = [];
+		/**
+		* Render prepared text, ordered attachments, and references without message chrome.
+		* The caller owns row identity, pending/echo state, time, and message actions.
+		* @param props - prepared content, facts, authorized image loader, and framework Factory/locale seats.
+		* @returns the content stack using the existing user-message layout.
+		*/
+		function UserContent({ content, loadImage, facts, interactive = false, ellipsis = false, renderSlot, renderFactorySlot, t }) {
+			const { text, attachments, extraBlocks, referenceLabels = EMPTY_LABELS } = content;
+			const compactImages = attachments.length > 1;
+			const truncated = (total) => t("json.truncated", { total });
+			const showBubble = text !== "" || extraBlocks.length > 0;
+			return (0, react_jsx_runtime.jsxs)("div", {
+				className: MessageItem_module_css_default.userStack,
+				children: [
+					attachments.length > 0 && (0, react_jsx_runtime.jsx)("div", {
+						className: MessageItem_module_css_default.attachmentRow,
+						"data-message-attachments": true,
+						children: attachments.map((attachment, index) => attachment.type === "image" ? (0, react_jsx_runtime.jsx)(react.Fragment, { children: renderSlot("conversation.chat.user.images", {
+							images: [attachment.image],
+							loadImage,
+							align: "end",
+							compact: compactImages
+						}) }, `image:${index}`) : (0, react_jsx_runtime.jsxs)("span", {
+							className: MessageItem_module_css_default.fileCard,
+							title: attachment.file.name,
+							children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.FileTypeIcon, {
+								path: attachment.file.name,
+								className: MessageItem_module_css_default.fileIcon
+							}), (0, react_jsx_runtime.jsxs)("span", {
+								className: MessageItem_module_css_default.fileContent,
+								children: [(0, react_jsx_runtime.jsx)("span", {
+									className: MessageItem_module_css_default.fileName,
+									children: attachment.file.name
+								}), (0, react_jsx_runtime.jsx)("span", {
+									className: MessageItem_module_css_default.fileMeta,
+									children: [(0, _deepseek_ai_dsh_client_ui_primitives.fileExtension)(attachment.file.name).toUpperCase().slice(0, 8), (0, _deepseek_ai_dsh_client_ui_primitives.fileSizeText)(attachment.file.bytes)].filter(Boolean).join(" ")
+								})]
+							})]
+						}, `file:${index}`))
+					}),
+					showBubble && (0, react_jsx_runtime.jsxs)("div", {
+						className: MessageItem_module_css_default.bubble,
+						children: [renderFactorySlot("conversation.user.text", {
+							text,
+							facts,
+							interactive,
+							ellipsis
+						}), extraBlocks.map((block, index) => (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.JsonBlock, {
+							label: t("message.extraBlock"),
+							payload: block,
+							truncatedLabel: truncated
+						}, index))]
+					}),
+					referenceLabels.length > 0 && (0, react_jsx_runtime.jsx)("div", {
+						className: MessageItem_module_css_default.referenceSummary,
+						children: t("message.referenceSummary", { labels: referenceLabels.join(t("message.referenceSeparator")) })
+					})
+				]
+			});
 		}
 		//#endregion
 		//#region lib/types/client/contract/turn-metrics.js
@@ -3590,68 +7468,25 @@ window.__ModuleLoader__.load({
 				outputTokens: usageOutputTokens(node.usage)
 			};
 		}
-		/**
-		* Fold assistant nodes into per-turn footer metrics.
-		*
-		* TTFT is the turn's lowest-step request-dispatch-to-first-token reading, so
-		* it is only meaningful when the turn's start is inside
-		* the loaded window (the caller gates on `turnTimings`, which shares that
-		* window). Throughput divides summed output tokens by summed decode wall time,
-		* counting only steps that carry both.
-		* @param nodes - Snapshot nodes of the loaded window.
-		* @returns Turn number → available metrics; turns with none are absent.
-		*/
-		function deriveTurnMetrics(nodes) {
-			const folds = /* @__PURE__ */ new Map();
-			for (const node of nodes) {
-				if (node.kind !== "assistant") continue;
-				const reading = assistantStepReading(node);
-				let fold = folds.get(node.turn);
-				if (fold === void 0) {
-					fold = {
-						firstStep: node.step,
-						firstStepTtftMs: reading.ttftMs,
-						decodeMs: 0,
-						outputTokens: 0,
-						sampled: false
-					};
-					folds.set(node.turn, fold);
-				} else if (node.step < fold.firstStep) {
-					fold.firstStep = node.step;
-					fold.firstStepTtftMs = reading.ttftMs;
-				}
-				if (reading.decodeMs !== null && reading.outputTokens !== null) {
-					fold.decodeMs += reading.decodeMs;
-					fold.outputTokens += reading.outputTokens;
-					fold.sampled = true;
-				}
-			}
-			const metrics = /* @__PURE__ */ new Map();
-			for (const [turn, fold] of folds) {
-				const entry = {};
-				if (fold.firstStepTtftMs !== null) entry.ttftMs = fold.firstStepTtftMs;
-				if (fold.sampled && fold.decodeMs > 0) entry.tokensPerSecond = fold.outputTokens / (fold.decodeMs / 1e3);
-				if (entry.ttftMs !== void 0 || entry.tokensPerSecond !== void 0) metrics.set(turn, entry);
-			}
-			return metrics;
-		}
 		//#endregion
-		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/StatsLine.module.css.mjs
-		const css$2 = ".Sxvx1a_root{text-align:center;max-width:var(--dsh-chat-content-width);box-sizing:border-box;width:100%;padding:4px calc(var(--dsh-composer-side-clearance) + 16px) 0px;font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));color:var(--dsw-alias-label-tertiary);white-space:nowrap;text-overflow:ellipsis;margin:0 auto;display:block;overflow:hidden}.Sxvx1a_sep{color:var(--dsw-alias-separator-primary);margin:0 10px}";
-		const tagId$2 = "@deepseek-ai/dsh-client-ui-chat/StatsLine.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$2) + "]") === null) {
+		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/StatsPills.module.css.mjs
+		const css$1 = ".hQV0aq_anchor{min-width:0;font-size:calc(var(--dsh-content-font-size-secondary,13px) - 1px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));display:inline-flex}.hQV0aq_pill{box-sizing:border-box;border-radius:var(--dsw-radius-sm);max-width:100%;color:var(--dsw-alias-label-tertiary);font:inherit;font-variant-numeric:tabular-nums;line-height:inherit;white-space:nowrap;background:0 0;border:none;align-items:center;gap:6px;padding:1px 8px;display:inline-flex}.hQV0aq_pill svg{flex:none;width:14px;height:14px}button.hQV0aq_pill{cursor:pointer}button.hQV0aq_pill:hover,button.hQV0aq_pill[aria-expanded=true]{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-secondary)}.hQV0aq_label{text-overflow:ellipsis;min-width:0;overflow:hidden}.hQV0aq_sep{color:var(--dsw-alias-separator-primary);margin:0 6px}";
+		const tagId$1 = "@deepseek-ai/dsh-client-ui-chat/StatsPills.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$1) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$2;
-			tag.textContent = css$2;
+			tag.dataset.pluginCss = tagId$1;
+			tag.textContent = css$1;
 			document.head.appendChild(tag);
 		}
-		var StatsLine_module_css_default = {
-			"root": "Sxvx1a_root",
-			"sep": "Sxvx1a_sep"
+		var StatsPills_module_css_default = {
+			"anchor": "hQV0aq_anchor",
+			"label": "hQV0aq_label",
+			"pill": "hQV0aq_pill",
+			"sep": "hQV0aq_sep"
 		};
 		//#endregion
-		//#region lib/types/client/chat/StatsLine.js
+		//#region lib/types/client/chat/StatsPills.js
 		/**
 		* Fold assistant and tool-result nodes into window-scoped display totals —
 		* the FALLBACK for assemblies without the `sessionStats` projection.
@@ -3736,118 +7571,172 @@ window.__ModuleLoader__.load({
 		function billedInputTokens(usage) {
 			return usage.uncachedInputTokens + usage.cacheReadTokens + usage.cacheWriteTokens;
 		}
-		const StatsLine = (0, react.memo)(function StatsLine({ useChat, useProjection, t }) {
+		function exactCount(value, t) {
+			return t("message.turnUsage.count", { count: formatExactTokens(value, t) });
+		}
+		function joined$1(first, second) {
+			if (second === null) return first;
+			return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+				first,
+				(0, react_jsx_runtime.jsx)("span", {
+					className: StatsPills_module_css_default.sep,
+					"aria-hidden": true,
+					children: "·"
+				}),
+				second
+			] });
+		}
+		function useSessionStats(useChat, useProjection) {
 			const settledNodes = useChat((s) => s.legacy.nodes);
-			const usage = useProjection("tokenUsage");
 			const projected = useProjection("sessionStats");
-			const stats = (0, react.useMemo)(() => projected ?? deriveStats(settledNodes), [projected, settledNodes]);
-			const groups = [];
-			if (stats.steps > 0) {
-				groups.push(t("stats.counts", {
-					turns: stats.turns,
-					steps: stats.steps
-				}));
-				const durations = [];
-				if (stats.llmMs > 0) durations.push(t("stats.llm", { duration: formatDuration(stats.llmMs, t) }));
-				if (stats.toolMs > 0) durations.push(t("stats.toolCall", { duration: formatDuration(stats.toolMs, t) }));
-				if (durations.length > 0) groups.push(durations.join(" · "));
-				const speeds = [];
-				if (stats.ttftSteps > 0) speeds.push(t("stats.ttftAverage", { duration: formatDuration(stats.ttftMs / stats.ttftSteps, t) }));
-				if (stats.decodeMs > 0) speeds.push(t("stats.tokensPerSecond", { throughput: formatTokensPerSecond(stats.decodeTokens / (stats.decodeMs / 1e3)) }));
-				if (speeds.length > 0) groups.push(speeds.join(" · "));
-			}
-			if (usage !== void 0 && (billedInputTokens(usage) > 0 || usage.outputTokens > 0)) {
-				const cacheHit = cacheHitPercent(usage);
-				if (cacheHit !== null) groups.push(t("stats.cacheHit", { percent: cacheHit }));
-				groups.push(t("stats.tokens", {
-					input: formatTokens(billedInputTokens(usage), t),
-					output: formatTokens(usage.outputTokens, t)
-				}));
-			}
-			const line = groups.join(" | ");
-			const rootRef = (0, react.useRef)(null);
-			const [truncated, setTruncated] = (0, react.useState)(false);
-			(0, react.useLayoutEffect)(() => {
-				const el = rootRef.current;
-				if (el === null) return;
-				const measure = () => {
-					setTruncated(el.scrollWidth > el.clientWidth);
-				};
-				measure();
-				if (typeof ResizeObserver === "undefined") return;
-				const observer = new ResizeObserver(measure);
-				observer.observe(el);
-				return () => {
-					observer.disconnect();
-				};
-			}, [line]);
-			if (groups.length === 0) return null;
-			return (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
-				label: line,
-				side: "top",
-				delayMs: 500,
-				disabled: !truncated,
-				children: (0, react_jsx_runtime.jsx)("div", {
-					ref: rootRef,
-					className: StatsLine_module_css_default.root,
-					children: groups.map((group, i) => (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [i > 0 && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("span", {
-						className: StatsLine_module_css_default.sep,
-						"aria-hidden": true,
-						children: "|"
-					}), " "] }), (0, react_jsx_runtime.jsx)("span", { children: group })] }, group))
+			return (0, react.useMemo)(() => projected ?? deriveStats(settledNodes), [projected, settledNodes]);
+		}
+		function decodeSpeed(stats, t) {
+			return t("message.tokensPerSecond", { tps: formatTokensPerSecond(stats.decodeTokens / (stats.decodeMs / 1e3)) });
+		}
+		/** A static reading: used when the pill has no dialog rows or the mode is Compact. */
+		function PlainPill({ stat, icon, label }) {
+			return (0, react_jsx_runtime.jsx)("span", {
+				className: StatsPills_module_css_default.anchor,
+				"data-composer-stat": stat,
+				children: (0, react_jsx_runtime.jsxs)("span", {
+					className: StatsPills_module_css_default.pill,
+					children: [icon, (0, react_jsx_runtime.jsx)("span", {
+						className: StatsPills_module_css_default.label,
+						children: label
+					})]
+				})
+			});
+		}
+		/**
+		* A pill button opening its own portaled dialog. Each pill owns its open
+		* state; useStatDialog closes it on Escape or an outside pointerdown or click,
+		* so at most one dialog is open across the dock.
+		*/
+		function DialogPill({ stat, icon, label, ariaLabel, title, titleValue, children }) {
+			const { open, setOpen, rootRef, panelRef, pos } = useStatDialog();
+			return (0, react_jsx_runtime.jsxs)("span", {
+				ref: rootRef,
+				className: StatsPills_module_css_default.anchor,
+				"data-composer-stat": stat,
+				children: [(0, react_jsx_runtime.jsxs)("button", {
+					type: "button",
+					className: StatsPills_module_css_default.pill,
+					"aria-haspopup": "dialog",
+					"aria-expanded": open,
+					"aria-label": ariaLabel,
+					onClick: () => {
+						setOpen(!open);
+					},
+					children: [icon, (0, react_jsx_runtime.jsx)("span", {
+						className: StatsPills_module_css_default.label,
+						children: label
+					})]
+				}), open && (0, react_dom.createPortal)((0, react_jsx_runtime.jsxs)("div", {
+					ref: panelRef,
+					className: stat_dialog_module_css_default.panel,
+					role: "dialog",
+					"aria-label": title,
+					style: pos ?? MEASURE_STYLE,
+					children: [
+						(0, react_jsx_runtime.jsxs)("div", {
+							className: stat_dialog_module_css_default.title,
+							children: [(0, react_jsx_runtime.jsxs)("span", {
+								className: stat_dialog_module_css_default.titleLabel,
+								children: [icon, title]
+							}), titleValue !== void 0 && (0, react_jsx_runtime.jsx)("span", {
+								className: stat_dialog_module_css_default.titleValue,
+								children: titleValue
+							})]
+						}),
+						(0, react_jsx_runtime.jsx)("div", {
+							className: stat_dialog_module_css_default.titleRule,
+							"aria-hidden": true
+						}),
+						children
+					]
+				}), document.body)]
+			});
+		}
+		/**
+		* Turn and step counts with whole-session speed, opening the time and speed
+		* dialog; Compact keeps only the speed reading.
+		*/
+		const ActivityPill = (0, react.memo)(function ActivityPill({ useChat, useProjection, usePerformanceUsage, t }) {
+			const mode = usePerformanceUsage((value) => value);
+			const stats = useSessionStats(useChat, useProjection);
+			const speed = stats.decodeMs > 0 ? decodeSpeed(stats, t) : null;
+			const icon = (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconGaugeOutlineRegular, {});
+			if (mode === "compact") return speed === null ? null : (0, react_jsx_runtime.jsx)(PlainPill, {
+				stat: "activity",
+				icon,
+				label: speed
+			});
+			if (stats.steps === 0) return null;
+			const counts = t("stats.counts", {
+				turns: stats.turns,
+				steps: stats.steps
+			});
+			const content = {
+				stat: "activity",
+				icon,
+				label: joined$1(counts, speed)
+			};
+			if (stats.llmMs <= 0 && stats.toolMs <= 0 && stats.ttftSteps <= 0 && speed === null) return (0, react_jsx_runtime.jsx)(PlainPill, { ...content });
+			return (0, react_jsx_runtime.jsx)(DialogPill, {
+				...content,
+				ariaLabel: speed === null ? counts : `${counts} · ${speed}`,
+				title: t("stats.dialog.title"),
+				children: (0, react_jsx_runtime.jsxs)("dl", {
+					className: stat_dialog_module_css_default.details,
+					"data-session-stats-details": true,
+					children: [
+						stats.llmMs > 0 && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("stats.dialog.llmTime") }), (0, react_jsx_runtime.jsx)("dd", { children: formatDuration(stats.llmMs, t) })] }),
+						stats.toolMs > 0 && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("stats.dialog.toolTime") }), (0, react_jsx_runtime.jsx)("dd", { children: formatDuration(stats.toolMs, t) })] }),
+						stats.ttftSteps > 0 && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("stats.dialog.ttft") }), (0, react_jsx_runtime.jsx)("dd", { children: formatDuration(stats.ttftMs / stats.ttftSteps, t) })] }),
+						speed !== null && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("stats.dialog.speed") }), (0, react_jsx_runtime.jsx)("dd", { children: speed })] })
+					]
 				})
 			});
 		});
-		//#endregion
-		//#region ../../node_modules/@deepseek-ai/dsh-session/lib/types/surface.js
-		/**
-		* Surface layer on top of the session event log: an ordered view of events
-		* that produce LLM messages. The append-only log remains the source of truth.
-		*
-		* Browser-safe: web clients consume this subpath export, so it must stay free
-		* of `node:` imports (they break the vite bundle).
-		*
-		* @module @deepseek-ai/dsh-session/surface
-		*/
-		/** Runtime counterpart of the message-producing event union. */
-		const SURFACE_EVENT_TYPES = /* @__PURE__ */ new Set([
-			"user/message",
-			"assistant/message",
-			"tool/result"
-		]);
-		/**
-		* Narrow an event to a surface-eligible event carrying its required marker.
-		* @param event - event to test.
-		* @returns true when both the type and marker identify a surface event.
-		*/
-		function isSurfaceEvent(event) {
-			if (!SURFACE_EVENT_TYPES.has(event.type)) return false;
-			return event.surfaceOp !== void 0;
-		}
-		/**
-		* Narrow an event to an append-origin surface event: one that entered the
-		* surface at its own log position and was never itself a replacement copy.
-		*
-		* The model-visible surface deliberately shadows replaced ranges, so it is the
-		* wrong source for a human transcript — a landed replacement would erase
-		* conversation the user already saw. Append-origin events are that transcript's
-		* durable source material; replacement copies stay model-only.
-		* @param event - event to test.
-		* @returns true when the event appended to the surface tail.
-		*/
-		function isAppendSurfaceEvent(event) {
-			return isSurfaceEvent(event) && event.surfaceOp === "append";
-		}
-		/**
-		* Narrow an event to a surface replacement: a node that shadowed an existing
-		* surface range instead of appending to the tail. The counterpart of
-		* {@link isAppendSurfaceEvent} over the two {@link SurfaceOp} variants.
-		* @param event - event to test.
-		* @returns true when the event replaced a surface range.
-		*/
-		function isReplacementSurfaceEvent(event) {
-			return isSurfaceEvent(event) && event.surfaceOp !== "append";
-		}
+		/** Whole-log token total and cache hit; Compact keeps only the cache hit. */
+		const UsagePill = (0, react.memo)(function UsagePill({ useProjection, usePerformanceUsage, t }) {
+			const mode = usePerformanceUsage((value) => value);
+			const usage = useProjection("tokenUsage");
+			if (usage === void 0 || billedInputTokens(usage) === 0 && usage.outputTokens === 0) return null;
+			const cacheHit = cacheHitPercent(usage);
+			const cacheHitText = cacheHit !== null ? t("stats.cacheHit", { percent: cacheHit }) : null;
+			const icon = (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconDatabaseOutlineRegular, {});
+			if (mode === "compact") return cacheHitText === null ? null : (0, react_jsx_runtime.jsx)(PlainPill, {
+				stat: "usage",
+				icon,
+				label: cacheHitText
+			});
+			const total = billedInputTokens(usage) + usage.outputTokens;
+			const totalText = t("message.turnUsage.count", { count: formatTokens(total, t) });
+			return (0, react_jsx_runtime.jsx)(DialogPill, {
+				stat: "usage",
+				icon,
+				label: joined$1(totalText, cacheHitText),
+				ariaLabel: cacheHitText === null ? totalText : `${totalText} · ${cacheHitText}`,
+				title: t("stats.dialog.usageTitle"),
+				titleValue: exactCount(total, t),
+				children: (0, react_jsx_runtime.jsxs)("dl", {
+					className: stat_dialog_module_css_default.details,
+					"data-session-stats-usage": true,
+					children: [
+						cacheHit !== null && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnUsage.cacheHit") }), (0, react_jsx_runtime.jsx)("dd", { children: `${cacheHit}%` })] }),
+						(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnUsage.input") }),
+						(0, react_jsx_runtime.jsx)("dd", { children: exactCount(usage.uncachedInputTokens, t) }),
+						(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnUsage.cacheRead") }),
+						(0, react_jsx_runtime.jsx)("dd", { children: exactCount(usage.cacheReadTokens, t) }),
+						usage.cacheWriteTokens !== 0 && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnUsage.cacheWrite") }), (0, react_jsx_runtime.jsx)("dd", { children: exactCount(usage.cacheWriteTokens, t) })] }),
+						(0, react_jsx_runtime.jsx)("dt", { children: t("message.turnUsage.output") }),
+						(0, react_jsx_runtime.jsx)("dd", { children: exactCount(usage.outputTokens, t) })
+					]
+				})
+			});
+		});
 		//#endregion
 		//#region lib/types/client/conversation-nodes/common.js
 		/**
@@ -3872,12 +7761,25 @@ window.__ModuleLoader__.load({
 			return context.start?.location ?? context.matches[0]?.location ?? { kind: "unresolved" };
 		}
 		/**
+		* Read the Turn and Step a Location resolves to.
+		* @param location - engine-owned Location.
+		* @returns resolved coordinates; Session-level and unresolved Locations have none.
+		*/
+		function locationCoordinates(location) {
+			if (location.kind === "step") return {
+				turn: location.turn.turn,
+				step: location.step.step
+			};
+			if (location.kind === "turn") return { turn: location.turn.turn };
+			return {};
+		}
+		/**
 		* Build one final Chat target Node with the engine-owned stable key.
 		* @param context - assembled business Context.
 		* @param kind - Chat renderer dispatch key.
 		* @param anchorSeq - sortable render position.
 		* @param data - renderer-owned payload.
-		* @param options - optional Location and visibility overrides.
+		* @param options - optional Location, visibility, and group-tree overrides.
 		* @returns final Chat view Node.
 		*/
 		function chatNode(context, kind, anchorSeq, data, options = {}) {
@@ -3889,6 +7791,7 @@ window.__ModuleLoader__.load({
 				anchorSeq,
 				location: options.location ?? contextLocation(context),
 				visibility: options.visibility ?? "visible",
+				groupTree: options.groupTree,
 				data
 			};
 		}
@@ -3940,7 +7843,7 @@ window.__ModuleLoader__.load({
 		* @param source - Logged `user/message` source.
 		* @returns Role and label rendered by Chat.
 		*/
-		function contextProvenance(source) {
+		function contextProducer(source) {
 			const record = asRecord(source);
 			const kind = record === null ? null : readString(record, "kind");
 			if (record === null || kind === null) return {
@@ -3955,10 +7858,6 @@ window.__ModuleLoader__.load({
 				case "agent-instructions": return {
 					role: "inject",
 					label: joined(collect(record, "changes", "path")) ?? kind
-				};
-				case "plugin": return {
-					role: "inject",
-					label: readString(record, "plugin") ?? kind
 				};
 				case "skill-invocation": return {
 					role: "inject",
@@ -3979,6 +7878,16 @@ window.__ModuleLoader__.load({
 			const record = asRecord(source);
 			if (record === null || readString(record, "kind") !== "session-reference") return [];
 			return collect(record, "references", "label");
+		}
+		/**
+		* Read the skill name a durable skill-invocation injection loaded.
+		* @param source - Logged `user/message` source.
+		* @returns The skill name, or null for every other source.
+		*/
+		function skillInvocationName(source) {
+			const record = asRecord(source);
+			if (record === null || readString(record, "kind") !== "skill-invocation") return null;
+			return readString(record, "name");
 		}
 		/**
 		* Classify finalized Assistant content for Chat rendering.
@@ -4079,9 +7988,6 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region lib/types/client/conversation-nodes/assistant.js
-		function isChunkRunEvent$1(event) {
-			return event.type === "chunkrow/text-chunks" || event.type === "chunkrow/reasoning-chunks" || event.type === "chunkrow/tool-call-chunks";
-		}
 		function initialState(turn, step) {
 			return {
 				turn,
@@ -4091,7 +7997,6 @@ window.__ModuleLoader__.load({
 				firstVisibleSeq: void 0,
 				firstVisibleTime: void 0,
 				firstTokenTime: void 0,
-				hidden: false,
 				final: void 0,
 				usage: void 0
 			};
@@ -4121,13 +8026,14 @@ window.__ModuleLoader__.load({
 		function resetForRetry(state) {
 			return {
 				...initialState(state.turn, state.step),
-				firstTokenTime: state.firstTokenTime,
-				hidden: true
+				firstTokenTime: state.firstTokenTime
 			};
 		}
-		function updateChunk(state, match) {
-			if (match.event.type !== "assistant/chunk") return state;
-			const chunk = match.event.data.chunk;
+		function updateChunk(state, chunk, seq, time) {
+			if (chunk.type === "tool-call-delta") {
+				const previous = state.blocks[chunk.index];
+				if (previous?.kind === "tool-call" && previous.callId !== "" && (chunk.name === void 0 || chunk.name === previous.name) && (state.firstTokenTime !== void 0 || !isTokenDelta(chunk))) return state;
+			}
 			const blocks = [...state.blocks];
 			let changedIndex = -1;
 			let previousVisible = false;
@@ -4161,17 +8067,11 @@ window.__ModuleLoader__.load({
 					const previous = blocks[chunk.index];
 					changedIndex = chunk.index;
 					previousVisible = blockIsVisible(previous);
-					const base = previous?.kind === "tool-call" ? previous : {
-						kind: "tool-call",
-						callId: "",
-						name: "",
-						argsRaw: ""
-					};
 					blocks[chunk.index] = {
 						kind: "tool-call",
-						callId: base.callId || String(chunk.id),
-						name: chunk.name ?? base.name,
-						argsRaw: base.argsRaw + chunk.argumentsDelta
+						callId: (previous?.kind === "tool-call" ? previous.callId : "") || String(chunk.id),
+						name: chunk.name ?? (previous?.kind === "tool-call" ? previous.name : ""),
+						argsRaw: previous?.kind === "tool-call" ? previous.argsRaw : ""
 					};
 					break;
 				}
@@ -4192,80 +8092,21 @@ window.__ModuleLoader__.load({
 				...state,
 				blocks,
 				visibleBlocks,
-				hidden: visibleBlocks > 0 ? false : state.hidden,
 				...visibleBlocks > 0 && state.firstVisibleSeq === void 0 ? {
-					firstVisibleSeq: match.event.seq,
-					firstVisibleTime: match.event.time
+					firstVisibleSeq: seq,
+					firstVisibleTime: time
 				} : {},
-				...firstToken && state.firstTokenTime === void 0 ? { firstTokenTime: match.event.time } : {}
+				...firstToken && state.firstTokenTime === void 0 ? { firstTokenTime: time } : {}
 			};
 		}
-		function chunkRunBoundaries(event, needsToken, needsVisible, visibleFromStart) {
-			const fragments = event.type === "chunkrow/tool-call-chunks" ? event.data.args : event.data.texts;
-			const nameStartsToken = event.type === "chunkrow/tool-call-chunks" && Object.hasOwn(event.data, "name");
-			let firstTokenTime;
-			let firstVisible;
-			let time = event.time;
-			for (let index = 0; index < fragments.length; index++) {
-				const fragment = fragments[index];
-				if (needsToken && firstTokenTime === void 0 && (nameStartsToken || fragment !== "")) firstTokenTime = time;
-				if (needsVisible && firstVisible === void 0 && (visibleFromStart || event.type !== "chunkrow/tool-call-chunks" && fragment.trim() !== "")) firstVisible = {
-					seq: event.seq + index,
-					time
-				};
-				if ((!needsToken || firstTokenTime !== void 0) && (!needsVisible || firstVisible !== void 0)) break;
-				time += event.data.dt[index] ?? 0;
-			}
-			return {
-				firstTokenTime,
-				firstVisible
-			};
-		}
-		function updateChunkRun(state, event) {
-			const blocks = [...state.blocks];
-			const previous = blocks[event.data.index];
-			const previousVisible = blockIsVisible(previous);
-			let visibleFromStart = state.visibleBlocks - Number(previousVisible) > 0;
-			if (event.type === "chunkrow/text-chunks") {
-				const text = previous?.kind === "text" ? previous.text : "";
-				visibleFromStart ||= text.trim() !== "";
-				blocks[event.data.index] = {
-					kind: "text",
-					text: text + event.data.texts.join("")
-				};
-			} else if (event.type === "chunkrow/reasoning-chunks") {
-				const text = previous?.kind === "reasoning" ? previous.text : "";
-				visibleFromStart ||= text.trim() !== "";
-				blocks[event.data.index] = {
-					kind: "reasoning",
-					text: text + event.data.texts.join("")
-				};
-			} else {
-				const base = previous?.kind === "tool-call" ? previous : {
-					kind: "tool-call",
-					callId: "",
-					name: "",
-					argsRaw: ""
-				};
-				blocks[event.data.index] = {
-					kind: "tool-call",
-					callId: base.callId || String(event.data.id),
-					name: Object.hasOwn(event.data, "name") ? event.data.name : base.name,
-					argsRaw: base.argsRaw + event.data.args.join("")
-				};
-			}
-			const boundaries = chunkRunBoundaries(event, state.firstTokenTime === void 0, state.firstVisibleSeq === void 0, visibleFromStart);
-			const visibleBlocks = state.visibleBlocks - Number(previousVisible) + Number(blockIsVisible(blocks[event.data.index]));
+		function settleMessage(state, match, event) {
+			const blocks = toAssistantBlocks(event.data.message.content);
 			return {
 				...state,
 				blocks,
-				visibleBlocks,
-				hidden: visibleBlocks > 0 ? false : state.hidden,
-				...boundaries.firstVisible === void 0 ? {} : {
-					firstVisibleSeq: boundaries.firstVisible.seq,
-					firstVisibleTime: boundaries.firstVisible.time
-				},
-				...boundaries.firstTokenTime === void 0 ? {} : { firstTokenTime: boundaries.firstTokenTime }
+				visibleBlocks: countVisibleBlocks(blocks),
+				final: match,
+				usage: event.data.usage
 			};
 		}
 		function closedBoundary(location) {
@@ -4311,27 +8152,14 @@ window.__ModuleLoader__.load({
 		function fallbackState$5(context) {
 			let state;
 			for (const match of context.matches) {
-				if (isChunkRunEvent$1(match.event)) {
+				if (match.event.type === "assistant/live-chunk") {
 					state ??= initialState(match.event.data.turn, match.event.data.step);
-					state = updateChunkRun(state, match.event);
-					continue;
-				}
-				if (match.event.type === "assistant/chunk") {
-					state ??= initialState(match.event.data.turn, match.event.data.step);
-					state = updateChunk(state, match);
+					state = updateChunk(state, match.event.data.chunk, match.event.seq, match.event.time);
 					continue;
 				}
 				if (match.event.type === "assistant/message") {
 					state ??= initialState(match.event.data.turn, match.event.data.step);
-					const blocks = toAssistantBlocks(match.event.data.message.content);
-					state = {
-						...state,
-						blocks,
-						visibleBlocks: countVisibleBlocks(blocks),
-						hidden: false,
-						final: match,
-						usage: match.event.data.usage
-					};
+					state = settleMessage(state, match, match.event);
 					continue;
 				}
 				if (match.event.type === "llm/retry" && state !== void 0) state = resetForRetry(state);
@@ -4345,7 +8173,7 @@ window.__ModuleLoader__.load({
 			const blocks = settled?.blocks ?? compactBlocks(state.blocks);
 			const visible = settled === void 0 ? state.visibleBlocks > 0 : hasVisibleContent(blocks);
 			const status = settled?.interrupted === true ? "interrupted" : settled === void 0 ? "running" : "settled";
-			const anchorSeq = settled?.seq ?? state.firstVisibleSeq ?? context.matches[0]?.event.seq ?? 0;
+			const anchorSeq = (settled?.interrupted === true ? settled.seq : state.firstVisibleSeq ?? settled?.seq) ?? context.matches[0]?.event.seq ?? 0;
 			const time = settled?.time ?? state.firstVisibleTime ?? context.matches[0]?.event.time ?? 0;
 			return {
 				anchorSeq,
@@ -4362,7 +8190,11 @@ window.__ModuleLoader__.load({
 				}
 			};
 		}
-		/** Per-step Assistant streaming/final/interruption Definition. */
+		function publishedAssistantData(context) {
+			const location = context.start?.location ?? context.matches.at(-1)?.location;
+			return location?.kind === "step" ? location.step.data.get("assistant-step") : void 0;
+		}
+		/** Per-step Assistant lifecycle; materialized keys survive cleared stream content as hidden Nodes. */
 		const assistantDefinition = {
 			kind: "assistant-step",
 			target: "chat",
@@ -4371,11 +8203,7 @@ window.__ModuleLoader__.load({
 					id: `${event.data.turn}:${event.data.step}`,
 					role: "start"
 				};
-				if (event.type === "assistant/chunk" || event.type === "assistant/message" && isAppendSurfaceEvent(event)) return {
-					id: `${event.data.turn}:${event.data.step}`,
-					role: "update"
-				};
-				if (isChunkRunEvent$1(event)) return {
+				if (event.type === "assistant/live-chunk" || event.type === "assistant/message" && event.surfaceOp === "append") return {
 					id: `${event.data.turn}:${event.data.step}`,
 					role: "update"
 				};
@@ -4390,26 +8218,14 @@ window.__ModuleLoader__.load({
 				return initialState(match.event.data.turn, match.event.data.step);
 			},
 			update: (context, match) => {
-				if (isChunkRunEvent$1(match.event)) return updateChunkRun(context.state, match.event);
-				if (match.event.type === "assistant/chunk") return updateChunk(context.state, match);
-				if (match.event.type === "assistant/message") {
-					const blocks = toAssistantBlocks(match.event.data.message.content);
-					return {
-						...context.state,
-						blocks,
-						visibleBlocks: countVisibleBlocks(blocks),
-						hidden: false,
-						final: match,
-						usage: match.event.data.usage
-					};
-				}
+				if (match.event.type === "assistant/live-chunk") return updateChunk(context.state, match.event.data.chunk, match.event.seq, match.event.time);
+				if (match.event.type === "assistant/message") return settleMessage(context.state, match, match.event);
 				if (match.event.type === "llm/retry") return resetForRetry(context.state);
 				return context.state;
 			},
 			publication: (match) => {
 				if (match.event.type === "step/start") return "none";
-				if (isChunkRunEvent$1(match.event)) return "animation-frame";
-				if (match.event.type !== "assistant/chunk") return "immediate";
+				if (match.event.type !== "assistant/live-chunk") return "immediate";
 				const type = match.event.data.chunk.type;
 				return type === "usage" || type === "finish" ? "none" : "animation-frame";
 			},
@@ -4426,15 +8242,17 @@ window.__ModuleLoader__.load({
 				};
 			},
 			buildViewNode: (context) => {
-				const projected = projectAssistant(context);
-				if (projected === void 0) return null;
-				if (projected.settled === void 0 && !projected.visible) {
-					const state = context.state ?? fallbackState$5(context);
-					if (state === void 0) return null;
-					const current = context.current.get("chat");
-					if (!state.hidden || current === void 0 || current === null) return null;
-				}
-				return chatNode(context, "assistant-step", projected.anchorSeq, projected.data, { visibility: projected.settled?.interrupted === true || projected.visible ? "visible" : "hidden" });
+				const current = context.current.get("chat");
+				const state = context.state ?? fallbackState$5(context);
+				const data = publishedAssistantData(context);
+				if (state === void 0 || data === void 0) return current == null ? null : {
+					...current,
+					visibility: "hidden"
+				};
+				const settled = data.finalNode;
+				const visible = settled === void 0 ? state.visibleBlocks > 0 : hasVisibleContent(data.blocks);
+				if (settled === void 0 && !visible && current == null) return null;
+				return chatNode(context, "assistant-step", (settled?.interrupted === true ? settled.seq : state.firstVisibleSeq ?? settled?.seq) ?? context.matches[0]?.event.seq ?? 0, data, { visibility: settled?.interrupted === true || visible ? "visible" : "hidden" });
 			}
 		};
 		/**
@@ -4442,7 +8260,16 @@ window.__ModuleLoader__.load({
 		* @param ctx - owning UI Conversation context.
 		*/
 		function registerAssistantConversationNode(ctx) {
-			ctx.uiConversation.events.register(assistantDefinition);
+			const match = assistantDefinition.match.bind(assistantDefinition);
+			ctx.uiConversation.events.register({
+				...assistantDefinition,
+				match: {
+					"step/start": match,
+					"assistant/live-chunk": match,
+					"assistant/message": match,
+					"llm/retry": match
+				}
+			});
 		}
 		//#endregion
 		//#region lib/types/client/contract/chat-nodes.js
@@ -4463,29 +8290,135 @@ window.__ModuleLoader__.load({
 			return !isSettledTool(block);
 		}
 		//#endregion
+		//#region lib/types/client/contract/chat-visibility.js
+		/**
+		* Exclude system prompts, ordinary Context, and permission commands from visible Chat rows.
+		* Context containing tool changes retains its notice row.
+		* @param node - projected Chat node.
+		* @returns whether the node contributes a visible Chat row.
+		*/
+		function isVisibleChatNode(node) {
+			return node.visibility === "visible" && node.kind !== "system-prompt" && (node.kind !== "context" || node.data.content.some((block) => block.type === "tool-addition" || block.type === "tool-removal")) && !(node.kind === "command" && node.data.name === "permission");
+		}
+		//#endregion
+		//#region lib/types/client/conversation-nodes/group-tree-segments.js
+		const NO_TURNS = [];
+		/**
+		* Loaded Turns split into consecutive segments at the Turns holding a Node at
+		* one group-tree position, visible or hidden. The latest segment starts at the
+		* last such Turn, or at the first loaded Turn when none is loaded. Node changes
+		* update per-Turn counts without scanning the loaded Nodes; `settle` returns at
+		* once while the start holds and otherwise reads loaded Turns only from the
+		* earlier of the previous and new starts.
+		*/
+		var GroupTreeSegments = class {
+			position;
+			/** Opening Node count by owning Turn. */
+			openings = /* @__PURE__ */ new Map();
+			latestOpening;
+			latestStart;
+			/** @param position - group-tree position whose Nodes open a segment. */
+			constructor(position) {
+				this.position = position;
+			}
+			/**
+			* Account one Node change.
+			* @param previous - replaced Node; absent for an addition.
+			* @param next - replacing Node; absent for a removal.
+			*/
+			track(previous, next) {
+				const before = this.openingTurn(previous);
+				const after = this.openingTurn(next);
+				if (before === after) return;
+				if (before !== void 0 && this.adjust(before, -1) === 0 && before === this.latestOpening) this.latestOpening = this.lastOpeningTurn();
+				if (after !== void 0) {
+					this.adjust(after, 1);
+					if (this.latestOpening === void 0 || after > this.latestOpening) this.latestOpening = after;
+				}
+			}
+			/**
+			* Test latest-segment membership as of the last `settle`.
+			* @param turn - owning Turn, when resolved.
+			* @returns whether the Turn belongs to the latest segment.
+			*/
+			inLatest(turn) {
+				return turn !== void 0 && this.latestStart !== void 0 && turn >= this.latestStart;
+			}
+			/**
+			* Move the latest segment start for the currently loaded Turns.
+			* @param turnOrder - loaded Turns in ascending timeline order.
+			* @returns loaded Turns that entered or left the latest segment, in ascending order.
+			*/
+			settle(turnOrder) {
+				const previous = this.latestStart;
+				const start = this.latestOpening ?? turnOrder[0];
+				if (start === previous) return NO_TURNS;
+				this.latestStart = start;
+				const bounded = previous !== void 0 && start !== void 0;
+				const low = bounded ? Math.min(previous, start) : Number.NEGATIVE_INFINITY;
+				const high = bounded ? Math.max(previous, start) : Number.POSITIVE_INFINITY;
+				const changed = [];
+				for (const turn of turnOrder.slice(turnOrder.findLastIndex((turn) => turn < low) + 1)) {
+					if (turn >= high) break;
+					changed.push(turn);
+				}
+				return changed;
+			}
+			openingTurn(node) {
+				return node !== void 0 && isAtOrOutside(node, this.position) ? locationCoordinates(node.location).turn : void 0;
+			}
+			lastOpeningTurn() {
+				let last;
+				for (const turn of this.openings.keys()) if (last === void 0 || turn > last) last = turn;
+				return last;
+			}
+			/** @returns the Turn's opening count after the change; zero removes the Turn. */
+			adjust(turn, delta) {
+				const next = (this.openings.get(turn) ?? 0) + delta;
+				if (next > 0) this.openings.set(turn, next);
+				else this.openings.delete(turn);
+				return next;
+			}
+		};
+		//#endregion
 		//#region lib/types/client/conversation-nodes/turn-navigation.js
 		/**
-		* Preview budget per field. The rail clamps two short lines, so anything past
-		* this is invisible; copying whole transcripts into navigation state would
+		* Preview budgets, sized to the rail card's clamps (one prompt line, up to
+		* three response lines) and mirrored by the turnOutline projection so a turn
+		* shows the same words before and after its events load. Anything past a
+		* budget is invisible; copying whole transcripts into navigation state would
 		* otherwise grow with the loaded window on every structural update.
 		*/
-		const PREVIEW_LIMIT = 160;
-		/** Join rendered text until the preview budget is met, then stop reading. */
-		function preview(parts) {
+		const PROMPT_PREVIEW_LIMIT = 50;
+		const RESPONSE_PREVIEW_LIMIT = 120;
+		/** Join rendered text, collapse whitespace, and cap at `limit` with a trailing ellipsis when clipped. */
+		function preview(parts, limit) {
 			let text = "";
+			let unread = false;
 			for (const part of parts) {
-				text += text === "" ? part : ` ${part}`;
-				if (text.length >= PREVIEW_LIMIT) break;
+				if (text.length >= limit * 2) {
+					unread = true;
+					break;
+				}
+				const clipped = part.length > limit * 2;
+				const chunk = clipped ? part.slice(0, limit * 2) : part;
+				text += text === "" ? chunk : ` ${chunk}`;
+				if (clipped) {
+					unread = true;
+					break;
+				}
 			}
-			return text.replace(/\s+/g, " ").trim().slice(0, PREVIEW_LIMIT);
+			const normalized = text.replace(/\s+/g, " ").trim();
+			if (normalized.length > limit - 1) return `${normalized.slice(0, limit - 1).trimEnd()}…`;
+			return unread ? `${normalized}…` : normalized;
 		}
 		function promptText(node) {
 			if (node.kind !== "user") return "";
-			return preview(node.data.content.flatMap((block) => block.type === "text" ? [block.text] : []));
+			return preview(node.data.content.flatMap((block) => block.type === "text" ? [block.text] : []), PROMPT_PREVIEW_LIMIT);
 		}
 		function responseText(node) {
 			if (node.kind !== "assistant-step") return "";
-			return preview(node.data.blocks.flatMap((block) => block.kind === "text" ? [block.text] : []));
+			return preview(node.data.blocks.flatMap((block) => block.kind === "text" ? [block.text] : []), RESPONSE_PREVIEW_LIMIT);
 		}
 		/**
 		* Whether two items carry the same rail state, so the reader can keep its array.
@@ -4505,7 +8438,7 @@ window.__ModuleLoader__.load({
 		* @returns the item, or undefined when the Turn has no visible loaded node.
 		*/
 		function turnNavigationItem(turn, locations, nodes) {
-			const loaded = locations.getTurn(turn).map((key) => nodes.get(key)).filter((node) => node !== void 0 && node.visibility === "visible");
+			const loaded = locations.getTurn(turn).map((key) => nodes.get(key)).filter((node) => node !== void 0 && isVisibleChatNode(node));
 			const user = loaded.find((node) => node.kind === "user");
 			const anchor = user ?? loaded[0];
 			if (anchor === void 0) return void 0;
@@ -4518,6 +8451,98 @@ window.__ModuleLoader__.load({
 			};
 		}
 		//#endregion
+		//#region lib/types/client/conversation-nodes/turn-process-presentation.js
+		function nodeTurn(node) {
+			const location = node?.location;
+			return location?.kind === "turn" || location?.kind === "step" ? location.turn.turn : void 0;
+		}
+		function samePresentation(left, right) {
+			return left === right || left !== void 0 && right !== void 0 && left.spec === right.spec && left.turn === right.turn && left.turnStarted === right.turnStarted && left.turnClosed === right.turnClosed && left.hasExternalProcess === right.hasExternalProcess && left.hasInterleavedInput === right.hasInterleavedInput && left.compactAnswer === right.compactAnswer;
+		}
+		function derivePresentation(turn, locations, nodes) {
+			const keys = locations.getTurn(turn);
+			const control = keys.map((key) => nodes.get(key)).find((node) => node?.kind === "turn-process");
+			if (control === void 0) return void 0;
+			const spec = control.data;
+			const location = control.location;
+			if (location.kind !== "turn" && location.kind !== "step") return void 0;
+			let openingHumanAnchor;
+			for (const key of keys) {
+				const node = nodes.get(key);
+				if (node !== void 0 && isAtOrOutside(node, "input") && (spec.controlAnchorSeq === location.turn.start?.seq || node.anchorSeq < spec.controlAnchorSeq)) openingHumanAnchor = Math.max(openingHumanAnchor ?? node.anchorSeq, node.anchorSeq);
+			}
+			let hasExternalProcess = false;
+			let hasInterleavedInput = false;
+			let compactAnswer = true;
+			for (const key of keys) {
+				const node = nodes.get(key);
+				if (node === void 0 || !isVisibleChatNode(node) || node.kind === "turn-process") continue;
+				if (isAtOrOutside(node, "input") && (openingHumanAnchor === void 0 || node.anchorSeq > openingHumanAnchor)) {
+					hasInterleavedInput = true;
+					if (spec.answerAnchorSeq === null || node.anchorSeq < spec.answerAnchorSeq) compactAnswer = false;
+				}
+				if (isAtOrOutside(node, "turn") || node.anchorSeq < spec.processStartSeq || spec.answerAnchorSeq !== null && node.anchorSeq >= spec.answerAnchorSeq) continue;
+				if (node.kind !== "assistant-step" || spec.answerStep === null || node.data.step !== spec.answerStep) hasExternalProcess = true;
+			}
+			return {
+				turn,
+				spec,
+				turnStarted: location.turn.start !== void 0,
+				turnClosed: location.turn.status === "closed",
+				hasExternalProcess,
+				hasInterleavedInput,
+				compactAnswer
+			};
+		}
+		/** Mutable projection of cross-Node process layout facts by Turn. */
+		var ChatTurnProcessProjector = class {
+			presentations = /* @__PURE__ */ new Map();
+			/**
+			* Read the retained process presentation for a Node's Turn.
+			* @param node - Current Chat Node.
+			* @returns The Turn's process presentation, when present.
+			*/
+			get(node) {
+				const turn = nodeTurn(node);
+				return turn === void 0 ? void 0 : this.presentations.get(turn);
+			}
+			/**
+			* Replace every projected Turn.
+			* @param order - visible Chat Node order.
+			* @param locations - current Chat Location index.
+			* @param nodes - current Chat Node store.
+			* @returns Turns whose process presentation changed.
+			*/
+			replace(order, locations, nodes) {
+				const turns = /* @__PURE__ */ new Set();
+				for (const key of order) {
+					const turn = nodeTurn(nodes.get(key));
+					if (turn !== void 0) turns.add(turn);
+				}
+				const changed = /* @__PURE__ */ new Set();
+				for (const turn of /* @__PURE__ */ new Set([...this.presentations.keys(), ...turns])) if (this.set(turn, turns.has(turn) ? derivePresentation(turn, locations, nodes) : void 0)) changed.add(turn);
+				return changed;
+			}
+			/**
+			* Recompute selected Turns after incremental Node changes.
+			* @param turns - affected Turn numbers.
+			* @param locations - current Chat Location index.
+			* @param nodes - current Chat Node store.
+			* @returns Turns whose process presentation changed.
+			*/
+			update(turns, locations, nodes) {
+				const changed = /* @__PURE__ */ new Set();
+				for (const turn of turns) if (this.set(turn, derivePresentation(turn, locations, nodes))) changed.add(turn);
+				return changed;
+			}
+			set(turn, next) {
+				if (samePresentation(this.presentations.get(turn), next)) return false;
+				if (next === void 0) this.presentations.delete(turn);
+				else this.presentations.set(turn, next);
+				return true;
+			}
+		};
+		//#endregion
 		//#region lib/types/client/conversation-nodes/chat-snapshot-builder.js
 		const EMPTY_KEYS = [];
 		const EMPTY_TURNS = [];
@@ -4526,12 +8551,129 @@ window.__ModuleLoader__.load({
 		function sameReferences$1(left, right) {
 			return left.length === right.length && left.every((value, index) => value === right[index]);
 		}
+		function cachedSource(sources, key, create) {
+			let source = sources.get(key);
+			if (source === void 0) {
+				source = create();
+				sources.set(key, source);
+			}
+			return source;
+		}
+		var MutableChatSource = class {
+			read;
+			label;
+			listeners = /* @__PURE__ */ new Set();
+			published;
+			constructor(read, label) {
+				this.read = read;
+				this.label = label;
+				this.published = read();
+			}
+			getSnapshot = () => this.read();
+			subscribe = (listener) => {
+				this.listeners.add(listener);
+				return () => {
+					this.listeners.delete(listener);
+				};
+			};
+			publish() {
+				const next = this.getSnapshot();
+				if (this.published === next) return;
+				this.published = next;
+				(0, _deepseek_ai_dsh_client_store.notifySubscribers)(this.listeners, this.label);
+			}
+		};
+		/** Membership is indexed on write; ordered arrays are materialized only for observed collections. */
+		var TurnKindNodes = class {
+			nodes = /* @__PURE__ */ new Map();
+			current = EMPTY_LIST;
+			dirty = false;
+			observable;
+			source() {
+				return this.observable ??= new MutableChatSource(() => this.read(), "[ui-chat] turn kind nodes");
+			}
+			set(node) {
+				const previous = this.nodes.get(node.key);
+				this.nodes.set(node.key, node);
+				if (previous !== void 0 && previous.data === node.data && previous.anchorSeq === node.anchorSeq) return;
+				this.dirty = true;
+			}
+			delete(key) {
+				this.nodes.delete(key);
+				this.dirty = true;
+			}
+			publish() {
+				this.observable?.publish();
+			}
+			read() {
+				if (this.dirty) {
+					this.current = [...this.nodes.values()].sort((a, b) => a.anchorSeq - b.anchorSeq).map((node) => node.data);
+					this.dirty = false;
+				}
+				return this.current;
+			}
+		};
 		var MutableChatNodeStore = class {
 			byKey = /* @__PURE__ */ new Map();
+			turnProcesses = new ChatTurnProcessProjector();
+			sources = /* @__PURE__ */ new Map();
+			processSources = /* @__PURE__ */ new Map();
+			bottomSources = /* @__PURE__ */ new Map();
+			/** Bottom membership: the latest loaded exchange. */
+			exchanges = new GroupTreeSegments("exchange");
+			dirtyKeys = /* @__PURE__ */ new Set();
+			dirtyBottomKeys = /* @__PURE__ */ new Set();
+			dirtyProcessKeys = /* @__PURE__ */ new Set();
+			turnKinds = /* @__PURE__ */ new Map();
+			dirtyTurnKinds = /* @__PURE__ */ new Set();
 			valuesCache = EMPTY_LIST;
 			valuesDirty = false;
 			get(key) {
 				return this.byKey.get(key);
+			}
+			source(key) {
+				return cachedSource(this.sources, key, () => new MutableChatSource(() => this.get(key), `[ui-chat] node source ${key}`));
+			}
+			bottomSource(key) {
+				return cachedSource(this.bottomSources, key, () => new MutableChatSource(() => {
+					const node = this.get(key);
+					return node !== void 0 && isVisibleChatNode(node) && this.exchanges.inLatest(locationCoordinates(node.location).turn);
+				}, `[ui-chat] node bottom source ${key}`));
+			}
+			/**
+			* Settle the latest exchange for the loaded Turns and mark the Nodes of
+			* Turns that entered or left it.
+			* @param turnOrder - loaded Turns in ascending timeline order.
+			* @param locations - current Chat Location index.
+			*/
+			settleBottom(turnOrder, locations) {
+				for (const turn of this.exchanges.settle(turnOrder)) for (const key of locations.getTurn(turn)) this.dirtyBottomKeys.add(key);
+			}
+			turnDataSource(turn, kind) {
+				return this.turnKind(turn, kind).source();
+			}
+			turnKind(turn, kind) {
+				return cachedSource(cachedSource(this.turnKinds, turn, () => /* @__PURE__ */ new Map()), kind, () => new TurnKindNodes());
+			}
+			updateTurnKind(previous, next) {
+				const before = previous === void 0 ? void 0 : locationCoordinates(previous.location).turn;
+				const after = next === void 0 ? void 0 : locationCoordinates(next.location).turn;
+				if (previous !== void 0 && before !== void 0 && (before !== after || previous.kind !== next?.kind)) {
+					const collection = this.turnKind(before, previous.kind);
+					collection.delete(previous.key);
+					this.dirtyTurnKinds.add(collection);
+				}
+				if (next !== void 0 && after !== void 0) {
+					const collection = this.turnKind(after, next.kind);
+					collection.set(next);
+					this.dirtyTurnKinds.add(collection);
+				}
+			}
+			processSource(key) {
+				return cachedSource(this.processSources, key, () => new MutableChatSource(() => this.process(key), `[ui-chat] node process source ${key}`));
+			}
+			process(key) {
+				return this.turnProcesses.get(this.get(key));
 			}
 			values() {
 				if (this.valuesDirty) {
@@ -4541,8 +8683,24 @@ window.__ModuleLoader__.load({
 				return this.valuesCache;
 			}
 			replace(nodes) {
+				const previous = new Map(this.byKey);
 				this.byKey.clear();
-				for (const node of nodes) this.byKey.set(node.key, node);
+				for (const node of nodes) {
+					this.byKey.set(node.key, node);
+					if (previous.get(node.key) !== node) {
+						this.updateTurnKind(previous.get(node.key), node);
+						this.exchanges.track(previous.get(node.key), node);
+						this.dirtyKeys.add(node.key);
+						this.dirtyProcessKeys.add(node.key);
+					}
+					previous.delete(node.key);
+				}
+				for (const key of previous.keys()) {
+					this.updateTurnKind(previous.get(key), void 0);
+					this.exchanges.track(previous.get(key), void 0);
+					this.dirtyKeys.add(key);
+					this.dirtyProcessKeys.add(key);
+				}
 				this.valuesCache = [...this.byKey.values()];
 				this.valuesDirty = false;
 			}
@@ -4550,28 +8708,73 @@ window.__ModuleLoader__.load({
 				let changed = false;
 				for (const node of nodes) {
 					if (this.byKey.get(node.key) === node) continue;
+					this.updateTurnKind(this.byKey.get(node.key), node);
+					this.exchanges.track(this.byKey.get(node.key), node);
 					this.byKey.set(node.key, node);
+					this.dirtyKeys.add(node.key);
+					this.dirtyProcessKeys.add(node.key);
 					changed = true;
 				}
 				if (changed) this.valuesDirty = true;
+			}
+			touchProcesses(turns, locations) {
+				for (const turn of turns) for (const key of locations.getTurn(turn)) this.dirtyProcessKeys.add(key);
+			}
+			replaceProcesses(order, locations) {
+				this.touchProcesses(this.turnProcesses.replace(order, locations, this), locations);
+			}
+			updateProcesses(turns, locations) {
+				this.touchProcesses(this.turnProcesses.update(turns, locations, this), locations);
+			}
+			publish() {
+				const dirty = [...this.dirtyKeys];
+				const dirtyBottom = /* @__PURE__ */ new Set([...this.dirtyBottomKeys, ...dirty]);
+				const dirtyProcesses = [...this.dirtyProcessKeys];
+				const dirtyTurnKinds = [...this.dirtyTurnKinds];
+				this.dirtyKeys.clear();
+				this.dirtyBottomKeys.clear();
+				this.dirtyProcessKeys.clear();
+				this.dirtyTurnKinds.clear();
+				for (const key of dirty) this.sources.get(key)?.publish();
+				for (const key of dirtyBottom) this.bottomSources.get(key)?.publish();
+				for (const key of dirtyProcesses) this.processSources.get(key)?.publish();
+				for (const collection of dirtyTurnKinds) collection.publish();
 			}
 		};
 		var MutableChatLocationIndex = class {
 			turns = /* @__PURE__ */ new Map();
 			steps = /* @__PURE__ */ new Map();
+			positions = /* @__PURE__ */ new Map();
 			getTurn(turn) {
 				return this.turns.get(turn) ?? EMPTY_KEYS;
 			}
 			getStep(turn, step) {
 				return this.steps.get(stepKey(turn, step)) ?? EMPTY_KEYS;
 			}
+			getPosition(key) {
+				return this.positions.get(key);
+			}
 			rebuild(order, store) {
 				const turns = /* @__PURE__ */ new Map();
 				const steps = /* @__PURE__ */ new Map();
-				for (const key of order) {
+				const positions = /* @__PURE__ */ new Map();
+				const changedTurns = /* @__PURE__ */ new Set();
+				for (const [index, key] of order.entries()) {
 					const location = store.get(key)?.location;
 					if (location === void 0) continue;
 					const coordinates = locationCoordinates(location);
+					const previous = this.positions.get(key);
+					const position = {
+						turn: coordinates.turn,
+						previous: order[index - 1],
+						next: order[index + 1]
+					};
+					const unchanged = previous !== void 0 && previous.turn === position.turn && previous.previous === position.previous && previous.next === position.next;
+					positions.set(key, unchanged ? previous : position);
+					if (!unchanged) {
+						if (previous?.turn !== void 0) changedTurns.add(previous.turn);
+						if (position.turn !== void 0) changedTurns.add(position.turn);
+					}
 					if (coordinates.turn === void 0) continue;
 					const turnKeys = turns.get(coordinates.turn) ?? [];
 					turnKeys.push(key);
@@ -4582,8 +8785,11 @@ window.__ModuleLoader__.load({
 					stepKeys.push(key);
 					steps.set(step, stepKeys);
 				}
+				for (const [key, position] of this.positions) if (!positions.has(key) && position.turn !== void 0) changedTurns.add(position.turn);
+				this.positions = positions;
 				this.turns = updateIndex(this.turns, turns);
 				this.steps = updateIndex(this.steps, steps);
+				return [...changedTurns];
 			}
 			/** Invalidate aggregate readers when member data changes without moving. */
 			touch(nodes) {
@@ -4662,13 +8868,14 @@ window.__ModuleLoader__.load({
 		function stepKey(turn, step) {
 			return `${turn}:${step}`;
 		}
-		function locationCoordinates(location) {
-			if (location.kind === "step") return {
-				turn: location.turn.turn,
-				step: location.step.step
-			};
-			if (location.kind === "turn") return { turn: location.turn.turn };
-			return {};
+		function locationTurnStatus(location) {
+			return location.kind === "turn" || location.kind === "step" ? location.turn.status : void 0;
+		}
+		function processPresentationInputChanged(previous, next, structural) {
+			if (structural || previous === void 0) return true;
+			if (locationTurnStatus(previous.location) !== locationTurnStatus(next.location)) return true;
+			if (previous.kind === "turn-process" && next.kind === "turn-process") return previous.data !== next.data;
+			return previous.kind === "assistant-step" && next.kind === "assistant-step" && previous.data.step !== next.data.step;
 		}
 		function turnProcessPresentations(nodes) {
 			const presentations = /* @__PURE__ */ new Map();
@@ -4684,14 +8891,15 @@ window.__ModuleLoader__.load({
 				const location = node.location;
 				if (location.kind !== "turn" && location.kind !== "step") continue;
 				const current = presentations.get(location.turn.turn) ?? {};
-				if ((node.kind === "user" || node.kind === "steering") && node.anchorSeq < (current.control?.data.controlAnchorSeq ?? Number.POSITIVE_INFINITY)) {
+				const controlAnchor = current.control?.data.controlAnchorSeq;
+				if (isAtOrOutside(node, "input") && controlAnchor !== void 0 && (controlAnchor === location.turn.start?.seq || node.anchorSeq < controlAnchor)) {
 					presentations.set(location.turn.turn, {
 						...current,
-						openingHumanAnchor: Math.min(current.openingHumanAnchor ?? node.anchorSeq, node.anchorSeq)
+						openingInputAnchor: Math.max(current.openingInputAnchor ?? node.anchorSeq, node.anchorSeq)
 					});
 					continue;
 				}
-				if (TURN_PROCESS_INDEPENDENT_KINDS.has(node.kind)) continue;
+				if (isAtOrOutside(node, "turn")) continue;
 				presentations.set(location.turn.turn, {
 					...current,
 					earliestProcessAnchor: Math.min(current.earliestProcessAnchor ?? node.anchorSeq, node.anchorSeq)
@@ -4713,18 +8921,18 @@ window.__ModuleLoader__.load({
 				rank: 0,
 				originalAnchor: node.anchorSeq
 			};
-			const openingHumanAnchor = presentation.openingHumanAnchor;
-			if (openingHumanAnchor !== void 0 && node.anchorSeq < openingHumanAnchor && !TURN_PROCESS_INDEPENDENT_KINDS.has(node.kind)) return {
-				anchor: openingHumanAnchor,
+			const openingInputAnchor = presentation.openingInputAnchor;
+			if (openingInputAnchor !== void 0 && node.anchorSeq < openingInputAnchor && !isAtOrOutside(node, "turn")) return {
+				anchor: openingInputAnchor,
 				rank: 2,
 				originalAnchor: node.anchorSeq
 			};
-			if (presentation.control !== void 0 && node.key === presentation.control.key) return openingHumanAnchor === void 0 ? {
+			if (presentation.control !== void 0 && node.key === presentation.control.key) return openingInputAnchor === void 0 ? {
 				anchor: presentation.earliestProcessAnchor ?? node.anchorSeq,
 				rank: -1,
 				originalAnchor: node.anchorSeq
 			} : {
-				anchor: openingHumanAnchor,
+				anchor: openingInputAnchor,
 				rank: 1,
 				originalAnchor: node.anchorSeq
 			};
@@ -4736,13 +8944,13 @@ window.__ModuleLoader__.load({
 		}
 		/**
 		* Order visible Chat Nodes without changing existing relative order as process
-		* eligibility changes. Opening human input precedes process candidates, while
+		* eligibility changes. Opening input precedes process candidates, while
 		* each synthetic process control sits between them.
 		* @param nodes - currently materialized Chat Nodes.
 		* @returns visible Nodes in presentation order.
 		*/
 		function orderedVisibleChatNodes(nodes) {
-			const visible = nodes.filter((node) => node.visibility === "visible");
+			const visible = nodes.filter((node) => isVisibleChatNode(node));
 			const presentations = turnProcessPresentations(visible);
 			return visible.sort((left, right) => {
 				const leftPosition = presentationPosition(left, presentations);
@@ -4818,6 +9026,194 @@ window.__ModuleLoader__.load({
 					byKey.set(key, withReferenceLabels(node, this.labelsByMessageSeq.get(messageSeq) ?? EMPTY_KEYS));
 				}
 				return [...byKey.values()];
+			}
+		};
+		function withSkillNames(node, names) {
+			const candidate = node;
+			if (candidate.kind !== "user" && candidate.kind !== "steering") return node;
+			const current = candidate.data.skillNames ?? EMPTY_KEYS;
+			const hasNames = Object.hasOwn(candidate.data, "skillNames");
+			if (sameReferences$1(current, names) && hasNames === names.length > 0) return node;
+			const data = { ...candidate.data };
+			if (names.length === 0) delete data.skillNames;
+			else data.skillNames = names;
+			return {
+				...candidate,
+				data
+			};
+		}
+		/**
+		* Classify one Node for batching: a direct message, a `skill-invocation`
+		* context, or a boundary of any other kind. A context that injects no skill
+		* (workspace rules, the catalog, a recall) is transparent and yields null.
+		*/
+		function slashEntryOf(node) {
+			const candidate = node;
+			if (candidate.kind === "user" || candidate.kind === "steering") return {
+				key: node.key,
+				seq: node.anchorSeq,
+				kind: "message",
+				name: null
+			};
+			if (candidate.kind === "context") {
+				const name = skillInvocationName(candidate.data.source);
+				return name === null ? null : {
+					key: node.key,
+					seq: node.anchorSeq,
+					kind: "skill",
+					name
+				};
+			}
+			return {
+				key: node.key,
+				seq: node.anchorSeq,
+				kind: "boundary",
+				name: null
+			};
+		}
+		function sameSlashEntry(left, right) {
+			return left.seq === right.seq && left.kind === right.kind && left.name === right.name;
+		}
+		/**
+		* Attaches each direct message's step-loaded skill names to its Node.
+		*
+		* A step's `skill-invocation` injections follow the direct messages the host
+		* scanned for `/name` gestures and precede the step's first Node of any other
+		* kind, so every non-message, non-context Node closes a batch. Every ended
+		* Turn publishes its `turn-tail` Node on `turn/end` whatever the reason, so a
+		* batch never spans Turns, and `step/start` precedes the direct message in
+		* the log, so no boundary separates a message from its injections. Names
+		* attach to every direct message of the batch: the bubble decorates only the
+		* tokens its own text carries.
+		*
+		* The index holds only messages, skill injections, and boundaries, ordered by
+		* `anchorSeq`. An apply re-reads just the batches around the Nodes whose
+		* classification changed and never scans the store, so an assistant
+		* streaming frame costs nothing here (the append hot path never scans the
+		* Chat Nodes).
+		*/
+		var SkillNameProjector = class {
+			entries = /* @__PURE__ */ new Map();
+			/** Every indexed entry in `anchorSeq` order. */
+			sorted = [];
+			/**
+			* Rebuild the index from a whole Node set and attach names to its messages.
+			* @param nodes - every materialized Chat Node, in any order.
+			* @returns the same Nodes, direct messages carrying their batch's names.
+			*/
+			replace(nodes) {
+				this.entries.clear();
+				this.sorted = [];
+				for (const node of nodes) {
+					const entry = slashEntryOf(node);
+					if (entry === null) continue;
+					this.entries.set(entry.key, entry);
+					this.sorted.push(entry);
+				}
+				this.sorted.sort((left, right) => left.seq - right.seq);
+				const names = /* @__PURE__ */ new Map();
+				for (let index = 0; index < this.sorted.length; index++) {
+					if (this.sorted[index]?.kind === "boundary") continue;
+					const end = this.runEnd(index);
+					this.assignRun(index, end, names);
+					index = end;
+				}
+				return nodes.map((node) => withSkillNames(node, names.get(node.key) ?? EMPTY_KEYS));
+			}
+			/**
+			* Fold one incremental upsert set: re-read only the batches around the
+			* Nodes whose classification changed.
+			* @param upserts - the changed Nodes.
+			* @param store - the resident Nodes, read by key for the messages of an affected batch.
+			* @returns the upserts plus any resident message whose names changed.
+			*/
+			apply(upserts, store) {
+				const dirty = [];
+				for (const node of upserts) {
+					const next = slashEntryOf(node);
+					const previous = this.entries.get(node.key);
+					if (previous !== void 0) {
+						if (next !== null && sameSlashEntry(previous, next)) {
+							if (next.kind === "message") dirty.push(next.seq);
+							continue;
+						}
+						this.remove(previous);
+						dirty.push(previous.seq);
+					}
+					if (next === null) continue;
+					this.insert(next);
+					dirty.push(next.seq);
+				}
+				if (dirty.length === 0) return upserts;
+				const names = /* @__PURE__ */ new Map();
+				for (const seq of dirty) this.collectAround(seq, names);
+				const byKey = new Map(upserts.map((node) => [node.key, node]));
+				for (const [key, list] of names) {
+					const node = byKey.get(key) ?? store.get(key);
+					if (node === void 0) continue;
+					const next = withSkillNames(node, list);
+					if (next !== node || byKey.has(key)) byKey.set(key, next);
+				}
+				return [...byKey.values()];
+			}
+			insert(entry) {
+				this.sorted.splice(this.lowerBound(entry.seq), 0, entry);
+				this.entries.set(entry.key, entry);
+			}
+			remove(entry) {
+				this.sorted.splice(this.sorted.indexOf(entry), 1);
+				this.entries.delete(entry.key);
+			}
+			/** First index whose seq is at least `seq`. */
+			lowerBound(seq) {
+				let low = 0;
+				let high = this.sorted.length;
+				while (low < high) {
+					const middle = low + high >>> 1;
+					if ((this.sorted[middle]?.seq ?? Number.POSITIVE_INFINITY) < seq) low = middle + 1;
+					else high = middle;
+				}
+				return low;
+			}
+			/** Last index of the boundary-free run containing `index`. */
+			runEnd(index) {
+				let end = index;
+				while (end + 1 < this.sorted.length && this.sorted[end + 1]?.kind !== "boundary") end++;
+				return end;
+			}
+			/** First index of the boundary-free run containing `index`. */
+			runStart(index) {
+				let start = index;
+				while (start - 1 >= 0 && this.sorted[start - 1]?.kind !== "boundary") start--;
+				return start;
+			}
+			/** Record the names every message of the run `[start, end]` carries. */
+			assignRun(start, end, names) {
+				const list = [];
+				for (let index = start; index <= end; index++) {
+					const entry = this.sorted[index];
+					if (entry?.kind === "skill" && entry.name !== null && !list.includes(entry.name)) list.push(entry.name);
+				}
+				for (let index = start; index <= end; index++) {
+					const entry = this.sorted[index];
+					if (entry?.kind === "message") names.set(entry.key, list);
+				}
+			}
+			/**
+			* Re-read the run(s) around one changed seq: the run holding a message or
+			* skill entry, or — for a boundary, or a seq that left the index — the runs
+			* on both sides of that position.
+			*/
+			collectAround(seq, names) {
+				const at = this.lowerBound(seq);
+				const here = this.sorted[at];
+				if (here !== void 0 && here.seq === seq && here.kind !== "boundary") {
+					this.assignRun(this.runStart(at), this.runEnd(at), names);
+					return;
+				}
+				if (at - 1 >= 0 && this.sorted[at - 1]?.kind !== "boundary") this.assignRun(this.runStart(at - 1), at - 1, names);
+				const right = here !== void 0 && here.seq === seq ? at + 1 : at;
+				if (right < this.sorted.length && this.sorted[right]?.kind !== "boundary") this.assignRun(right, this.runEnd(right), names);
 			}
 		};
 		const EMPTY_CONTRIBUTION = {
@@ -4902,7 +9298,7 @@ window.__ModuleLoader__.load({
 		function sameContribution(left, right) {
 			return left !== void 0 && left.anchorSeq === right.anchorSeq && left.partial?.blocks === right.partial?.blocks && left.partial?.turn === right.partial?.turn && left.partial?.step === right.partial?.step && left.running === right.running && sameReferences$1(left.nodes, right.nodes);
 		}
-		/** Incremental compatibility projection for StatsLine and legacy top-level snapshot fields. */
+		/** Incremental compatibility projection for the composer stats pills and legacy top-level snapshot fields. */
 		var LegacySliceBuilder = class {
 			contributions = /* @__PURE__ */ new Map();
 			finalizedContributions = /* @__PURE__ */ new Map();
@@ -5013,7 +9409,12 @@ window.__ModuleLoader__.load({
 			navigation = new MutableTurnNavigationIndex();
 			legacy = new LegacySliceBuilder();
 			referenceLabels = new ReferenceLabelProjector();
+			skillNames = new SkillNameProjector();
 			order = EMPTY_KEYS;
+			latestGroupInput;
+			readGroupNode = (key) => this.store.get(key);
+			readGroupTurn = (turn) => this.locations.getTurn(turn);
+			readGroupPosition = (key) => this.locations.getPosition(key);
 			/** Last published timeline: a Turn boundary can land without a new node. */
 			timeline = null;
 			empty;
@@ -5022,37 +9423,87 @@ window.__ModuleLoader__.load({
 					turnOrder: EMPTY_TURNS,
 					turns: /* @__PURE__ */ new Map()
 				});
+				this.latestGroupInput = {
+					kind: "replace",
+					order: this.order,
+					readNode: this.readGroupNode,
+					readTurn: this.readGroupTurn,
+					readPosition: this.readGroupPosition,
+					timeline: this.empty.timeline
+				};
 			}
 			replace(input) {
-				const nodes = this.referenceLabels.replace(input.nodes);
+				const nodes = this.skillNames.replace(this.referenceLabels.replace(input.nodes));
 				this.store.replace(nodes);
 				this.order = orderedVisibleChatNodes(nodes).map((node) => node.key);
 				this.locations.rebuild(this.order, this.store);
+				this.store.replaceProcesses(this.order, this.locations);
+				this.store.settleBottom(input.timeline.turnOrder, this.locations);
 				this.navigation.rebuild(input.timeline, this.locations, this.store);
 				this.timeline = input.timeline;
+				this.latestGroupInput = {
+					kind: "replace",
+					order: this.order,
+					readNode: this.readGroupNode,
+					readTurn: this.readGroupTurn,
+					readPosition: this.readGroupPosition,
+					timeline: input.timeline
+				};
 				return this.snapshot(input.timeline, this.legacy.replace(nodes, input.timeline));
 			}
 			apply(input) {
-				const upserts = this.referenceLabels.apply(input.upserts, this.store);
+				const upserts = this.skillNames.apply(this.referenceLabels.apply(input.upserts, this.store), this.store);
+				const processTurns = /* @__PURE__ */ new Set();
 				let structural = false;
 				const contentOnly = [];
+				const changes = [];
 				for (const node of upserts) {
 					const previous = this.store.get(node.key);
-					const nodeStructural = previous === void 0 || previous.kind !== node.kind || previous.anchorSeq !== node.anchorSeq || previous.visibility !== node.visibility || locationIdentity(previous.location) !== locationIdentity(node.location);
+					if (previous !== node) changes.push({
+						previous,
+						current: node
+					});
+					const nodeStructural = previous === void 0 || previous.kind !== node.kind || previous.anchorSeq !== node.anchorSeq || previous.visibility !== node.visibility || previous.groupTree !== node.groupTree || locationIdentity(previous.location) !== locationIdentity(node.location);
 					structural ||= nodeStructural;
 					if (!nodeStructural) contentOnly.push(node);
+					if (processPresentationInputChanged(previous, node, nodeStructural)) {
+						const previousTurn = previous === void 0 ? void 0 : locationCoordinates(previous.location).turn;
+						const nextTurn = locationCoordinates(node.location).turn;
+						if (previousTurn !== void 0) processTurns.add(previousTurn);
+						if (nextTurn !== void 0) processTurns.add(nextTurn);
+					}
 				}
 				this.store.upsert(upserts);
+				let changedTurnOrders = EMPTY_TURNS;
 				if (structural) {
 					const next = orderedVisibleChatNodes(this.store.values()).map((node) => node.key);
 					this.order = sameReferences$1(this.order, next) ? this.order : next;
-					this.locations.rebuild(this.order, this.store);
+					changedTurnOrders = this.locations.rebuild(this.order, this.store);
 				}
 				this.locations.touch(contentOnly);
+				this.store.updateProcesses(processTurns, this.locations);
+				this.store.settleBottom(input.timeline.turnOrder, this.locations);
 				if (structural || input.timeline !== this.timeline) this.navigation.rebuild(input.timeline, this.locations, this.store);
 				else this.navigation.touch(turnsOf(contentOnly), this.locations, this.store);
 				this.timeline = input.timeline;
+				this.latestGroupInput = {
+					kind: "apply",
+					changes,
+					order: this.order,
+					readNode: this.readGroupNode,
+					readTurn: this.readGroupTurn,
+					readPosition: this.readGroupPosition,
+					timeline: input.timeline,
+					changedTurns: input.changedTurns ?? EMPTY_TURNS,
+					changedTurnOrders
+				};
 				return this.snapshot(input.timeline, this.legacy.apply(upserts, input.timeline));
+			}
+			groupInput() {
+				return this.latestGroupInput;
+			}
+			publish() {
+				this.store.publish();
 			}
 			snapshot(timeline, legacy = this.legacy.replace(EMPTY_LIST, timeline)) {
 				return {
@@ -5092,8 +9543,51 @@ window.__ModuleLoader__.load({
 			ctx.uiConversation.views.register(chatViewDefinition);
 		}
 		//#endregion
+		//#region ../../node_modules/@deepseek-ai/dsh-session/lib/types/surface.js
+		/** Runtime counterpart of the message-producing event union. */
+		const SURFACE_EVENT_TYPES = /* @__PURE__ */ new Set([
+			"system/message",
+			"developer/message",
+			"user/message",
+			"assistant/message",
+			"tool/result"
+		]);
+		/**
+		* Narrow an event to a surface-eligible event carrying its required marker.
+		* @param event - event to test.
+		* @returns true when both the type and marker identify a surface event.
+		*/
+		function isSurfaceEvent(event) {
+			if (!SURFACE_EVENT_TYPES.has(event.type)) return false;
+			return event.surfaceOp !== void 0;
+		}
+		/**
+		* Narrow an event to an append-origin surface event: one that entered the
+		* surface at its own log position and was never itself a replacement copy.
+		*
+		* The model-visible surface deliberately shadows replaced ranges, so it is the
+		* wrong source for a human transcript — a landed replacement would erase
+		* conversation the user already saw. Append-origin events are that transcript's
+		* durable source material; replacement copies stay model-only.
+		* @param event - event to test.
+		* @returns true when the event appended to the surface tail.
+		*/
+		function isAppendSurfaceEvent(event) {
+			return isSurfaceEvent(event) && event.surfaceOp === "append";
+		}
+		/**
+		* Narrow an event to a surface replacement: a node that shadowed an existing
+		* surface range instead of appending to the tail. The counterpart of
+		* {@link isAppendSurfaceEvent} over the two {@link SurfaceOp} variants.
+		* @param event - event to test.
+		* @returns true when the event replaced a surface range.
+		*/
+		function isReplacementSurfaceEvent(event) {
+			return isSurfaceEvent(event) && event.surfaceOp !== "append";
+		}
+		//#endregion
 		//#region lib/types/client/conversation-nodes/command.js
-		const COMPACT_PLUGIN = "compact";
+		const COMPACT_KIND = "compact-checkpoint";
 		function commandFromRun(match) {
 			if (match.event.type !== "command/run") throw new Error("command start requires command/run");
 			const data = match.event.data;
@@ -5133,7 +9627,7 @@ window.__ModuleLoader__.load({
 		function compactSource(event) {
 			if (event.type !== "user/message" || !isReplacementSurfaceEvent(event)) return void 0;
 			const source = event.data.source;
-			if (source.kind !== "plugin" || source.plugin !== COMPACT_PLUGIN || typeof source.compactionId !== "string") return void 0;
+			if (source.kind !== COMPACT_KIND || typeof source.compactionId !== "string") return void 0;
 			return {
 				compactionId: source.compactionId,
 				...source.sourceCommandId === void 0 ? {} : { sourceCommandId: source.sourceCommandId }
@@ -5315,13 +9809,10 @@ window.__ModuleLoader__.load({
 		const unknownFallbackDefinition = {
 			kind: "unknown-surface",
 			target: "chat",
-			match: (event) => {
-				if (event.type === "chunkrow/text-chunks" || event.type === "chunkrow/reasoning-chunks" || event.type === "chunkrow/tool-call-chunks") return null;
-				return isAppendSurfaceEvent(event) ? {
-					id: String(event.seq),
-					role: "start"
-				} : null;
-			},
+			match: (event) => event.type !== "assistant/live-chunk" && isAppendSurfaceEvent(event) ? {
+				id: String(event.seq),
+				role: "start"
+			} : null,
 			start: (_context, match) => ({
 				kind: "unknown",
 				seq: match.event.seq,
@@ -5341,15 +9832,66 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region lib/types/client/conversation-nodes/inbox.js
-		function applySplice(previous, splice) {
-			const pending = [...previous?.state.pending ?? []];
-			const claimed = new Set(previous?.state.claimed ?? []);
-			const removed = pending.splice(splice.start, splice.removedCount ?? 0, ...splice.inserted);
-			for (const identity of splice.inserted) claimed.delete(identity.id);
-			if (splice.target === "next-step" && splice.outcome !== "canceled") for (const identity of removed) claimed.add(identity.id);
+		const EMPTY_PENDING = {
+			kind: "snapshot",
+			ids: []
+		};
+		const EMPTY_CURRENT_CLAIMED = /* @__PURE__ */ new Set();
+		function materializePending(state) {
+			const splices = [];
+			let current = state;
+			while (current.kind === "splice") {
+				splices.push(current);
+				current = current.previous;
+			}
+			const pending = [...current.ids];
+			for (const splice of splices.reverse()) pending.splice(splice.start, splice.removedCount, ...splice.inserted);
+			return pending;
+		}
+		function withoutInserted(claimed, inserted) {
+			let next;
+			for (const { id } of inserted) {
+				if (!claimed.has(id)) continue;
+				next ??= new Set(claimed);
+				next.delete(id);
+			}
+			return next ?? claimed;
+		}
+		/**
+		* Apply one Inbox splice under the AgentLoop's durable event ordering.
+		* An entered claim logs its complete message batch before another claim; a
+		* rejected claim logs no messages, so only the current claim can classify a
+		* later `user/message`.
+		*/
+		function applySplice(previous, splice, seq) {
+			const priorPending = previous?.state.pending ?? EMPTY_PENDING;
+			const inserted = splice.inserted;
+			const removedCount = splice.removedCount ?? 0;
+			if (removedCount > 0 && splice.outcome !== "canceled") {
+				const pending = materializePending(priorPending);
+				const removed = pending.splice(splice.start, removedCount, ...inserted);
+				return {
+					pending: {
+						kind: "snapshot",
+						ids: pending
+					},
+					currentClaimed: new Set(removed.map((message) => message.id)),
+					claimSeq: seq,
+					claimedHuman: removed.some((message) => message.source.kind === "user")
+				};
+			}
+			const currentClaimed = withoutInserted(previous?.state.currentClaimed ?? EMPTY_CURRENT_CLAIMED, inserted);
 			return {
-				pending,
-				claimed
+				pending: {
+					kind: "splice",
+					previous: priorPending,
+					start: splice.start,
+					removedCount,
+					inserted
+				},
+				currentClaimed,
+				claimSeq: previous?.state.claimSeq ?? -1,
+				claimedHuman: previous?.state.claimedHuman ?? false
 			};
 		}
 		function inboxDefinition(target) {
@@ -5361,53 +9903,69 @@ window.__ModuleLoader__.load({
 					role: "start"
 				} : null,
 				start: (_context, match, reader) => {
-					if (match.event.type !== "agent/inbox/spliced") throw new Error(`${kind} start requires agent/inbox/spliced`);
-					return applySplice(reader.previous(kind), match.event.data);
+					if (match.event.type !== "agent/inbox/spliced") throw new Error("inbox start requires agent/inbox/spliced");
+					return applySplice(reader.previous(kind), match.event.data, match.event.seq);
 				},
 				update: (context) => context.state,
 				publication: () => "none"
 			};
 		}
-		/** Cumulative next-turn inbox splice Definition. */
-		const nextTurnInboxDefinition = inboxDefinition("next-turn");
-		/** Cumulative next-step inbox splice Definition used to classify steering. */
+		/** Persistent next-step claims identify messages admitted into a running Turn. */
 		const nextStepInboxDefinition = inboxDefinition("next-step");
+		/** Persistent next-turn claims identify messages that wake a new Turn. */
+		const nextTurnInboxDefinition = inboxDefinition("next-turn");
 		/**
-		* Register the two durable Inbox-state contributions.
+		* Register the Inbox state used by Chat message classification.
 		* @param ctx - owning UI Conversation context.
 		*/
 		function registerInboxConversationNodes(ctx) {
-			ctx.uiConversation.events.register(nextTurnInboxDefinition);
 			ctx.uiConversation.events.register(nextStepInboxDefinition);
+			ctx.uiConversation.events.register(nextTurnInboxDefinition);
 		}
 		//#endregion
 		//#region lib/types/client/conversation-nodes/message.js
 		function isCompactionCheckpoint(event) {
 			if (event.type !== "user/message" || !isReplacementSurfaceEvent(event)) return false;
-			const source = event.data.source;
-			return source.kind === "plugin" && source.plugin === "compact";
+			return event.data.source.kind === "compact-checkpoint";
+		}
+		/** Context presentation shared by user-role injections and developer messages. */
+		function contextMessage(event, message) {
+			return {
+				kind: "context",
+				seq: event.seq,
+				time: event.time,
+				content: message.content,
+				source: message.source,
+				producer: contextProducer(message.source),
+				form: contextForm(message.source)
+			};
 		}
 		/** User, steering, and injected-context message classification Definition. */
 		const messageDefinition = {
 			kind: "input-message",
 			target: "chat",
-			match: (event) => event.type === "user/message" && isAppendSurfaceEvent(event) && !isCompactionCheckpoint(event) ? {
-				id: String(event.data.id),
-				role: "start"
-			} : null,
+			match: (event) => {
+				if (event.type === "user/message") return isAppendSurfaceEvent(event) && !isCompactionCheckpoint(event) ? {
+					id: String(event.data.id),
+					role: "start"
+				} : null;
+				return null;
+			},
 			start: (_context, match, reader) => {
-				if (match.event.type !== "user/message") throw new Error("input-message start requires user/message");
 				const event = match.event;
-				if (event.data.source.kind !== "user") return {
-					kind: "context",
-					seq: event.seq,
-					time: event.time,
-					content: event.data.content,
-					source: event.data.source,
-					provenance: contextProvenance(event.data.source),
-					form: contextForm(event.data.source)
-				};
-				return reader.previous("inbox-next-step")?.state.claimed.has(String(event.data.id)) === true ? {
+				if (event.type !== "user/message") throw new Error("input-message start requires user/message");
+				if (event.data.source.kind !== "user") {
+					const nextTurn = reader.previous("inbox-next-turn")?.state;
+					const nextStep = reader.previous("inbox-next-step")?.state;
+					const location = match.location;
+					const turnStart = location.kind === "step" ? location.turn.start?.seq : void 0;
+					const idleSteer = location.kind === "step" && location.step.step === 1 && turnStart !== void 0 && (nextStep?.claimSeq ?? -1) > turnStart && (nextTurn?.claimSeq ?? -1) < turnStart && nextStep?.claimedHuman === false && nextStep.currentClaimed.has(String(event.data.id));
+					return {
+						...contextMessage(event, event.data),
+						waking: nextTurn?.currentClaimed.has(String(event.data.id)) === true || idleSteer
+					};
+				}
+				return reader.previous("inbox-next-step")?.state.currentClaimed.has(String(event.data.id)) === true ? {
 					kind: "steering",
 					messageId: event.data.id,
 					seq: event.seq,
@@ -5425,19 +9983,41 @@ window.__ModuleLoader__.load({
 			update: (context) => context.state,
 			buildViewNode: (context) => {
 				if (context.state === void 0) return null;
-				return chatNode(context, context.state.kind, context.state.seq, context.state);
+				const waking = context.state.kind === "context" && context.start?.event.type === "user/message" && context.state.waking === true;
+				const location = contextLocation(context);
+				const human = context.state.kind === "user" || context.state.kind === "steering";
+				const opensExchange = human && location.kind === "step" && location.step.step === 1;
+				return chatNode(context, waking ? "turn-trigger" : context.state.kind, context.state.seq, context.state, {
+					location,
+					groupTree: opensExchange ? "exchange" : human || waking ? "input" : void 0
+				});
+			}
+		};
+		/** Developer history uses the input-message lifecycle and context presentation. */
+		const developerMessageDefinition = {
+			...messageDefinition,
+			kind: "developer-message",
+			match: (event) => event.type === "developer/message" ? {
+				id: String(event.data.message.id),
+				role: "start"
+			} : null,
+			start: (_context, match) => {
+				const event = match.event;
+				if (event.type !== "developer/message") throw new Error("developer-message start requires developer/message");
+				return contextMessage(event, event.data.message);
 			}
 		};
 		/**
-		* Register the user, steering, and injected-context message contribution.
+		* Register user, steering, injected-context, and developer message contributions.
 		* @param ctx - owning UI Conversation context.
 		*/
 		function registerMessageConversationNode(ctx) {
 			ctx.uiConversation.events.register(messageDefinition);
+			ctx.uiConversation.events.register(developerMessageDefinition);
 		}
 		//#endregion
 		//#region lib/types/client/conversation-nodes/request-prompt.js
-		/** Place a request's system field at the start of its visible message series. */
+		/** Place a request's system prompt at the start of its visible message series. */
 		function requestPromptAnchor(match, previous, isInitial) {
 			if (match.location.kind !== "step") return match.event.seq;
 			if (previous === void 0 && !isInitial) return match.event.seq;
@@ -5450,7 +10030,42 @@ window.__ModuleLoader__.load({
 			return current?.kind === "system-prompt" ? current.anchorSeq : requestPromptAnchor(match, previous, isInitial);
 		}
 		/**
-		* Request-header prompt Definition for the Chat target.
+		* System-prompt surface node Definition for the Chat target. It owns every
+		* `system/message` event on the Chat target so the unknown-surface fallback
+		* never renders the prompt as a transcript row. Each nonempty append owns a
+		* prompt card, even without a loaded request header. Initial cards precede
+		* their step's input; in-history updates stay at their own positions. The
+		* request-prompt Definition owns replacement and later-series cards. Positional
+		* replacements advance the effective prompt without changing historical cards.
+		* @param inspect - Pure surface interpretation supplied by uiConversation.
+		* @returns The Chat system-prompt Definition.
+		*/
+		function systemMessageDefinition(inspect) {
+			return {
+				kind: "system-message",
+				target: "chat",
+				match: (event) => event.type === "system/message" || "surfaceOp" in event && event.surfaceOp !== "append" ? {
+					id: String(event.seq),
+					role: "start"
+				} : null,
+				start: (_context, match, reader) => {
+					if (match.event.type === "assistant/live-chunk") throw new Error("system-message requires a durable event");
+					return inspect(reader.previous("system-message")?.state, match.event);
+				},
+				update: (context) => context.state,
+				buildViewNode: (context) => {
+					const state = context.state?.introduced;
+					if (state === void 0 || state.text === "" || context.start?.event.type !== "system/message" || context.start.event.surfaceOp !== "append") return null;
+					return chatNode(context, "system-prompt", state.update ? state.seq : requestPromptAnchor(context.start, void 0, true), {
+						text: state.text,
+						...state.update ? { update: true } : {}
+					});
+				}
+			};
+		}
+		/**
+		* Request-header prompt Definition for the Chat target. Resume and explicit
+		* series starts retain a prompt card even when the system text is unchanged.
 		* @param inspect - the shared prompt interpretation, supplied by the
 		* uiConversation service (a client bundle cannot value-import it).
 		* @returns the Chat request-prompt Definition.
@@ -5466,15 +10081,19 @@ window.__ModuleLoader__.load({
 				start: (context, match, reader) => {
 					if (match.event.type !== "request/header") throw new Error("request-prompt start requires request/header");
 					const previous = reader.previous("request-prompt")?.state;
+					const systemContext = reader.previous("system-message");
+					const system = systemContext?.state.effective;
 					const location = match.location.kind === "step" ? {
 						turn: match.location.turn.turn,
 						step: match.location.step.step
 					} : {};
-					const inspection = inspect(previous?.prompt, match.event);
+					const inspection = inspect(previous?.prompt, match.event, system);
 					const change = inspection.change?.kind;
+					const systemEvent = systemContext?.matches[0]?.event;
+					const shownByUpdate = system !== void 0 && systemEvent?.type === "system/message" && systemEvent.surfaceOp === "append" && (system.update || previous === void 0) && system.turn === location.turn && system.step === location.step;
 					return {
 						anchorSeq: stableRequestPromptAnchor(context, match, previous, match.event.data.reason === "initial"),
-						showsPrompt: previous === void 0 || match.event.data.reason !== "change" || match.event.data.startsSeries === true || change === "system" || change === "system-and-tools",
+						showsPrompt: !shownByUpdate && (previous === void 0 || match.event.data.reason !== "change" || match.event.data.startsSeries === true || change === "system" || change === "system-and-tools"),
 						...location,
 						...inspection
 					};
@@ -5482,17 +10101,21 @@ window.__ModuleLoader__.load({
 				update: (context) => context.state,
 				buildViewNode: (context) => {
 					const state = context.state;
-					if (state === void 0 || !state.showsPrompt || state.prompt.system === "") return null;
-					return chatNode(context, "system-prompt", state.anchorSeq, { text: state.prompt.system });
+					if (state === void 0) return null;
+					const current = context.current.get("chat");
+					const visible = state.showsPrompt && state.prompt.system !== "";
+					if (!visible && current?.kind !== "system-prompt") return null;
+					return chatNode(context, "system-prompt", state.anchorSeq, { text: state.prompt.system }, { visibility: visible ? "visible" : "hidden" });
 				}
 			};
 		}
 		/**
-		* Register model-request system prompts in the Chat flow.
+		* Register the system-prompt surface node and the model-request prompt card in the Chat flow.
 		* @param ctx - Owning UI Conversation context.
 		*/
 		function registerRequestPromptConversationNode(ctx) {
-			ctx.uiConversation.events.register(requestPromptDefinition((previous, event) => ctx.uiConversation.inspectRequestPrompt(previous, event)));
+			ctx.uiConversation.events.register(systemMessageDefinition((previous, event) => ctx.uiConversation.inspectSystemPrompt(previous, event)));
+			ctx.uiConversation.events.register(requestPromptDefinition((previous, event, system) => ctx.uiConversation.inspectRequestPrompt(previous, event, system)));
 		}
 		//#endregion
 		//#region lib/types/client/conversation-nodes/retry.js
@@ -5573,7 +10196,7 @@ window.__ModuleLoader__.load({
 					attempts,
 					current
 				};
-				return chatNode(context, "model-retry", attempts[0]?.seq ?? current.seq, data);
+				return chatNode(context, "model-retry", attempts[0]?.seq ?? current.seq, data, { groupTree: "process" });
 			}
 		};
 		/**
@@ -5590,33 +10213,85 @@ window.__ModuleLoader__.load({
 		function jsonArguments(value) {
 			return JSON.stringify(value);
 		}
-		function rootCall(match) {
+		function rootCall(match, previous) {
 			if (match.event.type !== "tool/call") throw new Error("tool-call start requires tool/call");
 			return {
+				phase: "start",
 				callId: String(match.event.data.callId),
 				name: match.event.data.name,
 				argsRaw: match.event.data.arguments,
+				args: previous === void 0 ? PartialArguments.fromText(match.event.data.arguments) : previous.args.settle(match.event.data.arguments),
 				turn: match.event.data.turn,
 				step: match.event.data.step,
 				time: match.event.time,
 				subCalls: []
 			};
 		}
+		/**
+		* Retain argument fragments in the named call's lazy view. Root replacement
+		* belongs to publication, after all pending fragments can be observed together.
+		*/
+		function applyDelta(state, match) {
+			const event = match.event;
+			if (event.type !== "assistant/live-chunk") return state;
+			const chunk = event.data.chunk;
+			const root = state.root;
+			if (chunk.type === "block-end" && chunk.block.type === "tool-call") {
+				if (root === void 0 || "kind" in root || root.phase !== "preparing") return state;
+				return {
+					...state,
+					root: {
+						...root,
+						name: chunk.block.name,
+						args: root.args.settle(chunk.block.arguments)
+					}
+				};
+			}
+			if (chunk.type !== "tool-call-delta") return state;
+			if (root === void 0) {
+				if (!chunk.name) return state;
+				const args = new PartialArguments();
+				args.append(chunk.argumentsDelta);
+				return {
+					...state,
+					root: {
+						phase: "preparing",
+						callId: String(chunk.id),
+						name: chunk.name,
+						turn: event.data.turn,
+						step: event.data.step,
+						time: event.time,
+						subCalls: [],
+						args
+					}
+				};
+			}
+			if ("kind" in root || root.phase !== "preparing" || root.args.isSealed) return state;
+			root.args.append(chunk.argumentsDelta);
+			return state;
+		}
+		function preparingBlock(root, current) {
+			const changed = root.args.refresh();
+			if (!changed && current !== void 0 && !("kind" in current) && current.phase === "preparing" && current.name === root.name && current.args === root.args) return current;
+			return changed ? { ...root } : root;
+		}
 		function rootResult(match, previous) {
 			if (match.event.type !== "tool/result") return void 0;
-			const result = match.event.data.message.content[0];
+			const message = match.event.data.message;
 			return {
 				kind: "tool-result",
 				seq: match.event.seq,
 				time: match.event.time,
-				callId: String(match.event.data.message.source.callId),
+				callId: String(message.source.callId),
+				name: previous?.name ?? "",
+				args: previous?.args ?? PartialArguments.EMPTY,
 				call: previous === void 0 ? null : {
 					name: previous.name,
 					argsRaw: previous.argsRaw
 				},
 				callTime: previous?.time ?? null,
-				content: result.content,
-				isError: result.isError === true,
+				content: message.content,
+				isError: message.isError === true,
 				...match.event.data.error === void 0 ? {} : { error: match.event.data.error },
 				meta: match.event.data.meta,
 				subCalls: []
@@ -5624,10 +10299,12 @@ window.__ModuleLoader__.load({
 		}
 		function childCall(match, data) {
 			return {
+				phase: "start",
 				callId: data.subCallId,
 				parentCallId: data.parentCallId,
 				name: data.name,
 				argsRaw: jsonArguments(data.arguments),
+				args: PartialArguments.fromObject(data.arguments),
 				turn: locationTurn(match),
 				step: locationStep(match),
 				time: match.event.time,
@@ -5641,13 +10318,17 @@ window.__ModuleLoader__.load({
 				time: match.event.time,
 				callId: data.subCallId,
 				parentCallId: data.parentCallId,
+				name: data.name,
+				args: previous !== void 0 && !("kind" in previous) ? previous.args : PartialArguments.fromObject(data.arguments),
 				call: {
 					name: data.name,
 					argsRaw: jsonArguments(data.arguments)
 				},
 				callTime: previous?.time ?? null,
 				content: data.content ?? [],
+				meta: data.meta,
 				isError: data.isError === true,
+				...data.error === void 0 ? {} : { error: data.error },
 				subCalls: []
 			};
 		}
@@ -5687,13 +10368,13 @@ window.__ModuleLoader__.load({
 		}
 		function updateDispatch(state, match) {
 			const event = match.event;
-			if (event.type !== "tool/code-dispatch-start" && event.type !== "tool/code-dispatch") return state;
+			if (event.type !== "tool/ptc-dispatch-start" && event.type !== "tool/ptc-dispatch") return state;
 			const data = event.data;
 			const parentCallId = String(data.parentCallId);
 			const subCallId = String(data.subCallId);
 			const siblings = state.children.get(parentCallId) ?? [];
 			const index = siblings.findIndex((candidate) => candidate.callId === subCallId);
-			if (event.type === "tool/code-dispatch-start") {
+			if (event.type === "tool/ptc-dispatch-start") {
 				if (index >= 0 || !acceptsEdge(state, parentCallId, subCallId)) return state;
 				const children = new Map(state.children);
 				children.set(parentCallId, [...siblings, childCall(match, data)]);
@@ -5718,6 +10399,7 @@ window.__ModuleLoader__.load({
 			};
 		}
 		function projectBlock(block, state, interruptedAt, visited = /* @__PURE__ */ new Set(), depth = 1) {
+			if (!("kind" in block) && block.phase === "preparing") return block;
 			if (visited.has(block.callId) || depth > MAX_DEPTH) return {
 				...block,
 				subCalls: []
@@ -5738,6 +10420,8 @@ window.__ModuleLoader__.load({
 				time: interruptedAt.time,
 				callId: block.callId,
 				...block.parentCallId === void 0 ? {} : { parentCallId: block.parentCallId },
+				name: block.name,
+				args: block.args,
 				call: {
 					name: block.name,
 					argsRaw: block.argsRaw
@@ -5779,11 +10463,22 @@ window.__ModuleLoader__.load({
 			for (const candidate of context.matches) state = updateDispatch(state, candidate);
 			return state;
 		}
-		/** Root Tool lifecycle and nested Code Dispatch Definition. */
+		/** Root Tool preparation, dispatch, result, and nested PTC calls. */
 		const toolDefinition = {
 			kind: "tool-call",
 			target: "chat",
 			match: (event) => {
+				if (event.type === "assistant/live-chunk") {
+					const chunk = event.data.chunk;
+					if (chunk.type === "block-end" && chunk.block.type === "tool-call") return {
+						id: String(chunk.block.id),
+						role: "start"
+					};
+					return chunk.type === "tool-call-delta" ? {
+						id: String(chunk.id),
+						role: "start"
+					} : null;
+				}
 				if (event.type === "tool/call") return {
 					id: String(event.data.callId),
 					role: "start"
@@ -5792,7 +10487,7 @@ window.__ModuleLoader__.load({
 					id: String(event.data.message.source.callId),
 					role: "update"
 				};
-				if (event.type === "tool/code-dispatch-start" || event.type === "tool/code-dispatch") {
+				if (event.type === "tool/ptc-dispatch-start" || event.type === "tool/ptc-dispatch") {
 					const rootCallId = event.data.rootCallId;
 					return typeof rootCallId === "string" && rootCallId !== "" ? {
 						id: rootCallId,
@@ -5801,14 +10496,26 @@ window.__ModuleLoader__.load({
 				}
 				return null;
 			},
-			start: (_context, match) => ({
-				root: rootCall(match),
-				children: /* @__PURE__ */ new Map(),
-				parents: /* @__PURE__ */ new Map()
-			}),
+			start: (_context, match) => {
+				const state = {
+					root: void 0,
+					children: /* @__PURE__ */ new Map(),
+					parents: /* @__PURE__ */ new Map()
+				};
+				return match.event.type === "tool/call" ? {
+					...state,
+					root: rootCall(match)
+				} : applyDelta(state, match);
+			},
 			update: (context, match) => {
+				if (match.event.type === "assistant/live-chunk") return applyDelta(context.state, match);
+				if (match.event.type === "tool/call") return {
+					...context.state,
+					root: rootCall(match, context.state.root)
+				};
 				if (match.event.type === "tool/result") {
-					const result = rootResult(match, "kind" in context.state.root ? void 0 : context.state.root);
+					const root = context.state.root;
+					const result = rootResult(match, root !== void 0 && !("kind" in root) && root.phase === "start" ? root : void 0);
 					return result === void 0 ? context.state : {
 						...context.state,
 						root: result
@@ -5816,11 +10523,25 @@ window.__ModuleLoader__.load({
 				}
 				return updateDispatch(context.state, match);
 			},
+			publication: (match) => match.event.type === "assistant/live-chunk" ? "animation-frame" : "immediate",
 			buildViewNode: (context) => {
+				const current = context.current.get("chat");
 				const state = context.state ?? fallbackState$2(context);
-				if (state === void 0) return null;
-				const projected = projectBlock(state.root, state, interruption(context));
-				return chatNode(context, "tool-call", context.start?.event.seq ?? ("kind" in state.root ? state.root.seq : context.matches[0]?.event.seq ?? 0), { root: projected });
+				if (state?.root === void 0) return current == null ? null : current.visibility === "hidden" ? current : {
+					...current,
+					visibility: "hidden"
+				};
+				const interruptedAt = interruption(context);
+				const projected = projectBlock(!("kind" in state.root) && state.root.phase === "preparing" ? preparingBlock(state.root, current?.data.root) : state.root, state, interruptedAt);
+				const anchor = context.start?.event.seq ?? ("kind" in state.root ? state.root.seq : context.matches[0]?.event.seq ?? 0);
+				const visibility = !("kind" in projected) && projected.phase === "preparing" && interruptedAt !== void 0 ? "hidden" : "visible";
+				const location = contextLocation(context);
+				const data = current?.data.root === projected ? current.data : { root: projected };
+				if (current?.data === data && current.anchorSeq === anchor && current.visibility === visibility && current.location === location) return current;
+				return chatNode(context, "tool-call", anchor, data, {
+					visibility,
+					location
+				});
 			}
 		};
 		/**
@@ -5828,7 +10549,17 @@ window.__ModuleLoader__.load({
 		* @param ctx - owning UI Conversation context.
 		*/
 		function registerToolConversationNode(ctx) {
-			ctx.uiConversation.events.register(toolDefinition);
+			const match = toolDefinition.match.bind(toolDefinition);
+			ctx.uiConversation.events.register({
+				...toolDefinition,
+				match: {
+					"assistant/live-chunk": match,
+					"tool/call": match,
+					"tool/result": match,
+					"tool/ptc-dispatch-start": match,
+					"tool/ptc-dispatch": match
+				}
+			});
 		}
 		//#endregion
 		//#region lib/types/client/conversation-nodes/turn-error.js
@@ -5837,9 +10568,28 @@ window.__ModuleLoader__.load({
 			if (location?.kind !== "turn" && location?.kind !== "step") return 0;
 			return location.turn.steps.at(-1)?.step ?? 0;
 		}
+		/**
+		* Failure shown for a turn ending: a recorded error, a sign-out cancellation,
+		* or a turn that restart recovery closed because the DSH process exited mid-turn.
+		*/
+		function endFailure(reason) {
+			switch (reason.kind) {
+				case "error": return reason.error;
+				case "aborted": return reason.reason.kind === "hook" && reason.reason.reason === "deepseek-account/signed-out" ? {
+					message: "Stopped because you signed out of DeepSeek.",
+					code: "ACCOUNT_SIGNED_OUT"
+				} : void 0;
+				case "interrupted": return {
+					message: "The DSH process exited before this turn finished.",
+					code: "INTERRUPTED"
+				};
+				default: return;
+			}
+		}
 		function failureFrom(match) {
-			if (match.event.type !== "turn/end" || match.event.data.reason.kind !== "error") return void 0;
-			const failure = match.event.data.reason.error;
+			if (match.event.type !== "turn/end") return void 0;
+			const failure = endFailure(match.event.data.reason);
+			if (failure === void 0) return void 0;
 			const display = displayFailure(failure);
 			return {
 				seq: match.event.seq,
@@ -5871,7 +10621,7 @@ window.__ModuleLoader__.load({
 					id: String(event.data.turn),
 					role: "start"
 				};
-				if (event.type === "turn/end" && event.data.reason.kind === "error") return {
+				if (event.type === "turn/end" && endFailure(event.data.reason) !== void 0) return {
 					id: String(event.data.turn),
 					role: "update"
 				};
@@ -5901,7 +10651,7 @@ window.__ModuleLoader__.load({
 					message: failure.message,
 					...failure.code === void 0 ? {} : { code: failure.code }
 				};
-				return chatNode(context, "turn-error", node.seq, node);
+				return chatNode(context, "turn-error", node.seq, node, { groupTree: "turn" });
 			}
 		};
 		/**
@@ -5965,7 +10715,7 @@ window.__ModuleLoader__.load({
 					turn: state.turn,
 					step: lastStep(context)
 				};
-				return chatNode(context, "turn-max-tokens", noticeAnchor(context, state.seq), node);
+				return chatNode(context, "turn-max-tokens", noticeAnchor(context, state.seq), node, { groupTree: "turn" });
 			}
 		};
 		/**
@@ -5976,65 +10726,39 @@ window.__ModuleLoader__.load({
 			ctx.uiConversation.events.register(turnMaxTokensDefinition);
 		}
 		//#endregion
-		//#region lib/types/client/contract/assistant-content.js
-		/**
-		* Test whether Assistant blocks contain a user-facing reply rather than only
-		* reasoning or Tool-call protocol material.
-		* @param blocks - Assistant content blocks.
-		* @returns whether the blocks contain visible reply content.
-		*/
-		function hasAssistantReplyContent(blocks) {
-			return blocks.some((block) => {
-				if (block.kind === "reasoning" || block.kind === "tool-call") return false;
-				if (block.kind === "text") return block.text.trim() !== "";
-				return true;
-			});
-		}
-		//#endregion
 		//#region lib/types/client/conversation-nodes/turn-process.js
-		function isChunkRunEvent(event) {
-			return event.type === "chunkrow/text-chunks" || event.type === "chunkrow/reasoning-chunks" || event.type === "chunkrow/tool-call-chunks";
-		}
 		function eventTurn(event) {
 			const data = event.data;
 			return typeof data.turn === "number" ? data.turn : void 0;
 		}
+		function visibleChunk(chunk) {
+			if (chunk.type === "text-delta" || chunk.type === "reasoning-delta") return chunk.text.trim() !== "";
+			if (chunk.type === "block-start") return chunk.blockType !== "text" && chunk.blockType !== "reasoning" && chunk.blockType !== "tool-call";
+			if (chunk.type !== "block-end") return false;
+			const block = chunk.block;
+			if (block.type === "tool-call") return false;
+			if (block.type === "text" || block.type === "reasoning") return block.text.trim() !== "";
+			return true;
+		}
 		function visibleAssistantEvent(event) {
-			if (event.type === "assistant/chunk") {
-				const chunk = event.data.chunk;
-				if (chunk.type === "text-delta" || chunk.type === "reasoning-delta") return chunk.text.trim() !== "";
-				if (chunk.type === "block-start") return chunk.blockType !== "text" && chunk.blockType !== "reasoning" && chunk.blockType !== "tool-call";
-				if (chunk.type !== "block-end") return false;
-				const block = chunk.block;
-				if (block.type === "tool-call") return false;
-				if (block.type === "text" || block.type === "reasoning") return block.text.trim() !== "";
-				return true;
-			}
-			return event.type === "assistant/message" && isAppendSurfaceEvent(event) && toAssistantBlocks(event.data.message.content).some((block) => {
+			if (event.type === "assistant/live-chunk") return visibleChunk(event.data.chunk);
+			if (event.type === "assistant/attempt") return false;
+			return event.type === "assistant/message" && event.surfaceOp === "append" && toAssistantBlocks(event.data.message.content).some((block) => {
 				if (block.kind === "tool-call") return false;
 				if (block.kind === "text" || block.kind === "reasoning") return block.text.trim() !== "";
 				return true;
 			});
 		}
 		function processEvidence(event) {
-			if (isChunkRunEvent(event)) {
-				if (event.type === "chunkrow/tool-call-chunks") return void 0;
-				const firstVisible = event.data.texts.findIndex((text) => text.trim() !== "");
-				return firstVisible < 0 ? void 0 : {
-					kind: "assistant",
-					seq: event.seq + firstVisible,
-					step: event.data.step
-				};
-			}
 			if (visibleAssistantEvent(event)) {
-				if (event.type !== "assistant/chunk" && event.type !== "assistant/message") return void 0;
+				if (event.type !== "assistant/live-chunk" && event.type !== "assistant/message" && event.type !== "assistant/attempt") return void 0;
 				return {
 					kind: "assistant",
 					seq: event.seq,
 					step: event.data.step
 				};
 			}
-			if (event.type === "tool/call" || event.type === "tool/result" && isAppendSurfaceEvent(event) || event.type === "llm/retry") return {
+			if (event.type === "tool/call" || event.type === "tool/result" && event.surfaceOp === "append" || event.type === "llm/retry") return {
 				kind: "other",
 				seq: event.seq
 			};
@@ -6050,6 +10774,7 @@ window.__ModuleLoader__.load({
 				turn,
 				assistantStartByStep: /* @__PURE__ */ new Map(),
 				messageCountByStep: /* @__PURE__ */ new Map(),
+				messageCount: 0,
 				toolCallCount: 0,
 				subagentCount: 0
 			};
@@ -6065,11 +10790,11 @@ window.__ModuleLoader__.load({
 			return data.blocks.some((block) => block.kind === "tool-call") ? null : data;
 		}
 		function processSpec(state, turn) {
-			const controlAnchorSeq = Math.min(state.otherStartSeq ?? Number.POSITIVE_INFINITY, ...state.assistantStartByStep.values());
-			if (!Number.isFinite(controlAnchorSeq)) return null;
+			const controlAnchorSeq = state.controlAnchorSeq ?? turn.start?.seq;
+			if (controlAnchorSeq === void 0) return null;
 			const answer = latestAnswer(turn);
 			const counts = {
-				messageCount: answer === null ? [...state.messageCountByStep.values()].reduce((total, count) => total + count, 0) : [...state.messageCountByStep].filter(([step]) => step < answer.step).reduce((total, [, count]) => total + count, 0),
+				messageCount: answer === null ? state.messageCount : [...state.messageCountByStep].filter(([step]) => step < answer.step).reduce((total, [, count]) => total + count, 0),
 				toolCallCount: state.toolCallCount,
 				subagentCount: state.subagentCount
 			};
@@ -6097,12 +10822,13 @@ window.__ModuleLoader__.load({
 		}
 		function updateProcessState(state, event) {
 			let current = state;
-			if (event.type === "assistant/message" && isAppendSurfaceEvent(event) && hasAssistantReplyContent(toAssistantBlocks(event.data.message.content))) {
+			if (event.type === "assistant/message" && event.surfaceOp === "append" && hasAssistantReplyContent(toAssistantBlocks(event.data.message.content))) {
 				const messageCountByStep = new Map(current.messageCountByStep);
 				messageCountByStep.set(event.data.step, (messageCountByStep.get(event.data.step) ?? 0) + 1);
 				current = {
 					...current,
-					messageCountByStep
+					messageCountByStep,
+					messageCount: current.messageCount + 1
 				};
 			}
 			if (event.type === "tool/call") {
@@ -6117,14 +10843,16 @@ window.__ModuleLoader__.load({
 			if (evidence === void 0) return current;
 			if (evidence.kind === "other") return current.otherStartSeq === void 0 ? {
 				...current,
-				otherStartSeq: evidence.seq
+				otherStartSeq: evidence.seq,
+				controlAnchorSeq: Math.min(current.controlAnchorSeq ?? Number.POSITIVE_INFINITY, evidence.seq)
 			} : current;
 			if (current.assistantStartByStep.has(evidence.step)) return current;
 			const assistantStartByStep = new Map(current.assistantStartByStep);
 			assistantStartByStep.set(evidence.step, evidence.seq);
 			return {
 				...current,
-				assistantStartByStep
+				assistantStartByStep,
+				controlAnchorSeq: Math.min(current.controlAnchorSeq ?? Number.POSITIVE_INFINITY, evidence.seq)
 			};
 		}
 		/** Turn-scoped process range and answer-boundary Definition. */
@@ -6138,7 +10866,7 @@ window.__ModuleLoader__.load({
 				};
 				const turn = eventTurn(event);
 				if (turn === void 0) return null;
-				if (event.type === "assistant/chunk" || event.type === "assistant/message" || isChunkRunEvent(event) || event.type === "tool/call" || event.type === "tool/result" || event.type === "llm/retry" || event.type === "step/start" || event.type === "step/end" || event.type === "turn/end") return {
+				if (event.type === "assistant/live-chunk" || event.type === "assistant/message" || event.type === "tool/call" || event.type === "tool/result" || event.type === "llm/retry" || event.type === "step/start" || event.type === "step/end" || event.type === "turn/end") return {
 					id: String(turn),
 					role: "update"
 				};
@@ -6150,39 +10878,46 @@ window.__ModuleLoader__.load({
 					turn: match.event.data.turn,
 					assistantStartByStep: /* @__PURE__ */ new Map(),
 					messageCountByStep: /* @__PURE__ */ new Map(),
+					messageCount: 0,
 					toolCallCount: 0,
 					subagentCount: 0
 				};
 			},
 			update: (context, match) => updateProcessState(context.state, match.event),
 			publication: (match) => {
-				if (isChunkRunEvent(match.event)) return "animation-frame";
-				if (match.event.type === "assistant/chunk") {
+				if (match.event.type === "assistant/live-chunk") {
 					const type = match.event.data.chunk.type;
 					return type === "usage" || type === "finish" ? "none" : "animation-frame";
 				}
 				return "immediate";
 			},
-			buildLocationData: (context, scope) => {
+			buildLocationData: (context, scope, previous) => {
 				if (scope !== "turn") return null;
 				const state = context.state ?? fallbackState(context);
 				if (state === void 0) return null;
 				const turn = turnLocation$1(context);
 				if (turn === void 0) return null;
+				const current = context.current.get("chat");
+				const latestStep = turn.steps.at(-1);
+				if (previous?.kind === "turn" && previous.key === "turn-process" && current?.kind === "turn-process" && current.data.answerAnchorSeq === null && current.data.controlAnchorSeq === state.controlAnchorSeq && current.data.messageCount === state.messageCount && current.data.toolCallCount === state.toolCallCount && current.data.subagentCount === state.subagentCount && turn.status !== "closed" && latestStep?.status !== "closed") return previous;
 				const spec = processSpec(state, turn);
-				return spec === null ? null : {
+				if (spec === null) return null;
+				if (previous?.kind === "turn" && previous.turn === spec.turn && previous.key === "turn-process" && sameTurnProcessSpec(previous.value, spec)) return previous;
+				return {
 					kind: "turn",
 					turn: turn.turn,
 					key: "turn-process",
-					value: encodeTurnProcess(spec)
+					value: spec
 				};
 			},
 			buildViewNode: (context) => {
 				const turn = turnLocation$1(context);
-				const signature = turn?.data.get("turn-process");
-				if (turn === void 0 || signature === void 0) return null;
-				const data = decodeTurnProcess(signature);
-				return chatNode(context, "turn-process", data.controlAnchorSeq + CHAT_SYNTHETIC_SEQ_OFFSETS.processControl, data);
+				const data = turn?.data.get("turn-process");
+				if (turn === void 0 || data === void 0) return null;
+				const current = context.current.get("chat");
+				const state = context.state;
+				if (current?.kind === "turn-process" && state !== void 0 && current.data.answerAnchorSeq === null && current.data.controlAnchorSeq === state.controlAnchorSeq && current.data.messageCount === state.messageCount && current.data.toolCallCount === state.toolCallCount && current.data.subagentCount === state.subagentCount && turn.status !== "closed" && turn.steps.at(-1)?.status !== "closed" && current.location === (context.start?.location ?? context.matches[0]?.location)) return current;
+				return chatNode(context, "turn-process", data.controlAnchorSeq + CHAT_SYNTHETIC_SEQ_OFFSETS.processControl, data, { groupTree: "turn" });
 			}
 		};
 		/**
@@ -6190,7 +10925,35 @@ window.__ModuleLoader__.load({
 		* @param ctx - owning UI Conversation context.
 		*/
 		function registerTurnProcess(ctx) {
-			ctx.uiConversation.events.register(turnProcessDefinition);
+			const match = turnProcessDefinition.match.bind(turnProcessDefinition);
+			ctx.uiConversation.events.register({
+				...turnProcessDefinition,
+				match: {
+					"turn/start": match,
+					"assistant/live-chunk": match,
+					"assistant/message": match,
+					"tool/call": match,
+					"tool/result": match,
+					"llm/retry": match,
+					"step/start": match,
+					"step/end": match,
+					"turn/end": match
+				}
+			});
+		}
+		//#endregion
+		//#region ../../node_modules/@deepseek-ai/dsh-llm/lib/types/assistant-stream.js
+		/**
+		* The last raw chunk of one never-packed type, scanning backwards and stopping at the first hit.
+		* @param stream - compact records from one durable Assistant settlement.
+		* @param type - chunk type that only appears as a raw record.
+		* @returns the stream's final chunk of that type, or undefined when it has none.
+		*/
+		function lastAssistantStreamChunk(stream, type) {
+			for (let index = stream.length - 1; index >= 0; index -= 1) {
+				const record = stream[index];
+				if (record.type === "chunk" && record.chunk.type === type) return record.chunk;
+			}
 		}
 		//#endregion
 		//#region ../../node_modules/@deepseek-ai/dsh-token-meter/lib/types/turn-usage.js
@@ -6211,6 +10974,9 @@ window.__ModuleLoader__.load({
 				provider,
 				model
 			} : void 0;
+		}
+		function streamUsage(stream) {
+			return lastAssistantStreamChunk(stream, "usage")?.usage;
 		}
 		function normalizeUsage(usage, route) {
 			const { inputTokens, outputTokens, cacheReadTokens, cacheWriteTokens, reasoningTokens, totalTokens } = usage;
@@ -6339,16 +11105,19 @@ window.__ModuleLoader__.load({
 					};
 					continue;
 				}
-				if (event.type === "assistant/chunk") {
+				if (event.type === "assistant/attempt") {
 					if (event.data.turn !== turn || state.kind !== "open" || !sameAttempt(state, event.data.turn, event.data.step)) {
 						invalid = true;
 						continue;
 					}
-					if (event.data.chunk.type === "usage") state = {
-						...state,
-						sample: event.data.chunk.usage
+					const sample = streamUsage(event.data.stream) ?? state.sample;
+					state = {
+						kind: "open",
+						turn,
+						step: event.data.step,
+						...sample === void 0 ? {} : { sample }
 					};
-					else if (event.data.chunk.type === "finish" && (event.data.chunk.reason.kind === "error" || event.data.chunk.reason.kind === "aborted")) if (!closeOpen()) invalid = true;
+					if (!closeOpen()) invalid = true;
 					else state = {
 						kind: "finishClosed",
 						turn,
@@ -6361,9 +11130,10 @@ window.__ModuleLoader__.load({
 						invalid = true;
 						continue;
 					}
-					if (event.data.usage !== void 0) state = {
+					const sample = event.data.usage ?? streamUsage(event.data.stream);
+					if (sample !== void 0) state = {
 						...state,
-						sample: event.data.usage
+						sample
 					};
 					if (!closeOpen(messageRoute(event.data.message))) invalid = true;
 					else state = {
@@ -6402,21 +11172,10 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region lib/types/client/conversation-nodes/turn-tail.js
 		function isSessionEvent(event) {
-			return event.type !== "chunkrow/text-chunks" && event.type !== "chunkrow/reasoning-chunks" && event.type !== "chunkrow/tool-call-chunks";
-		}
-		function hasTextAssistant(event) {
-			return event.type === "assistant/message" && isAppendSurfaceEvent(event) && toAssistantBlocks(event.data.message.content).some((block) => block.kind === "text" && block.text.trim() !== "");
-		}
-		function chunkHasText(event) {
-			if (event.type === "chunkrow/text-chunks") return event.data.texts.some((text) => text.trim() !== "");
-			if (event.type === "chunkrow/reasoning-chunks" || event.type === "chunkrow/tool-call-chunks") return false;
-			if (event.type !== "assistant/chunk") return false;
-			const chunk = event.data.chunk;
-			if (chunk.type === "text-delta") return chunk.text.trim() !== "";
-			return chunk.type === "block-end" && chunk.block.type === "text" && chunk.block.text.trim() !== "";
+			return event.type !== "assistant/live-chunk";
 		}
 		function turnCoordinates(event) {
-			if (event.type === "assistant/message" || event.type === "assistant/chunk" || event.type === "step/start" || event.type === "chunkrow/text-chunks" || event.type === "chunkrow/reasoning-chunks" || event.type === "chunkrow/tool-call-chunks" || event.type === "step/end") return {
+			if (event.type === "assistant/message" || event.type === "assistant/attempt" || event.type === "assistant/live-chunk" || event.type === "step/start" || event.type === "step/end") return {
 				turn: event.data.turn,
 				step: event.data.step
 			};
@@ -6424,44 +11183,6 @@ window.__ModuleLoader__.load({
 				turn: event.data.turn,
 				step: event.data.step
 			};
-		}
-		function closingAnchor(context) {
-			let anchor = context.matches.find((match) => match.event.type === "turn/end")?.event.seq ?? context.start?.event.seq ?? context.matches[0]?.event.seq ?? 0;
-			const steps = /* @__PURE__ */ new Map();
-			for (const match of context.matches) {
-				const event = match.event;
-				if (event.type === "turn/end") continue;
-				const coordinates = turnCoordinates(event);
-				if (coordinates?.step === void 0) continue;
-				const previous = steps.get(coordinates.step) ?? {
-					streamedText: false,
-					finalized: false
-				};
-				if (event.type === "assistant/chunk" || event.type === "chunkrow/text-chunks" || event.type === "chunkrow/reasoning-chunks" || event.type === "chunkrow/tool-call-chunks") {
-					steps.set(coordinates.step, {
-						...previous,
-						streamedText: previous.streamedText || chunkHasText(event)
-					});
-					continue;
-				}
-				if (event.type === "assistant/message") {
-					steps.set(coordinates.step, {
-						streamedText: false,
-						finalized: true
-					});
-					if (hasTextAssistant(event)) anchor = event.seq + CHAT_SYNTHETIC_SEQ_OFFSETS.finalizedFollowup;
-					continue;
-				}
-				if (event.type === "llm/retry") {
-					steps.set(coordinates.step, {
-						streamedText: false,
-						finalized: false
-					});
-					continue;
-				}
-				if (event.type === "step/end" && previous.streamedText && !previous.finalized) anchor = event.seq + CHAT_SYNTHETIC_SEQ_OFFSETS.interruptedFollowup;
-			}
-			return anchor;
 		}
 		function turnLocation(context) {
 			const location = context.start?.location ?? context.matches[0]?.location;
@@ -6471,7 +11192,7 @@ window.__ModuleLoader__.load({
 			return data.finalNode !== void 0 && data.blocks.some((block) => block.kind === "text" && block.text.trim() !== "");
 		}
 		function tailData(context) {
-			const end = context.state?.end ?? context.matches.find((match) => match.event.type === "turn/end");
+			const end = context.state === void 0 ? context.matches.find((match) => match.event.type === "turn/end") : context.state.end;
 			if (end?.event.type !== "turn/end") return null;
 			const turn = turnLocation(context);
 			if (turn === void 0) return null;
@@ -6480,10 +11201,9 @@ window.__ModuleLoader__.load({
 			let latestTranscriptSeq = finalized.at(-1)?.finalNode.seq;
 			for (const match of context.matches) {
 				const event = match.event;
-				const candidate = event.type === "tool/call" || event.type === "tool/result" && isAppendSurfaceEvent(event) || event.type === "turn/end" && event.data.reason.kind === "error" || event.type === "llm/retry" ? event.seq : void 0;
+				const candidate = event.type === "tool/call" || event.type === "tool/result" && event.surfaceOp === "append" || event.type === "turn/end" && event.data.reason.kind === "error" || event.type === "llm/retry" ? event.seq : void 0;
 				if (candidate !== void 0 && (latestTranscriptSeq === void 0 || candidate > latestTranscriptSeq)) latestTranscriptSeq = candidate;
 			}
-			const metrics = deriveTurnMetrics(finalized.map((candidate) => candidate.finalNode)).get(end.event.data.turn);
 			const tokenUsage = context.start?.event.type === "turn/start" ? deriveTurnTokenUsage(context.matches.map((match) => match.event).filter(isSessionEvent)) : void 0;
 			return {
 				turn: end.event.data.turn,
@@ -6491,8 +11211,6 @@ window.__ModuleLoader__.load({
 				time: end.event.time,
 				closing,
 				branchUnavailable: closing === null || latestTranscriptSeq !== closing.finalNode.seq,
-				...metrics?.ttftMs === void 0 ? {} : { ttftMs: metrics.ttftMs },
-				...metrics?.tokensPerSecond === void 0 ? {} : { tokensPerSecond: metrics.tokensPerSecond },
 				...tokenUsage === void 0 ? {} : { tokenUsage }
 			};
 		}
@@ -6541,7 +11259,7 @@ window.__ModuleLoader__.load({
 			},
 			buildViewNode: (context) => {
 				const data = turnLocation(context)?.data.get("turn-tail");
-				return data === void 0 ? null : chatNode(context, "turn-tail", closingAnchor(context), data);
+				return data === void 0 ? null : chatNode(context, "turn-tail", data.seq + CHAT_SYNTHETIC_SEQ_OFFSETS.finalizedFollowup, data, { groupTree: "turn" });
 			}
 		};
 		/**
@@ -6549,8 +11267,511 @@ window.__ModuleLoader__.load({
 		* @param ctx - owning UI Conversation context.
 		*/
 		function registerTurnTailConversationNode(ctx) {
-			ctx.uiConversation.events.register(turnTailDefinition);
+			const match = turnTailDefinition.match.bind(turnTailDefinition);
+			ctx.uiConversation.events.register({
+				...turnTailDefinition,
+				match: {
+					"turn/start": match,
+					"turn/end": match,
+					"tool/call": match,
+					"tool/result": match,
+					"assistant/message": match,
+					"assistant/attempt": match,
+					"assistant/live-chunk": match,
+					"step/start": match,
+					"step/end": match,
+					"llm/retry": match,
+					"llm/retry-started": match
+				}
+			});
 		}
+		//#endregion
+		//#region lib/types/client/conversation-nodes/process-activity.js
+		function activity(name) {
+			if (name === "read") return "read";
+			if (name === "read_image") return "readImage";
+			if (name === "grep" || name === "glob" || name.endsWith("_inspect")) return "search";
+			if (name === "write") return "write";
+			if (name === "edit" || name === "apply_patch") return "edit";
+			if ([
+				"bash",
+				"pwsh",
+				"exec_command",
+				"write_stdin"
+			].includes(name) || name.startsWith("terminal_")) return "commands";
+			if (name === "run_code") return "code";
+			if (name === "web_search") return "webSearch";
+			if (name === "web_fetch") return "webFetch";
+			if (name === "subagent" || name.startsWith("subagent_")) return "subagents";
+			if ([
+				"todo_write",
+				"create_goal",
+				"update_goal",
+				"get_goal"
+			].includes(name)) return "plan";
+			if (name === "ask_user_question" || name === "request_user_input") return "questions";
+			return "tools";
+		}
+		const LIVE_TOOL_DETAIL_MAX_CHARS = 160;
+		const LIVE_TOOL_DETAIL_PREFIX_CHARS = 512;
+		const LIVE_TOOL_DETAIL_SEGMENTER = new Intl.Segmenter(void 0, { granularity: "grapheme" });
+		const LIVE_TOOL_DETAIL_KEYS = [
+			"title",
+			"description",
+			"objective",
+			"task",
+			"task_name",
+			"name",
+			"question",
+			"questions",
+			"prompt",
+			"message",
+			"command",
+			"cmd",
+			"queries",
+			"query",
+			"pattern",
+			"url",
+			"uri",
+			"file_path",
+			"path",
+			"target",
+			"action",
+			"status"
+		];
+		function normalizeLiveToolText(text) {
+			const normalized = text.replace(/\s+/g, " ").trim();
+			if (normalized.length <= LIVE_TOOL_DETAIL_MAX_CHARS) return {
+				text: normalized,
+				truncated: false
+			};
+			const chars = [];
+			for (const { segment } of LIVE_TOOL_DETAIL_SEGMENTER.segment(normalized)) {
+				if (chars.length === LIVE_TOOL_DETAIL_MAX_CHARS) return {
+					text: `${chars.slice(0, LIVE_TOOL_DETAIL_MAX_CHARS - 1).join("").trimEnd()}…`,
+					truncated: true
+				};
+				chars.push(segment);
+			}
+			return {
+				text: normalized,
+				truncated: false
+			};
+		}
+		function normalizeLiveToolDetail(value) {
+			return normalizeLiveToolText(typeof value === "string" ? value : Array.isArray(value) && value.every((item) => typeof item === "string") ? value.join(", ") : "").text;
+		}
+		function argumentTextDetail(args, key) {
+			let limit = LIVE_TOOL_DETAIL_PREFIX_CHARS;
+			while (true) {
+				let prefix = args.textPrefix(key, limit);
+				if (prefix === void 0) return void 0;
+				const last = prefix.charCodeAt(prefix.length - 1);
+				if (last >= 55296 && last <= 56319) {
+					const extended = args.textPrefix(key, limit + 1);
+					const next = extended.charCodeAt(prefix.length);
+					if (next >= 56320 && next <= 57343) {
+						prefix = extended;
+						limit++;
+					} else if (extended.length === prefix.length && !args.isSealed && !args.complete(key)) prefix = prefix.slice(0, -1);
+				}
+				const detail = normalizeLiveToolText(prefix);
+				if (detail.truncated || !args.stringExceeds(key, limit)) return detail.text;
+				limit *= 2;
+			}
+		}
+		function questionDetail(value) {
+			if (!Array.isArray(value)) return "";
+			for (const item of value) {
+				if (item === null || typeof item !== "object") continue;
+				const detail = normalizeLiveToolDetail(Reflect.get(item, "question"));
+				if (detail !== "") return detail;
+			}
+			return "";
+		}
+		function liveReasoningDetail(nodes) {
+			for (let nodeIndex = nodes.length - 1; nodeIndex >= 0; nodeIndex--) {
+				const node = nodes[nodeIndex];
+				if (node?.kind !== "assistant-step" || node.data.status !== "running") continue;
+				for (let blockIndex = node.data.blocks.length - 1; blockIndex >= 0; blockIndex--) {
+					const block = node.data.blocks[blockIndex];
+					if (block?.kind !== "reasoning") continue;
+					const paragraphs = block.text.split(/\r?\n[\t ]*\r?\n/);
+					for (let paragraphIndex = paragraphs.length - 1; paragraphIndex >= 0; paragraphIndex--) {
+						const detail = normalizeLiveToolDetail(paragraphs[paragraphIndex]?.replaceAll("**", ""));
+						if (detail !== "") return detail;
+					}
+				}
+			}
+			return "";
+		}
+		/**
+		* One-line task detail from the argument view, read the same way while the
+		* arguments stream and after dispatch: the first detail key present with text
+		* so far or a closed value. Without one, the tool name stands in once no further
+		* field can arrive; a field still to come is not named early.
+		*/
+		function liveToolDetail(name, args) {
+			for (const key of LIVE_TOOL_DETAIL_KEYS) {
+				if (!args.has(key)) continue;
+				const detail = key === "questions" ? questionDetail(args.value(key)) : argumentTextDetail(args, key) ?? normalizeLiveToolDetail(args.value(key));
+				if (detail !== "") return detail;
+			}
+			return args.closed() ? normalizeLiveToolDetail(name) : "";
+		}
+		/**
+		* Rank categories by distinct call count, breaking ties by first appearance.
+		* @param nodes - process members, including recursive tools.
+		* @returns all ranked categories and the latest running tool category and bounded task detail.
+		*/
+		function processActivity(nodes) {
+			const counts = /* @__PURE__ */ new Map();
+			const seen = /* @__PURE__ */ new Set();
+			let running;
+			let runningDetail = "";
+			let runningTime = -Infinity;
+			let preparing;
+			const visit = (tool) => {
+				if (seen.has(tool.callId)) return;
+				seen.add(tool.callId);
+				const call = isRunningTool(tool) ? tool : tool.call;
+				if (call !== null) {
+					const kind = activity(call.name);
+					if (isRunningTool(tool) && tool.time >= runningTime) {
+						running = kind;
+						preparing = tool.phase === "preparing";
+						runningDetail = liveToolDetail(tool.name, tool.args);
+						runningTime = tool.time;
+					}
+					counts.set(kind, (counts.get(kind) ?? 0) + 1);
+				}
+				for (const child of tool.subCalls) visit(child);
+			};
+			for (const node of nodes) if (node.kind === "tool-call") visit(node.data.root);
+			if (running === void 0) runningDetail = liveReasoningDetail(nodes);
+			return {
+				counts: [...counts].map(([kind, count]) => ({
+					kind,
+					count
+				})).sort((a, b) => b.count - a.count),
+				running,
+				runningDetail,
+				...preparing ? { preparing: true } : {}
+			};
+		}
+		//#endregion
+		//#region lib/types/client/conversation-nodes/process-groups.js
+		/** Chat-owned segmentation and incremental summaries over materialized Node inputs. */
+		function turnOf(node) {
+			const location = node.location;
+			return location.kind === "turn" || location.kind === "step" ? location.turn.turn : void 0;
+		}
+		function reasoning(node) {
+			return node.kind === "assistant-step" && node.data.blocks.some((block) => block.kind === "reasoning" && block.text.trim() !== "");
+		}
+		function reply(node) {
+			return node.kind === "assistant-step" && hasAssistantReplyContent(node.data.blocks);
+		}
+		function sameSummary(left, right) {
+			return left.running === right.running && left.runningDetail === right.runningDetail && left.preparing === right.preparing && left.counts.length === right.counts.length && left.counts.every((value, index) => value.kind === right.counts[index]?.kind && value.count === right.counts[index].count);
+		}
+		function sameMembers(left, right) {
+			return left.length === right.length && left.every((value, index) => value.key === right[index]?.key && value.groupPart === right[index].groupPart);
+		}
+		function structureChanged(previous, current) {
+			if (!isVisibleChatNode(current) && (previous === void 0 || !isVisibleChatNode(previous))) return false;
+			return previous === void 0 || previous.kind !== current.kind || turnOf(previous) !== turnOf(current) || isVisibleChatNode(previous) !== isVisibleChatNode(current) || previous.groupTree !== current.groupTree || reasoning(previous) !== reasoning(current) || reply(previous) !== reply(current);
+		}
+		function readNode(input, key) {
+			const node = input.readNode(key);
+			if (node === void 0) throw new Error(`Chat grouping input is missing Node ${key}`);
+			return node;
+		}
+		/** One group's members and cached summary, refreshed together when its content changes. */
+		var ProcessGroup = class {
+			key;
+			turn;
+			members;
+			nodes = [];
+			snapshot;
+			constructor(key, turn, members) {
+				this.key = key;
+				this.turn = turn;
+				this.members = members;
+				this.snapshot = {
+					key,
+					members,
+					data: {
+						turn,
+						closed: false,
+						summary: {
+							counts: [],
+							running: void 0,
+							runningDetail: ""
+						}
+					}
+				};
+			}
+			refresh(input, closed) {
+				const nodes = this.members.map((member) => readNode(input, member.key));
+				const unchanged = nodes.length === this.nodes.length && nodes.every((node, index) => node === this.nodes[index]);
+				const previous = this.snapshot.data;
+				const activity = unchanged && previous.closed === closed ? previous.summary : processActivity(nodes);
+				const summary = closed ? {
+					counts: activity.counts,
+					running: void 0,
+					runningDetail: ""
+				} : activity;
+				this.nodes = nodes;
+				if (previous.closed !== closed || !sameSummary(previous.summary, summary)) this.snapshot = {
+					key: this.key,
+					members: this.members,
+					data: {
+						turn: this.turn,
+						closed,
+						summary
+					}
+				};
+			}
+		};
+		/** One Turn's grouping result and member lookup; summaries stay with their groups. */
+		var TurnGroups = class {
+			turn;
+			groups = /* @__PURE__ */ new Map();
+			membership = /* @__PURE__ */ new Map();
+			roots = /* @__PURE__ */ new Map();
+			constructor(turn) {
+				this.turn = turn;
+			}
+			references(key) {
+				return this.roots.get(key) ?? [];
+			}
+			snapshots() {
+				return [...this.groups.values()].map((group) => group.snapshot);
+			}
+			refresh(input, changed) {
+				const dirty = /* @__PURE__ */ new Set();
+				for (const node of changed) {
+					const group = this.membership.get(node);
+					if (group !== void 0) dirty.add(group);
+				}
+				const ended = input.timeline.turns.get(this.turn)?.status === "closed";
+				if (ended) {
+					for (const group of this.groups.values()) if (!group.snapshot.data.closed) dirty.add(group.key);
+				}
+				const upserts = [];
+				for (const key of dirty) {
+					const group = this.groups.get(key);
+					const previous = group.snapshot;
+					group.refresh(input, previous.data.closed || ended);
+					if (group.snapshot !== previous) upserts.push(group.snapshot);
+				}
+				return upserts;
+			}
+			rebuild(input, added) {
+				const roots = /* @__PURE__ */ new Map();
+				const groups = /* @__PURE__ */ new Map();
+				const membership = /* @__PURE__ */ new Map();
+				let pending = [];
+				const upserts = [];
+				const emit = (key, entry) => {
+					roots.set(key, [...roots.get(key) ?? [], entry]);
+				};
+				const flush = (closed) => {
+					const first = pending[0];
+					if (first === void 0) return;
+					const key = this.extendedGroup(pending, added)?.key ?? brandString(JSON.stringify([
+						"process",
+						first.key,
+						first.groupPart ?? null
+					]));
+					const previous = this.groups.get(key);
+					const before = previous?.snapshot;
+					const group = previous !== void 0 && sameMembers(previous.members, pending) ? previous : new ProcessGroup(key, this.turn, pending);
+					group.refresh(input, closed || input.timeline.turns.get(this.turn)?.status === "closed");
+					groups.set(group.key, group);
+					emit(first.key, {
+						kind: "group",
+						key: group.key
+					});
+					for (const member of pending) membership.set(member.key, group.key);
+					if (group.snapshot !== before) upserts.push(group.snapshot);
+					pending = [];
+				};
+				let previous;
+				let followed = false;
+				for (const key of input.readTurn(this.turn)) {
+					const position = readPosition(input, key);
+					if (previous !== void 0 && position.previous !== previous) flush(true);
+					previous = key;
+					followed = position.next !== void 0;
+					const node = readNode(input, key);
+					if (isAtOrOutside(node, "process")) {
+						flush(true);
+						emit(key, {
+							kind: "node",
+							key
+						});
+					} else if (node.kind === "assistant-step") {
+						if (reasoning(node)) pending.push({
+							kind: "node",
+							key,
+							groupPart: "reasoning"
+						});
+						if (reply(node)) {
+							flush(true);
+							emit(key, {
+								kind: "node",
+								key,
+								groupPart: "response"
+							});
+						}
+					} else pending.push({
+						kind: "node",
+						key
+					});
+				}
+				flush(followed);
+				const removes = [...this.groups.keys()].filter((key) => !groups.has(key));
+				this.groups = groups;
+				this.membership = membership;
+				this.roots = roots;
+				return {
+					upserts,
+					removes
+				};
+			}
+			extendedGroup(members, added) {
+				const offset = members.findIndex((member) => !added.has(member.key));
+				const first = members[offset];
+				if (first === void 0) return void 0;
+				const key = this.membership.get(first.key);
+				const previous = key === void 0 ? void 0 : this.groups.get(key);
+				if (previous === void 0 || offset + previous.members.length > members.length) return void 0;
+				for (let index = 0; index < previous.members.length; index++) {
+					const before = previous.members[index];
+					const after = members[offset + index];
+					if (before.key !== after.key || before.groupPart !== after.groupPart) return void 0;
+				}
+				for (let index = offset + previous.members.length; index < members.length; index++) if (!added.has(members[index].key)) return void 0;
+				return previous;
+			}
+		};
+		function readPosition(input, key) {
+			const position = input.readPosition(key);
+			if (position === void 0) throw new Error(`Chat grouping order is missing position for Node ${key}`);
+			return position;
+		}
+		/** Session-local Turn results; ordinary updates never read other Turns' Node contents. */
+		var ProcessState = class {
+			turns = /* @__PURE__ */ new Map();
+			order = [];
+			pending = null;
+			/**
+			* Consume one synchronous Builder input without retaining its readers.
+			* @param input - projected Node changes, indexed positions, and Turn lifecycle.
+			*/
+			accept(input) {
+				if (input.kind === "replace") {
+					const previousKeys = new Set(this.order);
+					const added = new Set(input.order.filter((key) => !previousKeys.has(key)));
+					const turns = /* @__PURE__ */ new Map();
+					for (const key of input.order) {
+						const turn = readPosition(input, key).turn;
+						if (turn === void 0 || turns.has(turn)) continue;
+						const groups = this.turns.get(turn) ?? new TurnGroups(turn);
+						groups.rebuild(input, added);
+						turns.set(turn, groups);
+					}
+					this.turns = turns;
+					this.order = input.order;
+					this.pending = {
+						entries: this.rootEntries(input),
+						groups: {
+							kind: "replace",
+							snapshots: [...turns.values()].flatMap((turn) => turn.snapshots())
+						}
+					};
+					return;
+				}
+				const regroup = new Set(input.changedTurnOrders);
+				const added = /* @__PURE__ */ new Set();
+				const changed = /* @__PURE__ */ new Map();
+				const touch = (turn) => {
+					let keys = changed.get(turn);
+					if (keys === void 0) {
+						keys = /* @__PURE__ */ new Set();
+						changed.set(turn, keys);
+					}
+					return keys;
+				};
+				for (const change of input.changes) {
+					const before = change.previous;
+					const after = change.current;
+					const turn = turnOf(after);
+					if (before === void 0 || !isVisibleChatNode(before)) added.add(after.key);
+					if (structureChanged(before, after)) {
+						const previousTurn = before === void 0 ? void 0 : turnOf(before);
+						if (previousTurn !== void 0) regroup.add(previousTurn);
+						if (turn !== void 0) regroup.add(turn);
+					}
+					if (turn !== void 0) touch(turn).add(after.key);
+				}
+				for (const turn of input.changedTurns) touch(turn);
+				const upserts = [];
+				const removes = [];
+				for (const turn of regroup) {
+					const groups = this.turns.get(turn) ?? new TurnGroups(turn);
+					const update = groups.rebuild(input, added);
+					upserts.push(...update.upserts);
+					removes.push(...update.removes);
+					if (input.readTurn(turn).length === 0) this.turns.delete(turn);
+					else this.turns.set(turn, groups);
+				}
+				for (const [turn, keys] of changed) if (!regroup.has(turn)) upserts.push(...this.turns.get(turn)?.refresh(input, keys) ?? []);
+				const reordered = input.order !== this.order || regroup.size > 0;
+				this.order = input.order;
+				const installed = new Set(upserts.map((group) => group.key));
+				this.pending = reordered || upserts.length > 0 || removes.length > 0 ? {
+					...reordered ? { entries: this.rootEntries(input) } : {},
+					groups: {
+						kind: "apply",
+						upserts,
+						removes: removes.filter((key) => !installed.has(key))
+					}
+				} : null;
+			}
+			rootEntries(input) {
+				return input.order.flatMap((key) => {
+					const turn = readPosition(input, key).turn;
+					if (turn === void 0) return [{
+						kind: "node",
+						key
+					}];
+					const groups = this.turns.get(turn);
+					if (groups === void 0) throw new Error(`Chat grouping order is missing Turn ${turn}`);
+					return groups.references(key);
+				});
+			}
+			/**
+			* Read pending output without advancing State.
+			* @returns the repeatable update for the last input batch.
+			*/
+			output() {
+				return this.pending;
+			}
+		};
+		/** Chat's registered business grouping; presentation modes never enter its State. */
+		const processGroupDefinition = {
+			kind: "process-groups",
+			target: "chat",
+			create: () => new ProcessState(),
+			update: (context, input) => {
+				context.state.accept(input);
+				return context.state;
+			},
+			buildGroups: (context) => context.state.output()
+		};
 		//#endregion
 		//#region lib/types/client/conversation-nodes/register.js
 		/**
@@ -6572,241 +11793,33 @@ window.__ModuleLoader__.load({
 			registerTurnTailConversationNode(ctx);
 			registerUnknownConversationFallback(ctx);
 			registerChatConversationView(ctx);
+			ctx.uiConversation.groups.register(processGroupDefinition);
 		}
 		//#endregion
-		//#region lib/types/client/details/tool-node-reader.js
-		function toolNode(node) {
-			return node?.kind === "tool-call" ? node : void 0;
-		}
+		//#region lib/types/client/chat/QuotaNoticeHost.js
 		/**
-		* Find any root or nested Tool lifecycle through the internal Node store.
-		* @param snapshot - current Conversation snapshot.
-		* @param callId - root or nested call identity.
-		* @returns current Tool lifecycle when materialized in the loaded window.
+		* The frame-wide `shell.overlay` host for quota notices. It holds the one live
+		* notice for the whole app, so leaving the Chat panel does not drop it. A
+		* `shell.quota-notice` entry may replace the generic Toast for codes it claims.
 		*/
-		function findToolCall(snapshot, callId) {
-			const visit = (block) => {
-				if (block.callId === callId) return block;
-				for (const child of block.subCalls) {
-					const found = visit(child);
-					if (found !== void 0) return found;
-				}
-			};
-			for (const node of snapshot.nodes.values()) {
-				const root = toolNode(node)?.data.root;
-				if (root === void 0) continue;
-				const found = visit(root);
-				if (found !== void 0) return found;
-			}
-		}
-		//#endregion
-		//#region \0dsh-css:packages/client-ui-chat/src/client/details/DetailsPanel.module.css.mjs
-		const css$1 = ".qs4lOq_root{border-left:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-base);flex-direction:column;min-width:0;height:100%;display:flex}.qs4lOq_header{border-bottom:1px solid var(--dsw-alias-border-l2);justify-content:space-between;align-items:center;gap:8px;padding:14px 12px 12px;display:flex}.qs4lOq_title{color:var(--dsw-alias-label-primary);text-overflow:ellipsis;white-space:nowrap;font-size:14px;font-weight:500;line-height:20px;overflow:hidden}.qs4lOq_close{width:28px;height:28px;color:var(--dsw-alias-label-secondary);cursor:pointer;background:0 0;border:none;border-radius:999px;flex:none;place-items:center;display:grid}.qs4lOq_close:hover{background:var(--dsw-alias-interactive-bg-hover)}.qs4lOq_body{flex:1;min-height:0;padding:12px 16px;overflow-y:auto}.qs4lOq_empty{color:var(--dsw-alias-label-tertiary);padding:8px 0;font-size:13px;line-height:20px}.qs4lOq_section{margin-bottom:16px}.qs4lOq_sectionLabel{color:var(--dsw-alias-label-secondary);margin-bottom:6px;font-size:12px;font-weight:500;line-height:18px}.qs4lOq_code{background:var(--dsw-alias-markdown-code-block);font-family:var(--ds-font-family-code);color:var(--dsw-alias-label-primary);white-space:pre-wrap;word-break:break-word;border-radius:12px;margin:0;padding:16px;font-size:13px;line-height:22px}.qs4lOq_code[data-error]{color:var(--dsw-alias-state-error-primary)}";
-		const tagId$1 = "@deepseek-ai/dsh-client-ui-chat/DetailsPanel.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$1) + "]") === null) {
-			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId$1;
-			tag.textContent = css$1;
-			document.head.appendChild(tag);
-		}
-		var DetailsPanel_module_css_default = {
-			"body": "qs4lOq_body",
-			"close": "qs4lOq_close",
-			"code": "qs4lOq_code",
-			"empty": "qs4lOq_empty",
-			"header": "qs4lOq_header",
-			"root": "qs4lOq_root",
-			"section": "qs4lOq_section",
-			"sectionLabel": "qs4lOq_sectionLabel",
-			"title": "qs4lOq_title"
-		};
-		//#endregion
-		//#region lib/types/client/details/DetailsPanel.js
-		function settledMaterial(node, callId) {
-			return {
-				name: node.call?.name ?? callId,
-				argsRaw: node.call?.argsRaw ?? null,
-				block: node
-			};
-		}
-		function runningMaterial(call) {
-			return {
-				name: call.name,
-				argsRaw: call.argsRaw,
-				block: call
-			};
-		}
-		function materialFor(s, callId) {
-			const found = findToolCall(s, callId);
-			if (found === void 0) return null;
-			return "kind" in found ? settledMaterial(found, callId) : runningMaterial(found);
-		}
-		function pretty(raw) {
-			try {
-				return JSON.stringify(JSON.parse(raw), null, 2);
-			} catch {
-				return raw;
-			}
-		}
-		/** Flatten a settled result for the no-ui-tool fallback. */
-		function rawResultText(block) {
-			if (!("kind" in block)) return "";
-			const parts = block.content.map((item) => item.type === "text" ? item.text : JSON.stringify(item, null, 2));
-			if (parts.length === 0 && block.error !== void 0) parts.push(`${block.error.name}: ${block.error.code}`);
-			return parts.join("\n");
-		}
-		function DetailsPanel({ useChat, useSessions, sessionId, useStore, renderSlot, closeDetails, t }) {
-			const selection = useStore((s) => s.selection);
-			const sessionCwd = useSessions((list) => list.byId[sessionId]?.cwd);
-			const callId = selection?.callId;
-			const material = useChat((s) => callId === void 0 ? null : materialFor(s, callId), (a, b) => (0, _deepseek_ai_dsh_client_store.shallowEqual)(a, b));
-			return (0, react_jsx_runtime.jsxs)("div", {
-				className: DetailsPanel_module_css_default.root,
-				children: [(0, react_jsx_runtime.jsxs)("div", {
-					className: DetailsPanel_module_css_default.header,
-					children: [(0, react_jsx_runtime.jsx)("div", {
-						className: DetailsPanel_module_css_default.title,
-						children: selection === null ? t("details.title") : material?.name ?? selection.toolName ?? t("details.title")
-					}), (0, react_jsx_runtime.jsx)("button", {
-						type: "button",
-						className: DetailsPanel_module_css_default.close,
-						"aria-label": t("details.close"),
-						onClick: () => {
-							closeDetails();
-						},
-						children: (0, react_jsx_runtime.jsx)("svg", {
-							viewBox: "0 0 16 16",
-							width: "14",
-							height: "14",
-							"aria-hidden": true,
-							children: (0, react_jsx_runtime.jsx)("path", {
-								d: "M4 4l8 8M12 4l-8 8",
-								stroke: "currentColor",
-								strokeWidth: "1.5",
-								strokeLinecap: "round"
-							})
-						})
-					})]
-				}), (0, react_jsx_runtime.jsx)("div", {
-					className: DetailsPanel_module_css_default.body,
-					children: selection === null || callId === void 0 ? (0, react_jsx_runtime.jsx)("div", {
-						className: DetailsPanel_module_css_default.empty,
-						children: t("details.empty")
-					}) : material === null ? (0, react_jsx_runtime.jsx)("div", {
-						className: DetailsPanel_module_css_default.empty,
-						children: t("details.notInWindow")
-					}) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [material.argsRaw !== null && (0, react_jsx_runtime.jsxs)("section", {
-						className: DetailsPanel_module_css_default.section,
-						children: [(0, react_jsx_runtime.jsx)("div", {
-							className: DetailsPanel_module_css_default.sectionLabel,
-							children: t("details.input")
-						}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.CodeBlock, {
-							code: pretty(material.argsRaw),
-							lang: "json",
-							copyLabel: t("copy"),
-							copiedLabel: t("copied")
-						})]
-					}), (0, react_jsx_runtime.jsxs)("section", {
-						className: DetailsPanel_module_css_default.section,
-						children: [(0, react_jsx_runtime.jsx)("div", {
-							className: DetailsPanel_module_css_default.sectionLabel,
-							children: t("details.output")
-						}), (0, react_jsx_runtime.jsx)(react.Fragment, { children: renderSlot("conversation.details.tool", {
-							block: material.block,
-							cwd: sessionCwd
-						}, { fallback: "kind" in material.block ? (0, react_jsx_runtime.jsx)("pre", {
-							className: DetailsPanel_module_css_default.code,
-							"data-error": material.block.isError || void 0,
-							children: rawResultText(material.block)
-						}) : (0, react_jsx_runtime.jsx)("div", {
-							className: DetailsPanel_module_css_default.empty,
-							children: t("details.running")
-						}) }) }, callId)]
-					})] })
-				})]
-			});
-		}
-		//#endregion
-		//#region \0dsh-css:packages/client-ui-chat/src/client/settings/TranscriptViewRow.module.css.mjs
-		const css = ".BeRTfW_row{border-bottom:1px solid var(--dsw-alias-border-l2);align-items:center;gap:8px;padding:16px 0;display:flex}.BeRTfW_rowText{flex-direction:column;flex:1;gap:4px;min-width:0;padding-right:48px;display:flex}.BeRTfW_title{color:var(--dsw-alias-label-primary);font-size:14px;font-weight:400;line-height:22px}.BeRTfW_desc{color:var(--dsw-alias-label-tertiary);font-size:12px;font-weight:400;line-height:18px}.BeRTfW_selector{background:var(--dsw-alias-bg-module-platform);height:36px;font:inherit;color:var(--dsw-alias-label-primary);cursor:pointer;border:none;border-radius:18px;align-items:center;gap:12px;padding:0 14px;font-size:14px;line-height:22px;display:inline-flex}.BeRTfW_selector:hover{background:var(--dsw-alias-interactive-bg-hover)}.BeRTfW_chevron{flex:none}";
-		const tagId = "@deepseek-ai/dsh-client-ui-chat/TranscriptViewRow.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
-			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
-			tag.dataset.pluginCss = tagId;
-			tag.textContent = css;
-			document.head.appendChild(tag);
-		}
-		var TranscriptViewRow_module_css_default = {
-			"chevron": "BeRTfW_chevron",
-			"desc": "BeRTfW_desc",
-			"row": "BeRTfW_row",
-			"rowText": "BeRTfW_rowText",
-			"selector": "BeRTfW_selector",
-			"title": "BeRTfW_title"
-		};
-		//#endregion
-		//#region lib/types/client/settings/TranscriptViewRow.js
-		/** General Settings row for completed-Turn transcript presentation. */
-		const OPTIONS = [{
-			id: "normal",
-			label: "settings.transcript.normal"
-		}, {
-			id: "compact",
-			label: "settings.transcript.compact"
-		}];
 		/**
-		* Render the completed-Turn transcript mode selector.
-		* @param props - composed Settings slot props.
-		* @returns the preference row.
+		* @param props - the live notice, its dismissal, the chain outlet, and the locale seat.
+		* @returns the notice on display, or null while none is live.
 		*/
-		function TranscriptViewRow({ useTranscriptView, setTranscriptView, t }) {
-			const mode = useTranscriptView((value) => value);
-			const [open, setOpen] = (0, react.useState)(false);
-			const selectedLabel = mode === "normal" ? "settings.transcript.normal" : "settings.transcript.compact";
-			const closeMenu = () => {
-				setOpen(false);
+		function QuotaNoticeHost({ useNotice, dismissNotice, keepNoticeOpen, renderSlotChain, t }) {
+			const notice = useNotice((current) => current);
+			if (notice === null) return null;
+			const owner = {
+				code: notice.code,
+				message: t("message.failure.quota"),
+				dismiss: dismissNotice,
+				keepOpen: keepNoticeOpen
 			};
-			const selectMode = (id) => {
-				closeMenu();
-				setTranscriptView(id);
-			};
-			const selector = (0, react_jsx_runtime.jsxs)("button", {
-				type: "button",
-				className: TranscriptViewRow_module_css_default.selector,
-				"aria-haspopup": "menu",
-				"aria-expanded": open,
-				onClick: () => {
-					setOpen((value) => !value);
-				},
-				children: [t(selectedLabel), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, { className: TranscriptViewRow_module_css_default.chevron })]
-			});
-			return (0, react_jsx_runtime.jsxs)("div", {
-				className: TranscriptViewRow_module_css_default.row,
-				children: [(0, react_jsx_runtime.jsxs)("div", {
-					className: TranscriptViewRow_module_css_default.rowText,
-					children: [(0, react_jsx_runtime.jsx)("div", {
-						className: TranscriptViewRow_module_css_default.title,
-						children: t("settings.transcript.title")
-					}), (0, react_jsx_runtime.jsx)("div", {
-						className: TranscriptViewRow_module_css_default.desc,
-						children: t("settings.transcript.description")
-					})]
-				}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Menu, {
-					open,
-					onClose: closeMenu,
-					items: OPTIONS.map((option) => ({
-						id: option.id,
-						label: t(option.label)
-					})),
-					selectedId: mode,
-					onSelect: selectMode,
-					align: "end",
-					portal: true,
-					anchor: selector
-				})]
-			});
+			return (0, react_jsx_runtime.jsx)(react.Fragment, { children: renderSlotChain("shell.quota-notice", owner, { fallback: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Toast, {
+				text: owner.message,
+				icon: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconWarningOutlineRegular, { size: 18 }),
+				onDone: dismissNotice
+			}) }) }, `quota-notice-${String(notice.seq)}`);
 		}
 		//#endregion
 		//#region ../../node_modules/@deepseek-ai/cosmokit/lib/index.js
@@ -6832,6 +11845,43 @@ window.__ModuleLoader__.load({
 			const result = {};
 			for (const key of keys) if (forced || source[key] !== void 0) result[key] = source[key];
 			return result;
+		}
+		/** Shared config references used by schema validators and plugin runtimes. */
+		const write = Symbol.for("cosmokit.volatile.write");
+		function snapshot(value, ancestors = /* @__PURE__ */ new Set()) {
+			if (typeof value === "function") throw new TypeError("volatile config cannot contain functions");
+			if (value === null || typeof value !== "object") return value;
+			if (ancestors.has(value)) throw new TypeError("volatile config cannot contain cycles");
+			ancestors.add(value);
+			try {
+				if (Array.isArray(value)) return Object.freeze(value.map((item) => snapshot(item, ancestors)));
+				if (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null) throw new TypeError("volatile config objects must be plain objects or arrays");
+				return Object.freeze(Object.fromEntries(Object.entries(value).map(([key, item]) => [key, snapshot(item, ancestors)])));
+			} finally {
+				ancestors.delete(value);
+			}
+		}
+		/**
+		* Create a detached reference containing an immutable copy of the supplied data.
+		* @param value - validated config data; class instances and functions are unsupported.
+		* @returns a reference whose value is updated only by its owning runtime.
+		*/
+		function createVolatile(value) {
+			let current = snapshot(value);
+			return Object.freeze({
+				get: () => current,
+				[write]: (value) => {
+					current = value;
+				}
+			});
+		}
+		/**
+		* Identify references across ESM/CJS copies of the shared library.
+		* @param value - a parsed config value.
+		* @returns whether the value implements the shared reference protocol.
+		*/
+		function isVolatile(value) {
+			return typeof value === "object" && value !== null && write in value;
 		}
 		/** Test values using `instanceof` with a `toStringTag` fallback. */
 		function is(type, value) {
@@ -6913,26 +11963,47 @@ window.__ModuleLoader__.load({
 			}
 			return result;
 		}
-		/** Deeply compare arrays, dates, regexps, buffers, and plain object fields. */
+		/**
+		* Compare values recursively, treating two volatile references as equal regardless of value.
+		* Strict comparison distinguishes null/undefined, treats opaque objects by identity,
+		* compares URLs by normalized href, treats array holes as undefined, and considers distinct cyclic structures unequal.
+		* @param a - first value.
+		* @param b - second value.
+		* @param strict - whether to require strict data equality outside volatile references.
+		* @returns whether the values compare equal.
+		*/
 		function deepEqual(a, b, strict) {
-			if (a === b) return true;
-			if (!strict && isNullable(a) && isNullable(b)) return true;
-			if (typeof a !== typeof b) return false;
-			if (typeof a !== "object") return false;
-			if (!a || !b) return false;
-			function check(test, then) {
-				return test(a) ? test(b) ? then(a, b) : false : test(b) ? false : void 0;
+			const ancestors = /* @__PURE__ */ new Set();
+			function compare(a, b) {
+				if (a === b) return true;
+				if (isVolatile(a) || isVolatile(b)) return isVolatile(a) && isVolatile(b);
+				if (!strict && isNullable(a) && isNullable(b)) return true;
+				if (typeof a !== typeof b || typeof a !== "object" || !a || !b) return false;
+				if (ancestors.has(a)) return false;
+				function check(test, then) {
+					return test(a) ? test(b) ? then(a, b) : false : test(b) ? false : void 0;
+				}
+				ancestors.add(a);
+				try {
+					return check(Array.isArray, (a, b) => {
+						if (a.length !== b.length) return false;
+						for (let index = 0; index < a.length; index++) if (!compare(a[index], b[index])) return false;
+						return true;
+					}) ?? check(is("Date"), (a, b) => a.valueOf() === b.valueOf()) ?? check(is("URL"), (a, b) => a.href === b.href) ?? check(is("RegExp"), (a, b) => a.source === b.source && a.flags === b.flags) ?? check(isArrayBufferLike, (a, b) => {
+						if (a.byteLength !== b.byteLength) return false;
+						const viewA = new Uint8Array(a);
+						const viewB = new Uint8Array(b);
+						for (let i = 0; i < viewA.length; i++) if (viewA[i] !== viewB[i]) return false;
+						return true;
+					}) ?? ((!strict || [a, b].every((value) => Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null)) && Object.keys({
+						...a,
+						...b
+					}).every((key) => compare(a[key], b[key])));
+				} finally {
+					ancestors.delete(a);
+				}
 			}
-			return check(Array.isArray, (a, b) => a.length === b.length && a.every((item, index) => deepEqual(item, b[index]))) ?? check(is("Date"), (a, b) => a.valueOf() === b.valueOf()) ?? check(is("RegExp"), (a, b) => a.source === b.source && a.flags === b.flags) ?? check(isArrayBufferLike, (a, b) => {
-				if (a.byteLength !== b.byteLength) return false;
-				const viewA = new Uint8Array(a);
-				const viewB = new Uint8Array(b);
-				for (let i = 0; i < viewA.length; i++) if (viewA[i] !== viewB[i]) return false;
-				return true;
-			}) ?? Object.keys({
-				...a,
-				...b
-			}).every((key) => deepEqual(a[key], b[key], strict));
+			return compare(a, b);
 		}
 		/** Time constants plus parsing and formatting helpers. */
 		var Time;
@@ -7181,6 +12252,7 @@ window.__ModuleLoader__.load({
 			return schema;
 		};
 		Schema.prototype.simplify = function simplify(value) {
+			if (isVolatile(value)) value = value.get();
 			if (deepEqual(value, this.meta.default, this.type === "dict")) return null;
 			if (isNullable(value)) return value;
 			if (this.type === "object" || this.type === "dict") {
@@ -7237,12 +12309,49 @@ window.__ModuleLoader__.load({
 			};
 			return schema;
 		} });
+		Schema.prototype.volatile = function volatile() {
+			if (this.meta.volatile) throw new TypeError("volatile schema is already wrapped");
+			return this.extra("volatile", true);
+		};
 		const resolvers = {};
+		const checkedVolatile = Symbol("checked-volatile-schema");
+		function validateVolatileSchema(schema, path = [], blocked = false, seen = /* @__PURE__ */ new Map()) {
+			const states = seen.get(schema) ?? /* @__PURE__ */ new Set();
+			if (states.has(blocked)) return;
+			states.add(blocked);
+			seen.set(schema, states);
+			if (schema.meta?.volatile && blocked) throw new ValidationError("volatile fields require a fixed object path without an enclosing volatile field", { path });
+			const nested = blocked || !!schema.meta?.volatile;
+			if (schema.dict) for (const [key, child] of Object.entries(schema.dict)) validateVolatileSchema(child, [...path, key], nested, seen);
+			if (schema.sKey) validateVolatileSchema(schema.sKey, [...path, "<key>"], true, seen);
+			if (schema.inner && (schema.type !== "lazy" || schema.inner[kSchema])) validateVolatileSchema(schema.inner, [...path, "*"], true, seen);
+			if (schema.list) for (let index = 0; index < schema.list.length; index++) validateVolatileSchema(schema.list[index], [...path, String(index)], true, seen);
+		}
 		Schema.extend = function extend(type, resolve) {
 			resolvers[type] = resolve;
 		};
 		Schema.resolve = function resolve(data, schema, options = {}, strict = false) {
 			if (!schema) return [data];
+			if (!options[checkedVolatile]) {
+				validateVolatileSchema(schema, options.path);
+				options = {
+					...options,
+					[checkedVolatile]: true
+				};
+			}
+			if (schema.meta?.volatile) {
+				const inner = Schema(schema);
+				inner.meta = {
+					...schema.meta,
+					volatile: false
+				};
+				const [value, adapted] = Schema.resolve(data, inner, options, strict);
+				try {
+					return [createVolatile(value), adapted];
+				} catch (error) {
+					throw new ValidationError(error instanceof Error ? error.message : String(error), options);
+				}
+			}
 			if (options.ignore?.(data, schema)) return [data];
 			if (isNullable(data) && schema.type !== "lazy") {
 				if (schema.meta.required) throw new ValidationError(`missing required value`, options);
@@ -7345,6 +12454,7 @@ window.__ModuleLoader__.load({
 					...schema.meta,
 					...schema.inner.meta
 				};
+				validateVolatileSchema(schema.inner, options.path, true);
 			}
 			return Schema.resolve(data, schema.inner, options, strict);
 		});
@@ -7444,7 +12554,7 @@ window.__ModuleLoader__.load({
 			} catch (e) {
 				if (!options?.autofix) throw e;
 				delete data[key];
-				return schema.meta.default;
+				return schema.meta.volatile ? createVolatile(schema.meta.default) : schema.meta.default;
 			}
 		}
 		Schema.extend("array", (data, { inner, meta }, options) => {
@@ -7600,79 +12710,489 @@ window.__ModuleLoader__.load({
 		], ({ inner }, isInner) => inner.toString(isInner));
 		//#endregion
 		//#region lib/types/chat-settings.js
-		/** Chat transcript preferences stored in the Host user-settings document. */
+		/** Chat display preferences stored in the Host user-settings document. */
 		/** Settings namespace owned by the Chat target. */
 		const CHAT_SETTINGS_NAMESPACE = "ui-chat";
-		/** Field carrying the completed-Turn transcript presentation mode. */
+		/** Field carrying the work-details presentation mode. */
 		const TRANSCRIPT_VIEW_FIELD = "transcriptView";
-		/** Transcript presentation modes accepted at settings boundaries. */
-		const TRANSCRIPT_VIEW_MODES = ["normal", "compact"];
-		/** Default preserves the compact process disclosure introduced by Chat. */
-		const DEFAULT_TRANSCRIPT_VIEW_MODE = "compact";
-		Schema.object({ [TRANSCRIPT_VIEW_FIELD]: Schema.union([...TRANSCRIPT_VIEW_MODES]).default(DEFAULT_TRANSCRIPT_VIEW_MODE) });
+		/** Field carrying the independent work-details collapse timing. */
+		const COLLAPSE_TIMING_FIELD = "collapseTiming";
+		/** Available points when a completed Turn returns to its historical presentation. */
+		const COLLAPSE_TIMINGS = ["completion", "next-input"];
+		/** Preserve completion-time folding when no timing preference is saved. */
+		const DEFAULT_COLLAPSE_TIMING = "completion";
+		/** Work-details presentation modes a user can choose. */
+		const TRANSCRIPT_VIEW_MODES = [
+			"compact",
+			"standard",
+			"detailed",
+			"verbose"
+		];
+		/**
+		* Saved value from the two-mode generation of this setting. Read as `detailed`;
+		* never offered as a choice and never written back.
+		*/
+		const LEGACY_TRANSCRIPT_VIEW_MODE = "normal";
+		/** Saved `expanded` values read as `detailed`, without being offered or written back. */
+		const LEGACY_EXPANDED_TRANSCRIPT_VIEW_MODE = "expanded";
+		/** Every value the durable field accepts: current modes plus legacy saved values. */
+		const TRANSCRIPT_VIEW_SETTING_VALUES = [
+			...TRANSCRIPT_VIEW_MODES,
+			LEGACY_TRANSCRIPT_VIEW_MODE,
+			LEGACY_EXPANDED_TRANSCRIPT_VIEW_MODE
+		];
+		/** Default work details for non-Desktop Web clients. */
+		const DEFAULT_TRANSCRIPT_VIEW_MODE = "detailed";
+		/** Performance and usage detail levels accepted by user settings. */
+		const PERFORMANCE_USAGE_MODES = ["compact", "detailed"];
+		/** Preserve detailed accounting for users without an explicit preference. */
+		const DEFAULT_PERFORMANCE_USAGE = "detailed";
+		/** Preserve the built-in browser for users without an explicit preference. */
+		const DEFAULT_LINK_OPENING = "sidebar";
+		/** Durable Chat schema; also the wire envelope the browser scope validates against. */
+		const ChatSettingsFields = {
+			[COLLAPSE_TIMING_FIELD]: Schema.union([...COLLAPSE_TIMINGS]).default(DEFAULT_COLLAPSE_TIMING),
+			linkOpening: Schema.union(["sidebar", "new-tab"]).default(DEFAULT_LINK_OPENING),
+			performanceUsage: Schema.union([...PERFORMANCE_USAGE_MODES]).default(DEFAULT_PERFORMANCE_USAGE),
+			[TRANSCRIPT_VIEW_FIELD]: Schema.union([...TRANSCRIPT_VIEW_SETTING_VALUES]).loose()
+		};
+		Schema.object(ChatSettingsFields);
+		//#endregion
+		//#region lib/types/client/presentation-policy.js
+		const POLICIES = {
+			compact: {
+				mode: "compact",
+				foldCompletedTurns: true,
+				stepGrouping: "collapsed",
+				liveProcessDetail: false,
+				settledReasoningPreview: false
+			},
+			standard: {
+				mode: "standard",
+				foldCompletedTurns: true,
+				stepGrouping: "collapsed",
+				liveProcessDetail: true,
+				settledReasoningPreview: true
+			},
+			detailed: {
+				mode: "detailed",
+				foldCompletedTurns: true,
+				stepGrouping: "history",
+				liveProcessDetail: true,
+				settledReasoningPreview: true
+			},
+			verbose: {
+				mode: "verbose",
+				foldCompletedTurns: false,
+				stepGrouping: "none",
+				liveProcessDetail: false,
+				settledReasoningPreview: true
+			}
+		};
+		function withTiming(collapseTiming) {
+			return {
+				compact: {
+					...POLICIES.compact,
+					collapseTiming
+				},
+				standard: {
+					...POLICIES.standard,
+					collapseTiming
+				},
+				detailed: {
+					...POLICIES.detailed,
+					collapseTiming
+				},
+				verbose: {
+					...POLICIES.verbose,
+					collapseTiming
+				}
+			};
+		}
+		const TIMING_POLICIES = {
+			completion: withTiming("completion"),
+			"next-input": withTiming("next-input")
+		};
+		/**
+		* Resolve a stable policy for one detail mode and collapse timing.
+		* @param mode - persisted work-details mode.
+		* @param collapseTiming - persisted timing; defaults to immediate completion folding.
+		* @returns the same policy object for the same pair of choices.
+		*/
+		function presentationPolicyFor(mode, collapseTiming = "completion") {
+			return TIMING_POLICIES[collapseTiming][mode];
+		}
+		/**
+		* Combine Host-backed detail and persisted timing without owning subscriptions.
+		* @param mode - live work-details mode.
+		* @param collapseTiming - live Host-backed collapse timing.
+		* @returns observable policy whose subscriptions follow both preferences.
+		*/
+		function derivePresentationPolicy(mode, collapseTiming) {
+			return {
+				getSnapshot: () => presentationPolicyFor(mode.getSnapshot(), collapseTiming.getSnapshot()),
+				subscribe: (listener) => {
+					const unsubscribeMode = mode.subscribe(listener);
+					const unsubscribeTiming = collapseTiming.subscribe(listener);
+					return () => {
+						unsubscribeMode();
+						unsubscribeTiming();
+					};
+				}
+			};
+		}
+		//#endregion
+		//#region \0dsh-css:packages/client-ui-chat/src/client/settings/PreferenceRow.module.css.mjs
+		const css = ".HNY9iG_row{border-bottom:.5px solid var(--dsw-alias-border-l2);align-items:center;gap:8px;padding:16px 0;display:flex}.HNY9iG_rowText{flex-direction:column;flex:1;gap:4px;min-width:0;padding-right:48px;display:flex}.HNY9iG_title{color:var(--dsw-alias-label-primary);font-size:14px;font-weight:400;line-height:22px}.HNY9iG_desc{color:var(--dsw-alias-label-tertiary);font-size:12px;font-weight:400;line-height:18px}.HNY9iG_selector{border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-module-platform);height:36px;font:inherit;color:var(--dsw-alias-label-primary);cursor:pointer;border:none;align-items:center;gap:12px;padding:0 14px;font-size:14px;line-height:22px;display:inline-flex}.HNY9iG_selector:hover{background:var(--dsw-alias-interactive-bg-hover)}.HNY9iG_chevron{flex:none}";
+		const tagId = "@deepseek-ai/dsh-client-ui-chat/PreferenceRow.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-chat";
+			tag.dataset.pluginCss = tagId;
+			tag.textContent = css;
+			document.head.appendChild(tag);
+		}
+		var PreferenceRow_module_css_default = {
+			"chevron": "HNY9iG_chevron",
+			"desc": "HNY9iG_desc",
+			"row": "HNY9iG_row",
+			"rowText": "HNY9iG_rowText",
+			"selector": "HNY9iG_selector",
+			"title": "HNY9iG_title"
+		};
+		//#endregion
+		//#region lib/types/client/settings/PreferenceRow.js
+		/** Localized two-column selector shared by Chat preference rows. */
+		/**
+		* Render a preference label and its menu; selection restores focus before publishing the new value.
+		* @param props - localized copy, selected value, choices, and mutation callback.
+		* @returns the settings row.
+		*/
+		function PreferenceRow({ title, description, value, selectedLabel, options, onSelect }) {
+			const [open, setOpen] = (0, react.useState)(false);
+			const selectorRef = (0, react.useRef)(null);
+			const closeMenu = () => {
+				setOpen(false);
+			};
+			const selectMode = (id) => {
+				selectorRef.current?.focus({ preventScroll: true });
+				closeMenu();
+				onSelect(id);
+			};
+			const selector = (0, react_jsx_runtime.jsxs)("button", {
+				ref: selectorRef,
+				type: "button",
+				className: PreferenceRow_module_css_default.selector,
+				"aria-haspopup": "menu",
+				"aria-expanded": open,
+				onClick: () => {
+					setOpen((value) => !value);
+				},
+				children: [selectedLabel, (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutlineRegular, { className: PreferenceRow_module_css_default.chevron })]
+			});
+			return (0, react_jsx_runtime.jsxs)("div", {
+				className: PreferenceRow_module_css_default.row,
+				children: [(0, react_jsx_runtime.jsxs)("div", {
+					className: PreferenceRow_module_css_default.rowText,
+					children: [(0, react_jsx_runtime.jsx)("div", {
+						className: PreferenceRow_module_css_default.title,
+						children: title
+					}), (0, react_jsx_runtime.jsx)("div", {
+						className: PreferenceRow_module_css_default.desc,
+						children: description
+					})]
+				}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Menu, {
+					open,
+					onClose: closeMenu,
+					items: options,
+					selectedId: value,
+					onSelect: selectMode,
+					align: "end",
+					portal: true,
+					anchor: selector
+				})]
+			});
+		}
+		//#endregion
+		//#region lib/types/client/settings/TranscriptViewRow.js
+		const LABELS = {
+			compact: "settings.transcript.compact",
+			standard: "settings.transcript.standard",
+			detailed: "settings.transcript.detailed",
+			verbose: "settings.transcript.verbose"
+		};
+		const COLLAPSE_LABELS = {
+			completion: "settings.collapse.completion",
+			"next-input": "settings.collapse.nextInput"
+		};
+		/**
+		* Render the independent, Host-backed work-details and collapse-timing selectors.
+		* @param props - composed Settings slot props.
+		* @returns the preference row.
+		*/
+		function TranscriptViewRow({ useTranscriptView, setTranscriptView, useCollapseTiming, setCollapseTiming, t }) {
+			const mode = useTranscriptView((value) => value);
+			const timing = useCollapseTiming((value) => value);
+			return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(PreferenceRow, {
+				title: t("settings.transcript.title"),
+				description: t("settings.transcript.description"),
+				value: mode,
+				selectedLabel: t(LABELS[mode]),
+				options: TRANSCRIPT_VIEW_MODES.map((id) => ({
+					id,
+					label: t(LABELS[id])
+				})),
+				onSelect: (value) => {
+					setTranscriptView(value);
+				}
+			}), (0, react_jsx_runtime.jsx)(PreferenceRow, {
+				title: t("settings.collapse.title"),
+				description: t("settings.collapse.description"),
+				value: timing,
+				selectedLabel: t(COLLAPSE_LABELS[timing]),
+				options: COLLAPSE_TIMINGS.map((id) => ({
+					id,
+					label: t(COLLAPSE_LABELS[id])
+				})),
+				onSelect: (value) => {
+					setCollapseTiming(value);
+				}
+			})] });
+		}
 		//#endregion
 		//#region lib/types/client/transcript-view.js
-		/** Host-backed completed-Turn transcript presentation policy. */
-		/** Live transcript preference consumed by Chat and its Settings row. */
+		/** Independent work-details preferences backed by the same Host configuration form. */
+		/** Live work-details preference consumed by Chat and its Settings row. */
 		var TranscriptViewPolicy = class {
 			host;
-			/** Reactive current mode; defaults to Compact before Host settings arrive. */
-			mode = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(DEFAULT_TRANSCRIPT_VIEW_MODE);
+			defaultMode;
+			unsubscribe;
+			/** Reactive current mode, including the client default before Host settings arrive. */
+			mode;
+			/** Reactive collapse timing, defaulting to completion until Host settings arrive. */
+			collapseTiming = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(DEFAULT_COLLAPSE_TIMING);
 			/**
 			* @param host - durable Chat settings scope.
+			* @param defaultMode - presentation used without an explicit saved mode.
 			*/
-			constructor(host) {
+			constructor(host, defaultMode = DEFAULT_TRANSCRIPT_VIEW_MODE) {
 				this.host = host;
-				host.subscribe(() => {
+				this.defaultMode = defaultMode;
+				this.mode = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(defaultMode);
+				this.unsubscribe = host.subscribe(() => {
 					this.adopt();
 				});
 				this.adopt();
 			}
+			/** Release the accepted-value subscription. */
+			dispose() {
+				this.unsubscribe();
+			}
 			/**
 			* Publish and persist one explicit user choice.
-			* @param mode - Normal or Compact transcript presentation.
+			* @param mode - Compact, Standard, Detailed, or Verbose work details.
 			*/
 			setMode(mode) {
 				if (this.mode.getSnapshot() === mode) return;
 				this.mode.set(mode);
 				this.host.set(TRANSCRIPT_VIEW_FIELD, mode);
 			}
+			/**
+			* Publish and persist collapse timing without changing the work-details mode.
+			* @param timing - immediate completion folding or deferred folding at the next input.
+			*/
+			setCollapseTiming(timing) {
+				if (this.collapseTiming.getSnapshot() === timing) return;
+				this.collapseTiming.set(timing);
+				this.host.set(COLLAPSE_TIMING_FIELD, timing);
+			}
 			/** Adopt the latest accepted Host section without writing it back. */
 			adopt() {
 				const section = this.host.getSnapshot().value;
-				if (section === void 0 || this.mode.getSnapshot() === section.transcriptView) return;
-				this.mode.set(section.transcriptView);
+				if (section === void 0) return;
+				const saved = section.transcriptView;
+				const mode = saved === "normal" || saved === "expanded" ? "detailed" : saved ?? this.defaultMode;
+				if (this.mode.getSnapshot() !== mode) this.mode.set(mode);
+				const timing = section.collapseTiming ?? "completion";
+				if (this.collapseTiming.getSnapshot() !== timing) this.collapseTiming.set(timing);
 			}
 		};
 		//#endregion
-		//#region lib/types/client/apply.js
-		const CHAT_NODE_INJECT = { hooks: { turnData: ({ useChat }, nodeKey) => function useTurnData(key) {
-			return useChat((snapshot) => {
-				const location = snapshot.nodes.get(nodeKey)?.location;
-				return location?.kind === "turn" || location?.kind === "step" ? location.turn.data.get(key) : void 0;
+		//#region lib/types/client/settings/LinkOpeningRow.js
+		/**
+		* Render the link-opening destination selector.
+		* @param props - Composed Settings slot props.
+		* @returns The preference row.
+		*/
+		function LinkOpeningRow({ useLinkOpening, useBrowserAvailable, setLinkOpening, t }) {
+			const destination = useLinkOpening((value) => value);
+			if (!useBrowserAvailable((value) => value)) return null;
+			return (0, react_jsx_runtime.jsx)(PreferenceRow, {
+				title: t("settings.links.title"),
+				description: t("settings.links.description"),
+				value: destination,
+				selectedLabel: t(destination === "sidebar" ? "settings.links.sidebar" : "settings.links.newTab"),
+				options: [{
+					id: "sidebar",
+					label: t("settings.links.sidebar")
+				}, {
+					id: "new-tab",
+					label: t("settings.links.newTab")
+				}],
+				onSelect: (value) => {
+					setLinkOpening(value);
+				}
 			});
-		} } };
+		}
+		//#endregion
+		//#region lib/types/client/settings/PerformanceUsageRow.js
+		const OPTIONS = [{
+			id: "compact",
+			label: "settings.performance.compact"
+		}, {
+			id: "detailed",
+			label: "settings.performance.detailed"
+		}];
+		/**
+		* Render the performance and usage detail selector.
+		* @param props - composed Settings slot props.
+		* @returns the preference row.
+		*/
+		function PerformanceUsageRow({ usePerformanceUsage, setPerformanceUsage, t }) {
+			const mode = usePerformanceUsage((value) => value);
+			const selectedLabel = mode === "detailed" ? "settings.performance.detailed" : "settings.performance.compact";
+			return (0, react_jsx_runtime.jsx)(PreferenceRow, {
+				title: t("settings.performance.title"),
+				description: t("settings.performance.description"),
+				value: mode,
+				selectedLabel: t(selectedLabel),
+				options: OPTIONS.map((option) => ({
+					id: option.id,
+					label: t(option.label)
+				})),
+				onSelect: (value) => {
+					setPerformanceUsage(value);
+				}
+			});
+		}
+		//#endregion
+		//#region lib/types/client/performance-usage.js
+		/** Performance detail preference, live immediately and reconciled with accepted Host settings. */
+		/** Shared live preference for the settings row and chat statistics. */
+		var PerformanceUsagePolicy = class {
+			host;
+			unsubscribe;
+			/** Current choice, reconciled with accepted Host settings when available. */
+			mode = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(DEFAULT_PERFORMANCE_USAGE);
+			/** @param host - Chat settings scope persisted through the Host. */
+			constructor(host) {
+				this.host = host;
+				const adopt = () => {
+					const accepted = host.getSnapshot().value?.performanceUsage;
+					if (accepted !== void 0) this.mode.set(accepted);
+				};
+				this.unsubscribe = host.subscribe(adopt);
+				adopt();
+			}
+			/** Release the accepted-value subscription. */
+			dispose() {
+				this.unsubscribe();
+			}
+			/**
+			* Publish a choice immediately and queue its Host write.
+			* @param mode - Statistics detail selected by the user.
+			*/
+			setMode(mode) {
+				if (mode === this.mode.getSnapshot()) return;
+				this.mode.set(mode);
+				this.host.set("performanceUsage", mode);
+			}
+		};
+		//#endregion
+		//#region lib/types/client/chat/use-turn-data.js
+		const EMPTY_SOURCE = {
+			getSnapshot: () => void 0,
+			subscribe: () => () => {}
+		};
+		/**
+		* Subscribe to one value from a Turn's keyed Location-data store.
+		* @param data - current Turn data store, or absence for a Node outside a Turn.
+		* @param key - declaration-merged business key.
+		* @returns the current value for that key.
+		*/
+		function useTurnDataValue(data, key) {
+			const source = data?.source(key) ?? EMPTY_SOURCE;
+			return (0, react.useSyncExternalStore)(source.subscribe, source.getSnapshot);
+		}
+		//#endregion
+		//#region lib/types/client/apply.js
+		/** Bind group and header visibility to the viewport of one flow render. */
+		const CHAT_FLOW_INJECT = { hooks: {
+			groupAction: (_standard, { motion }) => function useGroupAction(hidden, reveal) {
+				return useFlowHidden(hidden, reveal, motion);
+			},
+			groupHeaderAction: (_standard, { motion }) => function useGroupHeaderAction(ref, hidden) {
+				useMotionHidden(ref, hidden, motion);
+			}
+		} };
+		/** Bind node-local sources and forward the flow's existing visibility hook. */
+		const CHAT_NODE_INJECT = { hooks: {
+			turnData: (_standard, { turnData }) => function useTurnData(key) {
+				return useTurnDataValue(turnData, key);
+			},
+			disclosure: (_standard, { disclosureReset }) => bindDisclosure(disclosureReset),
+			groupAction: (_standard, { useGroupAction }) => useGroupAction
+		} };
 		/** Services required by the Chat target and its presentation registrations. */
 		const inject = [
 			"slots",
 			"sessions",
+			"uiWorkspace",
 			"uiSession",
 			"uiConversation",
-			"layout",
 			"locale",
-			"settingsScope",
+			"configForms",
 			"remote",
-			"remote.session"
+			"remote.session",
+			"sidebarRight"
 		];
 		/**
 		* Mount all Chat-owned contributions.
 		* @param ctx - Client root context.
 		*/
 		function apply(ctx) {
+			const quotaNotice = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(null);
+			let quotaNoticeSeq = 0;
+			const quotaNoticeHolds = /* @__PURE__ */ new Set();
 			const chatSources = /* @__PURE__ */ new WeakMap();
+			const quotaSubscriptions = /* @__PURE__ */ new Set();
+			ctx.effect(() => async () => {
+				await Promise.all([...quotaSubscriptions].map((dispose) => dispose()));
+			}, "ui-chat: live quota notices");
 			const chatSource = (binding) => {
 				let source = chatSources.get(binding);
 				if (source === void 0) {
+					const dispose = binding.ctx.effect(() => {
+						const stop = binding.eventSource.subscribe(() => {
+							const { change } = binding.eventSource.getSnapshot();
+							if (change.kind !== "append") return;
+							for (const { event } of change.entries) {
+								if (event.type !== "turn/end" || event.data.reason.kind !== "error") continue;
+								const { code } = event.data.reason.error;
+								if (quotaNoticeHolds.size > 0 || code !== "QUOTA" && code !== "ACCOUNT_QUOTA") continue;
+								quotaNotice.set({
+									code,
+									seq: ++quotaNoticeSeq
+								});
+							}
+						});
+						return () => {
+							stop();
+							chatSources.delete(binding);
+							quotaSubscriptions.delete(dispose);
+						};
+					}, "ui-chat: Provider binding quota notices");
+					quotaSubscriptions.add(dispose);
 					const target = ctx.uiConversation.binding(binding).target("chat");
 					source = {
 						getSnapshot: () => target.getSnapshot() ?? EMPTY_CHAT_SNAPSHOT,
@@ -7683,7 +13203,6 @@ window.__ModuleLoader__.load({
 				return source;
 			};
 			registerConversationNodes(ctx);
-			registerChatNodeRenderers(ctx);
 			ctx.uiSession.provide({
 				hooks: ["chat"],
 				resolve: (binding) => ({ hooks: { chat: chatSource(binding) } })
@@ -7695,19 +13214,117 @@ window.__ModuleLoader__.load({
 			const t = ctx.locale.bind(NS);
 			const chatStore = createChatStore();
 			const chatScrollPositions = /* @__PURE__ */ new Map();
-			const transcriptView = new TranscriptViewPolicy(ctx.settingsScope.bind({ namespace: CHAT_SETTINGS_NAMESPACE }));
+			const chatSettings = ctx.configForms.get(CHAT_SETTINGS_NAMESPACE);
+			const linkOpening = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(chatSettings.getSnapshot().value?.linkOpening ?? "sidebar");
+			ctx.effect(() => chatSettings.subscribe(() => {
+				const accepted = chatSettings.getSnapshot().value?.linkOpening;
+				if (accepted !== void 0) linkOpening.set(accepted);
+			}));
+			ctx.inject(["sidebarRightTabs"], (scope) => {
+				const tabs = scope.sidebarRightTabs;
+				const browserAvailable = {
+					getSnapshot: () => tabs.get("browser") !== void 0,
+					subscribe: (listener) => tabs.subscribe(listener)
+				};
+				scope.slots.inject("settings.general.item", () => scope.slots.register({
+					name: "settings.general.item",
+					id: "link-opening",
+					order: 17,
+					locale: NS,
+					inject: () => ({
+						hooks: {
+							linkOpening,
+							browserAvailable
+						},
+						setLinkOpening: (destination) => {
+							linkOpening.set(destination);
+							chatSettings.set("linkOpening", destination).catch((_error) => {});
+						}
+					})
+				}, LinkOpeningRow));
+			});
+			const transcriptView = new TranscriptViewPolicy(chatSettings, "dshDesktop" in globalThis ? "standard" : DEFAULT_TRANSCRIPT_VIEW_MODE);
+			const presentation = derivePresentationPolicy(transcriptView.mode, transcriptView.collapseTiming);
+			const performancePolicy = new PerformanceUsagePolicy(chatSettings);
+			ctx.effect(() => () => {
+				transcriptView.dispose();
+				performancePolicy.dispose();
+			});
+			const performanceUsage = performancePolicy.mode;
+			registerChatNodeRenderers(ctx, performanceUsage, presentation);
+			ctx.slots.registerFactory({
+				name: "conversation.chat.user.content",
+				scope: "session",
+				locale: NS,
+				children: { "conversation.chat.user.images": {
+					kind: "single",
+					scope: "session"
+				} }
+			}, UserContent);
+			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
+				name: "settings.general.item",
+				id: "performance-usage",
+				order: 30,
+				locale: NS,
+				inject: () => ({
+					hooks: { performanceUsage },
+					setPerformanceUsage: (mode) => {
+						performancePolicy.setMode(mode);
+					}
+				})
+			}, PerformanceUsageRow));
 			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
 				name: "settings.general.item",
 				id: "transcript-view",
 				order: 12,
 				locale: NS,
 				inject: () => ({
-					hooks: { transcriptView: transcriptView.mode },
+					hooks: {
+						transcriptView: transcriptView.mode,
+						collapseTiming: transcriptView.collapseTiming
+					},
 					setTranscriptView: (mode) => {
 						transcriptView.setMode(mode);
+					},
+					setCollapseTiming: (timing) => {
+						transcriptView.setCollapseTiming(timing);
 					}
 				})
 			}, TranscriptViewRow));
+			const nodeSources = (binding) => {
+				const chat = chatSource(binding);
+				const conversation = ctx.uiConversation.binding(binding);
+				return {
+					hooks: { presentation },
+					keyedHooks: {
+						chatNode: (key) => chat.getSnapshot().nodes.source(key),
+						chatNodeBottom: (key) => chat.getSnapshot().nodes.bottomSource(key),
+						chatNodeProcess: (key) => chat.getSnapshot().nodes.processSource(key),
+						chatGroup: (key) => conversation.snapshot.getSnapshot().views.grouped("chat")?.groupSource(key)
+					}
+				};
+			};
+			ctx.slots.inject("conversation.chat.flow", () => ctx.slots.register({
+				name: "conversation.chat.flow",
+				locale: NS,
+				store: chatStore,
+				children: {
+					"conversation.chat.turnStatus": {
+						kind: "single",
+						scope: "root"
+					},
+					"conversation.chat.node": {
+						kind: "keyed",
+						scope: "session",
+						inject: CHAT_NODE_INJECT
+					}
+				},
+				inject: (sessionId) => {
+					const binding = ctx.sessions.binding(sessionId);
+					if (binding === void 0) throw new Error(`ui-chat: unknown session "${sessionId}"`);
+					return nodeSources(binding);
+				}
+			}, ChatFlow));
 			ctx.slots.inject("conversation.view", () => {
 				return ctx.slots.register({
 					name: "conversation.view",
@@ -7715,40 +13332,35 @@ window.__ModuleLoader__.load({
 					order: 0,
 					label: () => t("view.chat"),
 					locale: NS,
-					children: {
-						"conversation.chat.node": {
-							kind: "keyed",
-							scope: "session",
-							inject: CHAT_NODE_INJECT
-						},
-						"conversation.chat.turnStatus": {
-							kind: "single",
-							scope: "root"
-						},
-						"conversation.message.images": {
-							kind: "single",
-							scope: "session"
-						}
-					},
+					children: { "conversation.chat.flow": {
+						kind: "single",
+						scope: "session",
+						inject: CHAT_FLOW_INJECT
+					} },
 					store: chatStore,
-					inject: (sessionId, actions) => {
-						const session = ctx.sessions.binding(sessionId)?.session;
-						if (session === void 0) throw new Error(`ui-chat: unknown session "${sessionId}"`);
+					inject: (sessionId) => {
+						const binding = ctx.sessions.binding(sessionId);
+						if (binding === void 0) throw new Error(`ui-chat: unknown session "${sessionId}"`);
+						const session = binding.session;
+						const chat = chatSource(binding);
 						return {
-							hooks: { transcriptView: transcriptView.mode },
-							openDetails: (target) => {
-								actions.select(target);
-								ctx.layout.openDetails();
-							},
-							fileMentions: (owner) => ctx.get("chatFileMentions")?.forClosing(owner),
-							openFile: async (path) => {
+							...nodeSources(binding),
+							fileMentions: (owner) => ctx.get("chatFileMentions")?.forClosing(owner, sessionId),
+							openFile: async (path, options) => {
 								const cwd = ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd;
-								const result = await ctx.remote.session.openWorkspacePath({ path: resolveWorkspacePath(cwd, path) });
-								if (!result.ok) throw new Error(`path open failed: ${result.error.message}`);
+								const url = fileAddressFor(sessionId, cwd, path);
+								if (options?.line === void 0) ctx.sidebarRight.openResource(url);
+								else ctx.sidebarRight.openResource(url, { params: { line: options.line } });
+								await Promise.resolve();
+							},
+							openExternalLink: (url) => {
+								if (linkOpening.getSnapshot() === "sidebar" && ctx.get("sidebarRightTabs")?.get("browser") !== void 0) ctx.sidebarRight.openTab("browser", { params: { url } });
+								else window.open(url, "_blank", "noopener,noreferrer");
 							},
 							loadOlder: () => {
 								session.loadOlder();
 							},
+							loadThrough: (seq) => session.loadThrough(seq),
 							loadImage: Object.assign((attachment) => ctx.uiConversation.imageUrl(sessionId, attachment), { peek: (attachment) => ctx.uiConversation.peekImageUrl(sessionId, attachment) }),
 							chatScroll: {
 								save: (position) => {
@@ -7758,37 +13370,69 @@ window.__ModuleLoader__.load({
 								read: () => chatScrollPositions.get(sessionId) ?? null
 							},
 							forkAt: (seq) => {
+								const messageId = [...chat.getSnapshot().timeline.turns.values()].find((turn) => turn.end?.seq === seq)?.data.get("turn-tail")?.closing?.finalNode.messageId;
 								ctx.sessions.fork({
 									sessionId,
 									atSeq: seq,
-									increaseTitle: true
+									increaseTitle: true,
+									onCreated: (childId) => {
+										ctx.get("productAnalytics")?.track("branch_session_click", {
+											session_id: childId,
+											parent_session_id: sessionId,
+											...messageId === void 0 ? {} : { parent_message_id: messageId },
+											click_position: "footer"
+										});
+									}
 								}).then((childId) => {
-									ctx.sessions.open(childId);
+									ctx.uiWorkspace.openSession(childId);
 								}).catch(() => {});
 							}
 						};
 					}
 				}, ChatView);
 			});
-			ctx.slots.inject("conversation.composer.dock", () => ctx.slots.register({
-				name: "conversation.composer.dock",
-				id: "stats",
-				order: 0,
-				locale: NS
-			}, StatsLine));
-			ctx.slots.inject("conversation.approval.detail", () => ctx.slots.register({ name: "conversation.approval.detail" }, ApprovalCommand));
-			ctx.slots.inject("details", () => ctx.slots.register({
-				name: "details",
+			ctx.slots.inject("shell.overlay", () => ctx.slots.register({
+				name: "shell.overlay",
+				id: "chat.quota-notice",
 				locale: NS,
-				children: { "conversation.details.tool": {
-					kind: "single",
-					scope: "session"
+				children: { "shell.quota-notice": {
+					kind: "chain",
+					scope: "root"
 				} },
-				store: chatStore,
-				inject: () => ({ closeDetails: () => {
-					ctx.layout.closeDetails();
-				} })
-			}, DetailsPanel));
+				inject: () => ({
+					hooks: { notice: quotaNotice },
+					dismissNotice: () => {
+						quotaNoticeHolds.clear();
+						quotaNotice.set(null);
+					},
+					keepNoticeOpen: () => {
+						if (quotaNotice.getSnapshot() === null) return () => {};
+						const token = Symbol("ui-chat quota notice hold");
+						quotaNoticeHolds.add(token);
+						return () => {
+							quotaNoticeHolds.delete(token);
+						};
+					}
+				})
+			}, QuotaNoticeHost));
+			const statPillInject = () => ({ hooks: { performanceUsage } });
+			ctx.slots.inject("conversation.composer.dock", function* () {
+				yield ctx.slots.register({
+					name: "conversation.composer.dock",
+					id: "activity",
+					order: 0,
+					locale: NS,
+					inject: statPillInject
+				}, ActivityPill);
+				yield ctx.slots.register({
+					name: "conversation.composer.dock",
+					id: "usage",
+					order: 1,
+					locale: NS,
+					inject: statPillInject
+				}, UsagePill);
+			});
+			ctx.slots.inject("conversation.approval.detail", () => ctx.slots.register({ name: "conversation.approval.detail" }, ApprovalCommand));
 		}
 		//#endregion
 		exports.EMPTY_CHAT_SNAPSHOT = EMPTY_CHAT_SNAPSHOT;

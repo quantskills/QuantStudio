@@ -9,7 +9,7 @@
  */
 import type { Context as ClientContext } from '@deepseek-ai/cordis';
 import { type SnapshotStore } from '@deepseek-ai/dsh-client-store';
-import type { ArbitrateKey, ArbitrateOutcome, PickOutcome } from '@deepseek-ai/dsh-client-ui-conversation/client';
+import type { ArbitrateKey, ArbitrateOutcome, CommandClaim, PickOutcome, ReferenceInsert } from '@deepseek-ai/dsh-client-ui-conversation/client';
 import type { SessionId } from '@deepseek-ai/dsh-session/types';
 import type { MenuState, TriggerHit } from '../core/contract.ts';
 import type { InputTriggerCrumb, InputTriggerSource, PickAction, SubmitEnvelope, TriggerChar, TriggerGuard } from '../types.ts';
@@ -51,7 +51,7 @@ export declare class InputTriggerController {
     readonly headers: SnapshotStore<ReadonlyMap<string, readonly InputTriggerCrumb[]>>;
     /**
      * Aggregated hot reference lexicon, grouped by trigger (plain-text-reference decision;
-     * see .agents/notes/implemented/architecture/2026-07-25-web-input-machine-and-slash-pipeline.md):
+     * see .agents/notes/archived/architecture/2026-07-25-web-input-machine-and-slash-pipeline.md):
      * sources implementing the lexicon hook are polled with the session
      * projection; undefined answers (roll not hot yet) are skipped; multiple
      * sources on one trigger concatenate in registration order. A snapshot
@@ -62,6 +62,13 @@ export declare class InputTriggerController {
     readonly lexicon: SnapshotStore<ReadonlyMap<TriggerChar, readonly string[]>>;
     /** The authoritative hit: single truth for span CAS material (menu snapshot never carries it alone). */
     private hit;
+    /**
+     * Identity of the hit whose menu the user dismissed. A dismissal means "not
+     * this one, not now": the same token with the same query keeps its menu
+     * closed, so restoring the caret after a dismissal cannot reopen it. Typing
+     * (a new query) or moving to another token clears it.
+     */
+    private dismissed;
     /** Whether the open menu was reached by a drill pick; cleared with the menu. */
     private drilled;
     private fetch;
@@ -120,7 +127,11 @@ export declare class InputTriggerController {
      * Keyboard arbitration while the menu is open.
      * @param key - intercepted key.
      * @param composing - inside IME composition: everything passes.
-     * @returns consumed / pick-highlighted / pass.
+     * @returns `pass` when the browser keeps the key (closed menu, no
+     * highlight, or a vanished candidate), `consumed` when the menu handled
+     * the key without a settling pick (move, close, drill descent, or a
+     * pending-refinement no-op), or `pick-highlighted` when the highlighted
+     * candidate settled and the menu closed.
      */
     arbitrate(key: ArbitrateKey, composing: boolean): ArbitrateOutcome;
     /**
@@ -142,6 +153,13 @@ export declare class InputTriggerController {
      */
     serializeReference(source: string, ref: string, signal: AbortSignal): Promise<string>;
     /**
+     * Route a chip to its owner or an editable token to its current lexicon owner.
+     * @param source - chip source name; undefined for editable text.
+     * @param reference - source-owned id and optional chip glyph.
+     * @returns whether an owner accepted the preview, possibly awaiting its catalog.
+     */
+    openReference(source: string | undefined, reference: Pick<ReferenceInsert, 'ref' | 'appearance'>): boolean;
+    /**
      * Enter last adjudication: polls sources' matchEnter in registration
      * order, first non-undefined wins. The outcome returns to the caller (the
      * input machine applies it inside the same submit attempt — no event).
@@ -153,6 +171,16 @@ export declare class InputTriggerController {
      * the caller must not silently downgrade.
      */
     adjudicate(line: string, signal: AbortSignal, envelope: SubmitEnvelope): Promise<PickOutcome>;
+    /**
+     * Resolve the claim a persisted command chip names, polling sources'
+     * matchClaim in registration order; the first claim wins. Never acts on the
+     * token (see {@link InputTriggerSource.matchClaim}).
+     * @param token - command spelling without its argument separator, e.g. '/goal'.
+     * @param signal - abort for the caller's restore attempt.
+     * @returns the claim, or undefined when no source claims the token. Rejects
+     * when a polled source's warmup fails or `signal` aborts.
+     */
+    resolveClaim(token: string, signal: AbortSignal): Promise<CommandClaim | undefined>;
     /**
      * Drop the menu group of a disposed source (root registry change notification).
      * @param source - the source whose registration was disposed.
@@ -168,6 +196,8 @@ export declare class InputTriggerController {
     sourceAdded(source: InputTriggerSource): void;
     /** External dismiss (e.g. pointer outside the composer area). */
     dismiss(): void;
+    /** Re-fetch the currently open menu without changing its hit or visible rows. */
+    refreshOpenMenu(): void;
     /** Scope teardown: close and abort (the service deletes the map entry). */
     dispose(): void;
     /** The session projection handed to sources (agent-backed identity; constant per scope). */
@@ -196,6 +226,8 @@ export declare class InputTriggerController {
     /** Re-poll every header-bearing source in the hit roster and publish their crumbs. */
     private refreshHeaders;
     private setHeaders;
+    /** Record the open menu's identity as dismissed, so a bare re-track cannot revive it. */
+    private rememberDismissed;
     private clearLauncher;
     private reduce;
 }

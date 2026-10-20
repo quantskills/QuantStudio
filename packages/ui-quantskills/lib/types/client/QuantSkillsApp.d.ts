@@ -220,7 +220,7 @@ export interface QuantSkillsFrameInjected {
     startAuthoringSession: (kind: QuantSkillsAuthoringKind, initialRequest?: string) => Promise<void>;
     openAgentTeamBuilder: (seed?: QuantSkillsAgentTeamBuilderSeed) => void;
 }
-export type QuantSkillsFrameProps = PropsRuntime<'root'> & PropsRenderSlots<'sidebar' | 'quantskills.page' | 'quantskills.results' | 'conversation' | 'details' | 'shell.overlay'> & PropsStore<LayoutStore> & InjectFace<QuantSkillsFrameInjected>;
+export type QuantSkillsFrameProps = PropsRuntime<'root'> & PropsRenderSlots<'sidebar' | 'quantskills.page' | 'quantskills.results' | 'main' | 'rightbar' | 'shell.overlay'> & PropsStore<LayoutStore> & InjectFace<QuantSkillsFrameInjected>;
 export type QuantSkillsAppProps = PropsRuntime<'quantskills.page'> & InjectFace<QuantSkillsAppInjected>;
 export type QuantSkillsRailProps = PropsRuntime<'sidebar'> & PropsRenderSlots<'sidebar.footer.action'> & InjectFace<QuantSkillsRailInjected>;
 export type QuantSkillsPluginFrameProps = PropsRuntime<'shell.overlay'> & PropsRenderSlots<'quantskills.page' | 'quantskills.results'> & InjectFace<QuantSkillsPluginFrameInjected>;
@@ -229,7 +229,7 @@ export type QuantSkillsResultProps = PropsRuntime<'quantskills.results'> & Injec
 export type QuantSkillsResultActionProps = PropsRuntime<'conversation.session.header.actions'> & QuantSkillsResultActionInjected;
 export type QuantSkillsAuthoringActionProps = QuantSkillsAuthoringActionInjected;
 /** DSH-compatible root frame that keeps the stock conversation services while replacing the stock visual shell. */
-export declare function QuantSkillsFrame({ useStore, actions, useSessions, useView, useCatalog, useBoundSessions, useAgents, useNotifications, renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, }: QuantSkillsFrameProps): import("react").JSX.Element;
+export declare function QuantSkillsFrame({ useStore, actions, useSessions, usePanelInfo, useView, useCatalog, useBoundSessions, useAgents, useNotifications, renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, }: QuantSkillsFrameProps): import("react").JSX.Element;
 /** Full-screen QuantSkills application hosted by the stock DSH shell. */
 export declare function QuantSkillsPluginFrame({ useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications, renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails, claimConversationTextScale, openResults, closeResults, close, modelAccess, }: QuantSkillsPluginFrameProps): import("react").JSX.Element | null;
 /** QuantSkills application launcher contributed to the stock Host sidebar. */

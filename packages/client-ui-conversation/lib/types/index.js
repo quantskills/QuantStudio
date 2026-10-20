@@ -1,13 +1,15 @@
-/** Host registration for browser conversation preferences. */
-import { CONVERSATION_SETTINGS_NAMESPACE, ConversationSettingsSchema } from "./submission-settings.js";
+import z from '@deepseek-ai/schemastery';
+import { BUSY_ENTER_FIELD } from "./submission-settings.js";
+import { ConversationSettingsFields } from "./submission-settings.js";
 export { BUSY_ENTER_BEHAVIORS, BUSY_ENTER_FIELD, CONVERSATION_SETTINGS_NAMESPACE, DEFAULT_BUSY_ENTER_BEHAVIOR, } from "./submission-settings.js";
-/**
- * Register the durable conversation section when a settings provider exists.
- * @param ctx - Host context whose optional settings service owns the section.
+/** Live preferences projected to the browser. */
+export const Config = z.object({
+    [BUSY_ENTER_FIELD]: ConversationSettingsFields[BUSY_ENTER_FIELD].volatile(),
+});
+/** Host preferences are consumed through the configuration form projection.
+ * @param ctx Plugin context used for optional settings presentation.
  */
 export function apply(ctx) {
-    ctx.inject(['settings'], (settingsCtx) => {
-        settingsCtx.settings.register(CONVERSATION_SETTINGS_NAMESPACE, ConversationSettingsSchema);
-    });
+    ctx.inject(['settings'], (child) => { child.effect(() => child.settings.configure({ auto: false }, ctx.fiber)); });
 }
 //# sourceMappingURL=index.js.map

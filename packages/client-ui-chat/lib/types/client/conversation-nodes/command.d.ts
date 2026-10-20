@@ -1,6 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis';
-import type { ConversationMatch, ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
-import type { CommandNode, CompactionSummaryNode } from '../contract/snapshot.ts';
+import type { CommandNode, CompactionSummaryNode, ConversationMatch, ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
 declare module '../contract/chat-nodes.ts' {
     interface ChatNodeDataMap {
         /** Ordinary slash-command lifecycle. */

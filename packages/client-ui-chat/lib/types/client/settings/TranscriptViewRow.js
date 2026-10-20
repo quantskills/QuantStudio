@@ -1,29 +1,25 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-/** General Settings row for completed-Turn transcript presentation. */
-import { useState } from 'react';
-import { IconChevronDownOutline14, Menu } from '@deepseek-ai/dsh-client-ui-primitives';
-import css from './TranscriptViewRow.module.css';
-const OPTIONS = [
-    { id: 'normal', label: 'settings.transcript.normal' },
-    { id: 'compact', label: 'settings.transcript.compact' },
-];
+import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
+import { TRANSCRIPT_VIEW_MODES } from "../../chat-settings.js";
+import { COLLAPSE_TIMINGS } from "../presentation-policy.js";
+import { PreferenceRow } from "./PreferenceRow.js";
+const LABELS = {
+    compact: 'settings.transcript.compact',
+    standard: 'settings.transcript.standard',
+    detailed: 'settings.transcript.detailed',
+    verbose: 'settings.transcript.verbose',
+};
+const COLLAPSE_LABELS = {
+    completion: 'settings.collapse.completion',
+    'next-input': 'settings.collapse.nextInput',
+};
 /**
- * Render the completed-Turn transcript mode selector.
+ * Render the independent, Host-backed work-details and collapse-timing selectors.
  * @param props - composed Settings slot props.
  * @returns the preference row.
  */
-export function TranscriptViewRow({ useTranscriptView, setTranscriptView, t }) {
+export function TranscriptViewRow({ useTranscriptView, setTranscriptView, useCollapseTiming, setCollapseTiming, t, }) {
     const mode = useTranscriptView(value => value);
-    const [open, setOpen] = useState(false);
-    const selectedLabel = mode === 'normal'
-        ? 'settings.transcript.normal'
-        : 'settings.transcript.compact';
-    const closeMenu = () => { setOpen(false); };
-    const selectMode = (id) => {
-        closeMenu();
-        setTranscriptView(id);
-    };
-    const selector = (_jsxs("button", { type: "button", className: css.selector, "aria-haspopup": "menu", "aria-expanded": open, onClick: () => { setOpen(value => !value); }, children: [t(selectedLabel), _jsx(IconChevronDownOutline14, { className: css.chevron })] }));
-    return (_jsxs("div", { className: css.row, children: [_jsxs("div", { className: css.rowText, children: [_jsx("div", { className: css.title, children: t('settings.transcript.title') }), _jsx("div", { className: css.desc, children: t('settings.transcript.description') })] }), _jsx(Menu, { open: open, onClose: closeMenu, items: OPTIONS.map(option => ({ id: option.id, label: t(option.label) })), selectedId: mode, onSelect: selectMode, align: "end", portal: true, anchor: selector })] }));
+    const timing = useCollapseTiming(value => value);
+    return (_jsxs(_Fragment, { children: [_jsx(PreferenceRow, { title: t('settings.transcript.title'), description: t('settings.transcript.description'), value: mode, selectedLabel: t(LABELS[mode]), options: TRANSCRIPT_VIEW_MODES.map(id => ({ id, label: t(LABELS[id]) })), onSelect: (value) => { setTranscriptView(value); } }), _jsx(PreferenceRow, { title: t('settings.collapse.title'), description: t('settings.collapse.description'), value: timing, selectedLabel: t(COLLAPSE_LABELS[timing]), options: COLLAPSE_TIMINGS.map(id => ({ id, label: t(COLLAPSE_LABELS[id]) })), onSelect: (value) => { setCollapseTiming(value); } })] }));
 }
 //# sourceMappingURL=TranscriptViewRow.js.map

@@ -1,76 +1,100 @@
 /**
- * The root entry's transient layout store: panel geometry as plain widths in
- * px (0 = closed). Module level exports the factory only — a module-level
- * handle would pin the store's identity in the module
- * cache (a de-facto singleton surviving plugin reloads). register() receives
- * the factory (exclusive use: the framework instantiates per entry), AppFrame
- * derives its PropsStore share from the return type, and the service face
- * receives the bound actions through the registration's inject hook.
+ * Root-owned frame measurement, panel preferences, and presentation reports.
+ * The registration supplies a fresh store and binds its actions to ctx.layout.
  */
 import { defineStore } from '@deepseek-ai/dsh-client-store';
-import { clampWidth, DETAILS_DEFAULT, DETAILS_MAX, DETAILS_MIN, SIDEBAR_DEFAULT, SIDEBAR_MAX, SIDEBAR_MIN, } from "./columns.js";
+import { clampWidth, RIGHTBAR_DEFAULT_RATIO, RIGHTBAR_MAX_RATIO, RIGHTBAR_MIN, SIDEBAR_AUTO_COLLAPSE, SIDEBAR_DEFAULT, SIDEBAR_MAX, SIDEBAR_MIN, } from "./columns.js";
 /**
- * Create the layout panel store handle. The preference IS the width, so
- * closing a panel forgets its drag width — reopening restores the contract
- * default. Actions are the complete write set: drag writes clamp
- * into the panel's contract range and never cross the open/closed line;
- * open/close transitions write 0 / the default explicitly. Below the
- * auto-collapse breakpoint (AppFrame feeds setNarrow) the sidebar toggle
- * flips the narrowExpanded override instead of the preference.
+ * Create the layout panel store handle. For the sidebar the preference IS the
+ * width, so closing it forgets its drag width — reopening restores the contract
+ * default. The right panel initializes at 45% of the frame on first opening
+ * and keeps that px preference across resizes and close. Drag writes clamp to
+ * the current frame's range. Narrow sidebar toggles change only the expansion
+ * override; opening the right panel clears that override.
  * @returns the store handle (spec + type + identity + factory in one).
  */
 export function createLayoutStore() {
     const handle = defineStore({
         init: () => ({
-            sidebar: SIDEBAR_DEFAULT,
-            sidebarReservation: 0,
-            sidebarExclusive: false,
-            sidebarClaimDragging: false,
-            details: 0,
-            detailsReservation: 0,
-            detailsExclusive: false,
-            detailsClaimDragging: false,
-            conversationTextScale: 1,
-            narrow: false,
-            narrowExpanded: false,
+            panelInfo: { activePanelId: null },
+            layoutInfo: {
+                sidebarReservation: 0,
+                sidebarExclusive: false,
+                sidebarClaimDragging: false,
+                detailsReservation: 0,
+                detailsExclusive: false,
+                detailsClaimDragging: false,
+                conversationTextScale: 1,
+                sidebar: SIDEBAR_DEFAULT,
+                viewportWidth: window.innerWidth,
+                narrowExpanded: false,
+                rightbar: null,
+                rightbarShown: false,
+                rightbarTrack: false,
+                rightbarFullscreen: false,
+                rightbarInstant: false,
+            },
         }),
         actions: {
-            setSidebar: (d, px) => { d.sidebar = clampWidth(px, SIDEBAR_MIN, SIDEBAR_MAX); },
-            setSidebarReservation: (d, px) => {
-                d.sidebarReservation = Math.max(0, Math.round(px));
+            setSidebarReservation: (d, px) => { d.layoutInfo.sidebarReservation = Math.max(0, Math.round(px)); },
+            setDetailsReservation: (d, px) => { d.layoutInfo.detailsReservation = Math.max(0, Math.round(px)); },
+            setSidebarClaimState: (d, exclusive, dragging) => { d.layoutInfo.sidebarExclusive = exclusive; d.layoutInfo.sidebarClaimDragging = exclusive && dragging; },
+            setDetailsClaimState: (d, exclusive, dragging) => { d.layoutInfo.detailsExclusive = exclusive; d.layoutInfo.detailsClaimDragging = exclusive && dragging; },
+            setConversationTextScale: (d, scale) => { d.layoutInfo.conversationTextScale = scale; },
+            selectPanel: (d, panelId) => {
+                d.panelInfo.activePanelId = panelId;
             },
-            setSidebarClaimState: (d, exclusive, dragging) => {
-                d.sidebarExclusive = exclusive;
-                d.sidebarClaimDragging = exclusive && dragging;
+            retainMainPanels: (d, panelIds) => {
+                if (d.panelInfo.activePanelId !== null && !panelIds.includes(d.panelInfo.activePanelId)) {
+                    d.panelInfo.activePanelId = null;
+                }
             },
-            setDetails: (d, px) => { d.details = clampWidth(px, DETAILS_MIN, DETAILS_MAX); },
-            setDetailsReservation: (d, px) => {
-                d.detailsReservation = Math.max(0, Math.round(px));
+            setSidebar: (d, px) => {
+                d.layoutInfo.rightbarInstant = false;
+                d.layoutInfo.sidebar = clampWidth(px, SIDEBAR_MIN, SIDEBAR_MAX);
             },
-            setDetailsClaimState: (d, exclusive, dragging) => {
-                d.detailsExclusive = exclusive;
-                d.detailsClaimDragging = exclusive && dragging;
-            },
-            setConversationTextScale: (d, scale) => { d.conversationTextScale = scale; },
             // Narrow toggles flip only the override: the width preference survives
             // untouched, so re-widening restores the pre-squeeze layout.
             toggleSidebar: (d) => {
-                if (d.narrow)
-                    d.narrowExpanded = !d.narrowExpanded;
+                d.layoutInfo.rightbarInstant = false;
+                if (d.layoutInfo.viewportWidth < SIDEBAR_AUTO_COLLAPSE)
+                    d.layoutInfo.narrowExpanded = !d.layoutInfo.narrowExpanded;
                 else
-                    d.sidebar = d.sidebar === 0 ? SIDEBAR_DEFAULT : 0;
+                    d.layoutInfo.sidebar = d.layoutInfo.sidebar === 0 ? SIDEBAR_DEFAULT : 0;
             },
             // Crossing the breakpoint in either direction drops the override: the
             // narrow default is auto-collapsed, the wide state is the preference.
-            setNarrow: (d, narrow) => {
-                if (d.narrow === narrow)
+            setViewportWidth: (d, width) => {
+                if (d.layoutInfo.viewportWidth === width)
                     return;
-                d.narrow = narrow;
-                d.narrowExpanded = false;
+                d.layoutInfo.rightbarInstant = false;
+                if ((d.layoutInfo.viewportWidth < SIDEBAR_AUTO_COLLAPSE) !== (width < SIDEBAR_AUTO_COLLAPSE)) {
+                    d.layoutInfo.narrowExpanded = false;
+                }
+                d.layoutInfo.viewportWidth = width;
             },
-            openDetails: (d) => { if (d.details === 0)
-                d.details = DETAILS_DEFAULT; },
-            closeDetails: (d) => { d.details = 0; },
+            setRightbar: (d, px) => {
+                d.layoutInfo.rightbarInstant = false;
+                d.layoutInfo.rightbar = clampWidth(px, RIGHTBAR_MIN, Math.max(RIGHTBAR_MIN, d.layoutInfo.viewportWidth * RIGHTBAR_MAX_RATIO));
+            },
+            openRightbar: (d, track, fullscreen) => {
+                if (!d.layoutInfo.rightbarShown || d.layoutInfo.rightbarTrack !== track || d.layoutInfo.rightbarFullscreen !== fullscreen) {
+                    d.layoutInfo.rightbarInstant = d.layoutInfo.rightbarFullscreen && !fullscreen;
+                }
+                if (!d.layoutInfo.rightbarShown && d.layoutInfo.viewportWidth < SIDEBAR_AUTO_COLLAPSE)
+                    d.layoutInfo.narrowExpanded = false;
+                d.layoutInfo.rightbar ??= Math.max(RIGHTBAR_MIN, Math.round(d.layoutInfo.viewportWidth * RIGHTBAR_DEFAULT_RATIO));
+                d.layoutInfo.rightbarShown = true;
+                d.layoutInfo.rightbarTrack = track;
+                d.layoutInfo.rightbarFullscreen = fullscreen;
+            },
+            closeRightbar: (d) => {
+                if (d.layoutInfo.rightbarShown)
+                    d.layoutInfo.rightbarInstant = d.layoutInfo.rightbarFullscreen;
+                d.layoutInfo.rightbarShown = false;
+                d.layoutInfo.rightbarTrack = false;
+                d.layoutInfo.rightbarFullscreen = false;
+            },
         },
     });
     return handle;

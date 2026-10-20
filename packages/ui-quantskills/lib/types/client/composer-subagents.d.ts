@@ -1,24 +1,5 @@
-/** Keep the stock subagent catalog opening upward from the composer icon. */
-interface SubagentPopupAddress {
-    readonly parentSessionId: string;
-    readonly childSessionId: string;
-    readonly mode: string;
-}
-interface SubagentPopupSessions {
-    readonly list: {
-        getSnapshot(): {
-            current: string | undefined;
-            byId: Record<string, {
-                displayTitle?: string;
-                origin?: string;
-                parentId?: string;
-            } | undefined>;
-        };
-    };
-    open(id: string): void;
-    openSubagent(address: SubagentPopupAddress): void;
-}
+import type { ISessions } from '@deepseek-ai/dsh-api-session-controller/client';
+import type { UiWorkspace } from '@deepseek-ai/dsh-client-ui-workspace/client';
 /** Install composer click and upward placement for the stock subagent catalog. */
-export declare function bindComposerSubagentMenu(documentRoot: Document, sessions: SubagentPopupSessions): () => void;
-export {};
+export declare function bindComposerSubagentMenu(documentRoot: Document, controller: ISessions, navigation: UiWorkspace): () => void;
 //# sourceMappingURL=composer-subagents.d.ts.map

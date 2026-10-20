@@ -261,7 +261,7 @@ describe('factor conversation isolation', () => {
     expect(screen.getByText(/算力 98/)).toBeTruthy()
     expect(screen.queryByText(/算力 100/)).toBeNull()
   })
-  const sessions = (purpose: string) => createSnapshotStore<SessionListState>({ current: 's1', byId: { s1: { id: 's1', running: false,
+  const sessions = (purpose: string) => createSnapshotStore<SessionListState>({ current: 's1', byId: { s1: { id: 's1', retainedBy: { mainView: 1 }, running: false,
     projectionValues: { quantSkillsPlainSession: { purpose, ...(purpose === 'factor-contest' ? { factorContest: identity } : {}) } } } } } as unknown as SessionListState)
   it.each(['ordinary', 'contest'])('never reads factor credentials or state in %s conversations', purpose => {
     const f = fixture({ enabled: true, phase: 'connected', identity }); render(<FactorContestReview useSessions={bindSnapshotSelector(sessions(purpose))} access={f.access} openContest={() => {}}/>)

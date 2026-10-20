@@ -7,8 +7,8 @@ export type ConversationSessionHeaderProps = ConversationSessionHeaderSlotProps;
 /**
  * Keeps session actions and view navigation reachable without the title bar.
  * @param props - Strict Session store, view ledger, navigation, render, and locale shares.
- * @returns compact controls and the composer-mounted subagent catalog.
+ * @returns Session navigation controls, with title and tabs after conversation starts.
  */
-export declare function ConversationSessionHeader({ sessionId, useSession, useSessions, useConversation, useConversationViews, useStore, actions, renderSlot, t, }: ConversationSessionHeaderProps): import("react").JSX.Element;
-export declare function ConversationSession({ useSession, useConversation, useConversationViews, useInput, inputActions, useStore, actions, renderSlot, bindDraftMirror, }: ConversationSessionProps): import("react").JSX.Element | null;
+export declare function ConversationSessionHeader({ sessionId, hideChrome, useSessions, useConversationViews, useStore, selectView, renderSlot, t, }: ConversationSessionHeaderProps): import("react").JSX.Element;
+export declare function ConversationSession(props: ConversationSessionProps): import("react").JSX.Element;
 //# sourceMappingURL=ConversationSession.d.ts.map

@@ -1,30 +1,42 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { memo, useEffect, useMemo, useState } from 'react';
-import { JsonBlock, projectUserText, StateDot } from '@deepseek-ai/dsh-client-ui-primitives';
+import { JsonBlock, StateDot, TextShimmer } from '@deepseek-ai/dsh-client-ui-primitives';
 import { CompactionItem } from "./CompactionItem.js";
 import { ContextInjectionRow } from "./ContextInjectionRow.js";
 import { MessageIconActions } from "./MessageIconActions.js";
 import css from './MessageItem.module.css';
+const EMPTY_TEXT_FACTS = {};
 function contentParts(content) {
     const texts = [];
-    const images = [];
+    const attachments = [];
     const rest = [];
     for (const block of content) {
         const b = block;
         if (b.type === 'text' && typeof b.text === 'string')
             texts.push(b.text);
         else if (b.type === 'image' && b.attachment !== undefined) {
-            images.push({ attachment: b.attachment });
+            attachments.push({ type: 'image', image: { attachment: b.attachment } });
+        }
+        else if (b.type === 'file' && b.attachment !== undefined) {
+            attachments.push({ type: 'file', file: b.attachment });
         }
         else
             rest.push(block);
     }
-    return { text: texts.join(''), images, rest };
+    return { text: texts.join(''), attachments, rest };
 }
 function retrySeconds(milliseconds) {
     return Math.max(1, Math.ceil(milliseconds / 1_000));
 }
 function failureMessage(message, code, t) {
+    if (code === 'ACCOUNT_SIGNED_OUT')
+        return t('message.failure.accountSignedOut');
+    if (code === 'INTERRUPTED')
+        return t('message.failure.interrupted');
+    if (code === 'ACCOUNT_SIGN_IN_REQUIRED')
+        return t('message.failure.accountSignInRequired');
+    if (code === 'QUOTA' || code === 'ACCOUNT_QUOTA')
+        return t('message.failure.quota');
     return code === 'AUTH' ? t('message.failure.auth') : message;
 }
 function ModelRetryItem({ node, active, t }) {
@@ -66,72 +78,80 @@ function ModelRetryItem({ node, active, t }) {
                 ? t('message.retry.started')
                 : t('message.retry.scheduled');
     const seconds = active ? remainingSeconds : scheduledSeconds;
-    return (_jsxs("details", { className: css.retryRow, "data-active": active || undefined, children: [_jsx("summary", { className: css.retrySummary, children: _jsx("span", { className: css.retryText, role: "status", children: t('message.retry.status', { label, retry: node.retry, maximum, seconds }) }) }), _jsxs("div", { className: css.retryDetails, children: [_jsxs("div", { children: [_jsx("span", { className: css.retryDetailLabel, children: t('message.retry.delay') }), t('duration.milliseconds', { milliseconds: Math.round(node.delayMs) })] }), _jsxs("div", { children: [_jsx("span", { className: css.retryDetailLabel, children: t('message.retry.failure') }), failureMessage(node.failure.message, node.failure.code, t)] })] })] }));
+    return (_jsxs("details", { className: css.retryRow, "data-active": active || undefined, children: [_jsx("summary", { className: css.retrySummary, children: _jsx("span", { className: css.retryText, role: "status", children: _jsx(TextShimmer, { active: active, children: t('message.retry.status', { label, retry: node.retry, maximum, seconds }) }) }) }), _jsxs("div", { className: css.retryDetails, children: [_jsxs("div", { children: [_jsx("span", { className: css.retryDetailLabel, children: t('message.retry.delay') }), t('duration.milliseconds', { milliseconds: Math.round(node.delayMs) })] }), _jsxs("div", { children: [_jsx("span", { className: css.retryDetailLabel, children: t('message.retry.failure') }), failureMessage(node.failure.message, node.failure.code, t)] })] })] }));
 }
 /** Persistent, turn-positioned feedback for a terminal failure. */
 function TurnErrorItem({ node, t }) {
-    return (_jsxs("div", { className: css.turnErrorRow, role: "status", children: [_jsx(StateDot, { state: "error", className: css.turnErrorDot }), _jsxs("div", { className: css.turnErrorCopy, children: [_jsx("span", { className: css.turnErrorTitle, children: t('message.turnError') }), _jsx("span", { className: css.turnErrorMessage, children: failureMessage(node.message, node.code, t) })] }), node.code !== undefined && _jsx("code", { className: css.turnErrorCode, children: node.code })] }));
+    return (_jsxs("div", { className: css.turnErrorRow, role: "status", children: [_jsx(StateDot, { state: "error", className: css.turnErrorDot }), _jsxs("div", { className: css.turnErrorCopy, children: [_jsx("span", { className: css.turnErrorTitle, children: node.code === 'ACCOUNT_SIGNED_OUT' || node.code === 'INTERRUPTED' ? t('message.taskStopped') : t('message.turnError') }), _jsx("span", { className: css.turnErrorMessage, children: failureMessage(node.message, node.code, t) })] }), node.code !== undefined && node.code !== 'INTERRUPTED' && _jsx("code", { className: css.turnErrorCode, children: node.code })] }));
 }
 /** Persistent, turn-positioned notice for a turn ended at the output-token cap. */
 function TurnMaxTokensItem({ t }) {
     return (_jsxs("div", { className: css.turnErrorRow, role: "status", children: [_jsx(StateDot, { state: "warning", className: css.turnErrorDot }), _jsxs("div", { className: css.turnErrorCopy, children: [_jsx("span", { className: css.maxTokensTitle, children: t('message.maxTokens') }), _jsx("span", { className: css.turnErrorMessage, children: t('message.maxTokens.hint') })] })] }));
 }
 /** Right-aligned bubble shared by user and steering rows. */
-function UserStyleBubble({ content, renderMessageImages, actions, pending = false, echo = false, referenceLabels = [], previewImages, reveal = 'always', t, }) {
-    const { text, images: contentImages, rest } = contentParts(content);
-    const images = previewImages ?? contentImages;
-    const truncated = (total) => t('json.truncated', { total });
-    const showBubble = text !== '' || rest.length > 0;
-    return (_jsxs("div", { className: css.userRow, "data-pending-steering": pending || undefined, "data-submission-echo": echo || undefined, "data-actions-reveal": reveal, children: [_jsxs("div", { className: css.userStack, children: [renderMessageImages({ images, align: 'end' }), showBubble && _jsxs("div", { className: css.bubble, "data-qs-user-bubble": true, children: [projectUserText(text, referenceLabels), rest.map((block, i) => _jsx(JsonBlock, { label: t('message.extraBlock'), payload: block, truncatedLabel: truncated }, i))] }), referenceLabels.length > 0 && (_jsx("div", { className: css.referenceSummary, children: t('message.referenceSummary', { labels: referenceLabels.join(t('message.referenceSeparator')) }) }))] }), actions?.(text)] }));
+function UserStyleBubble({ content, loadImage, renderFactorySlot, actions, pending = false, echo = false, referenceLabels, skillNames, previewAttachments, facts: inputFacts = EMPTY_TEXT_FACTS, interactive = false, }) {
+    const parts = useMemo(() => contentParts(content), [content]);
+    const prepared = useMemo(() => ({
+        text: parts.text,
+        attachments: previewAttachments ?? parts.attachments,
+        extraBlocks: parts.rest,
+        ...(referenceLabels === undefined ? {} : { referenceLabels }),
+    }), [parts, previewAttachments, referenceLabels]);
+    const facts = useMemo(() => ({
+        ...inputFacts,
+        ...(referenceLabels === undefined ? {} : { sessionLabels: referenceLabels }),
+        ...(skillNames === undefined ? {} : { skillNames }),
+    }), [inputFacts, referenceLabels, skillNames]);
+    return (_jsxs("div", { className: css.userRow, "data-pending-steering": pending || undefined, "data-submission-echo": echo || undefined, children: [renderFactorySlot('conversation.chat.user.content', {
+                content: prepared,
+                loadImage,
+                facts,
+                interactive,
+            }), actions?.(prepared.text)] }));
 }
 /**
  * Render one Host-authoritative pending steering item with the same visual
  * language as its eventual durable transcript node.
- * @param props - Pending message content and conversation translator.
+ * @param props - pending content, authorized image loader, and Factory/locale seats.
  * @returns the pending steering bubble.
  */
-export function PendingSteeringBubble({ content, renderMessageImages, t }) {
-    return (_jsx(UserStyleBubble, { content: content, renderMessageImages: renderMessageImages, pending: true, t: t, actions: text => (_jsx(MessageIconActions, { text: text, clock: "start", className: css.actions, t: t })) }));
+export function PendingSteeringBubble({ content, loadImage, renderFactorySlot, t }) {
+    return (_jsx(UserStyleBubble, { content: content, renderFactorySlot: renderFactorySlot, loadImage: loadImage, pending: true, actions: text => (_jsx(MessageIconActions, { text: text, clock: "start", className: css.actions, t: t })) }));
 }
 /**
- * Render one local submission echo with the exact visual language of the
- * durable user node that replaces it: draft text plus object-URL previews,
- * visible from the submit click until the durable `user/message` (or its
- * queue occurrence) renders.
- * @param props - the session snapshot's pending submission and render seats.
+ * Render one local transcript or steering submission echo with the same
+ * visual language and surface marker as the Host occurrence that replaces
+ * it: draft text plus object-URL previews, visible from the submit click
+ * until the durable `user/message` or steering occurrence renders.
+ * @param props - the pending submission, authorized image loader, and render seats.
  * @returns the echoed user bubble.
  */
-export function PendingSubmissionBubble({ submission, renderMessageImages, t }) {
+export function PendingSubmissionBubble({ submission, loadImage, renderFactorySlot, t }) {
     const content = useMemo(() => (submission.text === '' ? [] : [{ type: 'text', text: submission.text }]), [submission.text]);
-    const previewImages = useMemo(() => submission.images.map(image => ({
-        preview: {
-            url: image.previewUrl,
-            ...(image.name === undefined ? {} : { name: image.name }),
-            ...(image.width === undefined ? {} : { width: image.width }),
-            ...(image.height === undefined ? {} : { height: image.height }),
-        },
-    })), [submission.images]);
-    return (_jsx(UserStyleBubble, { content: content, previewImages: previewImages, renderMessageImages: renderMessageImages, echo: true, t: t, actions: text => (_jsx(MessageIconActions, { text: text, time: submission.time, clock: "start", className: css.actions, t: t })) }));
+    const previewAttachments = useMemo(() => submission.attachments.map(attachment => attachment.type === 'image'
+        ? {
+            type: 'image',
+            image: {
+                preview: {
+                    url: attachment.value.previewUrl,
+                    ...(attachment.value.name === undefined ? {} : { name: attachment.value.name }),
+                    ...(attachment.value.width === undefined ? {} : { width: attachment.value.width }),
+                    ...(attachment.value.height === undefined ? {} : { height: attachment.value.height }),
+                },
+            },
+        }
+        : { type: 'file', file: attachment.value }), [submission.attachments]);
+    return (_jsx(UserStyleBubble, { content: content, previewAttachments: previewAttachments, renderFactorySlot: renderFactorySlot, loadImage: loadImage, pending: submission.placement === 'steering', echo: true, actions: text => (_jsx(MessageIconActions, { text: text, time: submission.time, clock: "start", className: css.actions, t: t })) }));
 }
 /** User and admitted-steering keyed Chat renderer. */
-export const UserMessageNodeView = memo(function UserMessageNodeView({ node, renderMessageImages, useChat, t, }) {
+export const UserMessageNodeView = memo(function UserMessageNodeView({ node, renderFactorySlot, loadImage, t, }) {
     const data = node.data;
-    // The transcript's last user-authored row keeps its actions row shown, the
-    // same recency gate turn tails use; earlier rows reveal on hover.
-    const isLatestUserRow = useChat((snapshot) => {
-        for (let index = snapshot.order.length - 1; index >= 0; index -= 1) {
-            const candidate = snapshot.nodes.get(snapshot.order[index] ?? '');
-            if (candidate?.kind === 'user' || candidate?.kind === 'steering')
-                return candidate.key === node.key;
-        }
-        return true;
-    });
-    return (_jsx(UserStyleBubble, { content: data.content, renderMessageImages: renderMessageImages, ...data.referenceLabels === undefined ? {} : { referenceLabels: data.referenceLabels }, reveal: isLatestUserRow ? 'always' : 'hover', t: t, actions: text => (_jsx(MessageIconActions, { text: text, time: data.time, clock: "start", className: css.actions, t: t })) }));
+    return (_jsx(UserStyleBubble, { content: data.content, interactive: true, renderFactorySlot: renderFactorySlot, loadImage: loadImage, ...data.referenceLabels === undefined ? {} : { referenceLabels: data.referenceLabels }, ...data.skillNames === undefined ? {} : { skillNames: data.skillNames }, actions: text => (_jsx(MessageIconActions, { text: text, time: data.time, clock: "start", className: css.actions, t: t })) }));
 });
 /** Injected-context keyed Chat renderer. */
 export const ContextMessageNodeView = memo(function ContextMessageNodeView({ node, t }) {
     const data = node.data;
-    return (_jsx(ContextInjectionRow, { content: data.content, source: data.source, provenance: data.provenance, form: data.form, t: t }));
+    return (_jsx(ContextInjectionRow, { content: data.content, source: data.source, producer: data.producer, form: data.form, t: t }));
 });
 /** Automatic compaction keyed Chat renderer. */
 export const CompactionNodeView = memo(function CompactionNodeView({ node, t }) {

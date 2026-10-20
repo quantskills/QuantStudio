@@ -13,7 +13,7 @@ import type {
   QuantSkillsAgentTeamId, QuantSkillsAssetId, QuantSkillsCommitSha, QuantSkillsInstalledVersionId,
   QuantSkillsTreeDigest,
 } from '@deepseek-ai/dsh-api-remotes/client'
-import { bindSnapshotSelector } from './bind-snapshot.ts'
+import { bindSnapshotSelector as bindRawSnapshotSelector } from './bind-snapshot.ts'
 import {
   QuantSkillsApp, QuantSkillsAuthoringAction, QuantSkillsFrame, QuantSkillsRail,
   QuantSkillsPluginFrame,
@@ -43,6 +43,17 @@ vi.mock('@deepseek-ai/dsh-client-ui-deliverables/client', () => ({
     return [...new Set(data.produced.map(item => item.path))]
   },
 }))
+
+// Translate the legacy fixture builder into the current native Session retention contract.
+function bindSnapshotSelector(source: any): any {
+  const useSource = bindRawSnapshotSelector(source)
+  return (selector: any) => useSource((value: any) => {
+    if (!value?.byId || !Array.isArray(value.ids)) return selector(value)
+    return selector({ ...value, byId: Object.fromEntries(Object.entries(value.byId).map(([id, row]: [string, any]) =>
+      [id, { ...row, sessionId: id, retainedBy: { mainView: value.current === id, panel: false } }])) })
+  })
+}
+const usePanelInfo = (selector: any) => selector({ activePanelId: 'conversation' })
 
 const BOUND_SESSION_ID = 'session-bound' as SessionId
 const SECOND_BOUND_SESSION_ID = 'session-bound-second' as SessionId
@@ -337,7 +348,7 @@ function useCatalogState(snapshot: QuantSkillsCatalogSnapshot = catalog) {
 }
 
 function usePendingInteractions() {
-  return bindSnapshotSelector(createSnapshotStore<SessionPendingInteractionSnapshot>(new Map()))
+  return bindSnapshotSelector(createSnapshotStore(new Map()))
 }
 
 function notificationProps() {
@@ -387,7 +398,7 @@ function mountApp(
     | 'testAgent' | 'listAgentModels' | 'generateAgentRole' | 'installAgent' | 'startTask' | 'refreshCatalog' | 'readAssetReadme'
     | 'applicationUpdateStatus' | 'applicationUpdateCheck' | 'applicationUpdateStart'
     | 'refreshAgents' | 'refreshBoundSessions'
-    | 'useSessionPendingInteraction'
+    | 'useSessionStatus'
     | 'workspaceStatus' | 'setDefaultWorkspace' | 'startAuthoringSession' | 'openAgentTeamBuilder'
     | 'pandaMcpStatus' | 'authenticatePandaMcp' | 'refreshPandaMcp' | 'logoutPandaMcp'
   >> = {},
@@ -400,7 +411,7 @@ function mountApp(
   const props: QuantSkillsAppProps = {
     managedWorkspace: true,
     useSessions,
-    useSessionPendingInteraction: usePendingInteractions(),
+    useSessionStatus: usePendingInteractions(),
     useWorkspaces: emptyWorkspaces(),
     useStore: bindSnapshotSelector(view),
     useCatalog: bindSnapshotSelector(createSnapshotStore(catalogState)),
@@ -511,8 +522,8 @@ afterEach(() => {
 describe('QuantSkills navigation and display scale', () => {
   it('groups pending replies beside the new-session action and opens the exact pending session', () => {
     const openSession = vi.fn()
-    const useSessionPendingInteraction = bindSnapshotSelector(createSnapshotStore<SessionPendingInteractionSnapshot>(new Map([[BOUND_SESSION_ID, { sessionId: BOUND_SESSION_ID, key: 'question-one', kind: 'question' }]])))
-    mountApp('parallel', pandaReady, populatedBoundSessions, emptySessions(), { openSession, useSessionPendingInteraction })
+    const useSessionStatus = bindSnapshotSelector(createSnapshotStore<SessionPendingInteractionSnapshot>(new Map([[BOUND_SESSION_ID, { pendingInteraction: { sessionId: BOUND_SESSION_ID, key: 'question-one', kind: 'question' } }]])))
+    mountApp('parallel', pandaReady, populatedBoundSessions, emptySessions(), { openSession, useSessionStatus })
     const reply = screen.getByRole('button', { name: '查看等待回复的 1 个会话' }).parentElement!
     expect(reply.className).toContain('pageHeaderActions')
     fireEvent.click(screen.getByRole('button', { name: '查看等待回复的 1 个会话' }))
@@ -814,6 +825,7 @@ describe('QuantSkills navigation and display scale', () => {
         useSessions: sessionsWithCurrent(BOUND_SESSION_ID),
         useWorkspaces: emptyWorkspaces(),
         useStore: bindSnapshotSelector(layout),
+        usePanelInfo,
         actions: layout.actions,
         useView: bindSnapshotSelector(view),
         useCatalog: useCatalogState(),
@@ -835,7 +847,7 @@ describe('QuantSkills navigation and display scale', () => {
 
       expect(application.getAttribute('data-stock-conversation')).toBeNull()
       act(() => { view.actions.navigate('conversations') })
-      const conversation = screen.getByTestId('slot-conversation').closest('[data-conversation-scale]') as HTMLElement
+      const conversation = screen.getByTestId('slot-main').closest('[data-conversation-scale]') as HTMLElement
 
       expect(frame.dataset.interfaceScale).toBe(String(scale))
       expect(frame.style.getPropertyValue('--qs-interface-scale')).toBe(String(scale))
@@ -911,6 +923,7 @@ describe('QuantSkills navigation and display scale', () => {
       useSessions: sessionsWithCurrent(ORDINARY_SESSION_ID),
       useWorkspaces: emptyWorkspaces(),
       useStore: bindSnapshotSelector(layout),
+        usePanelInfo,
       actions: layout.actions,
       useView: bindSnapshotSelector(view),
       useCatalog: useCatalogState(),
@@ -930,7 +943,7 @@ describe('QuantSkills navigation and display scale', () => {
     render(<QuantSkillsFrame {...props}/>)
 
     expect(screen.getByLabelText('会话切换')).toBeTruthy()
-    expect(screen.getByTestId('ordinary-conversation')).toBeTruthy()
+    expect(screen.getByTestId('ordinary-main')).toBeTruthy()
     expect(screen.queryByTestId('ordinary-quantskills.page')).toBeNull()
   })
 
@@ -940,7 +953,7 @@ describe('QuantSkills navigation and display scale', () => {
     const startSession = vi.fn(async () => {})
     const startAuthoringSession = vi.fn(async (_kind: 'skill' | 'agent' | 'agent-team') => {})
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}
@@ -977,7 +990,7 @@ describe('QuantSkills navigation and display scale', () => {
     const view = createQuantSkillsViewStore().create()
     const layout = createQuantSkillsLayoutStore().create()
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}
@@ -1010,6 +1023,7 @@ describe('QuantSkills navigation and display scale', () => {
       useSessions: sessionsWithCurrent(BOUND_SESSION_ID),
       useWorkspaces: emptyWorkspaces(),
       useStore: bindSnapshotSelector(layout),
+        usePanelInfo,
       actions: layout.actions,
       useView: bindSnapshotSelector(view),
       useCatalog: useCatalogState(),
@@ -1044,7 +1058,7 @@ describe('QuantSkills navigation and display scale', () => {
     const notifications = createQuantSkillsNotificationStore().create()
     const acknowledgeNotification = vi.fn()
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}
@@ -1089,7 +1103,7 @@ describe('QuantSkills navigation and display scale', () => {
     const view = createQuantSkillsViewStore().create()
     const layout = createQuantSkillsLayoutStore().create()
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}
@@ -1139,7 +1153,7 @@ describe('QuantSkills navigation and display scale', () => {
     let resolveRename!: () => void
     const renameSession = vi.fn(() => new Promise<void>((resolve) => { resolveRename = resolve }))
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(SECOND_BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}
@@ -1185,7 +1199,7 @@ describe('QuantSkills navigation and display scale', () => {
       .mockRejectedValueOnce(new Error('rename conflict'))
       .mockRejectedValueOnce('denied')
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}
@@ -1228,7 +1242,7 @@ describe('QuantSkills navigation and display scale', () => {
     const archiveSessions = vi.fn(async (_ids: readonly SessionId[]) => {})
     const removeSessions = vi.fn(async (_ids: readonly SessionId[]) => {})
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(SECOND_BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}
@@ -1285,7 +1299,7 @@ describe('QuantSkills navigation and display scale', () => {
     const layout = createQuantSkillsLayoutStore().create()
     const removeSessions = vi.fn(async (_ids: readonly SessionId[]) => {})
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(SECOND_BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}
@@ -1345,7 +1359,7 @@ describe('QuantSkills navigation and display scale', () => {
       clearAppBadge: { configurable: true, value: clearAppBadge },
     })
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}
@@ -1399,7 +1413,7 @@ describe('QuantSkills navigation and display scale', () => {
     const view = createQuantSkillsViewStore().create()
     const layout = createQuantSkillsLayoutStore().create()
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}
@@ -1454,7 +1468,7 @@ describe('QuantSkills navigation and display scale', () => {
     const view = createQuantSkillsViewStore().create()
     const layout = createQuantSkillsLayoutStore().create()
     view.actions.navigate('conversations')
-    render(<QuantSkillsFrame
+    render(<QuantSkillsFrame usePanelInfo={usePanelInfo}
       useSessions={sessionsWithCurrent(BOUND_SESSION_ID)}
       useWorkspaces={emptyWorkspaces()}
       useStore={bindSnapshotSelector(layout)}

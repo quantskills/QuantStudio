@@ -10,7 +10,7 @@
 import type { JSX } from 'react';
 import type { EditorConfig, LexicalNode, NodeKey, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
-import type { ReferenceInsert } from '../../contract/input.ts';
+import type { ReferenceInsert } from '../../contract/draft-editor.ts';
 /** JSON form of one chip (Lexical node serialization contract). */
 export type SerializedReferenceChipNode = Spread<{
     source: string;

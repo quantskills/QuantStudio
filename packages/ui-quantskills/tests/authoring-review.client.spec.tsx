@@ -13,7 +13,7 @@ const draft = { kind: 'skill' as const, toolCallId: 'prepared', treeDigest: 'sha
 function setup(kind: 'skill' | 'agent' | 'agent-team' = 'skill', running = false) {
   const value = { ...draft, kind }
   const store = createSnapshotStore<SessionListState>({
-    ids: [id], current: id, byId: { [id]: { id, displayTitle: '创作', blank: false, running, updatedAt: 1,
+    ids: [id], current: id, byId: { [id]: { id, retainedBy: { mainView: 1 }, displayTitle: '创作', blank: false, running, updatedAt: 1,
       projectionValues: { quantSkillsAuthoringPending: value } } },
     phase: 'ready', subagentsByParent: {}, jobsBySession: {}, currentAddress: undefined,
   })

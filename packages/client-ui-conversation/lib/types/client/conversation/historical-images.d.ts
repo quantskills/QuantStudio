@@ -7,7 +7,6 @@ import type { SessionId } from '@deepseek-ai/dsh-session/types';
 export declare class HistoricalImageCache {
     private readonly sessions;
     private readonly entries;
-    private readonly generations;
     private readonly scopeDisposers;
     private readonly urls;
     private disposed;
@@ -40,7 +39,6 @@ export declare class HistoricalImageCache {
      * @returns whether the cache took ownership.
      */
     seed(sessionId: SessionId, attachment: ImageAttachmentRef, url: string): boolean;
-    private key;
     private loadCanonical;
     private assertLive;
     private bindScope;

@@ -1,42 +1,13 @@
-import { isAppendSurfaceEvent } from '@deepseek-ai/dsh-session/surface';
 import { deriveTurnTokenUsage } from '@deepseek-ai/dsh-token-meter/client';
-import { deriveTurnMetrics } from "../contract/turn-metrics.js";
 import { CHAT_SYNTHETIC_SEQ_OFFSETS, chatNode } from "./common.js";
-import { toAssistantBlocks } from "./event-projection.js";
 function isSessionEvent(event) {
-    return event.type !== 'chunkrow/text-chunks'
-        && event.type !== 'chunkrow/reasoning-chunks'
-        && event.type !== 'chunkrow/tool-call-chunks';
-}
-function hasTextAssistant(event) {
-    return event.type === 'assistant/message'
-        && isAppendSurfaceEvent(event)
-        && toAssistantBlocks(event.data.message.content)
-            .some(block => block.kind === 'text' && block.text.trim() !== '');
-}
-function chunkHasText(event) {
-    if (event.type === 'chunkrow/text-chunks') {
-        return event.data.texts.some(text => text.trim() !== '');
-    }
-    if (event.type === 'chunkrow/reasoning-chunks'
-        || event.type === 'chunkrow/tool-call-chunks')
-        return false;
-    if (event.type !== 'assistant/chunk')
-        return false;
-    const chunk = event.data.chunk;
-    if (chunk.type === 'text-delta')
-        return chunk.text.trim() !== '';
-    return chunk.type === 'block-end'
-        && chunk.block.type === 'text'
-        && chunk.block.text.trim() !== '';
+    return event.type !== 'assistant/live-chunk';
 }
 function turnCoordinates(event) {
     if (event.type === 'assistant/message'
-        || event.type === 'assistant/chunk'
+        || event.type === 'assistant/attempt'
+        || event.type === 'assistant/live-chunk'
         || event.type === 'step/start'
-        || event.type === 'chunkrow/text-chunks'
-        || event.type === 'chunkrow/reasoning-chunks'
-        || event.type === 'chunkrow/tool-call-chunks'
         || event.type === 'step/end') {
         return { turn: event.data.turn, step: event.data.step };
     }
@@ -44,47 +15,6 @@ function turnCoordinates(event) {
         return { turn: event.data.turn, step: event.data.step };
     }
     return undefined;
-}
-function closingAnchor(context) {
-    let anchor = context.matches.find(match => match.event.type === 'turn/end')?.event.seq
-        ?? context.start?.event.seq
-        ?? context.matches[0]?.event.seq
-        ?? 0;
-    const steps = new Map();
-    for (const match of context.matches) {
-        const event = match.event;
-        if (event.type === 'turn/end')
-            continue;
-        const coordinates = turnCoordinates(event);
-        if (coordinates?.step === undefined)
-            continue;
-        const previous = steps.get(coordinates.step) ?? { streamedText: false, finalized: false };
-        if (event.type === 'assistant/chunk'
-            || event.type === 'chunkrow/text-chunks'
-            || event.type === 'chunkrow/reasoning-chunks'
-            || event.type === 'chunkrow/tool-call-chunks') {
-            steps.set(coordinates.step, {
-                ...previous,
-                streamedText: previous.streamedText || chunkHasText(event),
-            });
-            continue;
-        }
-        if (event.type === 'assistant/message') {
-            steps.set(coordinates.step, { streamedText: false, finalized: true });
-            if (hasTextAssistant(event)) {
-                anchor = event.seq + CHAT_SYNTHETIC_SEQ_OFFSETS.finalizedFollowup;
-            }
-            continue;
-        }
-        if (event.type === 'llm/retry') {
-            steps.set(coordinates.step, { streamedText: false, finalized: false });
-            continue;
-        }
-        if (event.type === 'step/end' && previous.streamedText && !previous.finalized) {
-            anchor = event.seq + CHAT_SYNTHETIC_SEQ_OFFSETS.interruptedFollowup;
-        }
-    }
-    return anchor;
 }
 function turnLocation(context) {
     const location = context.start?.location ?? context.matches[0]?.location;
@@ -95,8 +25,9 @@ function hasText(data) {
         && data.blocks.some(block => block.kind === 'text' && block.text.trim() !== '');
 }
 function tailData(context) {
-    const end = context.state?.end
-        ?? context.matches.find(match => match.event.type === 'turn/end');
+    const end = context.state === undefined
+        ? context.matches.find(match => match.event.type === 'turn/end')
+        : context.state.end;
     if (end?.event.type !== 'turn/end')
         return null;
     const turn = turnLocation(context);
@@ -113,7 +44,7 @@ function tailData(context) {
     for (const match of context.matches) {
         const event = match.event;
         const candidate = event.type === 'tool/call'
-            || (event.type === 'tool/result' && isAppendSurfaceEvent(event))
+            || (event.type === 'tool/result' && event.surfaceOp === 'append')
             || (event.type === 'turn/end' && event.data.reason.kind === 'error')
             || event.type === 'llm/retry'
             ? event.seq
@@ -122,7 +53,6 @@ function tailData(context) {
             latestTranscriptSeq = candidate;
         }
     }
-    const metrics = deriveTurnMetrics(finalized.map(candidate => candidate.finalNode)).get(end.event.data.turn);
     const tokenUsage = context.start?.event.type === 'turn/start'
         ? deriveTurnTokenUsage(context.matches.map(match => match.event).filter(isSessionEvent))
         : undefined;
@@ -132,8 +62,6 @@ function tailData(context) {
         time: end.event.time,
         closing,
         branchUnavailable: closing === null || latestTranscriptSeq !== closing.finalNode.seq,
-        ...metrics?.ttftMs === undefined ? {} : { ttftMs: metrics.ttftMs },
-        ...metrics?.tokensPerSecond === undefined ? {} : { tokensPerSecond: metrics.tokensPerSecond },
         ...tokenUsage === undefined ? {} : { tokenUsage },
     };
 }
@@ -177,7 +105,7 @@ export const turnTailDefinition = {
     buildViewNode: (context) => {
         const turn = turnLocation(context);
         const data = turn?.data.get('turn-tail');
-        return data === undefined ? null : chatNode(context, 'turn-tail', closingAnchor(context), data);
+        return data === undefined ? null : chatNode(context, 'turn-tail', data.seq + CHAT_SYNTHETIC_SEQ_OFFSETS.finalizedFollowup, data, { groupTree: 'turn' });
     },
 };
 /**
@@ -185,6 +113,22 @@ export const turnTailDefinition = {
  * @param ctx - owning UI Conversation context.
  */
 export function registerTurnTailConversationNode(ctx) {
-    ctx.uiConversation.events.register(turnTailDefinition);
+    const match = turnTailDefinition.match.bind(turnTailDefinition);
+    ctx.uiConversation.events.register({
+        ...turnTailDefinition,
+        match: {
+            'turn/start': match,
+            'turn/end': match,
+            'tool/call': match,
+            'tool/result': match,
+            'assistant/message': match,
+            'assistant/attempt': match,
+            'assistant/live-chunk': match,
+            'step/start': match,
+            'step/end': match,
+            'llm/retry': match,
+            'llm/retry-started': match,
+        },
+    });
 }
 //# sourceMappingURL=turn-tail.js.map

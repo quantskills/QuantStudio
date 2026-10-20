@@ -1,3 +1,4 @@
+import { selectedSession } from './selected-session.ts'
 import { ArchivedSessions, ArchiveSessionConfirmation, DeleteSessionConfirmation, SessionHistoryMenu, type SessionHistoryAccess, type SessionFileDeletionAccess } from './ArchivedSessions.tsx'
 import { SessionActionsMenu } from './SessionActionsMenu.tsx'
 import { ArchiveBoxIcon } from '@phosphor-icons/react'
@@ -416,7 +417,7 @@ export interface QuantSkillsFrameInjected {
 }
 export type QuantSkillsFrameProps = PropsRuntime<'root'>
   & PropsRenderSlots<
-    'sidebar' | 'quantskills.page' | 'quantskills.results' | 'conversation' | 'details' | 'shell.overlay'
+    'sidebar' | 'quantskills.page' | 'quantskills.results' | 'main' | 'rightbar' | 'shell.overlay'
   >
   & PropsStore<LayoutStore>
   & InjectFace<QuantSkillsFrameInjected>
@@ -442,13 +443,14 @@ type PageProps = QuantSkillsAppProps & {
 
 /** DSH-compatible root frame that keeps the stock conversation services while replacing the stock visual shell. */
 export function QuantSkillsFrame({
-  useStore, actions, useSessions, useView, useCatalog, useBoundSessions, useAgents, useNotifications,
+  useStore, actions, useSessions, usePanelInfo, useView, useCatalog, useBoundSessions, useAgents, useNotifications,
   renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession,
   startAuthoringSession, openAgentTeamBuilder,
 }: QuantSkillsFrameProps) {
+  const activeMainPanel = usePanelInfo(state => state.activePanelId)
   const sidebarOpen = useStore(state => state.sidebarOpen)
   const detailsOpen = useStore(state => state.detailsOpen)
-  const currentSessionId = useSessions(state => state.current)
+  const currentSessionId = useSessions(state => selectedSession(state))
   const plainArchives = useBoundSessions(state => state.plainArchives)
   const archives = useBoundSessions(state => state.archives)
   const boundSessionsReady = useBoundSessions(state => state.phase === 'ready')
@@ -595,11 +597,11 @@ export function QuantSkillsFrame({
           startAuthoringSession={startAuthoringSession}
           openAgentTeamBuilder={openAgentTeamBuilder}
         >
-          {renderSlot('conversation', {})}
+          {renderSlot('main', {}, { entryKey: activeMainPanel ?? 'conversation' })}
         </ConversationFrame>
         : renderSlot('quantskills.page', {})}
     </div>
-    <div className={css.rootDetails}>{renderSlot('details', {})}</div>
+    <div className={css.rootDetails}>{renderSlot('rightbar', { width: detailsReservation || 400, viewportWidth: window.innerWidth, canShow: detailsOpen })}</div>
     <div
       className={css.rootResults}
       data-open={resultsVisible || undefined}
@@ -1465,7 +1467,7 @@ export function QuantSkillsPluginFrame({
   )
   const displayNameOverrides = useView(state => state.assetDisplayNameOverrides)
   const resultsOpen = useLayout(state => state.resultsOpen)
-  const currentSessionId = useSessions(state => state.current)
+  const currentSessionId = useSessions(state => selectedSession(state))
   const catalogSnapshot = useCatalog(snapshot => snapshot)
   const catalog = useMemo(
     () => applyAssetDisplayNameOverrides(catalogSnapshot, displayNameOverrides),
@@ -2062,7 +2064,7 @@ function HomePage(props: PageProps) {
   const [applicationUpdateError, setApplicationUpdateError] = useState<string>()
   const [featuredActionError, setFeaturedActionError] = useState<string>()
   const [featuredCategory, setFeaturedCategory] = useState('all')
-  const currentSessionId = props.useSessions(state => state.current)
+  const currentSessionId = props.useSessions(state => selectedSession(state))
   const currentBound = props.boundSessions.archives.find(archive => archive.sessionId === currentSessionId)
   const currentAgent = props.agents.archives.find(archive => archive.sessionId === currentSessionId)
   const activeSkills = props.boundSessions.archives.filter(archive => archive.running && !archive.archived)
@@ -3143,25 +3145,24 @@ function ConversationArchiveGroup({ title, rows, props, open }: {
 function ParallelPage(props: PageProps) {
   const [filter, setFilter] = useState<'all' | 'running' | 'waiting' | 'failed' | 'cancelled' | 'completed'>('all')
   const [replyDrawerOpen, setReplyDrawerOpen] = useState(false)
-  const currentSessionId = props.useSessions(state => state.current)
-  const sessionById = props.useSessions(state => state.byId)
-  const pendingInteractions = props.useSessionPendingInteraction(state => state)
+  const currentSessionId = props.useSessions(state => selectedSession(state))
+  const pendingInteractions = props.useSessionStatus(state => state)
   const rows = [
     ...props.boundSessions.archives.filter(archive => !archive.archived).map(archive => ({
       kind: 'skill' as const,
       archive,
-      state: pendingInteractions.has(archive.sessionId)
+      state: pendingInteractions.get(archive.sessionId)?.pendingInteraction !== undefined
         ? 'waiting' as const
-        : sessionById[archive.sessionId]?.completed === true
+        : pendingInteractions.get(archive.sessionId)?.completionUnread === true
           ? 'completed' as const
           : archive.runState,
     })),
     ...props.agents.archives.filter(archive => !archive.archived).map(archive => ({
       kind: 'agent' as const,
       archive,
-      state: pendingInteractions.has(archive.sessionId)
+      state: pendingInteractions.get(archive.sessionId)?.pendingInteraction !== undefined
         ? 'waiting' as const
-        : sessionById[archive.sessionId]?.completed === true
+        : pendingInteractions.get(archive.sessionId)?.completionUnread === true
           ? 'completed' as const
           : archive.runState,
     })),
@@ -3259,7 +3260,7 @@ function ParallelPage(props: PageProps) {
       <header><div><h2>等待你的回复</h2><p>这些会话相互独立，可逐个处理。</p></div><button type="button" aria-label="关闭等待回复" onClick={() => { setReplyDrawerOpen(false) }}><X/></button></header>
       {waiting.map(row => <button type="button" key={row.archive.sessionId} onClick={() => { setReplyDrawerOpen(false); open(row.archive.sessionId) }}>
         {row.kind === 'skill' ? <SkillMark small/> : <CapabilityIcon kind="agent"/>}
-        <span><b>{row.archive.title ?? (row.kind === 'skill' ? row.archive.binding.assetId : row.archive.agent.name)}</b><small>{pendingInteractions.get(row.archive.sessionId)?.kind ?? '需要你的输入'}</small></span><CaretRight/>
+        <span><b>{row.archive.title ?? (row.kind === 'skill' ? row.archive.binding.assetId : row.archive.agent.name)}</b><small>{pendingInteractions.get(row.archive.sessionId)?.pendingInteraction?.kind ?? '需要你的输入'}</small></span><CaretRight/>
       </button>)}
     </aside>}
   </div>
@@ -4774,7 +4775,7 @@ function WorkspaceSettings({ props }: { props: PageProps }) {
   const [workspaceError, setWorkspaceError] = useState<string>()
   const defaultWorkspaceId = props.useStore(state => state.defaultWorkspaceId)
   const settingsWritable = props.useStore(state => state.settingsWritable)
-  const currentSessionId = sessions.current
+  const currentSessionId = selectedSession(sessions)
   const current = currentSessionId === undefined ? undefined : sessions.byId[currentSessionId]
   const workspace = currentSessionId === undefined
     ? workspaces.items.at(0)

@@ -1,20 +1,10 @@
 /**
- * Pure concession-chain column solver for the three-column AppFrame.
- * Chain order is fixed by contract: keep center >= CENTER_MIN by shrinking
- * details, then auto-closing it (derived zero width — preferred width
- * preferences are never rewritten, so widening the window restores them).
- * The sidebar never concedes: its rendered width is always the drag
- * preference (or the collapsed rail), and center absorbs any remaining
- * deficit as the last resort. Inputs are the layout store's plain width
- * preferences (0 = closed); a closed sidebar resolves to the fixed
- * SIDEBAR_COLLAPSED control rail while closed details resolve to zero width.
- * The SIDEBAR_AUTO_COLLAPSE breakpoint is consumed by AppFrame, which decides
- * the effective sidebar preference before solving; the solver itself stays
- * breakpoint-free.
+ * Normal column geometry: the right column shrinks, then loses its track,
+ * before the center drops below its minimum. The sidebar never concedes here;
+ * AppFrame supplies its effective preference after responsive collapse.
  */
-// Contract-frozen geometry: the three-column concession chain's fixed points.
-/** Center column floor; only the final fallback may go below it. */
-export const CENTER_MIN = 640;
+/** Center width protected while the normal right column is open. */
+export const CENTER_MIN = 400;
 /** Sidebar drag clamp floor. */
 export const SIDEBAR_MIN = 264;
 /** Sidebar drag clamp ceiling. */
@@ -27,12 +17,12 @@ export const SIDEBAR_COLLAPSED = 56;
  * LG breakpoint); a manual toggle below it re-expands over the squeezed center
  * (stores.ts narrowExpanded). */
 export const SIDEBAR_AUTO_COLLAPSE = 1024;
-/** Details drag clamp floor. */
-export const DETAILS_MIN = 300;
-/** Details drag clamp ceiling. */
-export const DETAILS_MAX = 520;
-/** Details width before any user drag. */
-export const DETAILS_DEFAULT = 360;
+/** Right column drag clamp floor. */
+export const RIGHTBAR_MIN = 300;
+/** Maximum normal right panel width as a fraction of the frame. */
+export const RIGHTBAR_MAX_RATIO = 0.7;
+/** First-open right panel preference as a fraction of the frame. */
+export const RIGHTBAR_DEFAULT_RATIO = 0.45;
 /**
  * Clamp a panel width into its contract range.
  * @param px - requested width.
@@ -44,44 +34,28 @@ export function clampWidth(px, min, max) {
     return Math.min(max, Math.max(min, Math.round(px)));
 }
 /**
- * Solve the three column widths for one viewport frame. Pure: no hysteresis —
- * the output is a function of (viewport, preferences) only, so recovery on
- * re-widening is automatic. Preferences re-clamp here because they cross the
- * store boundary and callers may still supply stale ranges.
+ * Solve the three column widths for one viewport frame.
  * @param viewport - available frame width in px.
  * @param sidebar - sidebar width preference in px (0 = closed).
- * @param details - details width preference in px (0 = closed).
- * @param sidebarReservation - transient minimum width requested by mounted overlays.
- * @param detailsReservation - transient minimum right-column width requested by mounted workbenches.
- * @param sidebarExclusive - an overlay replaces the native rail; only its reservation consumes width.
- * @returns resolved widths; details 0 means visually closed (never unmounted), while a closed sidebar keeps its compact rail.
+ * @param rightbar - requested right panel width in px (0 = no track).
+ * @param collapsedWidth - track width of the closed sidebar; the default keeps
+ *   the icon rail, 0 hides the column entirely (macOS desktop).
+ * @returns actual widths after shrinking or removing the right track; only
+ *   without that track may the center fall below its minimum, down to zero.
  */
-export function computeColumns(viewport, sidebar, details, sidebarReservation = 0, detailsReservation = 0, sidebarExclusive = false) {
-    // Exclusive overlays own their entire width, including zero for mobile drawers.
-    const preferredSidebar = sidebarExclusive ? 0 : sidebar === 0
-        ? SIDEBAR_COLLAPSED
-        : clampWidth(sidebar, SIDEBAR_MIN, SIDEBAR_MAX);
-    const s = Math.max(preferredSidebar, Math.max(0, Math.round(sidebarReservation)));
-    const d0 = details === 0 ? 0 : clampWidth(details, DETAILS_MIN, DETAILS_MAX);
-    const reservedDetails = Math.max(0, Math.round(detailsReservation));
-    // A mounted right-side workbench owns a visible split rather than an
-    // optional details drawer. Keep its reservation (and any wider native
-    // preference) while the center absorbs the remaining width. The caller can
-    // read the resolved track through AppFrame's CSS variable, so even a
-    // viewport smaller than both reservations stays geometrically aligned.
-    if (reservedDetails > 0) {
-        const resolvedDetails = Math.min(Math.max(d0, reservedDetails), Math.max(0, viewport - s));
-        return { sidebar: s, center: Math.max(0, viewport - s - resolvedDetails), details: resolvedDetails };
-    }
-    // Step 1: everything fits at preferred widths.
-    if (s + d0 + CENTER_MIN <= viewport)
-        return { sidebar: s, center: viewport - s - d0, details: d0 };
-    // Step 2: shrink details toward its minimum.
-    const d1 = d0 === 0 ? 0 : Math.max(DETAILS_MIN, viewport - s - CENTER_MIN);
-    if (s + d1 + CENTER_MIN <= viewport)
-        return { sidebar: s, center: CENTER_MIN, details: d1 };
-    // Step 3: auto-close details (derived — preferences untouched); center
-    // absorbs any remaining deficit (may drop below CENTER_MIN).
-    return { sidebar: s, center: Math.max(0, viewport - s), details: 0 };
+export function computeColumns(viewport, sidebar, rightbar, collapsedWidth = SIDEBAR_COLLAPSED) {
+    const s = sidebar === 0 ? collapsedWidth : clampWidth(sidebar, SIDEBAR_MIN, SIDEBAR_MAX);
+    const available = viewport - s - CENTER_MIN;
+    const r = rightbar === 0 || available < RIGHTBAR_MIN
+        ? 0
+        : Math.min(available, clampWidth(rightbar, RIGHTBAR_MIN, viewport * RIGHTBAR_MAX_RATIO));
+    return { sidebar: s, center: Math.max(0, viewport - s - r), rightbar: r };
+}
+/** Apply QS overlay reservations without losing the official responsive geometry. */
+export function applyColumnClaims(viewport, native, claims) {
+    const sidebar = Math.max(0, Math.min(viewport, claims.sidebarExclusive ? claims.sidebarReservation : Math.max(native.sidebar, claims.sidebarReservation)));
+    const requestedRight = claims.detailsExclusive ? claims.detailsReservation : Math.max(native.rightbar, claims.detailsReservation);
+    const rightbar = Math.max(0, Math.min(requestedRight, viewport - sidebar - Math.min(CENTER_MIN, viewport - sidebar)));
+    return { sidebar, rightbar, center: Math.max(0, viewport - sidebar - rightbar) };
 }
 //# sourceMappingURL=columns.js.map

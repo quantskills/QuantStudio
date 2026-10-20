@@ -2,18 +2,37 @@ import type { Context } from '@deepseek-ai/cordis';
 import type { ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
 interface InboxIdentity {
     readonly id: string;
+    readonly source: {
+        readonly kind: string;
+    };
 }
-/** Cumulative state after one durable inbox splice. */
+interface PendingSnapshot {
+    readonly kind: 'snapshot';
+    readonly ids: readonly InboxIdentity[];
+}
+interface PendingSplice {
+    readonly kind: 'splice';
+    readonly previous: PendingState;
+    readonly start: number;
+    readonly removedCount: number;
+    readonly inserted: readonly InboxIdentity[];
+}
+type PendingState = PendingSnapshot | PendingSplice;
+/** Persistent Inbox state after one durable Inbox splice. */
 export interface InboxState {
-    readonly pending: readonly InboxIdentity[];
-    readonly claimed: ReadonlySet<string>;
+    /** Persistent splice chain materialized only when a batch is claimed. */
+    readonly pending: PendingState;
+    /** Message ids in the current claim, shared until the next claim. */
+    readonly currentClaimed: ReadonlySet<string>;
+    readonly claimSeq: number;
+    readonly claimedHuman: boolean;
 }
-/** Cumulative next-turn inbox splice Definition. */
-export declare const nextTurnInboxDefinition: ConversationNodeDefinition<InboxState>;
-/** Cumulative next-step inbox splice Definition used to classify steering. */
+/** Persistent next-step claims identify messages admitted into a running Turn. */
 export declare const nextStepInboxDefinition: ConversationNodeDefinition<InboxState>;
+/** Persistent next-turn claims identify messages that wake a new Turn. */
+export declare const nextTurnInboxDefinition: ConversationNodeDefinition<InboxState>;
 /**
- * Register the two durable Inbox-state contributions.
+ * Register the Inbox state used by Chat message classification.
  * @param ctx - owning UI Conversation context.
  */
 export declare function registerInboxConversationNodes(ctx: Context): void;

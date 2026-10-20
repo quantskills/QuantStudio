@@ -1,38 +1,35 @@
-import { isAppendSurfaceEvent } from '@deepseek-ai/dsh-session/surface';
 import { hasAssistantReplyContent } from "../contract/assistant-content.js";
-import { decodeTurnProcess, encodeTurnProcess, isSubagentDelegationTool, } from "../contract/turn-process.js";
+import { isSubagentDelegationTool, sameTurnProcessSpec, } from "../contract/turn-process.js";
 import { CHAT_SYNTHETIC_SEQ_OFFSETS, chatNode } from "./common.js";
 import { toAssistantBlocks } from "./event-projection.js";
-function isChunkRunEvent(event) {
-    return event.type === 'chunkrow/text-chunks'
-        || event.type === 'chunkrow/reasoning-chunks'
-        || event.type === 'chunkrow/tool-call-chunks';
-}
 function eventTurn(event) {
     const data = event.data;
     return typeof data.turn === 'number' ? data.turn : undefined;
 }
-function visibleAssistantEvent(event) {
-    if (event.type === 'assistant/chunk') {
-        const chunk = event.data.chunk;
-        if (chunk.type === 'text-delta' || chunk.type === 'reasoning-delta')
-            return chunk.text.trim() !== '';
-        if (chunk.type === 'block-start') {
-            return chunk.blockType !== 'text'
-                && chunk.blockType !== 'reasoning'
-                && chunk.blockType !== 'tool-call';
-        }
-        if (chunk.type !== 'block-end')
-            return false;
-        const block = chunk.block;
-        if (block.type === 'tool-call')
-            return false;
-        if (block.type === 'text' || block.type === 'reasoning')
-            return block.text.trim() !== '';
-        return true;
+function visibleChunk(chunk) {
+    if (chunk.type === 'text-delta' || chunk.type === 'reasoning-delta')
+        return chunk.text.trim() !== '';
+    if (chunk.type === 'block-start') {
+        return chunk.blockType !== 'text'
+            && chunk.blockType !== 'reasoning'
+            && chunk.blockType !== 'tool-call';
     }
+    if (chunk.type !== 'block-end')
+        return false;
+    const block = chunk.block;
+    if (block.type === 'tool-call')
+        return false;
+    if (block.type === 'text' || block.type === 'reasoning')
+        return block.text.trim() !== '';
+    return true;
+}
+function visibleAssistantEvent(event) {
+    if (event.type === 'assistant/live-chunk')
+        return visibleChunk(event.data.chunk);
+    if (event.type === 'assistant/attempt')
+        return false;
     return event.type === 'assistant/message'
-        && isAppendSurfaceEvent(event)
+        && event.surfaceOp === 'append'
         && toAssistantBlocks(event.data.message.content).some((block) => {
             if (block.kind === 'tool-call')
                 return false;
@@ -42,21 +39,15 @@ function visibleAssistantEvent(event) {
         });
 }
 function processEvidence(event) {
-    if (isChunkRunEvent(event)) {
-        if (event.type === 'chunkrow/tool-call-chunks')
-            return undefined;
-        const firstVisible = event.data.texts.findIndex(text => text.trim() !== '');
-        return firstVisible < 0
-            ? undefined
-            : { kind: 'assistant', seq: event.seq + firstVisible, step: event.data.step };
-    }
     if (visibleAssistantEvent(event)) {
-        if (event.type !== 'assistant/chunk' && event.type !== 'assistant/message')
+        if (event.type !== 'assistant/live-chunk'
+            && event.type !== 'assistant/message'
+            && event.type !== 'assistant/attempt')
             return undefined;
         return { kind: 'assistant', seq: event.seq, step: event.data.step };
     }
     if (event.type === 'tool/call'
-        || (event.type === 'tool/result' && isAppendSurfaceEvent(event))
+        || (event.type === 'tool/result' && event.surfaceOp === 'append')
         || event.type === 'llm/retry')
         return { kind: 'other', seq: event.seq };
     return undefined;
@@ -73,6 +64,7 @@ function fallbackState(context) {
         turn,
         assistantStartByStep: new Map(),
         messageCountByStep: new Map(),
+        messageCount: 0,
         toolCallCount: 0,
         subagentCount: 0,
     };
@@ -91,13 +83,13 @@ function latestAnswer(turn) {
     return data.blocks.some(block => block.kind === 'tool-call') ? null : data;
 }
 function processSpec(state, turn) {
-    const controlAnchorSeq = Math.min(state.otherStartSeq ?? Number.POSITIVE_INFINITY, ...state.assistantStartByStep.values());
-    if (!Number.isFinite(controlAnchorSeq))
+    const controlAnchorSeq = state.controlAnchorSeq ?? turn.start?.seq;
+    if (controlAnchorSeq === undefined)
         return null;
     const answer = latestAnswer(turn);
     const counts = {
         messageCount: answer === null
-            ? [...state.messageCountByStep.values()].reduce((total, count) => total + count, 0)
+            ? state.messageCount
             : [...state.messageCountByStep]
                 .filter(([step]) => step < answer.step)
                 .reduce((total, [, count]) => total + count, 0),
@@ -134,11 +126,11 @@ function processSpec(state, turn) {
 function updateProcessState(state, event) {
     let current = state;
     if (event.type === 'assistant/message'
-        && isAppendSurfaceEvent(event)
+        && event.surfaceOp === 'append'
         && hasAssistantReplyContent(toAssistantBlocks(event.data.message.content))) {
         const messageCountByStep = new Map(current.messageCountByStep);
         messageCountByStep.set(event.data.step, (messageCountByStep.get(event.data.step) ?? 0) + 1);
-        current = { ...current, messageCountByStep };
+        current = { ...current, messageCountByStep, messageCount: current.messageCount + 1 };
     }
     if (event.type === 'tool/call') {
         const subagent = isSubagentDelegationTool(event.data.name);
@@ -152,13 +144,23 @@ function updateProcessState(state, event) {
     if (evidence === undefined)
         return current;
     if (evidence.kind === 'other') {
-        return current.otherStartSeq === undefined ? { ...current, otherStartSeq: evidence.seq } : current;
+        return current.otherStartSeq === undefined
+            ? {
+                ...current,
+                otherStartSeq: evidence.seq,
+                controlAnchorSeq: Math.min(current.controlAnchorSeq ?? Number.POSITIVE_INFINITY, evidence.seq),
+            }
+            : current;
     }
     if (current.assistantStartByStep.has(evidence.step))
         return current;
     const assistantStartByStep = new Map(current.assistantStartByStep);
     assistantStartByStep.set(evidence.step, evidence.seq);
-    return { ...current, assistantStartByStep };
+    return {
+        ...current,
+        assistantStartByStep,
+        controlAnchorSeq: Math.min(current.controlAnchorSeq ?? Number.POSITIVE_INFINITY, evidence.seq),
+    };
 }
 /** Turn-scoped process range and answer-boundary Definition. */
 export const turnProcessDefinition = {
@@ -170,9 +172,8 @@ export const turnProcessDefinition = {
         const turn = eventTurn(event);
         if (turn === undefined)
             return null;
-        if (event.type === 'assistant/chunk'
+        if (event.type === 'assistant/live-chunk'
             || event.type === 'assistant/message'
-            || isChunkRunEvent(event)
             || event.type === 'tool/call'
             || event.type === 'tool/result'
             || event.type === 'llm/retry'
@@ -190,21 +191,20 @@ export const turnProcessDefinition = {
             turn: match.event.data.turn,
             assistantStartByStep: new Map(),
             messageCountByStep: new Map(),
+            messageCount: 0,
             toolCallCount: 0,
             subagentCount: 0,
         };
     },
     update: (context, match) => updateProcessState(context.state, match.event),
     publication: (match) => {
-        if (isChunkRunEvent(match.event))
-            return 'animation-frame';
-        if (match.event.type === 'assistant/chunk') {
+        if (match.event.type === 'assistant/live-chunk') {
             const type = match.event.data.chunk.type;
             return type === 'usage' || type === 'finish' ? 'none' : 'animation-frame';
         }
         return 'immediate';
     },
-    buildLocationData: (context, scope) => {
+    buildLocationData: (context, scope, previous) => {
         if (scope !== 'turn')
             return null;
         const state = context.state ?? fallbackState(context);
@@ -213,21 +213,53 @@ export const turnProcessDefinition = {
         const turn = turnLocation(context);
         if (turn === undefined)
             return null;
+        const current = context.current.get('chat');
+        const latestStep = turn.steps.at(-1);
+        if (previous?.kind === 'turn'
+            && previous.key === 'turn-process'
+            && current?.kind === 'turn-process'
+            && current.data.answerAnchorSeq === null
+            && current.data.controlAnchorSeq === state.controlAnchorSeq
+            && current.data.messageCount === state.messageCount
+            && current.data.toolCallCount === state.toolCallCount
+            && current.data.subagentCount === state.subagentCount
+            && turn.status !== 'closed'
+            && latestStep?.status !== 'closed')
+            return previous;
         const spec = processSpec(state, turn);
-        return spec === null ? null : {
+        if (spec === null)
+            return null;
+        if (previous?.kind === 'turn'
+            && previous.turn === spec.turn
+            && previous.key === 'turn-process'
+            && sameTurnProcessSpec(previous.value, spec))
+            return previous;
+        return {
             kind: 'turn',
             turn: turn.turn,
             key: 'turn-process',
-            value: encodeTurnProcess(spec),
+            value: spec,
         };
     },
     buildViewNode: (context) => {
         const turn = turnLocation(context);
-        const signature = turn?.data.get('turn-process');
-        if (turn === undefined || signature === undefined)
+        const data = turn?.data.get('turn-process');
+        if (turn === undefined || data === undefined)
             return null;
-        const data = decodeTurnProcess(signature);
-        return chatNode(context, 'turn-process', data.controlAnchorSeq + CHAT_SYNTHETIC_SEQ_OFFSETS.processControl, data);
+        const current = context.current.get('chat');
+        const state = context.state;
+        if (current?.kind === 'turn-process'
+            && state !== undefined
+            && current.data.answerAnchorSeq === null
+            && current.data.controlAnchorSeq === state.controlAnchorSeq
+            && current.data.messageCount === state.messageCount
+            && current.data.toolCallCount === state.toolCallCount
+            && current.data.subagentCount === state.subagentCount
+            && turn.status !== 'closed'
+            && turn.steps.at(-1)?.status !== 'closed'
+            && current.location === (context.start?.location ?? context.matches[0]?.location))
+            return current;
+        return chatNode(context, 'turn-process', data.controlAnchorSeq + CHAT_SYNTHETIC_SEQ_OFFSETS.processControl, data, { groupTree: 'turn' });
     },
 };
 /**
@@ -235,6 +267,20 @@ export const turnProcessDefinition = {
  * @param ctx - owning UI Conversation context.
  */
 export function registerTurnProcess(ctx) {
-    ctx.uiConversation.events.register(turnProcessDefinition);
+    const match = turnProcessDefinition.match.bind(turnProcessDefinition);
+    ctx.uiConversation.events.register({
+        ...turnProcessDefinition,
+        match: {
+            'turn/start': match,
+            'assistant/live-chunk': match,
+            'assistant/message': match,
+            'tool/call': match,
+            'tool/result': match,
+            'llm/retry': match,
+            'step/start': match,
+            'step/end': match,
+            'turn/end': match,
+        },
+    });
 }
 //# sourceMappingURL=turn-process.js.map

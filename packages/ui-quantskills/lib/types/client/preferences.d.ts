@@ -1,4 +1,3 @@
-import type { SettingsScopeSnapshot } from '@deepseek-ai/dsh-client-ui-settings/client';
 import type { SettingsPathOpView } from '@deepseek-ai/dsh-api-remotes/client';
 interface NamespaceView {
     ns: string;
@@ -15,7 +14,14 @@ export interface PreferencesTransport {
     }>;
     mutate(ns: string, ops: SettingsPathOpView[], revision: number): Promise<NamespaceView>;
 }
-export interface PreferencesSnapshot<T> extends SettingsScopeSnapshot<T> {
+export interface PreferencesSnapshot<T> {
+    status: 'loading' | 'ready' | 'unavailable';
+    value: T | undefined;
+    base: unknown;
+    user: unknown;
+    revision: number | undefined;
+    writable: boolean;
+    mode: 'host';
     error?: string;
 }
 /** QuantSkills preferences use authenticated Host capabilities, never the browser's hostname. */

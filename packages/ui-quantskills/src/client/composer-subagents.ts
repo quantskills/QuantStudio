@@ -1,3 +1,9 @@
+import type { ISessions, SessionTarget } from '@deepseek-ai/dsh-api-session-controller/client'
+import type { UiWorkspace } from '@deepseek-ai/dsh-client-ui-workspace/client'
+import type { SubagentAddress } from '@deepseek-ai/dsh-subagent/client'
+import type { SessionId } from '@deepseek-ai/dsh-session/types'
+import { brandString } from '@deepseek-ai/dsh-brand'
+import { selectedSession } from './selected-session.ts'
 /** Keep the stock subagent catalog opening upward from the composer icon. */
 
 const MENU_LABELS = ["子代理会话", "Subagent sessions"]
@@ -68,11 +74,7 @@ function watchComposerSubagentMenu(): void {
 }
 
 
-interface SubagentPopupAddress {
-  readonly parentSessionId: string
-  readonly childSessionId: string
-  readonly mode: string
-}
+type SubagentPopupAddress = SubagentAddress
 
 interface SubagentPopupSessions {
   readonly list: { getSnapshot(): { current: string | undefined, byId: Record<string, { displayTitle?: string, origin?: string, parentId?: string } | undefined> } }
@@ -139,8 +141,17 @@ function installSubagentPopup(sessions: SubagentPopupSessions): void {
 }
 
 /** Install composer click and upward placement for the stock subagent catalog. */
-export function bindComposerSubagentMenu(documentRoot: Document, sessions: SubagentPopupSessions): () => void {
+export function bindComposerSubagentMenu(documentRoot: Document, controller: ISessions, navigation: UiWorkspace): () => void {
+  const originalOpen = navigation.openSession
+  const sessions: SubagentPopupSessions = {
+    list: { getSnapshot: () => { const snapshot = controller.list.getSnapshot(); return { ...snapshot, current: selectedSession(snapshot) } } },
+    open: id => originalOpen.call(navigation, brandString<SessionId>(id)),
+    openSubagent: address => originalOpen.call(navigation, address),
+  }
   installSubagentPopup(sessions)
+  const wrappedOpen = (target: SessionTarget) => typeof target === 'string'
+    ? originalOpen.call(navigation, target) : sessions.openSubagent(target)
+  navigation.openSession = wrappedOpen
   const onClick = (event: Event): void => {
     const target = event.target
     if (!(target instanceof Element)) return
@@ -160,6 +171,8 @@ export function bindComposerSubagentMenu(documentRoot: Document, sessions: Subag
   documentRoot.addEventListener("keydown", onKey)
   window.addEventListener("resize", placeComposerSubagentMenu)
   return () => {
+    if (navigation.openSession === wrappedOpen) navigation.openSession = originalOpen
+    closeSubagentPopup()
     watching = false
     observer.disconnect()
     documentRoot.removeEventListener("click", onClick, true)

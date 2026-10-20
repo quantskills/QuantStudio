@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-run
 // The composer remains in ConversationRoot so switching out of the blank-draft
 // phase does not remount its textarea.
 import { useState } from 'react';
-import { FISH_LOGO_PATH, FISH_LOGO_VIEWBOX, IconChevronDownOutline14, IconFolderClose16, IconFolderOpen16, } from '@deepseek-ai/dsh-client-ui-primitives';
+import { FISH_LOGO_PATH, FISH_LOGO_VIEWBOX, IconChevronDownOutlineRegular, IconFolderCloseRegular, IconFolderOpenRegular, } from '@deepseek-ai/dsh-client-ui-primitives';
 import { workspaceTitleOf } from '@deepseek-ai/dsh-util-workspace-path';
 import css from './HeroShell.module.css';
 /**
@@ -28,8 +28,8 @@ export function workspaceLabel(cwd) {
  */
 export function WorkspaceChip({ buttonRef, label, menuOpen = false, onClick, t }) {
     return (_jsxs("button", { ref: buttonRef, type: "button", className: css.workspace, "aria-label": t('hero.chooseWorkspace'), "aria-haspopup": "menu", "aria-expanded": menuOpen, onClick: onClick, children: [label === undefined
-                ? _jsx(IconFolderClose16, { className: css.folder, size: 16 })
-                : _jsx(IconFolderOpen16, { className: css.folder, size: 16 }), _jsx("span", { className: css.workspaceLabel, children: label ?? t('hero.chooseWorkspace') }), _jsx(IconChevronDownOutline14, { className: css.chevron, size: 12 })] }));
+                ? _jsx(IconFolderCloseRegular, { className: css.folder, size: 16 })
+                : _jsx(IconFolderOpenRegular, { className: css.folder, size: 16 }), _jsx("span", { className: css.workspaceLabel, children: label ?? t('hero.chooseWorkspace') }), _jsx(IconChevronDownOutlineRegular, { className: css.chevron, size: 12 })] }));
 }
 /* Hover swim morph targets: the resting FISH_LOGO_PATH with weighted
    regional deformation baked in (generated programmatically — parse the
@@ -74,13 +74,8 @@ export function HeroShell({ t, renderSlot, children }) {
                     }
                 }, onMouseLeave: () => { setHovering(false); }, children: mark }), _jsx("span", { className: css.headlineText, children: headline })] });
     const defaultHeadline = t('hero.headline');
-    return (_jsxs("div", { className: css.root, children: [_jsxs("div", { className: css.stack, children: [_jsxs("div", { className: css.headline, children: [renderSlot('conversation.hero.identity', {
-                                defaultMark,
-                                defaultHeadline,
-                                ...markProps,
-                                renderIdentity,
-                            }, {
-                                fallback: renderIdentity(defaultMark, defaultHeadline),
-                            }), _jsx("span", { className: css.previewBadge, "data-hero-preview-badge": "", children: t('hero.preview') })] }), _jsx("div", { className: css.body })] }), children] }));
+    return (_jsxs("div", { className: css.root, children: [_jsxs("div", { className: css.stack, children: [_jsx("div", { className: css.headline, children: renderSlot('conversation.hero.identity', {
+                            defaultMark, defaultHeadline, size: 34, className: css.fish, renderIdentity,
+                        }, { fallback: renderIdentity(defaultMark, _jsxs("span", { className: css.titleGroup, children: [_jsx("span", { children: defaultHeadline }), _jsx("span", { className: css.previewBadge, children: t('hero.preview') })] })) }) }), _jsx("div", { className: css.body })] }), children] }));
 }
 //# sourceMappingURL=EmptyHero.js.map

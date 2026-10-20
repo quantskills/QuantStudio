@@ -1,11 +1,12 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-/** Composer context-occupancy meter: a ring beside the send button fed by the
+/** Composer context-occupancy meter: a ring and percentage below the card fed by the
  * `contextPressure` projection, with a click-open panel of the heuristic
  * `contextBreakdown` composition (system prompt, tools, conversation).
  * Renders nothing until a provider reports both pressure and a route
  * capacity. */
 import { useEffect, useRef, useState } from 'react';
-import { Tooltip } from '@deepseek-ai/dsh-client-ui-primitives';
+import { createPortal } from 'react-dom';
+import { Tooltip, useAnchoredPosition, useDismissOnOutsidePointer } from '@deepseek-ai/dsh-client-ui-primitives';
 import { contextOccupancy } from "../context-occupancy.js";
 import css from './ContextMeter.module.css';
 /** Ring geometry: 14px viewBox, 2px stroke. */
@@ -44,33 +45,33 @@ export function ContextMeter({ useProjection, t }) {
     const breakdown = useProjection('contextBreakdown');
     const [open, setOpen] = useState(false);
     const rootRef = useRef(null);
+    const panelRef = useRef(null);
     const context = contextOccupancy(pressure);
     const available = context !== null;
+    const position = useAnchoredPosition({
+        open: open && available,
+        anchorRef: rootRef,
+        panelRef,
+        side: 'top',
+        gap: 8,
+        margin: 12,
+    });
+    useDismissOnOutsidePointer(rootRef, open && available, setOpen, panelRef);
     // A model switch can temporarily remove capacity while this component stays
     // mounted. Close the now-unavailable panel instead of preserving stale UI.
     useEffect(() => {
         if (!available && open)
             setOpen(false);
     }, [available, open]);
-    // Outside click / Escape close, one document listener while open (Menu's pattern).
     useEffect(() => {
         if (!open || !available)
             return;
-        const onPointerDown = (e) => {
-            if (e.target instanceof Node && rootRef.current?.contains(e.target) === true)
-                return;
-            setOpen(false);
-        };
         const onKeyDown = (e) => {
             if (e.key === 'Escape')
                 setOpen(false);
         };
-        document.addEventListener('pointerdown', onPointerDown);
         document.addEventListener('keydown', onKeyDown);
-        return () => {
-            document.removeEventListener('pointerdown', onPointerDown);
-            document.removeEventListener('keydown', onKeyDown);
-        };
+        return () => { document.removeEventListener('keydown', onKeyDown); };
     }, [available, open]);
     if (context === null)
         return null;
@@ -90,6 +91,6 @@ export function ContextMeter({ useProjection, t }) {
         ? [{ key: 'total', color: undefined, width: percent }]
         : ROWS.map(row => ({ key: row.key, color: row.color, width: percent * breakdown[row.key] / breakdownTotal }));
     const segments = parts.filter(part => part.width > 0);
-    return (_jsxs("span", { ref: rootRef, className: css.root, children: [_jsx(Tooltip, { label: t('context.aria', { percent: reading }), side: "top", delayMs: 200, disabled: open, children: _jsx("button", { type: "button", className: css.trigger, "aria-label": t('context.aria', { percent: reading }), "aria-haspopup": "dialog", "aria-expanded": open, onClick: () => { setOpen(!open); }, children: _jsxs("svg", { viewBox: "0 0 14 14", width: "14", height: "14", "aria-hidden": true, children: [_jsx("circle", { className: css.track, cx: "7", cy: "7", r: RADIUS }), _jsx("circle", { className: css.fill, cx: "7", cy: "7", r: RADIUS, strokeDasharray: `${CIRCUMFERENCE * percent / 100} ${CIRCUMFERENCE}`, transform: "rotate(-90 7 7)" })] }) }) }), open && (_jsxs("div", { className: css.panel, role: "dialog", "aria-label": t('context.used'), children: [_jsxs("div", { className: css.header, children: [_jsx("span", { className: css.headline, children: headBefore }), _jsx("span", { className: css.percent, children: reading }), _jsx("span", { className: css.headline, children: headAfter }), _jsx("span", { className: css.figures, children: `~${formatTokens(context.usedTokens, t)} / ${formatTokens(context.contextWindow, t)}` })] }), _jsx("div", { className: css.bar, children: segments.map(segment => (_jsx("div", { className: segment.color === undefined ? css.segment : `${css.segment} ${segment.color}`, style: { width: `${segment.width}%` } }, segment.key))) }), breakdown !== undefined && (_jsx("dl", { className: css.rows, children: ROWS.map(row => (_jsxs("div", { className: css.row, children: [_jsxs("dt", { children: [_jsx("span", { className: `${css.swatch} ${row.color}`, "aria-hidden": true }), t(row.label)] }), _jsx("dd", { children: `~${formatTokens(breakdown[row.key], t)}` })] }, row.key))) }))] }))] }));
+    return (_jsxs("span", { ref: rootRef, className: css.root, children: [_jsx(Tooltip, { label: t('context.aria', { percent: reading }), side: "top", delayMs: 200, disabled: open, children: _jsxs("button", { type: "button", className: css.trigger, "aria-label": t('context.aria', { percent: reading }), "aria-haspopup": "dialog", "aria-expanded": open, onClick: () => { setOpen(!open); }, children: [_jsxs("svg", { viewBox: "0 0 14 14", width: "14", height: "14", "aria-hidden": true, children: [_jsx("circle", { className: css.track, cx: "7", cy: "7", r: RADIUS }), _jsx("circle", { className: css.fill, cx: "7", cy: "7", r: RADIUS, strokeDasharray: `${CIRCUMFERENCE * percent / 100} ${CIRCUMFERENCE}`, transform: "rotate(-90 7 7)" })] }), _jsx("span", { children: reading })] }) }), open && createPortal(_jsxs("div", { ref: panelRef, className: css.panel, style: position ?? { visibility: 'hidden', left: 0, top: 0 }, role: "dialog", "aria-label": t('context.used'), children: [_jsxs("div", { className: css.header, children: [_jsx("span", { className: css.headline, children: headBefore }), _jsx("span", { className: css.percent, children: reading }), _jsx("span", { className: css.headline, children: headAfter }), _jsx("span", { className: css.figures, children: `~${formatTokens(context.usedTokens, t)} / ${formatTokens(context.contextWindow, t)}` })] }), _jsx("div", { className: css.bar, children: segments.map(segment => (_jsx("div", { className: segment.color === undefined ? css.segment : `${css.segment} ${segment.color}`, style: { width: `${segment.width}%` } }, segment.key))) }), breakdown !== undefined && (_jsx("dl", { className: css.rows, children: ROWS.map(row => (_jsxs("div", { className: css.row, children: [_jsxs("dt", { children: [_jsx("span", { className: `${css.swatch} ${row.color}`, "aria-hidden": true }), t(row.label)] }), _jsx("dd", { children: `~${formatTokens(breakdown[row.key], t)}` })] }, row.key))) }))] }), document.body)] }));
 }
 //# sourceMappingURL=ContextMeter.js.map

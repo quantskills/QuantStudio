@@ -1,3 +1,3 @@
-/** Chat-owned selection state shared by the transcript and details panel. */
+/** Chat-owned per-Session view state. */
 export {};
 //# sourceMappingURL=store.js.map

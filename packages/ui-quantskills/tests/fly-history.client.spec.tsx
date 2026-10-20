@@ -47,7 +47,8 @@ it('connects the dashboard button to the shared background history job', async (
     checkpoints: [], environment: { blender: '', brain_ready: true, blender_ready: true, progress: { status: 'complete' } }, onboarding: false }
   vi.mocked(flyFetch).mockImplementation(async url => ({ ok: true, json: async () => url.endsWith('/state') ? state : url.endsWith('/control') ? { history: { status: 'running' } } : { profiles: [], jev_configured: false } }) as Response)
   render(<FlyV2Page active/>)
-  fireEvent.click(await screen.findByText(/行情与运行详情/))
+  fireEvent.click(await screen.findByText(/行情与连接/))
+  fireEvent.click(screen.getByRole('button', { name: '连接与诊断 ↗' }))
   fireEvent.click(screen.getByRole('button', { name: '获取历史数据' }))
   expect(await screen.findByRole('button', { name: '正在获取历史数据…' })).toBeTruthy()
   expect(vi.mocked(flyFetch).mock.calls.some(([url, init]) => url.endsWith('/control') && JSON.parse(String(init?.body)).action === 'history')).toBe(true)

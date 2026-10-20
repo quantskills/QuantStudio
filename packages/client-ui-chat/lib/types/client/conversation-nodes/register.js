@@ -12,6 +12,7 @@ import { registerTurnErrorConversationNode } from "./turn-error.js";
 import { registerTurnMaxTokensConversationNode } from "./turn-max-tokens.js";
 import { registerTurnProcess } from "./turn-process.js";
 import { registerTurnTailConversationNode } from "./turn-tail.js";
+import { processGroupDefinition } from "./process-groups.js";
 /**
  * Register the Chat business Definitions and target builder contributed by this package.
  * @param ctx - owning UI Conversation context.
@@ -31,5 +32,6 @@ export function registerConversationNodes(ctx) {
     registerTurnTailConversationNode(ctx);
     registerUnknownConversationFallback(ctx);
     registerChatConversationView(ctx);
+    ctx.uiConversation.groups.register(processGroupDefinition);
 }
 //# sourceMappingURL=register.js.map

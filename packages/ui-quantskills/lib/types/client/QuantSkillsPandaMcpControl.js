@@ -76,7 +76,8 @@ export function QuantSkillsPandaMcpHeroControl({ mode, useView, status, authenti
     return _jsx(QuantSkillsPandaMcpSurface, { visible: mode === 'standalone' || pluginConversationOpen, status: status, authenticate: authenticate, refresh: refresh, logout: logout });
 }
 /** Render PandaData in the composer after conversation activity begins. */
-export function QuantSkillsPandaMcpControl({ mode, useView, useConversation, session, status, authenticate, refresh, logout, }) {
+export function QuantSkillsPandaMcpControl({ mode, useView, useConversation, useSession, status, authenticate, refresh, logout, }) {
+    const session = useSession(state => state);
     const conversation = useConversation(state => state);
     const pluginConversationOpen = useView(state => state.pluginOpen && state.pluginConversationOpen);
     const started = conversation.activeTargets.size > 0

@@ -1,9 +1,9 @@
 import type { SessionEvent } from '@deepseek-ai/dsh-session/types';
-import type { ConversationNode, RunningToolCall } from '../contract/snapshot.ts';
+import type { ConversationNode, RunningToolCall } from '@deepseek-ai/dsh-client-ui-conversation/client';
 /** Fixed wire-safety ceiling for every recursive Tool call consumer. */
 export declare const MAX_TOOL_CALL_TREE_DEPTH = 256;
 /**
- * Owns Code Dispatch pairing and projects its private parent index into the
+ * Owns PTC dispatch pairing and projects its private parent index into the
  * recursive Tool call contract exposed by conversation snapshots.
  */
 export declare class ToolCallTree {
@@ -16,7 +16,7 @@ export declare class ToolCallTree {
     /** Forget all event-derived child calls before replaying a new window. */
     reset(): void;
     /**
-     * Fold one event when it belongs to the Code Dispatch lifecycle.
+     * Fold one event when it belongs to the PTC dispatch lifecycle.
      * @param event - Session event from the current live or history window.
      * @returns Whether the event was consumed as a child-call lifecycle event.
      */

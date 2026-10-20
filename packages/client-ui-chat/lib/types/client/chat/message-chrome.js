@@ -1,4 +1,6 @@
 // Shared time-label helpers for user/assistant IconActions rows.
+/** Refresh interval for whole-second live run clocks. */
+export const LIVE_RUN_CLOCK_INTERVAL_MS = 1000;
 function pad2(n) {
     return String(n).padStart(2, '0');
 }
@@ -23,28 +25,24 @@ export function msUntilNextLocalMidnight(ms) {
     return Math.max(next.getTime() - ms, 1);
 }
 /**
- * Localized elapsed-time label shared by running and settled turn chrome.
- * @param ms - Elapsed duration in milliseconds (negatives clamp to zero).
- * @param t - Translate seat supplying the duration templates.
- * @returns Display string in whole seconds.
+ * Build elapsed-time fragments for both live and completed Turn labels.
+ * @param ms - elapsed milliseconds; negatives clamp to zero and fractions floor.
+ * @param t - translate seat supplying units and their trailing spacing.
+ * @returns numbers and localized units in display order, without leading zeros;
+ * minutes start at 60 seconds and hours at 60 minutes.
  */
 export function formatRunDuration(ms, t) {
     const total = Math.max(0, Math.floor(ms / 1000));
-    const minutes = Math.floor(total / 60);
+    const hours = Math.floor(total / 3600);
+    const minutes = Math.floor(total / 60) % 60;
     const seconds = total % 60;
-    return minutes > 0
-        ? t('duration.minutes', { minutes, seconds: String(seconds).padStart(2, '0') })
-        : t('duration.seconds', { seconds });
-}
-/**
- * Sub-turn latency figure: one decimal under ten seconds, whole seconds
- * beyond. Unit-less so the locale template owns the second suffix.
- * @param ms - Latency in milliseconds (negatives clamp to zero).
- * @returns Display number in seconds without unit.
- */
-export function formatLatencySeconds(ms) {
-    const s = Math.max(0, ms) / 1000;
-    return s < 10 ? String(Math.round(s * 10) / 10) : String(Math.round(s));
+    const parts = [];
+    if (hours > 0)
+        parts.push({ text: String(hours), numeric: true }, { text: t('duration.hourUnit'), numeric: false });
+    if (total >= 60)
+        parts.push({ text: String(minutes), numeric: true }, { text: t('duration.minuteUnit'), numeric: false });
+    parts.push({ text: String(seconds), numeric: true }, { text: t('duration.secondUnit'), numeric: false });
+    return parts;
 }
 /**
  * Decode-throughput figure: whole tokens from ten up, one decimal below.

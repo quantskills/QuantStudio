@@ -1,21 +1,52 @@
 import type { ContentBlock, ToolSchema } from '@deepseek-ai/dsh-llm/types';
 import type { SessionEvent } from '@deepseek-ai/dsh-session/types';
-import type { AssistantProvenanceView, AssistantRequestConfig } from './records.ts';
-export type { AssistantProvenanceView, AssistantRequestConfig, } from './records.ts';
-/** Complete model-visible request header in force for an ordinary generation. */
+import type { AssistantProviderMetadataView, AssistantRequestConfig } from './records.ts';
+export type { AssistantProviderMetadataView, AssistantRequestConfig, } from './records.ts';
+/**
+ * Complete model-visible request state in force for an ordinary generation:
+ * the `request/header` config and tools plus the system prompt held by the
+ * current `system/message` surface node.
+ */
 export interface ConversationPromptSnapshot {
     /** Provider/model and sampling configuration from the effective request header. */
     config: AssistantRequestConfig;
-    /** Rendered system prompt text; empty when the request had no system prompt. */
+    /**
+     * Rendered text of the `system/message` surface node in force for the
+     * request; empty when the surface has no system prompt or the node lies
+     * outside the loaded history window.
+     */
     system: string;
     /** Complete tool catalog sent with the request, including tools that were never called. */
     tools: readonly ToolSchema[];
 }
-/** System/tool change introduced while preparing one ordinary request. */
-export interface RequestPromptChange {
-    /** Sequence of the request/header event that introduced this state. */
+/** Effective prompt or introduced system node, anchored at the event that establishes it. */
+export interface SystemPromptNode {
+    /** Sequence of the system event or replacement that establishes this prompt. */
     seq: number;
-    /** Unix epoch ms from the request/header event. */
+    /** Unix epoch ms of that event. */
+    time: number;
+    /** Turn the loop committed the node in. */
+    turn: number;
+    /** Step the loop committed the node in. */
+    step: number;
+    /** Rendered system prompt text; empty records "no system prompt". */
+    text: string;
+    /**
+     * True for a prompt appended after an earlier loaded system node: an
+     * in-history update the model reads at this position, presented where it
+     * was committed rather than by the next request header.
+     */
+    update: boolean;
+}
+/** System/tool change introduced while preparing one ordinary request, or by an in-history prompt update. */
+export interface RequestPromptChange {
+    /**
+     * Sequence of the event that introduced this state: the `system/message`
+     * node when it introduced, replaced, or updated the system prompt, otherwise the
+     * `request/header` event.
+     */
+    seq: number;
+    /** Unix epoch ms of that event. */
     time: number;
     /** How the model-visible prompt differs from the previous recorded state. */
     kind: 'initial' | 'system' | 'tools' | 'system-and-tools';
@@ -24,7 +55,7 @@ export interface RequestPromptChange {
 }
 /** Canonical prompt snapshot and any model-visible change introduced by one request header. */
 export interface RequestPromptInspection {
-    /** Complete prompt state recorded by the header. */
+    /** Complete prompt state in force for the header's request. */
     prompt: ConversationPromptSnapshot;
     /** System/tool change relative to the preceding loaded header. */
     change?: RequestPromptChange;
@@ -34,14 +65,17 @@ export interface RequestPromptInspection {
  * Trajectory Definitions receive it from the uiConversation service because a
  * client bundle cannot value-import another plugin's module.
  */
-export type RequestPromptInspector = (previous: ConversationPromptSnapshot | undefined, event: SessionEvent<'request/header'>) => RequestPromptInspection;
+export type RequestPromptInspector = (previous: ConversationPromptSnapshot | undefined, event: SessionEvent<'request/header'>, system: SystemPromptNode | undefined) => RequestPromptInspection;
 /**
- * Canonicalize one request header and classify its model-visible prompt change.
+ * Canonicalize one request header against the system node in force and
+ * classify the model-visible prompt change.
  * @param previous - Prompt from the preceding loaded request header, when available.
  * @param event - Durable full request header to inspect.
+ * @param system - Effective nonempty system prompt after loaded surface replacements; empty when removed.
+ * An in-history update already presented its text at its own position, so the header reports no system change for it.
  * @returns The canonical prompt and an initial/system/tool change when it can be established.
  */
-export declare function inspectRequestPrompt(previous: ConversationPromptSnapshot | undefined, event: SessionEvent<'request/header'>): RequestPromptInspection;
+export declare function inspectRequestPrompt(previous: ConversationPromptSnapshot | undefined, event: SessionEvent<'request/header'>, system: SystemPromptNode | undefined): RequestPromptInspection;
 /** Lifecycle fields shared by ordinary generation and compaction requests. */
 interface RequestViewBase {
     /** Sequence that opened the operation represented by this request. */
@@ -49,10 +83,11 @@ interface RequestViewBase {
     startedAt: number;
     completedAt: number | null;
     status: 'running' | 'complete' | 'error';
+    /** Failure detail; with assistant retry metadata, the last failed attempt even while running or after recovery. */
     error?: string;
-    /** Stable provider code for localized presentation of known failures. */
+    /** Stable provider code for `error`, including retained attempt failures, for localized presentation. */
     errorCode?: string;
-    provenance?: AssistantProvenanceView;
+    providerMetadata?: AssistantProviderMetadataView;
     requestConfig?: AssistantRequestConfig;
     usage?: unknown;
     /** Assistant message or compaction summary sequence produced by this request. */

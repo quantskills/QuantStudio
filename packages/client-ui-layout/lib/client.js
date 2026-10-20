@@ -11,6 +11,10 @@ window.__ModuleLoader__.load({
 		* LG breakpoint); a manual toggle below it re-expands over the squeezed center
 		* (stores.ts narrowExpanded). */
 		const SIDEBAR_AUTO_COLLAPSE = 1024;
+		/** Maximum normal right panel width as a fraction of the frame. */
+		const RIGHTBAR_MAX_RATIO = .7;
+		/** First-open right panel preference as a fraction of the frame. */
+		const RIGHTBAR_DEFAULT_RATIO = .45;
 		/**
 		* Clamp a panel width into its contract range.
 		* @param px - requested width.
@@ -22,57 +26,51 @@ window.__ModuleLoader__.load({
 			return Math.min(max, Math.max(min, Math.round(px)));
 		}
 		/**
-		* Solve the three column widths for one viewport frame. Pure: no hysteresis —
-		* the output is a function of (viewport, preferences) only, so recovery on
-		* re-widening is automatic. Preferences re-clamp here because they cross the
-		* store boundary and callers may still supply stale ranges.
+		* Solve the three column widths for one viewport frame.
 		* @param viewport - available frame width in px.
 		* @param sidebar - sidebar width preference in px (0 = closed).
-		* @param details - details width preference in px (0 = closed).
-		* @param sidebarReservation - transient minimum width requested by mounted overlays.
-		* @param detailsReservation - transient minimum right-column width requested by mounted workbenches.
-		* @param sidebarExclusive - an overlay replaces the native rail; only its reservation consumes width.
-		* @returns resolved widths; details 0 means visually closed (never unmounted), while a closed sidebar keeps its compact rail.
+		* @param rightbar - requested right panel width in px (0 = no track).
+		* @param collapsedWidth - track width of the closed sidebar; the default keeps
+		*   the icon rail, 0 hides the column entirely (macOS desktop).
+		* @returns actual widths after shrinking or removing the right track; only
+		*   without that track may the center fall below its minimum, down to zero.
 		*/
-		function computeColumns(viewport, sidebar, details, sidebarReservation = 0, detailsReservation = 0, sidebarExclusive = false) {
-			const preferredSidebar = sidebarExclusive ? 0 : sidebar === 0 ? 56 : clampWidth(sidebar, 264, 420);
-			const s = Math.max(preferredSidebar, Math.max(0, Math.round(sidebarReservation)));
-			const d0 = details === 0 ? 0 : clampWidth(details, 300, 520);
-			const reservedDetails = Math.max(0, Math.round(detailsReservation));
-			if (reservedDetails > 0) {
-				const resolvedDetails = Math.min(Math.max(d0, reservedDetails), Math.max(0, viewport - s));
-				return {
-					sidebar: s,
-					center: Math.max(0, viewport - s - resolvedDetails),
-					details: resolvedDetails
-				};
-			}
-			if (s + d0 + 640 <= viewport) return {
-				sidebar: s,
-				center: viewport - s - d0,
-				details: d0
-			};
-			const d1 = d0 === 0 ? 0 : Math.max(300, viewport - s - 640);
-			if (s + d1 + 640 <= viewport) return {
-				sidebar: s,
-				center: 640,
-				details: d1
-			};
+		function computeColumns(viewport, sidebar, rightbar, collapsedWidth = 56) {
+			const s = sidebar === 0 ? collapsedWidth : clampWidth(sidebar, 264, 420);
+			const available = viewport - s - 400;
+			const r = rightbar === 0 || available < 300 ? 0 : Math.min(available, clampWidth(rightbar, 300, viewport * RIGHTBAR_MAX_RATIO));
 			return {
 				sidebar: s,
-				center: Math.max(0, viewport - s),
-				details: 0
+				center: Math.max(0, viewport - s - r),
+				rightbar: r
+			};
+		}
+		/** Apply QS overlay reservations without losing the official responsive geometry. */
+		function applyColumnClaims(viewport, native, claims) {
+			const sidebar = Math.max(0, Math.min(viewport, claims.sidebarExclusive ? claims.sidebarReservation : Math.max(native.sidebar, claims.sidebarReservation)));
+			const requestedRight = claims.detailsExclusive ? claims.detailsReservation : Math.max(native.rightbar, claims.detailsReservation);
+			const rightbar = Math.max(0, Math.min(requestedRight, viewport - sidebar - Math.min(400, viewport - sidebar)));
+			return {
+				sidebar,
+				rightbar,
+				center: Math.max(0, viewport - sidebar - rightbar)
 			};
 		}
 		//#endregion
 		//#region lib/types/client/DocumentTitle.js
+		/** Browser title selection follows the active main panel without subscribing the frame. */
 		/**
 		* Project the selected durable session title into the browser title and
 		* restore the build-selected product title when unmounted.
 		* @param props - Selected session title projection.
 		* @returns No rendered content.
 		*/
-		function DocumentTitle({ title, productTitle }) {
+		function DocumentTitle({ useSessions, usePanelInfo, productTitle }) {
+			const showSessionTitle = usePanelInfo((info) => info.activePanelId === null);
+			const title = useSessions((state) => {
+				const current = Object.values(state.byId).find((session) => (session.retainedBy.mainView ?? 0) > 0)?.id;
+				return !showSessionTitle || current === void 0 ? void 0 : state.byId[current]?.title;
+			});
 			(0, react.useEffect)(() => {
 				document.title = title === void 0 ? productTitle : `${title} — ${productTitle}`;
 				return () => {
@@ -83,7 +81,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-layout/src/client/AppFrame.module.css.mjs
-		const css = ".TftIka_frame{background:var(--dsw-alias-bg-base);height:100%;transition:grid-template-columns var(--ds-transition-duration-slow) var(--ds-ease-in-out);grid-template-rows:100%;display:grid;position:relative;overflow:hidden}.TftIka_frame[data-dragging]{transition:none}@media (prefers-reduced-motion:reduce){.TftIka_frame{transition:none}}.TftIka_sidebarCol{background:var(--dsw-specific-sidebar-fill);border-right:1px solid var(--dsw-alias-border-l1);min-width:0;overflow:hidden}.TftIka_sidebarCol[data-exclusive-hidden]{visibility:hidden;pointer-events:none;user-select:none}.TftIka_centerCol{flex-direction:column;min-width:0;display:flex;overflow:hidden}.TftIka_detailsCol{border-left:1px solid var(--dsw-alias-border-l2);min-width:0;overflow:hidden}.TftIka_detailsCol[data-exclusive-hidden]{visibility:hidden;pointer-events:none;user-select:none}.TftIka_frame[data-details-collapsed] .TftIka_detailsCol{border-left:none}.TftIka_handle{cursor:col-resize;z-index:2;touch-action:none;width:8px;transition:left var(--ds-transition-duration-slow) var(--ds-ease-in-out);margin-left:-4px;position:absolute;top:0;bottom:0}.TftIka_frame[data-dragging] .TftIka_handle{transition:none}@media (prefers-reduced-motion:reduce){.TftIka_handle{transition:none}}.TftIka_handle[data-side=details]:after{content:\"\";box-sizing:border-box;background:var(--dsw-alias-button-floating-fill);border:1px solid var(--dsw-alias-border-l2-darkmode-thin);opacity:0;width:12px;height:32px;transition:opacity var(--ds-transition-duration-slow) var(--ds-ease-in-out), background var(--ds-transition-duration-slow) var(--ds-ease-in-out);border-radius:10px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}.TftIka_detailsCol:hover~.TftIka_handle[data-side=details]:after,.TftIka_handle[data-side=details]:hover:after,.TftIka_handle[data-side=details][data-dragging=true]:after{opacity:1}.TftIka_handle[data-side=details]:hover:after,.TftIka_handle[data-side=details][data-dragging=true]:after{background:var(--dsw-alias-button-floating-hover);border-color:var(--dsw-alias-border-l3)}.TftIka_overlayLayer{z-index:20;pointer-events:none;position:absolute;inset:0}.TftIka_overlayLayer>*{pointer-events:auto}";
+		const css = ".L1KAcq_frame{background:var(--dsw-alias-bg-base);grid-template-rows:minmax(0,1fr) auto;height:100%;display:grid;position:relative;overflow:hidden}.L1KAcq_frame[data-animating]{transition:grid-template-columns var(--ds-transition-duration-slow) var(--ds-ease-in-out)}.L1KAcq_frame[data-dragging]{transition:none}[data-windows-titlebar] .L1KAcq_frame{--dsh-windows-content-radius:16px;box-sizing:border-box;padding-top:var(--dsh-windows-titlebar-height);background:var(--dsw-specific-sidebar-fill)}[data-windows-titlebar] .L1KAcq_centerCol{background:var(--dsw-alias-bg-base);border-radius:var(--dsh-windows-content-radius) 0 0 0;corner-shape:round}[data-windows-titlebar] .L1KAcq_frame:before{content:\"\";height:var(--dsh-windows-titlebar-height);background:var(--dsw-specific-sidebar-fill);-webkit-app-region:drag;position:absolute;inset:0 0 auto}[data-windows-titlebar] .L1KAcq_sidebarCol{border-right:none}@media (prefers-reduced-motion:reduce){.L1KAcq_frame[data-animating]{transition:none}}.L1KAcq_sidebarCol{background:var(--dsw-specific-sidebar-fill);border-right:.5px solid var(--dsw-alias-border-l3);min-width:0;overflow:hidden}.L1KAcq_sidebarCol[data-exclusive-hidden]{visibility:hidden;pointer-events:none;user-select:none}.L1KAcq_centerCol{flex-direction:column;min-width:0;display:flex;overflow:hidden}[data-platform=darwin] .L1KAcq_frame{background:0 0}html[data-platform=darwin]{--dsh-frame-top-clearance:48px}html[data-windows-titlebar]{--dsh-frame-top-clearance:var(--dsh-windows-titlebar-height);--dsh-frame-chrome-top:var(--dsh-windows-titlebar-height)}html[data-platform=darwin],html[data-windows-titlebar]{--dsh-frame-overlay-top:calc(var(--dsh-frame-top-clearance) + 20px)}html[data-platform=darwin][data-fullscreen],html[data-windows-titlebar][data-fullscreen]{--dsh-frame-overlay-top:20px;--dsh-frame-chrome-top:0px}[data-platform=darwin] .L1KAcq_sidebarCol{background:linear-gradient(to bottom, #7a9bf01a, #7a9bf000 35%, #8f89b800 68%, #8f89b817), color-mix(in srgb, color-mix(in srgb, var(--dsw-specific-sidebar-fill) 97%, #7a9bf0) 40%, transparent);border-right:none}[data-platform=darwin] [data-ds-dark-theme] .L1KAcq_sidebarCol{background:linear-gradient(to bottom, #7a9bf014, #7a9bf000 35%, #8f89b800 68%, #8f89b812), color-mix(in srgb, var(--dsw-specific-sidebar-fill) 50%, transparent)}@media (prefers-reduced-transparency:reduce){[data-platform=darwin] .L1KAcq_sidebarCol,[data-platform=darwin] [data-ds-dark-theme] .L1KAcq_sidebarCol{background:color-mix(in srgb, var(--dsw-specific-sidebar-fill) 90%, transparent)}}[data-platform=darwin] .L1KAcq_centerCol{background:var(--dsw-alias-bg-base);border-left:.5px solid var(--dsw-alias-border-l3)}[data-platform=darwin] .L1KAcq_rightbarCol{background:var(--dsw-alias-bg-base)}[data-platform=darwin] [data-sidebar-collapsed] .L1KAcq_centerCol{border-left:none}[data-platform=darwin] .L1KAcq_frame[data-sidebar-collapsed]{--dsh-frame-leading-clearance:160px}[data-platform=darwin][data-fullscreen] .L1KAcq_frame[data-sidebar-collapsed]{--dsh-frame-leading-clearance:84px}[data-platform=darwin][data-fullscreen] .L1KAcq_leadingSeat{left:12px}.L1KAcq_leadingSeat{z-index:15;-webkit-app-region:no-drag;align-items:center;display:flex;position:absolute;top:11px;left:88px}.L1KAcq_handle{cursor:col-resize;z-index:11;touch-action:none;grid-area:1/1/2/-1;width:8px;margin-left:-4px;position:absolute;top:0;bottom:0}.L1KAcq_frame[data-animating] .L1KAcq_handle{transition:left var(--ds-transition-duration-slow) var(--ds-ease-in-out)}.L1KAcq_frame[data-dragging] .L1KAcq_handle,.L1KAcq_frame[data-rightbar-fullscreen],.L1KAcq_frame[data-rightbar-fullscreen] .L1KAcq_handle,.L1KAcq_frame[data-rightbar-instant],.L1KAcq_frame[data-rightbar-instant] .L1KAcq_handle{transition:none}@media (prefers-reduced-motion:reduce){.L1KAcq_frame[data-animating] .L1KAcq_handle{transition:none}}.L1KAcq_rightbarCol{min-width:0;position:relative;overflow:visible}.L1KAcq_bottomRow{background:var(--dsw-alias-bg-base);grid-column:1/-1;min-width:0;min-height:0;overflow:auto}.L1KAcq_overlayLayer{z-index:20;pointer-events:none;position:absolute;inset:0}.L1KAcq_overlayLayer>*{pointer-events:auto}";
 		const tagId = "@deepseek-ai/dsh-client-ui-layout/AppFrame.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -93,26 +91,32 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var AppFrame_module_css_default = {
-			"centerCol": "TftIka_centerCol",
-			"detailsCol": "TftIka_detailsCol",
-			"frame": "TftIka_frame",
-			"handle": "TftIka_handle",
-			"overlayLayer": "TftIka_overlayLayer",
-			"sidebarCol": "TftIka_sidebarCol"
+			"bottomRow": "L1KAcq_bottomRow",
+			"centerCol": "L1KAcq_centerCol",
+			"frame": "L1KAcq_frame",
+			"handle": "L1KAcq_handle",
+			"leadingSeat": "L1KAcq_leadingSeat",
+			"overlayLayer": "L1KAcq_overlayLayer",
+			"rightbarCol": "L1KAcq_rightbarCol",
+			"sidebarCol": "L1KAcq_sidebarCol"
 		};
 		//#endregion
 		//#region lib/types/client/AppFrame.js
 		/**
 		* Three-column shell frame, registered into the built-in 'root' slot (the web
 		* shell renders only 'root'). Owns the grid tracks (sidebar | center |
-		* details), the drag handles (pointer capture + rAF throttle), the concession
-		* chain (columns.ts), and the child-slot render decisions: the sidebar slot
-		* renders HERE with live parameters from the concession solve, and the
-		* session-aware occupants render in fixed column positions; strict entries
-		* gate themselves on current-session availability while session-maybe
-		* entries retain identity. Pure component: everything arrives
-		* through the three framework shares — zero cordis or framework imports,
-		* zero self-made hooks.
+		* rightbar), the drag handles (pointer capture + rAF throttle), the column
+		* solve (columns.ts), and the child-slot render decisions: the sidebar slot
+		* receives live parameters from that solve. The root-scoped main slot selects
+		* the Conversation or a global panel. Each column occupant owns its Session
+		* binding and reports the geometry it needs.
+		*
+		* The right column is a track, not a box: its occupant draws its panel anchored
+		* to the frame's right edge at the resolved normal width, and the
+		* track only decides whether the centre makes room for it. The occupant reports
+		* shown/track/fullscreen through `ctx.layout`; fullscreen keeps the reported
+		* track but hides the outer resize handle. Everything arrives through the framework
+		* shares — zero cordis or framework imports, zero self-made hooks.
 		*/
 		/** Center column grid item (session-body building block). */
 		function CenterColumn(props) {
@@ -120,28 +124,24 @@ window.__ModuleLoader__.load({
 				className: AppFrame_module_css_default.centerCol,
 				style: {
 					"--dsh-conversation-text-scale": props.conversationTextScale,
-					"--dsh-conversation-text-base-size": `${String(16 * props.conversationTextScale)}px`
+					"--dsh-conversation-text-base-size": `${String(16 * (props.conversationTextScale ?? 1))}px`
 				},
 				children: props.children
 			});
 		}
-		/** Sidebar column grid item; exclusive claims keep the native subtree mounted but inert. */
-		function SidebarColumn(props) {
-			return (0, react_jsx_runtime.jsx)("div", {
-				className: AppFrame_module_css_default.sidebarCol,
-				"aria-hidden": props.hidden || void 0,
-				"data-exclusive-hidden": props.hidden || void 0,
-				...props.hidden ? { inert: "" } : {},
-				children: props.children
-			});
+		/** Subscribe to the main key without subscribing the column frame to each panel id. */
+		function MainPanel({ usePanelInfo, renderSlot }) {
+			return renderSlot("main", {}, { entryKey: usePanelInfo((info) => info.activePanelId) ?? "conversation" });
 		}
-		/** Details column grid item; width 0 keeps the subtree mounted (never unmount on close). */
-		function DetailsColumn(props) {
+		/**
+		* Right column grid item. Zero-width unless the occupant asked for a track; the
+		* occupant's panel is positioned against the column's right edge, which never
+		* moves, so it can hang over the centre when there is no track.
+		*/
+		function RightbarColumn(props) {
 			return (0, react_jsx_runtime.jsx)("div", {
-				className: AppFrame_module_css_default.detailsCol,
-				"aria-hidden": props.hidden || void 0,
-				"data-exclusive-hidden": props.hidden || void 0,
-				...props.hidden ? { inert: "" } : {},
+				className: AppFrame_module_css_default.rightbarCol,
+				"data-rightbar-col": true,
 				children: props.children
 			});
 		}
@@ -154,6 +154,7 @@ window.__ModuleLoader__.load({
 			const origin = (0, react.useRef)(0);
 			const latest = (0, react.useRef)(0);
 			const frame = (0, react.useRef)(null);
+			const capture = (0, react.useRef)(null);
 			const callbacks = (0, react.useRef)({
 				onStart: props.onStart,
 				onDrag: props.onDrag,
@@ -164,16 +165,34 @@ window.__ModuleLoader__.load({
 				onDrag: props.onDrag,
 				onEnd: props.onEnd
 			};
+			const endDrag = (0, react.useCallback)(() => {
+				const active = capture.current;
+				if (active === null) return;
+				capture.current = null;
+				if (frame.current !== null) {
+					cancelAnimationFrame(frame.current);
+					frame.current = null;
+				}
+				if (active.element.hasPointerCapture(active.id)) active.element.releasePointerCapture(active.id);
+				setDragging(false);
+				callbacks.current.onEnd();
+			}, []);
+			(0, react.useEffect)(() => endDrag, [endDrag]);
 			const onPointerDown = (0, react.useCallback)((e) => {
+				if (e.button !== 0 || capture.current !== null) return;
 				e.preventDefault();
 				e.currentTarget.setPointerCapture(e.pointerId);
+				capture.current = {
+					element: e.currentTarget,
+					id: e.pointerId
+				};
 				origin.current = e.clientX;
 				latest.current = e.clientX;
 				callbacks.current.onStart();
 				setDragging(true);
 			}, []);
 			const onPointerMove = (0, react.useCallback)((e) => {
-				if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+				if (capture.current?.id !== e.pointerId) return;
 				latest.current = e.clientX;
 				frame.current ??= requestAnimationFrame(() => {
 					frame.current = null;
@@ -181,16 +200,13 @@ window.__ModuleLoader__.load({
 				});
 			}, []);
 			const onPointerUp = (0, react.useCallback)((e) => {
-				if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
-				e.currentTarget.releasePointerCapture(e.pointerId);
-				if (frame.current !== null) {
-					cancelAnimationFrame(frame.current);
-					frame.current = null;
-				}
-				callbacks.current.onDrag(latest.current - origin.current);
-				setDragging(false);
-				callbacks.current.onEnd();
-			}, []);
+				if (capture.current?.id !== e.pointerId) return;
+				callbacks.current.onDrag(e.clientX - origin.current);
+				endDrag();
+			}, [endDrag]);
+			const onPointerCancel = (0, react.useCallback)((e) => {
+				if (capture.current?.id === e.pointerId) endDrag();
+			}, [endDrag]);
 			return (0, react_jsx_runtime.jsx)("div", {
 				className: AppFrame_module_css_default.handle,
 				style: { left: props.left },
@@ -198,57 +214,86 @@ window.__ModuleLoader__.load({
 				"data-dragging": dragging || void 0,
 				onPointerDown,
 				onPointerMove,
-				onPointerUp
+				onPointerUp,
+				onPointerCancel,
+				onLostPointerCapture: onPointerCancel
 			});
 		}
 		/** The three-column frame (see module doc). */
-		function AppFrame({ useStore, useSessions, actions, renderSlot, SessionProvider, t }) {
-			const panels = useStore((s) => s);
-			const detailsSession = useSessions((s) => {
-				const current = s.current;
-				return current !== void 0 && s.byId[current]?.blank === false ? current : void 0;
-			});
-			const documentTitle = useSessions((s) => {
-				const current = s.current;
-				return current === void 0 ? void 0 : s.byId[current]?.title;
-			});
+		function AppFrame({ useStore, useSessions, usePanelInfo, actions, renderSlot, t }) {
+			const layoutInfo = useStore((state) => state.layoutInfo);
 			const frameRef = (0, react.useRef)(null);
-			const [viewport, setViewport] = (0, react.useState)(() => window.innerWidth);
-			const lastSession = (0, react.useRef)(detailsSession);
+			const viewport = layoutInfo.viewportWidth;
 			(0, react.useLayoutEffect)(() => {
-				if (detailsSession === void 0) return;
-				if (lastSession.current !== void 0 && lastSession.current !== detailsSession) actions.closeDetails();
-				lastSession.current = detailsSession;
-			}, [actions, detailsSession]);
-			(0, react.useEffect)(() => {
 				const el = frameRef.current;
 				/* v8 ignore next -- the ref is always attached by effect time: the frame div renders unconditionally. */
 				if (el === null) return;
 				let raf = null;
+				let disposed = false;
+				const measure = () => {
+					const width = el.getBoundingClientRect().width;
+					if (width > 0) actions.setViewportWidth(width);
+				};
+				measure();
 				const observer = new ResizeObserver(() => {
+					if (disposed) return;
 					raf ??= requestAnimationFrame(() => {
 						raf = null;
-						const width = el.getBoundingClientRect().width;
-						if (width > 0) setViewport(width);
+						measure();
 					});
 				});
 				observer.observe(el);
 				return () => {
+					disposed = true;
 					observer.disconnect();
 					if (raf !== null) cancelAnimationFrame(raf);
 				};
-			}, []);
+			}, [actions]);
 			const narrow = viewport < SIDEBAR_AUTO_COLLAPSE;
-			(0, react.useEffect)(() => {
-				actions.setNarrow(narrow);
-			}, [actions, narrow]);
-			const sidebarCollapsed = narrow ? !panels.narrowExpanded : panels.sidebar === 0;
-			const cols = computeColumns(viewport, panels.sidebarExclusive || sidebarCollapsed ? 0 : panels.sidebar === 0 ? 280 : panels.sidebar, detailsSession === void 0 || panels.detailsExclusive ? 0 : panels.details, panels.sidebarReservation, panels.detailsReservation, panels.sidebarExclusive);
+			const sidebarCollapsed = narrow ? !layoutInfo.narrowExpanded : layoutInfo.sidebar === 0;
+			const sidebarPreference = sidebarCollapsed ? 0 : layoutInfo.sidebar === 0 ? 280 : layoutInfo.sidebar;
+			const rightbarPreference = layoutInfo.rightbar ?? viewport * .45;
+			const darwin = document.documentElement.dataset.platform === "darwin";
+			const collapsedWidth = darwin || document.documentElement.hasAttribute("data-windows-titlebar") ? 0 : 56;
+			const normal = computeColumns(viewport, !layoutInfo.rightbarShown && narrow ? 0 : sidebarPreference, rightbarPreference, collapsedWidth);
+			const cols = applyColumnClaims(viewport, computeColumns(viewport, sidebarPreference, layoutInfo.rightbarTrack ? rightbarPreference : 0, collapsedWidth), layoutInfo);
 			const colsRef = (0, react.useRef)(cols);
 			colsRef.current = cols;
+			const rightbarWidth = (0, react.useRef)(normal.rightbar);
+			rightbarWidth.current = normal.rightbar;
 			const sidebarBase = (0, react.useRef)(0);
-			const detailsBase = (0, react.useRef)(0);
+			const rightbarBase = (0, react.useRef)(0);
 			const [dragging, setDragging] = (0, react.useState)(false);
+			const [animating, setAnimating] = (0, react.useState)(0);
+			const trackToggle = `${sidebarCollapsed}:${layoutInfo.rightbarTrack}`;
+			const previousToggle = (0, react.useRef)(trackToggle);
+			const previousViewport = (0, react.useRef)(viewport);
+			(0, react.useLayoutEffect)(() => {
+				const viewportChanged = previousViewport.current !== viewport;
+				previousViewport.current = viewport;
+				if (previousToggle.current === trackToggle) return;
+				previousToggle.current = trackToggle;
+				if (viewportChanged) return;
+				setAnimating((token) => token + 1);
+			}, [trackToggle, viewport]);
+			(0, react.useEffect)(() => {
+				if (animating === 0) return;
+				const frame = frameRef.current;
+				/* v8 ignore next -- the ref is always attached by effect time: the frame div renders unconditionally. */
+				if (frame === null) return;
+				const settle = () => {
+					setAnimating(0);
+				};
+				const onTransitionEnd = (event) => {
+					if (event.target === frame && event.propertyName === "grid-template-columns") settle();
+				};
+				frame.addEventListener("transitionend", onTransitionEnd);
+				const timer = setTimeout(settle, 600);
+				return () => {
+					frame.removeEventListener("transitionend", onTransitionEnd);
+					clearTimeout(timer);
+				};
+			}, [animating]);
 			const onDragEnd = (0, react.useCallback)(() => {
 				setDragging(false);
 			}, []);
@@ -256,65 +301,94 @@ window.__ModuleLoader__.load({
 				sidebarBase.current = colsRef.current.sidebar;
 				setDragging(true);
 			}, []);
-			const onDetailsStart = (0, react.useCallback)(() => {
-				detailsBase.current = colsRef.current.details;
-				setDragging(true);
-			}, []);
 			const onSidebarDrag = (0, react.useCallback)((dx) => {
 				actions.setSidebar(sidebarBase.current + dx);
 			}, [actions]);
-			const onDetailsDrag = (0, react.useCallback)((dx) => {
-				actions.setDetails(detailsBase.current - dx);
+			const onRightbarStart = (0, react.useCallback)(() => {
+				rightbarBase.current = rightbarWidth.current;
+				setDragging(true);
+			}, []);
+			const onRightbarDrag = (0, react.useCallback)((dx) => {
+				actions.setRightbar(rightbarBase.current - dx);
 			}, [actions]);
 			const productTitle = {}.DSH_CLIENT_TITLE ?? t("brand.localBuild");
+			const rightbarMax = cols.rightbar;
+			const sidebar = (0, react.useMemo)(() => renderSlot("sidebar", {
+				collapsed: sidebarCollapsed,
+				width: cols.sidebar
+			}), [
+				renderSlot,
+				sidebarCollapsed,
+				cols.sidebar
+			]);
+			const main = (0, react.useMemo)(() => (0, react_jsx_runtime.jsx)(MainPanel, {
+				usePanelInfo,
+				renderSlot
+			}), [usePanelInfo, renderSlot]);
+			const overlays = (0, react.useMemo)(() => renderSlot("shell.overlay", {}), [renderSlot]);
+			const leading = (0, react.useMemo)(() => renderSlot("shell.leading", {}), [renderSlot]);
+			const leadingMounted = darwin && sidebarCollapsed;
 			return (0, react_jsx_runtime.jsxs)("div", {
 				ref: frameRef,
 				"data-shell-frame": true,
 				className: AppFrame_module_css_default.frame,
 				style: {
-					gridTemplateColumns: `${cols.sidebar}px minmax(0, 1fr) ${cols.details}px`,
-					"--dsh-shell-sidebar-width": `${cols.sidebar}px`,
-					"--dsh-shell-details-width": `${cols.details}px`
+					...document.documentElement.hasAttribute("data-windows-titlebar") ? { "--dsh-windows-sidebar-width": `${cols.sidebar}px` } : {},
+					gridTemplateColumns: `${cols.sidebar}px minmax(${cols.rightbar === 0 ? 0 : 400}px, 1fr) minmax(0px, ${rightbarMax}px)`
 				},
 				"data-sidebar-collapsed": sidebarCollapsed || void 0,
-				"data-details-collapsed": cols.details === 0 || void 0,
-				"data-dragging": dragging || panels.sidebarClaimDragging || panels.detailsClaimDragging || void 0,
+				"data-rightbar-collapsed": cols.rightbar === 0 || void 0,
+				"data-rightbar-fullscreen": layoutInfo.rightbarFullscreen || void 0,
+				"data-rightbar-instant": layoutInfo.rightbarInstant || void 0,
+				"data-dragging": dragging || layoutInfo.sidebarClaimDragging || layoutInfo.detailsClaimDragging || void 0,
+				"data-animating": animating > 0 || void 0,
 				children: [
 					(0, react_jsx_runtime.jsx)(DocumentTitle, {
 						productTitle,
-						...documentTitle === void 0 ? {} : { title: documentTitle }
+						useSessions,
+						usePanelInfo
 					}),
-					(0, react_jsx_runtime.jsx)(SidebarColumn, {
-						hidden: panels.sidebarExclusive,
-						children: renderSlot("sidebar", {
-							collapsed: sidebarCollapsed,
-							width: cols.sidebar
-						})
+					(0, react_jsx_runtime.jsx)("div", {
+						className: AppFrame_module_css_default.sidebarCol,
+						"data-exclusive-hidden": layoutInfo.sidebarExclusive || void 0,
+						...layoutInfo.sidebarExclusive ? { inert: "" } : {},
+						children: sidebar
 					}),
 					(0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(CenterColumn, {
-						conversationTextScale: panels.conversationTextScale,
-						children: renderSlot("conversation", {})
-					}), (0, react_jsx_runtime.jsx)(DetailsColumn, {
-						hidden: panels.detailsExclusive,
-						children: (0, react_jsx_runtime.jsx)(SessionProvider, { children: renderSlot("details", {}) })
-					})] }),
+						conversationTextScale: layoutInfo.conversationTextScale,
+						children: main
+					}), (0, react_jsx_runtime.jsx)(RightbarColumn, { children: !layoutInfo.detailsExclusive && renderSlot("rightbar", {
+						width: normal.rightbar,
+						viewportWidth: viewport,
+						canShow: normal.rightbar > 0
+					}) })] }),
+					(0, react_jsx_runtime.jsx)("div", {
+						className: AppFrame_module_css_default.bottomRow,
+						"data-shell-bottom": true,
+						children: renderSlot("shell.bottom", {})
+					}),
 					(0, react_jsx_runtime.jsx)("div", {
 						className: AppFrame_module_css_default.overlayLayer,
 						"data-shell-overlay": true,
-						children: renderSlot("shell.overlay", {})
+						children: overlays
 					}),
-					!panels.sidebarExclusive && !sidebarCollapsed && (0, react_jsx_runtime.jsx)(DragHandle, {
+					leadingMounted && (0, react_jsx_runtime.jsx)("div", {
+						className: AppFrame_module_css_default.leadingSeat,
+						"data-shell-leading": true,
+						children: leading
+					}),
+					!sidebarCollapsed && !layoutInfo.sidebarExclusive && (0, react_jsx_runtime.jsx)(DragHandle, {
 						side: "sidebar",
 						left: cols.sidebar,
 						onStart: onSidebarStart,
 						onDrag: onSidebarDrag,
 						onEnd: onDragEnd
 					}),
-					cols.details > 0 && panels.detailsReservation === 0 && (0, react_jsx_runtime.jsx)(DragHandle, {
-						side: "details",
-						left: viewport - cols.details,
-						onStart: onDetailsStart,
-						onDrag: onDetailsDrag,
+					!layoutInfo.detailsExclusive && layoutInfo.rightbarShown && !layoutInfo.rightbarFullscreen && normal.rightbar > 0 && (0, react_jsx_runtime.jsx)(DragHandle, {
+						side: "rightbar",
+						left: viewport - normal.rightbar,
+						onStart: onRightbarStart,
+						onDrag: onRightbarDrag,
 						onEnd: onDragEnd
 					})
 				]
@@ -323,77 +397,96 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region lib/types/client/stores.js
 		/**
-		* The root entry's transient layout store: panel geometry as plain widths in
-		* px (0 = closed). Module level exports the factory only — a module-level
-		* handle would pin the store's identity in the module
-		* cache (a de-facto singleton surviving plugin reloads). register() receives
-		* the factory (exclusive use: the framework instantiates per entry), AppFrame
-		* derives its PropsStore share from the return type, and the service face
-		* receives the bound actions through the registration's inject hook.
+		* Root-owned frame measurement, panel preferences, and presentation reports.
+		* The registration supplies a fresh store and binds its actions to ctx.layout.
 		*/
 		/**
-		* Create the layout panel store handle. The preference IS the width, so
-		* closing a panel forgets its drag width — reopening restores the contract
-		* default. Actions are the complete write set: drag writes clamp
-		* into the panel's contract range and never cross the open/closed line;
-		* open/close transitions write 0 / the default explicitly. Below the
-		* auto-collapse breakpoint (AppFrame feeds setNarrow) the sidebar toggle
-		* flips the narrowExpanded override instead of the preference.
+		* Create the layout panel store handle. For the sidebar the preference IS the
+		* width, so closing it forgets its drag width — reopening restores the contract
+		* default. The right panel initializes at 45% of the frame on first opening
+		* and keeps that px preference across resizes and close. Drag writes clamp to
+		* the current frame's range. Narrow sidebar toggles change only the expansion
+		* override; opening the right panel clears that override.
 		* @returns the store handle (spec + type + identity + factory in one).
 		*/
 		function createLayoutStore() {
 			return (0, _deepseek_ai_dsh_client_store.defineStore)({
 				init: () => ({
-					sidebar: 280,
-					sidebarReservation: 0,
-					sidebarExclusive: false,
-					sidebarClaimDragging: false,
-					details: 0,
-					detailsReservation: 0,
-					detailsExclusive: false,
-					detailsClaimDragging: false,
-					conversationTextScale: 1,
-					narrow: false,
-					narrowExpanded: false
+					panelInfo: { activePanelId: null },
+					layoutInfo: {
+						sidebarReservation: 0,
+						sidebarExclusive: false,
+						sidebarClaimDragging: false,
+						detailsReservation: 0,
+						detailsExclusive: false,
+						detailsClaimDragging: false,
+						conversationTextScale: 1,
+						sidebar: 280,
+						viewportWidth: window.innerWidth,
+						narrowExpanded: false,
+						rightbar: null,
+						rightbarShown: false,
+						rightbarTrack: false,
+						rightbarFullscreen: false,
+						rightbarInstant: false
+					}
 				}),
 				actions: {
-					setSidebar: (d, px) => {
-						d.sidebar = clampWidth(px, 264, 420);
-					},
 					setSidebarReservation: (d, px) => {
-						d.sidebarReservation = Math.max(0, Math.round(px));
-					},
-					setSidebarClaimState: (d, exclusive, dragging) => {
-						d.sidebarExclusive = exclusive;
-						d.sidebarClaimDragging = exclusive && dragging;
-					},
-					setDetails: (d, px) => {
-						d.details = clampWidth(px, 300, 520);
+						d.layoutInfo.sidebarReservation = Math.max(0, Math.round(px));
 					},
 					setDetailsReservation: (d, px) => {
-						d.detailsReservation = Math.max(0, Math.round(px));
+						d.layoutInfo.detailsReservation = Math.max(0, Math.round(px));
+					},
+					setSidebarClaimState: (d, exclusive, dragging) => {
+						d.layoutInfo.sidebarExclusive = exclusive;
+						d.layoutInfo.sidebarClaimDragging = exclusive && dragging;
 					},
 					setDetailsClaimState: (d, exclusive, dragging) => {
-						d.detailsExclusive = exclusive;
-						d.detailsClaimDragging = exclusive && dragging;
+						d.layoutInfo.detailsExclusive = exclusive;
+						d.layoutInfo.detailsClaimDragging = exclusive && dragging;
 					},
 					setConversationTextScale: (d, scale) => {
-						d.conversationTextScale = scale;
+						d.layoutInfo.conversationTextScale = scale;
+					},
+					selectPanel: (d, panelId) => {
+						d.panelInfo.activePanelId = panelId;
+					},
+					retainMainPanels: (d, panelIds) => {
+						if (d.panelInfo.activePanelId !== null && !panelIds.includes(d.panelInfo.activePanelId)) d.panelInfo.activePanelId = null;
+					},
+					setSidebar: (d, px) => {
+						d.layoutInfo.rightbarInstant = false;
+						d.layoutInfo.sidebar = clampWidth(px, 264, 420);
 					},
 					toggleSidebar: (d) => {
-						if (d.narrow) d.narrowExpanded = !d.narrowExpanded;
-						else d.sidebar = d.sidebar === 0 ? 280 : 0;
+						d.layoutInfo.rightbarInstant = false;
+						if (d.layoutInfo.viewportWidth < 1024) d.layoutInfo.narrowExpanded = !d.layoutInfo.narrowExpanded;
+						else d.layoutInfo.sidebar = d.layoutInfo.sidebar === 0 ? 280 : 0;
 					},
-					setNarrow: (d, narrow) => {
-						if (d.narrow === narrow) return;
-						d.narrow = narrow;
-						d.narrowExpanded = false;
+					setViewportWidth: (d, width) => {
+						if (d.layoutInfo.viewportWidth === width) return;
+						d.layoutInfo.rightbarInstant = false;
+						if (d.layoutInfo.viewportWidth < 1024 !== width < 1024) d.layoutInfo.narrowExpanded = false;
+						d.layoutInfo.viewportWidth = width;
 					},
-					openDetails: (d) => {
-						if (d.details === 0) d.details = 360;
+					setRightbar: (d, px) => {
+						d.layoutInfo.rightbarInstant = false;
+						d.layoutInfo.rightbar = clampWidth(px, 300, Math.max(300, d.layoutInfo.viewportWidth * RIGHTBAR_MAX_RATIO));
 					},
-					closeDetails: (d) => {
-						d.details = 0;
+					openRightbar: (d, track, fullscreen) => {
+						if (!d.layoutInfo.rightbarShown || d.layoutInfo.rightbarTrack !== track || d.layoutInfo.rightbarFullscreen !== fullscreen) d.layoutInfo.rightbarInstant = d.layoutInfo.rightbarFullscreen && !fullscreen;
+						if (!d.layoutInfo.rightbarShown && d.layoutInfo.viewportWidth < 1024) d.layoutInfo.narrowExpanded = false;
+						d.layoutInfo.rightbar ??= Math.max(300, Math.round(d.layoutInfo.viewportWidth * RIGHTBAR_DEFAULT_RATIO));
+						d.layoutInfo.rightbarShown = true;
+						d.layoutInfo.rightbarTrack = track;
+						d.layoutInfo.rightbarFullscreen = fullscreen;
+					},
+					closeRightbar: (d) => {
+						if (d.layoutInfo.rightbarShown) d.layoutInfo.rightbarInstant = d.layoutInfo.rightbarFullscreen;
+						d.layoutInfo.rightbarShown = false;
+						d.layoutInfo.rightbarTrack = false;
+						d.layoutInfo.rightbarFullscreen = false;
 					}
 				}
 			});
@@ -402,6 +495,35 @@ window.__ModuleLoader__.load({
 		//#region lib/types/client/service.js
 		/** Cross-plugin panel-action face (ctx.layout). */
 		var LayoutController = class {
+			panels;
+			hasMainPanel;
+			panelInfo;
+			navigation = new AbortController();
+			selectPanel(panelId) {
+				if (panelId !== null && !this.hasMainPanel(panelId)) throw new Error(`Unknown main panel: ${panelId}`);
+				this.navigation.abort();
+				this.panels.selectPanel(panelId);
+			}
+			beginNavigation() {
+				this.navigation.abort();
+				this.navigation = new AbortController();
+				return this.navigation.signal;
+			}
+			dispose() {
+				this.navigation.abort();
+			}
+			constructor(panels, hasMainPanel, panelInfo) {
+				this.panels = panels;
+				this.hasMainPanel = hasMainPanel;
+				this.panelInfo = panelInfo;
+				this.attachPanels(panels);
+			}
+			openRightbar(track, fullscreen) {
+				this.panels.openRightbar(track, fullscreen);
+			}
+			closeRightbar() {
+				this.panels.closeRightbar();
+			}
 			#panels;
 			#sidebarReservations = /* @__PURE__ */ new Map();
 			#sidebarClaim;
@@ -556,11 +678,11 @@ window.__ModuleLoader__.load({
 					this.#syncDetailsReservation();
 					claim.onDisplaced();
 				}
-				this.#require().openDetails();
+				this.openRightbar(true, false);
 			}
 			/** Close the details panel. */
 			closeDetails() {
-				this.#require().closeDetails();
+				this.closeRightbar();
 			}
 			#syncSidebarReservation() {
 				if (this.#panels === void 0) return;
@@ -584,11 +706,37 @@ window.__ModuleLoader__.load({
 			}
 		};
 		//#endregion
+		//#region lib/types/client/shortcut-locales.js
+		/** Layout command labels. */
+		const zh = { toggle: "展开／收起左侧栏" };
+		/** English labels for the same layout commands. */
+		const en = { toggle: "Toggle left sidebar" };
+		//#endregion
 		//#region lib/types/client/theme-presenter.js
 		/** Body attribute selecting the dark base palette in the token stylesheets. */
 		const DARK_ATTRIBUTE = "data-ds-dark-theme";
-		/** Body variable carrying the user's content font size in px. */
-		const CONTENT_FONT_SIZE_VARIABLE = "--dsh-content-font-size";
+		/**
+		* Root attribute publishing the theme source (`light`, `dark`, or `system`)
+		* for host shells that mirror it into the native theme (the Electron preload
+		* forwards it to `nativeTheme.themeSource`, so native chrome, renderer
+		* `prefers-color-scheme` queries, and Platform login links follow the app
+		* palette on every platform). `system` only when the preference is `system`;
+		* a fixed preference (including registered theme ids) publishes its resolved
+		* scheme.
+		*/
+		const THEME_SOURCE_ATTRIBUTE = "data-ds-theme-source";
+		/** Body variables carrying the user's font sizes in px by role. */
+		const FONT_SIZE_VARIABLES = {
+			text: "--dsh-content-font-size",
+			code: "--dsh-code-font-size",
+			terminal: "--dsh-terminal-font-size"
+		};
+		/** Body variables carrying the user's normalized font lists; absent selects the built-in stack. */
+		const FONT_FAMILY_VARIABLES = {
+			text: "--dsh-font-family-text",
+			code: "--dsh-font-family-code",
+			terminal: "--dsh-font-family-terminal"
+		};
 		/** Applies theme snapshots to the document; one instance per plugin fiber. */
 		var ThemePresenter = class {
 			/** Token names this presenter wrote in the last apply (its retraction set). */
@@ -603,7 +751,7 @@ window.__ModuleLoader__.load({
 			/**
 			* Project a snapshot onto the document: set root `color-scheme` and the body
 			* palette attribute from `active.colorScheme` (never the id — `system` is
-			* resolved upstream), publish the content font-size axis, then replace the
+			* resolved upstream), publish the font sizes and font lists, then replace the
 			* previously applied token variables with `active.tokens`. Browser
 			* theme-color metadata follows the computed body background after those
 			* writes, so the rendered palette remains the color authority.
@@ -612,10 +760,16 @@ window.__ModuleLoader__.load({
 			apply(snapshot) {
 				const scheme = snapshot.active.colorScheme;
 				document.documentElement.style.colorScheme = scheme;
+				document.documentElement.setAttribute(THEME_SOURCE_ATTRIBUTE, snapshot.preference === "system" ? "system" : scheme);
 				const body = document.body;
 				if (scheme === "dark") body.setAttribute(DARK_ATTRIBUTE, "");
 				else body.removeAttribute(DARK_ATTRIBUTE);
-				body.style.setProperty(CONTENT_FONT_SIZE_VARIABLE, `${snapshot.fontSize}px`);
+				for (const [role, name] of Object.entries(FONT_SIZE_VARIABLES)) body.style.setProperty(name, `${snapshot.fontSizes[role]}px`);
+				for (const [kind, name] of Object.entries(FONT_FAMILY_VARIABLES)) {
+					const list = snapshot.fontFamilies[kind];
+					if (list === "") body.style.removeProperty(name);
+					else body.style.setProperty(name, list);
+				}
 				for (const name of this.appliedTokens) body.style.removeProperty(name);
 				this.appliedTokens = [];
 				for (const [name, value] of Object.entries(snapshot.active.tokens)) {
@@ -625,12 +779,17 @@ window.__ModuleLoader__.load({
 				this.themeColorMeta.content = getComputedStyle(body).backgroundColor;
 				if (!this.themeColorMeta.isConnected) document.head.append(this.themeColorMeta);
 			}
-			/** Retract root color-scheme, the palette attribute, token variables, the font-size axis, and the owned metadata node. */
+			/**
+			* Retract root color-scheme, the theme-source attribute, the palette
+			* attribute, token variables, the font sizes, font lists, and the owned metadata node.
+			*/
 			dispose() {
 				document.documentElement.style.removeProperty("color-scheme");
+				document.documentElement.removeAttribute(THEME_SOURCE_ATTRIBUTE);
 				const body = document.body;
 				body.removeAttribute(DARK_ATTRIBUTE);
-				body.style.removeProperty(CONTENT_FONT_SIZE_VARIABLE);
+				for (const name of Object.values(FONT_SIZE_VARIABLES)) body.style.removeProperty(name);
+				for (const name of Object.values(FONT_FAMILY_VARIABLES)) body.style.removeProperty(name);
 				for (const name of this.appliedTokens) body.style.removeProperty(name);
 				this.appliedTokens = [];
 				this.themeColorMeta.remove();
@@ -642,17 +801,36 @@ window.__ModuleLoader__.load({
 		const inject = [
 			"slots",
 			"theme",
-			"locale"
+			"locale",
+			"shortcuts"
 		];
 		/**
 		* Client plugin body: provide ctx.layout, then one register() call — AppFrame
-		* into 'root' with the four child-slot declarations, the layout store seat,
-		* and the inject hook that hands the store's bound actions to the service.
+		* into 'root' with its child-slot declarations, the layout store seat,
+		* and the shared root instance supplying commands and the panel-info source.
 		* @param ctx - client root context.
 		*/
 		function apply(ctx) {
-			const layout = new LayoutController();
+			ctx.effect(() => ctx.locale.register("shortcuts.layout", {
+				zh,
+				en
+			}), "layout: command labels");
+			const t = ctx.locale.bind("shortcuts.layout");
 			ctx.effect(() => {
+				const handle = createLayoutStore();
+				const instance = handle.create();
+				const store = {
+					...handle,
+					create: () => instance
+				};
+				const retainMainPanels = () => {
+					instance.actions.retainMainPanels(ctx.slots.entries("main").flatMap((entry) => entry.options.key === void 0 ? [] : [entry.options.key]));
+				};
+				const layout = new LayoutController(instance.actions, (id) => ctx.slots.entries("main").some((entry) => entry.options.key === id), {
+					getSnapshot: () => instance.getSnapshot().panelInfo,
+					subscribe: (listener) => instance.subscribe(listener)
+				});
+				const disposePanelInfo = ctx.slots.provideRoot({ hooks: { panelInfo: layout.panelInfo } });
 				const disposeService = ctx.reflect.provide("layout", layout);
 				const disposeRegistration = ctx.slots.register({
 					name: "root",
@@ -662,27 +840,72 @@ window.__ModuleLoader__.load({
 							kind: "single",
 							scope: "root"
 						},
-						"conversation": {
-							kind: "single",
-							scope: "session-maybe"
+						"main": {
+							kind: "keyed",
+							scope: "root"
 						},
-						"details": {
+						"rightbar": {
 							kind: "single",
-							scope: "session"
+							scope: "root"
+						},
+						"shell.bottom": {
+							kind: "single",
+							scope: "root"
 						},
 						"shell.overlay": {
 							kind: "list",
 							scope: "root"
+						},
+						"shell.leading": {
+							kind: "single",
+							scope: "root"
 						}
 					},
-					store: createLayoutStore,
-					inject: (actions) => {
-						layout.attachPanels(actions);
-						return {};
-					}
+					store
 				}, AppFrame);
+				const disposeShortcut = ctx.shortcuts.register({
+					id: "sidebar.left.toggle",
+					label: () => t("toggle"),
+					aliases: ["sidebar", "toggle left sidebar"],
+					defaults: {
+						"desktop:macos": {
+							code: "KeyB",
+							modifiers: ["primary"]
+						},
+						"desktop:windows": {
+							code: "KeyB",
+							modifiers: ["primary"]
+						},
+						"desktop:linux": {
+							code: "KeyB",
+							modifiers: ["primary"]
+						},
+						"web:macos": {
+							code: "KeyB",
+							modifiers: ["primary", "alt"]
+						},
+						"web:windows": {
+							code: "KeyB",
+							modifiers: ["primary", "alt"]
+						}
+					},
+					regions: ["page", "editable"],
+					modals: [],
+					resolve: () => ({
+						status: "handled",
+						run: () => {
+							layout.toggleSidebar();
+						}
+					})
+				});
+				const disposePanels = ctx.slots.subscribe("main", retainMainPanels);
+				retainMainPanels();
 				return () => {
+					disposeShortcut();
+					layout.dispose();
+					disposePanels();
 					disposeRegistration();
+					disposePanelInfo();
 					disposeService();
 				};
 			}, "ui-layout: service + root registration");

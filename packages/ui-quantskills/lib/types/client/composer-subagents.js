@@ -1,3 +1,5 @@
+import { brandString } from '@deepseek-ai/dsh-brand';
+import { selectedSession } from "./selected-session.js";
 /** Keep the stock subagent catalog opening upward from the composer icon. */
 const MENU_LABELS = ["子代理会话", "Subagent sessions"];
 function reactHandler(node, name) {
@@ -123,8 +125,17 @@ function installSubagentPopup(sessions) {
     sessions.openSubagent = wrapped;
 }
 /** Install composer click and upward placement for the stock subagent catalog. */
-export function bindComposerSubagentMenu(documentRoot, sessions) {
+export function bindComposerSubagentMenu(documentRoot, controller, navigation) {
+    const originalOpen = navigation.openSession;
+    const sessions = {
+        list: { getSnapshot: () => { const snapshot = controller.list.getSnapshot(); return { ...snapshot, current: selectedSession(snapshot) }; } },
+        open: id => originalOpen.call(navigation, brandString(id)),
+        openSubagent: address => originalOpen.call(navigation, address),
+    };
     installSubagentPopup(sessions);
+    const wrappedOpen = (target) => typeof target === 'string'
+        ? originalOpen.call(navigation, target) : sessions.openSubagent(target);
+    navigation.openSession = wrappedOpen;
     const onClick = (event) => {
         const target = event.target;
         if (!(target instanceof Element))
@@ -147,6 +158,9 @@ export function bindComposerSubagentMenu(documentRoot, sessions) {
     documentRoot.addEventListener("keydown", onKey);
     window.addEventListener("resize", placeComposerSubagentMenu);
     return () => {
+        if (navigation.openSession === wrappedOpen)
+            navigation.openSession = originalOpen;
+        closeSubagentPopup();
         watching = false;
         observer.disconnect();
         documentRoot.removeEventListener("click", onClick, true);

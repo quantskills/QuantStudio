@@ -1,7 +1,7 @@
 import type { ReactNode, RefObject } from 'react';
-import type { ConversationSlotProps } from '../contract/slots.ts';
+import type { ConversationContentProps } from '../contract/slots.ts';
 /** The owner's locale seat type, passed to hero chrome as a plain prop. */
-type HeroTranslate = ConversationSlotProps['t'];
+type HeroTranslate = ConversationContentProps['t'];
 /**
  * Basename label for the workspace chip (the shared derivation);
  * separator-only paths echo the raw cwd.
@@ -32,7 +32,7 @@ export interface HeroShellProps {
     /** The owner's locale seat, passed down as a plain prop. */
     t: HeroTranslate;
     /** Authorized renderer for the hero brand-mark slot. */
-    renderSlot: ConversationSlotProps['renderSlot'];
+    renderSlot: ConversationContentProps['renderSlot'];
     /** Overlay content after the stack (modals). */
     children?: ReactNode;
 }

@@ -2,19 +2,45 @@ import { NS } from "../locale.js";
 import { AssistantNodeView } from "./AssistantNodeView.js";
 import { CommandNodeView, ManualCompactionNodeView } from "./CommandNodeView.js";
 import { CompactionNodeView, ContextMessageNodeView, RetryNodeView, TurnErrorNodeView, TurnMaxTokensNodeView, UnknownNodeView, UserMessageNodeView, } from "./MessageItem.js";
+import { DefaultReasoningBody, ReasoningContent } from "./ReasoningContent.js";
 import { SystemPromptNodeView } from "./SystemPromptRow.js";
 import { TurnProcessNodeView } from "./TurnProcessNodeView.js";
 import { TurnTailNodeView } from "./TurnTailNodeView.js";
+import { TurnTriggerNodeView } from "./TurnTriggerNodeView.js";
 /**
  * Register this package's business renderers behind the keyed Chat Node seat.
+ * Renderers whose output depends on the work-details mode receive the policy
+ * through their own registration; the seat and the other renderers do not.
  * @param ctx - owning UI Conversation context.
+ * @param performanceUsage - live statistics detail preference.
+ * @param presentation - live presentation policy.
  */
-export function registerChatNodeRenderers(ctx) {
+export function registerChatNodeRenderers(ctx, performanceUsage, presentation) {
+    ctx.effect(() => ctx.slots.registerFactory({
+        name: 'conversation.chat.reasoning.content',
+        scope: 'root',
+        locale: NS,
+    }, ReasoningContent));
+    ctx.slots.inject('conversation.chat.reasoning.body', () => ctx.slots.register({
+        name: 'conversation.chat.reasoning.body',
+        priority: 100,
+    }, DefaultReasoningBody));
     ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({ name: 'conversation.chat.node', key: 'user', locale: NS }, UserMessageNodeView));
     ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({ name: 'conversation.chat.node', key: 'steering', locale: NS }, UserMessageNodeView));
     ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({ name: 'conversation.chat.node', key: 'context', locale: NS }, ContextMessageNodeView));
+    ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({ name: 'conversation.chat.node', key: 'turn-trigger', locale: NS }, TurnTriggerNodeView));
     ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({ name: 'conversation.chat.node', key: 'system-prompt', locale: NS }, SystemPromptNodeView));
-    ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({ name: 'conversation.chat.node', key: 'assistant-step', locale: NS, children: { 'conversation.chat.deliverables': { kind: 'single', scope: 'session' } } }, AssistantNodeView));
+    ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({
+        name: 'conversation.chat.node',
+        key: 'assistant-step',
+        locale: NS,
+        children: {
+            'conversation.chat.reasoning.body': { kind: 'single', scope: 'session' },
+            'conversation.chat.deliverables': { kind: 'single', scope: 'session' },
+            'conversation.chat.message.images': { kind: 'single', scope: 'session' },
+        },
+        inject: () => ({ hooks: { presentation } }),
+    }, AssistantNodeView));
     ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({
         name: 'conversation.chat.node',
         key: 'command',
@@ -31,8 +57,9 @@ export function registerChatNodeRenderers(ctx) {
         name: 'conversation.chat.node',
         key: 'turn-tail',
         locale: NS,
+        inject: () => ({ hooks: { performanceUsage } }),
         children: {
-            'conversation.chat.turnTail': { kind: 'chain', scope: 'session' },
+            'conversation.chat.turnTail': { kind: 'list', scope: 'session' },
             'conversation.chat.assistant-actions': { kind: 'list', scope: 'session' },
         },
     }, TurnTailNodeView));

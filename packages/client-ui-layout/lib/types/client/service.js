@@ -1,5 +1,25 @@
 /** Cross-plugin panel-action face (ctx.layout). */
 export class LayoutController {
+    panels;
+    hasMainPanel;
+    panelInfo;
+    navigation = new AbortController();
+    selectPanel(panelId) {
+        if (panelId !== null && !this.hasMainPanel(panelId))
+            throw new Error(`Unknown main panel: ${panelId}`);
+        this.navigation.abort();
+        this.panels.selectPanel(panelId);
+    }
+    beginNavigation() { this.navigation.abort(); this.navigation = new AbortController(); return this.navigation.signal; }
+    dispose() { this.navigation.abort(); }
+    constructor(panels, hasMainPanel, panelInfo) {
+        this.panels = panels;
+        this.hasMainPanel = hasMainPanel;
+        this.panelInfo = panelInfo;
+        this.attachPanels(panels);
+    }
+    openRightbar(track, fullscreen) { this.panels.openRightbar(track, fullscreen); }
+    closeRightbar() { this.panels.closeRightbar(); }
     #panels;
     #sidebarReservations = new Map();
     #sidebarClaim;
@@ -170,11 +190,11 @@ export class LayoutController {
             this.#syncDetailsReservation();
             claim.onDisplaced();
         }
-        this.#require().openDetails();
+        this.openRightbar(true, false);
     }
     /** Close the details panel. */
     closeDetails() {
-        this.#require().closeDetails();
+        this.closeRightbar();
     }
     #syncSidebarReservation() {
         if (this.#panels === undefined)

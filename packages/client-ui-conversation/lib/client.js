@@ -26,41 +26,1712 @@ window.__ModuleLoader__.load({
 			enumerable: true
 		}) : target, mod));
 		//#endregion
+		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
 		let _deepseek_ai_dsh_client_store = require("@deepseek-ai/dsh-client-store");
 		let _deepseek_ai_dsh_client_ui_slots = require("@deepseek-ai/dsh-client-ui-slots");
 		let _deepseek_ai_cordis = require("@deepseek-ai/cordis");
 		let react_jsx_runtime = require("react/jsx-runtime");
-		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
 		let react = require("react");
 		react = __toESM(react, 1);
+		let zod = require("zod");
 		let react_dom = require("react-dom");
+		//#region ../../node_modules/@deepseek-ai/cosmokit/lib/index.js
+		/** Return true when a value is `null` or `undefined`. */
+		function isNullable(value) {
+			return value === null || value === void 0;
+		}
+		/** Return true for non-array object values. */
+		function isPlainObject(data) {
+			return data && typeof data === "object" && !Array.isArray(data);
+		}
+		/** Filter object entries and return a new object. */
+		function filterKeys(object, filter) {
+			return Object.fromEntries(Object.entries(object).filter(([key, value]) => filter(key, value)));
+		}
+		/** Map object values while preserving the original key set. */
+		function mapValues(object, transform) {
+			return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, transform(value, key)]));
+		}
+		/** Pick selected keys from an object, optionally including `undefined` values. */
+		function pick(source, keys, forced) {
+			if (!keys) return { ...source };
+			const result = {};
+			for (const key of keys) if (forced || source[key] !== void 0) result[key] = source[key];
+			return result;
+		}
+		/** Shared config references used by schema validators and plugin runtimes. */
+		const write = Symbol.for("cosmokit.volatile.write");
+		function snapshot(value, ancestors = /* @__PURE__ */ new Set()) {
+			if (typeof value === "function") throw new TypeError("volatile config cannot contain functions");
+			if (value === null || typeof value !== "object") return value;
+			if (ancestors.has(value)) throw new TypeError("volatile config cannot contain cycles");
+			ancestors.add(value);
+			try {
+				if (Array.isArray(value)) return Object.freeze(value.map((item) => snapshot(item, ancestors)));
+				if (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null) throw new TypeError("volatile config objects must be plain objects or arrays");
+				return Object.freeze(Object.fromEntries(Object.entries(value).map(([key, item]) => [key, snapshot(item, ancestors)])));
+			} finally {
+				ancestors.delete(value);
+			}
+		}
+		/**
+		* Create a detached reference containing an immutable copy of the supplied data.
+		* @param value - validated config data; class instances and functions are unsupported.
+		* @returns a reference whose value is updated only by its owning runtime.
+		*/
+		function createVolatile(value) {
+			let current = snapshot(value);
+			return Object.freeze({
+				get: () => current,
+				[write]: (value) => {
+					current = value;
+				}
+			});
+		}
+		/**
+		* Identify references across ESM/CJS copies of the shared library.
+		* @param value - a parsed config value.
+		* @returns whether the value implements the shared reference protocol.
+		*/
+		function isVolatile(value) {
+			return typeof value === "object" && value !== null && write in value;
+		}
+		/** Test values using `instanceof` with a `toStringTag` fallback. */
+		function is(type, value) {
+			if (arguments.length === 1) return (value) => is(type, value);
+			return type in globalThis && value instanceof globalThis[type] || Object.prototype.toString.call(value).slice(8, -1) === type;
+		}
+		function isArrayBufferLike(value) {
+			return is("ArrayBuffer", value) || is("SharedArrayBuffer", value);
+		}
+		function isArrayBufferSource(value) {
+			return isArrayBufferLike(value) || ArrayBuffer.isView(value);
+		}
+		/** Binary source detection and base64/hex conversion helpers. */
+		var Binary;
+		(function(Binary) {
+			Binary.is = isArrayBufferLike;
+			Binary.isSource = isArrayBufferSource;
+			function fromSource(source) {
+				if (ArrayBuffer.isView(source)) return source.buffer.slice(source.byteOffset, source.byteOffset + source.byteLength);
+				else return source;
+			}
+			Binary.fromSource = fromSource;
+			function toBase64(source) {
+				source = fromSource(source);
+				if (typeof Buffer !== "undefined") return Buffer.from(source).toString("base64");
+				let binary = "";
+				const bytes = new Uint8Array(source);
+				for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
+				return btoa(binary);
+			}
+			Binary.toBase64 = toBase64;
+			function fromBase64(source) {
+				if (typeof Buffer !== "undefined") return fromSource(Buffer.from(source, "base64"));
+				return Uint8Array.from(atob(source), (c) => c.charCodeAt(0));
+			}
+			Binary.fromBase64 = fromBase64;
+			function toHex(source) {
+				source = fromSource(source);
+				if (typeof Buffer !== "undefined") return Buffer.from(source).toString("hex");
+				return Array.from(new Uint8Array(source), (byte) => byte.toString(16).padStart(2, "0")).join("");
+			}
+			Binary.toHex = toHex;
+			function fromHex(source) {
+				if (typeof Buffer !== "undefined") return fromSource(Buffer.from(source, "hex"));
+				const hex = source.length % 2 === 0 ? source : source.slice(0, source.length - 1);
+				const buffer = [];
+				for (let i = 0; i < hex.length; i += 2) buffer.push(parseInt(`${hex[i]}${hex[i + 1]}`, 16));
+				return Uint8Array.from(buffer).buffer;
+			}
+			Binary.fromHex = fromHex;
+		})(Binary || (Binary = {}));
+		Binary.fromBase64;
+		Binary.toBase64;
+		Binary.fromHex;
+		Binary.toHex;
+		/** Deep-clone common JavaScript values while preserving prototypes and cycles. */
+		function clone(source, refs = /* @__PURE__ */ new Map()) {
+			if (!source || typeof source !== "object") return source;
+			if (is("Date", source)) return new Date(source.valueOf());
+			if (is("RegExp", source)) return new RegExp(source.source, source.flags);
+			if (isArrayBufferLike(source)) return source.slice(0);
+			if (ArrayBuffer.isView(source)) return source.buffer.slice(source.byteOffset, source.byteOffset + source.byteLength);
+			const cached = refs.get(source);
+			if (cached) return cached;
+			if (Array.isArray(source)) {
+				const result = [];
+				refs.set(source, result);
+				source.forEach((value, index) => {
+					result[index] = Reflect.apply(clone, null, [value, refs]);
+				});
+				return result;
+			}
+			const result = Object.create(Object.getPrototypeOf(source));
+			refs.set(source, result);
+			for (const key of Reflect.ownKeys(source)) {
+				const descriptor = { ...Reflect.getOwnPropertyDescriptor(source, key) };
+				if ("value" in descriptor) descriptor.value = Reflect.apply(clone, null, [descriptor.value, refs]);
+				Reflect.defineProperty(result, key, descriptor);
+			}
+			return result;
+		}
+		/**
+		* Compare values recursively, treating two volatile references as equal regardless of value.
+		* Strict comparison distinguishes null/undefined, treats opaque objects by identity,
+		* compares URLs by normalized href, treats array holes as undefined, and considers distinct cyclic structures unequal.
+		* @param a - first value.
+		* @param b - second value.
+		* @param strict - whether to require strict data equality outside volatile references.
+		* @returns whether the values compare equal.
+		*/
+		function deepEqual(a, b, strict) {
+			const ancestors = /* @__PURE__ */ new Set();
+			function compare(a, b) {
+				if (a === b) return true;
+				if (isVolatile(a) || isVolatile(b)) return isVolatile(a) && isVolatile(b);
+				if (!strict && isNullable(a) && isNullable(b)) return true;
+				if (typeof a !== typeof b || typeof a !== "object" || !a || !b) return false;
+				if (ancestors.has(a)) return false;
+				function check(test, then) {
+					return test(a) ? test(b) ? then(a, b) : false : test(b) ? false : void 0;
+				}
+				ancestors.add(a);
+				try {
+					return check(Array.isArray, (a, b) => {
+						if (a.length !== b.length) return false;
+						for (let index = 0; index < a.length; index++) if (!compare(a[index], b[index])) return false;
+						return true;
+					}) ?? check(is("Date"), (a, b) => a.valueOf() === b.valueOf()) ?? check(is("URL"), (a, b) => a.href === b.href) ?? check(is("RegExp"), (a, b) => a.source === b.source && a.flags === b.flags) ?? check(isArrayBufferLike, (a, b) => {
+						if (a.byteLength !== b.byteLength) return false;
+						const viewA = new Uint8Array(a);
+						const viewB = new Uint8Array(b);
+						for (let i = 0; i < viewA.length; i++) if (viewA[i] !== viewB[i]) return false;
+						return true;
+					}) ?? ((!strict || [a, b].every((value) => Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null)) && Object.keys({
+						...a,
+						...b
+					}).every((key) => compare(a[key], b[key])));
+				} finally {
+					ancestors.delete(a);
+				}
+			}
+			return compare(a, b);
+		}
+		/** Time constants plus parsing and formatting helpers. */
+		var Time;
+		(function(Time) {
+			Time.millisecond = 1;
+			Time.second = 1e3;
+			Time.minute = Time.second * 60;
+			Time.hour = Time.minute * 60;
+			Time.day = Time.hour * 24;
+			Time.week = Time.day * 7;
+			let timezoneOffset = (/* @__PURE__ */ new Date()).getTimezoneOffset();
+			function setTimezoneOffset(offset) {
+				timezoneOffset = offset;
+			}
+			Time.setTimezoneOffset = setTimezoneOffset;
+			function getTimezoneOffset() {
+				return timezoneOffset;
+			}
+			Time.getTimezoneOffset = getTimezoneOffset;
+			function getDateNumber(date = /* @__PURE__ */ new Date(), offset) {
+				if (typeof date === "number") date = new Date(date);
+				if (offset === void 0) offset = timezoneOffset;
+				return Math.floor((date.valueOf() / Time.minute - offset) / 1440);
+			}
+			Time.getDateNumber = getDateNumber;
+			function fromDateNumber(value, offset) {
+				const date = new Date(value * Time.day);
+				if (offset === void 0) offset = timezoneOffset;
+				return new Date(+date + offset * Time.minute);
+			}
+			Time.fromDateNumber = fromDateNumber;
+			const numeric = /\d+(?:\.\d+)?/.source;
+			const timeRegExp = new RegExp(`^${[
+				"w(?:eek(?:s)?)?",
+				"d(?:ay(?:s)?)?",
+				"h(?:our(?:s)?)?",
+				"m(?:in(?:ute)?(?:s)?)?",
+				"s(?:ec(?:ond)?(?:s)?)?"
+			].map((unit) => `(${numeric}${unit})?`).join("")}$`);
+			function parseTime(source) {
+				const capture = timeRegExp.exec(source);
+				if (!capture) return 0;
+				return (parseFloat(capture[1]) * Time.week || 0) + (parseFloat(capture[2]) * Time.day || 0) + (parseFloat(capture[3]) * Time.hour || 0) + (parseFloat(capture[4]) * Time.minute || 0) + (parseFloat(capture[5]) * Time.second || 0);
+			}
+			Time.parseTime = parseTime;
+			function parseDate(date) {
+				const parsed = parseTime(date);
+				if (parsed) date = Date.now() + parsed;
+				else if (/^\d{1,2}(:\d{1,2}){1,2}$/.test(date)) date = `${(/* @__PURE__ */ new Date()).toLocaleDateString()}-${date}`;
+				else if (/^\d{1,2}-\d{1,2}-\d{1,2}(:\d{1,2}){1,2}$/.test(date)) date = `${(/* @__PURE__ */ new Date()).getFullYear()}-${date}`;
+				return date ? new Date(date) : /* @__PURE__ */ new Date();
+			}
+			Time.parseDate = parseDate;
+			function format(ms) {
+				const abs = Math.abs(ms);
+				if (abs >= Time.day - Time.hour / 2) return Math.round(ms / Time.day) + "d";
+				else if (abs >= Time.hour - Time.minute / 2) return Math.round(ms / Time.hour) + "h";
+				else if (abs >= Time.minute - Time.second / 2) return Math.round(ms / Time.minute) + "m";
+				else if (abs >= Time.second) return Math.round(ms / Time.second) + "s";
+				return ms + "ms";
+			}
+			Time.format = format;
+			function toDigits(source, length = 2) {
+				return source.toString().padStart(length, "0");
+			}
+			Time.toDigits = toDigits;
+			function template(template, time = /* @__PURE__ */ new Date()) {
+				return template.replace("yyyy", time.getFullYear().toString()).replace("yy", time.getFullYear().toString().slice(2)).replace("MM", toDigits(time.getMonth() + 1)).replace("dd", toDigits(time.getDate())).replace("hh", toDigits(time.getHours())).replace("mm", toDigits(time.getMinutes())).replace("ss", toDigits(time.getSeconds())).replace("SSS", toDigits(time.getMilliseconds(), 3));
+			}
+			Time.template = template;
+		})(Time || (Time = {}));
+		//#endregion
+		//#region ../../node_modules/@deepseek-ai/schemastery/lib/index.mjs
+		const kSchema = Symbol.for("schemastery");
+		const kValidationError = Symbol.for("ValidationError");
+		globalThis.__schemastery_index__ ??= 0;
+		globalThis.__schemastery_refs__ = void 0;
+		var ValidationError = class extends TypeError {
+			options;
+			name = "ValidationError";
+			constructor(message, options) {
+				let prefix = "$";
+				for (const segment of options.path || []) if (typeof segment === "string") prefix += "." + segment;
+				else if (typeof segment === "number") prefix += "[" + segment + "]";
+				else if (typeof segment === "symbol") prefix += `[Symbol(${segment.toString()})]`;
+				if (prefix.startsWith(".")) prefix = prefix.slice(1);
+				super((prefix === "$" ? "" : `${prefix} `) + message);
+				this.options = options;
+			}
+			static is(error) {
+				return !!error?.[kValidationError];
+			}
+		};
+		Object.defineProperty(ValidationError.prototype, kValidationError, { value: true });
+		const Schema = function(options) {
+			const schema = function(data, options = {}) {
+				return Schema.resolve(data, schema, options)[0];
+			};
+			if (options.refs) {
+				const refs = mapValues(options.refs, (options) => new Schema(options));
+				const getRef = (uid) => refs[uid];
+				for (const key in refs) {
+					const options = refs[key];
+					options.sKey = getRef(options.sKey);
+					options.inner = getRef(options.inner);
+					options.list = options.list && options.list.map(getRef);
+					options.dict = options.dict && mapValues(options.dict, getRef);
+				}
+				return refs[options.uid];
+			}
+			Object.assign(schema, options);
+			if (typeof schema.callback === "string") try {
+				schema.callback = new Function("return " + schema.callback)();
+			} catch {}
+			Object.defineProperty(schema, "uid", { value: globalThis.__schemastery_index__++ });
+			Object.setPrototypeOf(schema, Schema.prototype);
+			schema.meta ||= {};
+			schema.toString = schema.toString.bind(schema);
+			return schema;
+		};
+		Schema.prototype = Object.create(Function.prototype);
+		Schema.prototype[kSchema] = true;
+		Object.defineProperty(Schema.prototype, "~standard", { get() {
+			return {
+				version: 1,
+				vendor: "schemastery",
+				validate: (value) => {
+					try {
+						return { value: Schema.resolve(value, this, {})[0] };
+					} catch (error) {
+						if (ValidationError.is(error)) return { issues: [{
+							message: error.message,
+							path: error.options.path
+						}] };
+						throw error;
+					}
+				}
+			};
+		} });
+		Schema.ValidationError = ValidationError;
+		Schema.prototype.toJSON = function toJSON() {
+			if (globalThis.__schemastery_refs__) {
+				globalThis.__schemastery_refs__[this.uid] ??= JSON.parse(JSON.stringify({ ...this }));
+				return this.uid;
+			}
+			globalThis.__schemastery_refs__ = { [this.uid]: { ...this } };
+			globalThis.__schemastery_refs__[this.uid] = JSON.parse(JSON.stringify({ ...this }));
+			const result = {
+				uid: this.uid,
+				refs: globalThis.__schemastery_refs__
+			};
+			globalThis.__schemastery_refs__ = void 0;
+			return result;
+		};
+		Schema.prototype.set = function set(key, value) {
+			this.dict[key] = value;
+			return this;
+		};
+		Schema.prototype.push = function push(value) {
+			this.list.push(value);
+			return this;
+		};
+		function mergeDesc(original, messages) {
+			const result = typeof original === "string" ? { "": original } : { ...original };
+			for (const locale in messages) {
+				const value = messages[locale];
+				if (value?.$description || value?.$desc) result[locale] = value.$description || value.$desc;
+				else if (typeof value === "string") result[locale] = value;
+			}
+			return result;
+		}
+		function getInner(value) {
+			return value?.$value ?? value?.$inner;
+		}
+		function extractKeys(data) {
+			return filterKeys(data ?? {}, (key) => !key.startsWith("$"));
+		}
+		Schema.prototype.i18n = function i18n(messages) {
+			const schema = Schema(this);
+			const desc = mergeDesc(schema.meta.description, messages);
+			if (Object.keys(desc).length) schema.meta.description = desc;
+			if (schema.dict) schema.dict = mapValues(schema.dict, (inner, key) => {
+				return inner.i18n(mapValues(messages, (data) => getInner(data)?.[key] ?? data?.[key]));
+			});
+			if (schema.list) schema.list = schema.list.map((inner, index) => {
+				return inner.i18n(mapValues(messages, (data = {}) => {
+					if (Array.isArray(getInner(data))) return getInner(data)[index];
+					if (Array.isArray(data)) return data[index];
+					return extractKeys(data);
+				}));
+			});
+			if (schema.inner) schema.inner = schema.inner.i18n(mapValues(messages, (data) => {
+				if (getInner(data)) return getInner(data);
+				return extractKeys(data);
+			}));
+			if (schema.sKey) schema.sKey = schema.sKey.i18n(mapValues(messages, (data) => data?.$key));
+			return schema;
+		};
+		Schema.prototype.extra = function extra(key, value) {
+			const schema = Schema(this);
+			schema.meta = {
+				...schema.meta,
+				[key]: value
+			};
+			return schema;
+		};
+		for (const key of [
+			"required",
+			"disabled",
+			"collapse",
+			"hidden",
+			"loose"
+		]) Object.assign(Schema.prototype, { [key](value = true) {
+			const schema = Schema(this);
+			schema.meta = {
+				...schema.meta,
+				[key]: value
+			};
+			return schema;
+		} });
+		Schema.prototype.deprecated = function deprecated() {
+			const schema = Schema(this);
+			schema.meta.badges ||= [];
+			schema.meta.badges.push({
+				text: "deprecated",
+				type: "danger"
+			});
+			return schema;
+		};
+		Schema.prototype.experimental = function experimental() {
+			const schema = Schema(this);
+			schema.meta.badges ||= [];
+			schema.meta.badges.push({
+				text: "experimental",
+				type: "warning"
+			});
+			return schema;
+		};
+		Schema.prototype.pattern = function pattern(regexp) {
+			const schema = Schema(this);
+			const pattern = pick(regexp, ["source", "flags"]);
+			schema.meta = {
+				...schema.meta,
+				pattern
+			};
+			return schema;
+		};
+		Schema.prototype.simplify = function simplify(value) {
+			if (isVolatile(value)) value = value.get();
+			if (deepEqual(value, this.meta.default, this.type === "dict")) return null;
+			if (isNullable(value)) return value;
+			if (this.type === "object" || this.type === "dict") {
+				const result = {};
+				for (const key in value) {
+					const item = (this.type === "object" ? this.dict[key] : this.inner)?.simplify(value[key]);
+					if (this.type === "dict" || !isNullable(item)) result[key] = item;
+				}
+				if (deepEqual(result, this.meta.default, this.type === "dict")) return null;
+				return result;
+			} else if (this.type === "array" || this.type === "tuple") {
+				const result = [];
+				value.forEach((value, index) => {
+					const schema = this.type === "array" ? this.inner : this.list[index];
+					const item = schema ? schema.simplify(value) : value;
+					result.push(item);
+				});
+				return result;
+			} else if (this.type === "intersect") {
+				const result = {};
+				for (const item of this.list) Object.assign(result, item.simplify(value));
+				return result;
+			} else if (this.type === "union") for (const schema of this.list) try {
+				Schema.resolve(value, schema, {});
+				return schema.simplify(value);
+			} catch {}
+			return value;
+		};
+		Schema.prototype.toString = function toString(inline) {
+			return formatters[this.type]?.(this, inline) ?? `Schema<${this.type}>`;
+		};
+		Schema.prototype.role = function role(role, extra) {
+			const schema = Schema(this);
+			schema.meta = {
+				...schema.meta,
+				role,
+				extra
+			};
+			return schema;
+		};
+		for (const key of [
+			"default",
+			"link",
+			"comment",
+			"description",
+			"max",
+			"min",
+			"step"
+		]) Object.assign(Schema.prototype, { [key](value) {
+			const schema = Schema(this);
+			schema.meta = {
+				...schema.meta,
+				[key]: value
+			};
+			return schema;
+		} });
+		Schema.prototype.volatile = function volatile() {
+			if (this.meta.volatile) throw new TypeError("volatile schema is already wrapped");
+			return this.extra("volatile", true);
+		};
+		const resolvers = {};
+		const checkedVolatile = Symbol("checked-volatile-schema");
+		function validateVolatileSchema(schema, path = [], blocked = false, seen = /* @__PURE__ */ new Map()) {
+			const states = seen.get(schema) ?? /* @__PURE__ */ new Set();
+			if (states.has(blocked)) return;
+			states.add(blocked);
+			seen.set(schema, states);
+			if (schema.meta?.volatile && blocked) throw new ValidationError("volatile fields require a fixed object path without an enclosing volatile field", { path });
+			const nested = blocked || !!schema.meta?.volatile;
+			if (schema.dict) for (const [key, child] of Object.entries(schema.dict)) validateVolatileSchema(child, [...path, key], nested, seen);
+			if (schema.sKey) validateVolatileSchema(schema.sKey, [...path, "<key>"], true, seen);
+			if (schema.inner && (schema.type !== "lazy" || schema.inner[kSchema])) validateVolatileSchema(schema.inner, [...path, "*"], true, seen);
+			if (schema.list) for (let index = 0; index < schema.list.length; index++) validateVolatileSchema(schema.list[index], [...path, String(index)], true, seen);
+		}
+		Schema.extend = function extend(type, resolve) {
+			resolvers[type] = resolve;
+		};
+		Schema.resolve = function resolve(data, schema, options = {}, strict = false) {
+			if (!schema) return [data];
+			if (!options[checkedVolatile]) {
+				validateVolatileSchema(schema, options.path);
+				options = {
+					...options,
+					[checkedVolatile]: true
+				};
+			}
+			if (schema.meta?.volatile) {
+				const inner = Schema(schema);
+				inner.meta = {
+					...schema.meta,
+					volatile: false
+				};
+				const [value, adapted] = Schema.resolve(data, inner, options, strict);
+				try {
+					return [createVolatile(value), adapted];
+				} catch (error) {
+					throw new ValidationError(error instanceof Error ? error.message : String(error), options);
+				}
+			}
+			if (options.ignore?.(data, schema)) return [data];
+			if (isNullable(data) && schema.type !== "lazy") {
+				if (schema.meta.required) throw new ValidationError(`missing required value`, options);
+				let current = schema;
+				let fallback = schema.meta.default;
+				while (current?.type === "intersect" && isNullable(fallback)) {
+					current = current.list[0];
+					fallback = current?.meta.default;
+				}
+				if (isNullable(fallback)) return [data];
+				data = clone(fallback);
+			}
+			const callback = resolvers[schema.type];
+			if (!callback) throw new ValidationError(`unsupported type "${schema.type}"`, options);
+			try {
+				return callback(data, schema, options, strict);
+			} catch (error) {
+				if (!schema.meta.loose) throw error;
+				return [schema.meta.default];
+			}
+		};
+		Schema.from = function from(source) {
+			if (isNullable(source)) return Schema.any();
+			else if ([
+				"string",
+				"number",
+				"boolean"
+			].includes(typeof source)) return Schema.const(source).required();
+			else if (source[kSchema]) return source;
+			else if (typeof source === "function") switch (source) {
+				case String: return Schema.string().required();
+				case Number: return Schema.number().required();
+				case Boolean: return Schema.boolean().required();
+				case Function: return Schema.function().required();
+				default: return Schema.is(source).required();
+			}
+			else throw new TypeError(`cannot infer schema from ${source}`);
+		};
+		Schema.lazy = function lazy(builder) {
+			const toJSON = () => {
+				if (!schema.inner[kSchema]) {
+					schema.inner = schema.builder();
+					schema.inner.meta = {
+						...schema.meta,
+						...schema.inner.meta
+					};
+				}
+				return schema.inner.toJSON();
+			};
+			const schema = new Schema({
+				type: "lazy",
+				builder,
+				inner: { toJSON }
+			});
+			return schema;
+		};
+		Schema.natural = function natural() {
+			return Schema.number().step(1).min(0);
+		};
+		Schema.percent = function percent() {
+			return Schema.number().step(.01).min(0).max(1).role("slider");
+		};
+		Schema.date = function date() {
+			return Schema.union([Schema.is(Date), Schema.transform(Schema.string().role("datetime"), (value, options) => {
+				const date = new Date(value);
+				if (isNaN(+date)) throw new ValidationError(`invalid date "${value}"`, options);
+				return date;
+			}, true)]);
+		};
+		Schema.regExp = function regExp(flag = "") {
+			return Schema.union([Schema.is(RegExp), Schema.transform(Schema.string().role("regexp", { flag }), (value, options) => {
+				try {
+					return new RegExp(value, flag);
+				} catch (e) {
+					throw new ValidationError(e.message, options);
+				}
+			}, true)]);
+		};
+		Schema.arrayBuffer = function arrayBuffer(encoding) {
+			return Schema.union([
+				Schema.is(ArrayBuffer),
+				Schema.is(SharedArrayBuffer),
+				Schema.transform(Schema.any(), (value, options) => {
+					if (Binary.isSource(value)) return Binary.fromSource(value);
+					throw new ValidationError(`expected ArrayBufferSource but got ${value}`, options);
+				}, true),
+				...encoding ? [Schema.transform(Schema.string(), (value, options) => {
+					try {
+						return encoding === "base64" ? Binary.fromBase64(value) : Binary.fromHex(value);
+					} catch (e) {
+						throw new ValidationError(e.message, options);
+					}
+				}, true)] : []
+			]);
+		};
+		Schema.extend("lazy", (data, schema, options, strict) => {
+			if (!schema.inner[kSchema]) {
+				schema.inner = schema.builder();
+				schema.inner.meta = {
+					...schema.meta,
+					...schema.inner.meta
+				};
+				validateVolatileSchema(schema.inner, options.path, true);
+			}
+			return Schema.resolve(data, schema.inner, options, strict);
+		});
+		Schema.extend("any", (data) => {
+			return [data];
+		});
+		Schema.extend("never", (data, _, options) => {
+			throw new ValidationError(`expected nullable but got ${data}`, options);
+		});
+		Schema.extend("const", (data, { value }, options) => {
+			if (deepEqual(data, value)) return [value];
+			throw new ValidationError(`expected ${value} but got ${data}`, options);
+		});
+		function checkWithinRange(data, meta, description, options, skipMin = false) {
+			const { max = Infinity, min = -Infinity } = meta;
+			if (data > max) throw new ValidationError(`expected ${description} <= ${max} but got ${data}`, options);
+			if (data < min && !skipMin) throw new ValidationError(`expected ${description} >= ${min} but got ${data}`, options);
+		}
+		Schema.extend("string", (data, { meta }, options) => {
+			if (typeof data !== "string") throw new ValidationError(`expected string but got ${data}`, options);
+			if (meta.pattern) {
+				const regexp = new RegExp(meta.pattern.source, meta.pattern.flags);
+				if (!regexp.test(data)) throw new ValidationError(`expect string to match regexp ${regexp}`, options);
+			}
+			checkWithinRange(data.length, meta, "string length", options);
+			return [data];
+		});
+		function decimalShift(data, digits) {
+			const str = data.toString();
+			if (str.includes("e")) return data * Math.pow(10, digits);
+			const index = str.indexOf(".");
+			if (index === -1) return data * Math.pow(10, digits);
+			const frac = str.slice(index + 1);
+			const integer = str.slice(0, index);
+			if (frac.length <= digits) return +(integer + frac.padEnd(digits, "0"));
+			return +(integer + frac.slice(0, digits) + "." + frac.slice(digits));
+		}
+		function isMultipleOf(data, min, step) {
+			step = Math.abs(step);
+			if (!/^\d+\.\d+$/.test(step.toString())) return (data - min) % step === 0;
+			const index = step.toString().indexOf(".");
+			const digits = step.toString().slice(index + 1).length;
+			return Math.abs(decimalShift(data, digits) - decimalShift(min, digits)) % decimalShift(step, digits) === 0;
+		}
+		Schema.extend("number", (data, { meta }, options) => {
+			if (typeof data !== "number") throw new ValidationError(`expected number but got ${data}`, options);
+			checkWithinRange(data, meta, "number", options);
+			const { step } = meta;
+			if (step && !isMultipleOf(data, meta.min ?? 0, step)) throw new ValidationError(`expected number multiple of ${step} but got ${data}`, options);
+			return [data];
+		});
+		Schema.extend("boolean", (data, _, options) => {
+			if (typeof data === "boolean") return [data];
+			throw new ValidationError(`expected boolean but got ${data}`, options);
+		});
+		Schema.extend("bitset", (data, { bits, meta }, options) => {
+			let value = 0, keys = [];
+			if (typeof data === "number") {
+				value = data;
+				for (const key in bits) if (data & bits[key]) keys.push(key);
+			} else if (Array.isArray(data)) {
+				keys = data;
+				for (const key of keys) {
+					if (typeof key !== "string") throw new ValidationError(`expected string but got ${key}`, options);
+					if (key in bits) value |= bits[key];
+				}
+			} else throw new ValidationError(`expected number or array but got ${data}`, options);
+			if (value === meta.default) return [value];
+			return [value, keys];
+		});
+		Schema.extend("function", (data, _, options) => {
+			if (typeof data === "function") return [data];
+			throw new ValidationError(`expected function but got ${data}`, options);
+		});
+		Schema.extend("is", (data, { constructor }, options) => {
+			if (typeof constructor === "function") {
+				if (data instanceof constructor) return [data];
+				throw new ValidationError(`expected ${constructor.name} but got ${data}`, options);
+			} else {
+				if (isNullable(data)) throw new ValidationError(`expected ${constructor} but got ${data}`, options);
+				let prototype = Object.getPrototypeOf(data);
+				while (prototype) {
+					if (prototype.constructor?.name === constructor) return [data];
+					prototype = Object.getPrototypeOf(prototype);
+				}
+				throw new ValidationError(`expected ${constructor} but got ${data}`, options);
+			}
+		});
+		function property(data, key, schema, options) {
+			try {
+				const [value, adapted] = Schema.resolve(data[key], schema, {
+					...options,
+					path: [...options.path || [], key]
+				});
+				if (adapted !== void 0) data[key] = adapted;
+				return value;
+			} catch (e) {
+				if (!options?.autofix) throw e;
+				delete data[key];
+				return schema.meta.volatile ? createVolatile(schema.meta.default) : schema.meta.default;
+			}
+		}
+		Schema.extend("array", (data, { inner, meta }, options) => {
+			if (!Array.isArray(data)) throw new ValidationError(`expected array but got ${data}`, options);
+			checkWithinRange(data.length, meta, "array length", options, !isNullable(inner.meta.default));
+			return [data.map((_, index) => property(data, index, inner, options))];
+		});
+		Schema.extend("dict", (data, { inner, sKey }, options, strict) => {
+			if (!isPlainObject(data)) throw new ValidationError(`expected object but got ${data}`, options);
+			const result = {};
+			for (const key in data) {
+				let rKey;
+				try {
+					rKey = Schema.resolve(key, sKey, options)[0];
+				} catch (error) {
+					if (strict) continue;
+					throw error;
+				}
+				result[rKey] = property(data, key, inner, options);
+				data[rKey] = data[key];
+				if (key !== rKey) delete data[key];
+			}
+			return [result];
+		});
+		Schema.extend("tuple", (data, { list }, options, strict) => {
+			if (!Array.isArray(data)) throw new ValidationError(`expected array but got ${data}`, options);
+			const result = list.map((inner, index) => property(data, index, inner, options));
+			if (strict) return [result];
+			result.push(...data.slice(list.length));
+			return [result];
+		});
+		function merge(result, data) {
+			for (const key in data) {
+				if (key in result) continue;
+				result[key] = data[key];
+			}
+		}
+		Schema.extend("object", (data, { dict }, options, strict) => {
+			if (!isPlainObject(data)) throw new ValidationError(`expected object but got ${data}`, options);
+			const result = {};
+			for (const key in dict) {
+				const value = property(data, key, dict[key], options);
+				if (!isNullable(value) || key in data) result[key] = value;
+			}
+			if (!strict) merge(result, data);
+			return [result];
+		});
+		Schema.extend("union", (data, { list, toString }, options, strict) => {
+			const messages = [];
+			for (const inner of list) try {
+				return Schema.resolve(data, inner, options, strict);
+			} catch (error) {
+				messages.push(error);
+			}
+			throw new ValidationError(`expected ${toString()} but got ${JSON.stringify(data)}`, options);
+		});
+		Schema.extend("intersect", (data, { list, toString }, options, strict) => {
+			if (!list.length) return [data];
+			let result;
+			for (const inner of list) {
+				const value = Schema.resolve(data, inner, options, true)[0];
+				if (isNullable(value)) continue;
+				if (isNullable(result)) result = value;
+				else if (typeof result !== typeof value) throw new ValidationError(`expected ${toString()} but got ${JSON.stringify(data)}`, options);
+				else if (typeof value === "object") merge(result ??= {}, value);
+				else if (result !== value) throw new ValidationError(`expected ${toString()} but got ${JSON.stringify(data)}`, options);
+			}
+			if (!strict && isPlainObject(data)) merge(result, data);
+			return [result];
+		});
+		Schema.extend("transform", (data, { inner, callback, preserve }, options) => {
+			const [result, adapted = data] = Schema.resolve(data, inner, options, true);
+			if (preserve) return [callback(result)];
+			else return [callback(result), callback(adapted)];
+		});
+		const formatters = {};
+		function defineMethod(name, keys, format) {
+			formatters[name] = format;
+			Object.assign(Schema, { [name](...args) {
+				const schema = new Schema({ type: name });
+				keys.forEach((key, index) => {
+					switch (key) {
+						case "sKey":
+							schema.sKey = args[index] ?? Schema.string();
+							break;
+						case "inner":
+							schema.inner = Schema.from(args[index]);
+							break;
+						case "list":
+							schema.list = args[index].map(Schema.from);
+							break;
+						case "dict":
+							schema.dict = mapValues(args[index], Schema.from);
+							break;
+						case "bits":
+							schema.bits = {};
+							for (const key in args[index]) {
+								if (typeof args[index][key] !== "number") continue;
+								schema.bits[key] = args[index][key];
+							}
+							break;
+						case "callback": {
+							const callback = schema.callback = args[index];
+							callback["toJSON"] ||= () => callback.toString();
+							break;
+						}
+						case "constructor": {
+							const constructor = schema.constructor = args[index];
+							if (typeof constructor === "function") constructor["toJSON"] ||= () => constructor["name"];
+							break;
+						}
+						default: schema[key] = args[index];
+					}
+				});
+				if (name === "object" || name === "dict") schema.meta.default = {};
+				else if (name === "array" || name === "tuple") schema.meta.default = [];
+				else if (name === "bitset") schema.meta.default = 0;
+				return schema;
+			} });
+		}
+		defineMethod("is", ["constructor"], ({ constructor }) => {
+			if (typeof constructor === "function") return constructor.name;
+			else return constructor;
+		});
+		defineMethod("any", [], () => "any");
+		defineMethod("never", [], () => "never");
+		defineMethod("const", ["value"], ({ value }) => typeof value === "string" ? JSON.stringify(value) : value);
+		defineMethod("string", [], () => "string");
+		defineMethod("number", [], () => "number");
+		defineMethod("boolean", [], () => "boolean");
+		defineMethod("bitset", ["bits"], () => "bitset");
+		defineMethod("function", [], () => "function");
+		defineMethod("array", ["inner"], ({ inner }) => `${inner.toString(true)}[]`);
+		defineMethod("dict", ["inner", "sKey"], ({ inner, sKey }) => `{ [key: ${sKey.toString()}]: ${inner.toString()} }`);
+		defineMethod("tuple", ["list"], ({ list }) => `[${list.map((inner) => inner.toString()).join(", ")}]`);
+		defineMethod("object", ["dict"], ({ dict }) => {
+			if (Object.keys(dict).length === 0) return "{}";
+			return `{ ${Object.entries(dict).map(([key, inner]) => {
+				return `${key}${inner.meta.required ? "" : "?"}: ${inner.toString()}`;
+			}).join(", ")} }`;
+		});
+		defineMethod("union", ["list"], ({ list }, inline) => {
+			const result = list.map(({ toString: format }) => format()).join(" | ");
+			return inline ? `(${result})` : result;
+		});
+		defineMethod("intersect", ["list"], ({ list }) => {
+			return `${list.map((inner) => inner.toString(true)).join(" & ")}`;
+		});
+		defineMethod("transform", [
+			"inner",
+			"callback",
+			"preserve"
+		], ({ inner }, isInner) => inner.toString(isInner));
+		//#endregion
+		//#region ../../node_modules/@deepseek-ai/dsh-util-values/lib/index.js
+		/**
+		* Lazily scanned view of one JSON object's top-level fields, built from text
+		* that may still be streaming or from an already parsed object. Nothing is
+		* scanned until a reader asks; the view remembers every question it answered
+		* and reports changed answers when the owner refreshes for publication.
+		* Used for model tool-call arguments: a row reads the fields it
+		* cares about at whatever granularity it displays, at every stage of the call.
+		* @module @deepseek-ai/dsh-util-values/src/partial-json
+		*/
+		const SIMPLE_ESCAPES = {
+			"\"": "\"",
+			"\\": "\\",
+			"/": "/",
+			b: "\b",
+			f: "\f",
+			n: "\n",
+			r: "\r",
+			t: "	"
+		};
+		const CONTENT_ESCAPE = /[\\\u0000-\u001f]/u;
+		function isWhitespace(c) {
+			return c === " " || c === "\n" || c === "\r" || c === "	";
+		}
+		function isHex(c) {
+			return c >= "0" && c <= "9" || c >= "a" && c <= "f" || c >= "A" && c <= "F";
+		}
+		(class PartialArguments {
+			/** The view of a call with no arguments available. */
+			static EMPTY = PartialArguments.fromObject({});
+			/**
+			* View finished argument text without scanning it until a reader asks.
+			* @param text - the complete argument JSON text.
+			* @returns a sealed view.
+			*/
+			static fromText(text) {
+				const view = new PartialArguments();
+				view.append(text);
+				view.sealed = true;
+				return view;
+			}
+			/**
+			* View an already parsed argument payload, such as a PTC dispatch object.
+			* @param value - the parsed argument value.
+			* @returns a sealed view; a non-object payload has no fields.
+			*/
+			static fromObject(value) {
+				const view = new PartialArguments();
+				view.object = typeof value === "object" && value !== null && !Array.isArray(value) ? value : {};
+				view.sealed = true;
+				return view;
+			}
+			/**
+			* The source: text so far or a parsed object, plus whether it can still grow.
+			* These are the only enumerable fields, so two views over the same source
+			* compare equal structurally however far each has been read.
+			*/
+			chunks = [];
+			object;
+			sealed = false;
+			#ends = [];
+			#size = 0;
+			#consumed = 0;
+			#mode = "root";
+			#escape = false;
+			#keyStart = 0;
+			#keyEscaped = false;
+			#key = "";
+			#current = null;
+			#nestedEnds = [];
+			#nestedInString = false;
+			#invalidAt;
+			#invalidValue = false;
+			#entries = /* @__PURE__ */ new Map();
+			#order = [];
+			#reads = /* @__PURE__ */ new Map();
+			/** Whether this view rejects further appends; does not scan text or register reads. */
+			get isSealed() {
+				return this.sealed;
+			}
+			/** Whether indexing or a content read found invalid JSON; unread value contents are not validated. */
+			get invalid() {
+				this.scan();
+				return this.#mode === "invalid" || this.#invalidValue;
+			}
+			/**
+			* Retain streamed argument text without scanning or comparing observed answers.
+			* @param fragment - the text following every fragment appended before.
+			*/
+			append(fragment) {
+				if (this.sealed) throw new Error("PartialArguments: cannot append to a sealed view");
+				if (fragment.length === 0) return;
+				this.chunks.push(fragment);
+				this.#size += fragment.length;
+				this.#ends.push(this.#size);
+			}
+			/**
+			* Reconcile a streamed prefix with authoritative complete text without joining the fragments.
+			* @param text - the final argument text, which replaces missing or conflicting deltas.
+			* @returns this view sealed with its caches retained when every character matches; otherwise a new sealed view.
+			*/
+			settle(text) {
+				if (this.object !== void 0 || text.length !== this.#size) return PartialArguments.fromText(text);
+				let offset = 0;
+				for (const chunk of this.chunks) {
+					if (!text.startsWith(chunk, offset)) return PartialArguments.fromText(text);
+					offset += chunk.length;
+				}
+				this.chunks = text.length === 0 ? [] : [text];
+				this.#ends = text.length === 0 ? [] : [text.length];
+				this.sealed = true;
+				return this;
+			}
+			/**
+			* Compare observed answers and advance their publication baseline. Unread views remain unscanned.
+			* @returns whether any observed answer changed since its first read or the preceding refresh.
+			*/
+			refresh() {
+				if (this.#reads.size === 0) return false;
+				this.scan();
+				let changed = false;
+				let completions = false;
+				for (const read of this.#reads.values()) {
+					if (read.completion) {
+						completions = true;
+						continue;
+					}
+					changed = this.refreshRead(read) || changed;
+				}
+				if (completions) {
+					for (const read of this.#reads.values()) if (read.completion) changed = this.refreshRead(read) || changed;
+				}
+				if (this.sealed) this.#reads.clear();
+				return changed;
+			}
+			refreshRead(read) {
+				const now = read.answer();
+				if (Object.is(now, read.last)) return false;
+				read.last = now;
+				return true;
+			}
+			/**
+			* Check whether no further fields can arrive.
+			* @returns whether the outer object closed, indexing failed, or the view is sealed; unread values are not validated.
+			*/
+			closed() {
+				return this.remember("closed", "", () => this.closedNow());
+			}
+			/**
+			* List discovered fields in first-appearance order.
+			* @returns top-level keys seen so far, in first-appearance order.
+			*/
+			keys() {
+				return this.remember("keys", "", () => this.keysNow(), (keys) => keys.length);
+			}
+			/**
+			* Check whether a top-level field has appeared.
+			* @param key - argument name.
+			* @returns whether the field has appeared (a string opened or another value began).
+			*/
+			has(key) {
+				return this.remember("has", key, () => this.hasNow(key));
+			}
+			/**
+			* Check whether a field's closing delimiter has arrived, without validating its contents.
+			* @param key - argument name.
+			* @returns whether its delimiter arrived and no content reader has reported an error for this value.
+			*/
+			complete(key) {
+				return this.remember("complete", key, () => this.completeNow(key));
+			}
+			/**
+			* Read string length without materializing its text.
+			* @param key - argument name.
+			* @param options - change granularity for a streaming string.
+			* @returns decoded UTF-16 length of the string field so far; undefined when absent or not a string.
+			*/
+			stringLength(key, options) {
+				const step = Math.max(1, Math.floor(options?.step ?? 1));
+				const offset = options?.offset ?? 0;
+				return this.remember(`length:${step}:${offset}`, key, () => this.lengthNow(key), (length) => length === void 0 ? void 0 : Math.ceil((length + offset) / step));
+			}
+			/**
+			* Check a string against a decoded UTF-16 length limit without materializing it.
+			* @param key - argument name.
+			* @param maxLength - decoded UTF-16 limit, floored to at least zero.
+			* @returns whether the string is longer than the limit; false when absent or not a string.
+			*/
+			stringExceeds(key, maxLength) {
+				const limit = Math.max(0, Math.floor(maxLength));
+				return this.remember(`exceeds:${limit}`, key, () => (this.lengthNow(key, limit + 1) ?? 0) > limit);
+			}
+			/**
+			* Read a decoded string, including a streaming prefix.
+			* @param key - argument name.
+			* @returns the string field's decoded text so far; undefined when absent or not a string.
+			*/
+			text(key) {
+				return this.remember("text", key, () => this.textNow(key));
+			}
+			/**
+			* Read at most the first decoded UTF-16 units of a string.
+			* @param key - argument name.
+			* @param maxLength - maximum decoded UTF-16 length, floored to at least one.
+			* @returns the bounded string prefix; undefined when absent or not a string.
+			*/
+			textPrefix(key, maxLength) {
+				const limit = Math.max(1, Math.floor(maxLength));
+				return this.remember(`prefix:${limit}`, key, () => this.textPrefixNow(key, limit));
+			}
+			/**
+			* Read a completed non-string argument.
+			* @param key - argument name.
+			* @returns the parsed non-string value once it closed; undefined while open, absent, or a string.
+			*/
+			value(key) {
+				return this.remember("value", key, () => this.valueNow(key));
+			}
+			/** Answer a question and, on a streaming view, remember it for change detection. */
+			remember(kind, key, read, comparison) {
+				this.scan();
+				const result = read();
+				if (!this.sealed) {
+					const id = `${kind}/${key}`;
+					if (!this.#reads.has(id)) this.#reads.set(id, {
+						completion: kind === "complete",
+						answer: comparison === void 0 ? read : () => comparison(read()),
+						last: comparison === void 0 ? result : comparison(result)
+					});
+				}
+				return result;
+			}
+			closedNow() {
+				return this.sealed || this.#mode === "closed" || this.#mode === "invalid";
+			}
+			keysNow() {
+				return this.object === void 0 ? this.#order : Object.keys(this.object);
+			}
+			hasNow(key) {
+				return this.object === void 0 ? this.#entries.has(key) : Object.hasOwn(this.object, key);
+			}
+			completeNow(key) {
+				if (this.object !== void 0) return Object.hasOwn(this.object, key);
+				const entry = this.#entries.get(key);
+				return entry !== void 0 && entry.end >= 0 && (entry.kind === "string" ? entry.invalidAt === void 0 : !entry.invalid);
+			}
+			lengthNow(key, limit = Number.POSITIVE_INFINITY) {
+				if (this.object !== void 0) {
+					const field = Object.hasOwn(this.object, key) ? this.object[key] : void 0;
+					return typeof field === "string" ? field.length : void 0;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "string") return void 0;
+				if (entry.text !== void 0 && entry.text.at === entry.end) return entry.text.length;
+				const read = entry.length ??= {
+					at: entry.start,
+					length: 0,
+					text: ""
+				};
+				this.readString(entry, read, limit, false);
+				return read.length;
+			}
+			textNow(key) {
+				if (this.object !== void 0) {
+					const field = Object.hasOwn(this.object, key) ? this.object[key] : void 0;
+					return typeof field === "string" ? field : void 0;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "string") return void 0;
+				if (entry.text === void 0 && entry.end >= 0 && entry.needsDecoding && entry.invalidAt === void 0) {
+					let text;
+					try {
+						text = JSON.parse(`"${this.slice(entry.start, entry.end)}"`);
+					} catch (_error) {}
+					if (text !== void 0) entry.text = {
+						at: entry.end,
+						length: text.length,
+						text
+					};
+				}
+				const read = entry.text ??= {
+					at: entry.start,
+					length: 0,
+					text: ""
+				};
+				this.readString(entry, read, Number.POSITIVE_INFINITY, true);
+				return read.text;
+			}
+			textPrefixNow(key, maxLength) {
+				if (this.object !== void 0) {
+					const field = Object.hasOwn(this.object, key) ? this.object[key] : void 0;
+					return typeof field === "string" ? field.slice(0, maxLength) : void 0;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "string") return void 0;
+				const prefixes = entry.prefixes ??= /* @__PURE__ */ new Map();
+				let read = prefixes.get(maxLength);
+				if (read === void 0) {
+					read = {
+						at: entry.start,
+						length: 0,
+						text: ""
+					};
+					prefixes.set(maxLength, read);
+				}
+				this.readString(entry, read, maxLength, true);
+				return read.text;
+			}
+			valueNow(key) {
+				if (this.object !== void 0) {
+					if (!Object.hasOwn(this.object, key)) return void 0;
+					const field = this.object[key];
+					return typeof field === "string" ? void 0 : field;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "value" || entry.end < 0 || entry.invalid) return void 0;
+				if (entry.parsed === void 0) try {
+					entry.parsed = JSON.parse(this.slice(entry.start, entry.end));
+				} catch (_error) {
+					entry.invalid = true;
+					this.#invalidValue = true;
+				}
+				return entry.parsed;
+			}
+			chunkAt(at) {
+				let low = 0;
+				let high = this.#ends.length;
+				while (low < high) {
+					const mid = low + high >>> 1;
+					if (this.#ends[mid] <= at) low = mid + 1;
+					else high = mid;
+				}
+				return low;
+			}
+			/** Materialize only a requested range, never the cumulative source. */
+			slice(start, end) {
+				if (start >= end) return "";
+				const first = this.chunkAt(start);
+				const last = this.chunkAt(end - 1);
+				const base = first === 0 ? 0 : this.#ends[first - 1];
+				if (first === last) return this.chunks[first].slice(start - base, end - base);
+				const parts = [this.chunks[first].slice(start - base)];
+				for (let i = first + 1; i < last; i++) parts.push(this.chunks[i]);
+				parts.push(this.chunks[last].slice(0, end - this.#ends[last - 1]));
+				return parts.join("");
+			}
+			readString(entry, read, limit, materialize) {
+				const end = Math.min(entry.end < 0 ? this.#consumed : entry.end, entry.invalidAt ?? Number.POSITIVE_INFINITY, this.#invalidAt ?? Number.POSITIVE_INFINITY);
+				if (!entry.needsDecoding) {
+					const length = Math.min(end - read.at, limit - read.length);
+					if (length <= 0) return;
+					if (materialize) read.text += this.slice(read.at, read.at + length);
+					read.at += length;
+					read.length += length;
+					return;
+				}
+				let chunkIndex = this.chunkAt(read.at);
+				while (read.at < end && read.length < limit) {
+					const base = chunkIndex === 0 ? 0 : this.#ends[chunkIndex - 1];
+					const chunk = this.chunks[chunkIndex];
+					const remaining = chunk.slice(read.at - base, Math.min(chunk.length, end - base));
+					const boundary = remaining.search(CONTENT_ESCAPE);
+					const length = Math.min(boundary < 0 ? remaining.length : boundary, limit - read.length);
+					if (length > 0) {
+						if (materialize) read.text += remaining.slice(0, length);
+						read.at += length;
+						read.length += length;
+						if (read.at === base + chunk.length) chunkIndex++;
+						continue;
+					}
+					const type = remaining.length > 1 ? remaining[1] : read.at + 1 < end ? this.chunks[chunkIndex + 1][0] : void 0;
+					let decoded;
+					let width = 2;
+					if (remaining[0] === "\\" && type === void 0 && entry.end < 0) return;
+					if (remaining[0] === "\\" && type === "u") {
+						const hex = this.slice(read.at + 2, Math.min(end, read.at + 6));
+						let valid = true;
+						for (let i = 0; i < hex.length; i++) if (!isHex(hex[i])) valid = false;
+						if (valid) {
+							if (hex.length < 4 && entry.end < 0) return;
+							if (hex.length === 4) decoded = String.fromCharCode(Number.parseInt(hex, 16));
+						}
+						width = 6;
+					} else if (remaining[0] === "\\" && type !== void 0) decoded = SIMPLE_ESCAPES[type];
+					if (decoded === void 0) {
+						entry.invalidAt = read.at;
+						this.#invalidValue = true;
+						return;
+					}
+					if (materialize) read.text += decoded;
+					read.length++;
+					read.at += width;
+					while (chunkIndex < this.chunks.length && read.at >= this.#ends[chunkIndex]) chunkIndex++;
+				}
+			}
+			/** Locate new field ranges without decoding or parsing their contents. */
+			scan() {
+				if (this.object !== void 0 || this.#consumed === this.#size) return;
+				for (let i = this.chunkAt(this.#consumed); i < this.chunks.length && this.#invalidAt === void 0; i++) {
+					const pending = this.chunks[i];
+					const base = i === 0 ? 0 : this.#ends[i - 1];
+					for (let index = this.#consumed - base; index < pending.length && this.#mode !== "invalid"; index++) {
+						if (this.#mode === "string" || this.#mode === "nested" && this.#nestedInString) {
+							const end = this.stringBoundary(pending, index);
+							this.#consumed += end - index;
+							index = end;
+							if (index === pending.length) break;
+						}
+						this.step(pending[index], this.#consumed);
+						this.#consumed++;
+					}
+				}
+			}
+			/** Only raw quotes and their preceding backslash runs can terminate a string. */
+			stringBoundary(fragment, start) {
+				let at = start;
+				while (true) {
+					const quote = fragment.indexOf("\"", at);
+					const end = quote < 0 ? fragment.length : quote;
+					if (this.#mode === "string") {
+						const entry = this.#current;
+						if (!entry.needsDecoding && CONTENT_ESCAPE.test(fragment.slice(at, end))) entry.needsDecoding = true;
+					}
+					let slashStart = end;
+					while (slashStart > at && fragment[slashStart - 1] === "\\") slashStart--;
+					const escaped = (end - slashStart) % 2 === 1 !== (slashStart === at && this.#escape);
+					this.#escape = quote < 0 && escaped;
+					if (quote < 0 || !escaped) return end;
+					at = quote + 1;
+				}
+			}
+			step(c, at) {
+				switch (this.#mode) {
+					case "root":
+						if (isWhitespace(c)) return;
+						if (c === "{") {
+							this.#mode = "key-or-end";
+							return;
+						}
+						this.fail();
+						return;
+					case "key-or-end":
+						if (isWhitespace(c)) return;
+						if (c === "}") {
+							this.#mode = "closed";
+							return;
+						}
+						if (c === "\"") {
+							this.beginKey(at);
+							return;
+						}
+						this.fail();
+						return;
+					case "key-only":
+						if (isWhitespace(c)) return;
+						if (c === "\"") {
+							this.beginKey(at);
+							return;
+						}
+						this.fail();
+						return;
+					case "key":
+						this.stepKey(c, at);
+						return;
+					case "colon":
+						if (isWhitespace(c)) return;
+						if (c === ":") {
+							this.#mode = "value";
+							return;
+						}
+						this.fail();
+						return;
+					case "value":
+						this.beginValue(c, at);
+						return;
+					case "string": {
+						const entry = this.#current;
+						entry.end = at;
+						this.#current = null;
+						this.#mode = "comma-or-end";
+						return;
+					}
+					case "scalar":
+						this.stepScalar(c, at);
+						return;
+					case "nested":
+						this.stepNested(c, at);
+						return;
+					case "comma-or-end":
+						if (isWhitespace(c)) return;
+						if (c === ",") {
+							this.#mode = "key-only";
+							return;
+						}
+						if (c === "}") {
+							this.#mode = "closed";
+							return;
+						}
+						this.fail();
+						return;
+					case "closed":
+						if (isWhitespace(c)) return;
+						this.fail();
+						return;
+					/* v8 ignore next 2 -- scan() stops stepping once the view is invalid. */
+					case "invalid": return;
+					/* v8 ignore next 2 -- Every scanner mode has a handler above. */
+					default: assertNever$1(this.#mode);
+				}
+			}
+			fail() {
+				this.#invalidAt = this.#consumed;
+				this.#mode = "invalid";
+				this.#current = null;
+			}
+			beginKey(at) {
+				this.#mode = "key";
+				this.#keyStart = at + 1;
+				this.#keyEscaped = false;
+				this.#escape = false;
+			}
+			stepKey(c, at) {
+				if (c < " ") {
+					this.fail();
+					return;
+				}
+				if (this.#escape) {
+					this.#escape = false;
+					return;
+				}
+				if (c === "\\") {
+					this.#escape = true;
+					this.#keyEscaped = true;
+					return;
+				}
+				if (c !== "\"") return;
+				const raw = this.slice(this.#keyStart, at);
+				if (this.#keyEscaped) try {
+					this.#key = JSON.parse(`"${raw}"`);
+				} catch (_error) {
+					this.fail();
+					return;
+				}
+				else this.#key = raw;
+				this.#mode = "colon";
+			}
+			open(entry) {
+				if (!this.#entries.has(this.#key)) this.#order.push(this.#key);
+				this.#entries.set(this.#key, entry);
+				this.#current = entry;
+			}
+			beginValue(c, at) {
+				if (isWhitespace(c)) return;
+				if (c === "\"") {
+					this.open({
+						kind: "string",
+						start: at + 1,
+						end: -1,
+						needsDecoding: false,
+						invalidAt: void 0,
+						length: void 0,
+						text: void 0,
+						prefixes: void 0
+					});
+					this.#escape = false;
+					this.#mode = "string";
+					return;
+				}
+				if (c === "}" || c === "," || c === ":" || c === "]") {
+					this.fail();
+					return;
+				}
+				this.open({
+					kind: "value",
+					start: at,
+					end: -1,
+					parsed: void 0,
+					invalid: false
+				});
+				if (c === "{" || c === "[") {
+					this.#mode = "nested";
+					this.#nestedEnds = [c === "{" ? "}" : "]"];
+					this.#nestedInString = false;
+					this.#escape = false;
+					return;
+				}
+				this.#mode = "scalar";
+			}
+			stepScalar(c, at) {
+				if (c !== "," && c !== "}" && !isWhitespace(c)) return;
+				this.closeValue(at);
+				this.#mode = c === "," ? "key-only" : c === "}" ? "closed" : "comma-or-end";
+			}
+			stepNested(c, at) {
+				if (this.#nestedInString) {
+					this.#nestedInString = false;
+					return;
+				}
+				if (c === "\"") {
+					this.#nestedInString = true;
+					return;
+				}
+				if (c === "{" || c === "[") {
+					this.#nestedEnds.push(c === "{" ? "}" : "]");
+					return;
+				}
+				if (c === "}" || c === "]") {
+					if (this.#nestedEnds.pop() !== c) {
+						this.fail();
+						return;
+					}
+					if (this.#nestedEnds.length === 0) {
+						this.closeValue(at + 1);
+						this.#mode = "comma-or-end";
+					}
+				}
+			}
+			closeValue(end) {
+				const entry = this.#current;
+				entry.end = end;
+				this.#current = null;
+			}
+		});
+		/** Duplicate-install-safe JSON and immutable-value helpers. @module @deepseek-ai/dsh-util-values */
+		/**
+		* Mark an unreachable closed-union branch.
+		* @param value - impossible value; an unhandled typed variant fails at the call site.
+		* @param context - optional switch-site label included in the failure message.
+		* @returns never; a runtime value that escaped its type always throws.
+		*/
+		function assertNever$1(value, context) {
+			const rendered = JSON.stringify(value) ?? String(value);
+			throw new Error(`unreachable variant${context ? ` in ${context}` : ""}: ${rendered}`);
+		}
+		/**
+		* Weak-key lookup with a strongly retained iterable set of associated values.
+		*
+		* Each value must belong to only one key. The container performs no automatic
+		* cleanup; owners delete associations or clear the container at lifecycle end.
+		*/
+		var WeakMapWithValues = class {
+			keys = /* @__PURE__ */ new WeakMap();
+			valueSet = /* @__PURE__ */ new Set();
+			/** Live strongly retained values in insertion order. */
+			values = this.valueSet;
+			/**
+			* Read the value associated with a key.
+			* @param key - weakly held lookup key.
+			* @returns the associated value, or absence.
+			*/
+			get(key) {
+				return this.keys.get(key);
+			}
+			/**
+			* Test whether a key has an association.
+			* @param key - weakly held lookup key.
+			* @returns whether the key is present.
+			*/
+			has(key) {
+				return this.keys.has(key);
+			}
+			/**
+			* Associate one key with one caller-unique value.
+			* @param key - weakly held lookup key.
+			* @param value - strongly retained value that belongs to no other key.
+			* @returns this container.
+			*/
+			set(key, value) {
+				if (this.keys.has(key)) {
+					const previous = this.keys.get(key);
+					if (previous === value) return this;
+					this.valueSet.delete(previous);
+				}
+				this.keys.set(key, value);
+				this.valueSet.add(value);
+				return this;
+			}
+			/**
+			* Remove one association and its strongly retained value.
+			* @param key - weakly held lookup key.
+			* @returns whether an association was removed.
+			*/
+			delete(key) {
+				if (!this.keys.has(key)) return false;
+				const value = this.keys.get(key);
+				const deleted = this.keys.delete(key);
+				this.valueSet.delete(value);
+				return deleted;
+			}
+			/** Remove every association and strongly retained value. */
+			clear() {
+				this.keys = /* @__PURE__ */ new WeakMap();
+				this.valueSet.clear();
+			}
+		};
+		//#endregion
 		//#region lib/types/client/contract/request-inspection.js
 		/**
-		* Canonicalize one request header and classify its model-visible prompt change.
+		* Canonicalize one request header against the system node in force and
+		* classify the model-visible prompt change.
 		* @param previous - Prompt from the preceding loaded request header, when available.
 		* @param event - Durable full request header to inspect.
+		* @param system - Effective nonempty system prompt after loaded surface replacements; empty when removed.
+		* An in-history update already presented its text at its own position, so the header reports no system change for it.
 		* @returns The canonical prompt and an initial/system/tool change when it can be established.
 		*/
-		function inspectRequestPrompt(previous, event) {
+		function inspectRequestPrompt(previous, event, system) {
 			const header = event.data.header;
 			const rawTools = header.tools;
 			const prompt = {
 				config: header.config,
-				system: header.system ?? "",
+				system: system?.text ?? "",
 				tools: Array.isArray(rawTools) ? rawTools : []
 			};
 			if (previous === void 0 && event.data.reason !== "initial") return { prompt };
-			const systemChanged = previous !== void 0 && previous.system !== prompt.system;
+			const systemChanged = previous !== void 0 && previous.system !== prompt.system && system?.update !== true;
 			const toolsChanged = previous !== void 0 && JSON.stringify(previous.tools) !== JSON.stringify(prompt.tools);
 			if (previous !== void 0 && !systemChanged && !toolsChanged) return { prompt };
+			const origin = system !== void 0 && (previous === void 0 || systemChanged) ? system : event;
 			return {
 				prompt,
 				change: {
-					seq: event.seq,
-					time: event.time,
+					seq: origin.seq,
+					time: origin.time,
 					kind: previous === void 0 ? "initial" : systemChanged && toolsChanged ? "system-and-tools" : systemChanged ? "system" : "tools",
 					...previous === void 0 ? {} : { previous }
 				}
+			};
+		}
+		//#endregion
+		//#region ../../node_modules/@deepseek-ai/dsh-session/lib/types/surface.js
+		/** Runtime counterpart of the message-producing event union. */
+		const SURFACE_EVENT_TYPES = /* @__PURE__ */ new Set([
+			"system/message",
+			"developer/message",
+			"user/message",
+			"assistant/message",
+			"tool/result"
+		]);
+		/**
+		* Narrow an event to a surface-eligible event carrying its required marker.
+		* @param event - event to test.
+		* @returns true when both the type and marker identify a surface event.
+		*/
+		function isSurfaceEvent(event) {
+			if (!SURFACE_EVENT_TYPES.has(event.type)) return false;
+			return event.surfaceOp !== void 0;
+		}
+		//#endregion
+		//#region lib/types/client/contract/system-prompt.js
+		/**
+		* Apply a system event or positional replacement without retaining ordinary messages.
+		* Replacement positions inherit their start endpoint, not their chronological seq.
+		* Unknown older endpoint order withholds the prompt until prepend replay resolves it.
+		* @param previous - Interpretation at the preceding relevant event in the loaded window.
+		* @param event - System message or surface replacement already admitted by Session.
+		* @returns Immutable surviving system facts and the effective nonempty prompt.
+		*/
+		function inspectSystemPrompt(previous, event) {
+			const op = isSurfaceEvent(event) ? event.surfaceOp : void 0;
+			const firstSeq = previous?.firstSeq ?? event.seq;
+			let nodes = previous?.nodes ?? [];
+			let replacements = previous?.replacements ?? /* @__PURE__ */ new Map();
+			const unknownEndpoint = (seq) => seq < firstSeq && !replacements.has(seq);
+			const uncertain = previous?.uncertain === true || op !== void 0 && op !== "append" && (unknownEndpoint(op.startSeq) || unknownEndpoint(op.endSeq));
+			if (uncertain) return {
+				firstSeq,
+				uncertain,
+				nodes: [],
+				replacements: /* @__PURE__ */ new Map(),
+				effective: void 0,
+				introduced: void 0
+			};
+			let position = event.seq;
+			if (op !== void 0 && op !== "append") {
+				position = replacements.get(op.startSeq) ?? op.startSeq;
+				const end = replacements.get(op.endSeq) ?? op.endSeq;
+				nodes = nodes.filter((item) => item.position < position || item.position > end);
+				const retained = new Map([...replacements].filter(([, value]) => value < position || value > end));
+				retained.set(event.seq, position);
+				replacements = retained;
+			}
+			const introduced = event.type === "system/message" ? {
+				seq: event.seq,
+				time: event.time,
+				turn: event.data.turn,
+				step: event.data.step,
+				text: event.data.message.content.flatMap((block) => block.type === "text" ? [block.text] : []).join(""),
+				update: op === "append" && previous?.nodes.some((item) => item.node.text !== "") === true
+			} : void 0;
+			if (introduced !== void 0) nodes = [...nodes, {
+				position,
+				node: introduced
+			}].sort((a, b) => a.position - b.position);
+			const surviving = nodes.findLast((item) => item.node.text !== "")?.node;
+			const effective = surviving === previous?.nodes.findLast((item) => item.node.text !== "")?.node ? previous?.effective : introduced !== void 0 && introduced === surviving ? introduced : {
+				seq: event.seq,
+				time: event.time,
+				turn: surviving?.turn ?? 0,
+				step: surviving?.step ?? 0,
+				text: surviving?.text ?? "",
+				update: false
+			};
+			return {
+				firstSeq,
+				uncertain,
+				nodes,
+				replacements,
+				effective,
+				introduced
 			};
 		}
 		//#endregion
@@ -75,15 +1746,221 @@ window.__ModuleLoader__.load({
 			return `${kind.length}:${kind}${id}`;
 		}
 		//#endregion
+		//#region lib/types/client/conversation/group-store.js
+		/** Keyed group publication and incremental validation of rendering positions. */
+		function sameNodeReference(left, right) {
+			return left.key === right.key && left.groupPart === right.groupPart;
+		}
+		function sameEntry(left, right) {
+			return left.kind === right.kind && left.key === right.key && (left.kind === "group" || right.kind === "node" && left.groupPart === right.groupPart);
+		}
+		function reuseReferences(previous, next, equal) {
+			return previous === next || previous.length === next.length && previous.every((value, index) => equal(value, next[index])) ? previous : next;
+		}
+		/** Validates a complete batch before installing its group and root-list changes. */
+		var ConversationGroupStore = class {
+			root = [];
+			rootGroups = /* @__PURE__ */ new Set();
+			groups = /* @__PURE__ */ new Map();
+			placements = /* @__PURE__ */ new Map();
+			sources = /* @__PURE__ */ new Map();
+			dirty = /* @__PURE__ */ new Set();
+			/** @returns the identity-stable ordered root references. */
+			get entries() {
+				return this.root;
+			}
+			groupSource(key) {
+				let source = this.sources.get(key);
+				if (source === void 0) {
+					const publication = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(this.groups.get(key));
+					source = {
+						publication,
+						observable: {
+							getSnapshot: () => this.groups.get(key),
+							subscribe: (listener) => publication.subscribe(listener)
+						}
+					};
+					this.sources.set(key, source);
+				}
+				return source.observable;
+			}
+			/**
+			* Install one validated update without notifying readers.
+			* @param update - root replacement and complete or incremental group records.
+			* @param readNode - synchronous reader of the current target Nodes.
+			*/
+			prepareAndInstall(update, readNode) {
+				const nextRoot = update.entries === void 0 ? this.root : reuseReferences(this.root, update.entries, sameEntry);
+				const nextRootGroups = nextRoot === this.root ? this.rootGroups : this.collectRootGroups(nextRoot);
+				const { upserts, removes } = this.collectChanges(update);
+				const replaceReferences = update.groups.kind === "replace";
+				if (this.groups.size - removes.size + [...upserts.keys()].filter((key) => !this.groups.has(key)).length !== nextRootGroups.size) throw new Error("conversation group records and root references must correspond one-to-one");
+				for (const key of removes) if (nextRootGroups.has(key)) throw new Error(`conversation group "${key}" is still referenced`);
+				for (const key of upserts.keys()) if (!nextRootGroups.has(key)) throw new Error(`conversation group "${key}" has no root reference`);
+				if (nextRootGroups !== this.rootGroups) {
+					for (const key of nextRootGroups) if (!upserts.has(key) && !this.groups.has(key)) throw new Error(`conversation root references missing group "${key}"`);
+				}
+				const affectedParts = /* @__PURE__ */ new Map();
+				const partsOf = (key) => {
+					let parts = affectedParts.get(key);
+					if (parts === void 0) {
+						parts = new Set(this.placements.get(key));
+						affectedParts.set(key, parts);
+					}
+					return parts;
+				};
+				const removeReference = (reference) => {
+					partsOf(reference.key).delete(reference.groupPart);
+				};
+				const addReference = (reference) => {
+					if (readNode(reference.key) === void 0) throw new Error(`conversation group references missing Node "${reference.key}"`);
+					const parts = partsOf(reference.key);
+					if (parts.has(reference.groupPart) || reference.groupPart === void 0 && parts.size > 0 || parts.has(void 0)) throw new Error(`conversation Node "${reference.key}" has overlapping rendering positions`);
+					parts.add(reference.groupPart);
+				};
+				if (replaceReferences || nextRoot !== this.root) {
+					for (const entry of this.root) if (entry.kind === "node") removeReference(entry);
+				}
+				for (const key of removes) for (const member of this.groups.get(key).members) removeReference(member);
+				for (const [key, next] of upserts) {
+					const previous = this.groups.get(key);
+					if (previous !== void 0 && (replaceReferences || previous.members !== next.members)) for (const member of previous.members) removeReference(member);
+				}
+				if (replaceReferences || nextRoot !== this.root) {
+					for (const entry of nextRoot) if (entry.kind === "node") addReference(entry);
+				}
+				for (const [key, next] of upserts) if (replaceReferences || this.groups.get(key)?.members !== next.members) for (const member of next.members) addReference(member);
+				for (const [key, parts] of affectedParts) if (parts.size === 0) this.placements.delete(key);
+				else this.placements.set(key, parts);
+				for (const key of removes) {
+					this.groups.delete(key);
+					this.dirty.add(key);
+				}
+				for (const [key, next] of upserts) {
+					if (this.groups.get(key) === next) continue;
+					this.groups.set(key, next);
+					this.dirty.add(key);
+				}
+				this.root = nextRoot;
+				this.rootGroups = nextRootGroups;
+			}
+			/** Publish changed group sources after all related target data has been installed. */
+			publish() {
+				const keys = [...this.dirty];
+				this.dirty.clear();
+				for (const key of keys) this.sources.get(key)?.publication.set(this.groups.get(key));
+			}
+			/** Remove grouping without deleting its source Nodes; publication remains deferred. */
+			clear() {
+				this.prepareAndInstall(
+					{
+						entries: [],
+						groups: {
+							kind: "replace",
+							snapshots: []
+						}
+					},
+					/* v8 ignore next -- an empty replacement never reads a Node reference. */
+					() => void 0
+				);
+			}
+			collectRootGroups(entries) {
+				const keys = /* @__PURE__ */ new Set();
+				for (const entry of entries) {
+					if (entry.kind !== "group") continue;
+					if (keys.has(entry.key)) throw new Error(`conversation group "${entry.key}" has duplicate root references`);
+					keys.add(entry.key);
+				}
+				return keys;
+			}
+			collectChanges(update) {
+				const upserts = /* @__PURE__ */ new Map();
+				const removes = /* @__PURE__ */ new Set();
+				const add = (snapshot) => {
+					if (upserts.has(snapshot.key)) throw new Error(`conversation group "${snapshot.key}" has duplicate upserts`);
+					const previous = this.groups.get(snapshot.key);
+					if (previous === void 0) {
+						upserts.set(snapshot.key, snapshot);
+						return;
+					}
+					const members = reuseReferences(previous.members, snapshot.members, sameNodeReference);
+					upserts.set(snapshot.key, previous.data === snapshot.data && previous.members === members ? previous : {
+						...snapshot,
+						members
+					});
+				};
+				switch (update.groups.kind) {
+					case "replace":
+						for (const snapshot of update.groups.snapshots) add(snapshot);
+						for (const key of this.groups.keys()) if (!upserts.has(key)) removes.add(key);
+						break;
+					case "apply":
+						for (const snapshot of update.groups.upserts) add(snapshot);
+						for (const key of update.groups.removes) {
+							if (removes.has(key)) throw new Error(`conversation group "${key}" has duplicate removals`);
+							if (!this.groups.has(key)) throw new Error(`conversation group "${key}" cannot be removed because it is absent`);
+							if (upserts.has(key)) throw new Error(`conversation group "${key}" cannot be upserted and removed together`);
+							removes.add(key);
+						}
+						break;
+					/* v8 ignore next 2 -- closed update union; TypeScript rejects other operation tags. */
+					default: assertNever$1(update.groups);
+				}
+				return {
+					upserts,
+					removes
+				};
+			}
+		};
+		//#endregion
 		//#region lib/types/client/conversation/location-index.js
+		var MutableLocationDataSource = class {
+			store;
+			key;
+			listeners = /* @__PURE__ */ new Set();
+			published;
+			constructor(store, key) {
+				this.store = store;
+				this.key = key;
+				this.published = store.get(key);
+			}
+			getSnapshot = () => this.store.get(this.key);
+			subscribe = (listener) => {
+				this.listeners.add(listener);
+				return () => {
+					this.listeners.delete(listener);
+				};
+			};
+			publish() {
+				const next = this.getSnapshot();
+				if (this.published === next) return;
+				this.published = next;
+				(0, _deepseek_ai_dsh_client_store.notifySubscribers)(this.listeners, `[ui-conversation] Location data ${this.key}`);
+			}
+		};
 		var MutableLocationDataStore = class {
+			markDirty;
 			entries = /* @__PURE__ */ new Map();
+			sources = /* @__PURE__ */ new Map();
+			dirtyKeys = /* @__PURE__ */ new Set();
+			constructor(markDirty) {
+				this.markDirty = markDirty;
+			}
 			get(key) {
 				return this.entries.get(key)?.value;
+			}
+			source(key) {
+				let source = this.sources.get(key);
+				if (source === void 0) {
+					source = new MutableLocationDataSource(this, key);
+					this.sources.set(key, source);
+				}
+				return source;
 			}
 			remove(owner, key) {
 				if (this.entries.get(key)?.owner !== owner) return false;
 				this.entries.delete(key);
+				this.changed(key);
 				return true;
 			}
 			set(owner, key, value) {
@@ -94,31 +1971,52 @@ window.__ModuleLoader__.load({
 					owner,
 					value
 				});
+				this.changed(key);
 				return true;
 			}
 			replace(entries) {
-				let changed = this.entries.size !== entries.size;
-				if (!changed) for (const [key, value] of entries) {
+				const changedKeys = [];
+				for (const key of /* @__PURE__ */ new Set([...this.entries.keys(), ...entries.keys()])) {
 					const current = this.entries.get(key);
-					if (current?.owner !== value.owner || current.value !== value.value) {
-						changed = true;
-						break;
-					}
+					const next = entries.get(key);
+					if (current?.owner !== next?.owner || current?.value !== next?.value) changedKeys.push(key);
 				}
-				if (changed) this.entries = new Map(entries);
-				return changed;
+				if (changedKeys.length === 0) return false;
+				this.entries = new Map(entries);
+				for (const key of changedKeys) this.changed(key);
+				return true;
+			}
+			publish() {
+				const dirty = [...this.dirtyKeys];
+				this.dirtyKeys.clear();
+				for (const key of dirty) this.sources.get(key)?.publish();
+			}
+			changed(key) {
+				this.dirtyKeys.add(key);
+				this.markDirty(this);
 			}
 		};
 		const SESSION_LOCATION = { kind: "session" };
 		const UNRESOLVED_LOCATION = { kind: "unresolved" };
 		function payloadCoordinates(event) {
 			const data = event.data;
-			if (data.turn === null) return { session: true };
+			if (data.turn === null) return {
+				session: true,
+				location: void 0
+			};
 			const turn = Number.isSafeInteger(data.turn) && data.turn >= 0 ? data.turn : void 0;
 			const step = Number.isSafeInteger(data.step) && data.step >= 0 ? data.step : void 0;
-			return {
-				...turn === void 0 ? {} : { turn },
-				...step === void 0 ? {} : { step }
+			if (turn === void 0) return step === void 0 ? { location: void 0 } : {
+				step,
+				location: void 0
+			};
+			return step === void 0 ? {
+				turn,
+				location: void 0
+			} : {
+				turn,
+				step,
+				location: void 0
 			};
 		}
 		function sameReferences(left, right) {
@@ -140,14 +2038,16 @@ window.__ModuleLoader__.load({
 		/** Session-owned Turn/Step timeline and event-to-Location index. */
 		var ConversationLocationIndex = class {
 			coordinates = /* @__PURE__ */ new Map();
-			locations = /* @__PURE__ */ new Map();
 			seqsByTurn = /* @__PURE__ */ new Map();
+			stepsByTurn = /* @__PURE__ */ new Map();
 			timeline = {
 				turnOrder: [],
 				turns: /* @__PURE__ */ new Map()
 			};
 			turnDataStores = /* @__PURE__ */ new Map();
 			stepDataStores = /* @__PURE__ */ new Map();
+			dirtyDataStores = /* @__PURE__ */ new Set();
+			changedTurns = /* @__PURE__ */ new Set();
 			currentTurn;
 			currentStep;
 			/**
@@ -156,6 +2056,15 @@ window.__ModuleLoader__.load({
 			*/
 			snapshot() {
 				return this.timeline;
+			}
+			/**
+			* Drain the Turn changes accumulated for one assembly flush.
+			* @returns Turn identities changed since the preceding drain.
+			*/
+			takeChangedTurns() {
+				const turns = [...this.changedTurns];
+				this.changedTurns.clear();
+				return turns;
 			}
 			/**
 			* Replace all Definition-owned Location values while preserving reader identities.
@@ -200,13 +2109,19 @@ window.__ModuleLoader__.load({
 				}
 				return changed;
 			}
+			/** Publish committed Location-data changes to their keyed sources. */
+			publishData() {
+				const dirty = [...this.dirtyDataStores];
+				this.dirtyDataStores.clear();
+				for (const store of dirty) store.publish();
+			}
 			/**
 			* Resolve the latest Location for one event.
 			* @param event - event already ingested into this index.
 			* @returns current Location, falling back to session when it has no Turn/Step affinity.
 			*/
 			locationOf(event) {
-				return this.locations.get(event.seq) ?? SESSION_LOCATION;
+				return this.coordinates.get(event.seq)?.location ?? SESSION_LOCATION;
 			}
 			/**
 			* Rebuild timeline facts after replace/prepend or a boundary append.
@@ -214,7 +2129,7 @@ window.__ModuleLoader__.load({
 			* @returns seqs whose resolved Location changed.
 			*/
 			rebuild(entries) {
-				const previousLocations = this.locations;
+				const previousCoordinates = this.coordinates;
 				const turns = /* @__PURE__ */ new Map();
 				const coordinates = /* @__PURE__ */ new Map();
 				let currentTurn;
@@ -263,7 +2178,8 @@ window.__ModuleLoader__.load({
 					const step = explicit.session === true || event.type === "turn/start" || event.type === "turn/end" ? void 0 : explicit.step ?? (turn === currentTurn ? currentStep : void 0);
 					coordinates.set(event.seq, {
 						...turn === void 0 ? {} : { turn },
-						...turn === void 0 || step === void 0 ? {} : { step }
+						...turn === void 0 || step === void 0 ? {} : { step },
+						location: void 0
 					});
 					if (turn !== void 0) turnDraft(turn, event.seq);
 					if (turn !== void 0 && step !== void 0) stepDraft(turn, step, event.seq);
@@ -314,22 +2230,24 @@ window.__ModuleLoader__.load({
 						break;
 					}
 				}
+				for (const turn of /* @__PURE__ */ new Set([...previousTurns.keys(), ...nextTurns.keys()])) if (previousTurns.get(turn) !== nextTurns.get(turn)) this.changedTurns.add(turn);
 				this.timeline = sameMap && turnOrder === this.timeline.turnOrder ? this.timeline : {
 					turnOrder,
 					turns: nextTurns
 				};
+				this.stepsByTurn.clear();
+				for (const [number, turn] of this.timeline.turns) this.stepsByTurn.set(number, new Map(turn.steps.map((step) => [step.step, step])));
 				this.coordinates = coordinates;
-				this.locations = /* @__PURE__ */ new Map();
 				this.seqsByTurn = /* @__PURE__ */ new Map();
 				for (const { event } of entries) {
 					const coordinates = this.coordinates.get(event.seq);
-					if (coordinates?.turn !== void 0) this.indexTurnSeq(coordinates.turn, event.seq);
-					this.locations.set(event.seq, this.resolve(event.seq));
+					if (coordinates.turn !== void 0) this.indexTurnSeq(coordinates.turn, event.seq);
+					coordinates.location = this.resolve(event.seq);
 				}
 				this.currentTurn = currentTurn;
 				this.currentStep = currentStep;
 				const changed = /* @__PURE__ */ new Set();
-				for (const { event } of entries) if (!sameLocation(previousLocations.get(event.seq), this.locations.get(event.seq))) changed.add(event.seq);
+				for (const { event } of entries) if (!sameLocation(previousCoordinates.get(event.seq)?.location, this.coordinates.get(event.seq)?.location)) changed.add(event.seq);
 				return changed;
 			}
 			/**
@@ -357,14 +2275,16 @@ window.__ModuleLoader__.load({
 				const stepNumber = event.type === "turn/start" || event.type === "turn/end" ? void 0 : explicit.step ?? (turnNumber === this.currentTurn ? this.currentStep : void 0);
 				this.coordinates.set(event.seq, {
 					turn: turnNumber,
-					...stepNumber === void 0 ? {} : { step: stepNumber }
+					...stepNumber === void 0 ? {} : { step: stepNumber },
+					location: this.coordinates.get(event.seq)?.location
 				});
 				this.indexTurnSeq(turnNumber, event.seq);
 				const previousTurn = this.timeline.turns.get(turnNumber);
 				let steps = previousTurn?.steps ?? [];
 				if (event.type === "step/start" || event.type === "step/end") {
 					const number = event.data.step;
-					const previousStep = steps.find((candidate) => candidate.step === number);
+					const indexedSteps = this.stepsByTurn.get(turnNumber) ?? /* @__PURE__ */ new Map();
+					const previousStep = indexedSteps.get(number);
 					const candidate = {
 						turn: turnNumber,
 						step: number,
@@ -374,6 +2294,8 @@ window.__ModuleLoader__.load({
 						data: this.stepData(turnNumber, number)
 					};
 					const nextStep = sameStep(previousStep, candidate) ? previousStep : candidate;
+					indexedSteps.set(number, nextStep);
+					this.stepsByTurn.set(turnNumber, indexedSteps);
 					const index = steps.findIndex((step) => step.step === number);
 					steps = index < 0 ? [...steps, nextStep] : steps.map((step, at) => at === index ? nextStep : step);
 				}
@@ -393,11 +2315,13 @@ window.__ModuleLoader__.load({
 					turnOrder,
 					turns
 				};
+				if (turn !== previousTurn) this.changedTurns.add(turnNumber);
 				const changed = /* @__PURE__ */ new Set();
 				for (const seq of this.seqsByTurn.get(turnNumber) ?? []) {
-					const previous = this.locations.get(seq);
+					const coordinates = this.coordinates.get(seq);
+					const previous = coordinates.location;
 					const next = this.resolve(seq);
-					this.locations.set(seq, next);
+					coordinates.location = next;
 					if (!sameLocation(previous, next)) changed.add(seq);
 				}
 				if (event.type === "step/end" && this.currentTurn === event.data.turn && this.currentStep === event.data.step) this.currentStep = void 0;
@@ -408,14 +2332,13 @@ window.__ModuleLoader__.load({
 				return changed;
 			}
 			/**
-			* Index one non-boundary tail event without rescanning the window.
+			* Index one non-boundary tail event without scanning the window or the Turn's Steps.
 			* @param event - contiguous appended event.
 			*/
 			appendNonBoundary(event) {
 				const explicit = payloadCoordinates(event);
 				if (explicit.session === true) {
-					this.coordinates.set(event.seq, {});
-					this.locations.set(event.seq, SESSION_LOCATION);
+					this.coordinates.set(event.seq, { location: SESSION_LOCATION });
 					return;
 				}
 				if (explicit.turn !== void 0) {
@@ -425,17 +2348,51 @@ window.__ModuleLoader__.load({
 				}
 				const turn = explicit.turn ?? this.currentTurn;
 				const step = explicit.step ?? (turn === this.currentTurn ? this.currentStep : void 0);
-				this.coordinates.set(event.seq, {
+				const coordinates = explicit.turn !== void 0 && explicit.step !== void 0 ? explicit : {
 					...turn === void 0 ? {} : { turn },
-					...turn === void 0 || step === void 0 ? {} : { step }
-				});
+					...turn === void 0 || step === void 0 ? {} : { step },
+					location: void 0
+				};
+				this.coordinates.set(event.seq, coordinates);
 				if (turn !== void 0) this.indexTurnSeq(turn, event.seq);
-				this.locations.set(event.seq, this.resolve(event.seq));
+				coordinates.location = this.resolve(event.seq);
+			}
+			/**
+			* Remove indexed Assistant transients without rebuilding the Turn/Step timeline.
+			* @param events - transient events retired by one Assistant settlement.
+			*/
+			removeAssistantTransients(events) {
+				for (const event of events) {
+					const turn = this.coordinates.get(event.seq)?.turn;
+					if (turn !== void 0) {
+						const seqs = this.seqsByTurn.get(turn);
+						seqs?.delete(event.seq);
+						if (seqs?.size === 0) this.seqsByTurn.delete(turn);
+					}
+					this.coordinates.delete(event.seq);
+				}
+			}
+			/**
+			* Index one durable Assistant settlement inserted before an already visible tail.
+			* @param event - message or attempt settlement with explicit Turn and Step coordinates.
+			*/
+			insertAssistantSettlement(event) {
+				const coordinates = {
+					turn: event.data.turn,
+					step: event.data.step,
+					location: void 0
+				};
+				this.coordinates.set(event.seq, coordinates);
+				this.indexTurnSeq(event.data.turn, event.seq);
+				coordinates.location = this.resolve(event.seq);
 			}
 			indexTurnSeq(turn, seq) {
-				const current = this.seqsByTurn.get(turn) ?? /* @__PURE__ */ new Set();
+				let current = this.seqsByTurn.get(turn);
+				if (current === void 0) {
+					current = /* @__PURE__ */ new Set();
+					this.seqsByTurn.set(turn, current);
+				}
 				current.add(seq);
-				this.seqsByTurn.set(turn, current);
 			}
 			turnData(turn) {
 				return this.mutableTurnData(turn);
@@ -444,14 +2401,20 @@ window.__ModuleLoader__.load({
 				return this.mutableStepData(stepDataKey(turn, step));
 			}
 			mutableTurnData(turn) {
-				const current = this.turnDataStores.get(turn) ?? new MutableLocationDataStore();
+				const current = this.turnDataStores.get(turn) ?? this.createDataStore(turn);
 				this.turnDataStores.set(turn, current);
 				return current;
 			}
 			mutableStepData(key) {
-				const current = this.stepDataStores.get(key) ?? new MutableLocationDataStore();
+				const current = this.stepDataStores.get(key) ?? this.createDataStore(Number(key.slice(0, key.indexOf(":"))));
 				this.stepDataStores.set(key, current);
 				return current;
+			}
+			createDataStore(turn) {
+				return new MutableLocationDataStore((store) => {
+					this.dirtyDataStores.add(store);
+					this.changedTurns.add(turn);
+				});
 			}
 			storeFor(data) {
 				return data.kind === "turn" ? this.mutableTurnData(data.turn) : this.mutableStepData(stepDataKey(data.turn, requireStep(data)));
@@ -465,7 +2428,7 @@ window.__ModuleLoader__.load({
 					kind: "turn",
 					turn
 				};
-				const step = turn.steps.find((candidate) => candidate.step === coordinates.step);
+				const step = this.stepsByTurn.get(coordinates.turn)?.get(coordinates.step);
 				return step === void 0 ? {
 					kind: "turn",
 					turn
@@ -543,21 +2506,17 @@ window.__ModuleLoader__.load({
 			}
 			return merged;
 		}
-		function conversationMatch(key, input, role, location) {
-			if (role === "start") {
-				if (input.type === "chunks") throw new Error(`conversation Context ${key} received a packed start Match`);
-				return {
-					event: input.event,
-					role,
-					location
-				};
-			}
+		function conversationMatch(input, role, location) {
 			return {
 				event: input.event,
 				role,
 				location
 			};
 		}
+		const NO_GROUPS = {
+			entries: () => [],
+			forTarget: () => void 0
+		};
 		/**
 		* Session-owned incremental engine that assembles business Contexts from a
 		* contiguous Event window and materializes registered view snapshots.
@@ -565,26 +2524,47 @@ window.__ModuleLoader__.load({
 		var ConversationNodeAssembler = class {
 			eventDefinitions;
 			viewDefinitions;
+			groupDefinitions;
 			contexts = /* @__PURE__ */ new Map();
 			contextsByKind = /* @__PURE__ */ new Map();
 			contextsBySeq = /* @__PURE__ */ new Map();
+			contextsByTarget = /* @__PURE__ */ new Map();
 			inputs = /* @__PURE__ */ new Map();
 			locationIndex = new ConversationLocationIndex();
 			dirty = /* @__PURE__ */ new Set();
+			dirtyByTarget = /* @__PURE__ */ new Map();
 			revised = /* @__PURE__ */ new Set();
 			dependents = /* @__PURE__ */ new Map();
 			views = /* @__PURE__ */ new Map();
+			groups = /* @__PURE__ */ new Map();
+			pendingGroupStores = /* @__PURE__ */ new Set();
+			activeTargets = /* @__PURE__ */ new Set();
+			/** Matches of the event in dispatch, kept by index; dispatch is not reentrant and reuses both arrays. */
+			matchedDefinitions = [];
+			matchedResults = [];
 			hasMore = false;
 			replacePending = true;
 			timelineDirty = true;
 			/**
 			* @param eventDefinitions - live Event Definition registry.
 			* @param viewDefinitions - live view builder registry.
+			* @param groupDefinitions - optional registered grouping rules, independent of presentation modes.
 			*/
-			constructor(eventDefinitions, viewDefinitions) {
+			constructor(eventDefinitions, viewDefinitions, groupDefinitions = NO_GROUPS) {
 				this.eventDefinitions = eventDefinitions;
 				this.viewDefinitions = viewDefinitions;
+				this.groupDefinitions = groupDefinitions;
 				this.resetViewBuilders();
+			}
+			/**
+			* Read the current open turn without activating a View.
+			* @returns the latest turn number when its start is loaded and it remains open, otherwise undefined.
+			*/
+			openTurn() {
+				const snapshot = this.locationIndex.snapshot();
+				const latest = snapshot.turnOrder.at(-1);
+				const turn = latest === void 0 ? void 0 : snapshot.turns.get(latest);
+				return turn?.status === "open" && turn.start !== void 0 ? turn.turn : void 0;
 			}
 			/**
 			* Replace the complete loaded window after open, resync, or gap repair.
@@ -596,8 +2576,10 @@ window.__ModuleLoader__.load({
 				this.contexts.clear();
 				this.contextsByKind.clear();
 				this.contextsBySeq.clear();
+				this.contextsByTarget.clear();
 				this.inputs.clear();
 				this.dirty.clear();
+				this.dirtyByTarget.clear();
 				this.revised.clear();
 				this.dependents.clear();
 				this.hasMore = hasMore;
@@ -608,7 +2590,7 @@ window.__ModuleLoader__.load({
 				for (const entry of sorted) this.matchInput(entry);
 				this.replayDependencies();
 				this.revised.clear();
-				for (const context of this.contexts.values()) this.dirty.add(context);
+				for (const context of this.contexts.values()) this.markDirty(context);
 				this.replacePending = true;
 				return "immediate";
 			}
@@ -620,10 +2602,10 @@ window.__ModuleLoader__.load({
 			append(record) {
 				const event = record.event;
 				if (this.inputs.has(event.seq)) return "none";
-				this.revised.clear();
+				if (this.revised.size > 0) this.revised.clear();
 				this.inputs.set(event.seq, record);
 				let publication = "none";
-				if (isLocationBoundary(event.type)) {
+				if (event.type !== "assistant/live-chunk" && isLocationBoundary(event.type)) {
 					const previousTimeline = this.locationIndex.snapshot();
 					const changed = this.locationIndex.appendBoundary(event);
 					if (this.locationIndex.snapshot() !== previousTimeline) {
@@ -634,6 +2616,39 @@ window.__ModuleLoader__.load({
 					if (changed.size > 0) publication = "immediate";
 				} else this.locationIndex.appendNonBoundary(event);
 				publication = maximumPublication(publication, this.matchInput(record));
+				if (this.replayRevisedDependents()) publication = "immediate";
+				if (this.revised.size > 0) this.revised.clear();
+				return publication;
+			}
+			/**
+			* Retire one Assistant attempt's transient matches and apply its optional durable settlement.
+			* Empty Contexts retain their keys and published nodes until the loaded window is rebuilt;
+			* Definitions may hide those nodes when no start remains instead of withdrawing their identities.
+			* @param attemptId - process-local attempt whose transient presentation ended.
+			* @param entry - durable message or attempt event committed for the stream.
+			* @returns highest requested publication cadence.
+			*/
+			settleAssistant(attemptId, entry) {
+				this.revised.clear();
+				const retired = [...this.inputs.values()].filter((candidate) => candidate.type === "transient" && candidate.event.data.attemptId === attemptId);
+				const retiredSeqs = new Set(retired.map((candidate) => candidate.event.seq));
+				const affected = /* @__PURE__ */ new Set();
+				for (const seq of retiredSeqs) {
+					this.inputs.delete(seq);
+					for (const context of this.contextsBySeq.get(seq) ?? []) affected.add(context);
+					this.contextsBySeq.delete(seq);
+				}
+				for (const context of affected) context.matches = context.matches.filter((match) => !retiredSeqs.has(match.event.seq));
+				this.locationIndex.removeAssistantTransients(retired.map((candidate) => candidate.event));
+				let publication = retired.length === 0 ? "none" : "immediate";
+				if (entry !== void 0 && !this.inputs.has(entry.event.seq)) {
+					this.inputs.set(entry.event.seq, entry);
+					this.locationIndex.insertAssistantSettlement(entry.event);
+					const pending = /* @__PURE__ */ new Map();
+					publication = maximumPublication(publication, this.collectInput(entry, pending));
+					this.applyPendingMatches(pending, affected);
+				}
+				this.replayContexts(affected);
 				if (this.replayRevisedDependents()) publication = "immediate";
 				this.revised.clear();
 				return publication;
@@ -673,60 +2688,65 @@ window.__ModuleLoader__.load({
 				return this.replaceWindow(this.sortedInputs(), this.hasMore);
 			}
 			/**
-			* Materialize dirty Contexts and advance every registered view builder.
+			* Materialize dirty Contexts and advance every active view builder.
 			* @returns whether any view snapshot was rebuilt or incrementally applied.
 			*/
 			flush() {
 				if (!this.replacePending && this.dirty.size === 0 && !this.timelineDirty) return false;
 				if (this.replacePending) {
 					this.replaceLocationData();
-					const allByTarget = /* @__PURE__ */ new Map();
-					for (const target of this.views.keys()) allByTarget.set(target, []);
-					for (const context of this.contexts.values()) {
-						const target = context.definition.target;
-						if (target === void 0 || !this.views.has(target)) continue;
-						const node = this.buildNode(context, target);
-						context.current.set(target, node);
-						if (node !== null) allByTarget.get(target)?.push(node);
+					const updated = [];
+					const changedTurns = this.locationIndex.takeChangedTurns();
+					for (const target of this.activeTargets) {
+						const view = this.views.get(target);
+						if (view === void 0) continue;
+						this.updateView(view, true, this.buildTargetNodes(target, this.contextsByTarget.get(target)), changedTurns);
+						updated.push(view);
 					}
-					for (const view of this.views.values()) view.snapshot = view.builder.replace({
-						nodes: allByTarget.get(view.target) ?? [],
-						timeline: this.locationIndex.snapshot()
-					});
 					this.replacePending = false;
 					this.dirty.clear();
+					this.dirtyByTarget.clear();
 					this.timelineDirty = false;
-					return true;
+					return this.publishViews(updated);
 				}
-				const upsertsByTarget = /* @__PURE__ */ new Map();
-				for (const target of this.views.keys()) upsertsByTarget.set(target, []);
+				const updated = [];
 				if (this.applyDirtyLocationData()) this.timelineDirty = true;
-				for (const context of this.dirty) {
-					const target = context.definition.target;
-					if (target === void 0 || !this.views.has(target)) continue;
-					const previous = context.current.get(target) ?? null;
-					const node = this.buildNode(context, target);
-					if (node === null && previous !== null) throw new Error(`conversation Definition "${context.kind}" withdrew materialized target "${target}"; return the same key with hidden visibility instead`);
-					context.current.set(target, node);
-					if (node !== null) upsertsByTarget.get(target)?.push(node);
+				const changedTurns = this.locationIndex.takeChangedTurns();
+				const timelineDirty = this.timelineDirty;
+				for (const target of this.activeTargets) {
+					const view = this.views.get(target);
+					if (view === void 0) continue;
+					if (view.builder === void 0) continue;
+					const upserts = this.buildTargetUpserts(target, this.dirtyByTarget.get(target));
+					if (upserts.length === 0 && !timelineDirty) continue;
+					this.updateView(view, false, upserts, changedTurns);
+					updated.push(view);
 				}
 				this.dirty.clear();
-				const timelineDirty = this.timelineDirty;
+				this.dirtyByTarget.clear();
 				this.timelineDirty = false;
-				for (const view of this.views.values()) {
-					const upserts = upsertsByTarget.get(view.target) ?? [];
-					if (upserts.length === 0 && !timelineDirty) continue;
-					view.snapshot = view.builder.apply({
-						upserts,
-						timeline: this.locationIndex.snapshot()
-					});
-				}
+				return this.publishViews(updated);
+			}
+			/**
+			* Add one target to the monotonic active set and materialize its current snapshot.
+			* Pending Context work is flushed before the first complete replacement.
+			* @param target - registered or subsequently registered view target.
+			* @returns whether any active target snapshot changed.
+			*/
+			activateTarget(target) {
+				const view = this.views.get(target);
+				if (this.activeTargets.has(target)) return false;
+				const published = this.flush();
+				this.activeTargets.add(target);
+				if (view === void 0) return published;
+				this.replaceView(view);
+				this.publishViews([view]);
 				return true;
 			}
 			/**
 			* Read the latest snapshot of a registered target.
 			* @param target - registered view target.
-			* @returns target snapshot, or undefined when no builder is registered.
+			* @returns target snapshot, or undefined before registration or activation.
 			*/
 			snapshot(target) {
 				return this.views.get(target)?.snapshot;
@@ -734,25 +2754,31 @@ window.__ModuleLoader__.load({
 			get(target) {
 				return this.snapshot(target);
 			}
+			grouped(target) {
+				return this.groups.get(target)?.store;
+			}
 			/**
 			* Read targets whose owners classify their latest snapshot as visible activity.
-			* @returns active target ids.
+			* @returns target ids contributing visible activity.
 			*/
-			activeTargets() {
+			activityTargets() {
 				const active = /* @__PURE__ */ new Set();
-				for (const view of this.views.values()) if (view.isActive?.(view.snapshot) === true) active.add(view.target);
+				for (const target of this.activeTargets) {
+					const view = this.views.get(target);
+					if (view === void 0) continue;
+					if (view.isActive?.(view.snapshot) === true) active.add(view.target);
+				}
 				return active;
 			}
 			sortedInputs() {
 				return [...this.inputs.values()].sort((left, right) => left.event.seq - right.event.seq);
 			}
 			matchInput(input) {
-				return this.dispatchInput(input, (definition, id, role) => this.acceptMatch(definition, id, role, input));
+				return this.dispatchInput(input, this.acceptMatch);
 			}
 			collectInput(input, pending) {
-				return this.dispatchInput(input, (definition, id, role) => {
+				return this.dispatchInput(input, (definition, id, match) => {
 					const key = conversationContextKey(definition.kind, id);
-					const match = conversationMatch(key, input, role, this.locationIndex.locationOf(input.event));
 					const matches = pending.get(key) ?? [];
 					matches.push({
 						definition,
@@ -765,124 +2791,165 @@ window.__ModuleLoader__.load({
 			}
 			dispatchInput(input, accept) {
 				const event = input.event;
-				const matchedTargets = /* @__PURE__ */ new Set();
-				let publication = "none";
-				for (const definition of this.eventDefinitions.entries()) {
+				let startMatch;
+				let updateMatch;
+				let location;
+				const matchFor = (role) => {
+					location ??= this.locationIndex.locationOf(event);
+					return role === "start" ? startMatch ??= conversationMatch(input, role, location) : updateMatch ??= conversationMatch(input, role, location);
+				};
+				const definitions = this.matchedDefinitions;
+				const results = this.matchedResults;
+				definitions.length = 0;
+				results.length = 0;
+				const routes = this.eventDefinitions.forEvent?.(event.type);
+				if (routes === void 0) for (const definition of this.eventDefinitions.entries()) {
 					const result = definition.match(event);
 					if (result === null) continue;
-					if (definition.target !== void 0) matchedTargets.add(definition.target);
-					publication = maximumPublication(publication, accept(definition, result.id, result.role));
+					definitions.push(definition);
+					results.push(result);
+				}
+				else for (const { definition, match } of routes) {
+					const result = match(event);
+					if (result === null) continue;
+					definitions.push(definition);
+					results.push(result);
+				}
+				let claims;
+				for (let index = 0; index < results.length; index++) {
+					if (results[index].exclusive !== true) continue;
+					const definition = definitions[index];
+					const target = definition.target;
+					if (target === void 0) throw new Error(`conversation Definition "${definition.kind}" claims ${event.type} at seq ${String(event.seq)} without a target`);
+					const claimant = claims?.get(target);
+					if (claimant !== void 0) throw new Error(`conversation Definitions "${claimant}" and "${definition.kind}" both claim ${event.type} at seq ${String(event.seq)} on target "${target}"`);
+					(claims ??= /* @__PURE__ */ new Map()).set(target, definition.kind);
+				}
+				let firstTarget;
+				let secondTarget;
+				let otherTargets;
+				let publication = "none";
+				for (let index = 0; index < results.length; index++) {
+					const definition = definitions[index];
+					const result = results[index];
+					const target = definition.target;
+					if (target !== void 0 && result.exclusive !== true && claims?.has(target) === true) continue;
+					if (target !== void 0 && target !== firstTarget && target !== secondTarget) if (firstTarget === void 0) firstTarget = target;
+					else if (secondTarget === void 0) secondTarget = target;
+					else (otherTargets ??= /* @__PURE__ */ new Set()).add(target);
+					publication = maximumPublication(publication, accept.call(this, definition, result.id, matchFor(result.role)));
 				}
 				const fallback = this.eventDefinitions.fallbackEntry();
 				const target = fallback?.target;
-				if (fallback !== void 0 && target !== void 0 && !matchedTargets.has(target)) {
+				if (fallback !== void 0 && target !== void 0 && target !== firstTarget && target !== secondTarget && otherTargets?.has(target) !== true) {
 					const result = fallback.match(event);
-					if (result !== null) publication = maximumPublication(publication, accept(fallback, result.id, result.role));
+					if (result !== null) publication = maximumPublication(publication, accept.call(this, fallback, result.id, matchFor(result.role)));
 				}
 				return publication;
 			}
-			acceptMatch(definition, id, role, input) {
-				const key = conversationContextKey(definition.kind, id);
+			createContext(definition, id, key) {
+				const context = {
+					key,
+					kind: definition.kind,
+					id,
+					definition,
+					startSeq: void 0,
+					start: void 0,
+					matches: [],
+					state: void 0,
+					revision: 0,
+					current: /* @__PURE__ */ new Map(),
+					locationData: emptyLocationData(),
+					dependencies: /* @__PURE__ */ new Map()
+				};
+				this.contexts.set(key, context);
+				this.indexTargetContext(context);
+				return context;
+			}
+			acceptMatch(definition, id, match) {
+				const latest = this.contextsByKind.get(definition.kind)?.at(-1);
+				const key = latest?.id === id ? latest.key : conversationContextKey(definition.kind, id);
 				let context = this.contexts.get(key);
-				if (role === "start" && context?.start !== void 0) throw new Error(`conversation Context ${key} received more than one start Match`);
-				if (context === void 0) {
-					context = {
-						key,
-						kind: definition.kind,
-						id,
-						definition,
-						startSeq: void 0,
-						start: void 0,
-						matches: [],
-						state: void 0,
-						revision: 0,
-						current: /* @__PURE__ */ new Map(),
-						locationData: emptyLocationData(),
-						dependencies: /* @__PURE__ */ new Map()
-					};
-					this.contexts.set(key, context);
-				}
-				const match = conversationMatch(key, input, role, this.locationIndex.locationOf(input.event));
+				context ??= this.createContext(definition, id, key);
+				const starting = match.role === "start" && context.start === void 0;
 				const previous = context.matches.at(-1);
-				if (previous !== void 0 && previous.event.seq >= input.event.seq) throw new Error(`conversation Context ${key} received non-appended Match ${input.event.seq}`);
-				if (role === "start" && context.matches.length > 0) throw new Error(`conversation Context ${key} received an update before its start Match`);
+				if (previous !== void 0 && previous.event.seq >= match.event.seq) throw new Error(`conversation Context ${key} received non-appended Match ${match.event.seq}`);
+				if (starting && context.matches.length > 0) throw new Error(`conversation Context ${key} received an update before its start Match`);
 				context.matches.push(match);
-				if (match.role === "start") {
-					context.startSeq = input.event.seq;
+				if (starting) {
+					context.startSeq = match.event.seq;
 					context.start = match;
 					this.indexStartedContext(context);
 				}
-				const owners = this.contextsBySeq.get(input.event.seq) ?? /* @__PURE__ */ new Set();
-				owners.add(context);
-				this.contextsBySeq.set(input.event.seq, owners);
-				if (match.role === "start") this.replayContext(context);
+				let owners = this.contextsBySeq.get(match.event.seq);
+				if (owners === void 0) {
+					owners = [];
+					this.contextsBySeq.set(match.event.seq, owners);
+				}
+				owners.push(context);
+				if (starting) this.replayContext(context);
 				else if (context.state !== void 0) {
 					const typed = contextSnapshot(context);
 					context.state = requireState(definition, "update", definition.update(typed, match));
 					context.revision++;
 					this.revised.add(context);
 				}
-				this.dirty.add(context);
+				this.markDirty(context);
 				return definition.publication?.(match) ?? "immediate";
 			}
 			applyPendingMatches(pending, affected) {
-				const startsByKind = /* @__PURE__ */ new Map();
 				for (const [key, entries] of pending) {
 					const first = entries[0];
 					if (first === void 0) continue;
 					let context = this.contexts.get(key);
-					if (context === void 0) {
-						context = {
-							key,
-							kind: first.definition.kind,
-							id: first.id,
-							definition: first.definition,
-							startSeq: void 0,
-							start: void 0,
-							matches: [],
-							state: void 0,
-							revision: 0,
-							current: /* @__PURE__ */ new Map(),
-							locationData: emptyLocationData(),
-							dependencies: /* @__PURE__ */ new Map()
-						};
-						this.contexts.set(key, context);
-					}
-					let discoveredStart;
+					context ??= this.createContext(first.definition, first.id, key);
 					const additions = entries.map((entry) => {
 						if (entry.definition !== context.definition || entry.id !== context.id) throw new Error(`conversation Context ${key} received inconsistent Definition identity`);
-						if (entry.match.role === "start") {
-							if (discoveredStart !== void 0 || context.start !== void 0) throw new Error(`conversation Context ${key} received more than one start Match`);
-							discoveredStart = entry.match;
+						let owners = this.contextsBySeq.get(entry.match.event.seq);
+						if (owners === void 0) {
+							owners = [];
+							this.contextsBySeq.set(entry.match.event.seq, owners);
 						}
-						const owners = this.contextsBySeq.get(entry.match.event.seq) ?? /* @__PURE__ */ new Set();
-						owners.add(context);
-						this.contextsBySeq.set(entry.match.event.seq, owners);
+						owners.push(context);
 						return entry.match;
 					}).sort((left, right) => left.event.seq - right.event.seq);
 					context.matches = mergeMatches(context.key, additions, context.matches);
-					if (discoveredStart !== void 0) {
-						context.start = discoveredStart;
-						context.startSeq = discoveredStart.event.seq;
-						const starts = startsByKind.get(context.kind) ?? [];
-						starts.push(context);
-						startsByKind.set(context.kind, starts);
-					}
-					if (context.start !== void 0 && context.matches[0] !== context.start) throw new Error(`conversation Context ${context.key} received an update before its start Match`);
 					affected.add(context);
-					this.dirty.add(context);
+					this.markDirty(context);
 				}
-				for (const [kind, contexts] of startsByKind) this.indexStartedContexts(kind, contexts);
 			}
 			replayContexts(contexts) {
+				this.refreshStarts(contexts);
 				const ordered = [...contexts].sort((left, right) => (left.startSeq ?? Number.POSITIVE_INFINITY) - (right.startSeq ?? Number.POSITIVE_INFINITY));
 				for (const context of ordered) {
 					if (context.start === void 0) {
 						context.state = void 0;
-						this.dirty.add(context);
+						this.replaceDependencies(context, /* @__PURE__ */ new Map());
+						context.revision++;
+						this.revised.add(context);
+						this.markDirty(context);
 						continue;
 					}
 					this.replayContext(context);
+				}
+			}
+			refreshStarts(contexts) {
+				const changed = /* @__PURE__ */ new Set();
+				const startsByKind = /* @__PURE__ */ new Map();
+				for (const context of contexts) {
+					const start = context.matches.find((match) => match.role === "start");
+					if (start === context.start) continue;
+					context.start = start;
+					context.startSeq = start?.event.seq;
+					changed.add(context);
+					const starts = startsByKind.get(context.kind) ?? [];
+					if (start !== void 0) starts.push(context);
+					startsByKind.set(context.kind, starts);
+				}
+				for (const [kind, starts] of startsByKind) {
+					const existing = this.contextsByKind.get(kind) ?? [];
+					this.contextsByKind.set(kind, existing.filter((context) => !changed.has(context)));
+					this.indexStartedContexts(kind, starts);
 				}
 			}
 			replayContext(context) {
@@ -899,13 +2966,32 @@ window.__ModuleLoader__.load({
 				this.replaceDependencies(context, dependencies);
 				for (let index = 1; index < context.matches.length; index++) {
 					const match = context.matches[index];
-					if (match === void 0 || match.role !== "update") continue;
+					if (match === void 0) continue;
 					const typed = contextSnapshot(context);
 					context.state = requireState(context.definition, "update", context.definition.update(typed, match));
 				}
 				context.revision++;
 				this.revised.add(context);
+				this.markDirty(context);
+			}
+			indexTargetContext(context) {
+				const target = context.definition.target;
+				if (target === void 0) return;
+				const contexts = this.contextsByTarget.get(target) ?? /* @__PURE__ */ new Set();
+				contexts.add(context);
+				this.contextsByTarget.set(target, contexts);
+			}
+			markDirty(context) {
+				if (this.dirty.has(context)) return;
 				this.dirty.add(context);
+				const target = context.definition.target;
+				if (target === void 0 || !this.activeTargets.has(target)) return;
+				let contexts = this.dirtyByTarget.get(target);
+				if (contexts === void 0) {
+					contexts = /* @__PURE__ */ new Set();
+					this.dirtyByTarget.set(target, contexts);
+				}
+				contexts.add(context);
 			}
 			replaceDependencies(context, dependencies) {
 				for (const dependency of context.dependencies.values()) {
@@ -923,6 +3009,7 @@ window.__ModuleLoader__.load({
 				}
 			}
 			replayRevisedDependents() {
+				if (this.dependents.size === 0) return false;
 				const pending = [...this.revised];
 				const affected = /* @__PURE__ */ new Set();
 				for (let index = 0; index < pending.length; index++) {
@@ -934,7 +3021,7 @@ window.__ModuleLoader__.load({
 						pending.push(dependent);
 					}
 				}
-				this.replayContexts(affected);
+				if (affected.size > 0) this.replayContexts(affected);
 				return affected.size > 0;
 			}
 			readerFor(beforeSeq, dependencies) {
@@ -1053,9 +3140,76 @@ window.__ModuleLoader__.load({
 				if (node.target !== target) throw new Error(`conversation Definition "${context.kind}" returned target "${node.target}" while building "${target}"`);
 				return node;
 			}
-			buildLocationData(context, scope) {
+			replaceView(view) {
+				this.updateView(view, true, this.buildTargetNodes(view.target, this.contextsByTarget.get(view.target)), []);
+			}
+			updateView(view, replacing, nodes, changedTurns) {
+				const builder = view.builder ?? view.definition.create();
+				const definition = view.groupDefinition;
+				if (definition !== void 0 && builder.groupInput === void 0) throw new Error(`conversation group target "${view.target}" requires builder.groupInput()`);
+				view.builder = builder;
+				const timeline = this.locationIndex.snapshot();
+				const snapshot = replacing ? builder.replace({
+					nodes,
+					timeline,
+					changedTurns
+				}) : builder.apply({
+					upserts: nodes,
+					timeline,
+					changedTurns
+				});
+				if (definition !== void 0 && builder.groupInput !== void 0) {
+					let context = this.groups.get(view.target);
+					const initial = context === void 0;
+					if (context === void 0) context = {
+						definition,
+						state: definition.create(),
+						store: new ConversationGroupStore()
+					};
+					const input = builder.groupInput();
+					context.state = definition.update(context, input);
+					const change = definition.buildGroups(context);
+					if ((initial || input.kind === "replace") && (change === null || change.entries === void 0 || change.groups.kind !== "replace")) throw new Error(`conversation group target "${view.target}" requires complete grouping for replacement input`);
+					if (change !== null) {
+						context.store.prepareAndInstall(change, input.readNode);
+						this.pendingGroupStores.add(context.store);
+					}
+					this.groups.set(view.target, context);
+				}
+				view.snapshot = snapshot;
+			}
+			publishViews(updated) {
+				const changed = updated.length > 0 || this.pendingGroupStores.size > 0;
+				const stores = [...this.pendingGroupStores];
+				this.pendingGroupStores.clear();
+				for (const view of updated) view.builder?.publish?.();
+				for (const store of stores) store.publish();
+				this.locationIndex.publishData();
+				return changed;
+			}
+			buildTargetNodes(target, contexts) {
+				const nodes = [];
+				for (const context of contexts ?? []) {
+					const node = this.buildNode(context, target);
+					context.current.set(target, node);
+					if (node !== null) nodes.push(node);
+				}
+				return nodes;
+			}
+			buildTargetUpserts(target, contexts) {
+				const upserts = [];
+				for (const context of contexts ?? []) {
+					const previous = context.current.get(target) ?? null;
+					const node = this.buildNode(context, target);
+					if (node === null && previous !== null) throw new Error(`conversation Definition "${context.kind}" withdrew materialized target "${target}"; return the same key with hidden visibility instead`);
+					context.current.set(target, node);
+					if (node !== null) upserts.push(node);
+				}
+				return upserts;
+			}
+			buildLocationData(context, scope, previous) {
 				if (context.definition.buildLocationData === void 0) return null;
-				const data = context.definition.buildLocationData(contextSnapshot(context), scope);
+				const data = context.definition.buildLocationData(contextSnapshot(context), scope, previous);
 				if (data === null) return null;
 				if (data.kind !== scope) throw new Error(`conversation Definition "${context.kind}" published ${data.kind} data through its ${scope} scope`);
 				if (data.key !== context.kind) throw new Error(`conversation Definition "${context.kind}" published Location data key "${data.key}"; expected its owned kind`);
@@ -1067,7 +3221,7 @@ window.__ModuleLoader__.load({
 				const entries = [];
 				for (const scope of LOCATION_DATA_SCOPES) {
 					for (const context of this.contexts.values()) {
-						const data = this.buildLocationData(context, scope);
+						const data = this.buildLocationData(context, scope, context.locationData[scope]);
 						context.locationData[scope] = data;
 						if (data !== null) entries.push({
 							owner: context.key,
@@ -1083,9 +3237,10 @@ window.__ModuleLoader__.load({
 					const changes = [];
 					for (const context of this.dirty) {
 						const previous = context.locationData[scope];
-						const next = this.buildLocationData(context, scope);
+						const next = this.buildLocationData(context, scope, previous);
+						if (previous === next) continue;
 						context.locationData[scope] = next;
-						if (previous !== next) changes.push({
+						changes.push({
 							owner: context.key,
 							previous,
 							next
@@ -1096,15 +3251,24 @@ window.__ModuleLoader__.load({
 				return changed;
 			}
 			resetViewBuilders() {
+				const definitions = this.viewDefinitions.entries();
+				const targets = new Set(definitions.map((definition) => definition.target));
+				for (const [target, group] of this.groups) if (!targets.has(target) || this.groupDefinitions.forTarget(target) !== group.definition) {
+					group.store.clear();
+					this.pendingGroupStores.add(group.store);
+					this.groups.delete(target);
+				}
 				this.views.clear();
-				for (const definition of this.viewDefinitions.entries()) {
-					const builder = definition.create();
-					this.views.set(definition.target, {
+				for (const definition of definitions) {
+					const view = {
 						target: definition.target,
-						builder,
+						definition,
+						groupDefinition: this.groupDefinitions.forTarget(definition.target),
 						isActive: definition.isActive === void 0 ? void 0 : (snapshot) => definition.isActive?.(snapshot) === true,
-						snapshot: builder.empty
-					});
+						builder: void 0,
+						snapshot: void 0
+					};
+					this.views.set(definition.target, view);
 				}
 				this.replacePending = true;
 			}
@@ -1181,6 +3345,9 @@ window.__ModuleLoader__.load({
 		/** Runtime registry of independently owned Conversation business Definitions. */
 		var ConversationEventRegistry = class extends ConversationDefinitionRegistry {
 			fallback;
+			routes = /* @__PURE__ */ new Map();
+			unrestricted = /* @__PURE__ */ new Set();
+			tables = /* @__PURE__ */ new WeakMap();
 			/**
 			* Register a uniquely named business Definition for the caller's lifetime.
 			* @param definition - Definition contribution.
@@ -1188,17 +3355,18 @@ window.__ModuleLoader__.load({
 			*/
 			register(definition) {
 				assertDefinitionTarget(definition);
-				return this.registerDefinition(definition.kind, definition, `conversation Definition "${definition.kind}" is already registered`, `uiConversation.events.register(${JSON.stringify(definition.kind)})`);
+				return this.registerDefinition(definition.kind, this.resolve(definition), `conversation Definition "${definition.kind}" is already registered`, `uiConversation.events.register(${JSON.stringify(definition.kind)})`);
 			}
 			/**
 			* Register the sole fallback used only when no ordinary Definition matches.
-			* @param definition - fallback Definition.
+			* @param input - fallback Definition.
 			* @returns idempotent disposer.
 			*/
-			registerFallback(definition) {
-				assertDefinitionTarget(definition);
-				if (definition.target === void 0) throw new Error("conversation fallback Definition must declare a target");
+			registerFallback(input) {
+				assertDefinitionTarget(input);
+				if (input.target === void 0) throw new Error("conversation fallback Definition must declare a target");
 				if (this.fallback !== void 0) throw new Error("conversation fallback Definition is already registered");
+				const definition = this.resolve(input);
 				const dispose = this.ctx.effect(() => {
 					this.fallback = definition;
 					this.refresh();
@@ -1218,6 +3386,52 @@ window.__ModuleLoader__.load({
 			*/
 			fallbackEntry() {
 				return this.fallback;
+			}
+			/**
+			* Read precomputed candidates in registration order; the returned Set is borrowed read-only.
+			* @param type - current event type.
+			* @returns table handlers for this type together with all function-form handlers.
+			*/
+			forEvent(type) {
+				return this.routes.get(type) ?? this.unrestricted;
+			}
+			resolve(input) {
+				if (typeof input.match === "function") return input;
+				const table = new Map(Object.entries(input.match));
+				const definition = {
+					...input,
+					match: (event) => table.get(event.type)?.call(definition, event) ?? null
+				};
+				this.tables.set(definition, table);
+				return definition;
+			}
+			refresh() {
+				const routes = /* @__PURE__ */ new Map();
+				const unrestricted = /* @__PURE__ */ new Set();
+				for (const definition of this.definitions.values()) {
+					const table = this.tables.get(definition);
+					if (table === void 0) {
+						const route = {
+							definition,
+							match: definition.match.bind(definition)
+						};
+						unrestricted.add(route);
+						for (const candidates of routes.values()) candidates.add(route);
+					} else for (const [type, match] of table) {
+						let candidates = routes.get(type);
+						if (candidates === void 0) {
+							candidates = new Set(unrestricted);
+							routes.set(type, candidates);
+						}
+						candidates.add({
+							definition,
+							match: match.bind(definition)
+						});
+					}
+				}
+				this.routes = routes;
+				this.unrestricted = unrestricted;
+				super.refresh();
 			}
 		};
 		function assertDefinitionTarget(definition) {
@@ -1262,9 +3476,8 @@ window.__ModuleLoader__.load({
 		/** Resolve durable Conversation images and release their browser URLs with Session scope. */
 		var HistoricalImageCache = class {
 			sessions;
-			entries = /* @__PURE__ */ new Map();
-			generations = /* @__PURE__ */ new Map();
-			scopeDisposers = /* @__PURE__ */ new Map();
+			entries = new WeakMapWithValues();
+			scopeDisposers = new WeakMapWithValues();
 			urls = /* @__PURE__ */ new Set();
 			disposed = false;
 			/**
@@ -1285,18 +3498,17 @@ window.__ModuleLoader__.load({
 			*/
 			resolve(sessionId, attachment) {
 				if (this.disposed) return Promise.reject(/* @__PURE__ */ new Error("ui-conversation image cache is disposed"));
-				const key = this.key(sessionId, attachment);
-				const cached = this.entries.get(key);
-				if (cached !== void 0) return cached.pending;
 				const binding = this.sessions.binding(sessionId);
 				if (binding === void 0) return Promise.reject(/* @__PURE__ */ new Error(`ui-conversation: unknown session "${sessionId}"`));
-				this.bindScope(sessionId, binding.ctx);
+				const entries = this.bindScope(binding);
+				const key = attachment.attachmentId;
+				const cached = entries.get(key);
+				if (cached !== void 0) return cached.pending;
 				const entry = {
-					sessionId,
-					generation: this.generations.get(sessionId) ?? 0,
+					binding,
 					pending: Promise.resolve("")
 				};
-				this.entries.set(key, entry);
+				entries.set(key, entry);
 				entry.pending = this.loadCanonical(key, entry, attachment);
 				return entry.pending;
 			}
@@ -1307,7 +3519,8 @@ window.__ModuleLoader__.load({
 			* @returns current preview or canonical URL when cached.
 			*/
 			peek(sessionId, attachment) {
-				return this.entries.get(this.key(sessionId, attachment))?.current;
+				const binding = this.sessions.binding(sessionId);
+				return binding === void 0 ? void 0 : this.entries.get(binding)?.get(attachment.attachmentId)?.current;
 			}
 			/**
 			* Adopt a submission preview while fetching the durable admitted bytes.
@@ -1320,22 +3533,21 @@ window.__ModuleLoader__.load({
 			*/
 			seed(sessionId, attachment, url) {
 				if (this.disposed) return false;
-				const key = this.key(sessionId, attachment);
-				if (this.entries.has(key)) return false;
 				const binding = this.sessions.binding(sessionId);
 				if (binding === void 0) return false;
-				this.bindScope(sessionId, binding.ctx);
+				const entries = this.bindScope(binding);
+				const key = attachment.attachmentId;
+				if (entries.has(key)) return false;
 				const entry = {
-					sessionId,
-					generation: this.generations.get(sessionId) ?? 0,
+					binding,
 					current: url,
 					pending: Promise.resolve(url)
 				};
 				this.urls.add(url);
-				this.entries.set(key, entry);
+				entries.set(key, entry);
 				entry.pending = this.loadCanonical(key, entry, attachment).catch((error) => {
-					if (this.entries.get(key) === entry && entry.current === url) {
-						this.entries.delete(key);
+					if (entries.get(key) === entry && entry.current === url) {
+						entries.delete(key);
 						this.releaseUrl(url);
 					}
 					throw error;
@@ -1343,13 +3555,8 @@ window.__ModuleLoader__.load({
 				entry.pending.catch(() => {});
 				return true;
 			}
-			key(sessionId, attachment) {
-				return `${sessionId}:${attachment.attachmentId}`;
-			}
 			loadCanonical(key, entry, attachment) {
-				const binding = this.sessions.binding(entry.sessionId);
-				if (binding === void 0) return Promise.reject(/* @__PURE__ */ new Error(`ui-conversation: unknown session "${entry.sessionId}"`));
-				return binding.session.readAttachment(attachment.attachmentId).then((result) => {
+				return entry.binding.session.readAttachment(attachment.attachmentId).then((result) => {
 					if (!result.ok) throw new Error(`${result.error.code}: ${result.error.message}`);
 					this.assertLive(key, entry);
 					let url;
@@ -1365,31 +3572,34 @@ window.__ModuleLoader__.load({
 					if (previous !== void 0 && previous !== url) this.releaseUrl(previous);
 					return url;
 				}).catch((error) => {
-					if (this.entries.get(key) === entry && entry.current === void 0) this.entries.delete(key);
+					const entries = this.entries.get(entry.binding);
+					if (entries?.get(key) === entry && entry.current === void 0) entries.delete(key);
 					throw error;
 				});
 			}
 			assertLive(key, entry) {
 				if (this.disposed) throw new Error("ui-conversation image cache was disposed before loading completed");
-				if (this.entries.get(key) !== entry || (this.generations.get(entry.sessionId) ?? 0) !== entry.generation) throw new Error("ui-conversation image scope was released before loading completed");
+				if (this.entries.get(entry.binding)?.get(key) !== entry) throw new Error("ui-conversation image scope was released before loading completed");
 			}
-			bindScope(sessionId, scope) {
-				if (this.scopeDisposers.has(sessionId)) return;
-				const dispose = scope.effect(() => () => {
-					this.scopeDisposers.delete(sessionId);
-					this.release(sessionId);
+			bindScope(binding) {
+				const existing = this.entries.get(binding);
+				if (existing !== void 0) return existing;
+				const entries = /* @__PURE__ */ new Map();
+				this.entries.set(binding, entries);
+				const dispose = binding.ctx.effect(() => () => {
+					this.scopeDisposers.delete(binding);
+					this.release(binding, entries);
 				}, "ui-conversation historical image scope");
-				this.scopeDisposers.set(sessionId, () => {
+				const release = () => {
 					dispose();
-				});
+				};
+				this.scopeDisposers.set(binding, release);
+				return entries;
 			}
-			release(sessionId) {
-				this.generations.set(sessionId, (this.generations.get(sessionId) ?? 0) + 1);
-				for (const [key, entry] of this.entries) {
-					if (entry.sessionId !== sessionId) continue;
-					this.entries.delete(key);
-					if (entry.current !== void 0) this.releaseUrl(entry.current);
-				}
+			release(binding, entries) {
+				if (this.entries.get(binding) === entries) this.entries.delete(binding);
+				for (const entry of entries.values()) if (entry.current !== void 0) this.releaseUrl(entry.current);
+				entries.clear();
 			}
 			releaseUrl(url) {
 				if (!this.urls.delete(url)) return;
@@ -1398,10 +3608,11 @@ window.__ModuleLoader__.load({
 			dispose() {
 				if (this.disposed) return;
 				this.disposed = true;
-				for (const dispose of [...this.scopeDisposers.values()]) dispose();
+				for (const dispose of [...this.scopeDisposers.values]) dispose();
 				this.scopeDisposers.clear();
 				for (const url of this.urls) revokeUrl(url);
 				this.urls.clear();
+				for (const entries of this.entries.values) entries.clear();
 				this.entries.clear();
 			}
 		};
@@ -1422,11 +3633,290 @@ window.__ModuleLoader__.load({
 			}
 		};
 		//#endregion
+		//#region lib/types/client/conversation/group-registry.js
+		/** One Group Definition per target; registration never instantiates its Builder. */
+		var ConversationGroupRegistry = class extends ConversationDefinitionRegistry {
+			views;
+			/**
+			* @param ctx - owning plugin context.
+			* @param views - registered target Builder definitions.
+			*/
+			constructor(ctx, views) {
+				super(ctx);
+				this.views = views;
+			}
+			/**
+			* Register grouping rules for an existing target.
+			* @param definition - business State and grouping output for the declared target data.
+			* @returns the effect-owned, idempotent registration disposer.
+			*/
+			register(definition) {
+				if (!this.views.entries().some((view) => view.target === definition.target)) throw new Error(`conversation group target "${definition.target}" is not registered`);
+				return this.registerDefinition(definition.target, definition, `conversation group target "${definition.target}" is already registered`, `uiConversation.groups.register(${JSON.stringify(definition.target)})`);
+			}
+			/**
+			* Find the grouping rules registered for one target.
+			* @param target - View target.
+			* @returns its grouping Definition, when registered.
+			*/
+			forTarget(target) {
+				return this.definitions.get(target);
+			}
+		};
+		//#endregion
+		//#region lib/types/client/conversation/user-text-document.js
+		var UserTextTransformError = class extends Error {
+			ruleId;
+			constructor(ruleId, cause) {
+				super(`user-text rule "${ruleId}" failed to evaluate`, { cause });
+				this.ruleId = ruleId;
+				this.name = "UserTextTransformError";
+			}
+		};
+		/** Data-layer cache owned by one caller; initialization and refresh share one reconciliation. */
+		var UserTextDocument = class {
+			text;
+			rules;
+			initial = [];
+			output = [];
+			matchers = /* @__PURE__ */ new Map();
+			complete = false;
+			evaluating = false;
+			/**
+			* Reconcile original text using current rule definitions and valid query records.
+			* @param input - original text and readonly Facts, compared by fields actually read.
+			* @param rules - unique definitions ordered by ascending order and stable ID.
+			* @returns complete readonly nodes; failures retain caches but publish no partial result.
+			*/
+			evaluate(input, rules) {
+				if (this.evaluating) throw new Error("user-text document evaluation cannot be reentrant");
+				this.evaluating = true;
+				try {
+					const { changed, matchers } = this.prepare(input, rules);
+					if (!changed && this.complete) return this.output;
+					this.complete = false;
+					this.output = alignNodes(this.reconcile(input, matchers), this.output, this.initial);
+					this.complete = true;
+					return this.output;
+				} finally {
+					this.evaluating = false;
+				}
+			}
+			prepare(input, rules) {
+				let changed = this.rules !== rules;
+				if (this.text !== input.text) {
+					changed = true;
+					this.text = input.text;
+					this.matchers.clear();
+					this.initial = input.text.length === 0 ? [] : [textNode(input.text, 0, input.text.length)];
+					this.output = this.initial;
+				}
+				const ids = new Set(rules.map((rule) => rule.id));
+				const matchers = [];
+				for (const definition of rules) {
+					let matcher = this.matchers.get(definition.id);
+					if (matcher === void 0 || matcher.definition !== definition || factsChanged(matcher.reads, input)) {
+						matcher = {
+							definition,
+							queries: [],
+							reads: /* @__PURE__ */ new Map()
+						};
+						this.matchers.set(definition.id, matcher);
+						changed = true;
+					}
+					matchers.push(matcher);
+				}
+				for (const id of this.matchers.keys()) if (!ids.has(id)) this.matchers.delete(id);
+				this.rules = rules;
+				return {
+					changed,
+					matchers
+				};
+			}
+			reconcile(input, matchers) {
+				const traversals = matchers.map((matcher) => ({
+					matcher,
+					added: [],
+					index: -1,
+					head: void 0
+				}));
+				const nodes = [];
+				let cursor = 0;
+				try {
+					while (true) {
+						let winner;
+						for (const traversal of traversals) {
+							const node = nextCandidate(traversal, input, cursor);
+							if (node !== void 0 && (winner === void 0 || node.start < winner.start)) winner = node;
+						}
+						if (winner === void 0) {
+							if (cursor < input.text.length) nodes.push(textNode(input.text, cursor, input.text.length));
+							return nodes;
+						}
+						if (cursor < winner.start) nodes.push(textNode(input.text, cursor, winner.start));
+						nodes.push(winner);
+						cursor = winner.end;
+					}
+				} finally {
+					for (const { matcher, added } of traversals) if (added.length > 0) matcher.queries = mergeQueries(matcher.queries, added);
+				}
+			}
+		};
+		function factsChanged(reads, input) {
+			for (const [key, value] of reads) if (!Object.is(value, input.facts[key])) return true;
+			return false;
+		}
+		function withFacts(input, reads, run) {
+			let active = true;
+			try {
+				return run({ read: (key) => {
+					if (!active) throw new Error("user-text transform context is closed; read is synchronous only");
+					const value = input.facts[key];
+					reads.set(key, value);
+					return value;
+				} });
+			} finally {
+				active = false;
+			}
+		}
+		function nextCandidate(traversal, input, cursor) {
+			const { matcher } = traversal;
+			if (traversal.head === void 0 || traversal.head.node !== void 0 && traversal.head.node.start < cursor) {
+				let next = matcher.queries[traversal.index + 1];
+				while (next !== void 0 && next.from <= cursor) {
+					traversal.index++;
+					next = matcher.queries[traversal.index + 1];
+				}
+				const recorded = matcher.queries[traversal.index];
+				if (recorded !== void 0 && (recorded.error !== void 0 ? recorded.from === cursor : recorded.node === void 0 || recorded.node.start >= cursor)) traversal.head = recorded;
+				else {
+					let node;
+					let error;
+					try {
+						node = withFacts(input, matcher.reads, (context) => matcher.definition.match(input.text, cursor, context));
+						if (node !== void 0) validateCandidate(input.text, matcher.definition.id, cursor, node);
+					} catch (cause) {
+						error = new UserTextTransformError(matcher.definition.id, cause);
+					}
+					traversal.head = {
+						from: cursor,
+						node,
+						error
+					};
+					traversal.added.push(traversal.head);
+				}
+			}
+			if (traversal.head.error !== void 0) throw traversal.head.error;
+			return traversal.head.node;
+		}
+		function validateCandidate(text, ruleId, from, node) {
+			if (!Number.isInteger(node.start) || !Number.isInteger(node.end) || node.start < from || node.end <= node.start || node.end > text.length) throw new Error(`invalid candidate range [${node.start}, ${node.end}); expected a nonempty range from ${from} to ${text.length}`);
+			if (node.id === "text") {
+				if (node.data.text !== text.slice(node.start, node.end)) throw new Error("text candidate must preserve its original substring");
+			} else if (node.id !== ruleId) throw new Error(`candidate must use rule ID "${ruleId}" or text`);
+		}
+		function mergeQueries(previous, added) {
+			if (previous.length === 0) return added;
+			const merged = [];
+			const remaining = previous.values();
+			let old = remaining.next().value;
+			for (const query of added) {
+				while (old !== void 0 && old.from < query.from) {
+					merged.push(old);
+					old = remaining.next().value;
+				}
+				merged.push(query);
+			}
+			while (old !== void 0) {
+				merged.push(old);
+				old = remaining.next().value;
+			}
+			return merged;
+		}
+		function textNode(text, start, end) {
+			return {
+				id: "text",
+				start,
+				end,
+				data: { text: text.slice(start, end) }
+			};
+		}
+		function alignNodes(output, previous, input) {
+			let previousIndex = 0;
+			let inputIndex = 0;
+			let aligned;
+			for (const [index, node] of output.entries()) {
+				let inputNode = input[inputIndex];
+				while (inputNode && inputNode.start < node.start) inputNode = input[++inputIndex];
+				let previousNode = previous[previousIndex];
+				while (previousNode && previousNode.start < node.start) previousNode = previous[++previousIndex];
+				const reused = inputNode && equalNode(node, inputNode) ? inputNode : previousNode && equalNode(node, previousNode) ? previousNode : node;
+				if (reused !== node && !aligned) aligned = output.slice(0, index);
+				aligned?.push(reused);
+			}
+			const nodes = aligned ?? output;
+			if (equalElements(nodes, previous)) return previous;
+			return equalElements(nodes, input) ? input : nodes;
+		}
+		function equalElements(left, right) {
+			return left === right || left.length === right.length && left.every((node, index) => node === right[index]);
+		}
+		function equalNode(left, right) {
+			return Object.is(left, right) || left.id === right.id && left.start === right.start && left.end === right.end && equalJson(left.data, right.data);
+		}
+		function equalJson(left, right) {
+			if (Object.is(left, right)) return true;
+			if (left === null || right === null || typeof left !== "object" || typeof right !== "object") return false;
+			if (Array.isArray(left) !== Array.isArray(right)) return false;
+			const keys = Object.keys(left);
+			if (keys.length !== Object.keys(right).length) return false;
+			return keys.every((key) => Object.hasOwn(right, key) && equalJson(Reflect.get(left, key), Reflect.get(right, key)));
+		}
+		//#endregion
+		//#region lib/types/client/conversation/user-text-registry.js
+		/** Observable rule revision with no retained documents or document subscriptions. */
+		var UserTextRegistry = class extends ConversationDefinitionRegistry {
+			rules = [];
+			revision = 0;
+			/**
+			* Register a uniquely named rule; invalid IDs, duplicate IDs and non-finite order throw before publication.
+			* @param rule - readonly synchronous candidate matcher with a nonempty ID other than the reserved `text` ID.
+			* @returns idempotent disposer; removal synchronously publishes a new revision.
+			*/
+			register(rule) {
+				if (rule.id.length === 0) throw new Error("user-text rule ID must not be empty");
+				if (rule.id === "text") throw new Error("user-text rule \"text\" is reserved for original text");
+				if (!Number.isFinite(rule.order)) throw new Error(`user-text rule "${rule.id}" order must be finite`);
+				return this.registerDefinition(rule.id, rule, `user-text rule "${rule.id}" is already registered`, `uiConversation.userText.register(${JSON.stringify(rule.id)})`);
+			}
+			/**
+			* Create an independent document evaluator; it reads current rules at each call and never subscribes.
+			* @returns callback owning its document cache, released when the caller releases the callback.
+			*/
+			createEvaluator() {
+				const document = new UserTextDocument();
+				return (input) => document.evaluate(input, this.rules);
+			}
+			/**
+			* Read the observable rule revision.
+			* @returns monotonic revision, stable until a successful registration or disposal.
+			*/
+			getSnapshot() {
+				return this.revision;
+			}
+			refresh() {
+				this.rules = [...this.definitions.values()].sort((a, b) => a.order - b.order || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+				this.revision++;
+				super.refresh();
+			}
+		};
+		//#endregion
 		//#region lib/types/client/conversation/assembly.js
 		/** Per-Session target-neutral Conversation assembly. */
 		var BoundConversation = class {
 			assembler;
 			snapshot;
+			openTurn;
 			viewStore;
 			targetSources = /* @__PURE__ */ new Map();
 			revision = -1;
@@ -1436,6 +3926,7 @@ window.__ModuleLoader__.load({
 				this.assembler = assembler;
 				this.viewStore = assembler;
 				this.snapshot = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(this.currentSnapshot());
+				this.openTurn = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(assembler.openTurn());
 				this.replace(feed.getSnapshot());
 				this.disposeFeed = feed.subscribe(() => {
 					this.accept(feed.getSnapshot());
@@ -1448,19 +3939,24 @@ window.__ModuleLoader__.load({
 					source = {
 						getSnapshot: () => views.get(target),
 						subscribe: (listener) => {
-							return this.snapshot.subscribe(listener);
+							const unsubscribe = this.snapshot.subscribe(listener);
+							this.activate(target);
+							return unsubscribe;
 						}
 					};
 					this.targetSources.set(target, source);
 				}
 				return source;
 			}
+			activate(target) {
+				if (this.assembler.activateTarget(target)) this.snapshot.set(this.currentSnapshot());
+				this.openTurn.set(this.assembler.openTurn());
+			}
 			rebuild() {
 				this.publish(this.assembler.rebuildRegistry());
 			}
 			dispose() {
-				if (this.frame !== void 0 && typeof cancelAnimationFrame === "function") cancelAnimationFrame(this.frame);
-				this.frame = void 0;
+				this.cancelFrame();
 				this.disposeFeed();
 			}
 			replace(window) {
@@ -1485,7 +3981,11 @@ window.__ModuleLoader__.load({
 							if (next === "immediate" || publication === "none") publication = next;
 						}
 						this.publish(publication);
+						return;
 					}
+					case "settle-assistant":
+						this.publish(this.assembler.settleAssistant(window.change.attemptId, window.change.entry));
+						return;
 				}
 			}
 			publish(publication) {
@@ -1493,20 +3993,30 @@ window.__ModuleLoader__.load({
 				if (publication === "animation-frame" && typeof requestAnimationFrame === "function") {
 					if (this.frame !== void 0) return;
 					this.frame = requestAnimationFrame(() => {
-						this.frame = void 0;
-						this.flush();
+						this.frame = requestAnimationFrame(() => {
+							this.frame = requestAnimationFrame(() => {
+								this.frame = void 0;
+								this.flush();
+							});
+						});
 					});
 					return;
 				}
+				this.cancelFrame();
 				this.flush();
+			}
+			cancelFrame() {
+				if (this.frame !== void 0 && typeof cancelAnimationFrame === "function") cancelAnimationFrame(this.frame);
+				this.frame = void 0;
 			}
 			flush() {
 				if (this.assembler.flush()) this.snapshot.set(this.currentSnapshot());
+				this.openTurn.set(this.assembler.openTurn());
 			}
 			currentSnapshot() {
 				return {
 					views: this.viewStore,
-					activeTargets: this.assembler.activeTargets()
+					activeTargets: this.assembler.activityTargets()
 				};
 			}
 		};
@@ -1517,7 +4027,11 @@ window.__ModuleLoader__.load({
 			events;
 			/** Registry of target View definitions. */
 			views;
-			bindings = /* @__PURE__ */ new Map();
+			/** Business grouping rules over already materialized target Nodes. */
+			groups;
+			/** Pure text rules and parser snapshots, independent of durable Session assembly. */
+			userText;
+			bindings = new WeakMapWithValues();
 			images;
 			/**
 			* @param ctx - owning Client context.
@@ -1528,9 +4042,11 @@ window.__ModuleLoader__.load({
 				this.sessions = sessions;
 				this.events = new ConversationEventRegistry(ctx);
 				this.views = new ConversationViewRegistry(ctx);
+				this.groups = new ConversationGroupRegistry(ctx, this.views);
+				this.userText = new UserTextRegistry(ctx);
 				this.images = new HistoricalImageCache(ctx, sessions);
 				const rebuild = () => {
-					for (const record of this.bindings.values()) record.binding.rebuild();
+					for (const record of this.bindings.values) record.binding.rebuild();
 				};
 				let rebuildQueued = false;
 				const scheduleRebuild = () => {
@@ -1544,10 +4060,12 @@ window.__ModuleLoader__.load({
 				ctx.effect(() => {
 					const disposeEvents = this.events.subscribe(scheduleRebuild);
 					const disposeViews = this.views.subscribe(scheduleRebuild);
+					const disposeGroups = this.groups.subscribe(scheduleRebuild);
 					return () => {
+						disposeGroups();
 						disposeViews();
 						disposeEvents();
-						for (const record of [...this.bindings.values()]) this.drop(record, true);
+						for (const record of [...this.bindings.values]) this.drop(record, true);
 					};
 				}, "ui-conversation assembly");
 			}
@@ -1555,21 +4073,22 @@ window.__ModuleLoader__.load({
 			* Resolve the Conversation binding for one Controller binding or Session id.
 			* @param source - Session binding or identity.
 			* @returns stable Conversation binding.
+			* @throws if the Session is unknown or its binding is no longer current.
 			*/
 			binding(source) {
 				const sessionId = typeof source === "string" ? source : source.sessionId;
 				const owner = typeof source === "string" ? this.sessions.binding(source) : source;
 				if (owner === void 0) throw new Error(`uiConversation.binding: unknown session "${sessionId}"`);
-				const current = this.bindings.get(owner.sessionId);
-				if (current?.source === owner) return current.binding;
-				if (current !== void 0) this.drop(current, true);
-				const binding = new BoundConversation(owner.eventSource, new ConversationNodeAssembler(this.events, this.views));
+				if (this.sessions.binding(sessionId) !== owner) throw new Error(`uiConversation.binding: inactive session "${sessionId}"`);
+				const current = this.bindings.get(owner);
+				if (current !== void 0) return current.binding;
+				const binding = new BoundConversation(owner.eventSource, new ConversationNodeAssembler(this.events, this.views, this.groups));
 				const record = {
 					source: owner,
 					binding,
 					disposeScope: () => {}
 				};
-				this.bindings.set(owner.sessionId, record);
+				this.bindings.set(owner, record);
 				const disposeScope = owner.ctx.effect(() => () => {
 					this.drop(record, false);
 				}, "ui-conversation binding");
@@ -1610,28 +4129,301 @@ window.__ModuleLoader__.load({
 				return this.images.seed(sessionId, attachment, url);
 			}
 			/**
-			* Canonicalize one `request/header` event against the previous prompt state.
+			* Interpret a system message or surface replacement for target-owned prompt Definitions.
+			* @param previous - System facts at the preceding relevant loaded event.
+			* @param event - Durable system message or positional replacement.
+			* @returns Immutable prompt interpretation at this event.
+			*/
+			inspectSystemPrompt(previous, event) {
+				return inspectSystemPrompt(previous, event);
+			}
+			/**
+			* Canonicalize one `request/header` event against the previous prompt state
+			* and the `system/message` node in force.
 			*
 			* A pure interpretation shared by the Chat and Trajectory Definitions, exposed
 			* as a service method because cross-plugin value imports are forbidden in
 			* client bundles.
 			* @param previous - prompt recorded by the preceding loaded header, if any.
 			* @param event - the `request/header` session event to interpret.
+			* @param system - effective prompt after loaded surface replacements, if any.
 			* @returns the canonical prompt snapshot and any model-visible change.
 			*/
-			inspectRequestPrompt(previous, event) {
-				return inspectRequestPrompt(previous, event);
+			inspectRequestPrompt(previous, event, system) {
+				return inspectRequestPrompt(previous, event, system);
 			}
 			drop(record, releaseScope) {
-				if (this.bindings.get(record.source.sessionId) !== record) return;
-				this.bindings.delete(record.source.sessionId);
+				if (this.bindings.get(record.source) !== record) return;
+				this.bindings.delete(record.source);
 				record.binding.dispose();
 				if (releaseScope) record.disposeScope();
 			}
 		};
 		//#endregion
+		//#region \0dsh-css:packages/client-ui-conversation/src/client/user-text/UserText.module.css.mjs
+		const css$9 = ".VQbbBW_root{display:contents}.VQbbBW_ellipsis{text-overflow:ellipsis;white-space:nowrap;min-width:0;max-width:100%;display:block;overflow:hidden}";
+		const tagId$9 = "@deepseek-ai/dsh-client-ui-conversation/UserText.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$9) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
+			tag.dataset.pluginCss = tagId$9;
+			tag.textContent = css$9;
+			document.head.appendChild(tag);
+		}
+		var UserText_module_css_default = {
+			"ellipsis": "VQbbBW_ellipsis",
+			"root": "VQbbBW_root"
+		};
+		//#endregion
+		//#region lib/types/client/user-text/UserText.js
+		/** User-text presentation delegates evaluation to its data-layer document and renders JSON business nodes. */
+		/**
+		* Render original text through pure matching rules and business-owned node Slots.
+		* A failed parse retains the entire original text and reports the rule error.
+		* @param props - original text, confirmed facts, display policy, and framework seats.
+		* @returns ordered inline nodes with raw-text fallbacks for missing registrations.
+		*/
+		function UserText({ text, facts, interactive = false, ellipsis = false, useUserTextRevision, createUserTextEvaluator, reportTransformFailure, renderSlot }) {
+			useUserTextRevision((revision) => revision);
+			const evaluate = (0, react.useMemo)(createUserTextEvaluator, [createUserTextEvaluator]);
+			let nodes;
+			let error;
+			try {
+				nodes = evaluate({
+					text,
+					facts
+				});
+			} catch (cause) {
+				error = cause;
+			}
+			const failed = nodes === void 0;
+			(0, react.useEffect)(() => {
+				if (failed) reportTransformFailure(error);
+			}, [
+				failed,
+				error,
+				reportTransformFailure
+			]);
+			const content = (0, react.useMemo)(() => nodes === void 0 ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.UserTextRun, { text }) : (0, react_jsx_runtime.jsx)(react_jsx_runtime.Fragment, { children: nodes.map((node) => {
+				const raw = text.slice(node.start, node.end);
+				return (0, react_jsx_runtime.jsx)(react.Fragment, { children: renderSlot("conversation.user.text.node", {
+					node,
+					raw,
+					interactive
+				}, {
+					entryKey: node.id,
+					fallback: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.UserTextRun, { text: node.id === "text" ? node.data.display ?? raw : raw })
+				}) }, `${node.id}:${node.start}`);
+			}) }), [
+				nodes,
+				text,
+				interactive,
+				renderSlot
+			]);
+			return (0, react_jsx_runtime.jsx)("span", {
+				className: ellipsis ? UserText_module_css_default.ellipsis : UserText_module_css_default.root,
+				children: content
+			});
+		}
+		/**
+		* Display an unmatched substring without business interpretation.
+		* @param props - parser-produced plain-text node.
+		* @returns its inline text.
+		*/
+		function PlainUserText({ node }) {
+			return (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.UserTextRun, { text: node.data.display ?? node.data.text });
+		}
+		/**
+		* Display a confirmed Session label without inventing navigation behavior.
+		* @param props - Session reference JSON and its original spelling.
+		* @returns the existing non-interactive Session chip.
+		*/
+		function SessionReference({ node, raw }) {
+			return (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.ReferenceChip, {
+				appearance: "session",
+				label: node.data.label,
+				title: raw
+			});
+		}
+		//#endregion
+		//#region lib/types/client/user-text/session-reference-rule.js
+		/** Find the nearest Session reference; bare labels read their Facts only at a non-wire @ position. */
+		const sessionReferenceRule = {
+			id: "session",
+			order: 10,
+			match(text, from, context) {
+				let labels;
+				let readLabels = false;
+				const wire = /@\[([^\]\n]+)\]\(dsh-session:[^)\s]+\)/uy;
+				for (let start = text.indexOf("@", from); start >= 0; start = text.indexOf("@", start + 1)) {
+					wire.lastIndex = start;
+					const explicit = wire.exec(text);
+					if (explicit !== null) return {
+						id: "session",
+						start,
+						end: start + explicit[0].length,
+						data: { label: explicit[1] }
+					};
+					if (!readLabels) {
+						labels = context.read("sessionLabels");
+						readLabels = true;
+					}
+					let best;
+					for (const label of labels ?? []) {
+						if (label.length === 0 || !text.startsWith(label, start + 1)) continue;
+						const end = start + label.length + 1;
+						if (best === void 0 || end > best.end) best = {
+							id: "session",
+							start,
+							end,
+							data: { label }
+						};
+					}
+					if (best !== void 0) return best;
+				}
+			}
+		};
+		//#endregion
+		//#region lib/types/client/user-text/whitespace-rules.js
+		function replacement(text, start, end, display) {
+			return {
+				id: "text",
+				start,
+				end,
+				data: {
+					text: text.slice(start, end),
+					display
+				}
+			};
+		}
+		/** Offer the next whitespace run whose display collapses to one space. */
+		const collapseWhitespaceRule = {
+			id: "text.collapse-whitespace",
+			order: 1010,
+			match(text, from, context) {
+				if (!context.read("collapseWhitespace")) return void 0;
+				const spaces = /\s+/gu;
+				spaces.lastIndex = from;
+				for (let match = spaces.exec(text); match !== null; match = spaces.exec(text)) {
+					if (match.index > 0 && /\s/u.test(text.slice(match.index - 1, match.index)) || match[0] === " ") continue;
+					return replacement(text, match.index, match.index + match[0].length, " ");
+				}
+			}
+		};
+		/** Offer original document-edge whitespace, winning same-start collisions with collapse. */
+		const trimWhitespaceRule = {
+			id: "text.trim-whitespace",
+			order: 1e3,
+			match(text, from, context) {
+				if (!context.read("trimWhitespace")) return void 0;
+				if (from === 0) {
+					const leading = /^\s+/u.exec(text);
+					if (leading !== null) return replacement(text, 0, leading[0].length, "");
+				}
+				let start = text.length;
+				const whitespace = /\s/u;
+				while (start > 0 && whitespace.test(text.charAt(start - 1))) start--;
+				return start === text.length || start < from ? void 0 : replacement(text, start, text.length, "");
+			}
+		};
+		//#endregion
+		//#region lib/types/client/draft.js
+		/** Semantic draft snapshots shared by storage, programmatic input, and editor restoration. */
+		const referenceSchema = zod.z.object({
+			source: zod.z.string(),
+			ref: zod.z.string(),
+			offset: zod.z.number().int().nonnegative(),
+			length: zod.z.number().int().positive(),
+			label: zod.z.string(),
+			appearance: zod.z.enum([
+				"session",
+				"file",
+				"folder"
+			]).optional(),
+			clipboardText: zod.z.string(),
+			invalid: zod.z.boolean().optional()
+		});
+		const commandSchema = zod.z.object({ token: zod.z.string() });
+		const snapshotSchema = zod.z.object({
+			text: zod.z.string(),
+			references: zod.z.array(referenceSchema),
+			command: commandSchema.optional()
+		}).refine((draft) => {
+			const spelling = draft.command?.token.trimEnd();
+			if (spelling !== void 0 && (!/^\/\S/u.test(spelling) || !draft.text.startsWith(spelling))) return false;
+			let end = spelling?.length ?? 0;
+			for (const reference of draft.references) {
+				if (reference.offset < end || reference.length !== reference.clipboardText.length) return false;
+				end = reference.offset + reference.length;
+				if (end > draft.text.length || draft.text.slice(reference.offset, end) !== reference.clipboardText) return false;
+			}
+			return true;
+		}, "Draft references must identify ordered, non-overlapping text spans after the leading command token");
+		/**
+		* Copy input into the semantic draft representation without editor runtime identities.
+		* @param input - plain text or caller-owned structured content.
+		* @returns an owned snapshot ready for editor import.
+		*/
+		function resolveDraftInput(input) {
+			if (typeof input === "string") return {
+				text: input,
+				references: []
+			};
+			return {
+				text: input.text,
+				references: input.references.map(copyReference),
+				...input.command === void 0 ? {} : { command: { token: input.command.token } }
+			};
+		}
+		/**
+		* Decode persisted drafts, accepting the earlier plain-string representation.
+		* @param value - JSON value read from browser storage.
+		* @returns the decoded draft, or undefined for invalid data.
+		*/
+		function parseStoredDraft(value) {
+			if (typeof value === "string") return resolveDraftInput(value);
+			const parsed = snapshotSchema.safeParse(value);
+			if (!parsed.success) return void 0;
+			return {
+				text: parsed.data.text,
+				references: parsed.data.references.map(({ appearance, invalid, ...reference }) => ({
+					...reference,
+					...appearance === void 0 ? {} : { appearance },
+					...invalid === void 0 ? {} : { invalid }
+				})),
+				...parsed.data.command === void 0 ? {} : { command: { token: parsed.data.command.token } }
+			};
+		}
+		/**
+		* Export reference identities without their editor-local occurrence ids.
+		* @param text - current clipboard projection.
+		* @param occurrences - matching reference projections from the same document revision.
+		* @param commandToken - claim token of the command chip opening the document, if any.
+		* @returns an editor-independent snapshot.
+		*/
+		function snapshotDraft(text, occurrences, commandToken) {
+			return {
+				text,
+				references: occurrences.map(copyReference),
+				...commandToken === void 0 ? {} : { command: { token: commandToken } }
+			};
+		}
+		function copyReference(reference) {
+			return {
+				source: reference.source,
+				ref: reference.ref,
+				offset: reference.offset,
+				length: reference.length,
+				label: reference.label,
+				clipboardText: reference.clipboardText,
+				...reference.appearance === void 0 ? {} : { appearance: reference.appearance },
+				...reference.invalid === void 0 ? {} : { invalid: reference.invalid }
+			};
+		}
+		//#endregion
 		//#region lib/types/client/stores.js
 		/** Per-session Conversation store shared by the shell body and header. */
+		const CONVERSATION_STORE_KEY = "dsh.conversation";
 		/**
 		* Declare per-session draft persistence and View selection.
 		* @returns the store handle.
@@ -1643,7 +4435,7 @@ window.__ModuleLoader__.load({
 					view: null,
 					viewRequest: null
 				}),
-				persist: "dsh.conversation",
+				persist: CONVERSATION_STORE_KEY,
 				actions: {
 					setDraft: (d, text) => {
 						d.draft = text;
@@ -1664,6 +4456,86 @@ window.__ModuleLoader__.load({
 				}
 			});
 		}
+		/**
+		* Read a Session's draft before its input source is published to React.
+		* @param sessionId - Session-scoped persistence suffix.
+		* @returns saved semantic content, or an empty document when storage is absent or invalid.
+		*/
+		function readConversationDraft(sessionId) {
+			const empty = {
+				text: "",
+				references: []
+			};
+			if (typeof localStorage === "undefined") return empty;
+			try {
+				const raw = localStorage.getItem(`${CONVERSATION_STORE_KEY}.${sessionId}`);
+				if (raw === null) return empty;
+				const stored = JSON.parse(raw);
+				if (typeof stored !== "object" || stored === null || !("draft" in stored)) return empty;
+				return parseStoredDraft(stored.draft) ?? empty;
+			} catch (_error) {
+				return empty;
+			}
+		}
+		/**
+		* Read the persisted View preference before the Slot store is materialized.
+		* @param sessionId - Session-scoped persistence suffix.
+		* @returns the preferred View id, or null when storage has no usable value.
+		*/
+		function readConversationViewPreference(sessionId) {
+			if (typeof localStorage === "undefined") return null;
+			try {
+				const raw = localStorage.getItem(`${CONVERSATION_STORE_KEY}.${sessionId}`);
+				if (raw === null) return null;
+				const stored = JSON.parse(raw);
+				if (typeof stored !== "object" || stored === null || !("view" in stored)) return null;
+				return typeof stored.view === "string" ? stored.view : null;
+			} catch {
+				return null;
+			}
+		}
+		//#endregion
+		//#region ../../node_modules/@deepseek-ai/dsh-file-reference/lib/types/grammar.js
+		/**
+		* Format a selected path as prompt text. Whitespace uses the quoted
+		* `@"path"` grammar; a quoted directory keeps that quote open after its
+		* trailing slash so completion can descend another level.
+		* @param candidate - selected file or directory.
+		* @param preserveQuote - retain an explicitly opened quote even when unnecessary.
+		* @returns the insertion value, or `undefined` for a path the editor grammar cannot represent safely.
+		*/
+		function formatFileMention(candidate, preserveQuote) {
+			const path = candidate.kind === "directory" ? `${candidate.path}/` : candidate.path;
+			if (/[\u0000-\u001f\u007f-\u009f"]/u.test(path)) return void 0;
+			if (!(preserveQuote || /\s/u.test(path))) return `@${path}`;
+			if (candidate.kind === "directory") return `@"${path}`;
+			return `@"${path}"`;
+		}
+		//#endregion
+		//#region ../../node_modules/@deepseek-ai/dsh-util-workspace-path/lib/index.js
+		/**
+		* Read the final non-empty segment of a Workspace path for display.
+		* Workspace-label surfaces use this helper instead of deriving another basename.
+		* @param path - Workspace directory path using POSIX or Windows separators.
+		* @returns the final segment, or an empty string for a separator-only path.
+		*/
+		function workspaceTitleOf(path) {
+			const trimmed = path.replace(/[/\\]+$/, "");
+			const separator = Math.max(trimmed.lastIndexOf("/"), trimmed.lastIndexOf("\\"));
+			return trimmed.slice(separator + 1);
+		}
+		/**
+		* Strip the workspace root from a workspace-rooted absolute path (display only).
+		* @param text - the path to shorten.
+		* @param cwd - session workspace root; absent or empty leaves the path unchanged.
+		* @returns the path relative to the workspace root, or unchanged when it is not rooted there.
+		*/
+		function relativizeToCwd(text, cwd) {
+			if (cwd === void 0 || cwd === "") return text;
+			const root = cwd.replace(/[/\\]+$/, "");
+			if (text.startsWith(`${root}/`) || text.startsWith(`${root}\\`)) return text.slice(root.length + 1);
+			return text;
+		}
 		//#endregion
 		//#region lib/types/client/service.js
 		/**
@@ -1675,7 +4547,7 @@ window.__ModuleLoader__.load({
 		* through one property read; assignment through the tracker proxy and `#`
 		* private fields bypass that rebinding.
 		*/
-		/** Create one browser-only draft descriptor; only its id enters input state. */
+		/** Create one browser-only image draft descriptor; only its id enters input state. */
 		function browserDraftAttachment(file) {
 			return {
 				kind: "image",
@@ -1721,8 +4593,8 @@ window.__ModuleLoader__.load({
 				} else setTimeout(resolve, 0);
 			});
 		}
-		/** Native canonical base64 of one browser file (FileReader data-URL encode; no main-thread byte loop). */
-		function base64Of(file) {
+		/** Native canonical base64 of one browser image (FileReader data-URL encode; no main-thread byte loop). */
+		function base64ImageOf(file) {
 			return new Promise((resolve, reject) => {
 				const reader = new FileReader();
 				reader.onload = () => {
@@ -1752,7 +4624,14 @@ window.__ModuleLoader__.load({
 			input;
 			/** The per-session composer-block registry. */
 			blocks;
+			/** Live upload state per file-kind draft; images never appear here. */
+			fileUploads = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)({});
 			draftAttachments = /* @__PURE__ */ new Map();
+			fileUploadOperations = /* @__PURE__ */ new Map();
+			pendingFileUploads = /* @__PURE__ */ new Set();
+			fileUploadQueue = [];
+			activeFileUploads = 0;
+			maxConcurrentFileUploads;
 			/**
 			* @param ctx - owning root context (the plugin apply context; the service
 			* registers itself and follows that fiber's lifetime).
@@ -1764,9 +4643,16 @@ window.__ModuleLoader__.load({
 				super(ctx, "conversation");
 				this.input = config.input;
 				this.blocks = config.blocks;
-				ctx.effect(() => () => {
-					for (const attachment of this.draftAttachments.values()) revokePreview(attachment.previewUrl);
+				this.maxConcurrentFileUploads = config.maxConcurrentFileUploads;
+				ctx.effect(() => async () => {
+					const operations = [...this.fileUploadOperations.values()];
+					for (const operation of operations) operation.controller.abort();
+					await Promise.allSettled([...this.pendingFileUploads]);
+					this.fileUploadOperations.clear();
+					this.fileUploadQueue.length = 0;
+					for (const attachment of this.draftAttachments.values()) if (attachment.kind === "image") revokePreview(attachment.previewUrl);
 					this.draftAttachments.clear();
+					this.fileUploads.set({});
 				}, "conversation draft attachments");
 			}
 			/**
@@ -1783,50 +4669,64 @@ window.__ModuleLoader__.load({
 				if (!result.ok) throw new Error(`conversation.send failed: ${result.error.code}: ${result.error.message}`);
 			}
 			/**
-			* Submit ordered draft images with text through one host admission. A local
+			* Submit ordered draft attachments with text through one host admission. A local
 			* submission echo enters the session snapshot synchronously; serialization
 			* and the prompt round-trip start after the browser can paint it. On the
-			* echo's observed retirement the draft images hand their preview URLs to
-			* the durable image cache and leave the registry; on failure they stay
-			* registered so the composer can restore them.
+			* echo's observed retirement seeds admitted image previews into the durable
+			* cache and removes every attachment from the draft registry. On failure,
+			* every attachment remains registered so the composer can restore it.
 			* @param session - target session.
 			* @param text - serialized prompt text.
-			* @param imageIds - ordered draft-local attachment ids.
+			* @param attachmentIds - ordered draft-local attachment ids.
 			* @param mode - queue or steer delivery selected by composer policy.
 			* @param signal - optional cancellation for the complete Host admission.
 			* @returns the Host admission outcome; local attachment preparation failures reject.
 			*/
-			async sendSession(session, text, imageIds, mode, signal) {
-				const attachments = this.draftImages(imageIds);
-				if (attachments.length !== imageIds.length) throw new Error("conversation.sendSession: one or more draft images are no longer available");
-				if (session.getSnapshot().subagent !== null) {
-					const content = [...await this.serializeImages(attachments.map((attachment) => attachment.file)), ...text === "" ? [] : [{
-						type: "text",
-						text
-					}]];
-					return (await session.prompt(content, mode, signal)).ok ? { kind: "success" } : { kind: "error" };
-				}
+			async sendSession(session, text, attachmentIds, mode, signal) {
+				const attachments = this.resolveDraftAttachments(attachmentIds);
+				if (attachments.length !== attachmentIds.length) throw new Error("conversation.sendSession: one or more draft attachments are no longer available");
+				const uploads = this.fileUploads.getSnapshot();
+				const uploadFor = (attachment) => {
+					const upload = uploads[attachment.id];
+					if (upload === void 0 || upload.status !== "ready") throw new Error("conversation.sendSession: one or more files have not finished uploading");
+					return upload;
+				};
+				const pendingAttachments = attachments.map((attachment) => attachment.kind === "image" ? {
+					type: "image",
+					value: {
+						previewUrl: attachment.previewUrl,
+						...attachment.file.name === "" ? {} : { name: attachment.file.name },
+						...attachment.width === void 0 ? {} : { width: attachment.width },
+						...attachment.height === void 0 ? {} : { height: attachment.height }
+					}
+				} : {
+					type: "file",
+					value: uploadFor(attachment).file
+				});
+				const serializeAttachments = () => Promise.all(attachments.map(async (attachment) => attachment.kind === "image" ? {
+					type: "image",
+					...await this.encodeImage(attachment.file)
+				} : {
+					type: "file",
+					receiptId: uploadFor(attachment).receiptId
+				}));
 				let finishRetirement;
 				const retirement = attachments.length === 0 ? void 0 : new Promise((resolve) => {
 					finishRetirement = resolve;
 				});
 				const submission = session.beginSubmission({
+					mode,
 					text,
-					images: attachments.map((attachment) => ({
-						previewUrl: attachment.previewUrl,
-						...attachment.file.name === "" ? {} : { name: attachment.file.name },
-						...attachment.width === void 0 ? {} : { width: attachment.width },
-						...attachment.height === void 0 ? {} : { height: attachment.height }
-					})),
+					attachments: pendingAttachments,
 					onRetire: (settlement) => {
-						this.settleSubmittedImages(session.sessionId, attachments, settlement);
+						this.settleSubmittedAttachments(session.sessionId, attachments, settlement);
 						finishRetirement?.(settlement);
 					}
 				});
 				let content;
 				try {
 					await nextPaint();
-					content = [...await this.serializeImages(attachments.map((attachment) => attachment.file)), ...text === "" ? [] : [{
+					content = [...await serializeAttachments(), ...text === "" ? [] : [{
 						type: "text",
 						text
 					}]];
@@ -1839,25 +4739,140 @@ window.__ModuleLoader__.load({
 				return { kind: "success" };
 			}
 			/**
-			* Create runtime-only draft images and their object URLs.
-			* @param files - browser files to register after MIME validation.
+			* Create runtime-only draft attachments. Files whose browser MIME is an
+			* accepted image type become image drafts (object URL preview, bytes sent
+			* with the prompt); every other file becomes a file draft whose background
+			* upload starts immediately and remains owned by this service across Session
+			* navigation until completion or explicit removal.
+			* @param sessionId - target Agent-scope identity.
+			* @param files - browser files to register.
 			* @returns ordered draft descriptors.
 			*/
-			createDraftImages(files) {
-				for (const file of files) imageMediaType(file.type);
+			createDrafts(sessionId, files) {
 				return files.map((file) => {
-					const attachment = browserDraftAttachment(file);
+					if (isImageMediaType(file.type)) {
+						const attachment = browserDraftAttachment(file);
+						this.draftAttachments.set(attachment.id, attachment);
+						probeDimensions(attachment);
+						return attachment;
+					}
+					const attachment = {
+						kind: "file",
+						id: randomUUID(),
+						file
+					};
 					this.draftAttachments.set(attachment.id, attachment);
-					probeDimensions(attachment);
+					this.beginFileUpload(sessionId, attachment);
 					return attachment;
 				});
 			}
 			/**
-			* Resolve ordered input-state ids to runtime-owned draft images.
+			* Restart one failed file upload.
+			* @param sessionId - target Agent-scope identity.
+			* @param id - draft attachment id whose upload previously failed.
+			*/
+			retryFileUpload(sessionId, id) {
+				const attachment = this.draftAttachments.get(id);
+				if (attachment === void 0 || attachment.kind !== "file") return;
+				if (this.fileUploads.getSnapshot()[id]?.status !== "error") return;
+				this.beginFileUpload(sessionId, attachment);
+			}
+			/**
+			* Stage carried file drafts again for a new Session.
+			* @param sessionId - target Agent-scope identity after a Workspace switch.
+			* @param ids - carried draft attachment ids.
+			*/
+			rebindDraftFiles(sessionId, ids) {
+				for (const id of ids) {
+					const attachment = this.draftAttachments.get(id);
+					if (attachment?.kind === "file") this.beginFileUpload(sessionId, attachment);
+				}
+			}
+			beginFileUpload(sessionId, attachment) {
+				this.fileUploadOperations.get(attachment.id)?.controller.abort();
+				const controller = new AbortController();
+				this.fileUploads.update((draft) => {
+					draft[attachment.id] = {
+						status: "uploading",
+						loaded: 0
+					};
+				});
+				let settle;
+				const done = new Promise((resolve) => {
+					settle = resolve;
+				});
+				this.fileUploadOperations.set(attachment.id, {
+					controller,
+					done
+				});
+				this.pendingFileUploads.add(done);
+				done.then(() => {
+					this.pendingFileUploads.delete(done);
+				});
+				const run = async () => {
+					try {
+						if (controller.signal.aborted || this.fileUploadOperations.get(attachment.id)?.controller !== controller) return;
+						const result = await this.ctx.fileUpload.upload(sessionId, attachment.file, attachment.file.name === "" ? void 0 : attachment.file.name, controller.signal, (progress) => {
+							if (this.fileUploadOperations.get(attachment.id)?.controller !== controller) return;
+							this.fileUploads.update((draft) => {
+								if (!(attachment.id in draft)) return;
+								draft[attachment.id] = {
+									status: "uploading",
+									loaded: progress.loaded,
+									...progress.total === void 0 ? {} : { total: progress.total }
+								};
+							});
+						});
+						if (this.fileUploadOperations.get(attachment.id)?.controller !== controller) return;
+						this.fileUploads.update((draft) => {
+							if (!(attachment.id in draft)) return;
+							draft[attachment.id] = result.ok ? {
+								status: "ready",
+								receiptId: result.value.receiptId,
+								file: result.value.file
+							} : {
+								status: "error",
+								message: result.error.message
+							};
+						});
+					} catch (error) {
+						if (this.fileUploadOperations.get(attachment.id)?.controller !== controller) return;
+						this.fileUploads.update((draft) => {
+							if (!(attachment.id in draft)) return;
+							draft[attachment.id] = {
+								status: "error",
+								message: error instanceof Error ? error.message : String(error)
+							};
+						});
+					} finally {
+						if (this.fileUploadOperations.get(attachment.id)?.controller === controller) this.fileUploadOperations.delete(attachment.id);
+					}
+				};
+				this.fileUploadQueue.push({
+					run,
+					settle
+				});
+				this.pumpFileUploads();
+			}
+			/** Start queued upload Workers until the configured concurrency is occupied. */
+			pumpFileUploads() {
+				while (this.activeFileUploads < this.maxConcurrentFileUploads) {
+					const task = this.fileUploadQueue.shift();
+					if (task === void 0) return;
+					this.activeFileUploads += 1;
+					task.run().finally(() => {
+						this.activeFileUploads -= 1;
+						task.settle();
+						this.pumpFileUploads();
+					});
+				}
+			}
+			/**
+			* Resolve ordered input-state ids to runtime-owned draft attachments.
 			* @param ids - draft attachment ids.
 			* @returns descriptors that remain live, in requested order.
 			*/
-			draftImages(ids) {
+			resolveDraftAttachments(ids) {
 				const attachments = [];
 				for (const id of ids) {
 					const attachment = this.draftAttachments.get(id);
@@ -1866,33 +4881,52 @@ window.__ModuleLoader__.load({
 				return attachments;
 			}
 			/**
-			* Serialize ordered draft images to command-submit wire payloads without
-			* sending or releasing them (the composer releases only after the command
-			* settles successfully).
-			* @param imageIds - ordered draft-local attachment ids.
-			* @returns base64 payloads in id order.
+			* Serialize ordered draft attachments to command-submit wire payloads without
+			* sending or releasing them. Images are encoded; generic files cite receipts
+			* from their completed background uploads and never reread browser bytes.
+			* @param attachmentIds - ordered draft-local attachment ids.
+			* @returns wire payloads in id order.
 			*/
-			async serializeDraftImages(imageIds) {
-				const attachments = this.draftImages(imageIds);
-				if (attachments.length !== imageIds.length) throw new Error("conversation.serializeDraftImages: one or more draft images are no longer available");
-				return Promise.all(attachments.map((attachment) => this.encodeImage(attachment.file)));
+			async serializeDraftAttachments(attachmentIds) {
+				const attachments = this.resolveDraftAttachments(attachmentIds);
+				if (attachments.length !== attachmentIds.length) throw new Error("conversation.serializeDraftAttachments: one or more draft attachments are no longer available");
+				const uploads = this.fileUploads.getSnapshot();
+				return { attachments: await Promise.all(attachments.map(async (attachment) => {
+					if (attachment.kind === "image") return {
+						type: "image",
+						...await this.encodeImage(attachment.file)
+					};
+					const upload = uploads[attachment.id];
+					if (upload === void 0 || upload.status !== "ready") throw new Error("conversation.serializeDraftAttachments: one or more files have not finished uploading");
+					return {
+						type: "file",
+						receiptId: upload.receiptId
+					};
+				})) };
 			}
 			/**
-			* Release one browser-owned draft image and preview URL.
+			* Release one browser-owned draft attachment, aborting its active upload.
 			* @param id - draft attachment id.
 			*/
-			releaseDraftImage(id) {
+			releaseDraftAttachment(id) {
 				const attachment = this.draftAttachments.get(id);
 				if (attachment === void 0) return;
+				const operation = this.fileUploadOperations.get(id);
+				this.fileUploadOperations.delete(id);
+				operation?.controller.abort();
 				this.draftAttachments.delete(id);
-				revokePreview(attachment.previewUrl);
+				if (attachment.kind === "image") {
+					revokePreview(attachment.previewUrl);
+					return;
+				}
+				this.fileUploads.set(Object.fromEntries(Object.entries(this.fileUploads.getSnapshot()).filter(([key]) => key !== id)));
 			}
 			/**
-			* Release a set of browser-owned draft images.
+			* Release a set of browser-owned draft attachments.
 			* @param attachments - descriptors to release.
 			*/
-			releaseDraftImages(attachments) {
-				for (const attachment of attachments) this.releaseDraftImage(attachment.id);
+			releaseDraftAttachments(attachments) {
+				for (const attachment of attachments) this.releaseDraftAttachment(attachment.id);
 			}
 			/** Apply one operation to a pending queue occurrence. */
 			async updateQueue(itemId, action) {
@@ -1930,36 +4964,35 @@ window.__ModuleLoader__.load({
 				return sessions;
 			}
 			/**
-			* Settle one submission's draft images when its echo retires. Observed:
+			* Settle one submission's draft attachments when its echo retires. Observed:
 			* each image leaves the registry, handing its preview URL to the durable
 			* image cache (seeded under the admitted reference so the transcript node
 			* renders immediately while the cache reads canonical bytes) or revoking it
 			* when the cache already holds that reference. Failed: nothing changes;
 			* the ids stay registered for the composer's rail restore.
 			*/
-			settleSubmittedImages(sessionId, attachments, retirement) {
+			settleSubmittedAttachments(sessionId, attachments, retirement) {
 				if (retirement.reason !== "observed") return;
 				const uiConversation = this.ctx.get("uiConversation");
-				attachments.forEach((attachment, index) => {
-					if (this.draftAttachments.get(attachment.id) === void 0) return;
+				let observedIndex = 0;
+				for (const attachment of attachments) {
+					const live = this.draftAttachments.get(attachment.id);
+					const ref = retirement.attachments[observedIndex++];
+					if (live === void 0) continue;
+					if (attachment.kind === "file") {
+						this.releaseDraftAttachment(attachment.id);
+						continue;
+					}
 					this.draftAttachments.delete(attachment.id);
-					const ref = retirement.attachments[index];
-					if (ref !== void 0 && uiConversation?.seedImageUrl(sessionId, ref, attachment.previewUrl) === true) return;
+					if (ref !== void 0 && "mediaType" in ref && uiConversation?.seedImageUrl(sessionId, ref, attachment.previewUrl) === true) continue;
 					revokePreview(attachment.previewUrl);
-				});
-			}
-			/** Convert browser files to canonical base64 prompt parts. */
-			serializeImages(images) {
-				return Promise.all(images.map(async (file) => ({
-					type: "image",
-					...await this.encodeImage(file)
-				})));
+				}
 			}
 			/** Canonical base64 wire form of one browser image file. */
 			async encodeImage(file) {
 				return {
 					mediaType: imageMediaType(file.type),
-					data: await base64Of(file),
+					data: await base64ImageOf(file),
 					...file.name === "" ? {} : { name: file.name }
 				};
 			}
@@ -1972,6 +5005,14 @@ window.__ModuleLoader__.load({
 				case "image/gif": return value;
 				default: throw new UnsupportedImageMediaTypeError(value);
 			}
+		}
+		/**
+		* Whether a browser-declared MIME selects the image draft path (all other files upload verbatim).
+		* @param value - the browser's declared MIME type.
+		* @returns whether the file is an accepted raster image.
+		*/
+		function isImageMediaType(value) {
+			return value === "image/png" || value === "image/jpeg" || value === "image/webp" || value === "image/gif";
 		}
 		function revokePreview(url) {
 			if (url.startsWith("blob:")) URL.revokeObjectURL(url);
@@ -2014,21 +5055,230 @@ window.__ModuleLoader__.load({
 			}
 		};
 		//#endregion
-		//#region lib/types/client/input/queue-store.js
-		/**
-		* Project a session's transient inbox rows as a bare observable (subscribe/getSnapshot).
-		* The wiring layer overlays this onto InputState.queue; the runtime
-		* QueuedMessage and the input-contract QueuedMessage are structurally
-		* identical.
-		* @param session - the resident session face.
-		* @returns the queue read face (snapshot reference stable while the queue is unchanged).
-		*/
-		function queueReadFaceOf(session) {
-			return {
-				getSnapshot: () => session.getSnapshot().queue,
-				subscribe: (fn) => session.subscribe(fn)
-			};
+		//#region lib/types/client/input/machine.js
+		/** Exhaustiveness backstop for the closed InputEvent union. */
+		function unreachable(value) {
+			throw new Error(`unreachable input event: ${JSON.stringify(value)}`);
 		}
+		/** Strip a claimed command token from its submit-time draft. */
+		function argsAfter(draft, token) {
+			const s = draft.trimStart();
+			if (s.startsWith(token)) return s.slice(token.length);
+			const base = token.trimEnd();
+			if (s.startsWith(base)) {
+				const rest = s.slice(base.length);
+				return /^\s/.test(rest) ? rest.slice(1) : rest;
+			}
+			return "";
+		}
+		/** Pure phase, claim, and attempt owner for one Session input. */
+		var SubmitMachine = class {
+			phase = "plain";
+			claim;
+			seq = 0;
+			inflight;
+			/** Ordinary sends detached from the editor, retained for settlement validation and cancellation. */
+			detached = /* @__PURE__ */ new Map();
+			/** Read-only snapshot of the submit-plane state. */
+			get state() {
+				const c = this.claim;
+				return {
+					phase: this.phase,
+					...c ? { claim: {
+						name: c.name,
+						token: c.token,
+						...c.hint !== void 0 ? { hint: c.hint } : {},
+						...c.attachments === true ? { attachments: true } : {}
+					} } : {}
+				};
+			}
+			/**
+			* Feed one event through the machine.
+			* @param ev - submit-plane event.
+			* @returns effects for the SessionInput shell, in execution order.
+			*/
+			dispatch(ev) {
+				switch (ev.type) {
+					case "draft-changed": return this.followCommand(ev.command);
+					case "claim": return this.followCommand(ev.claim);
+					case "enter": return this.onEnter(ev.mode, ev.draft, ev.submission);
+					case "adjudicated": return this.onAdjudicated(ev.attempt, ev.outcome);
+					case "adjudication-failed": return this.onAdjudicationFailed(ev.attempt, ev.message);
+					case "submit-settled": return this.onSubmitSettled(ev);
+					case "sink-settled": return this.onSinkSettled(ev);
+					case "send-committed": return this.onSendCommitted();
+					case "release": return this.onRelease();
+					default: return unreachable(ev);
+				}
+			}
+			/**
+			* Outside a transaction the claim follows the document's leading command
+			* chip: deleting or displacing the chip releases it, and a history restore
+			* of the chip re-enters claimed. The claim event applies the same rule to a
+			* chip the editor just inserted, before its update commits; busy phases
+			* refuse both.
+			*/
+			followCommand(command) {
+				if (this.phase !== "plain" && this.phase !== "claimed") return [];
+				this.claim = command;
+				this.phase = command === void 0 ? "plain" : "claimed";
+				return [];
+			}
+			/** Mint an attempt and controller without assigning its lifecycle owner. */
+			mintAttempt(mode, draft, submission) {
+				const controller = new AbortController();
+				this.seq += 1;
+				return {
+					attempt: {
+						seq: this.seq,
+						signal: controller.signal,
+						draftSnapshot: draft,
+						mode,
+						...submission === void 0 ? {} : { submission }
+					},
+					controller
+				};
+			}
+			/** Mint the frozen command/adjudication attempt. */
+			beginAttempt(mode, draft, submission) {
+				const flight = this.mintAttempt(mode, draft, submission);
+				this.inflight = flight;
+				return flight.attempt;
+			}
+			/** Mint an ordinary send that leaves the phase plain. */
+			beginDetached(mode, draft, submission) {
+				const flight = this.mintAttempt(mode, draft, submission);
+				this.detached.set(flight.attempt.seq, flight.controller);
+				this.claim = void 0;
+				this.phase = "plain";
+				return flight.attempt;
+			}
+			/** Default-send effects capture the sink input before the editor commit. */
+			detachedEffects(attempt) {
+				return [{
+					type: "default-sink",
+					attempt,
+					draft: attempt.draftSnapshot,
+					mode: attempt.mode
+				}, {
+					type: "commit-draft",
+					retainSuffixOf: attempt.draftSnapshot
+				}];
+			}
+			onEnter(mode, draft, submission) {
+				if (this.phase === "adjudicating" || this.phase === "submitting") return [];
+				if (this.phase === "claimed" && this.claim !== void 0) {
+					const attempt = this.beginAttempt(mode, draft, submission);
+					this.phase = "submitting";
+					return [{
+						type: "begin-submit",
+						attempt,
+						claim: this.claim,
+						args: argsAfter(draft, this.claim.token)
+					}];
+				}
+				const trimmed = draft.trim();
+				if (trimmed === "") return [];
+				if (trimmed.startsWith("/")) {
+					const attempt = this.beginAttempt(mode, draft, submission);
+					this.phase = "adjudicating";
+					return [{
+						type: "adjudicate",
+						attempt,
+						draft
+					}];
+				}
+				return this.detachedEffects(this.beginDetached(mode, draft, submission));
+			}
+			onAdjudicated(attempt, outcome) {
+				const flight = this.inflight;
+				if (this.phase !== "adjudicating" || flight === void 0 || flight.attempt.seq !== attempt.seq) return [];
+				if (outcome !== void 0 && outcome !== "handled" && "claim" in outcome) {
+					this.claim = outcome.claim;
+					this.phase = "submitting";
+					return [{
+						type: "begin-submit",
+						attempt,
+						claim: outcome.claim,
+						args: argsAfter(attempt.draftSnapshot, outcome.claim.token)
+					}];
+				}
+				this.inflight = void 0;
+				this.phase = "plain";
+				if (outcome !== void 0) return [];
+				this.detached.set(attempt.seq, flight.controller);
+				return this.detachedEffects(attempt);
+			}
+			onAdjudicationFailed(attempt, message) {
+				if (this.phase !== "adjudicating" || this.inflight?.attempt.seq !== attempt.seq) return [];
+				this.inflight = void 0;
+				this.phase = "plain";
+				return [{
+					type: "notice",
+					level: "error",
+					text: message
+				}];
+			}
+			/** Claimed command settlement; after a failure the claim follows the leading command chip again. */
+			onSubmitSettled(ev) {
+				const flight = this.inflight;
+				if (this.phase !== "submitting" || flight === void 0 || flight.attempt.seq !== ev.attempt.seq) return [];
+				this.inflight = void 0;
+				if (ev.ok) {
+					this.phase = "plain";
+					this.claim = void 0;
+					const effects = [{
+						type: "commit-draft",
+						retainSuffixOf: flight.attempt.draftSnapshot
+					}];
+					if (ev.outcome?.text !== void 0) effects.push({
+						type: "notice",
+						level: ev.outcome.kind === "error" ? "error" : "info",
+						text: ev.outcome.text
+					});
+					return effects;
+				}
+				const text = ev.message ?? ev.outcome?.text;
+				this.claim = ev.command;
+				this.phase = ev.command === void 0 ? "plain" : "claimed";
+				return text === void 0 ? [] : [{
+					type: "notice",
+					level: "error",
+					text
+				}];
+			}
+			/** Settle one ordinary send independently of current phase and other detached sends. */
+			onSinkSettled(ev) {
+				if (!this.detached.delete(ev.attempt.seq)) return [];
+				const text = ev.message ?? ev.outcome?.text;
+				if (text === void 0) return [];
+				return [{
+					type: "notice",
+					level: ev.ok && ev.outcome?.kind !== "error" ? "info" : "error",
+					text
+				}];
+			}
+			/** Clear after an accepted attachment-only send; it has no text suffix to retain. */
+			onSendCommitted() {
+				if (this.phase !== "plain") return [];
+				this.claim = void 0;
+				return [{
+					type: "commit-draft",
+					retainSuffixOf: null
+				}];
+			}
+			onRelease() {
+				if (this.inflight !== void 0) {
+					this.inflight.controller.abort();
+					this.inflight = void 0;
+				}
+				for (const controller of this.detached.values()) controller.abort();
+				this.detached.clear();
+				this.phase = "plain";
+				this.claim = void 0;
+				return [];
+			}
+		};
 		//#endregion
 		//#region ../../node_modules/lexical/dist/Lexical.prod.mjs
 		/**
@@ -2044,23 +5294,23 @@ window.__ModuleLoader__.load({
 			for (const t of e) o.append("v", t);
 			throw n.search = o.toString(), Error(`Minified Lexical error #${t}; visit ${n.toString()} for the full message or use the non-minified dev environment for full errors and additional helpful warnings.`);
 		}
-		function e$2(t, ...e) {
+		function e(t, ...e) {
 			const n = new URL("https://lexical.dev/docs/error"), o = new URLSearchParams();
 			o.append("code", t);
 			for (const t of e) o.append("v", t);
 			n.search = o.toString(), console.warn(`Minified Lexical warning #${t}; visit ${n.toString()} for the full message or use the non-minified dev environment for full errors and additional helpful warnings.`);
 		}
 		const n = "undefined" != typeof window && void 0 !== window.document && void 0 !== window.document.createElement;
-		const o$4 = n && "documentMode" in document ? document.documentMode : null;
-		const r$2 = n && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+		const o = n && "documentMode" in document ? document.documentMode : null;
+		const r$1 = n && /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 		const i = n && /^(?!.*Seamonkey)(?=.*Firefox).*/i.test(navigator.userAgent);
-		const s = !(!n || !("InputEvent" in window) || o$4) && "getTargetRanges" in new window.InputEvent("input");
+		const s = !(!n || !("InputEvent" in window) || o) && "getTargetRanges" in new window.InputEvent("input");
 		const l = n && /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 		const c = n && /Android/.test(navigator.userAgent);
-		const a$1 = n && /Version\/[\d.]+.*Safari/.test(navigator.userAgent) && !c;
+		const a = n && /Version\/[\d.]+.*Safari/.test(navigator.userAgent) && !c;
 		const u = n && /^(?=.*Chrome).*/i.test(navigator.userAgent);
 		const f = n && c && u;
-		const d$1 = n && /AppleWebKit\/[\d.]+/.test(navigator.userAgent) && r$2 && !u;
+		const d$1 = n && /AppleWebKit\/[\d.]+/.test(navigator.userAgent) && r$1 && !u;
 		const h = 0;
 		const g = 1;
 		const _ = 2;
@@ -2070,7 +5320,7 @@ window.__ModuleLoader__.load({
 		const w = 4;
 		const O$3 = 5;
 		const M$2 = 6;
-		const A = a$1 || l || d$1 ? "\xA0" : "​";
+		const A = a || l || d$1 ? "\xA0" : "​";
 		const D$1 = "\n\n";
 		const F = i ? "\xA0" : A;
 		const z$1 = {
@@ -2202,7 +5452,7 @@ window.__ModuleLoader__.load({
 			setManagedLineBreak(t) {
 				if (this.element.__lexicalLastChildKind = t, null === t) this.removeManagedLineBreak();
 				else {
-					const e = "decorator" === t && (d$1 || l || a$1);
+					const e = "decorator" === t && (d$1 || l || a);
 					this.insertManagedLineBreak(e);
 				}
 			}
@@ -3376,7 +6626,7 @@ window.__ModuleLoader__.load({
 			}],
 			["compositionend", function(t, e) {
 				const n = e._inputState;
-				i ? n.compositionPhase = "ending-firefox" : l || !a$1 && !d$1 ? Nl(e, We$2, t) : (n.compositionPhase = "ending-safari", n.compositionEndData = t.data);
+				i ? n.compositionPhase = "ending-firefox" : l || !a && !d$1 ? Nl(e, We$2, t) : (n.compositionPhase = "ending-safari", n.compositionEndData = t.data);
 			}],
 			["input", function(t, e) {
 				t.stopPropagation();
@@ -3805,7 +7055,7 @@ window.__ModuleLoader__.load({
 				return " " === t.key;
 			}(t)) Nl(e, an$1, t);
 			else if (function(t) {
-				return r$2 && _l(t, "o", { ctrlKey: !0 });
+				return r$1 && _l(t, "o", { ctrlKey: !0 });
 			}(t)) t.preventDefault(), n.isInsertLineBreak = !0, Nl(e, Ue$2, !0);
 			else if (function(t) {
 				return _l(t, "Enter", {
@@ -3815,13 +7065,13 @@ window.__ModuleLoader__.load({
 				});
 			}(t)) n.isInsertLineBreak = !1, Nl(e, cn$1, t);
 			else if (function(t) {
-				return _l(t, "Backspace", { shiftKey: "any" }) || r$2 && _l(t, "h", { ctrlKey: !0 });
+				return _l(t, "Backspace", { shiftKey: "any" }) || r$1 && _l(t, "h", { ctrlKey: !0 });
 			}(t)) ml(t) ? Nl(e, un, t) && Vn(n) : (t.preventDefault(), Nl(e, $e$2, !0));
 			else if (function(t) {
 				return "Escape" === t.key;
 			}(t)) Nl(e, fn, t);
 			else if (function(t) {
-				return _l(t, "Delete", {}) || r$2 && _l(t, "d", { ctrlKey: !0 });
+				return _l(t, "Delete", {}) || r$1 && _l(t, "d", { ctrlKey: !0 });
 			}(t)) !function(t) {
 				return "Delete" === t.key;
 			}(t) ? (t.preventDefault(), Nl(e, $e$2, !1)) : Nl(e, dn, t);
@@ -3832,10 +7082,10 @@ window.__ModuleLoader__.load({
 				return _l(t, "Delete", yl);
 			}(t)) t.preventDefault(), Nl(e, qe$2, !1);
 			else if (function(t) {
-				return r$2 && _l(t, "Backspace", { metaKey: !0 });
+				return r$1 && _l(t, "Backspace", { metaKey: !0 });
 			}(t)) t.preventDefault(), Nl(e, Ye$1, !0);
 			else if (function(t) {
-				return r$2 && (_l(t, "Delete", { metaKey: !0 }) || _l(t, "k", { ctrlKey: !0 }));
+				return r$1 && (_l(t, "Delete", { metaKey: !0 }) || _l(t, "k", { ctrlKey: !0 }));
 			}(t)) t.preventDefault(), Nl(e, Ye$1, !1);
 			else if (function(t) {
 				return _l(t, "b", pl);
@@ -3853,7 +7103,7 @@ window.__ModuleLoader__.load({
 				return _l(t, "z", pl);
 			}(t)) t.preventDefault(), Nl(e, Qe$2);
 			else if (function(t) {
-				if (r$2) return _l(t, "z", {
+				if (r$1) return _l(t, "z", {
 					metaKey: !0,
 					shiftKey: !0
 				});
@@ -4339,6 +7589,7 @@ window.__ModuleLoader__.load({
 		const mo = "history-push";
 		const xo = "history-merge";
 		const Co = "paste";
+		const bo = "skip-dom-selection";
 		const No = "skip-selection-focus";
 		const wo = "composition-end";
 		const Oo = "!important";
@@ -6080,7 +9331,7 @@ window.__ModuleLoader__.load({
 			return null === ni && t(195, yi()), ni;
 		}
 		function gi(t) {
-			null !== hi() && null === oi && (oi = t), oi !== t && e$2(378);
+			null !== hi() && null === oi && (oi = t), oi !== t && e(378);
 		}
 		function _i() {
 			return null === oi && t(337, yi()), oi;
@@ -7720,7 +10971,7 @@ window.__ModuleLoader__.load({
 				if (r || c !== u) {
 					const e = Kr();
 					if ("" === c) {
-						if (Vs(null), a$1 || l || d$1) i.remove();
+						if (Vs(null), a || l || d$1) i.remove();
 						else {
 							const t = _i();
 							dl(i, "", e), setTimeout(() => {
@@ -7770,12 +11021,12 @@ window.__ModuleLoader__.load({
 			return t.code === o;
 		}
 		const pl = {
-			ctrlKey: !r$2,
-			metaKey: r$2
+			ctrlKey: !r$1,
+			metaKey: r$1
 		};
 		const yl = {
-			altKey: r$2,
-			ctrlKey: !r$2
+			altKey: r$1,
+			ctrlKey: !r$1
 		};
 		function ml(t) {
 			return "Backspace" === t.key;
@@ -8601,7 +11852,7 @@ window.__ModuleLoader__.load({
 		function Ka(t, n, o = "error") {
 			const r = t.getTextContentSize();
 			let i = "next" === n ? r : "previous" === n ? 0 : n;
-			return (i < 0 || i > r) && ("clamp" !== o && e$2(284, String(n), String(r), t.getKey()), i = i < 0 ? 0 : r), i;
+			return (i < 0 || i > r) && ("clamp" !== o && e(284, String(n), String(r), t.getKey()), i = i < 0 ? 0 : r), i;
 		}
 		function za(t, e) {
 			return new Ua(t, e);
@@ -10172,7 +13423,7 @@ window.__ModuleLoader__.load({
 			}, 0), n.registerCommand(cn$1, (e) => {
 				if (!ur(Kr())) return !1;
 				if (null !== e) {
-					if ((l || a$1 || d$1) && s) return !1;
+					if ((l || a || d$1) && s) return !1;
 					e.preventDefault();
 				}
 				return n.dispatchCommand(Ue$2, !1);
@@ -10314,270 +13565,53 @@ window.__ModuleLoader__.load({
 		}
 		Date.now;
 		//#endregion
-		//#region lib/types/client/input/machine.js
-		/** Exhaustiveness backstop for the closed InputEvent union. */
-		function unreachable(value) {
-			throw new Error(`unreachable input event: ${JSON.stringify(value)}`);
-		}
-		/** Strip a claimed command token from its submit-time draft. */
-		function argsAfter(draft, token) {
-			const s = draft.trimStart();
-			if (s.startsWith(token)) return s.slice(token.length);
-			const base = token.trimEnd();
-			if (s.startsWith(base)) {
-				const rest = s.slice(base.length);
-				return /^\s/.test(rest) ? rest.slice(1) : rest;
-			}
-			return "";
-		}
-		/** Pure phase, claim, and attempt owner for one Session input. */
-		var SubmitMachine = class {
-			phase = "plain";
-			claim;
-			seq = 0;
-			inflight;
-			/** Ordinary sends detached from the editor, retained for settlement validation and cancellation. */
-			detached = /* @__PURE__ */ new Map();
-			/** Read-only snapshot of the submit-plane state. */
-			get state() {
-				const c = this.claim;
-				return {
-					phase: this.phase,
-					...c ? { claim: {
-						token: c.token,
-						...c.hint !== void 0 ? { hint: c.hint } : {},
-						...c.images === true ? { images: true } : {}
-					} } : {}
-				};
-			}
-			/**
-			* Feed one event through the machine.
-			* @param ev - submit-plane event.
-			* @returns effects for the SessionInput shell, in execution order.
-			*/
-			dispatch(ev) {
-				switch (ev.type) {
-					case "draft-changed": return this.onDraftChanged(ev.draft);
-					case "claim": return this.onClaim(ev.claim);
-					case "enter": return this.onEnter(ev.mode, ev.draft);
-					case "adjudicated": return this.onAdjudicated(ev.attempt, ev.outcome);
-					case "adjudication-failed": return this.onAdjudicationFailed(ev.attempt, ev.message);
-					case "submit-settled": return this.onSubmitSettled(ev);
-					case "sink-settled": return this.onSinkSettled(ev);
-					case "send-committed": return this.onSendCommitted();
-					case "release": return this.onRelease();
-					default: return unreachable(ev);
-				}
-			}
-			/** Claimed integrity watch: a draft that breaks the token prefix releases the claim. */
-			onDraftChanged(draft) {
-				if (this.phase === "claimed" && this.claim !== void 0 && !draft.startsWith(this.claim.token)) {
-					this.phase = "plain";
-					this.claim = void 0;
-				}
-				return [];
-			}
-			/** The editor applied a claim-token replacement; busy phases refuse another claim. */
-			onClaim(claim) {
-				if (this.phase !== "plain" && this.phase !== "claimed") return [];
-				this.claim = claim;
-				this.phase = "claimed";
-				return [];
-			}
-			/** Mint an attempt and controller without assigning its lifecycle owner. */
-			mintAttempt(mode, draft) {
-				const controller = new AbortController();
-				this.seq += 1;
-				return {
-					attempt: {
-						seq: this.seq,
-						signal: controller.signal,
-						draftSnapshot: draft,
-						mode
-					},
-					controller
-				};
-			}
-			/** Mint the frozen command/adjudication attempt. */
-			beginAttempt(mode, draft) {
-				const flight = this.mintAttempt(mode, draft);
-				this.inflight = flight;
-				return flight.attempt;
-			}
-			/** Mint an ordinary send that leaves the phase plain. */
-			beginDetached(mode, draft) {
-				const flight = this.mintAttempt(mode, draft);
-				this.detached.set(flight.attempt.seq, flight.controller);
-				this.claim = void 0;
-				this.phase = "plain";
-				return flight.attempt;
-			}
-			/** Default-send effects capture the sink input before the editor commit. */
-			detachedEffects(attempt) {
-				return [{
-					type: "default-sink",
-					attempt,
-					draft: attempt.draftSnapshot,
-					mode: attempt.mode
-				}, {
-					type: "commit-draft",
-					retainSuffixOf: attempt.draftSnapshot
-				}];
-			}
-			onEnter(mode, draft) {
-				if (this.phase === "adjudicating" || this.phase === "submitting") return [];
-				if (this.phase === "claimed" && this.claim !== void 0) {
-					const attempt = this.beginAttempt(mode, draft);
-					this.phase = "submitting";
-					return [{
-						type: "begin-submit",
-						attempt,
-						claim: this.claim,
-						args: argsAfter(draft, this.claim.token)
-					}];
-				}
-				const trimmed = draft.trim();
-				if (trimmed === "") return [];
-				if (trimmed.startsWith("/")) {
-					const attempt = this.beginAttempt(mode, draft);
-					this.phase = "adjudicating";
-					return [{
-						type: "adjudicate",
-						attempt,
-						draft
-					}];
-				}
-				return this.detachedEffects(this.beginDetached(mode, draft));
-			}
-			onAdjudicated(attempt, outcome) {
-				const flight = this.inflight;
-				if (this.phase !== "adjudicating" || flight === void 0 || flight.attempt.seq !== attempt.seq) return [];
-				if (outcome !== void 0 && outcome !== "handled" && "claim" in outcome) {
-					this.claim = outcome.claim;
-					this.phase = "submitting";
-					return [{
-						type: "begin-submit",
-						attempt,
-						claim: outcome.claim,
-						args: argsAfter(attempt.draftSnapshot, outcome.claim.token)
-					}];
-				}
-				this.inflight = void 0;
-				this.phase = "plain";
-				if (outcome !== void 0) return [];
-				this.detached.set(attempt.seq, flight.controller);
-				return this.detachedEffects(attempt);
-			}
-			onAdjudicationFailed(attempt, message) {
-				if (this.phase !== "adjudicating" || this.inflight?.attempt.seq !== attempt.seq) return [];
-				this.inflight = void 0;
-				this.phase = "plain";
-				return [{
-					type: "notice",
-					level: "error",
-					text: message
-				}];
-			}
-			/** Claimed command settlement retains the frozen transaction semantics. */
-			onSubmitSettled(ev) {
-				const flight = this.inflight;
-				if (this.phase !== "submitting" || flight === void 0 || flight.attempt.seq !== ev.attempt.seq) return [];
-				this.inflight = void 0;
-				if (ev.ok) {
-					this.phase = "plain";
-					this.claim = void 0;
-					const effects = [{
-						type: "commit-draft",
-						retainSuffixOf: flight.attempt.draftSnapshot
-					}];
-					if (ev.outcome?.text !== void 0) effects.push({
-						type: "notice",
-						level: ev.outcome.kind === "error" ? "error" : "info",
-						text: ev.outcome.text
-					});
-					return effects;
-				}
-				const text = ev.message ?? ev.outcome?.text;
-				if (ev.draft === flight.attempt.draftSnapshot && this.claim !== void 0 && ev.draft.startsWith(this.claim.token)) {
-					this.phase = "claimed";
-					return text === void 0 ? [] : [{
-						type: "notice",
-						level: "error",
-						text
-					}];
-				}
-				this.phase = "plain";
-				this.claim = void 0;
-				return text === void 0 ? [] : [{
-					type: "notice",
-					level: "error",
-					text
-				}];
-			}
-			/** Settle one ordinary send independently of current phase and other detached sends. */
-			onSinkSettled(ev) {
-				if (!this.detached.delete(ev.attempt.seq)) return [];
-				const text = ev.message ?? ev.outcome?.text;
-				if (text === void 0) return [];
-				return [{
-					type: "notice",
-					level: ev.ok && ev.outcome?.kind !== "error" ? "info" : "error",
-					text
-				}];
-			}
-			/** Clear after an accepted image-only send; it has no text suffix to retain. */
-			onSendCommitted() {
-				if (this.phase !== "plain") return [];
-				this.claim = void 0;
-				return [{
-					type: "commit-draft",
-					retainSuffixOf: null
-				}];
-			}
-			onRelease() {
-				if (this.inflight !== void 0) {
-					this.inflight.controller.abort();
-					this.inflight = void 0;
-				}
-				for (const controller of this.detached.values()) controller.abort();
-				this.detached.clear();
-				this.phase = "plain";
-				this.claim = void 0;
-				return [];
-			}
-		};
-		//#endregion
 		//#region ../../node_modules/clsx/dist/clsx.mjs
-		function r$1(e) {
+		function r(e) {
 			var t, f, n = "";
 			if ("string" == typeof e || "number" == typeof e) n += e;
 			else if ("object" == typeof e) if (Array.isArray(e)) {
 				var o = e.length;
-				for (t = 0; t < o; t++) e[t] && (f = r$1(e[t])) && (n && (n += " "), n += f);
+				for (t = 0; t < o; t++) e[t] && (f = r(e[t])) && (n && (n += " "), n += f);
 			} else for (f in e) e[f] && (n && (n += " "), n += f);
 			return n;
 		}
 		function clsx() {
-			for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++) (e = arguments[f]) && (t = r$1(e)) && (n && (n += " "), n += t);
+			for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++) (e = arguments[f]) && (t = r(e)) && (n && (n += " "), n += t);
 			return n;
 		}
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-conversation/src/client/input/editor/ReferenceChip.module.css.mjs
-		const css$9 = ".DftnZW_chip{vertical-align:bottom;background:var(--dsw-alias-interactive-bg-hover);max-width:240px;height:22px;color:var(--dsw-alias-state-business-primary);user-select:none;cursor:default;border-radius:6px;align-items:center;gap:3px;padding:0 6px;line-height:22px;display:inline-flex}.DftnZW_marker{flex:none;font-weight:500}.DftnZW_icon{flex:none}.DftnZW_label{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.DftnZW_invalid{color:var(--dsw-alias-state-error-primary);opacity:.7;text-decoration:line-through}";
-		const tagId$9 = "@deepseek-ai/dsh-client-ui-conversation/ReferenceChip.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$9) + "]") === null) {
+		const css$8 = ".lhtAnW_chip{max-width:240px;color:var(--dsw-alias-state-business-primary);user-select:none;align-items:baseline;gap:3px;display:inline-flex}.lhtAnW_marker{flex:none;font-weight:500}.lhtAnW_icon{flex:none;align-self:center}.lhtAnW_label{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.lhtAnW_invalid{color:var(--dsw-alias-state-error-primary);opacity:.7;text-decoration:line-through}";
+		const tagId$8 = "@deepseek-ai/dsh-client-ui-conversation/ReferenceChip.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$8) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
-			tag.dataset.pluginCss = tagId$9;
-			tag.textContent = css$9;
+			tag.dataset.pluginCss = tagId$8;
+			tag.textContent = css$8;
 			document.head.appendChild(tag);
 		}
 		var ReferenceChip_module_css_default = {
-			"chip": "DftnZW_chip",
-			"icon": "DftnZW_icon",
-			"invalid": "DftnZW_invalid",
-			"label": "DftnZW_label",
-			"marker": "DftnZW_marker"
+			"chip": "lhtAnW_chip",
+			"icon": "lhtAnW_icon",
+			"invalid": "lhtAnW_invalid",
+			"label": "lhtAnW_label",
+			"marker": "lhtAnW_marker"
+		};
+		//#endregion
+		//#region \0dsh-css:packages/client-ui-conversation/src/client/input/editor/composer-editor.module.css.mjs
+		const css$7 = ".kSzH7a_reference{border-radius:var(--dsw-radius-sm);line-height:inherit;vertical-align:baseline;color:var(--dsw-alias-state-business-primary);-webkit-box-decoration-break:clone;box-decoration-break:clone;background:0 0;padding:0 4px}.kSzH7a_reference:hover{background:var(--dsw-alias-state-business-tertiary)}.kSzH7a_openable{cursor:pointer}[data-composer-command][data-selected]>.kSzH7a_reference{background:var(--dsw-alias-state-business-tertiary)}.kSzH7a_textRef{max-width:100%;display:inline-block}";
+		const tagId$7 = "@deepseek-ai/dsh-client-ui-conversation/composer-editor.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$7) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
+			tag.dataset.pluginCss = tagId$7;
+			tag.textContent = css$7;
+			document.head.appendChild(tag);
+		}
+		var composer_editor_module_css_default = {
+			"openable": "kSzH7a_openable",
+			"reference": "kSzH7a_reference",
+			"textRef": "kSzH7a_textRef"
 		};
 		//#endregion
 		//#region lib/types/client/input/editor/ReferenceChip.js
@@ -10593,13 +13627,13 @@ window.__ModuleLoader__.load({
 		*/
 		function ReferenceChip({ label, appearance, invalid }) {
 			return (0, react_jsx_runtime.jsxs)("span", {
-				className: clsx(ReferenceChip_module_css_default.chip, invalid && ReferenceChip_module_css_default.invalid),
+				className: clsx(composer_editor_module_css_default.reference, ReferenceChip_module_css_default.chip, appearance === "file" && !invalid && composer_editor_module_css_default.openable, invalid && ReferenceChip_module_css_default.invalid),
 				title: label,
 				children: [appearance === void 0 ? (0, react_jsx_runtime.jsx)("span", {
 					className: ReferenceChip_module_css_default.marker,
 					"aria-hidden": true,
 					children: "@"
-				}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.ReferenceIcon, {
+				}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.ReferenceIconRegular, {
 					kind: appearance,
 					size: 14,
 					className: ReferenceChip_module_css_default.icon
@@ -10771,55 +13805,6 @@ window.__ModuleLoader__.load({
 			return node instanceof ReferenceChipNode;
 		}
 		//#endregion
-		//#region lib/types/client/input/editor/claim-decor.js
-		/** Inline style carried by the claim-token node (the old backdrop's hlToken color). */
-		const TOKEN_STYLE = "color: var(--dsw-alias-state-warn-label)";
-		/** The document's first text leaf, or null (empty document / leading chip). */
-		function firstTextLeaf() {
-			const block = nl().getFirstChild();
-			if (!Pi(block)) return null;
-			const leaf = block.getFirstChild();
-			return Xo(leaf) ? leaf : null;
-		}
-		/**
-		* Register the claim-token styling transform.
-		* @param editor - the shell-owned editor.
-		* @param activeToken - live claim token accessor; null while unclaimed.
-		* @returns the unregister disposer.
-		*/
-		function registerClaimDecoration(editor, activeToken) {
-			return editor.registerNodeTransform(Wo, (node) => {
-				const first = firstTextLeaf();
-				if (first === null || node.getKey() !== first.getKey()) {
-					if (node.getStyle() === TOKEN_STYLE) node.setStyle("");
-					return;
-				}
-				const token = activeToken();
-				const text = node.getTextContent();
-				if (token === null || !text.startsWith(token)) {
-					if (node.getStyle() === TOKEN_STYLE) node.setStyle("");
-					return;
-				}
-				if (text.length > token.length) {
-					const [tokenNode] = node.splitText(token.length);
-					if (tokenNode !== void 0 && tokenNode.getStyle() !== TOKEN_STYLE) tokenNode.setStyle(TOKEN_STYLE);
-					return;
-				}
-				if (node.getStyle() !== TOKEN_STYLE) node.setStyle(TOKEN_STYLE);
-			});
-		}
-		/**
-		* Nudge the token seat dirty so the transform restyles after a claim flip
-		* (claims change phase without a text edit; transforms only run on dirty
-		* nodes).
-		* @param editor - the shell-owned editor.
-		*/
-		function refreshClaimDecoration(editor) {
-			editor.update(() => {
-				firstTextLeaf()?.markDirty();
-			});
-		}
-		//#endregion
 		//#region ../../node_modules/@lexical/text/dist/LexicalText.prod.mjs
 		/**
 		* Copyright (c) Meta Platforms, Inc. and affiliates.
@@ -10897,7 +13882,7 @@ window.__ModuleLoader__.load({
 		//#region lib/types/client/input/decorations.js
 		/**
 		* Plain-text reference scan (the plain-text-reference decision;
-		* see .agents/notes/implemented/architecture/2026-07-25-web-input-machine-and-slash-pipeline.md):
+		* see .agents/notes/archived/architecture/2026-07-25-web-input-machine-and-slash-pipeline.md):
 		* a `/name` or `@name` token whose name is on the trigger's lexicon, and
 		* syntax-recognizable `@dir/` folder tokens. Pure derivation — the editor's
 		* text-ref entity transform consumes these ranges; editing the text out of
@@ -10907,31 +13892,37 @@ window.__ModuleLoader__.load({
 		const TEXT_REF_RE = /(^|\s)([/@])([\w-]+)/g;
 		const FOLDER_REF_RE = /(^|\s)(@(?:"[^"\n]*\/|[^\s"]+\/))/g;
 		/**
+		* What may follow a `/name` token: whitespace or the draft end, the boundary
+		* the host skill gesture (`dsh-tool-skill`) requires, so `/nfs-hg/xxx`,
+		* `/plan.md`, and `/plan。` are prose, never a reference.
+		*/
+		const SLASH_TOKEN_END_RE = /^(?:\s|$)/;
+		/**
 		* Scan the draft for plain-text reference tokens against the hot lexicons.
 		* Word-boundary discipline: the trigger must sit at the draft
 		* start or after whitespace ('x/name' never matches); the name must be an
-		* exact lexicon member.
+		* exact lexicon member; a `/name` token must end at whitespace or the draft
+		* end ('/name/x' is a path, '/name。' is prose).
 		* @param draft - draft text.
-		* @param lexicon - per-trigger name lists (a missing trigger scans nothing).
+		* @param lexicon - per-trigger name lists; missing catalogs match no named tokens.
 		* @returns matched ranges in draft order.
 		*/
 		function scanTextRefs(draft, lexicon) {
 			if (draft === "") return [];
 			const out = [];
-			if (lexicon.size > 0) {
-				TEXT_REF_RE.lastIndex = 0;
-				let m;
-				while ((m = TEXT_REF_RE.exec(draft)) !== null) {
-					const trigger = m[2];
-					const name = m[3] ?? "";
-					if (lexicon.get(trigger)?.includes(name)) {
-						const start = m.index + (m[1]?.length ?? 0);
-						out.push({
-							start,
-							end: start + 1 + name.length,
-							trigger
-						});
-					}
+			TEXT_REF_RE.lastIndex = 0;
+			let m;
+			while ((m = TEXT_REF_RE.exec(draft)) !== null) {
+				const trigger = m[2];
+				const name = m[3] ?? "";
+				if (trigger === "/" && !SLASH_TOKEN_END_RE.test(draft.slice(m.index + m[0].length))) continue;
+				if (lexicon.get(trigger)?.includes(name)) {
+					const start = m.index + (m[1]?.length ?? 0);
+					out.push({
+						start,
+						end: start + 1 + name.length,
+						trigger
+					});
 				}
 			}
 			FOLDER_REF_RE.lastIndex = 0;
@@ -10949,19 +13940,8 @@ window.__ModuleLoader__.load({
 			return out.sort((left, right) => left.start - right.start);
 		}
 		//#endregion
-		//#region \0dsh-css:packages/client-ui-conversation/src/client/input/editor/composer-editor.module.css.mjs
-		const css$8 = "._6hn0ca_textRef{color:var(--dsw-alias-state-business-primary);-webkit-box-decoration-break:clone;box-decoration-break:clone}";
-		const tagId$8 = "@deepseek-ai/dsh-client-ui-conversation/composer-editor.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$8) + "]") === null) {
-			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
-			tag.dataset.pluginCss = tagId$8;
-			tag.textContent = css$8;
-			document.head.appendChild(tag);
-		}
-		var composer_editor_module_css_default = { "textRef": "_6hn0ca_textRef" };
-		//#endregion
 		//#region lib/types/client/input/editor/text-ref.js
+		/** Editable reference tokens share chip hover styling while retaining ordinary text semantics. */
 		/** One matched plain-text reference as a styled, fully editable text node. */
 		var TextRefNode = class TextRefNode extends Wo {
 			/** Lexical node registry type tag. */
@@ -10999,7 +13979,8 @@ window.__ModuleLoader__.load({
 			/** Style the span the base TextNode mounts. */
 			createDOM(config) {
 				const el = super.createDOM(config);
-				el.classList.add(composer_editor_module_css_default.textRef ?? "textRef");
+				el.className = clsx(el.className, composer_editor_module_css_default.reference, composer_editor_module_css_default.textRef, this.getTextContent().startsWith("/") && composer_editor_module_css_default.openable);
+				el.setAttribute("spellcheck", "false");
 				el.setAttribute("data-composer-text-ref", "");
 				return el;
 			}
@@ -11013,27 +13994,18 @@ window.__ModuleLoader__.load({
 			}
 		};
 		/**
-		* Register the plain-text reference entity transform. The claim decoration
-		* has precedence on the leading-token seat: while a command claim holds, the
-		* claimed token must stay a plain TextNode (transforms register per concrete
-		* node class, so a TextRefNode would never receive the TextNode claim
-		* transform and the warn color would be lost).
+		* Register the plain-text reference entity transform.
 		* @param editor - the shell-owned editor.
 		* @param lexiconOf - live per-trigger name-roll accessor (the controller's aggregated store).
-		* @param activeToken - live claim token accessor; null while unclaimed.
 		* @returns the unregister disposer.
 		*/
-		function registerTextRefDecoration(editor, lexiconOf, activeToken) {
+		function registerTextRefDecoration(editor, lexiconOf) {
 			const getMatch = (text) => {
-				const claim = activeToken();
-				for (const range of scanTextRefs(text, lexiconOf())) {
-					if (claim !== null && range.start === 0 && text.slice(range.start, range.end) === claim) continue;
-					return {
-						start: range.start,
-						end: range.end
-					};
-				}
-				return null;
+				const range = scanTextRefs(text, lexiconOf())[0];
+				return range === void 0 ? null : {
+					start: range.start,
+					end: range.end
+				};
 			};
 			return Eu(...x(editor, getMatch, TextRefNode, (node) => new TextRefNode(node.getTextContent())));
 		}
@@ -11046,6 +14018,260 @@ window.__ModuleLoader__.load({
 		function rescanTextRefs(editor) {
 			editor.update(() => {
 				for (const node of nl().getAllTextNodes()) node.markDirty();
+			}, { tag: xo });
+		}
+		//#endregion
+		//#region lib/types/client/input/editor/reference-activation.js
+		/** Route composer clicks through the live reference owner without editing the draft. */
+		/**
+		* Install preview activation for atomic chips and editable reference tokens.
+		* @param editor - composer editor.
+		* @param open - live source routing; false preserves ordinary editor handling.
+		* @returns command disposer.
+		*/
+		function registerReferenceActivation(editor, open) {
+			return editor.registerCommand(Ke$2, (event) => {
+				if (event.target === null || event.button !== 0 || event.detail > 1) return false;
+				const selection = Kr();
+				if (ur(selection) && !selection.isCollapsed()) return false;
+				const node = Zs(event.target);
+				if ($isReferenceChipNode(node)) {
+					if (node.isInvalid()) return false;
+					const appearance = node.getAppearance();
+					return open(node.getSource(), {
+						ref: node.getReference(),
+						...appearance === void 0 ? {} : { appearance }
+					});
+				}
+				return node instanceof TextRefNode && open(void 0, { ref: node.getTextContent() });
+			}, 1);
+		}
+		//#endregion
+		//#region lib/types/client/input/editor/CommandChip.js
+		/**
+		* Visual body of the claimed command chip: the CommandChipNode's React face.
+		* Pure display with the reference chip's treatment; the claim and its
+		* lifecycle live on the node and the shell.
+		*/
+		/**
+		* Render the claimed command chip.
+		* @param props - the token to display.
+		* @returns the chip body.
+		*/
+		function CommandChip({ token }) {
+			return (0, react_jsx_runtime.jsx)("span", {
+				className: clsx(composer_editor_module_css_default.reference, ReferenceChip_module_css_default.chip),
+				children: (0, react_jsx_runtime.jsx)("span", {
+					className: ReferenceChip_module_css_default.label,
+					children: token
+				})
+			});
+		}
+		//#endregion
+		//#region lib/types/client/input/editor/command-chip-node.js
+		/** One claimed command as an atomic decorator node. */
+		var CommandChipNode = class CommandChipNode extends Li {
+			/** The claim this chip anchors; its submit closure has no JSON form. */
+			__claim;
+			/** Lexical node registry type tag. */
+			static getType() {
+				return "command-chip";
+			}
+			/**
+			* Clone with identity (Lexical writable-copy contract).
+			* @param node - node to clone.
+			* @returns a copy carrying the same NodeKey and claim.
+			*/
+			static clone(node) {
+				return new CommandChipNode(node.__claim, node.__key);
+			}
+			/**
+			* Rebuild one chip from its JSON form. JSON cannot carry the claim's
+			* submit closure, so an imported command is its literal token text.
+			* @param json - serialized chip.
+			* @returns a plain text node holding the token.
+			*/
+			static importJSON(json) {
+				return Go(json.text);
+			}
+			/**
+			* @param claim - the command claim the chip anchors.
+			* @param key - Lexical clone-path key; absent for fresh nodes.
+			*/
+			constructor(claim, key) {
+				super(key);
+				this.__claim = claim;
+			}
+			/** Serialize to the JSON node form (the token text alone). */
+			exportJSON() {
+				return {
+					...super.exportJSON(),
+					type: "command-chip",
+					version: 1,
+					text: this.getTextContent()
+				};
+			}
+			/**
+			* Mount the chip's host element; the decorator portal renders into it.
+			* @returns an inline, non-editable span carrying the test/e2e anchor.
+			*/
+			createDOM() {
+				const el = document.createElement("span");
+				el.setAttribute("data-composer-command", this.__claim.name);
+				el.setAttribute("contenteditable", "false");
+				return el;
+			}
+			/** Host element never changes shape. */
+			updateDOM() {
+				return false;
+			}
+			/** The chip sits in the text line. */
+			isInline() {
+				return true;
+			}
+			/**
+			* Arrows step across the chip and the default character deletion removes
+			* it whole, for the reason documented on ReferenceChipNode.isKeyboardSelectable;
+			* registerCommandChipSelection inserts the selecting step before that deletion.
+			*/
+			isKeyboardSelectable() {
+				return false;
+			}
+			/** Clipboard / persistence projection: the token without its separator. */
+			getTextContent() {
+				return this.__claim.token.trimEnd();
+			}
+			/** The claim this chip anchors. */
+			getClaim() {
+				return this.getLatest().__claim;
+			}
+			/** React face rendered into the host element by the decorator portal. */
+			decorate() {
+				return (0, react_jsx_runtime.jsx)(CommandChip, { token: this.getTextContent() });
+			}
+		};
+		/**
+		* Mint one chip node for a claim.
+		* @param claim - the command claim.
+		* @returns the fresh node.
+		*/
+		function $createCommandChipNode(claim) {
+			return new CommandChipNode(claim);
+		}
+		/**
+		* Command chip type guard.
+		* @param node - any node or nullish.
+		* @returns whether the node is a CommandChipNode.
+		*/
+		function $isCommandChipNode(node) {
+			return node instanceof CommandChipNode;
+		}
+		/** Replace a displaced chip with its literal token. */
+		function $releaseChip(chip) {
+			chip.replace(Go(chip.getTextContent()));
+		}
+		/**
+		* Keep command chips on the leading seat. A chip anywhere but the first
+		* child of the first block (text, a line break, or a block inserted before
+		* it) becomes its literal token, which releases the claim. Inserting a
+		* sibling before the chip or moving it to another block marks the chip dirty;
+		* a block inserted before the chip's block marks only that block dirty.
+		* @param editor - the shell-owned editor.
+		* @returns the unregister disposer.
+		*/
+		function registerCommandChipSeat(editor) {
+			return Eu(editor.registerNodeTransform(CommandChipNode, (chip) => {
+				if (chip.getPreviousSibling() !== null || chip.getParentOrThrow().getPreviousSibling() !== null) $releaseChip(chip);
+			}), editor.registerNodeTransform(Zi, (block) => {
+				const first = block.getFirstChild();
+				if ($isCommandChipNode(first) && block.getPreviousSibling() !== null) $releaseChip(first);
+			}));
+		}
+		//#endregion
+		//#region lib/types/client/input/editor/command-chip-selection.js
+		/**
+		* Keys that never clear a selected chip by themselves: bare modifiers, and
+		* IME or virtual-keyboard keys whose deletion arrives later as an input event.
+		*/
+		const PASSIVE_KEYS = /* @__PURE__ */ new Set([
+			"Shift",
+			"Control",
+			"Alt",
+			"Meta",
+			"Unidentified",
+			"Process"
+		]);
+		/** The chip a collapsed caret deletes next in one direction, or null. */
+		function $commandChipBesideCaret(isBackward) {
+			const selection = Kr();
+			if (!ur(selection) || !selection.isCollapsed()) return null;
+			const node = kl(selection.focus, isBackward);
+			return $isCommandChipNode(node) ? node : null;
+		}
+		/** Deletion direction of an input event type; null for other input. */
+		function deletionDirection(inputType) {
+			if (inputType === "deleteContentBackward") return true;
+			if (inputType === "deleteContentForward") return false;
+			return null;
+		}
+		/**
+		* Register two-step deletion for the command chip.
+		* @param editor - the shell-owned editor.
+		* @returns the unregister disposer, which also clears a selected chip.
+		*/
+		function registerCommandChipSelection(editor) {
+			let selected = null;
+			/** A keydown with a selected chip whose dispatch has produced no character deletion yet. */
+			let keyWithoutDeletion = false;
+			const paint = (next) => {
+				if (selected !== null && selected.key !== next?.key) editor.getElementByKey(selected.key)?.removeAttribute("data-selected");
+				selected = next;
+				if (next !== null) editor.getElementByKey(next.key)?.setAttribute("data-selected", "");
+				editor.getRootElement()?.toggleAttribute("data-composer-chip-selected", next !== null);
+			};
+			const clear = () => {
+				if (selected !== null) paint(null);
+				return false;
+			};
+			/**
+			* Decide one character deletion.
+			* @param isBackward - deletion direction.
+			* @param clearOnPass - whether letting the deletion run clears the selection here;
+			* an input event leaves it for the deletion that follows.
+			* @returns true when the deletion only selected the chip and must be consumed.
+			*/
+			const $decide = (isBackward, clearOnPass) => {
+				keyWithoutDeletion = false;
+				const chip = $commandChipBesideCaret(isBackward);
+				if (chip === null) return clear();
+				if (selected?.key === chip.getKey() && selected.isBackward === isBackward) return clearOnPass ? clear() : false;
+				paint({
+					key: chip.getKey(),
+					isBackward
+				});
+				return true;
+			};
+			return Eu(editor.registerCommand(ze$1, (event) => {
+				const isBackward = deletionDirection(event.inputType);
+				if (isBackward === null || !$decide(isBackward, false)) return false;
+				event.preventDefault();
+				return true;
+			}, 3), editor.registerCommand($e$2, (isBackward) => $decide(isBackward, true), 3), editor.registerCommand(tn$2, (event) => {
+				if (selected === null || PASSIVE_KEYS.has(event.key)) return false;
+				keyWithoutDeletion = true;
+				queueMicrotask(() => {
+					if (!keyWithoutDeletion) return;
+					keyWithoutDeletion = false;
+					clear();
+				});
+				return false;
+			}, 4), editor.registerCommand(Ke$2, clear, 4), editor.registerCommand(Mn$1, clear, 4), editor.registerUpdateListener(({ editorState }) => {
+				const current = selected;
+				if (current === null) return;
+				const touching = editorState.read(() => $commandChipBesideCaret(current.isBackward)?.getKey() === current.key);
+				paint(touching ? current : null);
+			}), () => {
+				paint(null);
 			});
 		}
 		/**
@@ -11079,7 +14305,7 @@ window.__ModuleLoader__.load({
 				const start = detect.length;
 				const kids = element.getChildren();
 				children.set(element.getKey(), kids.map((kid) => kid.getKey()));
-				for (const kid of kids) if ($isReferenceChipNode(kid)) pushLeaf("chip", kid, "￼", kid.getTextContent());
+				for (const kid of kids) if ($isReferenceChipNode(kid) || $isCommandChipNode(kid)) pushLeaf("chip", kid, "￼", kid.getTextContent());
 				else if (Xo(kid)) {
 					const text = kid.getTextContent();
 					pushLeaf("text", kid, text, text);
@@ -11195,6 +14421,7 @@ window.__ModuleLoader__.load({
 					...chip.isInvalid() ? { invalid: true } : {}
 				});
 			}
+			const lead = layout.segments[0]?.node;
 			const selection = Kr();
 			let range = null;
 			if (ur(selection)) {
@@ -11210,7 +14437,8 @@ window.__ModuleLoader__.load({
 				clipboardText: layout.clipboardText,
 				occurrences,
 				selection: range,
-				caret: range !== null && range.start === range.end ? range.start : null
+				caret: range !== null && range.start === range.end ? range.start : null,
+				command: $isCommandChipNode(lead) ? lead.getClaim() : void 0
 			};
 		}
 		//#endregion
@@ -11312,27 +14540,7 @@ window.__ModuleLoader__.load({
 			return true;
 		}
 		//#endregion
-		//#region lib/types/client/input/facade.js
-		/** Guard tier from the machine phase. */
-		function guardOf(phase) {
-			switch (phase) {
-				case "plain": return "plain";
-				case "claimed": return "claimed";
-				default: return "frozen";
-			}
-		}
-		/** Whether two projections differ in content (selection and caret excluded). */
-		function projectionContentChanged(prev, next) {
-			if (prev.clipboardText !== next.clipboardText || prev.detectText !== next.detectText) return true;
-			if (prev.occurrences.length !== next.occurrences.length) return true;
-			return next.occurrences.some((occ, i) => {
-				const old = prev.occurrences[i];
-				return old === void 0 || old.occurrenceId !== occ.occurrenceId || old.invalid !== occ.invalid;
-			});
-		}
-		const EMPTY_QUEUE = [];
-		/** No-pipeline lexicon: zero text-ref decorations. */
-		const EMPTY_LEXICON$1 = /* @__PURE__ */ new Map();
+		//#region lib/types/client/input/editor/runtime.js
 		/**
 		* Detect-projection and legacy reference placeholders stripped from every
 		* external text entering the document (paste, persisted-draft seed): a chip
@@ -11342,84 +14550,68 @@ window.__ModuleLoader__.load({
 		const REFERENCE_PLACEHOLDER_RE = /[\uE100-\uE11D\uFFFC]/gu;
 		/** Undo merge window for contiguous typing, in ms (the old machine's mergeWindowMs). */
 		const HISTORY_MERGE_DELAY_MS = 1e3;
-		/**
-		* The per-session input facade: scoped-event application verbs +
-		* setDraft/submit + the published InputState store, over a shell-owned
-		* Lexical editor.
-		*/
-		var SessionInputShell = class {
+		/** One model-owned editor; registration and disposal remain with its model. */
+		var DraftEditorRuntime = class {
 			deps;
-			/** Published editor projection + submit-plane state + queue overlay (the InputZone currency source). */
-			state;
-			/** Latest surfaced notice (null after clear); the bar renders errors as banners and information inline. */
-			notices = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(null);
-			/** The shell-owned editor (text + chip truth); the composer binds its contenteditable to it. */
+			/** The editor bound by the Composer's contenteditable host. */
 			editor;
-			/** The public provide-channel action face (one stable identity per session). */
-			actions = {
-				setDraft: (text) => {
-					this.setDraft(text);
-				},
-				addImages: (ids) => this.addImages(ids),
-				removeImage: (id) => {
-					this.removeImage(id);
-				},
-				pruneImages: (ids) => {
-					this.pruneImages(ids);
-				},
-				submit: () => {
-					this.submit("queue");
-				}
-			};
-			core = new SubmitMachine();
-			projection = {
+			projected = {
 				detectText: "",
 				clipboardText: "",
 				occurrences: [],
 				selection: null,
-				caret: null
+				caret: null,
+				command: void 0
 			};
-			rev = 0;
 			/** Stable occurrence ids per chip NodeKey (undo restores keys, so ids survive it too). */
 			occurrenceIds = /* @__PURE__ */ new Map();
 			occurrenceSeq = 0;
-			unregister;
-			noticeSeq = 0;
-			lastMirroredDraft = "";
-			imageIds = [];
-			disposed = false;
-			/** Draft persistence mirror (Conversation store write; receives the clipboard projection). */
-			mirrorFn;
 			/** Live lexicon subscription disposer; undefined until the controller resolves. */
 			lexiconOff;
-			/** Default sends retained until admission settles or scope disposal releases their images. */
-			detachedDrafts = /* @__PURE__ */ new Map();
-			/** Failed default sends waiting to be restored together in submission order. */
-			failedDetached = /* @__PURE__ */ new Map();
-			/** Revision of the last automatic failure restoration. */
-			failedRestoreRev;
-			restoringFailures = false;
-			imageFlightSeq = 0;
-			/** Image-only sends retained until admission settles or scope disposal releases their images. */
-			imageFlights = /* @__PURE__ */ new Map();
+			lexiconSource;
+			/** @param deps - model callbacks used by editor listeners and transforms. */
 			constructor(deps) {
 				this.deps = deps;
 				this.editor = ys({
 					namespace: "dsh-composer",
-					nodes: [ReferenceChipNode, TextRefNode],
+					nodes: [
+						ReferenceChipNode,
+						CommandChipNode,
+						TextRefNode
+					],
 					onError: (error) => {
 						throw error;
 					}
 				});
-				this.unregister = Eu(O$1(this.editor), O(this.editor, z(), HISTORY_MERGE_DELAY_MS), this.editor.registerUpdateListener(() => {
-					this.onEditorUpdate();
-				}), registerClaimDecoration(this.editor, () => this.activeClaimToken()), registerTextRefDecoration(this.editor, () => this.lexicon.getSnapshot(), () => this.activeClaimToken()), () => {
+			}
+			/**
+			* Install editor behavior after the model holds this runtime.
+			* @returns unregister callback that also detaches the editor root.
+			*/
+			register() {
+				const preserveExternalSelection = () => {
+					const root = this.editor.getRootElement();
+					if (root !== null && !root.contains(root.ownerDocument.activeElement)) Al(bo);
+					return false;
+				};
+				const unregister = Eu(O$1(this.editor), this.editor.registerCommand(Mn$1, () => {
+					this.editor.update(preserveExternalSelection, { discrete: true });
+					return false;
+				}, 4), this.editor.registerCommand(Ie$2, preserveExternalSelection, 4), this.editor.registerNodeTransform(zi, preserveExternalSelection), registerReferenceActivation(this.editor, (source, reference) => this.deps.openReference(source, reference)), O(this.editor, z(), HISTORY_MERGE_DELAY_MS), this.editor.registerUpdateListener(() => {
+					this.deps.onUpdate();
+				}), registerCommandChipSeat(this.editor), registerCommandChipSelection(this.editor), registerTextRefDecoration(this.editor, () => this.deps.lexicon()), () => {
 					this.lexiconOff?.();
+					this.lexiconOff = void 0;
+					this.lexiconSource = void 0;
 				});
-				this.state = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(this.compose());
-				deps.queue?.subscribe(() => {
-					this.publish();
-				});
+				return () => {
+					unregister();
+					this.editor.setRootElement(null);
+				};
+			}
+			/** The latest committed editor projection. */
+			get projection() {
+				return this.projected;
 			}
 			/**
 			* Run one editor edit whose result is observable on return. At the top
@@ -11442,37 +14634,27 @@ window.__ModuleLoader__.load({
 				});
 			}
 			/**
-			* Subscribe the text-ref re-scan to the controller's lexicon once the
-			* controller resolves. The deps thunk cannot resolve at construction (the
-			* shell is created inside the sessions provide materialization), so the
-			* first interactive updates retry until it can.
+			* Reconnect decorations when the optional trigger provider changes.
+			* The rescan reads the current editor and does not replace its content.
 			*/
-			ensureLexiconSubscription() {
-				if (this.lexiconOff !== void 0) return;
-				const controller = this.deps.inputTriggers?.();
-				if (controller === void 0) return;
-				this.lexiconOff = controller.lexicon.subscribe(() => {
+			refreshLexiconSubscription() {
+				const lexicon = this.deps.resolveLexicon();
+				if (lexicon === this.lexiconSource) return;
+				this.lexiconOff?.();
+				this.lexiconSource = lexicon;
+				this.lexiconOff = lexicon?.subscribe(() => {
 					rescanTextRefs(this.editor);
 				});
+				rescanTextRefs(this.editor);
 			}
-			/** Re-project, run the claim watch, publish, and feed trigger tracking after every editor commit. */
-			onEditorUpdate() {
-				this.ensureLexiconSubscription();
-				const prev = this.projection;
-				this.projection = this.editor.getEditorState().read(() => $projectComposer((key) => this.occurrenceIdOf(key)));
-				if (projectionContentChanged(prev, this.projection)) {
-					this.rev += 1;
-					if (!this.restoringFailures && this.failedRestoreRev !== void 0) {
-						this.failedDetached.clear();
-						this.failedRestoreRev = void 0;
-					}
-					this.dispatchRun({
-						type: "draft-changed",
-						draft: this.projection.clipboardText
-					});
-				}
-				const caret = this.projection.caret;
-				if (caret !== null) this.deps.inputTriggers?.()?.track(this.projection.detectText, caret, { tier: guardOf(this.core.state.phase) }, this.rev);
+			/**
+			* Re-project inside the existing editor update callback.
+			* @returns the projection preceding this read.
+			*/
+			refreshProjection() {
+				const prev = this.projected;
+				this.projected = this.editor.getEditorState().read(() => $projectComposer((key) => this.occurrenceIdOf(key)));
+				return prev;
 			}
 			occurrenceIdOf(key) {
 				const existing = this.occurrenceIds.get(key);
@@ -11489,7 +14671,7 @@ window.__ModuleLoader__.load({
 			*/
 			setDraft(text) {
 				const clean = text.replace(REFERENCE_PLACEHOLDER_RE, "");
-				if (clean === this.projection.clipboardText) return;
+				if (clean === this.projection.clipboardText && this.projection.occurrences.length === 0) return;
 				this.editor.update(() => {
 					const root = nl();
 					root.clear();
@@ -11503,48 +14685,6 @@ window.__ModuleLoader__.load({
 					discrete: true,
 					tag: xo
 				});
-			}
-			/** Append ordered image ids unless an admission transaction is locked. */
-			addImages(ids) {
-				if (this.snapshot.phase === "adjudicating" || this.snapshot.phase === "submitting") return false;
-				if (ids.length === 0) return true;
-				this.imageIds = [...this.imageIds, ...ids];
-				this.publish();
-				return true;
-			}
-			/**
-			* Remove one image id from this draft. Busy admission phases refuse, like
-			* {@link addImages}: a removal landing while a command submit serializes
-			* would otherwise vanish from the rail yet still ride the in-flight send.
-			*/
-			removeImage(id) {
-				if (this.snapshot.phase === "adjudicating" || this.snapshot.phase === "submitting") return;
-				const next = this.imageIds.filter((candidate) => candidate !== id);
-				if (next.length === this.imageIds.length) return;
-				this.imageIds = next;
-				this.publish();
-			}
-			/**
-			* Keep only image ids that still resolve in the browser attachment registry.
-			* @param available - live registry ids.
-			*/
-			pruneImages(available) {
-				const keep = new Set(available);
-				const next = this.imageIds.filter((id) => keep.has(id));
-				if (next.length === this.imageIds.length) return;
-				this.imageIds = next;
-				this.publish();
-			}
-			/**
-			* Clear the draft as a successful-send commit: the editor empties (no undo
-			* unit) and the undo history is cut, so Ctrl/Cmd-Z cannot resurrect sent
-			* content (the command path gets the same discipline from submit-settled).
-			* @param imageIds - admitted image ids to remove from this draft.
-			*/
-			commitSend(imageIds) {
-				const submitted = new Set(imageIds);
-				this.imageIds = this.imageIds.filter((id) => !submitted.has(id));
-				this.dispatchRun({ type: "send-committed" });
 			}
 			/**
 			* Insert pasted plain text over the current editor selection
@@ -11568,45 +14708,507 @@ window.__ModuleLoader__.load({
 				}, Co);
 			}
 			/**
+			* The live selection as a detect-coordinate span (menu-launcher synthetic
+			* hits replace it on pick); an absent selection answers a collapsed span at
+			* the document end.
+			* @returns the ordered [start, end) span in detect coordinates.
+			*/
+			caretSpan() {
+				if (this.projection.selection !== null) return this.projection.selection;
+				const at = this.projection.detectText.length;
+				return {
+					start: at,
+					end: at
+				};
+			}
+			/**
+			* Replace a mapped span without applying the model's phase or revision guards.
+			* @param span - detect-coordinate range.
+			* @param text - inserted text.
+			* @returns whether the range mapped and the edit applied.
+			*/
+			replaceText(span, text) {
+				let applied = false;
+				this.applyEdit(() => {
+					applied = $replaceDetectSpanWithText(span, text);
+				});
+				return applied;
+			}
+			/**
+			* Insert an asynchronous text result as one independent undo operation.
+			* @param span - owner-validated insertion range.
+			* @param text - text sanitized with the same rules as paste.
+			* @returns whether the range mapped and the edit applied.
+			*/
+			insertAsyncText(span, text) {
+				let applied = false;
+				const clean = text.replace(REFERENCE_PLACEHOLDER_RE, "");
+				this.applyEdit(() => {
+					applied = $replaceDetectSpanWithText(span, clean);
+				}, Co);
+				return applied;
+			}
+			/**
+			* Insert a reference chip with the existing trailing-space rule.
+			* @param span - detect-coordinate range.
+			* @param ref - reference fields.
+			* @param tail - the character following the range before editing.
+			* @returns whether the range mapped and the edit applied.
+			*/
+			insertReference(span, ref, tail) {
+				let applied = false;
+				this.applyEdit(() => {
+					applied = $replaceDetectSpanWithNodes(span, tail === " " ? [$createReferenceChipNode(ref)] : [$createReferenceChipNode(ref), Go(" ")]);
+				});
+				return applied;
+			}
+			/**
+			* Replace a span with a command chip followed by the claim token's
+			* argument separator, unless the separator already follows.
+			* @param span - detect-coordinate range.
+			* @param claim - the command claim the chip anchors.
+			* @param tail - the character following the range before editing.
+			* @param mergeHistory - merge into the previous history entry (a restored
+			* draft's chip is part of its seed, not an undoable step).
+			* @returns whether the range mapped and the edit applied.
+			*/
+			insertCommand(span, claim, tail, mergeHistory = false) {
+				const separator = claim.token.slice(claim.token.trimEnd().length);
+				let applied = false;
+				this.applyEdit(() => {
+					applied = $replaceDetectSpanWithNodes(span, separator === "" || tail === separator.charAt(0) ? [$createCommandChipNode(claim)] : [$createCommandChipNode(claim), Go(separator)]);
+				}, mergeHistory ? xo : void 0);
+				return applied;
+			}
+			/**
+			* Insert an ordered file-reference batch after the live selection without deleting it.
+			* @param references - validated references in source order.
+			* @returns whether the live insertion position accepted the batch.
+			*/
+			insertFileReferences(references) {
+				if (references.length === 0) return true;
+				let applied = false;
+				this.applyEdit(() => {
+					const projection = $projectComposer((key) => this.occurrenceIdOf(key));
+					const at = projection.selection?.end ?? projection.detectText.length;
+					const before = projection.detectText.slice(0, at);
+					const nodes = references.flatMap((ref) => [$createReferenceChipNode(ref), Go(" ")]);
+					if (before !== "" && !/\s$/u.test(before)) nodes.unshift(Go(" "));
+					applied = $replaceDetectSpanWithNodes({
+						start: at,
+						end: at
+					}, nodes);
+				}, Co);
+				return applied;
+			}
+			/**
+			* Clear committed content using the model's suffix decision inside the editor update.
+			* @param prefixLength - returns the clipboard-prefix length to remove, or null to clear the root.
+			*/
+			clearCommittedDraft(prefixLength) {
+				this.editor.update(() => {
+					const layout = $composerLayout();
+					const length = prefixLength(layout.clipboardText);
+					if (length !== null) {
+						$replaceDetectSpanWithText({
+							start: 0,
+							end: detectOffsetOfClipboardOffset(layout, length)
+						}, "");
+						return;
+					}
+					const root = nl();
+					root.clear();
+					root.selectEnd();
+				}, {
+					discrete: true,
+					tag: xo
+				});
+			}
+			/**
+			* Import semantic content or a model-selected failure snapshot with fresh reference nodes.
+			* @param draft - clipboard text.
+			* @param occurrences - reference occurrences in clipboard order.
+			*/
+			restoreDraft(draft, occurrences) {
+				this.editor.update(() => {
+					const root = nl();
+					root.clear();
+					let paragraph = es();
+					root.append(paragraph);
+					const appendText = (text) => {
+						const lines = text.replace(REFERENCE_PLACEHOLDER_RE, "").split("\n");
+						for (let i = 0; i < lines.length; i += 1) {
+							const line = lines[i];
+							if (line !== "") paragraph.append(Go(line));
+							if (i < lines.length - 1) {
+								paragraph = es();
+								root.append(paragraph);
+							}
+						}
+					};
+					let cursor = 0;
+					for (const occurrence of occurrences) {
+						appendText(draft.slice(cursor, occurrence.offset));
+						paragraph.append(new ReferenceChipNode({
+							source: occurrence.source,
+							ref: occurrence.ref,
+							label: occurrence.label,
+							...occurrence.appearance === void 0 ? {} : { appearance: occurrence.appearance },
+							clipboardText: occurrence.clipboardText
+						}, occurrence.invalid === true));
+						cursor = occurrence.offset + occurrence.length;
+					}
+					appendText(draft.slice(cursor));
+					root.selectEnd();
+				}, {
+					discrete: true,
+					tag: xo
+				});
+			}
+			/** Cut the editor's undo history after a committed clear or restoration. */
+			clearHistory() {
+				this.editor.dispatchCommand(Nn$1, void 0);
+			}
+		};
+		//#endregion
+		//#region lib/types/client/input/facade.js
+		/** Guard tier from the machine phase. */
+		function guardOf(phase) {
+			switch (phase) {
+				case "plain": return "plain";
+				case "claimed": return "claimed";
+				default: return "frozen";
+			}
+		}
+		/** Whether two projections differ in content (selection and caret excluded). */
+		function projectionContentChanged(prev, next) {
+			if (prev.clipboardText !== next.clipboardText || prev.detectText !== next.detectText) return true;
+			if (prev.command !== next.command) return true;
+			if (prev.occurrences.length !== next.occurrences.length) return true;
+			return next.occurrences.some((occ, i) => {
+				const old = prev.occurrences[i];
+				return old === void 0 || old.occurrenceId !== occ.occurrenceId || old.invalid !== occ.invalid;
+			});
+		}
+		const EMPTY_QUEUE$1 = [];
+		/** Unavailable catalogs contain no named text references. */
+		const EMPTY_LEXICON$1 = /* @__PURE__ */ new Map();
+		/**
+		* The per-session input facade: scoped-event application verbs +
+		* setDraft/submit + the published InputState store, over a shell-owned
+		* Lexical editor.
+		*/
+		var SessionInputShell = class {
+			deps;
+			/** Published editor projection + submit-plane state + queue overlay (the InputZone currency source). */
+			state;
+			/** Latest surfaced notice (null after clear); the bar renders errors as banners and information inline. */
+			notices = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(null);
+			/** The shell-owned editor (text + chip truth); the composer binds its contenteditable to it. */
+			get editor() {
+				return this.draftEditor.editor;
+			}
+			/** The public provide-channel action face (one stable identity per session). */
+			actions = {
+				captureInsertion: () => ({
+					...this.caretSpan(),
+					draftRev: this.rev
+				}),
+				insertText: (text, span) => {
+					if (this.snapshot.phase === "adjudicating" || this.snapshot.phase === "submitting" || this.disposed) return false;
+					if (span.draftRev !== this.rev) return false;
+					return this.draftEditor.insertAsyncText(span, text);
+				},
+				setDraft: (text) => {
+					this.setDraft(text);
+				},
+				persistDraft: () => {
+					this.persistCurrentDraft();
+				},
+				addAttachments: (ids) => this.addAttachments(ids),
+				removeAttachment: (id) => {
+					this.removeAttachment(id);
+				},
+				pruneAttachments: (ids) => {
+					this.pruneAttachments(ids);
+				},
+				submit: () => {
+					this.submit("queue");
+				}
+			};
+			core = new SubmitMachine();
+			draftEditor;
+			get projection() {
+				return this.draftEditor.projection;
+			}
+			rev = 0;
+			unregister;
+			noticeSeq = 0;
+			lastPublishedDraft;
+			draftSnapshotCache;
+			attachmentIds = [];
+			disposed = false;
+			/** Conversation store writer for the current semantic document. */
+			persistDraft;
+			/** A restored draft's command token waiting for the trigger pipeline, with the revision its restore produced. */
+			pendingCommand;
+			/** The in-flight claim resolution for a restored command chip. */
+			commandRestore;
+			/** The mounted composer's file-picker opener (scoped pick-files event target). */
+			filePicker;
+			/** Default sends retained until admission settles or scope disposal releases their attachments. */
+			detachedDrafts = /* @__PURE__ */ new Map();
+			/** Failed default sends waiting to be restored together in submission order. */
+			failedDetached = /* @__PURE__ */ new Map();
+			/** Revision of the last automatic failure restoration. */
+			failedRestoreRev;
+			restoringFailures = false;
+			attachmentFlightSeq = 0;
+			/** Attachment-only sends retained until admission settles or scope disposal releases their attachments. */
+			attachmentFlights = /* @__PURE__ */ new Map();
+			unsubscribeInbox;
+			constructor(deps) {
+				this.deps = deps;
+				this.draftEditor = new DraftEditorRuntime({
+					onUpdate: () => {
+						this.onEditorUpdate();
+					},
+					openReference: (source, reference) => this.deps.inputTriggers?.()?.openReference(source, reference) ?? false,
+					lexicon: () => this.lexicon.getSnapshot(),
+					resolveLexicon: () => this.deps.inputTriggers?.()?.lexicon
+				});
+				this.unregister = this.draftEditor.register();
+				this.state = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(this.compose());
+				this.unsubscribeInbox = deps.inbox?.subscribe(() => {
+					this.publish();
+				});
+			}
+			/** Re-project, sync the claim with the leading command chip, publish, and feed trigger tracking after every editor commit. */
+			onEditorUpdate() {
+				if (projectionContentChanged(this.draftEditor.refreshProjection(), this.projection)) {
+					this.rev += 1;
+					if (!this.restoringFailures && this.failedRestoreRev !== void 0) {
+						this.failedDetached.clear();
+						this.failedRestoreRev = void 0;
+					}
+					this.dispatchRun({
+						type: "draft-changed",
+						command: this.projection.command
+					});
+				}
+				const caret = this.projection.caret;
+				if (caret !== null) this.deps.inputTriggers?.()?.track(this.projection.detectText, caret, { tier: guardOf(this.core.state.phase) }, this.rev);
+			}
+			/**
+			* Replace the whole draft (persisted-draft seed and programmatic writes).
+			* Placeholder-sanitized; newlines split paragraphs; the caret lands at the
+			* end. Merged into history so a seed is not an undoable step of its own.
+			* @param text - plain text or the complete semantic document.
+			*/
+			setDraft(text) {
+				const draft = resolveDraftInput(text);
+				this.cancelCommandRestore();
+				if (draft.references.length === 0) this.draftEditor.setDraft(draft.text);
+				else this.draftEditor.restoreDraft(draft.text, draft.references);
+				if (draft.command === void 0) return;
+				this.pendingCommand = {
+					token: draft.command.token,
+					rev: this.rev
+				};
+				this.restoreCommand();
+			}
+			/**
+			* Reconnect optional catalog notifications and resume a pending command
+			* chip restore without waiting for another edit.
+			*/
+			refreshLexiconSubscription() {
+				if (this.disposed) return;
+				this.draftEditor.refreshLexiconSubscription();
+				this.restoreCommand();
+			}
+			/**
+			* Rebuild the command chip a restored draft carried once the trigger
+			* pipeline can resolve its claim. The rebuild applies only at the revision
+			* the restore produced: an edit made while the claim resolves keeps the
+			* literal token, which Enter still adjudicates as the command.
+			*/
+			restoreCommand() {
+				const pending = this.pendingCommand;
+				const inputTriggers = this.deps.inputTriggers?.();
+				if (pending === void 0 || inputTriggers === void 0 || this.disposed) return;
+				this.pendingCommand = void 0;
+				const restore = new AbortController();
+				this.commandRestore = restore;
+				const spelling = pending.token.trimEnd();
+				inputTriggers.resolveClaim(spelling, restore.signal).then((claim) => {
+					if (restore.signal.aborted) return;
+					this.commandRestore = void 0;
+					if (claim !== void 0) this.applyClaim(claim, {
+						start: 0,
+						end: spelling.length,
+						draftRev: pending.rev
+					}, true);
+				}, (_error) => {
+					if (this.commandRestore === restore) this.commandRestore = void 0;
+				});
+			}
+			/** Drop a pending or in-flight command chip restore. */
+			cancelCommandRestore() {
+				this.pendingCommand = void 0;
+				this.commandRestore?.abort();
+				this.commandRestore = void 0;
+			}
+			/** Current semantic document, stable until its content revision changes. */
+			get draftSnapshot() {
+				if (this.draftSnapshotCache?.revision === this.rev) return this.draftSnapshotCache.value;
+				const value = snapshotDraft(this.projection.clipboardText, this.projection.occurrences, this.projection.command?.token);
+				this.draftSnapshotCache = {
+					revision: this.rev,
+					value
+				};
+				return value;
+			}
+			/** Persist the latest document without changing the editor or binding a writer. */
+			persistCurrentDraft() {
+				this.persistDraft?.(this.draftSnapshot);
+			}
+			/**
+			* Apply one new-task request to this already-initialized input model.
+			* @param options - replacement content and explicit permission to clear existing text.
+			* @returns applied when the requested text is adopted, even if unchanged;
+			* preserved when the current draft is kept; blocked after disposal or during a pending submission.
+			*/
+			requestDraftInitialization(options) {
+				if (this.draftInitializationBlocked()) return "blocked";
+				if (options.prompt === void 0 && options.clearPreviousDraft !== true) return "preserved";
+				if (options.clearPreviousDraft !== true && (this.snapshot.draft !== "" || this.attachmentIds.length > 0)) return "preserved";
+				this.setDraft(options.prompt ?? "");
+				return "applied";
+			}
+			draftInitializationBlocked() {
+				const { phase } = this.core.state;
+				return this.disposed || phase === "adjudicating" || phase === "submitting" || this.detachedDrafts.size > 0 || this.attachmentFlights.size > 0;
+			}
+			/** Append ordered attachment ids unless an admission transaction is locked. */
+			addAttachments(ids) {
+				if (this.snapshot.phase === "adjudicating" || this.snapshot.phase === "submitting") return false;
+				if (ids.length === 0) return true;
+				this.attachmentIds = [...this.attachmentIds, ...ids];
+				this.publish();
+				return true;
+			}
+			/**
+			* Add validated file references and attachment ids while admission is editable.
+			* @param references - reference chips in source order.
+			* @param ids - newly allocated attachment ids.
+			* @returns false when admission is locked or the editor refuses the insertion.
+			*/
+			addFiles(references, ids) {
+				if (this.snapshot.phase === "adjudicating" || this.snapshot.phase === "submitting") return false;
+				if (!this.draftEditor.insertFileReferences(references)) return false;
+				this.attachmentIds = [...this.attachmentIds, ...ids];
+				this.publish();
+				return true;
+			}
+			/**
+			* Remove one attachment id from this draft. Busy admission phases refuse, like
+			* {@link addAttachments}: a removal landing while a command submit serializes
+			* would otherwise vanish from the rail yet still ride the in-flight send.
+			*/
+			removeAttachment(id) {
+				if (this.snapshot.phase === "adjudicating" || this.snapshot.phase === "submitting") return false;
+				const next = this.attachmentIds.filter((candidate) => candidate !== id);
+				if (next.length === this.attachmentIds.length) return false;
+				this.attachmentIds = next;
+				this.publish();
+				return true;
+			}
+			/**
+			* Keep only ids that still resolve in the browser attachment registry.
+			* @param available - live registry ids.
+			*/
+			pruneAttachments(available) {
+				const keep = new Set(available);
+				const next = this.attachmentIds.filter((id) => keep.has(id));
+				if (next.length === this.attachmentIds.length) return;
+				this.attachmentIds = next;
+				this.publish();
+			}
+			/**
+			* Clear the draft as a successful-send commit: the editor empties (no undo
+			* unit) and the undo history is cut, so Ctrl/Cmd-Z cannot resurrect sent
+			* content (the command path gets the same discipline from submit-settled).
+			* @param attachmentIds - admitted attachment ids to remove from this draft.
+			*/
+			commitSend(attachmentIds) {
+				const submitted = new Set(attachmentIds);
+				this.attachmentIds = this.attachmentIds.filter((id) => !submitted.has(id));
+				this.dispatchRun({ type: "send-committed" });
+			}
+			/**
+			* Insert pasted plain text over the current editor selection
+			* (placeholder-sanitized). The paste event's own default is suppressed by
+			* the caller; PASTE_TAG makes the paste its own history boundary, so one
+			* undo never removes both the paste and typing inside the merge window.
+			* @param text - pasted plain text.
+			*/
+			paste(text) {
+				this.draftEditor.paste(text);
+			}
+			/**
 			* Enter adjudication + submit transaction + default sink. Effects fan out
 			* from the machine; this method only feeds the event. Lock entry
 			* (adjudicating/submitting) force-closes the transient layers: the popup
 			* dismisses and the menu tracks frozen.
 			*/
-			submit(mode = "queue") {
-				if (this.snapshot.draft.trim() === "" && this.imageIds.length > 0) {
+			submit(mode = "queue", source) {
+				if (this.disposed) return;
+				const timestamp = Date.now();
+				let state;
+				if (this.snapshot.phase === "plain" && (this.snapshot.draft.trim() !== "" || this.attachmentIds.length > 0)) try {
+					state = this.deps.submissionState?.();
+				} catch (_error) {}
+				const submission = Object.freeze({
+					timestamp,
+					mode,
+					...source === void 0 ? {} : { source },
+					...state === void 0 ? {} : { state }
+				});
+				if (this.snapshot.draft.trim() === "" && this.attachmentIds.length > 0) {
 					if (this.snapshot.phase === "plain") {
-						const imageIds = [...this.imageIds];
+						const attachmentIds = [...this.attachmentIds];
 						const controller = new AbortController();
-						this.imageFlightSeq += 1;
-						const flight = this.imageFlightSeq;
-						this.imageFlights.set(flight, {
+						this.attachmentFlightSeq += 1;
+						const flight = this.attachmentFlightSeq;
+						this.attachmentFlights.set(flight, {
 							controller,
-							imageIds
+							attachmentIds
 						});
-						this.commitSend(imageIds);
-						this.deps.defaultSink("", imageIds, mode, controller.signal).then((outcome) => {
-							if (this.disposed || !this.imageFlights.delete(flight)) return;
+						this.commitSend(attachmentIds);
+						this.notifySubmission(submission);
+						this.deps.defaultSink("", attachmentIds, mode, controller.signal).then((outcome) => {
+							if (this.disposed || !this.attachmentFlights.delete(flight)) return;
 							if (outcome.kind === "success") return;
-							this.restoreImages(imageIds);
+							this.restoreAttachments(attachmentIds);
 							if (outcome.text !== void 0) this.notify("error", outcome.text);
 						}, (error) => {
-							if (this.disposed || !this.imageFlights.delete(flight)) return;
-							this.restoreImages(imageIds);
+							if (this.disposed || !this.attachmentFlights.delete(flight)) return;
+							this.restoreAttachments(attachmentIds);
 							this.notify("error", error instanceof Error ? error.message : String(error));
 						});
 					}
 					return;
 				}
 				const before = this.snapshot;
-				if (before.phase === "claimed" && this.imageIds.length > 0 && before.claim?.images !== true) {
-					this.notify("error", this.deps.commandImages.unsupportedNotice(before.claim?.token ?? before.draft));
+				if (before.phase === "claimed" && this.attachmentIds.length > 0 && before.claim?.attachments !== true) {
+					this.notify("error", this.deps.commandAttachments.unsupportedNotice(before.claim?.token ?? before.draft));
 					return;
 				}
 				this.dispatchRun({
 					type: "enter",
 					mode,
-					draft: this.projection.clipboardText
+					draft: this.projection.clipboardText,
+					submission
 				});
 				const phase = this.snapshot.phase;
 				if (phase === "adjudicating" || phase === "submitting") {
@@ -11652,12 +15254,7 @@ window.__ModuleLoader__.load({
 			* @returns the ordered [start, end) span in detect coordinates.
 			*/
 			caretSpan() {
-				if (this.projection.selection !== null) return this.projection.selection;
-				const at = this.projection.detectText.length;
-				return {
-					start: at,
-					end: at
-				};
+				return this.draftEditor.caretSpan();
 			}
 			/**
 			* Hot plain-text reference lexicon source for the decoration scan:
@@ -11671,25 +15268,30 @@ window.__ModuleLoader__.load({
 			};
 			/**
 			* Apply one command claim (scoped begin-command event listener body): the
-			* editor replaces [0, span.end) with the claim token, then the machine
-			* enters claimed.
+			* editor replaces [0, span.end) with the command chip and its separator,
+			* then the machine enters claimed.
 			* @param claim - the command claim from the pick path.
 			* @param span - pick-time span snapshot (detect coordinates).
 			* @returns whether the edit applied (phase, span CAS, and leading guard passed).
 			*/
 			beginCommand(claim, span) {
+				return this.applyClaim(claim, span, false);
+			}
+			/**
+			* Replace [0, span.end) with the command chip and enter claimed.
+			* @param mergeHistory - merge the edit into the previous history entry.
+			* @returns whether the edit applied.
+			*/
+			applyClaim(claim, span, mergeHistory) {
 				const phase = this.core.state.phase;
 				if (phase !== "plain" && phase !== "claimed") return false;
 				if (span.draftRev !== this.rev) return false;
 				if (this.projection.detectText.slice(0, span.start).trim() !== "") return false;
-				let applied = false;
-				this.applyEdit(() => {
-					applied = $replaceDetectSpanWithText({
-						start: 0,
-						end: span.end
-					}, claim.token);
-				});
-				if (!applied) return false;
+				const tail = this.projection.detectText.slice(span.end, span.end + 1);
+				if (!this.draftEditor.insertCommand({
+					start: 0,
+					end: span.end
+				}, claim, tail, mergeHistory)) return false;
 				this.dispatchRun({
 					type: "claim",
 					claim
@@ -11709,11 +15311,7 @@ window.__ModuleLoader__.load({
 				if (phase !== "plain" && phase !== "claimed") return false;
 				if (span.draftRev !== this.rev) return false;
 				const tail = this.projection.detectText.slice(span.end, span.end + 1);
-				let applied = false;
-				this.applyEdit(() => {
-					applied = $replaceDetectSpanWithNodes(span, tail === " " ? [$createReferenceChipNode(ref)] : [$createReferenceChipNode(ref), Go(" ")]);
-				});
-				return applied;
+				return this.draftEditor.insertReference(span, ref, tail);
 			}
 			/**
 			* Consume one command token after business success (scoped consume-token
@@ -11725,11 +15323,7 @@ window.__ModuleLoader__.load({
 			consumeToken(guard) {
 				if (guard.kind === "span") {
 					if (guard.span.draftRev !== this.rev || guard.span.start === guard.span.end) return false;
-					let applied = false;
-					this.applyEdit(() => {
-						applied = $replaceDetectSpanWithText(guard.span, "");
-					});
-					return applied;
+					return this.draftEditor.replaceText(guard.span, "");
 				}
 				if (guard.token === "" || this.projection.clipboardText.trim() !== guard.token) return false;
 				this.setDraft("");
@@ -11750,11 +15344,7 @@ window.__ModuleLoader__.load({
 			*/
 			insertText(text, span, keepCompleting = false) {
 				if (span.draftRev !== this.rev) return false;
-				let applied = false;
-				this.applyEdit(() => {
-					applied = $replaceDetectSpanWithText(span, text);
-				});
-				return applied;
+				return this.draftEditor.replaceText(span, text);
 			}
 			/**
 			* Surface a notice from outside the machine (detached command results).
@@ -11770,25 +15360,35 @@ window.__ModuleLoader__.load({
 				});
 			}
 			/**
-			* Teardown the shell and return every browser-owned image still retained by
+			* Return the keyboard to the composer with the caret it last held. Lexical's
+			* own focus restores its stored selection; a bare DOM focus on the
+			* contenteditable would land the caret at the start instead.
+			*/
+			focus() {
+				this.editor.getRootElement()?.focus({ preventScroll: true });
+				this.editor.focus();
+			}
+			/**
+			* Teardown the shell and return every browser-owned attachment still retained by
 			* the draft or an unsettled default send.
-			* @returns image ids the scope disposer must release.
+			* @returns attachment ids the scope disposer must release.
 			*/
 			dispose() {
 				if (this.disposed) return [];
-				const retained = new Set(this.imageIds);
-				for (const record of this.detachedDrafts.values()) for (const imageId of record.imageIds) retained.add(imageId);
-				for (const flight of this.imageFlights.values()) {
-					for (const imageId of flight.imageIds) retained.add(imageId);
+				const retained = new Set(this.attachmentIds);
+				for (const record of this.detachedDrafts.values()) for (const attachmentId of record.attachmentIds) retained.add(attachmentId);
+				for (const flight of this.attachmentFlights.values()) {
+					for (const attachmentId of flight.attachmentIds) retained.add(attachmentId);
 					flight.controller.abort();
 				}
 				this.disposed = true;
+				this.cancelCommandRestore();
 				this.dispatchRun({ type: "release" });
+				this.unsubscribeInbox?.();
 				this.unregister();
-				this.editor.setRootElement(null);
 				this.detachedDrafts.clear();
 				this.failedDetached.clear();
-				this.imageFlights.clear();
+				this.attachmentFlights.clear();
 				return [...retained];
 			}
 			/** Read the live input state (guard derivation reads here). */
@@ -11796,29 +15396,46 @@ window.__ModuleLoader__.load({
 				return this.state.getSnapshot();
 			}
 			/**
-			* Bind the draft persistence mirror (Conversation store write). Adopt-on-bind: the
-			* store draft may hold a persisted value from a previous mount; the caller
-			* seeds it via setDraft BEFORE binding, and afterwards every editor-adopted
-			* draft mirrors out.
-			* @param write - store draft write.
+			* Bind the Conversation store writer without importing or saving content.
+			* @param write - semantic draft writer; persistCurrentDraft flushes the initial value.
 			* @returns the unbind disposer.
 			*/
-			bindMirror(write) {
-				this.mirrorFn = write;
+			bindDraftPersistence(write) {
+				this.persistDraft = write;
 				return () => {
-					if (this.mirrorFn === write) this.mirrorFn = void 0;
+					if (this.persistDraft === write) this.persistDraft = void 0;
 				};
 			}
-			/** The claim token the decoration transform styles; null while unclaimed. */
-			activeClaimToken() {
-				const core = this.core.state;
-				return (core.phase === "claimed" || core.phase === "submitting") && core.claim !== void 0 ? core.claim.token : null;
+			/**
+			* Bind the mounted composer's file action and live intake availability.
+			* @param picker - availability query and native file-dialog opener.
+			* @returns the unbind disposer.
+			*/
+			bindFilePicker(picker) {
+				this.filePicker = picker;
+				return () => {
+					if (this.filePicker === picker) this.filePicker = void 0;
+				};
 			}
-			/** Dispatch + execute, refreshing the claim decoration when the styled token flips. */
+			/**
+			* Read the mounted composer's live file-intake availability.
+			* @returns false when no accepting composer is mounted.
+			*/
+			canPickFiles() {
+				return this.filePicker?.available() === true;
+			}
+			/**
+			* Open the native file dialog when the mounted composer accepts files.
+			* @returns whether the opener was called.
+			*/
+			pickFiles() {
+				if (this.filePicker === void 0 || !this.filePicker.available()) return false;
+				this.filePicker.open();
+				return true;
+			}
+			/** Dispatch one machine event and execute its effects. */
 			dispatchRun(ev) {
-				const beforeToken = this.activeClaimToken();
 				this.run(this.core.dispatch(ev));
-				if (this.activeClaimToken() !== beforeToken) refreshClaimDecoration(this.editor);
 			}
 			run(effects) {
 				for (const fx of effects) this.execute(fx);
@@ -11854,24 +15471,11 @@ window.__ModuleLoader__.load({
 			* undo history so sent content cannot resurrect.
 			*/
 			commitDraft(retainSuffixOf) {
-				this.editor.update(() => {
-					const layout = $composerLayout();
-					const clip = layout.clipboardText;
-					if (retainSuffixOf !== null && clip !== retainSuffixOf && clip.startsWith(retainSuffixOf)) {
-						$replaceDetectSpanWithText({
-							start: 0,
-							end: detectOffsetOfClipboardOffset(layout, retainSuffixOf.length)
-						}, "");
-						return;
-					}
-					const root = nl();
-					root.clear();
-					root.selectEnd();
-				}, {
-					discrete: true,
-					tag: xo
+				this.draftEditor.clearCommittedDraft((clip) => {
+					if (retainSuffixOf !== null && clip !== retainSuffixOf && clip.startsWith(retainSuffixOf)) return retainSuffixOf.length;
+					return null;
 				});
-				this.editor.dispatchCommand(Nn$1, void 0);
+				this.draftEditor.clearHistory();
 			}
 			/**
 			* Prompt serialization before the sink: expand each chip occurrence to its
@@ -11880,13 +15484,14 @@ window.__ModuleLoader__.load({
 			* its editor snapshot. Chip-free drafts skip the async detour.
 			*/
 			sinkSerialized(attempt, draft, mode) {
-				const imageIds = [...this.imageIds];
-				this.imageIds = [];
+				this.notifySubmission(attempt.submission);
+				const attachmentIds = [...this.attachmentIds];
+				this.attachmentIds = [];
 				const occurrences = this.projection.occurrences;
 				const record = {
 					draft,
 					occurrences,
-					imageIds
+					attachmentIds
 				};
 				this.detachedDrafts.set(attempt.seq, record);
 				if (this.failedRestoreRev === this.rev) {
@@ -11894,7 +15499,7 @@ window.__ModuleLoader__.load({
 					this.failedRestoreRev = void 0;
 				}
 				if (occurrences.length === 0) {
-					this.settleSink(attempt, this.deps.defaultSink(draft.trim(), imageIds, mode, attempt.signal));
+					this.settleSink(attempt, this.deps.defaultSink(draft.trim(), attachmentIds, mode, attempt.signal));
 					return;
 				}
 				const inputTriggers = this.deps.inputTriggers?.();
@@ -11914,12 +15519,18 @@ window.__ModuleLoader__.load({
 						cursor = part.offset + part.length;
 					}
 					out += draft.slice(cursor);
-					this.settleSink(attempt, this.deps.defaultSink(out.trim(), imageIds, mode, attempt.signal));
+					this.settleSink(attempt, this.deps.defaultSink(out.trim(), attachmentIds, mode, attempt.signal));
 				}, (error) => {
 					if (this.dead(attempt)) return;
 					const message = error instanceof Error ? error.message : String(error);
 					this.settleDetachedFailure(attempt, message);
 				});
+			}
+			notifySubmission(submission) {
+				if (submission === void 0) return;
+				try {
+					this.deps.messageSubmitted?.(submission);
+				} catch (_error) {}
 			}
 			/** Settle one detached default send independently of other sends. */
 			settleSink(attempt, pending) {
@@ -11946,7 +15557,7 @@ window.__ModuleLoader__.load({
 				const record = this.detachedDrafts.get(attempt.seq);
 				if (record === void 0) return;
 				this.detachedDrafts.delete(attempt.seq);
-				this.restoreImages(record.imageIds);
+				this.restoreAttachments(record.attachmentIds);
 				this.failedDetached.set(attempt.seq, record);
 				if (this.projection.clipboardText === "" || this.failedRestoreRev === this.rev) this.restoreFailedDrafts();
 				this.dispatchRun({
@@ -11974,53 +15585,20 @@ window.__ModuleLoader__.load({
 				}
 				this.restoringFailures = true;
 				try {
-					this.editor.update(() => {
-						const root = nl();
-						root.clear();
-						let paragraph = es();
-						root.append(paragraph);
-						const appendText = (text) => {
-							const lines = text.split("\n");
-							for (let i = 0; i < lines.length; i += 1) {
-								const line = lines[i];
-								if (line !== "") paragraph.append(Go(line));
-								if (i < lines.length - 1) {
-									paragraph = es();
-									root.append(paragraph);
-								}
-							}
-						};
-						let cursor = 0;
-						for (const occurrence of occurrences) {
-							appendText(draft.slice(cursor, occurrence.offset));
-							paragraph.append(new ReferenceChipNode({
-								source: occurrence.source,
-								ref: occurrence.ref,
-								label: occurrence.label,
-								...occurrence.appearance === void 0 ? {} : { appearance: occurrence.appearance },
-								clipboardText: occurrence.clipboardText
-							}, occurrence.invalid === true));
-							cursor = occurrence.offset + occurrence.length;
-						}
-						appendText(draft.slice(cursor));
-						root.selectEnd();
-					}, {
-						discrete: true,
-						tag: xo
-					});
-					this.editor.dispatchCommand(Nn$1, void 0);
+					this.draftEditor.restoreDraft(draft, occurrences);
+					this.draftEditor.clearHistory();
 					this.failedRestoreRev = this.rev;
 				} finally {
 					this.restoringFailures = false;
 				}
 			}
-			/** Return failed-send images to the head of the rail (ids still resolve — release happens only after success). */
-			restoreImages(imageIds) {
-				if (imageIds.length === 0) return;
-				const current = new Set(this.imageIds);
-				const restored = imageIds.filter((id) => !current.has(id));
+			/** Return failed-send attachments to the head of the rail; release happens only after success. */
+			restoreAttachments(attachmentIds) {
+				if (attachmentIds.length === 0) return;
+				const current = new Set(this.attachmentIds);
+				const restored = attachmentIds.filter((id) => !current.has(id));
 				if (restored.length === 0) return;
-				this.imageIds = [...restored, ...this.imageIds];
+				this.attachmentIds = [...restored, ...this.attachmentIds];
 				this.publish();
 			}
 			/** Enter adjudication: poll the session controller; failure = notice + draft retained (never a silent downgrade). */
@@ -12034,7 +15612,7 @@ window.__ModuleLoader__.load({
 					});
 					return;
 				}
-				inputTriggers.adjudicate(draft.trim(), attempt.signal, { images: this.imageIds.length }).then((outcome) => {
+				inputTriggers.adjudicate(draft.trim(), attempt.signal, { attachments: this.attachmentIds.length }).then((outcome) => {
 					if (this.dead(attempt)) return;
 					this.dispatchRun({
 						type: "adjudicated",
@@ -12054,28 +15632,28 @@ window.__ModuleLoader__.load({
 			/**
 			* The submit transaction: claim.submit against the session scope; ok maps
 			* from the outcome kind. An accepting claim receives the serialized draft
-			* images, which are cleared and released only on a success outcome; a
-			* failure (serialize, transport, or handler error) keeps draft and images
+			* attachments, which are cleared and released only on a success outcome; a
+			* failure (serialize, transport, or handler error) keeps draft and attachments
 			* for correction.
 			*/
 			beginSubmit(attempt, claim, args) {
-				const imageIds = claim.images === true ? [...this.imageIds] : [];
+				const attachmentIds = claim.attachments === true ? [...this.attachmentIds] : [];
 				Promise.resolve().then(async () => {
-					const images = imageIds.length > 0 ? await this.deps.commandImages.serialize(imageIds) : [];
+					const attachments = attachmentIds.length > 0 ? await this.deps.commandAttachments.serialize(attachmentIds) : [];
 					if (this.dead(attempt)) return void 0;
-					return claim.submit(args, this.deps.actx, images);
+					return claim.submit(args, this.deps.actx, attachments);
 				}).then((outcome) => {
 					if (outcome === void 0 || this.dead(attempt)) return;
-					if (outcome.kind === "success" && imageIds.length > 0) {
-						const submitted = new Set(imageIds);
-						this.imageIds = this.imageIds.filter((id) => !submitted.has(id));
-						this.deps.commandImages.release(imageIds);
+					if (outcome.kind === "success" && attachmentIds.length > 0) {
+						const submitted = new Set(attachmentIds);
+						this.attachmentIds = this.attachmentIds.filter((id) => !submitted.has(id));
+						this.deps.commandAttachments.release(attachmentIds);
 					}
 					this.dispatchRun({
 						type: "submit-settled",
 						attempt,
 						ok: outcome.kind === "success",
-						draft: this.projection.clipboardText,
+						command: this.projection.command,
 						outcome,
 						...outcome.kind === "error" && outcome.text === void 0 ? { message: "command failed" } : {}
 					});
@@ -12086,7 +15664,7 @@ window.__ModuleLoader__.load({
 						type: "submit-settled",
 						attempt,
 						ok: false,
-						draft: this.projection.clipboardText,
+						command: this.projection.command,
 						message
 					});
 				});
@@ -12099,30 +15677,52 @@ window.__ModuleLoader__.load({
 				const core = this.core.state;
 				return {
 					draft: this.projection.clipboardText,
-					imageIds: this.imageIds,
+					attachmentIds: this.attachmentIds,
 					draftRev: this.rev,
 					phase: core.phase,
 					...core.claim !== void 0 ? { claim: core.claim } : {},
 					occurrences: this.projection.occurrences,
-					queue: this.deps.queue?.getSnapshot() ?? EMPTY_QUEUE
+					queue: this.deps.inbox?.getSnapshot()?.["next-turn"] ?? EMPTY_QUEUE$1
 				};
 			}
 			publish() {
 				const next = this.compose();
 				this.state.set(next);
-				if (next.draft !== this.lastMirroredDraft) {
-					this.lastMirroredDraft = next.draft;
-					this.mirrorFn?.(next.draft);
+				const draft = this.draftSnapshot;
+				if (draft !== this.lastPublishedDraft) {
+					this.lastPublishedDraft = draft;
+					this.persistDraft?.(draft);
 				}
 			}
 		};
+		//#endregion
+		//#region lib/types/client/input/submission-analytics.js
+		/**
+		* Report the original message occurrence without reading newer Session facts.
+		* @param ctx - client context.
+		* @param submission - original occurrence and Session snapshot.
+		*/
+		function reportMessageSubmission(ctx, submission) {
+			const { state, timestamp, mode } = submission;
+			if (state === void 0) return;
+			const model = state.model;
+			ctx.get("productAnalytics")?.track("send_button_click", {
+				...state.sessionId === void 0 ? {} : { session_id: state.sessionId },
+				...model === void 0 ? {} : {
+					model_name: `${model.provider}/${model.name}`,
+					...model.effort === void 0 ? {} : { thinking_effort: model.effort }
+				},
+				run_mode: state.runMode,
+				msg_type: state.running ? mode : "default"
+			}, timestamp);
+		}
 		//#endregion
 		//#region lib/types/client/input/hub.js
 		/** Session-addressed input facade registry (SessionInputResolver face + composer-layer extras). */
 		var InputHub = class {
 			rootCtx;
 			t;
-			shells = /* @__PURE__ */ new Map();
+			shells = /* @__PURE__ */ new WeakMap();
 			/**
 			* @param ctx - client root context (services resolved lazily per call — boot order stays free).
 			* @param t - conversation-namespace translate thunk (reads the active locale at call time).
@@ -12137,41 +15737,68 @@ window.__ModuleLoader__.load({
 			* @returns the resident per-session facade.
 			*/
 			for(actx) {
-				const id = this.sessions().scopeOf(actx);
-				if (id === void 0) throw new Error("conversation.input.for requires a session scope");
-				return this.shell(id);
+				const sessions = this.sessions();
+				const session = sessions.sessionOf(actx);
+				const binding = session === void 0 ? void 0 : sessions.binding(session.sessionId);
+				if (binding === void 0 || binding.session !== session) throw new Error("conversation.input.for requires a retained Session scope");
+				return this.shellFor(binding);
+			}
+			requestDraftInitialization(binding, options) {
+				if (this.sessions().binding(binding.sessionId) !== binding) throw new Error("conversation.input.requestDraftInitialization requires a retained Session binding");
+				return this.shellFor(binding).requestDraftInitialization(options);
 			}
 			/**
-			* Resident shell for one session binding — the provide-channel entry
-			* (called during scope materialization, BEFORE the scope record is
-			* queryable, hence binding-fed and hence the thunked slash/popup deps).
-			* Wires the scoped event listeners + teardown into the session scope.
+			* Resolve the resident shell for an already-retained, addressable Session binding.
+			* Draft import completes before return. The Session scope owns input listeners,
+			* the inject-managed catalog subscription, and shell teardown.
 			* @param binding - session assembly handle.
 			* @returns the shell.
 			*/
 			shellFor(binding) {
-				const existing = this.shells.get(binding.sessionId);
+				const existing = this.shells.get(binding);
 				if (existing !== void 0) return existing;
-				const { sessionId: id, session, ctx: actx } = binding;
+				const { session, ctx: actx } = binding;
 				const shell = new SessionInputShell({
 					actx,
+					submissionState: () => {
+						const state = session.getSnapshot();
+						const model = session.projections.faceOf("modelSelection").getSnapshot();
+						const plan = session.projections.faceOf("plan").getSnapshot();
+						const goal = session.projections.faceOf("goal").getSnapshot();
+						const selection = model?.next ?? model?.lastUsed;
+						return Object.freeze({
+							...state.blank ? {} : { sessionId: state.sessionId },
+							...selection == null ? {} : { model: Object.freeze({
+								provider: selection.provider,
+								name: selection.model,
+								...selection.reasoningEffort === void 0 ? {} : { effort: selection.reasoningEffort }
+							}) },
+							runMode: plan?.active ? "plan" : goal?.goal.phase === "active" ? "goal" : "default",
+							running: state.running
+						});
+					},
+					messageSubmitted: (submission) => {
+						reportMessageSubmission(this.rootCtx, submission);
+					},
 					inputTriggers: () => this.controller(actx),
 					popup: () => this.popup(actx),
-					queue: queueReadFaceOf(session),
-					defaultSink: (text, imageIds, mode, signal) => this.sink(session, text, imageIds, mode, signal),
+					inbox: session.projections.faceOf("inbox"),
+					defaultSink: (text, attachmentIds, mode, signal) => this.sink(session, text, attachmentIds, mode, signal),
 					steerQueue: () => {
 						this.steerQueue(session, shell);
 					},
-					commandImages: {
-						serialize: (ids) => this.conversation().serializeDraftImages(ids),
+					commandAttachments: {
+						serialize: async (ids) => {
+							return (await this.conversation().serializeDraftAttachments(ids)).attachments;
+						},
 						release: (ids) => {
 							const conversation = this.rootCtx.get("conversation");
-							for (const imageId of ids) conversation?.releaseDraftImage(imageId);
+							for (const attachmentId of ids) conversation?.releaseDraftAttachment(attachmentId);
 						},
-						unsupportedNotice: (token) => this.t("command.imagesUnsupported", { command: token.trim().replace(/^\//u, "") })
+						unsupportedNotice: (token) => this.t("command.attachmentsUnsupported", { command: token.trim().replace(/^\//u, "") })
 					}
 				});
-				this.shells.set(id, shell);
+				this.shells.set(binding, shell);
 				actx.effect(() => {
 					const offs = [
 						actx.on("slash/input-begin-command", (req) => shell.beginCommand(req.claim, req.span) ? true : void 0),
@@ -12182,11 +15809,20 @@ window.__ModuleLoader__.load({
 					return () => {
 						for (const off of offs) off();
 						const drafts = shell.dispose();
-						this.shells.delete(id);
+						this.shells.delete(binding);
 						const conversation = this.rootCtx.get("conversation");
-						for (const imageId of drafts) conversation?.releaseDraftImage(imageId);
+						for (const attachmentId of drafts) conversation?.releaseDraftAttachment(attachmentId);
 					};
 				}, "conversation.input: session shell");
+				actx.inject(["inputTriggers"], (scope) => {
+					scope.effect(() => {
+						shell.refreshLexiconSubscription();
+						return () => {
+							shell.refreshLexiconSubscription();
+						};
+					}, "conversation.input: reference catalogs");
+				});
+				shell.setDraft(readConversationDraft(binding.sessionId));
 				return shell;
 			}
 			/**
@@ -12196,8 +15832,6 @@ window.__ModuleLoader__.load({
 			* @returns the shell.
 			*/
 			shell(id) {
-				const existing = this.shells.get(id);
-				if (existing !== void 0) return existing;
 				const binding = this.sessions().binding(id);
 				if (binding === void 0) throw new Error(`conversation.input: session "${id}" resolved no binding`);
 				return this.shellFor(binding);
@@ -12213,14 +15847,31 @@ window.__ModuleLoader__.load({
 				return this.shell(id);
 			}
 			/**
+			* Query file intake without creating a Session input.
+			* @param id - target Session.
+			* @returns whether its mounted composer currently accepts files.
+			*/
+			canPickFiles(id) {
+				const binding = this.sessions().binding(id);
+				return binding !== void 0 && this.shells.get(binding)?.canPickFiles() === true;
+			}
+			/**
+			* Open the target composer's file dialog under its live intake policy.
+			* @param id - target Session.
+			*/
+			pickFiles(id) {
+				const binding = this.sessions().binding(id);
+				if (binding !== void 0) this.shells.get(binding)?.pickFiles();
+			}
+			/**
 			* Resolve the optional slash controller for composer chrome that launches
 			* the shared candidate menu without typing a trigger.
 			* @param id - session id.
 			* @returns the resident controller, or undefined when no trigger provider is installed.
 			*/
 			inputTriggers(id) {
-				const actx = this.sessions().scope(id);
-				return actx === void 0 ? void 0 : this.controller(actx);
+				const binding = this.sessions().binding(id);
+				return binding === void 0 ? void 0 : this.controller(binding.ctx);
 			}
 			/**
 			* Default sink: optimistic clear + prompt. The session is always a real
@@ -12228,24 +15879,24 @@ window.__ModuleLoader__.load({
 			* exactly one path; a failed first prompt is an ordinary prompt failure
 			* (banner via promptError, draft restored only while untouched).
 			*/
-			sink(session, text, imageIds, mode, signal) {
-				if (text === "" && imageIds.length === 0) return Promise.resolve({ kind: "success" });
-				return this.conversation().sendSession(session, text, imageIds, mode, signal);
+			sink(session, text, attachmentIds, mode, signal) {
+				if (text === "" && attachmentIds.length === 0) return Promise.resolve({ kind: "success" });
+				return this.conversation().sendSession(session, text, attachmentIds, mode, signal);
 			}
 			/**
-			* Steer every still-pending queued message into the running turn, in FIFO
-			* order — the same strict-steer operation as the queue dock's per-row
-			* button. A turn closing mid-way (`session/steer-unavailable`) or a row already
+			* Submit every still-pending queued message through QueueDock Steer, in FIFO
+			* request order — the same operation as the queue dock's per-row button.
+			* An Agent stopping before a command (`session/steer-unavailable`) or a row already
 			* claimed by the agent (`session/queue-item-not-found`) converges silently, while a
 			* genuine failure surfaces as one composer notice. Repeated triggers
 			* (e.g. two rapid empty-draft chords) rely on that `session/queue-item-not-found`
 			* convergence: the snapshot may still list a row the host already steered,
-			* and the duplicate strict steer is a silent no-op.
+			* and the duplicate Steer is a silent no-op.
 			* @param session - the addressed host session.
 			* @param shell - the resident shell (notice outlet).
 			*/
 			async steerQueue(session, shell) {
-				const queued = session.getSnapshot().queue.filter((item) => item.placement === "queued");
+				const queued = session.projections.faceOf("inbox").getSnapshot()?.["next-turn"] ?? [];
 				if (queued.length === 0) return;
 				for (const item of queued) {
 					const result = await session.updateQueue(item.id, { kind: "steer" });
@@ -12256,9 +15907,11 @@ window.__ModuleLoader__.load({
 				}
 			}
 			controller(actx) {
+				if (this.sessions().sessionOf(actx) === void 0) return void 0;
 				return this.rootCtx.get("inputTriggers")?.sessionOf(actx);
 			}
 			popup(actx) {
+				if (this.sessions().sessionOf(actx) === void 0) return void 0;
 				return this.rootCtx.get("commandUi")?.popupFor(actx);
 			}
 			sessions() {
@@ -12273,796 +15926,6 @@ window.__ModuleLoader__.load({
 			}
 		};
 		//#endregion
-		//#region ../../node_modules/@deepseek-ai/cosmokit/lib/index.js
-		/** Return true when a value is `null` or `undefined`. */
-		function isNullable(value) {
-			return value === null || value === void 0;
-		}
-		/** Return true for non-array object values. */
-		function isPlainObject(data) {
-			return data && typeof data === "object" && !Array.isArray(data);
-		}
-		/** Filter object entries and return a new object. */
-		function filterKeys(object, filter) {
-			return Object.fromEntries(Object.entries(object).filter(([key, value]) => filter(key, value)));
-		}
-		/** Map object values while preserving the original key set. */
-		function mapValues(object, transform) {
-			return Object.fromEntries(Object.entries(object).map(([key, value]) => [key, transform(value, key)]));
-		}
-		/** Pick selected keys from an object, optionally including `undefined` values. */
-		function pick(source, keys, forced) {
-			if (!keys) return { ...source };
-			const result = {};
-			for (const key of keys) if (forced || source[key] !== void 0) result[key] = source[key];
-			return result;
-		}
-		/** Test values using `instanceof` with a `toStringTag` fallback. */
-		function is(type, value) {
-			if (arguments.length === 1) return (value) => is(type, value);
-			return type in globalThis && value instanceof globalThis[type] || Object.prototype.toString.call(value).slice(8, -1) === type;
-		}
-		function isArrayBufferLike(value) {
-			return is("ArrayBuffer", value) || is("SharedArrayBuffer", value);
-		}
-		function isArrayBufferSource(value) {
-			return isArrayBufferLike(value) || ArrayBuffer.isView(value);
-		}
-		/** Binary source detection and base64/hex conversion helpers. */
-		var Binary;
-		(function(Binary) {
-			Binary.is = isArrayBufferLike;
-			Binary.isSource = isArrayBufferSource;
-			function fromSource(source) {
-				if (ArrayBuffer.isView(source)) return source.buffer.slice(source.byteOffset, source.byteOffset + source.byteLength);
-				else return source;
-			}
-			Binary.fromSource = fromSource;
-			function toBase64(source) {
-				source = fromSource(source);
-				if (typeof Buffer !== "undefined") return Buffer.from(source).toString("base64");
-				let binary = "";
-				const bytes = new Uint8Array(source);
-				for (let i = 0; i < bytes.byteLength; i++) binary += String.fromCharCode(bytes[i]);
-				return btoa(binary);
-			}
-			Binary.toBase64 = toBase64;
-			function fromBase64(source) {
-				if (typeof Buffer !== "undefined") return fromSource(Buffer.from(source, "base64"));
-				return Uint8Array.from(atob(source), (c) => c.charCodeAt(0));
-			}
-			Binary.fromBase64 = fromBase64;
-			function toHex(source) {
-				source = fromSource(source);
-				if (typeof Buffer !== "undefined") return Buffer.from(source).toString("hex");
-				return Array.from(new Uint8Array(source), (byte) => byte.toString(16).padStart(2, "0")).join("");
-			}
-			Binary.toHex = toHex;
-			function fromHex(source) {
-				if (typeof Buffer !== "undefined") return fromSource(Buffer.from(source, "hex"));
-				const hex = source.length % 2 === 0 ? source : source.slice(0, source.length - 1);
-				const buffer = [];
-				for (let i = 0; i < hex.length; i += 2) buffer.push(parseInt(`${hex[i]}${hex[i + 1]}`, 16));
-				return Uint8Array.from(buffer).buffer;
-			}
-			Binary.fromHex = fromHex;
-		})(Binary || (Binary = {}));
-		Binary.fromBase64;
-		Binary.toBase64;
-		Binary.fromHex;
-		Binary.toHex;
-		/** Deep-clone common JavaScript values while preserving prototypes and cycles. */
-		function clone(source, refs = /* @__PURE__ */ new Map()) {
-			if (!source || typeof source !== "object") return source;
-			if (is("Date", source)) return new Date(source.valueOf());
-			if (is("RegExp", source)) return new RegExp(source.source, source.flags);
-			if (isArrayBufferLike(source)) return source.slice(0);
-			if (ArrayBuffer.isView(source)) return source.buffer.slice(source.byteOffset, source.byteOffset + source.byteLength);
-			const cached = refs.get(source);
-			if (cached) return cached;
-			if (Array.isArray(source)) {
-				const result = [];
-				refs.set(source, result);
-				source.forEach((value, index) => {
-					result[index] = Reflect.apply(clone, null, [value, refs]);
-				});
-				return result;
-			}
-			const result = Object.create(Object.getPrototypeOf(source));
-			refs.set(source, result);
-			for (const key of Reflect.ownKeys(source)) {
-				const descriptor = { ...Reflect.getOwnPropertyDescriptor(source, key) };
-				if ("value" in descriptor) descriptor.value = Reflect.apply(clone, null, [descriptor.value, refs]);
-				Reflect.defineProperty(result, key, descriptor);
-			}
-			return result;
-		}
-		/** Deeply compare arrays, dates, regexps, buffers, and plain object fields. */
-		function deepEqual(a, b, strict) {
-			if (a === b) return true;
-			if (!strict && isNullable(a) && isNullable(b)) return true;
-			if (typeof a !== typeof b) return false;
-			if (typeof a !== "object") return false;
-			if (!a || !b) return false;
-			function check(test, then) {
-				return test(a) ? test(b) ? then(a, b) : false : test(b) ? false : void 0;
-			}
-			return check(Array.isArray, (a, b) => a.length === b.length && a.every((item, index) => deepEqual(item, b[index]))) ?? check(is("Date"), (a, b) => a.valueOf() === b.valueOf()) ?? check(is("RegExp"), (a, b) => a.source === b.source && a.flags === b.flags) ?? check(isArrayBufferLike, (a, b) => {
-				if (a.byteLength !== b.byteLength) return false;
-				const viewA = new Uint8Array(a);
-				const viewB = new Uint8Array(b);
-				for (let i = 0; i < viewA.length; i++) if (viewA[i] !== viewB[i]) return false;
-				return true;
-			}) ?? Object.keys({
-				...a,
-				...b
-			}).every((key) => deepEqual(a[key], b[key], strict));
-		}
-		/** Time constants plus parsing and formatting helpers. */
-		var Time;
-		(function(Time) {
-			Time.millisecond = 1;
-			Time.second = 1e3;
-			Time.minute = Time.second * 60;
-			Time.hour = Time.minute * 60;
-			Time.day = Time.hour * 24;
-			Time.week = Time.day * 7;
-			let timezoneOffset = (/* @__PURE__ */ new Date()).getTimezoneOffset();
-			function setTimezoneOffset(offset) {
-				timezoneOffset = offset;
-			}
-			Time.setTimezoneOffset = setTimezoneOffset;
-			function getTimezoneOffset() {
-				return timezoneOffset;
-			}
-			Time.getTimezoneOffset = getTimezoneOffset;
-			function getDateNumber(date = /* @__PURE__ */ new Date(), offset) {
-				if (typeof date === "number") date = new Date(date);
-				if (offset === void 0) offset = timezoneOffset;
-				return Math.floor((date.valueOf() / Time.minute - offset) / 1440);
-			}
-			Time.getDateNumber = getDateNumber;
-			function fromDateNumber(value, offset) {
-				const date = new Date(value * Time.day);
-				if (offset === void 0) offset = timezoneOffset;
-				return new Date(+date + offset * Time.minute);
-			}
-			Time.fromDateNumber = fromDateNumber;
-			const numeric = /\d+(?:\.\d+)?/.source;
-			const timeRegExp = new RegExp(`^${[
-				"w(?:eek(?:s)?)?",
-				"d(?:ay(?:s)?)?",
-				"h(?:our(?:s)?)?",
-				"m(?:in(?:ute)?(?:s)?)?",
-				"s(?:ec(?:ond)?(?:s)?)?"
-			].map((unit) => `(${numeric}${unit})?`).join("")}$`);
-			function parseTime(source) {
-				const capture = timeRegExp.exec(source);
-				if (!capture) return 0;
-				return (parseFloat(capture[1]) * Time.week || 0) + (parseFloat(capture[2]) * Time.day || 0) + (parseFloat(capture[3]) * Time.hour || 0) + (parseFloat(capture[4]) * Time.minute || 0) + (parseFloat(capture[5]) * Time.second || 0);
-			}
-			Time.parseTime = parseTime;
-			function parseDate(date) {
-				const parsed = parseTime(date);
-				if (parsed) date = Date.now() + parsed;
-				else if (/^\d{1,2}(:\d{1,2}){1,2}$/.test(date)) date = `${(/* @__PURE__ */ new Date()).toLocaleDateString()}-${date}`;
-				else if (/^\d{1,2}-\d{1,2}-\d{1,2}(:\d{1,2}){1,2}$/.test(date)) date = `${(/* @__PURE__ */ new Date()).getFullYear()}-${date}`;
-				return date ? new Date(date) : /* @__PURE__ */ new Date();
-			}
-			Time.parseDate = parseDate;
-			function format(ms) {
-				const abs = Math.abs(ms);
-				if (abs >= Time.day - Time.hour / 2) return Math.round(ms / Time.day) + "d";
-				else if (abs >= Time.hour - Time.minute / 2) return Math.round(ms / Time.hour) + "h";
-				else if (abs >= Time.minute - Time.second / 2) return Math.round(ms / Time.minute) + "m";
-				else if (abs >= Time.second) return Math.round(ms / Time.second) + "s";
-				return ms + "ms";
-			}
-			Time.format = format;
-			function toDigits(source, length = 2) {
-				return source.toString().padStart(length, "0");
-			}
-			Time.toDigits = toDigits;
-			function template(template, time = /* @__PURE__ */ new Date()) {
-				return template.replace("yyyy", time.getFullYear().toString()).replace("yy", time.getFullYear().toString().slice(2)).replace("MM", toDigits(time.getMonth() + 1)).replace("dd", toDigits(time.getDate())).replace("hh", toDigits(time.getHours())).replace("mm", toDigits(time.getMinutes())).replace("ss", toDigits(time.getSeconds())).replace("SSS", toDigits(time.getMilliseconds(), 3));
-			}
-			Time.template = template;
-		})(Time || (Time = {}));
-		//#endregion
-		//#region ../../node_modules/@deepseek-ai/schemastery/lib/index.mjs
-		const kSchema = Symbol.for("schemastery");
-		const kValidationError = Symbol.for("ValidationError");
-		globalThis.__schemastery_index__ ??= 0;
-		globalThis.__schemastery_refs__ = void 0;
-		var ValidationError = class extends TypeError {
-			options;
-			name = "ValidationError";
-			constructor(message, options) {
-				let prefix = "$";
-				for (const segment of options.path || []) if (typeof segment === "string") prefix += "." + segment;
-				else if (typeof segment === "number") prefix += "[" + segment + "]";
-				else if (typeof segment === "symbol") prefix += `[Symbol(${segment.toString()})]`;
-				if (prefix.startsWith(".")) prefix = prefix.slice(1);
-				super((prefix === "$" ? "" : `${prefix} `) + message);
-				this.options = options;
-			}
-			static is(error) {
-				return !!error?.[kValidationError];
-			}
-		};
-		Object.defineProperty(ValidationError.prototype, kValidationError, { value: true });
-		const Schema = function(options) {
-			const schema = function(data, options = {}) {
-				return Schema.resolve(data, schema, options)[0];
-			};
-			if (options.refs) {
-				const refs = mapValues(options.refs, (options) => new Schema(options));
-				const getRef = (uid) => refs[uid];
-				for (const key in refs) {
-					const options = refs[key];
-					options.sKey = getRef(options.sKey);
-					options.inner = getRef(options.inner);
-					options.list = options.list && options.list.map(getRef);
-					options.dict = options.dict && mapValues(options.dict, getRef);
-				}
-				return refs[options.uid];
-			}
-			Object.assign(schema, options);
-			if (typeof schema.callback === "string") try {
-				schema.callback = new Function("return " + schema.callback)();
-			} catch {}
-			Object.defineProperty(schema, "uid", { value: globalThis.__schemastery_index__++ });
-			Object.setPrototypeOf(schema, Schema.prototype);
-			schema.meta ||= {};
-			schema.toString = schema.toString.bind(schema);
-			return schema;
-		};
-		Schema.prototype = Object.create(Function.prototype);
-		Schema.prototype[kSchema] = true;
-		Object.defineProperty(Schema.prototype, "~standard", { get() {
-			return {
-				version: 1,
-				vendor: "schemastery",
-				validate: (value) => {
-					try {
-						return { value: Schema.resolve(value, this, {})[0] };
-					} catch (error) {
-						if (ValidationError.is(error)) return { issues: [{
-							message: error.message,
-							path: error.options.path
-						}] };
-						throw error;
-					}
-				}
-			};
-		} });
-		Schema.ValidationError = ValidationError;
-		Schema.prototype.toJSON = function toJSON() {
-			if (globalThis.__schemastery_refs__) {
-				globalThis.__schemastery_refs__[this.uid] ??= JSON.parse(JSON.stringify({ ...this }));
-				return this.uid;
-			}
-			globalThis.__schemastery_refs__ = { [this.uid]: { ...this } };
-			globalThis.__schemastery_refs__[this.uid] = JSON.parse(JSON.stringify({ ...this }));
-			const result = {
-				uid: this.uid,
-				refs: globalThis.__schemastery_refs__
-			};
-			globalThis.__schemastery_refs__ = void 0;
-			return result;
-		};
-		Schema.prototype.set = function set(key, value) {
-			this.dict[key] = value;
-			return this;
-		};
-		Schema.prototype.push = function push(value) {
-			this.list.push(value);
-			return this;
-		};
-		function mergeDesc(original, messages) {
-			const result = typeof original === "string" ? { "": original } : { ...original };
-			for (const locale in messages) {
-				const value = messages[locale];
-				if (value?.$description || value?.$desc) result[locale] = value.$description || value.$desc;
-				else if (typeof value === "string") result[locale] = value;
-			}
-			return result;
-		}
-		function getInner(value) {
-			return value?.$value ?? value?.$inner;
-		}
-		function extractKeys(data) {
-			return filterKeys(data ?? {}, (key) => !key.startsWith("$"));
-		}
-		Schema.prototype.i18n = function i18n(messages) {
-			const schema = Schema(this);
-			const desc = mergeDesc(schema.meta.description, messages);
-			if (Object.keys(desc).length) schema.meta.description = desc;
-			if (schema.dict) schema.dict = mapValues(schema.dict, (inner, key) => {
-				return inner.i18n(mapValues(messages, (data) => getInner(data)?.[key] ?? data?.[key]));
-			});
-			if (schema.list) schema.list = schema.list.map((inner, index) => {
-				return inner.i18n(mapValues(messages, (data = {}) => {
-					if (Array.isArray(getInner(data))) return getInner(data)[index];
-					if (Array.isArray(data)) return data[index];
-					return extractKeys(data);
-				}));
-			});
-			if (schema.inner) schema.inner = schema.inner.i18n(mapValues(messages, (data) => {
-				if (getInner(data)) return getInner(data);
-				return extractKeys(data);
-			}));
-			if (schema.sKey) schema.sKey = schema.sKey.i18n(mapValues(messages, (data) => data?.$key));
-			return schema;
-		};
-		Schema.prototype.extra = function extra(key, value) {
-			const schema = Schema(this);
-			schema.meta = {
-				...schema.meta,
-				[key]: value
-			};
-			return schema;
-		};
-		for (const key of [
-			"required",
-			"disabled",
-			"collapse",
-			"hidden",
-			"loose"
-		]) Object.assign(Schema.prototype, { [key](value = true) {
-			const schema = Schema(this);
-			schema.meta = {
-				...schema.meta,
-				[key]: value
-			};
-			return schema;
-		} });
-		Schema.prototype.deprecated = function deprecated() {
-			const schema = Schema(this);
-			schema.meta.badges ||= [];
-			schema.meta.badges.push({
-				text: "deprecated",
-				type: "danger"
-			});
-			return schema;
-		};
-		Schema.prototype.experimental = function experimental() {
-			const schema = Schema(this);
-			schema.meta.badges ||= [];
-			schema.meta.badges.push({
-				text: "experimental",
-				type: "warning"
-			});
-			return schema;
-		};
-		Schema.prototype.pattern = function pattern(regexp) {
-			const schema = Schema(this);
-			const pattern = pick(regexp, ["source", "flags"]);
-			schema.meta = {
-				...schema.meta,
-				pattern
-			};
-			return schema;
-		};
-		Schema.prototype.simplify = function simplify(value) {
-			if (deepEqual(value, this.meta.default, this.type === "dict")) return null;
-			if (isNullable(value)) return value;
-			if (this.type === "object" || this.type === "dict") {
-				const result = {};
-				for (const key in value) {
-					const item = (this.type === "object" ? this.dict[key] : this.inner)?.simplify(value[key]);
-					if (this.type === "dict" || !isNullable(item)) result[key] = item;
-				}
-				if (deepEqual(result, this.meta.default, this.type === "dict")) return null;
-				return result;
-			} else if (this.type === "array" || this.type === "tuple") {
-				const result = [];
-				value.forEach((value, index) => {
-					const schema = this.type === "array" ? this.inner : this.list[index];
-					const item = schema ? schema.simplify(value) : value;
-					result.push(item);
-				});
-				return result;
-			} else if (this.type === "intersect") {
-				const result = {};
-				for (const item of this.list) Object.assign(result, item.simplify(value));
-				return result;
-			} else if (this.type === "union") for (const schema of this.list) try {
-				Schema.resolve(value, schema, {});
-				return schema.simplify(value);
-			} catch {}
-			return value;
-		};
-		Schema.prototype.toString = function toString(inline) {
-			return formatters[this.type]?.(this, inline) ?? `Schema<${this.type}>`;
-		};
-		Schema.prototype.role = function role(role, extra) {
-			const schema = Schema(this);
-			schema.meta = {
-				...schema.meta,
-				role,
-				extra
-			};
-			return schema;
-		};
-		for (const key of [
-			"default",
-			"link",
-			"comment",
-			"description",
-			"max",
-			"min",
-			"step"
-		]) Object.assign(Schema.prototype, { [key](value) {
-			const schema = Schema(this);
-			schema.meta = {
-				...schema.meta,
-				[key]: value
-			};
-			return schema;
-		} });
-		const resolvers = {};
-		Schema.extend = function extend(type, resolve) {
-			resolvers[type] = resolve;
-		};
-		Schema.resolve = function resolve(data, schema, options = {}, strict = false) {
-			if (!schema) return [data];
-			if (options.ignore?.(data, schema)) return [data];
-			if (isNullable(data) && schema.type !== "lazy") {
-				if (schema.meta.required) throw new ValidationError(`missing required value`, options);
-				let current = schema;
-				let fallback = schema.meta.default;
-				while (current?.type === "intersect" && isNullable(fallback)) {
-					current = current.list[0];
-					fallback = current?.meta.default;
-				}
-				if (isNullable(fallback)) return [data];
-				data = clone(fallback);
-			}
-			const callback = resolvers[schema.type];
-			if (!callback) throw new ValidationError(`unsupported type "${schema.type}"`, options);
-			try {
-				return callback(data, schema, options, strict);
-			} catch (error) {
-				if (!schema.meta.loose) throw error;
-				return [schema.meta.default];
-			}
-		};
-		Schema.from = function from(source) {
-			if (isNullable(source)) return Schema.any();
-			else if ([
-				"string",
-				"number",
-				"boolean"
-			].includes(typeof source)) return Schema.const(source).required();
-			else if (source[kSchema]) return source;
-			else if (typeof source === "function") switch (source) {
-				case String: return Schema.string().required();
-				case Number: return Schema.number().required();
-				case Boolean: return Schema.boolean().required();
-				case Function: return Schema.function().required();
-				default: return Schema.is(source).required();
-			}
-			else throw new TypeError(`cannot infer schema from ${source}`);
-		};
-		Schema.lazy = function lazy(builder) {
-			const toJSON = () => {
-				if (!schema.inner[kSchema]) {
-					schema.inner = schema.builder();
-					schema.inner.meta = {
-						...schema.meta,
-						...schema.inner.meta
-					};
-				}
-				return schema.inner.toJSON();
-			};
-			const schema = new Schema({
-				type: "lazy",
-				builder,
-				inner: { toJSON }
-			});
-			return schema;
-		};
-		Schema.natural = function natural() {
-			return Schema.number().step(1).min(0);
-		};
-		Schema.percent = function percent() {
-			return Schema.number().step(.01).min(0).max(1).role("slider");
-		};
-		Schema.date = function date() {
-			return Schema.union([Schema.is(Date), Schema.transform(Schema.string().role("datetime"), (value, options) => {
-				const date = new Date(value);
-				if (isNaN(+date)) throw new ValidationError(`invalid date "${value}"`, options);
-				return date;
-			}, true)]);
-		};
-		Schema.regExp = function regExp(flag = "") {
-			return Schema.union([Schema.is(RegExp), Schema.transform(Schema.string().role("regexp", { flag }), (value, options) => {
-				try {
-					return new RegExp(value, flag);
-				} catch (e) {
-					throw new ValidationError(e.message, options);
-				}
-			}, true)]);
-		};
-		Schema.arrayBuffer = function arrayBuffer(encoding) {
-			return Schema.union([
-				Schema.is(ArrayBuffer),
-				Schema.is(SharedArrayBuffer),
-				Schema.transform(Schema.any(), (value, options) => {
-					if (Binary.isSource(value)) return Binary.fromSource(value);
-					throw new ValidationError(`expected ArrayBufferSource but got ${value}`, options);
-				}, true),
-				...encoding ? [Schema.transform(Schema.string(), (value, options) => {
-					try {
-						return encoding === "base64" ? Binary.fromBase64(value) : Binary.fromHex(value);
-					} catch (e) {
-						throw new ValidationError(e.message, options);
-					}
-				}, true)] : []
-			]);
-		};
-		Schema.extend("lazy", (data, schema, options, strict) => {
-			if (!schema.inner[kSchema]) {
-				schema.inner = schema.builder();
-				schema.inner.meta = {
-					...schema.meta,
-					...schema.inner.meta
-				};
-			}
-			return Schema.resolve(data, schema.inner, options, strict);
-		});
-		Schema.extend("any", (data) => {
-			return [data];
-		});
-		Schema.extend("never", (data, _, options) => {
-			throw new ValidationError(`expected nullable but got ${data}`, options);
-		});
-		Schema.extend("const", (data, { value }, options) => {
-			if (deepEqual(data, value)) return [value];
-			throw new ValidationError(`expected ${value} but got ${data}`, options);
-		});
-		function checkWithinRange(data, meta, description, options, skipMin = false) {
-			const { max = Infinity, min = -Infinity } = meta;
-			if (data > max) throw new ValidationError(`expected ${description} <= ${max} but got ${data}`, options);
-			if (data < min && !skipMin) throw new ValidationError(`expected ${description} >= ${min} but got ${data}`, options);
-		}
-		Schema.extend("string", (data, { meta }, options) => {
-			if (typeof data !== "string") throw new ValidationError(`expected string but got ${data}`, options);
-			if (meta.pattern) {
-				const regexp = new RegExp(meta.pattern.source, meta.pattern.flags);
-				if (!regexp.test(data)) throw new ValidationError(`expect string to match regexp ${regexp}`, options);
-			}
-			checkWithinRange(data.length, meta, "string length", options);
-			return [data];
-		});
-		function decimalShift(data, digits) {
-			const str = data.toString();
-			if (str.includes("e")) return data * Math.pow(10, digits);
-			const index = str.indexOf(".");
-			if (index === -1) return data * Math.pow(10, digits);
-			const frac = str.slice(index + 1);
-			const integer = str.slice(0, index);
-			if (frac.length <= digits) return +(integer + frac.padEnd(digits, "0"));
-			return +(integer + frac.slice(0, digits) + "." + frac.slice(digits));
-		}
-		function isMultipleOf(data, min, step) {
-			step = Math.abs(step);
-			if (!/^\d+\.\d+$/.test(step.toString())) return (data - min) % step === 0;
-			const index = step.toString().indexOf(".");
-			const digits = step.toString().slice(index + 1).length;
-			return Math.abs(decimalShift(data, digits) - decimalShift(min, digits)) % decimalShift(step, digits) === 0;
-		}
-		Schema.extend("number", (data, { meta }, options) => {
-			if (typeof data !== "number") throw new ValidationError(`expected number but got ${data}`, options);
-			checkWithinRange(data, meta, "number", options);
-			const { step } = meta;
-			if (step && !isMultipleOf(data, meta.min ?? 0, step)) throw new ValidationError(`expected number multiple of ${step} but got ${data}`, options);
-			return [data];
-		});
-		Schema.extend("boolean", (data, _, options) => {
-			if (typeof data === "boolean") return [data];
-			throw new ValidationError(`expected boolean but got ${data}`, options);
-		});
-		Schema.extend("bitset", (data, { bits, meta }, options) => {
-			let value = 0, keys = [];
-			if (typeof data === "number") {
-				value = data;
-				for (const key in bits) if (data & bits[key]) keys.push(key);
-			} else if (Array.isArray(data)) {
-				keys = data;
-				for (const key of keys) {
-					if (typeof key !== "string") throw new ValidationError(`expected string but got ${key}`, options);
-					if (key in bits) value |= bits[key];
-				}
-			} else throw new ValidationError(`expected number or array but got ${data}`, options);
-			if (value === meta.default) return [value];
-			return [value, keys];
-		});
-		Schema.extend("function", (data, _, options) => {
-			if (typeof data === "function") return [data];
-			throw new ValidationError(`expected function but got ${data}`, options);
-		});
-		Schema.extend("is", (data, { constructor }, options) => {
-			if (typeof constructor === "function") {
-				if (data instanceof constructor) return [data];
-				throw new ValidationError(`expected ${constructor.name} but got ${data}`, options);
-			} else {
-				if (isNullable(data)) throw new ValidationError(`expected ${constructor} but got ${data}`, options);
-				let prototype = Object.getPrototypeOf(data);
-				while (prototype) {
-					if (prototype.constructor?.name === constructor) return [data];
-					prototype = Object.getPrototypeOf(prototype);
-				}
-				throw new ValidationError(`expected ${constructor} but got ${data}`, options);
-			}
-		});
-		function property(data, key, schema, options) {
-			try {
-				const [value, adapted] = Schema.resolve(data[key], schema, {
-					...options,
-					path: [...options.path || [], key]
-				});
-				if (adapted !== void 0) data[key] = adapted;
-				return value;
-			} catch (e) {
-				if (!options?.autofix) throw e;
-				delete data[key];
-				return schema.meta.default;
-			}
-		}
-		Schema.extend("array", (data, { inner, meta }, options) => {
-			if (!Array.isArray(data)) throw new ValidationError(`expected array but got ${data}`, options);
-			checkWithinRange(data.length, meta, "array length", options, !isNullable(inner.meta.default));
-			return [data.map((_, index) => property(data, index, inner, options))];
-		});
-		Schema.extend("dict", (data, { inner, sKey }, options, strict) => {
-			if (!isPlainObject(data)) throw new ValidationError(`expected object but got ${data}`, options);
-			const result = {};
-			for (const key in data) {
-				let rKey;
-				try {
-					rKey = Schema.resolve(key, sKey, options)[0];
-				} catch (error) {
-					if (strict) continue;
-					throw error;
-				}
-				result[rKey] = property(data, key, inner, options);
-				data[rKey] = data[key];
-				if (key !== rKey) delete data[key];
-			}
-			return [result];
-		});
-		Schema.extend("tuple", (data, { list }, options, strict) => {
-			if (!Array.isArray(data)) throw new ValidationError(`expected array but got ${data}`, options);
-			const result = list.map((inner, index) => property(data, index, inner, options));
-			if (strict) return [result];
-			result.push(...data.slice(list.length));
-			return [result];
-		});
-		function merge(result, data) {
-			for (const key in data) {
-				if (key in result) continue;
-				result[key] = data[key];
-			}
-		}
-		Schema.extend("object", (data, { dict }, options, strict) => {
-			if (!isPlainObject(data)) throw new ValidationError(`expected object but got ${data}`, options);
-			const result = {};
-			for (const key in dict) {
-				const value = property(data, key, dict[key], options);
-				if (!isNullable(value) || key in data) result[key] = value;
-			}
-			if (!strict) merge(result, data);
-			return [result];
-		});
-		Schema.extend("union", (data, { list, toString }, options, strict) => {
-			const messages = [];
-			for (const inner of list) try {
-				return Schema.resolve(data, inner, options, strict);
-			} catch (error) {
-				messages.push(error);
-			}
-			throw new ValidationError(`expected ${toString()} but got ${JSON.stringify(data)}`, options);
-		});
-		Schema.extend("intersect", (data, { list, toString }, options, strict) => {
-			if (!list.length) return [data];
-			let result;
-			for (const inner of list) {
-				const value = Schema.resolve(data, inner, options, true)[0];
-				if (isNullable(value)) continue;
-				if (isNullable(result)) result = value;
-				else if (typeof result !== typeof value) throw new ValidationError(`expected ${toString()} but got ${JSON.stringify(data)}`, options);
-				else if (typeof value === "object") merge(result ??= {}, value);
-				else if (result !== value) throw new ValidationError(`expected ${toString()} but got ${JSON.stringify(data)}`, options);
-			}
-			if (!strict && isPlainObject(data)) merge(result, data);
-			return [result];
-		});
-		Schema.extend("transform", (data, { inner, callback, preserve }, options) => {
-			const [result, adapted = data] = Schema.resolve(data, inner, options, true);
-			if (preserve) return [callback(result)];
-			else return [callback(result), callback(adapted)];
-		});
-		const formatters = {};
-		function defineMethod(name, keys, format) {
-			formatters[name] = format;
-			Object.assign(Schema, { [name](...args) {
-				const schema = new Schema({ type: name });
-				keys.forEach((key, index) => {
-					switch (key) {
-						case "sKey":
-							schema.sKey = args[index] ?? Schema.string();
-							break;
-						case "inner":
-							schema.inner = Schema.from(args[index]);
-							break;
-						case "list":
-							schema.list = args[index].map(Schema.from);
-							break;
-						case "dict":
-							schema.dict = mapValues(args[index], Schema.from);
-							break;
-						case "bits":
-							schema.bits = {};
-							for (const key in args[index]) {
-								if (typeof args[index][key] !== "number") continue;
-								schema.bits[key] = args[index][key];
-							}
-							break;
-						case "callback": {
-							const callback = schema.callback = args[index];
-							callback["toJSON"] ||= () => callback.toString();
-							break;
-						}
-						case "constructor": {
-							const constructor = schema.constructor = args[index];
-							if (typeof constructor === "function") constructor["toJSON"] ||= () => constructor["name"];
-							break;
-						}
-						default: schema[key] = args[index];
-					}
-				});
-				if (name === "object" || name === "dict") schema.meta.default = {};
-				else if (name === "array" || name === "tuple") schema.meta.default = [];
-				else if (name === "bitset") schema.meta.default = 0;
-				return schema;
-			} });
-		}
-		defineMethod("is", ["constructor"], ({ constructor }) => {
-			if (typeof constructor === "function") return constructor.name;
-			else return constructor;
-		});
-		defineMethod("any", [], () => "any");
-		defineMethod("never", [], () => "never");
-		defineMethod("const", ["value"], ({ value }) => typeof value === "string" ? JSON.stringify(value) : value);
-		defineMethod("string", [], () => "string");
-		defineMethod("number", [], () => "number");
-		defineMethod("boolean", [], () => "boolean");
-		defineMethod("bitset", ["bits"], () => "bitset");
-		defineMethod("function", [], () => "function");
-		defineMethod("array", ["inner"], ({ inner }) => `${inner.toString(true)}[]`);
-		defineMethod("dict", ["inner", "sKey"], ({ inner, sKey }) => `{ [key: ${sKey.toString()}]: ${inner.toString()} }`);
-		defineMethod("tuple", ["list"], ({ list }) => `[${list.map((inner) => inner.toString()).join(", ")}]`);
-		defineMethod("object", ["dict"], ({ dict }) => {
-			if (Object.keys(dict).length === 0) return "{}";
-			return `{ ${Object.entries(dict).map(([key, inner]) => {
-				return `${key}${inner.meta.required ? "" : "?"}: ${inner.toString()}`;
-			}).join(", ")} }`;
-		});
-		defineMethod("union", ["list"], ({ list }, inline) => {
-			const result = list.map(({ toString: format }) => format()).join(" | ");
-			return inline ? `(${result})` : result;
-		});
-		defineMethod("intersect", ["list"], ({ list }) => {
-			return `${list.map((inner) => inner.toString(true)).join(" & ")}`;
-		});
-		defineMethod("transform", [
-			"inner",
-			"callback",
-			"preserve"
-		], ({ inner }, isInner) => inner.toString(isInner));
-		//#endregion
 		//#region lib/types/submission-settings.js
 		/** Busy-Enter preference stored in the Host user-settings document. */
 		/** Settings namespace owned by the conversation plugin. */
@@ -13073,54 +15936,62 @@ window.__ModuleLoader__.load({
 		const BUSY_ENTER_BEHAVIORS = ["queue", "steer"];
 		/** Default preserves Enter-as-Queue for running conversations. */
 		const DEFAULT_BUSY_ENTER_BEHAVIOR = "queue";
-		Schema.object({ [BUSY_ENTER_FIELD]: Schema.union([...BUSY_ENTER_BEHAVIORS]).default(DEFAULT_BUSY_ENTER_BEHAVIOR) });
+		/** Durable conversation schema; also the wire envelope the browser scope validates against. */
+		const ConversationSettingsFields = { [BUSY_ENTER_FIELD]: Schema.union([...BUSY_ENTER_BEHAVIORS]).default(DEFAULT_BUSY_ENTER_BEHAVIOR) };
+		Schema.object(ConversationSettingsFields);
 		//#endregion
 		//#region lib/types/client/input/submission-policy.js
 		/**
-		* Composer submission policy. It owns the live busy-Enter
-		* preference and resolves keyboard gestures into queue/steer delivery modes;
-		* Host and Agent keep the actual delivery-window authority.
+		* Composer submission policy. It owns the live busy-Enter preference and
+		* resolves submission gestures into queue/steer delivery modes; Host and
+		* Agent keep the actual delivery-window authority.
 		*/
 		/**
-		* Busy-Enter policy used by both the composer inject face and its Settings row.
-		* Direct `steer` is intentionally best-effort: AgentLoop turns a closed-window
-		* submission into the next waking Queue item.
+		* Resolve one submission gesture against the busy-Enter preference. Plain
+		* Enter and the primary Send button share the `enter` gesture, so the button
+		* delivers exactly what Enter would. Direct `steer` is intentionally
+		* best-effort: AgentLoop turns a closed-window submission into the next waking
+		* Queue item.
+		* @param preferred - the live busy-Enter preference.
+		* @param running - whether the addressed agent currently reports busy.
+		* @param gesture - plain Enter (or the Send button) or the Cmd/Ctrl-accelerated chord.
+		* @param steeringAvailable - whether this session transport supports steering.
+		* @returns Queue outside steer-capable busy state; otherwise the preferred mode or its opposite.
+		*/
+		function resolveSubmitMode(preferred, running, gesture, steeringAvailable) {
+			if (!running || !steeringAvailable) return "queue";
+			if (gesture === "enter") return preferred;
+			return preferred === "queue" ? "steer" : "queue";
+		}
+		/**
+		* Busy-Enter preference shared by the composer bar inject face and its
+		* Settings row: one live store the bar's submission gestures and Send label
+		* read, backed by the Host user-settings document when one is composed.
 		*/
 		var ComposerSubmissionPolicy = class {
-			/** Reactive preference source for the Settings row. */
+			/** Reactive preference source for the composer bar and the Settings row. */
 			busyEnter = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(DEFAULT_BUSY_ENTER_BEHAVIOR);
+			unsubscribe;
 			host;
 			/**
-			* @param host - durable preference scope owned by the providing plugin;
-			* absent compositions stay process-local. The adoption subscription shares
-			* the scope's plugin lifetime — a disposed scope never publishes again, so
-			* the policy needs no release hook.
+			* @param host Shared configuration form; omitted keeps the browser-local default.
 			*/
 			constructor(host) {
 				this.host = host;
 				if (host !== void 0) {
-					host.subscribe(() => {
+					this.unsubscribe = host.subscribe(() => {
 						this.adopt(host);
 					});
 					this.adopt(host);
 				}
 			}
-			/**
-			* Resolve one keyboard gesture without changing state.
-			* @param running - whether the addressed agent currently reports busy.
-			* @param gesture - plain Enter or the Cmd/Ctrl-accelerated chord.
-			* @param steeringAvailable - whether this session transport supports steering.
-			* @returns Queue outside steer-capable busy state; otherwise the preferred mode or its opposite.
-			*/
-			resolve(running, gesture, steeringAvailable) {
-				if (!running || !steeringAvailable) return "queue";
-				const preferred = this.busyEnter.getSnapshot();
-				if (gesture === "enter") return preferred;
-				return preferred === "queue" ? "steer" : "queue";
+			/** Release the preference subscription. */
+			dispose() {
+				this.unsubscribe?.();
 			}
 			/**
-			* Change the plain-Enter behavior used during busy state; the live value
-			* publishes before the durable write starts.
+			* Change the busy-state submission behavior; the live value publishes
+			* before the durable write starts.
 			* @param behavior - Queue or Steer.
 			*/
 			setBusyEnter(behavior) {
@@ -13147,29 +16018,39 @@ window.__ModuleLoader__.load({
 		const PLAN_NEXT_ACTION_EN = "describe your task to generate plan";
 		/** Simplified Chinese dictionary (the key-set source of truth). */
 		const zh = {
+			"shortcut.newline": "换行",
+			"shortcut.complementary": "使用互补的 Queue／Steer 方式",
+			"shortcut.slash": "打开命令菜单",
+			"shortcut.mention": "打开引用菜单",
 			"hint.plan": PLAN_NEXT_ACTION_ZH,
 			"hint.goal": "输入目标，智能体将持续执行",
 			"hint.goal.active": "当前目标进行中。可输入 edit 修改 / pause 暂停 / resume 继续 / clear 清除",
 			"placeholder.plan": PLAN_NEXT_ACTION_ZH,
-			"placeholder.default": "发消息或做任务… / 调用指令 @ 文件或对话",
+			"placeholder.default": "发消息或创建任务, / 调用指令, @ 文件或对话",
 			"placeholder.unavailable": "会话不可用",
 			"placeholder.parentOffline": "父会话已离线，无法继续发送；仍可停止当前运行",
-			"placeholder.hero": "描述你想要构建的内容… / 调用指令 @ 文件或对话",
+			"placeholder.hero": "描述你想要构建的内容, / 调用指令, @ 文件或对话",
 			"placeholder.workspace": "选择一个工作区开始",
 			"placeholder.steerQueue": "Cmd/Ctrl+Enter 插话发送全部排队消息",
-			"input.commands": "指令",
+			"input.commands": "添加文件或调用指令",
+			"input.file": "文件",
 			"input.stop": "停止生成",
 			"input.send": "发送消息",
-			"input.accessMode": "访问模式，当前：{name}",
-			"image.dropTitle": "松开即可添加文件",
-			"image.dropDesc": "图片最多 {count} 张，每张 {size}；其他文件会作为附件",
-			"image.dropBlocked": "当前无法添加文件",
+			"input.send.queue": "排队发送",
+			"input.send.steer": "插话发送",
+			"attachment.pending": "待发送附件",
+			"attachment.scrollLeft": "向左滚动附件",
+			"attachment.scrollRight": "向右滚动附件",
+			"attachment.dropTitle": "文件或图片拖动到此处即可添加",
+			"attachment.dropDesc": "图片限制：最多 {count} 张，每张 {size}",
+			"attachment.dropBlocked": "当前无法添加文件或图片",
+			"attachment.directoryDesktopOnly": "只有桌面端支持添加文件夹，浏览器里请添加单个文件",
+			"attachment.pathUnavailable": "无法获取文件夹路径，请重新拖入",
+			"attachment.pathUnsupported": "路径含有无法引用的字符，请改名后再试",
 			"image.pending": "待发送图片",
 			"image.openOriginal": "查看原图",
 			"image.openOriginalLabel": "{label}，点击查看原图",
 			"image.remove": "移除图片 {name}",
-			"image.scrollLeft": "向左滚动图片",
-			"image.scrollRight": "向右滚动图片",
 			"image.original": "原图",
 			"image.label": "图片",
 			"image.loadFailed": "图片加载失败，点击重试",
@@ -13183,25 +16064,25 @@ window.__ModuleLoader__.load({
 			"image.tooManyPixels": "图片分辨率过大，请压缩后重试",
 			"image.dimensionTooLarge": "图片宽高不能超过 {size}px，请缩小后重试",
 			"image.modelUnsupported": "当前模型不支持图片，请切换支持图片的模型",
-			"image.subagentUnsupported": "子智能体会话暂不支持图片",
 			"image.sendFailed": "图片发送失败（{reason}），请重新添加图片后再试",
+			"file.pending": "待发送文件",
+			"file.remove": "移除文件 {name}",
+			"file.uploading": "上传中…",
+			"file.uploadFailed": "上传失败，点击重试",
+			"file.retry": "重试上传 {name}",
+			"file.stillUploading": "文件还在上传，请等待上传完成后发送",
+			"file.sessionUnavailable": "会话不可用，无法上传文件",
+			"file.notStaged": "文件尚未上传成功，请重新添加后再试",
+			"file.label": "文件",
 			"context.aria": "上下文已用 {percent}",
 			"context.used": "上下文已用",
 			"context.system": "系统提示词",
-			"context.tools": "工具",
+			"context.tools": "工具定义",
 			"context.messages": "对话消息",
-			"settings.enter.title": "繁忙时 Enter 键行为",
-			"settings.enter.description": "仅在智能体运行时生效；Cmd/Ctrl+Enter 使用另一行为",
+			"settings.enter.title": "繁忙时的发送行为",
+			"settings.enter.description": "智能体运行时 Enter 键和发送按钮的行为；Cmd/Ctrl+Enter 使用另一行为",
 			"settings.enter.queue": "排队发送",
 			"settings.enter.steer": "插话发送",
-			"access.preset.readOnly": "只读权限",
-			"access.preset.workspaceWrite": "有限权限",
-			"access.preset.fullAccess": "完全权限",
-			"access.confirm.title": "确认启用完全权限？",
-			"access.confirm.description": "启用完全权限后，智能体将减少确认步骤，并且可以直接执行更多操作，包括敏感操作、文件修改或外部命令。仅建议在你信任当前任务时使用。",
-			"access.confirm.acknowledge": "我已了解风险，并愿意继续",
-			"access.confirm.cancel": "取消",
-			"access.confirm.enable": "启用完全权限",
 			"hero.headline": "探索未至之境",
 			"hero.preview": "预览版",
 			"hero.chooseWorkspace": "选择工作区",
@@ -13211,11 +16092,219 @@ window.__ModuleLoader__.load({
 			"todo.progress.done": "{done} 已完成",
 			"todo.progress.active": "{active} 进行中",
 			"todo.progress.pending": "{pending} 待处理",
+			"todo.status.completed": "已完成",
+			"todo.status.inProgress": "进行中",
+			"todo.status.pending": "待处理",
 			"todo.rowTitle": "更新任务清单",
+			"tool.title.createGoal": "创建目标",
+			"tool.title.getGoal": "查看目标",
+			"tool.title.updateGoal": "更新目标",
+			"tool.preparing.content": "{kilobytes}KB",
+			"tool.title.createSchedule": "创建定时任务",
+			"tool.title.listSchedules": "查看定时任务",
+			"tool.title.deleteSchedule": "删除定时任务",
+			"tool.title.updateSchedule": "修改定时任务",
+			"detail.state": "状态",
+			"detail.todo.completed": "已完成",
+			"detail.todo.in_progress": "进行中",
+			"detail.todo.pending": "待处理",
+			"detail.todo.empty": "任务清单为空",
+			"todo.diff.initial": "首次记录",
+			"todo.diff.compare": "与上次清单相比",
+			"todo.diff.unavailable": "旧清单不可用",
+			"todo.diff.noChanges": "清单没有变化",
+			"todo.diff.added": "新增 {count}",
+			"todo.diff.updated": "更新 {count}",
+			"todo.diff.removed": "移除 {count}",
+			"todo.diff.unchanged": "{count} 项未变化",
+			"todo.diff.addedItem": "新增",
+			"todo.diff.updatedItem": "状态变化",
+			"todo.diff.movedItem": "顺序调整",
+			"todo.diff.removedItem": "移除",
+			"detail.goal.empty": "没有目标",
+			"detail.goal.active": "进行中",
+			"detail.goal.disarmed": "等待继续",
+			"detail.goal.paused": "已暂停",
+			"detail.goal.blocked": "受阻",
+			"detail.goal.complete": "已完成",
+			"detail.goal.rounds": "执行轮次",
+			"detail.goal.reason": "受阻原因",
+			"detail.days": "{count} 天",
+			"detail.hours": "{count} 小时",
+			"detail.minutes": "{count} 分钟",
+			"detail.seconds": "{count} 秒",
+			"detail.schedule.once": "单次",
+			"detail.schedule.every": "每 {interval}",
+			"detail.schedule.when": "计划时间",
+			"detail.schedule.frequency": "重复",
+			"detail.schedule.scheduled": "等待触发",
+			"detail.schedule.overdue": "已到期，等待会话恢复",
+			"detail.schedule.empty": "没有定时任务",
+			"detail.schedule.deleted": "已删除",
+			"detail.schedule.count": "{count} 个定时任务",
+			"detail.schedule.daily": "每天 {time}（{zone}）",
+			"detail.schedule.weekly": "每周 {days} {time}（{zone}）",
+			"detail.schedule.cron": "Cron {expression}（{zone}）",
+			"detail.weekday.1": "周一",
+			"detail.weekday.2": "周二",
+			"detail.weekday.3": "周三",
+			"detail.weekday.4": "周四",
+			"detail.weekday.5": "周五",
+			"detail.weekday.6": "周六",
+			"detail.weekday.7": "周日",
+			"detail.weekday.join": "、",
+			"tool.title.inspectProviders": "检查提供方",
+			"tool.title.queryRuntime": "查询运行时",
+			"tool.title.inspectPlugins": "检查动态插件",
+			"tool.title.workflow": "运行工作流",
+			"tool.title.ralph": "运行循环工作流",
+			"tool.title.readEvent": "读取事件",
+			"tool.title.searchEvents": "搜索事件",
+			"tool.title.traceEvent": "追踪事件",
+			"tool.title.searchSessions": "搜索会话",
+			"tool.title.traceSession": "追踪会话",
+			"tool.title.listModels": "查看可用模型",
+			"tool.title.subagent": "创建子智能体",
+			"tool.title.listAgents": "查看子智能体",
+			"tool.title.sendMessage": "发送消息",
+			"tool.title.interruptAgent": "中断智能体",
+			"tool.title.listJobs": "查看后台任务",
+			"tool.title.readJob": "读取任务输出",
+			"tool.title.killJob": "取消后台任务",
+			"tool.title.openTerminal": "创建终端",
+			"tool.title.readTerminal": "读取终端",
+			"tool.title.listTerminals": "查看终端",
+			"tool.title.signalTerminal": "发送终端信号",
+			"tool.title.closeTerminal": "关闭终端",
+			"tool.title.lsp": "查询代码符号",
+			"tool.title.findDefinition": "查找定义",
+			"tool.title.findReferences": "查找引用",
+			"tool.title.findImplementation": "查找实现",
+			"tool.title.hoverSymbol": "查看符号信息",
+			"tool.title.spawnTeammate": "创建队友",
+			"tool.title.createTeamTask": "创建团队任务",
+			"tool.title.getTeamTask": "读取团队任务",
+			"tool.title.updateTeamTask": "更新团队任务",
+			"tool.title.listTeamTasks": "查看团队任务",
+			"tool.title.waitAgent": "等待子智能体",
+			"detail.recordedResult": "调用结果",
+			"detail.empty": "暂无结果",
+			"detail.none": "无",
+			"detail.yes": "是",
+			"detail.no": "否",
+			"detail.moreInInspect": "另有 {count} 项，可在「查看」中读取",
+			"detail.status.running": "运行中",
+			"detail.status.idle": "空闲",
+			"detail.status.ready": "就绪",
+			"detail.status.inactive": "未运行",
+			"detail.status.provisioning": "准备中",
+			"detail.status.failed": "失败",
+			"detail.status.completed": "已完成",
+			"detail.status.deleted": "已删除",
+			"detail.status.killed": "已取消",
+			"detail.status.accepted": "已接收",
+			"detail.status.queued": "已入队",
+			"detail.status.exited": "已退出",
+			"detail.field.id": "ID",
+			"detail.field.revision": "版本",
+			"detail.field.platform": "平台",
+			"detail.field.provider": "提供方",
+			"detail.field.model": "模型",
+			"detail.field.role": "角色",
+			"detail.field.context": "上下文",
+			"detail.field.owner": "负责人",
+			"detail.field.ready": "可开始",
+			"detail.field.dependencies": "前置任务",
+			"detail.field.writeScopes": "文件范围",
+			"detail.field.warnings": "提示",
+			"detail.field.diagnostics": "诊断",
+			"detail.field.methods": "方法",
+			"detail.field.inputSchema": "输入 Schema",
+			"detail.field.outputSchema": "输出 Schema",
+			"detail.field.currentPackage": "当前包",
+			"detail.field.nextPackage": "待运行的包",
+			"detail.field.latestRun": "最近运行",
+			"detail.field.packages": "版本包",
+			"detail.field.registrations": "注册项",
+			"detail.field.props": "属性",
+			"detail.field.data": "数据",
+			"detail.field.source": "来源",
+			"detail.field.content": "内容",
+			"detail.field.message": "消息",
+			"detail.field.messageId": "消息 ID",
+			"detail.field.root": "根节点",
+			"detail.field.pid": "进程 ID",
+			"detail.field.type": "类型",
+			"detail.field.time": "时间",
+			"detail.field.seq": "事件序号",
+			"detail.field.turn": "轮次",
+			"detail.field.step": "步骤",
+			"detail.field.callId": "调用 ID",
+			"detail.field.agents": "启动智能体数",
+			"detail.field.result": "结果",
+			"detail.field.parent": "父级",
+			"detail.field.depth": "层级",
+			"detail.field.exitCode": "退出码",
+			"detail.field.signal": "信号",
+			"detail.field.previousStatus": "中断前状态",
+			"detail.field.agent": "智能体 ID",
+			"detail.field.job": "任务 ID",
+			"detail.field.task": "任务内容",
+			"detail.field.processGroup": "进程组",
+			"detail.field.availability": "可用状态",
+			"detail.field.bestMatch": "最相关事件",
+			"detail.field.target": "目标事件",
+			"detail.field.surface": "记录状态",
+			"detail.agents.count": "{count} 个智能体",
+			"detail.jobs.count": "{count} 个后台任务",
+			"detail.terminals.count": "{count} 个终端",
+			"detail.tasks.count": "{count} 个团队任务",
+			"detail.tasks.nextPage": "后面还有任务；下一页位置为 {cursor}",
+			"detail.locations.count": "{count} 个位置",
+			"detail.location": "第 {line} 行，第 {column} 列",
+			"detail.receipt.delivered": "消息已送达",
+			"detail.receipt.interrupt": "已请求中断",
+			"detail.receipt.started": "已启动",
+			"detail.receipt.cancel": "已请求取消",
+			"detail.receipt.alreadyFinished": "任务已结束",
+			"detail.receipt.signal": "信号已发送",
+			"detail.receipt.closed": "已关闭",
+			"detail.receipt.closing": "关闭中",
+			"detail.wait.noProgress": "没有正在运行的子智能体",
+			"detail.wait.title": "子智能体状态",
+			"detail.wait.timeout": "等待超时",
+			"detail.wait.changed": "检测到变化",
+			"detail.agent.reply": "智能体回复",
+			"detail.models.title": "可用模型",
+			"detail.output.lines": "第 {begin}–{end} 行，共 {total} 行",
+			"detail.output.truncated": "输出已截断",
+			"detail.providers.count": "{count} 个检查提供方",
+			"detail.plugins.count": "{count} 个动态插件",
+			"detail.workflow.script": "工作流脚本",
+			"detail.ralph.reportedComplete": "智能体报告完成",
+			"detail.ralph.reportedBlocker": "智能体报告受阻",
+			"detail.ralph.limit": "已达到轮次上限",
+			"detail.report.nextSteps": "待完成事项",
+			"detail.trace.replacedBy": "被替换为",
+			"detail.trace.replacementChain": "替换链",
+			"detail.trace.replaces": "替换的事件",
+			"detail.trace.sources": "引用来源",
+			"detail.trace.derived": "派生事件",
+			"detail.trace.ancestors": "祖先会话",
+			"detail.trace.descendants": "后代会话",
+			"detail.matches.count": "{count} 条匹配",
+			"detail.matches.capped": "已达到结果上限，可缩小搜索范围",
+			"detail.event.neighbors": "前后事件",
 			"todo.completed": "{done}/{total} 已完成",
-			"command.imagesUnsupported": "/{command} 不接受图片附件，请先移除图片",
+			"command.attachmentsUnsupported": "/{command} 不接受附件，请先移除附件",
 			"ask.rowTitle": "提问",
 			"ask.waiting": "等待回答",
+			"ask.pending": "已继续工作，仍可回答",
+			"ask.pendingDetail": "等待中的问题仍可在输入框中回答",
+			"ask.reopen": "回答",
+			"ask.review": "查看回答",
+			"ask.closed": "已结束",
+			"ask.closedDetail": "该问题已结束，结果见下方对话",
 			"ask.cancelled": "已取消",
 			"ask.cancelledDetail": "本轮已取消，未提交回答",
 			"ask.interrupted": "已中断",
@@ -13226,29 +16315,35 @@ window.__ModuleLoader__.load({
 			"bash.failed": "失败",
 			"bash.stopped": "已停止",
 			"row.running": "运行中",
+			"row.preparing": "正在准备调用",
 			"row.failed": "失败",
 			"row.stopped": "已停止",
+			"row.commandArguments": "命令参数",
 			"row.input": "输入",
 			"row.output": "输出",
 			"row.inspect": "查看",
+			"row.imageSize": "{width}x{height}px，{bytes} 字节",
+			"row.imageSizeDownscaled": "{width}x{height}px（由 {originalWidth}x{originalHeight}px 缩小），{bytes} 字节",
 			"tool.title.search": "搜索",
 			"tool.title.read": "读取",
-			"tool.title.bash": "Bash",
+			"tool.title.bash": "运行命令",
 			"tool.title.write": "写入",
 			"tool.title.edit": "编辑",
 			"tool.title.code": "代码",
 			"tool.title.generic": "工具调用",
-			"tool.title.inspect": "查看",
+			"tool.title.inspect": "查询 Cordis 环境",
 			"tool.title.runCordis": "运行 Cordis 插件",
 			"tool.title.stopCordis": "停止 Cordis 插件",
 			"tool.title.removeCordis": "移除 Cordis 插件",
-			"tool.title.pwsh": "Pwsh",
-			"tool.title.grep": "Grep",
-			"tool.title.glob": "Glob",
+			"tool.title.pwsh": "运行命令",
+			"tool.title.readImage": "读取图片",
+			"tool.title.grep": "搜索文件内容",
+			"tool.title.glob": "查找文件",
 			"tool.title.webSearch": "网页搜索",
 			"tool.title.webFetch": "网页获取",
-			"diff.files.one": "{count} 个文件",
-			"diff.files.other": "{count} 个文件",
+			"tool.autoReviewRejected": "Auto review 已拒绝",
+			"tool.autoReviewNotExecuted": "工具未执行。原因：{reason}",
+			"tool.autoReviewReasonFallback": "Auto review 未授权此次操作",
 			"diff.collapseAria": "收起差异",
 			"diff.expandAria": "展开其余 {count} 行差异",
 			"diff.expandRest": "… 其余 {count} 行",
@@ -13270,6 +16365,9 @@ window.__ModuleLoader__.load({
 			"web.contentTruncated": "内容已截断",
 			"details.running": "运行中…",
 			"queue.count": "{n} 条排队消息",
+			"queue.sending": "发送中…",
+			"queue.image": "排队消息图片",
+			"queue.file": "排队文件 {name}",
 			"queue.edit": "编辑排队消息",
 			"queue.edit.unsupported": "包含非文本内容，暂不支持编辑",
 			"queue.save": "保存排队消息",
@@ -13277,11 +16375,14 @@ window.__ModuleLoader__.load({
 			"queue.remove": "删除排队消息",
 			"queue.steer": "插话发送",
 			"queue.steer.unavailable": "仅运行中可插话发送",
+			"error.sessionInUse": "当前会话已被占用，可能是其他正在运行的 DSH 导致的（如其他 dsh web、桌面端），请退出其他正在运行的 DSH 后重试。",
 			"queue.editFailed": "编辑失败：这条消息可能已经开始发送。",
 			"queue.removeFailed": "删除失败：这条消息可能已经开始发送。",
 			"queue.steerFailed": "插话发送失败，请重试。",
 			"terminal.signal": "信号 {signal}",
 			"terminal.exitCode": "退出码 {code}",
+			"terminal.noExitCode": "未正常退出",
+			"terminal.commandLine": "命令第 {n} 行",
 			"terminal.running": "运行中",
 			"terminal.failed": "失败",
 			"terminal.done": "已完成",
@@ -13294,29 +16395,39 @@ window.__ModuleLoader__.load({
 		};
 		/** English dictionary, checked complete against the zh key set. */
 		const en = {
+			"shortcut.newline": "New line",
+			"shortcut.complementary": "Use the complementary Queue / Steer action",
+			"shortcut.slash": "Open command menu",
+			"shortcut.mention": "Open reference menu",
 			"hint.plan": PLAN_NEXT_ACTION_EN,
 			"hint.goal": "describe the objective for a long-running task",
 			"hint.goal.active": "goal active — edit / pause / resume / clear",
 			"placeholder.plan": PLAN_NEXT_ACTION_EN,
-			"placeholder.default": "Message or run a task... / commands, @ files or sessions",
+			"placeholder.default": "Message or run a task, / commands, @ files or sessions",
 			"placeholder.unavailable": "Session unavailable",
 			"placeholder.parentOffline": "Parent session offline; sending is unavailable but you can still stop the run",
-			"placeholder.hero": "Describe what you want to build... / commands, @ files or sessions",
+			"placeholder.hero": "Describe what you want to build, / commands, @ files or sessions",
 			"placeholder.workspace": "Choose a workspace to start",
 			"placeholder.steerQueue": "Cmd/Ctrl+Enter steers all queued messages",
-			"input.commands": "Commands",
+			"input.commands": "Add files or run commands",
+			"input.file": "File",
 			"input.stop": "Stop generating",
 			"input.send": "Send message",
-			"input.accessMode": "Access mode, current: {name}",
-			"image.dropTitle": "Drop files here to add them",
-			"image.dropDesc": "Up to {count} images, {size} each; other files are attached",
-			"image.dropBlocked": "Files cannot be added right now",
+			"input.send.queue": "Queue message",
+			"input.send.steer": "Steer message",
+			"attachment.pending": "Pending attachments",
+			"attachment.scrollLeft": "Scroll attachments left",
+			"attachment.scrollRight": "Scroll attachments right",
+			"attachment.dropTitle": "Drag files or images here to add them",
+			"attachment.dropDesc": "Image limit: up to {count} images, {size} each",
+			"attachment.dropBlocked": "Files and images cannot be added right now",
+			"attachment.directoryDesktopOnly": "Folders can only be added in the desktop app; add individual files in the browser",
+			"attachment.pathUnavailable": "Could not obtain the folder path; drag it in again",
+			"attachment.pathUnsupported": "The path contains characters a reference cannot carry; rename it and try again",
 			"image.pending": "Pending images",
 			"image.openOriginal": "View original",
 			"image.openOriginalLabel": "{label}, click to view original",
 			"image.remove": "Remove image {name}",
-			"image.scrollLeft": "Scroll images left",
-			"image.scrollRight": "Scroll images right",
 			"image.original": "Original image",
 			"image.label": "Image",
 			"image.loadFailed": "Image failed to load; click to retry",
@@ -13330,25 +16441,25 @@ window.__ModuleLoader__.load({
 			"image.tooManyPixels": "Image resolution is too high; compress it and try again",
 			"image.dimensionTooLarge": "Image sides must be at most {size}px; downscale it and try again",
 			"image.modelUnsupported": "The current model does not support images; switch to a model that does",
-			"image.subagentUnsupported": "Subagent sessions do not support images yet",
 			"image.sendFailed": "Sending images failed ({reason}); re-add them and try again",
+			"file.pending": "Pending files",
+			"file.remove": "Remove file {name}",
+			"file.uploading": "Uploading…",
+			"file.uploadFailed": "Upload failed; click to retry",
+			"file.retry": "Retry uploading {name}",
+			"file.stillUploading": "Files are still uploading; send after they finish",
+			"file.sessionUnavailable": "Session unavailable; files cannot be uploaded",
+			"file.notStaged": "The file has not finished uploading; re-add it and try again",
+			"file.label": "File",
 			"context.aria": "{percent} of context used",
 			"context.used": "of context used",
 			"context.system": "System prompt",
-			"context.tools": "Tools",
+			"context.tools": "Tool definitions",
 			"context.messages": "Messages",
-			"settings.enter.title": "Enter behavior while busy",
-			"settings.enter.description": "Busy only; Cmd/Ctrl+Enter uses the other behavior",
+			"settings.enter.title": "Send behavior while busy",
+			"settings.enter.description": "What Enter and the Send button do while the agent is running; Cmd/Ctrl+Enter uses the other behavior",
 			"settings.enter.queue": "Queue",
 			"settings.enter.steer": "Steer",
-			"access.preset.readOnly": "Read Only",
-			"access.preset.workspaceWrite": "Workspace Write",
-			"access.preset.fullAccess": "Full access",
-			"access.confirm.title": "Enable Full access?",
-			"access.confirm.description": "Full access reduces confirmation steps and lets the agent perform more actions directly, including sensitive operations, file changes, or external commands. Only use it when you trust the current task.",
-			"access.confirm.acknowledge": "I understand the risks and want to continue",
-			"access.confirm.cancel": "Cancel",
-			"access.confirm.enable": "Enable Full access",
 			"hero.headline": "Into the Unknown",
 			"hero.preview": "Preview",
 			"hero.chooseWorkspace": "Choose workspace",
@@ -13358,11 +16469,219 @@ window.__ModuleLoader__.load({
 			"todo.progress.done": "{done} completed",
 			"todo.progress.active": "{active} in progress",
 			"todo.progress.pending": "{pending} pending",
+			"todo.status.completed": "Completed",
+			"todo.status.inProgress": "In progress",
+			"todo.status.pending": "Pending",
 			"todo.rowTitle": "Update to-do list",
+			"tool.title.createGoal": "Create goal",
+			"tool.title.getGoal": "View goal",
+			"tool.title.updateGoal": "Update goal",
+			"tool.preparing.content": "{kilobytes}KB",
+			"tool.title.createSchedule": "Create reminder",
+			"tool.title.listSchedules": "List reminders",
+			"tool.title.deleteSchedule": "Delete reminder",
+			"tool.title.updateSchedule": "Update reminder",
+			"detail.state": "Status",
+			"detail.todo.completed": "Completed",
+			"detail.todo.in_progress": "In progress",
+			"detail.todo.pending": "Pending",
+			"detail.todo.empty": "The to-do list is empty",
+			"todo.diff.initial": "Initial list",
+			"todo.diff.compare": "Changes since the previous list",
+			"todo.diff.unavailable": "Previous list unavailable",
+			"todo.diff.noChanges": "No changes to the list",
+			"todo.diff.added": "{count} added",
+			"todo.diff.updated": "{count} updated",
+			"todo.diff.removed": "{count} removed",
+			"todo.diff.unchanged": "{count} unchanged",
+			"todo.diff.addedItem": "Added",
+			"todo.diff.updatedItem": "Status changed",
+			"todo.diff.movedItem": "Reordered",
+			"todo.diff.removedItem": "Removed",
+			"detail.goal.empty": "No goal",
+			"detail.goal.active": "Active",
+			"detail.goal.disarmed": "Awaiting continuation",
+			"detail.goal.paused": "Paused",
+			"detail.goal.blocked": "Blocked",
+			"detail.goal.complete": "Completed",
+			"detail.goal.rounds": "Rounds",
+			"detail.goal.reason": "Blocker",
+			"detail.days": "{count} d",
+			"detail.hours": "{count} h",
+			"detail.minutes": "{count} min",
+			"detail.seconds": "{count} s",
+			"detail.schedule.once": "Once",
+			"detail.schedule.every": "Every {interval}",
+			"detail.schedule.when": "Scheduled for",
+			"detail.schedule.frequency": "Repeat",
+			"detail.schedule.scheduled": "Scheduled",
+			"detail.schedule.overdue": "Overdue, awaiting session resume",
+			"detail.schedule.empty": "No reminders",
+			"detail.schedule.deleted": "Deleted",
+			"detail.schedule.count": "{count} reminders",
+			"detail.schedule.daily": "Every day at {time} ({zone})",
+			"detail.schedule.weekly": "Weekly on {days} at {time} ({zone})",
+			"detail.schedule.cron": "Cron {expression} ({zone})",
+			"detail.weekday.1": "Mon",
+			"detail.weekday.2": "Tue",
+			"detail.weekday.3": "Wed",
+			"detail.weekday.4": "Thu",
+			"detail.weekday.5": "Fri",
+			"detail.weekday.6": "Sat",
+			"detail.weekday.7": "Sun",
+			"detail.weekday.join": ", ",
+			"tool.title.inspectProviders": "Inspect providers",
+			"tool.title.queryRuntime": "Query runtime",
+			"tool.title.inspectPlugins": "Inspect plugins",
+			"tool.title.workflow": "Run workflow",
+			"tool.title.ralph": "Run ralph loop",
+			"tool.title.readEvent": "Read event",
+			"tool.title.searchEvents": "Search events",
+			"tool.title.traceEvent": "Trace event",
+			"tool.title.searchSessions": "Search sessions",
+			"tool.title.traceSession": "Trace session",
+			"tool.title.listModels": "List models",
+			"tool.title.subagent": "Create subagent",
+			"tool.title.listAgents": "List subagents",
+			"tool.title.sendMessage": "Send message",
+			"tool.title.interruptAgent": "Interrupt agent",
+			"tool.title.listJobs": "List background jobs",
+			"tool.title.readJob": "Read job output",
+			"tool.title.killJob": "Cancel background job",
+			"tool.title.openTerminal": "Open terminal",
+			"tool.title.readTerminal": "Read terminal",
+			"tool.title.listTerminals": "List terminals",
+			"tool.title.signalTerminal": "Signal terminal",
+			"tool.title.closeTerminal": "Close terminal",
+			"tool.title.lsp": "Query code symbols",
+			"tool.title.findDefinition": "Find definition",
+			"tool.title.findReferences": "Find references",
+			"tool.title.findImplementation": "Find implementation",
+			"tool.title.hoverSymbol": "Inspect symbol",
+			"tool.title.spawnTeammate": "Create teammate",
+			"tool.title.createTeamTask": "Create team task",
+			"tool.title.getTeamTask": "Read team task",
+			"tool.title.updateTeamTask": "Update team task",
+			"tool.title.listTeamTasks": "List team tasks",
+			"tool.title.waitAgent": "Wait for subagent",
+			"detail.recordedResult": "Recorded result",
+			"detail.empty": "No results",
+			"detail.none": "None",
+			"detail.yes": "Yes",
+			"detail.no": "No",
+			"detail.moreInInspect": "{count} more items available in Inspect",
+			"detail.status.running": "Running",
+			"detail.status.idle": "Idle",
+			"detail.status.ready": "Ready",
+			"detail.status.inactive": "Inactive",
+			"detail.status.provisioning": "Provisioning",
+			"detail.status.failed": "Failed",
+			"detail.status.completed": "Completed",
+			"detail.status.deleted": "Deleted",
+			"detail.status.killed": "Cancelled",
+			"detail.status.accepted": "Accepted",
+			"detail.status.queued": "Queued",
+			"detail.status.exited": "Exited",
+			"detail.field.id": "ID",
+			"detail.field.revision": "Revision",
+			"detail.field.platform": "Platform",
+			"detail.field.provider": "Provider",
+			"detail.field.model": "Model",
+			"detail.field.role": "Role",
+			"detail.field.context": "Context",
+			"detail.field.owner": "Owner",
+			"detail.field.ready": "Ready",
+			"detail.field.dependencies": "Dependencies",
+			"detail.field.writeScopes": "Write scopes",
+			"detail.field.warnings": "Warnings",
+			"detail.field.diagnostics": "Diagnostics",
+			"detail.field.methods": "Methods",
+			"detail.field.inputSchema": "Input schema",
+			"detail.field.outputSchema": "Output schema",
+			"detail.field.currentPackage": "Current package",
+			"detail.field.nextPackage": "Next package",
+			"detail.field.latestRun": "Latest run",
+			"detail.field.packages": "Packages",
+			"detail.field.registrations": "Registrations",
+			"detail.field.props": "Props",
+			"detail.field.data": "Data",
+			"detail.field.source": "Source",
+			"detail.field.content": "Content",
+			"detail.field.message": "Message",
+			"detail.field.messageId": "Message ID",
+			"detail.field.root": "Root",
+			"detail.field.pid": "Process ID",
+			"detail.field.type": "Type",
+			"detail.field.time": "Time",
+			"detail.field.seq": "Event sequence",
+			"detail.field.turn": "Turn",
+			"detail.field.step": "Step",
+			"detail.field.callId": "Call ID",
+			"detail.field.agents": "Agents started",
+			"detail.field.result": "Result",
+			"detail.field.parent": "Parent",
+			"detail.field.depth": "Depth",
+			"detail.field.exitCode": "Exit code",
+			"detail.field.signal": "Signal",
+			"detail.field.previousStatus": "Previous status",
+			"detail.field.agent": "Agent ID",
+			"detail.field.job": "Job ID",
+			"detail.field.task": "Task",
+			"detail.field.processGroup": "Process group",
+			"detail.field.availability": "Availability",
+			"detail.field.bestMatch": "Best match",
+			"detail.field.target": "Target event",
+			"detail.field.surface": "Record status",
+			"detail.agents.count": "{count} agents",
+			"detail.jobs.count": "{count} background jobs",
+			"detail.terminals.count": "{count} terminals",
+			"detail.tasks.count": "{count} team tasks",
+			"detail.tasks.nextPage": "More tasks available; next cursor is {cursor}",
+			"detail.locations.count": "{count} locations",
+			"detail.location": "Line {line}, column {column}",
+			"detail.receipt.delivered": "Message delivered",
+			"detail.receipt.interrupt": "Interrupt requested",
+			"detail.receipt.started": "Started",
+			"detail.receipt.cancel": "Cancellation requested",
+			"detail.receipt.alreadyFinished": "Already finished",
+			"detail.receipt.signal": "Signal delivered",
+			"detail.receipt.closed": "Closed",
+			"detail.receipt.closing": "Closing",
+			"detail.wait.noProgress": "No active subagents",
+			"detail.wait.title": "Subagent activity",
+			"detail.wait.timeout": "Wait timed out",
+			"detail.wait.changed": "Change detected",
+			"detail.agent.reply": "Agent response",
+			"detail.models.title": "Available models",
+			"detail.output.lines": "Lines {begin}–{end} of {total}",
+			"detail.output.truncated": "Output truncated",
+			"detail.providers.count": "{count} inspect providers",
+			"detail.plugins.count": "{count} dynamic plugins",
+			"detail.workflow.script": "Workflow script",
+			"detail.ralph.reportedComplete": "Worker reported completion",
+			"detail.ralph.reportedBlocker": "Worker reported a blocker",
+			"detail.ralph.limit": "Round limit reached",
+			"detail.report.nextSteps": "Remaining work",
+			"detail.trace.replacedBy": "Replaced by",
+			"detail.trace.replacementChain": "Replacement chain",
+			"detail.trace.replaces": "Replaced events",
+			"detail.trace.sources": "Source events",
+			"detail.trace.derived": "Derived events",
+			"detail.trace.ancestors": "Ancestor sessions",
+			"detail.trace.descendants": "Descendant sessions",
+			"detail.matches.count": "{count} matches",
+			"detail.matches.capped": "Result limit reached; narrow the search for more",
+			"detail.event.neighbors": "Surrounding events",
 			"todo.completed": "{done}/{total} completed",
-			"command.imagesUnsupported": "/{command} does not accept image attachments; remove them first",
+			"command.attachmentsUnsupported": "/{command} does not accept attachments; remove them first",
 			"ask.rowTitle": "Ask question",
 			"ask.waiting": "waiting",
+			"ask.pending": "continued; answer still available",
+			"ask.pendingDetail": "These pending questions remain answerable from the composer.",
+			"ask.reopen": "Answer",
+			"ask.review": "View answers",
+			"ask.closed": "closed",
+			"ask.closedDetail": "This question is closed; its outcome is in the conversation below.",
 			"ask.cancelled": "cancelled",
 			"ask.cancelledDetail": "This question set was cancelled before answers were submitted.",
 			"ask.interrupted": "interrupted",
@@ -13373,11 +16692,15 @@ window.__ModuleLoader__.load({
 			"bash.failed": "Failed",
 			"bash.stopped": "Stopped",
 			"row.running": "Running",
+			"row.preparing": "Preparing tool call",
 			"row.failed": "Failed",
 			"row.stopped": "Stopped",
+			"row.commandArguments": "Command arguments",
 			"row.input": "IN",
 			"row.output": "OUT",
 			"row.inspect": "Inspect",
+			"row.imageSize": "{width}x{height}px, {bytes} bytes",
+			"row.imageSizeDownscaled": "{width}x{height}px (downscaled from {originalWidth}x{originalHeight}px), {bytes} bytes",
 			"tool.title.search": "Search",
 			"tool.title.read": "Read",
 			"tool.title.bash": "Bash",
@@ -13385,17 +16708,19 @@ window.__ModuleLoader__.load({
 			"tool.title.edit": "Edit",
 			"tool.title.code": "Code",
 			"tool.title.generic": "Tool call",
-			"tool.title.inspect": "Inspect",
+			"tool.title.inspect": "Query Cordis environment",
 			"tool.title.runCordis": "Run Cordis Plugin",
 			"tool.title.stopCordis": "Stop Cordis Plugin",
 			"tool.title.removeCordis": "Remove Cordis Plugin",
 			"tool.title.pwsh": "Pwsh",
+			"tool.title.readImage": "Read image",
 			"tool.title.grep": "Grep",
 			"tool.title.glob": "Glob",
 			"tool.title.webSearch": "Search",
 			"tool.title.webFetch": "Fetch",
-			"diff.files.one": "{count} file",
-			"diff.files.other": "{count} files",
+			"tool.autoReviewRejected": "Rejected by Auto review",
+			"tool.autoReviewNotExecuted": "Tool was not executed. Reason: {reason}",
+			"tool.autoReviewReasonFallback": "Auto review did not authorize this action",
 			"diff.collapseAria": "Collapse diff",
 			"diff.expandAria": "Expand {count} more diff lines",
 			"diff.expandRest": "… {count} more lines",
@@ -13417,6 +16742,9 @@ window.__ModuleLoader__.load({
 			"web.contentTruncated": "Content truncated",
 			"details.running": "Running…",
 			"queue.count": "{n} queued messages",
+			"queue.sending": "Sending…",
+			"queue.image": "Queued message image",
+			"queue.file": "Queued file {name}",
 			"queue.edit": "Edit queued message",
 			"queue.edit.unsupported": "Contains non-text content; editing is not supported yet",
 			"queue.save": "Save queued message",
@@ -13424,11 +16752,14 @@ window.__ModuleLoader__.load({
 			"queue.remove": "Remove queued message",
 			"queue.steer": "Steer queued message",
 			"queue.steer.unavailable": "Steering is available only while the agent is running",
+			"error.sessionInUse": "This session is already in use, possibly by another running DSH instance (such as dsh web or the desktop app). Quit other running DSH instances and try again.",
 			"queue.editFailed": "Edit failed: this message may have already started sending.",
 			"queue.removeFailed": "Removal failed: this message may have already started sending.",
 			"queue.steerFailed": "Steering failed. Try again.",
 			"terminal.signal": "signal {signal}",
 			"terminal.exitCode": "exit code {code}",
+			"terminal.noExitCode": "no exit code",
+			"terminal.commandLine": "Command line {n}",
 			"terminal.running": "Running",
 			"terminal.failed": "Failed",
 			"terminal.done": "Done",
@@ -13441,57 +16772,159 @@ window.__ModuleLoader__.load({
 		};
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-conversation/src/client/queue/QueueDock.module.css.mjs
-		const css$7 = "._66w_Oa_dock{box-sizing:border-box;width:calc(100% - var(--dsh-composer-side-clearance) - var(--dsh-composer-side-clearance) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset));max-width:calc(var(--dsh-composer-card-max-width) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset));margin:0 auto calc(0px - var(--dsh-composer-stack-gap) - 3px);padding:0 var(--dsh-composer-dock-inset);flex:none}._66w_Oa_panel{background:var(--dsw-specific-tip);--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2);--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2);border-radius:12px 12px 0 0;width:100%;padding:2px 0;position:relative;overflow:hidden}._66w_Oa_panel:after{border:1px solid var(--dsw-alias-border-l1);border-radius:inherit;content:\"\";pointer-events:none;border-bottom:none;position:absolute;inset:0}._66w_Oa_header{box-sizing:border-box;width:100%;height:36px;color:var(--dsw-alias-label-primary);text-align:left;cursor:pointer;background:0 0;border:none;border-radius:8px;align-items:center;gap:10px;padding:4px 12px;display:flex}._66w_Oa_header:focus-visible{outline:2px solid var(--dsw-alias-label-tertiary);outline-offset:-2px}._66w_Oa_header:disabled{cursor:default}._66w_Oa_lead{color:var(--dsw-alias-label-tertiary);flex:none;place-items:center;display:grid}._66w_Oa_count{min-width:0;font-family:Inter, var(--dsw-font-family);flex:auto;font-size:13px;font-weight:500;line-height:24px}._66w_Oa_chevron{width:14px;height:14px;color:var(--dsw-alias-label-tertiary);flex:none;place-items:center;display:grid}._66w_Oa_list{max-height:180px;margin:0;padding:0;list-style:none;overflow-y:auto}._66w_Oa_row{box-sizing:border-box;border-radius:8px;align-items:center;gap:10px;width:100%;height:36px;padding:4px 5px 4px 12px;display:flex}._66w_Oa_row+._66w_Oa_row{box-shadow:inset 0 1px 0 var(--dsw-alias-border-l1)}._66w_Oa_preview,._66w_Oa_editor{min-width:0;font:var(--dsw-font-xs-13);font-family:Inter, var(--dsw-font-family);flex:auto}._66w_Oa_preview{color:var(--dsw-alias-label-primary-dimmed);text-overflow:ellipsis;white-space:nowrap;word-break:break-word;overflow:hidden}._66w_Oa_editor{box-sizing:border-box;border:1px solid var(--dsw-alias-border-l2);background:var(--dsw-alias-bg-base);height:28px;color:var(--dsw-alias-label-primary);border-radius:6px;outline:none;padding:0 8px}._66w_Oa_editor:focus{border-color:var(--dsw-alias-state-business-primary)}._66w_Oa_actions{flex:none;align-items:center;gap:10px;display:flex}._66w_Oa_action{width:28px;height:28px;color:var(--dsw-alias-label-tertiary);cursor:pointer;background:0 0;border:none;border-radius:999px;flex:none;place-items:center;padding:0;display:grid}._66w_Oa_action:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover)}._66w_Oa_action:focus-visible{outline:2px solid var(--dsw-alias-label-tertiary);outline-offset:-2px}._66w_Oa_action:disabled{cursor:default;opacity:.45}";
-		const tagId$7 = "@deepseek-ai/dsh-client-ui-conversation/QueueDock.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$7) + "]") === null) {
+		const css$6 = ".TPDP_a_dock{box-sizing:border-box;width:calc(100% - var(--dsh-composer-side-clearance) - var(--dsh-composer-side-clearance) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset));max-width:calc(var(--dsh-composer-card-max-width) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset));margin:0 auto calc(0px - var(--dsh-composer-stack-gap) - 3px);padding:0 var(--dsh-composer-dock-inset);flex:none}.TPDP_a_panel{isolation:isolate;border-radius:var(--dsw-radius-lg) var(--dsw-radius-lg) 0 0;--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2);--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2);width:100%;padding:2px 0;position:relative;overflow:hidden}.TPDP_a_panel:before{z-index:-1;border-radius:inherit;background:var(--dsw-specific-menu);backdrop-filter:var(--dsw-menu-backdrop-filter);content:\"\";pointer-events:none;position:absolute;inset:0}.TPDP_a_panel:after{border:.5px solid var(--dsw-alias-border-l1);border-radius:inherit;content:\"\";pointer-events:none;border-bottom:none;position:absolute;inset:0}.TPDP_a_header{box-sizing:border-box;border-radius:var(--dsw-radius-md);width:100%;height:36px;color:var(--dsw-alias-label-primary);text-align:left;cursor:pointer;background:0 0;border:none;align-items:center;gap:10px;padding:4px 12px;display:flex}.TPDP_a_header:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:-2px}.TPDP_a_header:disabled{cursor:default}.TPDP_a_lead{color:var(--dsw-alias-label-tertiary);flex:none;place-items:center;display:grid}.TPDP_a_count{min-width:0;font-family:Inter, var(--dsw-font-family);flex:auto;font-size:13px;font-weight:500;line-height:24px}.TPDP_a_chevron{width:14px;height:14px;color:var(--dsw-alias-label-tertiary);flex:none;place-items:center;display:grid}.TPDP_a_list{max-height:180px;margin:0;padding:0;list-style:none;overflow-y:auto}.TPDP_a_row{box-sizing:border-box;border-radius:var(--dsw-radius-md);align-items:center;gap:10px;width:100%;min-height:36px;padding:4px 5px 4px 12px;display:flex}.TPDP_a_row+.TPDP_a_row{box-shadow:inset 0 1px 0 var(--dsw-alias-border-l1)}.TPDP_a_attachments{flex:none;gap:4px;min-width:0;max-width:55%;display:flex;overflow:hidden}.TPDP_a_pendingRow .TPDP_a_attachments{flex-shrink:1}.TPDP_a_file{border:.5px solid var(--dsw-alias-border-l1);border-radius:var(--dsw-radius-sm);background:var(--dsw-alias-bg-base);box-sizing:border-box;flex:0 180px;align-items:center;gap:4px;min-width:74px;height:24px;padding:0 6px;display:inline-flex;overflow:hidden}.TPDP_a_fileIcon{flex:none;width:16px;height:16px;display:inline-flex}.TPDP_a_fileName{min-width:0;color:var(--dsw-alias-label-primary-dimmed);font:var(--dsw-font-xs-13);text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.TPDP_a_fileSize{color:var(--dsw-alias-label-tertiary);white-space:nowrap;flex:none;font-size:10px}.TPDP_a_thumb{border:.5px solid var(--dsw-alias-border-l1);border-radius:var(--dsw-radius-xs);background:var(--dsw-alias-bg-base);object-fit:cover;width:24px;height:24px}.TPDP_a_preview{min-width:0;font:var(--dsw-font-xs-13);font-family:Inter, var(--dsw-font-family);color:var(--dsw-alias-label-primary-dimmed);flex:auto}.TPDP_a_actions{flex:none;align-items:center;gap:10px;display:flex}.TPDP_a_status{color:var(--dsw-alias-label-tertiary);font:var(--dsw-font-xs-13);white-space:nowrap;flex:none}.TPDP_a_action{corner-shape:round;width:28px;height:28px;color:var(--dsw-alias-label-tertiary);cursor:pointer;background:0 0;border:none;border-radius:999px;flex:none;place-items:center;padding:0;display:grid}.TPDP_a_action:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover)}.TPDP_a_action:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:-2px}.TPDP_a_action:disabled{cursor:default;opacity:.45}";
+		const tagId$6 = "@deepseek-ai/dsh-client-ui-conversation/QueueDock.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$6) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
-			tag.dataset.pluginCss = tagId$7;
-			tag.textContent = css$7;
+			tag.dataset.pluginCss = tagId$6;
+			tag.textContent = css$6;
 			document.head.appendChild(tag);
 		}
 		var QueueDock_module_css_default = {
-			"action": "_66w_Oa_action",
-			"actions": "_66w_Oa_actions",
-			"chevron": "_66w_Oa_chevron",
-			"count": "_66w_Oa_count",
-			"dock": "_66w_Oa_dock",
-			"editor": "_66w_Oa_editor",
-			"header": "_66w_Oa_header",
-			"lead": "_66w_Oa_lead",
-			"list": "_66w_Oa_list",
-			"panel": "_66w_Oa_panel",
-			"preview": "_66w_Oa_preview",
-			"row": "_66w_Oa_row"
+			"action": "TPDP_a_action",
+			"actions": "TPDP_a_actions",
+			"attachments": "TPDP_a_attachments",
+			"chevron": "TPDP_a_chevron",
+			"count": "TPDP_a_count",
+			"dock": "TPDP_a_dock",
+			"file": "TPDP_a_file",
+			"fileIcon": "TPDP_a_fileIcon",
+			"fileName": "TPDP_a_fileName",
+			"fileSize": "TPDP_a_fileSize",
+			"header": "TPDP_a_header",
+			"lead": "TPDP_a_lead",
+			"list": "TPDP_a_list",
+			"panel": "TPDP_a_panel",
+			"pendingRow": "TPDP_a_pendingRow",
+			"preview": "TPDP_a_preview",
+			"row": "TPDP_a_row",
+			"status": "TPDP_a_status",
+			"thumb": "TPDP_a_thumb"
 		};
 		//#endregion
 		//#region lib/types/client/queue/QueueDock.js
+		const EMPTY_QUEUE = [];
+		const QUEUE_TEXT_FACTS = {
+			collapseWhitespace: true,
+			trimWhitespace: true
+		};
+		function textOf(content) {
+			if (!content.every((block) => block.type === "text")) return null;
+			return content.map((block) => block.text).join("");
+		}
+		/**
+		* Durable references carried by one queued row. Inbox projections are wire data
+		* despite their typed face, so an image block without a reference is skipped
+		* rather than trusted.
+		* @param content - the row's wire content blocks.
+		* @returns the row's durable image references in block order.
+		*/
+		function queueAttachments(content) {
+			const attachments = [];
+			for (const block of content) {
+				if (block.type === "image") {
+					const { attachment } = block;
+					if (attachment !== void 0) attachments.push({
+						type: "image",
+						attachment
+					});
+				}
+				if (block.type === "file") {
+					const { attachment } = block;
+					if (attachment !== void 0) attachments.push({
+						type: "file",
+						attachment
+					});
+				}
+			}
+			return attachments;
+		}
+		/** Compact file identity used beside queue thumbnails. */
+		function QueueFile({ attachment, label }) {
+			return (0, react_jsx_runtime.jsxs)("span", {
+				className: QueueDock_module_css_default.file,
+				"aria-label": label,
+				title: attachment.name,
+				children: [
+					(0, react_jsx_runtime.jsx)("span", {
+						className: QueueDock_module_css_default.fileIcon,
+						"aria-hidden": true,
+						children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.FileTypeIcon, {
+							path: attachment.name,
+							size: 16
+						})
+					}),
+					(0, react_jsx_runtime.jsx)("span", {
+						className: QueueDock_module_css_default.fileName,
+						children: attachment.name
+					}),
+					(0, react_jsx_runtime.jsx)("span", {
+						className: QueueDock_module_css_default.fileSize,
+						children: (0, _deepseek_ai_dsh_client_ui_primitives.fileSizeText)(attachment.bytes)
+					})
+				]
+			});
+		}
+		/** One durable queued image as a fixed-size thumbnail; a load failure keeps the empty placeholder. */
+		function QueueThumb({ attachment, loadImage, label }) {
+			const [url, setUrl] = (0, react.useState)(null);
+			(0, react.useEffect)(() => {
+				let alive = true;
+				loadImage(attachment).then((resolved) => {
+					if (alive) setUrl(resolved);
+				}, () => {});
+				return () => {
+					alive = false;
+				};
+			}, [attachment, loadImage]);
+			return url === null ? (0, react_jsx_runtime.jsx)("span", {
+				className: QueueDock_module_css_default.thumb,
+				"aria-hidden": true
+			}) : (0, react_jsx_runtime.jsx)("img", {
+				className: QueueDock_module_css_default.thumb,
+				src: url,
+				alt: label
+			});
+		}
 		/**
 		* Queue strip: one item renders directly; multiple items default to a
-		* collapsible count header; an empty queue renders nothing.
+		* collapsible count header; an empty queue renders nothing. Local queued submissions
+		* show sending status and disabled actions until their Host queue rows arrive.
 		*/
-		function QueueDock({ useSession, updateQueue, notify, t }) {
-			const inbox = useSession((s) => s.queue);
-			const queue = (0, react.useMemo)(() => inbox.filter((row) => row.placement === "queued"), [inbox]);
+		function QueueDock({ useSession, useProjection, updateQueue, notify, loadImage, renderFactorySlot, t }) {
+			const inbox = useProjection("inbox");
+			const pendingSubmissions = useSession((s) => s.pendingSubmissions);
+			const queue = (0, react.useMemo)(() => {
+				const rows = inbox?.["next-turn"] ?? EMPTY_QUEUE;
+				const inChat = new Set(pendingSubmissions.filter((item) => item.placement === "transcript").map((item) => item.requestId));
+				return inChat.size === 0 ? rows : rows.filter(({ source }) => source.kind !== "user" || !("rpcId" in source) || !inChat.has(source.rpcId));
+			}, [inbox, pendingSubmissions]);
+			const pendingQueue = (0, react.useMemo)(() => {
+				const admitted = new Set(queue.flatMap(({ source }) => source.kind === "user" && "rpcId" in source ? [source.rpcId] : []));
+				return pendingSubmissions.filter((submission) => submission.placement === "queued" && !admitted.has(submission.requestId));
+			}, [pendingSubmissions, queue]);
+			const rowCount = queue.length + pendingQueue.length;
 			const running = useSession((s) => s.running);
-			const queueMutable = useSession((s) => s.subagent === null);
+			const queueMutable = useSession((s) => s.subagent === null || s.subagent.address.mode === "continuable");
 			const [editing, setEditing] = (0, react.useState)(null);
 			const [busy, setBusy] = (0, react.useState)(null);
 			const [collapsed, setCollapsed] = (0, react.useState)(true);
 			const listId = (0, react.useId)();
 			(0, react.useEffect)(() => {
-				if (queue.length === 0 && !collapsed) setCollapsed(true);
+				if (rowCount === 0 && !collapsed) setCollapsed(true);
 				if (editing !== null && (!queueMutable || !queue.some((row) => row.id === editing.id))) setEditing(null);
 			}, [
 				collapsed,
 				editing,
 				queue,
-				queueMutable
+				queueMutable,
+				rowCount
 			]);
-			if (queue.length === 0) return null;
+			if (rowCount === 0) return null;
 			const interactionActive = queueMutable && (editing !== null || busy !== null);
 			const expanded = !collapsed || interactionActive;
-			const listVisible = queue.length === 1 || expanded;
+			const listVisible = rowCount === 1 || expanded;
 			const applyAction = async (itemId, action, failure) => {
 				setBusy(itemId);
 				try {
@@ -13519,7 +16952,7 @@ window.__ModuleLoader__.load({
 				"data-queue-dock": "",
 				children: (0, react_jsx_runtime.jsxs)("div", {
 					className: QueueDock_module_css_default.panel,
-					children: [queue.length > 1 && (0, react_jsx_runtime.jsxs)("button", {
+					children: [rowCount > 1 && (0, react_jsx_runtime.jsxs)("button", {
 						type: "button",
 						className: QueueDock_module_css_default.header,
 						"aria-controls": listId,
@@ -13532,142 +16965,231 @@ window.__ModuleLoader__.load({
 							(0, react_jsx_runtime.jsx)("span", {
 								className: QueueDock_module_css_default.lead,
 								"aria-hidden": true,
-								children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconQueueOutline14, {})
+								children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconQueueOutlineRegular, {})
 							}),
 							(0, react_jsx_runtime.jsx)("span", {
 								className: QueueDock_module_css_default.count,
-								children: t("queue.count", { n: queue.length })
+								children: t("queue.count", { n: rowCount })
+							}),
+							!listVisible && pendingQueue.length > 0 && (0, react_jsx_runtime.jsx)("span", {
+								className: QueueDock_module_css_default.status,
+								role: "status",
+								children: t("queue.sending")
 							}),
 							(0, react_jsx_runtime.jsx)("span", {
 								className: QueueDock_module_css_default.chevron,
 								"aria-hidden": true,
-								children: expanded ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, {}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronUpOutline14, {})
+								children: expanded ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutlineRegular, {}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronUpOutlineRegular, {})
 							})
 						]
-					}), (0, react_jsx_runtime.jsx)("ul", {
+					}), (0, react_jsx_runtime.jsxs)("ul", {
 						id: listId,
 						className: QueueDock_module_css_default.list,
 						hidden: !listVisible,
-						children: listVisible && queue.map((row) => (0, react_jsx_runtime.jsxs)("li", {
-							className: QueueDock_module_css_default.row,
-							children: [
-								queue.length === 1 && (0, react_jsx_runtime.jsx)("span", {
-									className: QueueDock_module_css_default.lead,
-									"aria-hidden": true,
-									children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconQueueOutline14, {})
-								}),
-								editing?.id === row.id ? (0, react_jsx_runtime.jsx)("input", {
-									autoFocus: true,
-									className: QueueDock_module_css_default.editor,
-									"aria-label": t("queue.edit"),
-									value: editing.text,
-									onChange: (event) => {
-										setEditing({
-											id: row.id,
-											text: event.currentTarget.value
-										});
-									},
-									onKeyDown: (event) => {
-										if (event.key === "Escape") {
-											setEditing(null);
-											return;
-										}
-										if (event.key === "Enter" && !event.nativeEvent.isComposing) {
-											event.preventDefault();
+						children: [listVisible && queue.map((row) => {
+							const attachments = queueAttachments(row.content);
+							const text = textOf(row.content);
+							return (0, react_jsx_runtime.jsxs)("li", {
+								className: QueueDock_module_css_default.row,
+								children: [
+									rowCount === 1 && (0, react_jsx_runtime.jsx)("span", {
+										className: QueueDock_module_css_default.lead,
+										"aria-hidden": true,
+										children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconQueueOutlineRegular, {})
+									}),
+									editing?.id === row.id ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.InlineEditor, {
+										value: editing.text,
+										label: t("queue.edit"),
+										onChange: (text) => {
+											setEditing({
+												id: row.id,
+												text
+											});
+										},
+										onSave: () => {
 											saveEdit();
+										},
+										onCancel: () => {
+											setEditing(null);
 										}
-									}
-								}) : (0, react_jsx_runtime.jsx)("span", {
-									className: QueueDock_module_css_default.preview,
-									children: (0, _deepseek_ai_dsh_client_ui_primitives.projectUserText)(row.preview, [])
-								}),
-								queueMutable && (0, react_jsx_runtime.jsx)("div", {
-									className: QueueDock_module_css_default.actions,
-									children: editing?.id === row.id ? (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
-										label: t("queue.save"),
-										side: "bottom",
-										delayMs: 500,
-										children: (0, react_jsx_runtime.jsx)("button", {
-											type: "button",
-											className: QueueDock_module_css_default.action,
-											"aria-label": t("queue.save"),
-											disabled: busy !== null || editing.text.trim() === "",
-											onClick: () => {
-												saveEdit();
-											},
-											children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCheckOutline16, { size: 14 })
+									}) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [attachments.length > 0 && (0, react_jsx_runtime.jsx)("span", {
+										className: QueueDock_module_css_default.attachments,
+										children: attachments.map((item, index) => item.type === "image" ? (0, react_jsx_runtime.jsx)(QueueThumb, {
+											attachment: item.attachment,
+											loadImage,
+											label: t("queue.image")
+										}, `${item.attachment.attachmentId}:${index}`) : (0, react_jsx_runtime.jsx)(QueueFile, {
+											attachment: item.attachment,
+											label: t("queue.file", { name: item.attachment.name })
+										}, `${item.attachment.attachmentId}:${item.attachment.name}:${index}`))
+									}), (0, react_jsx_runtime.jsx)("span", {
+										className: QueueDock_module_css_default.preview,
+										children: renderFactorySlot("conversation.user.text", {
+											text: row.content.filter((block) => block.type === "text").map((block) => block.text).join(""),
+											facts: QUEUE_TEXT_FACTS,
+											interactive: false,
+											ellipsis: true
 										})
-									}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
-										label: t("queue.cancelEdit"),
-										side: "bottom",
-										delayMs: 500,
-										children: (0, react_jsx_runtime.jsx)("button", {
-											type: "button",
-											className: QueueDock_module_css_default.action,
-											"aria-label": t("queue.cancelEdit"),
-											disabled: busy !== null,
-											onClick: () => {
-												setEditing(null);
-											},
-											children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCloseOutline16, { size: 14 })
-										})
-									})] }) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-										(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
-											label: t("queue.edit"),
+									})] }),
+									queueMutable && (0, react_jsx_runtime.jsx)("div", {
+										className: QueueDock_module_css_default.actions,
+										children: editing?.id === row.id ? (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+											portal: true,
+											label: t("queue.save"),
 											side: "bottom",
 											delayMs: 500,
-											disabled: row.text === null,
 											children: (0, react_jsx_runtime.jsx)("button", {
+												type: "button",
+												className: QueueDock_module_css_default.action,
+												"aria-label": t("queue.save"),
+												disabled: busy !== null || editing.text.trim() === "",
+												onClick: () => {
+													saveEdit();
+												},
+												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCheckOutlineRegular, { size: 14 })
+											})
+										}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+											portal: true,
+											label: t("queue.cancelEdit"),
+											side: "bottom",
+											delayMs: 500,
+											children: (0, react_jsx_runtime.jsx)("button", {
+												type: "button",
+												className: QueueDock_module_css_default.action,
+												"aria-label": t("queue.cancelEdit"),
+												disabled: busy !== null,
+												onClick: () => {
+													setEditing(null);
+												},
+												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconCloseOutlineRegular, { size: 14 })
+											})
+										})] }) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+											(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+												portal: true,
+												label: t("queue.edit"),
+												side: "bottom",
+												delayMs: 500,
+												disabled: text === null,
+												children: (0, react_jsx_runtime.jsx)("button", {
+													type: "button",
+													className: QueueDock_module_css_default.action,
+													"aria-label": t("queue.edit"),
+													title: text === null ? t("queue.edit.unsupported") : void 0,
+													disabled: busy !== null || text === null,
+													onClick: () => {
+														if (text !== null) setEditing({
+															id: row.id,
+															text
+														});
+													},
+													children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconEditOutlineRegular, { size: 14 })
+												})
+											}),
+											(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+												portal: true,
+												label: t("queue.remove"),
+												side: "bottom",
+												delayMs: 500,
+												children: (0, react_jsx_runtime.jsx)("button", {
+													type: "button",
+													className: QueueDock_module_css_default.action,
+													"aria-label": t("queue.remove"),
+													disabled: busy !== null,
+													onClick: () => {
+														applyAction(row.id, { kind: "remove" }, t("queue.removeFailed"));
+													},
+													children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconTrashOutlineRegular, { size: 14 })
+												})
+											}),
+											(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+												portal: true,
+												label: t("queue.steer"),
+												side: "bottom",
+												delayMs: 500,
+												disabled: !running,
+												children: (0, react_jsx_runtime.jsx)("button", {
+													type: "button",
+													className: QueueDock_module_css_default.action,
+													"aria-label": t("queue.steer"),
+													title: running ? void 0 : t("queue.steer.unavailable"),
+													disabled: busy !== null || !running,
+													onClick: () => {
+														applyAction(row.id, { kind: "steer" }, t("queue.steerFailed"));
+													},
+													children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSendOutlineRegular, {})
+												})
+											})
+										] })
+									})
+								]
+							}, row.id);
+						}), listVisible && pendingQueue.map((submission) => {
+							return (0, react_jsx_runtime.jsxs)("li", {
+								className: `${QueueDock_module_css_default.row} ${QueueDock_module_css_default.pendingRow}`,
+								"data-submission-echo": "",
+								children: [
+									rowCount === 1 && (0, react_jsx_runtime.jsx)("span", {
+										className: QueueDock_module_css_default.lead,
+										"aria-hidden": true,
+										children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconQueueOutlineRegular, {})
+									}),
+									submission.attachments.length > 0 && (0, react_jsx_runtime.jsx)("span", {
+										className: QueueDock_module_css_default.attachments,
+										children: submission.attachments.map((attachment, index) => attachment.type === "image" ? (0, react_jsx_runtime.jsx)("img", {
+											className: QueueDock_module_css_default.thumb,
+											src: attachment.value.previewUrl,
+											alt: t("queue.image")
+										}, `${attachment.value.previewUrl}:${index}`) : (0, react_jsx_runtime.jsx)(QueueFile, {
+											attachment: attachment.value,
+											label: t("queue.file", { name: attachment.value.name })
+										}, `${attachment.value.attachmentId}:${attachment.value.name}:${index}`))
+									}),
+									(0, react_jsx_runtime.jsx)("span", {
+										className: QueueDock_module_css_default.preview,
+										children: renderFactorySlot("conversation.user.text", {
+											text: submission.text,
+											facts: QUEUE_TEXT_FACTS,
+											interactive: false,
+											ellipsis: true
+										})
+									}),
+									(0, react_jsx_runtime.jsx)("span", {
+										className: QueueDock_module_css_default.status,
+										role: "status",
+										children: t("queue.sending")
+									}),
+									queueMutable && (0, react_jsx_runtime.jsxs)("div", {
+										className: QueueDock_module_css_default.actions,
+										children: [
+											(0, react_jsx_runtime.jsx)("button", {
 												type: "button",
 												className: QueueDock_module_css_default.action,
 												"aria-label": t("queue.edit"),
-												title: row.text === null ? t("queue.edit.unsupported") : void 0,
-												disabled: busy !== null || row.text === null,
-												onClick: () => {
-													if (row.text !== null) setEditing({
-														id: row.id,
-														text: row.text
-													});
-												},
-												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconEditOutline16, { size: 14 })
-											})
-										}),
-										(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
-											label: t("queue.remove"),
-											side: "bottom",
-											delayMs: 500,
-											children: (0, react_jsx_runtime.jsx)("button", {
+												title: t("queue.sending"),
+												disabled: true,
+												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconEditOutlineRegular, { size: 14 })
+											}),
+											(0, react_jsx_runtime.jsx)("button", {
 												type: "button",
 												className: QueueDock_module_css_default.action,
 												"aria-label": t("queue.remove"),
-												disabled: busy !== null,
-												onClick: () => {
-													applyAction(row.id, { kind: "remove" }, t("queue.removeFailed"));
-												},
-												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconTrashOutline16, { size: 14 })
-											})
-										}),
-										(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
-											label: t("queue.steer"),
-											side: "bottom",
-											delayMs: 500,
-											disabled: !running,
-											children: (0, react_jsx_runtime.jsx)("button", {
+												title: t("queue.sending"),
+												disabled: true,
+												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconTrashOutlineRegular, { size: 14 })
+											}),
+											(0, react_jsx_runtime.jsx)("button", {
 												type: "button",
 												className: QueueDock_module_css_default.action,
 												"aria-label": t("queue.steer"),
-												title: running ? void 0 : t("queue.steer.unavailable"),
-												disabled: busy !== null || !running,
-												onClick: () => {
-													applyAction(row.id, { kind: "steer" }, t("queue.steerFailed"));
-												},
-												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSendOutline14, {})
+												title: t("queue.sending"),
+												disabled: true,
+												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconSendOutlineRegular, {})
 											})
-										})
-									] })
-								})
-							]
-						}, row.id))
+										]
+									})
+								]
+							}, submission.requestId);
+						})]
 					})]
 				})
 			});
@@ -13678,7 +17200,8 @@ window.__ModuleLoader__.load({
 			inject: [
 				"slots",
 				"conversation",
-				"sessions"
+				"sessions",
+				"uiConversation"
 			],
 			apply(ctx) {
 				ctx.slots.inject("conversation.input.dock", () => ctx.slots.register({
@@ -13695,7 +17218,8 @@ window.__ModuleLoader__.load({
 							updateQueue: (itemId, action) => conversation.updateQueue(itemId, action),
 							notify: (level, text) => {
 								conversation.input.for(actx).notify(level, text);
-							}
+							},
+							loadImage: (attachment) => ctx.uiConversation.imageUrl(sessionId, attachment)
 						};
 					}
 				}, QueueDock));
@@ -13703,22 +17227,22 @@ window.__ModuleLoader__.load({
 		};
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-conversation/src/client/settings/EnterBehaviorRow.module.css.mjs
-		const css$6 = ".UEhyia_row{border-bottom:1px solid var(--dsw-alias-border-l2);align-items:center;gap:8px;padding:16px 0;display:flex}.UEhyia_rowText{flex-direction:column;flex:1;gap:4px;min-width:0;padding-right:48px;display:flex}.UEhyia_title{color:var(--dsw-alias-label-primary);font-size:14px;font-weight:400;line-height:22px}.UEhyia_desc{color:var(--dsw-alias-label-tertiary);font-size:12px;font-weight:400;line-height:18px}.UEhyia_selector{background:var(--dsw-alias-bg-module-platform);height:36px;font:inherit;color:var(--dsw-alias-label-primary);cursor:pointer;border:none;border-radius:18px;align-items:center;gap:12px;padding:0 14px;font-size:14px;line-height:22px;display:inline-flex}.UEhyia_selector:hover{background:var(--dsw-alias-interactive-bg-hover)}.UEhyia_chevron{flex:none}";
-		const tagId$6 = "@deepseek-ai/dsh-client-ui-conversation/EnterBehaviorRow.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$6) + "]") === null) {
+		const css$5 = ".x6cYrG_row{border-bottom:.5px solid var(--dsw-alias-border-l2);align-items:center;gap:8px;padding:16px 0;display:flex}.x6cYrG_rowText{flex-direction:column;flex:1;gap:4px;min-width:0;padding-right:48px;display:flex}.x6cYrG_title{color:var(--dsw-alias-label-primary);font-size:14px;font-weight:400;line-height:22px}.x6cYrG_desc{color:var(--dsw-alias-label-tertiary);font-size:12px;font-weight:400;line-height:18px}.x6cYrG_selector{border-radius:var(--dsw-radius-md);background:var(--dsw-alias-bg-module-platform);height:36px;font:inherit;color:var(--dsw-alias-label-primary);cursor:pointer;border:none;align-items:center;gap:12px;padding:0 14px;font-size:14px;line-height:22px;display:inline-flex}.x6cYrG_selector:hover{background:var(--dsw-alias-interactive-bg-hover)}.x6cYrG_chevron{flex:none}";
+		const tagId$5 = "@deepseek-ai/dsh-client-ui-conversation/EnterBehaviorRow.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$5) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
-			tag.dataset.pluginCss = tagId$6;
-			tag.textContent = css$6;
+			tag.dataset.pluginCss = tagId$5;
+			tag.textContent = css$5;
 			document.head.appendChild(tag);
 		}
 		var EnterBehaviorRow_module_css_default = {
-			"chevron": "UEhyia_chevron",
-			"desc": "UEhyia_desc",
-			"row": "UEhyia_row",
-			"rowText": "UEhyia_rowText",
-			"selector": "UEhyia_selector",
-			"title": "UEhyia_title"
+			"chevron": "x6cYrG_chevron",
+			"desc": "x6cYrG_desc",
+			"row": "x6cYrG_row",
+			"rowText": "x6cYrG_rowText",
+			"selector": "x6cYrG_selector",
+			"title": "x6cYrG_title"
 		};
 		//#endregion
 		//#region lib/types/client/settings/EnterBehaviorRow.js
@@ -13774,7 +17298,7 @@ window.__ModuleLoader__.load({
 						onClick: () => {
 							setOpen((value) => !value);
 						},
-						children: [t(selectedLabel), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, { className: EnterBehaviorRow_module_css_default.chevron })]
+						children: [t(selectedLabel), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutlineRegular, { className: EnterBehaviorRow_module_css_default.chevron })]
 					})
 				})]
 			});
@@ -13783,7 +17307,10 @@ window.__ModuleLoader__.load({
 		//#region lib/types/client/contract/snapshot.js
 		/** Empty Conversation value used before a Session binding is available. */
 		const EMPTY_CONVERSATION_SNAPSHOT = {
-			views: { get: () => void 0 },
+			views: {
+				get: () => void 0,
+				grouped: () => void 0
+			},
 			activeTargets: /* @__PURE__ */ new Set()
 		};
 		/**
@@ -13796,47 +17323,290 @@ window.__ModuleLoader__.load({
 			return conversation.activeTargets.size > 0 || !session.blank && !session.awaitingFirstTurn || session.running ? "active" : session.promptAttempted ? "engaging" : "blank";
 		}
 		//#endregion
-		//#region ../../node_modules/@deepseek-ai/dsh-util-workspace-path/lib/index.js
+		//#region \0dsh-css:packages/client-ui-conversation/src/client/skeleton/ConversationRoot.module.css.mjs
+		const css$4 = ".rpM0nW_root{background:var(--dsw-alias-bg-base);flex-direction:column;min-width:0;height:100%;display:flex;position:relative}.rpM0nW_header{box-sizing:border-box;border-bottom:.5px solid var(--dsw-alias-border-l3);flex:none;grid-template-columns:auto minmax(0,1fr);min-height:76px;padding:10px 28px 0 20px;display:grid}.rpM0nW_header:where(:not(:has(.rpM0nW_tabs))){min-height:0;padding-bottom:10px}.rpM0nW_headerBlank{border-bottom:none;min-height:0;padding-bottom:0}.rpM0nW_headerBlank .rpM0nW_headerCorner{margin-left:auto}html:not([data-platform=darwin]) .rpM0nW_headerSessionless{padding-top:0}html:not([data-platform=darwin]) .rpM0nW_headerSessionless .rpM0nW_titleRow{min-height:0}[data-platform=darwin] .rpM0nW_headerLeading,[data-platform=darwin] .rpM0nW_headerActions,[data-platform=darwin] .rpM0nW_headerUtilities,[data-platform=darwin] .rpM0nW_headerCorner{-webkit-app-region:no-drag}.rpM0nW_sessionControls{border-bottom:1px solid var(--dsw-alias-border-l2);flex-wrap:wrap;flex:none;align-items:center;gap:8px 16px;min-width:0;padding:6px 16px;display:flex}.rpM0nW_sessionViews{flex-wrap:wrap;align-items:center;gap:4px;display:flex}.rpM0nW_sessionViewTab{color:var(--dsw-alias-label-secondary);cursor:pointer;background:0 0;border:none;border-radius:8px;padding:6px 10px;font-size:12px;line-height:18px}.rpM0nW_sessionViewTab:hover,.rpM0nW_sessionViewTab[aria-selected=true]{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-state-business-primary)}.rpM0nW_sessionViewTab:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:2px}.rpM0nW_sessionActions{flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto;display:flex}.rpM0nW_sessionActions:empty{display:none}.rpM0nW_titleRow{min-height:30px;grid-column:2;align-items:center;gap:0;padding-inline-start:max(0px, calc(var(--dsh-frame-leading-clearance,0px) - 20px));display:flex;container-type:inline-size}.rpM0nW_titleCluster{flex:1;align-items:center;gap:10px;min-width:0;display:flex}.rpM0nW_headerLeading{flex:none;grid-area:1/1;align-items:center;gap:8px;display:flex}.rpM0nW_crumbs{white-space:nowrap;align-items:center;gap:4px;min-width:0;display:flex;overflow:hidden}.rpM0nW_crumbSeg{align-items:center;gap:4px;min-width:0;display:inline-flex}.rpM0nW_crumbSep{color:var(--dsw-alias-label-caption);font-size:14px;line-height:20px}.rpM0nW_crumb{border-radius:var(--dsw-radius-md);max-width:220px;color:var(--dsw-alias-label-tertiary);text-overflow:ellipsis;white-space:nowrap;cursor:pointer;background:0 0;border:none;padding:4px 8px;font-size:14px;line-height:20px;display:inline-block;overflow:hidden}.rpM0nW_crumbSubagent{font-size:12px;line-height:18px}button.rpM0nW_crumb:hover{background:var(--dsw-alias-interactive-bg-hover)}.rpM0nW_crumbCurrent{color:var(--dsw-alias-label-primary);cursor:default;font-weight:500}.rpM0nW_headerActions{flex:none;align-items:center;gap:8px;display:flex}.rpM0nW_headerUtilities{flex:none;align-items:center;gap:8px;margin-left:20px;display:flex}.rpM0nW_headerUtilities:empty{display:none}.rpM0nW_headerCorner{flex:none;align-items:center;margin-left:8px;margin-right:-16px;display:flex}.rpM0nW_headerCorner:empty{display:none}.rpM0nW_tabs{z-index:1;grid-column:1/-1;gap:36px;margin-top:10px;padding-left:8px;display:flex;position:relative}.rpM0nW_tab{color:var(--dsw-alias-label-tertiary);cursor:pointer;background:0 0;border:none;padding:0 0 9px;font-size:13px;font-weight:500;line-height:16px;position:relative}.rpM0nW_tab:after{content:\"\";background:0 0;border-radius:2px;height:2px;position:absolute;bottom:-1px;left:0;right:0}.rpM0nW_tabActive{color:var(--dsw-alias-state-business-primary)}.rpM0nW_tabActive:after{background:var(--dsw-alias-state-business-primary)}.rpM0nW_viewArea{flex-direction:column;flex:1;min-height:0;display:flex}.rpM0nW_widthHandle{z-index:0;width:min(10px, calc((100% - var(--dsh-chat-content-width)) / 2 - 24px - 24px));cursor:col-resize;position:absolute;top:0;bottom:0}.rpM0nW_widthHandle[data-side=left]{right:calc(50% + var(--dsh-chat-content-width) / 2 + 24px)}.rpM0nW_widthHandle[data-side=right]{left:calc(50% + var(--dsh-chat-content-width) / 2 + 24px)}.rpM0nW_widthHandle:after{content:\"\";background:linear-gradient(to bottom, transparent calc(var(--dsh-width-handle-pointer-y,50%) - 36px), var(--dsw-alias-scrollbar-bg-l1) calc(var(--dsh-width-handle-pointer-y,50%) - 8px), var(--dsw-alias-scrollbar-bg-l1) calc(var(--dsh-width-handle-pointer-y,50%) + 8px), transparent calc(var(--dsh-width-handle-pointer-y,50%) + 36px));opacity:0;pointer-events:none;border-radius:2px;width:2px;position:absolute;top:0;bottom:0}.rpM0nW_widthHandle[data-side=left]:after{right:4px}.rpM0nW_widthHandle[data-side=right]:after{left:4px}.rpM0nW_widthHandle:hover:after,.rpM0nW_widthHandle[data-dragging]:after{opacity:1}.rpM0nW_widthHandle[data-dragging]{z-index:8}.rpM0nW_root:has([data-conversation-composer-overlay]) .rpM0nW_widthHandle{display:none}.rpM0nW_composerStack{--dsh-composer-stack-gap:6px;gap:var(--dsh-composer-stack-gap);flex-direction:column;display:flex}.rpM0nW_composerSeat{--dsh-composer-text-max-height:336px;flex-direction:column;flex:none;display:flex}.rpM0nW_root[data-phase=active]{overflow:hidden}.rpM0nW_root[data-phase=active] .rpM0nW_header{flex:none}.rpM0nW_body{--dsh-chat-content-width:var(--dsh-chat-user-width,clamp(680px, calc(var(--dsh-conversation-column-width,0px) * .64), 920px));--dsh-composer-card-max-width:calc(var(--dsh-chat-content-width) + 32px);--dsh-composer-side-clearance:16px;--dsh-composer-dock-inset:8px;flex-direction:column;flex:1;min-height:0;display:flex;position:relative}.rpM0nW_embeddedBody{--dsh-chat-content-width:min(calc(100% - 32px), 920px);--dsh-composer-card-max-width:min(calc(100% - 16px), 952px);--dsh-composer-side-clearance:8px;--dsh-composer-dock-inset:8px;overflow:hidden}.rpM0nW_scrollBody{scrollbar-gutter:stable;flex-direction:column;flex:1;min-height:0;margin-right:2px;display:flex;overflow-y:auto}.rpM0nW_scrollBody::-webkit-scrollbar-track{margin:2px}.rpM0nW_root[data-phase=active] .rpM0nW_viewArea,.rpM0nW_embeddedBody[data-content-phase=active] .rpM0nW_viewArea{flex:1 0 auto;min-height:auto}.rpM0nW_root[data-phase=active] .rpM0nW_composerSeat,.rpM0nW_embeddedBody[data-content-phase=active] .rpM0nW_composerSeat{z-index:7;background:linear-gradient(180deg, color-mix(in srgb, var(--dsw-alias-bg-base) 0%, transparent) 0px, var(--dsw-alias-bg-base) 36px);position:sticky;bottom:0}.rpM0nW_root[data-phase=active] .rpM0nW_composerSeat:has([data-trigger-menu]){z-index:9}.rpM0nW_scrollBody:has([data-conversation-composer-overlay]){scrollbar-gutter:auto;position:relative;overflow:hidden auto}.rpM0nW_scrollBody:has([data-conversation-composer-overlay])>[data-slot=conversation\\.session]>.rpM0nW_viewArea{flex:1 1 0;min-height:0;overflow:hidden}.rpM0nW_scrollBody:has([data-conversation-composer-overlay])>.rpM0nW_composerSeat{right:var(--dsh-scrollbar-width);position:absolute;bottom:0;left:0}.rpM0nW_composerHero{width:min(calc(var(--dsh-composer-card-max-width) + 2 * var(--dsh-composer-side-clearance)), 100%);z-index:1;align-self:center;gap:8px;padding-bottom:32px}.rpM0nW_heroWorkspaceRow{align-items:center;gap:2px;min-width:0;margin-top:4px;padding:0 16px 0 20px;display:flex}.rpM0nW_heroOptions{flex:none;align-items:center;gap:2px;min-width:0;margin-left:auto;display:flex}.rpM0nW_heroOptions:empty{display:none}.rpM0nW_root[data-phase=hero] .rpM0nW_scrollBody,.rpM0nW_embeddedBody[data-content-phase=hero] .rpM0nW_scrollBody{justify-content:center;overflow-y:auto}.rpM0nW_root[data-phase=settling] .rpM0nW_composerSeat,.rpM0nW_embeddedBody[data-content-phase=settling] .rpM0nW_composerSeat{visibility:hidden}@media (width<=840px){body[data-qs-mobile] .rpM0nW_root{--dsh-composer-side-clearance:8px;--dsh-chat-content-width:100%;--dsh-composer-text-max-height:min(160px,28dvh);min-height:0}body[data-qs-mobile] .rpM0nW_header{border-radius:16px;margin:6px 8px 0;padding:10px 12px 0}body[data-qs-mobile] .rpM0nW_titleRow{flex-wrap:wrap;gap:4px}body[data-qs-mobile] .rpM0nW_titleCluster{flex-wrap:wrap;gap:6px}body[data-qs-mobile] .rpM0nW_crumbs{flex:100%}body[data-qs-mobile] .rpM0nW_crumb{max-width:min(260px,65vw);padding:4px 0}body[data-qs-mobile] .rpM0nW_headerUtilities{gap:6px;margin-left:auto}body[data-qs-mobile] .rpM0nW_tabs{gap:24px;margin-top:6px;padding:0;overflow-x:auto}body[data-qs-mobile] .rpM0nW_tab{white-space:nowrap;flex-shrink:0;min-height:38px}body[data-qs-mobile] .rpM0nW_widthHandle{display:none}body[data-qs-mobile] .rpM0nW_scrollBody{overscroll-behavior-y:contain}body[data-qs-mobile] .rpM0nW_composerSeat{padding-bottom:env(safe-area-inset-bottom,0px);--dsh-composer-text-max-height:min(160px,28dvh)}}@media (width<=840px) and (height<=540px){body[data-qs-mobile] .rpM0nW_header{padding-top:4px}body[data-qs-mobile] .rpM0nW_headerActions{display:none}body[data-qs-mobile] .rpM0nW_crumbs{flex:1}body[data-qs-mobile] .rpM0nW_titleCluster{flex-wrap:nowrap}body[data-qs-mobile] .rpM0nW_tabs{margin-top:0}}";
+		const tagId$4 = "@deepseek-ai/dsh-client-ui-conversation/ConversationRoot.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$4) + "]") === null) {
+			const tag = document.createElement("style");
+			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
+			tag.dataset.pluginCss = tagId$4;
+			tag.textContent = css$4;
+			document.head.appendChild(tag);
+		}
+		var ConversationRoot_module_css_default = {
+			"body": "rpM0nW_body",
+			"composerHero": "rpM0nW_composerHero",
+			"composerSeat": "rpM0nW_composerSeat",
+			"composerStack": "rpM0nW_composerStack",
+			"crumb": "rpM0nW_crumb",
+			"crumbCurrent": "rpM0nW_crumbCurrent",
+			"crumbs": "rpM0nW_crumbs",
+			"crumbSeg": "rpM0nW_crumbSeg",
+			"crumbSep": "rpM0nW_crumbSep",
+			"crumbSubagent": "rpM0nW_crumbSubagent",
+			"embeddedBody": "rpM0nW_embeddedBody",
+			"header": "rpM0nW_header",
+			"headerActions": "rpM0nW_headerActions",
+			"headerBlank": "rpM0nW_headerBlank",
+			"headerCorner": "rpM0nW_headerCorner",
+			"headerLeading": "rpM0nW_headerLeading",
+			"headerSessionless": "rpM0nW_headerSessionless",
+			"headerUtilities": "rpM0nW_headerUtilities",
+			"heroOptions": "rpM0nW_heroOptions",
+			"heroWorkspaceRow": "rpM0nW_heroWorkspaceRow",
+			"root": "rpM0nW_root",
+			"scrollBody": "rpM0nW_scrollBody",
+			"sessionActions": "rpM0nW_sessionActions",
+			"sessionControls": "rpM0nW_sessionControls",
+			"sessionViews": "rpM0nW_sessionViews",
+			"sessionViewTab": "rpM0nW_sessionViewTab",
+			"tab": "rpM0nW_tab",
+			"tabActive": "rpM0nW_tabActive",
+			"tabs": "rpM0nW_tabs",
+			"titleCluster": "rpM0nW_titleCluster",
+			"titleRow": "rpM0nW_titleRow",
+			"viewArea": "rpM0nW_viewArea",
+			"widthHandle": "rpM0nW_widthHandle"
+		};
+		//#endregion
+		//#region lib/types/client/skeleton/ConversationWidthControls.js
+		/** localStorage key for the dragged transcript width preference (px). */
+		const WIDTH_PREF_KEY = "dsh.conversation.contentWidth";
+		/** Floor for a dragged content width; matches the layout center-column minimum. */
+		const CONTENT_MIN = 640;
+		/** Horizontal room reserved for both handles and their safe edge zones. */
+		const CONTENT_EDGE_BUDGET = 176;
+		const WHEEL_DELTA_LINE = 1;
+		const WHEEL_DELTA_PAGE = 2;
+		const FALLBACK_WHEEL_LINE_PX = 16;
+		/** Read a valid persisted width preference, or null when absent or corrupt. */
+		function readWidthPreference() {
+			const raw = localStorage.getItem(WIDTH_PREF_KEY);
+			if (raw === null) return null;
+			const value = Number(raw);
+			return Number.isFinite(value) && value > 0 ? value : null;
+		}
+		/** Resolve the width displayed for one measured Conversation column. */
+		function resolveContentWidth(columnWidth, preference) {
+			const max = Math.max(CONTENT_MIN, columnWidth - CONTENT_EDGE_BUDGET);
+			if (preference !== null) return Math.min(Math.max(preference, CONTENT_MIN), max);
+			return Math.max(680, Math.min(columnWidth * .64, 920));
+		}
+		/** Convert a wheel event's vertical delta to scrollport pixels. */
+		function wheelDeltaY(event, scrollport) {
+			if (event.deltaMode === WHEEL_DELTA_LINE) {
+				const lineHeight = Number.parseFloat(getComputedStyle(scrollport).lineHeight);
+				return event.deltaY * (Number.isFinite(lineHeight) ? lineHeight : FALLBACK_WHEEL_LINE_PX);
+			}
+			if (event.deltaMode === WHEEL_DELTA_PAGE) return event.deltaY * scrollport.clientHeight;
+			return event.deltaY;
+		}
+		/** One pointer-captured transcript width handle. */
+		function WidthHandle(props) {
+			const dragging = (0, react.useRef)(false);
+			const base = (0, react.useRef)(0);
+			const origin = (0, react.useRef)(0);
+			const latest = (0, react.useRef)(0);
+			const frame = (0, react.useRef)(null);
+			const callbacks = (0, react.useRef)(props);
+			callbacks.current = props;
+			const outwardWidth = () => {
+				const dx = latest.current - origin.current;
+				const outward = callbacks.current.side === "right" ? dx : -dx;
+				return base.current + outward * 2;
+			};
+			const cancelFrame = () => {
+				if (frame.current !== null) {
+					cancelAnimationFrame(frame.current);
+					frame.current = null;
+				}
+			};
+			const onPointerDown = (0, react.useCallback)((event) => {
+				if (event.button !== 0) return;
+				event.preventDefault();
+				event.currentTarget.setPointerCapture(event.pointerId);
+				origin.current = event.clientX;
+				latest.current = event.clientX;
+				base.current = callbacks.current.onStart();
+				dragging.current = true;
+				event.currentTarget.toggleAttribute("data-dragging", true);
+			}, []);
+			const onPointerMove = (0, react.useCallback)((event) => {
+				if (!dragging.current) return;
+				if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+				const box = event.currentTarget.getBoundingClientRect();
+				event.currentTarget.style.setProperty("--dsh-width-handle-pointer-y", `${event.clientY - box.top}px`);
+				latest.current = event.clientX;
+				frame.current ??= requestAnimationFrame(() => {
+					frame.current = null;
+					callbacks.current.onDrag(outwardWidth());
+				});
+			}, []);
+			const onPointerUp = (0, react.useCallback)((event) => {
+				if (!dragging.current) return;
+				if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+				dragging.current = false;
+				event.currentTarget.toggleAttribute("data-dragging", false);
+				event.currentTarget.releasePointerCapture(event.pointerId);
+				cancelFrame();
+				latest.current = event.clientX;
+				if (latest.current !== origin.current) callbacks.current.onCommit(outwardWidth());
+				callbacks.current.onEnd();
+			}, []);
+			const onPointerCancel = (0, react.useCallback)((event) => {
+				if (!dragging.current) return;
+				dragging.current = false;
+				event.currentTarget.toggleAttribute("data-dragging", false);
+				cancelFrame();
+				callbacks.current.onEnd();
+			}, []);
+			const onWheel = (0, react.useCallback)((event) => {
+				const body = event.currentTarget.parentElement;
+				/* v8 ignore next -- a width handle renders only inside the Conversation body. */
+				if (body === null) return;
+				const scrollport = body.querySelector(":scope > [data-conversation-scroll]");
+				/* v8 ignore next -- the Conversation body always contains its direct scroll element. */
+				if (scrollport === null) return;
+				if (event.ctrlKey || event.deltaY === 0) return;
+				scrollport.scrollBy({ top: wheelDeltaY(event, scrollport) });
+			}, []);
+			return (0, react_jsx_runtime.jsx)("div", {
+				className: ConversationRoot_module_css_default.widthHandle,
+				"data-side": props.side,
+				"data-width-handle": props.side,
+				onPointerDown,
+				onPointerMove,
+				onPointerUp,
+				onPointerCancel,
+				onLostPointerCapture: onPointerCancel,
+				onWheel
+			});
+		}
 		/**
-		* Read the final non-empty segment of a Workspace path for display.
-		* Workspace-label surfaces use this helper instead of deriving another basename.
-		* @param path - Workspace directory path using POSIX or Windows separators.
-		* @returns the final segment, or an empty string for a separator-only path.
+		* Install the main Conversation width axis and render its drag handles.
+		* @param props - Mounted Conversation body and current presentation phase.
+		* @returns two active-phase width handles, or no controls outside the active phase.
 		*/
-		function workspaceTitleOf(path) {
-			const trimmed = path.replace(/[/\\]+$/, "");
-			const separator = Math.max(trimmed.lastIndexOf("/"), trimmed.lastIndexOf("\\"));
-			return trimmed.slice(separator + 1);
+		function ConversationWidthControls({ container, phase }) {
+			const publishWidths = (0, react.useCallback)((container) => {
+				const target = container.parentElement ?? container;
+				const column = container.offsetWidth;
+				target.style.setProperty("--dsh-conversation-column-width", `${column}px`);
+				const preference = readWidthPreference();
+				if (preference === null) target.style.removeProperty("--dsh-chat-user-width");
+				else target.style.setProperty("--dsh-chat-user-width", `${resolveContentWidth(column, preference)}px`);
+			}, []);
+			(0, react.useLayoutEffect)(() => {
+				if (container === null) return;
+				const observer = new ResizeObserver(() => {
+					publishWidths(container);
+				});
+				observer.observe(container);
+				publishWidths(container);
+				return () => {
+					observer.disconnect();
+				};
+			}, [container, publishWidths]);
+			const onStart = (0, react.useCallback)(() => {
+				if (container === null) return 680;
+				return resolveContentWidth(container.offsetWidth, readWidthPreference());
+			}, [container]);
+			const onDrag = (0, react.useCallback)((width) => {
+				if (container === null) return;
+				(container.parentElement ?? container).style.setProperty("--dsh-chat-user-width", `${resolveContentWidth(container.offsetWidth, width)}px`);
+			}, [container]);
+			const onCommit = (0, react.useCallback)((width) => {
+				if (container === null) return;
+				localStorage.setItem(WIDTH_PREF_KEY, `${resolveContentWidth(container.offsetWidth, width)}`);
+			}, [container]);
+			const onEnd = (0, react.useCallback)(() => {
+				if (container !== null) publishWidths(container);
+			}, [container, publishWidths]);
+			if (container === null || phase !== "active") return null;
+			return ["left", "right"].map((side) => (0, react_jsx_runtime.jsx)(WidthHandle, {
+				side,
+				onStart,
+				onDrag,
+				onCommit,
+				onEnd
+			}, side));
+		}
+		//#endregion
+		//#region lib/types/client/skeleton/ConversationMainPanel.js
+		const CONTENT_SLOTS = { widthControls: ConversationWidthControls };
+		/**
+		* Render the existing main Conversation frame around the extracted content.
+		* @param props - the original `main.conversation` Slot props.
+		* @returns the unchanged root, Header, content, and width-control subtree.
+		*/
+		function ConversationMainPanel(props) {
+			const { sessionId, useSession, useSessions, useConversation, renderSlot, renderFactorySlot } = props;
+			const session = useSession((s) => s);
+			const conversation = useConversation((s) => s);
+			const shellPhase = session === void 0 || conversation === void 0 ? "blank" : conversationPhase(session, conversation);
+			const openState = session?.openState;
+			const summaryBlank = useSessions((s) => sessionId === void 0 ? void 0 : s.byId[sessionId]?.blank);
+			const parentAvailabilityPending = session?.subagent?.address.mode === "continuable" && session.subagent.parentAvailable === void 0;
+			const settling = sessionId !== void 0 && (shellPhase === "blank" && openState === "loading" && summaryBlank !== true || parentAvailabilityPending);
+			const hero = sessionId === void 0 || shellPhase === "blank" && (openState === "open" || summaryBlank === true);
+			const phase = settling ? "settling" : hero ? "hero" : "active";
+			return (0, react_jsx_runtime.jsxs)("div", {
+				className: ConversationRoot_module_css_default.root,
+				"data-phase": phase,
+				children: [renderSlot("conversation.header", {}), renderFactorySlot("conversation.content", {
+					variant: "main",
+					phase,
+					hero
+				}, { slots: CONTENT_SLOTS })]
+			});
+		}
+		//#endregion
+		//#region lib/types/client/skeleton/ConversationRoot.js
+		function ConversationRoot(props) {
+			return (0, react_jsx_runtime.jsx)(ConversationMainPanel, { ...props });
+		}
+		/**
+		* The text one Workspace is labeled with. A Workspace still carrying the
+		* automatic first-use title reads as the caller's localized default name; every
+		* other title reads verbatim in every language. A title the user typed as
+		* exactly {@link DEFAULT_WORKSPACE_DIRECTORY} is labeled as the default too;
+		* nothing else depends on the distinction.
+		* @param title - stored Workspace title.
+		* @param localizedDefault - the default Workspace name in the active language.
+		* @returns the title to display.
+		*/
+		function workspaceDisplayTitle(title, localizedDefault) {
+			return title === "default-workspace" ? localizedDefault : title;
 		}
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-conversation/src/client/skeleton/HeroShell.module.css.mjs
-		const css$5 = ".-tJdnW_root{justify-content:center;align-items:center;min-width:0;height:100%;padding:0 24px;display:flex}.-tJdnW_stack{width:100%;max-width:var(--dsh-composer-card-max-width);flex-direction:column;align-items:stretch;gap:12px;display:flex;overflow:visible}.-tJdnW_headline{color:var(--dsw-alias-label-primary);grid-template-columns:34px auto auto;justify-content:center;align-items:center;column-gap:10px;font-size:26px;font-weight:500;line-height:32px;display:grid}.-tJdnW_headlineText{grid-area:1/2}.-tJdnW_previewBadge{border:1px solid var(--dsw-alias-interactive-bg-hover);background:var(--dsw-alias-state-business-tertiary);color:var(--dsw-alias-label-primary-bluish);font-family:var(--ds-font-family-code);white-space:nowrap;border-radius:24px;grid-area:1/3;align-self:start;margin-top:2px;margin-left:-3px;padding:1px 7px 0;font-size:12px;font-weight:500;line-height:18px}.-tJdnW_fishHitbox{grid-area:1/1;justify-content:center;align-items:center;display:inline-flex}.-tJdnW_fish{transform-origin:50% 60%;color:var(--dsw-alias-label-primary);display:block;overflow:visible}@keyframes -tJdnW_hero-fish-swim{0%,to{transform:none}35%{transform:rotate(-4deg)translate(-.4px,-.9px)}70%{transform:rotate(1.6deg)translate(.3px,.2px)}}@media (hover:hover) and (prefers-reduced-motion:no-preference){.-tJdnW_fishHitbox:hover .-tJdnW_fish{animation:1.6s ease-in-out infinite -tJdnW_hero-fish-swim}}.-tJdnW_body{flex-direction:column;gap:12px;min-width:0;display:flex;position:relative;overflow:visible}.-tJdnW_body>*{z-index:1;position:relative}.-tJdnW_body>.-tJdnW_workspaceRow{z-index:10;align-items:center;min-width:0;padding-left:8px;display:flex}.-tJdnW_workspace{max-width:min(100%,360px);min-height:28px;color:var(--dsw-alias-label-primary);cursor:pointer;background:0 0;border:none;border-radius:16px;align-items:center;gap:4px;padding:0 8px;font-size:13px;font-weight:500;line-height:20px;display:inline-flex}.-tJdnW_workspace:not(:disabled):hover,.-tJdnW_workspace[aria-expanded=true]{background:var(--dsw-alias-interactive-bg-hover)}.-tJdnW_workspace:disabled{cursor:default}.-tJdnW_folder{color:var(--dsw-alias-label-primary);flex:none}.-tJdnW_workspaceLabel{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.-tJdnW_chevron{color:var(--dsw-alias-label-caption);flex:none}.-tJdnW_modalInput{box-sizing:border-box;border:1px solid var(--dsw-alias-border-l2);width:100%;height:44px;color:var(--dsw-alias-label-primary);background:0 0;border-radius:22px;outline:none;padding:7px 14px;font-size:14px;font-weight:400;line-height:22px}.-tJdnW_modalInput::placeholder{color:var(--dsw-alias-label-caption)}.-tJdnW_modalInput:disabled{color:var(--dsw-alias-label-dimmed)}.-tJdnW_modalAction{min-width:72px}.-tJdnW_modalError{color:var(--dsw-alias-state-error-primary);margin-top:8px;font-size:12px;line-height:18px}";
-		const tagId$5 = "@deepseek-ai/dsh-client-ui-conversation/HeroShell.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$5) + "]") === null) {
+		const css$3 = ".QUAvPa_root{justify-content:center;align-items:center;min-width:0;height:100%;padding:0 24px;display:flex}.QUAvPa_stack{width:100%;max-width:var(--dsh-composer-card-max-width);flex-direction:column;align-items:stretch;gap:12px;display:flex;overflow:visible}.QUAvPa_headline{color:var(--dsw-alias-label-primary);flex-wrap:wrap;justify-content:center;align-items:center;gap:12px 10px;font-size:26px;font-weight:500;line-height:32px;display:flex}.QUAvPa_titleGroup{flex-wrap:wrap;justify-content:center;align-items:center;gap:4px 7px;min-width:0;display:flex}.QUAvPa_previewBadge{border:.5px solid var(--dsw-alias-interactive-bg-hover);corner-shape:round;background:var(--dsw-alias-state-business-tertiary);color:var(--dsw-alias-label-primary-bluish);font-family:var(--ds-font-family-code);white-space:nowrap;border-radius:999px;align-self:flex-start;margin-top:2px;padding:1px 7px 0;font-size:12px;font-weight:500;line-height:18px}.QUAvPa_fishHitbox{flex:none;justify-content:center;align-items:center;display:inline-flex}.QUAvPa_fish{transform-origin:50% 60%;color:var(--dsw-alias-label-primary);display:block;overflow:visible}@keyframes QUAvPa_hero-fish-swim{0%,to{transform:none}35%{transform:rotate(-4deg)translate(-.4px,-.9px)}70%{transform:rotate(1.6deg)translate(.3px,.2px)}}@media (hover:hover) and (prefers-reduced-motion:no-preference){.QUAvPa_fishHitbox:hover .QUAvPa_fish{animation:1.6s ease-in-out infinite QUAvPa_hero-fish-swim}}.QUAvPa_body{flex-direction:column;gap:12px;min-width:0;display:flex;position:relative;overflow:visible}.QUAvPa_body>*{z-index:1;position:relative}.QUAvPa_body>.QUAvPa_workspaceRow{z-index:10;align-items:center;min-width:0;padding-left:8px;display:flex}.QUAvPa_workspace{border-radius:var(--dsw-radius-sm);max-width:min(100%,360px);min-height:28px;color:var(--dsw-alias-label-primary);cursor:pointer;background:0 0;border:none;align-items:center;gap:4px;padding:0 8px;font-size:13px;font-weight:500;line-height:20px;display:inline-flex}.QUAvPa_workspace:not(:disabled):hover,.QUAvPa_workspace[aria-expanded=true]{background:var(--dsw-alias-interactive-bg-hover)}.QUAvPa_workspace:disabled{cursor:default}.QUAvPa_folder{color:var(--dsw-alias-label-primary);flex:none}.QUAvPa_workspaceLabel{text-overflow:ellipsis;white-space:nowrap;min-width:0;overflow:hidden}.QUAvPa_chevron{color:var(--dsw-alias-label-caption);flex:none}.QUAvPa_modalInput{box-sizing:border-box;border:.5px solid var(--dsw-alias-border-l4);border-radius:var(--dsw-radius-lg);width:100%;height:44px;color:var(--dsw-alias-label-primary);background:0 0;outline:none;padding:7px 14px;font-size:14px;font-weight:400;line-height:22px}.QUAvPa_modalInput::placeholder{color:var(--dsw-alias-label-caption)}.QUAvPa_modalInput:disabled{color:var(--dsw-alias-label-dimmed)}.QUAvPa_modalAction{min-width:72px}.QUAvPa_modalError{color:var(--dsw-alias-state-error-primary);margin-top:8px;font-size:12px;line-height:18px}";
+		const tagId$3 = "@deepseek-ai/dsh-client-ui-conversation/HeroShell.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$3) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
-			tag.dataset.pluginCss = tagId$5;
-			tag.textContent = css$5;
+			tag.dataset.pluginCss = tagId$3;
+			tag.textContent = css$3;
 			document.head.appendChild(tag);
 		}
 		var HeroShell_module_css_default = {
-			"body": "-tJdnW_body",
-			"chevron": "-tJdnW_chevron",
-			"fish": "-tJdnW_fish",
-			"fishHitbox": "-tJdnW_fishHitbox",
-			"folder": "-tJdnW_folder",
-			"headline": "-tJdnW_headline",
-			"headlineText": "-tJdnW_headlineText",
-			"hero-fish-swim": "-tJdnW_hero-fish-swim",
-			"modalAction": "-tJdnW_modalAction",
-			"modalError": "-tJdnW_modalError",
-			"modalInput": "-tJdnW_modalInput",
-			"previewBadge": "-tJdnW_previewBadge",
-			"root": "-tJdnW_root",
-			"stack": "-tJdnW_stack",
-			"workspace": "-tJdnW_workspace",
-			"workspaceLabel": "-tJdnW_workspaceLabel",
-			"workspaceRow": "-tJdnW_workspaceRow"
+			"body": "QUAvPa_body",
+			"chevron": "QUAvPa_chevron",
+			"fish": "QUAvPa_fish",
+			"fishHitbox": "QUAvPa_fishHitbox",
+			"folder": "QUAvPa_folder",
+			"headline": "QUAvPa_headline",
+			"hero-fish-swim": "QUAvPa_hero-fish-swim",
+			"modalAction": "QUAvPa_modalAction",
+			"modalError": "QUAvPa_modalError",
+			"modalInput": "QUAvPa_modalInput",
+			"previewBadge": "QUAvPa_previewBadge",
+			"root": "QUAvPa_root",
+			"stack": "QUAvPa_stack",
+			"titleGroup": "QUAvPa_titleGroup",
+			"workspace": "QUAvPa_workspace",
+			"workspaceLabel": "QUAvPa_workspaceLabel",
+			"workspaceRow": "QUAvPa_workspaceRow"
 		};
 		//#endregion
 		//#region lib/types/client/skeleton/EmptyHero.js
@@ -13871,10 +17641,10 @@ window.__ModuleLoader__.load({
 				"aria-expanded": menuOpen,
 				onClick,
 				children: [
-					label === void 0 ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconFolderClose16, {
+					label === void 0 ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconFolderCloseRegular, {
 						className: HeroShell_module_css_default.folder,
 						size: 16
-					}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconFolderOpen16, {
+					}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconFolderOpenRegular, {
 						className: HeroShell_module_css_default.folder,
 						size: 16
 					}),
@@ -13882,7 +17652,7 @@ window.__ModuleLoader__.load({
 						className: HeroShell_module_css_default.workspaceLabel,
 						children: label ?? t("hero.chooseWorkspace")
 					}),
-					(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, {
+					(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutlineRegular, {
 						className: HeroShell_module_css_default.chevron,
 						size: 12
 					})
@@ -13932,11 +17702,10 @@ window.__ModuleLoader__.load({
 		*/
 		function HeroShell({ t, renderSlot, children }) {
 			const [hovering, setHovering] = (0, react.useState)(false);
-			const markProps = {
+			const defaultMark = renderSlot("conversation.hero.brand.mark", {
 				size: 34,
 				className: HeroShell_module_css_default.fish
-			};
-			const defaultMark = renderSlot("conversation.hero.brand.mark", markProps, { fallback: (0, react_jsx_runtime.jsx)(HeroFish, { hovering }) });
+			}, { fallback: (0, react_jsx_runtime.jsx)(HeroFish, { hovering }) });
 			const renderIdentity = (mark, headline) => (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)("span", {
 				className: HeroShell_module_css_default.fishHitbox,
 				onMouseEnter: () => {
@@ -13955,169 +17724,47 @@ window.__ModuleLoader__.load({
 				className: HeroShell_module_css_default.root,
 				children: [(0, react_jsx_runtime.jsxs)("div", {
 					className: HeroShell_module_css_default.stack,
-					children: [(0, react_jsx_runtime.jsxs)("div", {
+					children: [(0, react_jsx_runtime.jsx)("div", {
 						className: HeroShell_module_css_default.headline,
-						children: [renderSlot("conversation.hero.identity", {
+						children: renderSlot("conversation.hero.identity", {
 							defaultMark,
 							defaultHeadline,
-							...markProps,
+							size: 34,
+							className: HeroShell_module_css_default.fish,
 							renderIdentity
-						}, { fallback: renderIdentity(defaultMark, defaultHeadline) }), (0, react_jsx_runtime.jsx)("span", {
-							className: HeroShell_module_css_default.previewBadge,
-							"data-hero-preview-badge": "",
-							children: t("hero.preview")
-						})]
+						}, { fallback: renderIdentity(defaultMark, (0, react_jsx_runtime.jsxs)("span", {
+							className: HeroShell_module_css_default.titleGroup,
+							children: [(0, react_jsx_runtime.jsx)("span", { children: defaultHeadline }), (0, react_jsx_runtime.jsx)("span", {
+								className: HeroShell_module_css_default.previewBadge,
+								children: t("hero.preview")
+							})]
+						})) })
 					}), (0, react_jsx_runtime.jsx)("div", { className: HeroShell_module_css_default.body })]
 				}), children]
 			});
 		}
 		//#endregion
-		//#region \0dsh-css:packages/client-ui-conversation/src/client/skeleton/ConversationRoot.module.css.mjs
-		const css$4 = ".EEgdTW_root{background:var(--dsw-alias-bg-base);--dsh-chat-content-width:var(--dsh-chat-user-width,clamp(680px, calc(var(--dsh-conversation-column-width,0px) * .64), 920px));--dsh-composer-card-max-width:calc(var(--dsh-chat-content-width) + 32px);--dsh-composer-side-clearance:16px;--dsh-composer-dock-inset:8px;flex-direction:column;min-width:0;height:100%;display:flex;position:relative}body[data-qs-plugin-theme] .EEgdTW_root{--dsw-alias-bg-base:var(--qs-chrome);--dsw-alias-state-business-primary:var(--qs-accent);--dsw-alias-label-primary:var(--qs-ink);--dsw-alias-label-secondary:var(--qs-secondary)}.EEgdTW_header{border-bottom:1px solid #0000;flex:none;padding:12px 28px 0 20px;position:relative}.EEgdTW_header:after{content:\"\";z-index:0;background:var(--dsw-alias-border-l2);pointer-events:none;height:1px;position:absolute;bottom:1px;left:0;right:0}.EEgdTW_headerHidden{display:none}.EEgdTW_sessionControls{border-bottom:1px solid var(--dsw-alias-border-l2);flex-wrap:wrap;flex:none;align-items:center;gap:8px 16px;min-width:0;padding:6px 16px;display:flex}.EEgdTW_sessionViews{flex-wrap:wrap;align-items:center;gap:4px;display:flex}.EEgdTW_sessionViewTab{color:var(--dsw-alias-label-secondary);cursor:pointer;background:0 0;border:none;border-radius:8px;padding:6px 10px;font-size:12px;line-height:18px}.EEgdTW_sessionViewTab:hover,.EEgdTW_sessionViewTab[aria-selected=true]{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-state-business-primary)}.EEgdTW_sessionViewTab:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:2px}.EEgdTW_sessionActions{flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto;display:flex}.EEgdTW_sessionActions:empty{display:none}.EEgdTW_titleRow{align-items:center;gap:0;min-height:32px;display:flex}.EEgdTW_titleCluster{flex:1;align-items:center;gap:10px;min-width:0;display:flex}.EEgdTW_crumbs{white-space:nowrap;align-items:center;gap:4px;min-width:0;display:flex;overflow:hidden}.EEgdTW_crumbSeg{align-items:center;gap:4px;min-width:0;display:inline-flex}.EEgdTW_crumbSep{color:var(--dsw-alias-label-caption);font-size:14px;line-height:20px}.EEgdTW_crumb{max-width:220px;color:var(--dsw-alias-label-tertiary);text-overflow:ellipsis;white-space:nowrap;cursor:pointer;background:0 0;border:none;border-radius:12px;padding:4px 8px;font-size:14px;line-height:20px;overflow:hidden}.EEgdTW_crumbSubagent{font-size:12px;line-height:18px}.EEgdTW_crumb:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover)}.EEgdTW_crumbCurrent{color:var(--dsw-alias-label-primary);cursor:default;font-weight:500}.EEgdTW_headerActions{flex:none;align-items:center;gap:8px;display:flex}.EEgdTW_headerUtilities{flex:none;align-items:center;gap:8px;margin-left:20px;display:flex}.EEgdTW_headerUtilities:empty{display:none}.EEgdTW_tabs{z-index:1;gap:36px;margin-top:4px;padding-left:8px;display:flex;position:relative}.EEgdTW_tab{color:var(--dsw-alias-label-tertiary);cursor:pointer;background:0 0;border:none;padding:0 0 11px;font-size:13px;font-weight:500;line-height:16px;position:relative}.EEgdTW_tab:after{content:\"\";background:0 0;border-radius:2px;height:2px;position:absolute;bottom:1px;left:0;right:0}.EEgdTW_tabActive{color:var(--dsw-alias-state-business-primary)}.EEgdTW_tabActive:after{background:var(--dsw-alias-state-business-primary)}.EEgdTW_viewArea{flex-direction:column;flex:1;min-height:0;display:flex}.EEgdTW_widthHandle{z-index:8;width:min(40px, calc((100% - var(--dsh-chat-content-width)) / 2 - 24px - 24px));cursor:col-resize;position:absolute;top:0;bottom:0}.EEgdTW_widthHandle[data-side=left]{right:calc(50% + var(--dsh-chat-content-width) / 2 + 24px)}.EEgdTW_widthHandle[data-side=right]{left:calc(50% + var(--dsh-chat-content-width) / 2 + 24px)}.EEgdTW_widthHandle:after{content:\"\";background:linear-gradient(to bottom, transparent calc(var(--dsh-width-handle-pointer-y,50%) - 52px), var(--dsw-alias-scrollbar-hover-l1) calc(var(--dsh-width-handle-pointer-y,50%) - 12px), var(--dsw-alias-scrollbar-hover-l1) calc(var(--dsh-width-handle-pointer-y,50%) + 12px), transparent calc(var(--dsh-width-handle-pointer-y,50%) + 52px));opacity:0;pointer-events:none;border-radius:3px;width:3px;position:absolute;top:0;bottom:0}.EEgdTW_widthHandle[data-side=left]:after{right:16px}.EEgdTW_widthHandle[data-side=right]:after{left:16px}.EEgdTW_widthHandle:hover:after,.EEgdTW_widthHandle[data-dragging]:after{opacity:1}.EEgdTW_root:has([data-conversation-composer-overlay]) .EEgdTW_widthHandle{display:none}.EEgdTW_composerStack{--dsh-composer-stack-gap:6px;gap:var(--dsh-composer-stack-gap);flex-direction:column;display:flex}.EEgdTW_composerSeat{--dsh-composer-text-max-height:336px;flex-direction:column;flex:none;display:flex}.EEgdTW_root[data-phase=active]{overflow:hidden}.EEgdTW_root[data-phase=active] .EEgdTW_header{flex:none}.EEgdTW_body{flex-direction:column;flex:1;min-height:0;display:flex;position:relative}.EEgdTW_scrollBody{scrollbar-gutter:stable;flex-direction:column;flex:1;min-height:0;display:flex;overflow-y:auto}.EEgdTW_root[data-phase=active] .EEgdTW_viewArea{flex:1 0 auto;min-height:auto}.EEgdTW_root[data-phase=active] .EEgdTW_composerSeat{z-index:7;background:linear-gradient(180deg, color-mix(in srgb, var(--dsw-alias-bg-base) 0%, transparent) 0px, var(--dsw-alias-bg-base) 36px);position:sticky;bottom:0}.EEgdTW_root[data-phase=active] .EEgdTW_composerSeat:has([data-trigger-menu]){z-index:9}.EEgdTW_scrollBody:has([data-conversation-composer-overlay]){scrollbar-gutter:auto;position:relative;overflow:hidden auto}.EEgdTW_scrollBody:has([data-conversation-composer-overlay])>[data-slot=conversation\\.session]>.EEgdTW_viewArea{flex:1 1 0;min-height:0;overflow:hidden}.EEgdTW_scrollBody:has([data-conversation-composer-overlay])>.EEgdTW_composerSeat{right:var(--dsh-scrollbar-width);position:absolute;bottom:0;left:0}.EEgdTW_composerHero{width:min(calc(var(--dsh-composer-card-max-width) + 2 * var(--dsh-composer-side-clearance)), 100%);z-index:1;align-self:center;gap:8px;padding-bottom:32px}.EEgdTW_heroWorkspaceRow{align-items:center;gap:2px;min-width:0;margin-top:4px;padding-left:20px;display:flex}.EEgdTW_root[data-phase=hero] .EEgdTW_scrollBody{justify-content:center;overflow-y:auto}.EEgdTW_root[data-phase=settling] .EEgdTW_composerSeat{visibility:hidden}@media (width<=840px){body[data-qs-mobile] .EEgdTW_root{--dsh-composer-side-clearance:8px;--dsh-chat-content-width:100%;--dsh-composer-text-max-height:min(160px,28dvh);min-height:0}body[data-qs-mobile] .EEgdTW_header{border-radius:16px;margin:6px 8px 0;padding:10px 12px 0}body[data-qs-mobile] .EEgdTW_titleRow{flex-wrap:wrap;gap:4px}body[data-qs-mobile] .EEgdTW_titleCluster{flex-wrap:wrap;gap:6px}body[data-qs-mobile] .EEgdTW_crumbs{flex:100%}body[data-qs-mobile] .EEgdTW_crumb{max-width:min(260px,65vw);padding:4px 0}body[data-qs-mobile] .EEgdTW_headerUtilities{gap:6px;margin-left:auto}body[data-qs-mobile] .EEgdTW_tabs{gap:24px;margin-top:6px;padding:0;overflow-x:auto}body[data-qs-mobile] .EEgdTW_tab{white-space:nowrap;flex-shrink:0;min-height:38px}body[data-qs-mobile] .EEgdTW_widthHandle{display:none}body[data-qs-mobile] .EEgdTW_scrollBody{overscroll-behavior-y:contain}body[data-qs-mobile] .EEgdTW_composerSeat{padding-bottom:env(safe-area-inset-bottom,0px);--dsh-composer-text-max-height:min(160px,28dvh)}}@media (width<=840px) and (height<=540px){body[data-qs-mobile] .EEgdTW_header{padding-top:4px}body[data-qs-mobile] .EEgdTW_headerActions{display:none}body[data-qs-mobile] .EEgdTW_crumbs{flex:1}body[data-qs-mobile] .EEgdTW_titleCluster{flex-wrap:nowrap}body[data-qs-mobile] .EEgdTW_tabs{margin-top:0}}";
-		const tagId$4 = "@deepseek-ai/dsh-client-ui-conversation/ConversationRoot.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$4) + "]") === null) {
-			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
-			tag.dataset.pluginCss = tagId$4;
-			tag.textContent = css$4;
-			document.head.appendChild(tag);
+		//#region lib/types/client/skeleton/ConversationContent.js
+		function ConversationSessionView({ renderSlot }) {
+			return renderSlot("conversation.session", {});
 		}
-		var ConversationRoot_module_css_default = {
-			"body": "EEgdTW_body",
-			"composerHero": "EEgdTW_composerHero",
-			"composerSeat": "EEgdTW_composerSeat",
-			"composerStack": "EEgdTW_composerStack",
-			"crumb": "EEgdTW_crumb",
-			"crumbCurrent": "EEgdTW_crumbCurrent",
-			"crumbs": "EEgdTW_crumbs",
-			"crumbSeg": "EEgdTW_crumbSeg",
-			"crumbSep": "EEgdTW_crumbSep",
-			"crumbSubagent": "EEgdTW_crumbSubagent",
-			"header": "EEgdTW_header",
-			"headerActions": "EEgdTW_headerActions",
-			"headerHidden": "EEgdTW_headerHidden",
-			"headerUtilities": "EEgdTW_headerUtilities",
-			"heroWorkspaceRow": "EEgdTW_heroWorkspaceRow",
-			"root": "EEgdTW_root",
-			"scrollBody": "EEgdTW_scrollBody",
-			"sessionActions": "EEgdTW_sessionActions",
-			"sessionControls": "EEgdTW_sessionControls",
-			"sessionViews": "EEgdTW_sessionViews",
-			"sessionViewTab": "EEgdTW_sessionViewTab",
-			"tab": "EEgdTW_tab",
-			"tabActive": "EEgdTW_tabActive",
-			"tabs": "EEgdTW_tabs",
-			"titleCluster": "EEgdTW_titleCluster",
-			"titleRow": "EEgdTW_titleRow",
-			"viewArea": "EEgdTW_viewArea",
-			"widthHandle": "EEgdTW_widthHandle"
-		};
-		//#endregion
-		//#region lib/types/client/skeleton/ConversationRoot.js
-		/** localStorage key for the dragged transcript width preference (px). */
-		const WIDTH_PREF_KEY = "dsh.conversation.contentWidth";
-		/** Floor for a dragged content width; matches the layout center-column minimum. */
-		const CONTENT_MIN = 640;
-		/** Column budget the content must leave free: 88px per side keeps the width
-		* handles fully placeable (24px inset + 40px strip + 24px safe zone) — a
-		* larger dragged width would push its own handles off the column and leave no
-		* way to drag back. */
-		const CONTENT_EDGE_BUDGET = 176;
-		/** Reads the persisted width preference; durable-storage boundary, so a
-		* missing or corrupt value resolves to "no preference".
-		* @returns the stored width in px, or null when unset or invalid. */
-		function readWidthPreference() {
-			const raw = localStorage.getItem(WIDTH_PREF_KEY);
-			if (raw === null) return null;
-			const value = Number(raw);
-			return Number.isFinite(value) && value > 0 ? value : null;
+		function NoConversationWidthControls() {
+			return null;
 		}
-		/** Resolves the content width the CSS axis would show for a column width.
-		* @param columnWidth - the conversation column's rendered width in px.
-		* @param preference - the dragged preference, or null for the adaptive clamp.
-		* @returns the resolved content width in px (mirrors the CSS clamp). */
-		function resolveContentWidth(columnWidth, preference) {
-			const max = Math.max(CONTENT_MIN, columnWidth - CONTENT_EDGE_BUDGET);
-			if (preference !== null) return Math.min(Math.max(preference, CONTENT_MIN), max);
-			return Math.max(680, Math.min(columnWidth * .64, 920));
-		}
-		/** One transcript width handle: pointer capture + rAF-throttled symmetric
-		* resize (both sides write the one centered width, so outward travel widens
-		* by 2× the pointer distance). pointermove publishes the pointer's Y as a CSS
-		* variable so the glow indicator rides it. Mirrors ui-layout AppFrame's
-		* DragHandle capture model. */
-		function WidthHandle(props) {
-			const [dragging, setDragging] = (0, react.useState)(false);
-			const base = (0, react.useRef)(0);
-			const origin = (0, react.useRef)(0);
-			const latest = (0, react.useRef)(0);
-			const frame = (0, react.useRef)(null);
-			const callbacks = (0, react.useRef)(props);
-			callbacks.current = props;
-			const outwardWidth = () => {
-				const dx = latest.current - origin.current;
-				const outward = callbacks.current.side === "right" ? dx : -dx;
-				return base.current + outward * 2;
-			};
-			const cancelFrame = () => {
-				if (frame.current !== null) {
-					cancelAnimationFrame(frame.current);
-					frame.current = null;
-				}
-			};
-			const onPointerDown = (0, react.useCallback)((e) => {
-				e.preventDefault();
-				e.currentTarget.setPointerCapture(e.pointerId);
-				origin.current = e.clientX;
-				latest.current = e.clientX;
-				base.current = callbacks.current.onStart();
-				setDragging(true);
-			}, []);
-			const onPointerMove = (0, react.useCallback)((e) => {
-				const box = e.currentTarget.getBoundingClientRect();
-				e.currentTarget.style.setProperty("--dsh-width-handle-pointer-y", `${e.clientY - box.top}px`);
-				if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
-				latest.current = e.clientX;
-				frame.current ??= requestAnimationFrame(() => {
-					frame.current = null;
-					callbacks.current.onDrag(outwardWidth());
-				});
-			}, []);
-			const onPointerUp = (0, react.useCallback)((e) => {
-				if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
-				e.currentTarget.releasePointerCapture(e.pointerId);
-				cancelFrame();
-				latest.current = e.clientX;
-				if (latest.current !== origin.current) callbacks.current.onCommit(outwardWidth());
-				setDragging(false);
-				callbacks.current.onEnd();
-			}, []);
-			const onPointerCancel = (0, react.useCallback)(() => {
-				cancelFrame();
-				setDragging(false);
-				callbacks.current.onEnd();
-			}, []);
-			return (0, react_jsx_runtime.jsx)("div", {
-				className: ConversationRoot_module_css_default.widthHandle,
-				"data-side": props.side,
-				"data-width-handle": props.side,
-				"data-dragging": dragging || void 0,
-				onPointerDown,
-				onPointerMove,
-				onPointerUp,
-				onPointerCancel,
-				onLostPointerCapture: onPointerCancel
-			});
-		}
-		function ConversationRoot({ sessionId, useSession, useSessions, useSessionPendingInteraction, useWorkspaces, useConversation, useInput, useComposerBlock, renderSlot, renderSlotChain, selectWorkspace, t }) {
-			const session = useSession((s) => s);
-			const pendingInteraction = useSessionPendingInteraction((snapshot) => sessionId === void 0 ? void 0 : snapshot.get(sessionId));
-			const conversation = useConversation((s) => s);
-			const shellPhase = session === void 0 || conversation === void 0 ? "blank" : conversationPhase(session, conversation);
-			const openState = session?.openState;
+		/**
+		* Render the shared Conversation body and its occurrence-selected local Components.
+		* @param props - Factory input, standard Session sources, and Conversation seats.
+		* @returns the Conversation view, Composer, and optional width controls.
+		*/
+		function ConversationContent(props) {
+			const { sessionId, phase, hero, useSession, useSessions, useSessionStatus, useWorkspaces, useInput, useComposerBlock, renderSlot, renderSlotChain, selectWorkspace, t, useFactorySlot } = props;
+			const session = useSession((snapshot) => snapshot);
+			const Views = useFactorySlot("views", ConversationSessionView);
+			const WidthControls = useFactorySlot("widthControls", NoConversationWidthControls);
+			const [body, setBody] = (0, react.useState)(null);
+			const pendingInteraction = useSessionStatus((snapshot) => sessionId === void 0 ? void 0 : snapshot.get(sessionId)?.pendingInteraction);
 			const inputState = useInput((s) => s);
 			const cwd = useSessions((s) => sessionId === void 0 ? void 0 : s.byId[sessionId]?.cwd);
-			const summaryBlank = useSessions((s) => sessionId === void 0 ? void 0 : s.byId[sessionId]?.blank);
 			const workspaces = useWorkspaces((s) => s);
 			const composerBlock = useComposerBlock((block) => block);
 			const [pickerOpen, setPickerOpen] = (0, react.useState)(false);
@@ -14129,64 +17776,13 @@ window.__ModuleLoader__.load({
 				seatObserver.current = null;
 				const scroller = seat?.parentElement ?? null;
 				if (seat === null || scroller === null) return;
-				let previousHeight = seat.offsetHeight;
 				seatObserver.current = new ResizeObserver(() => {
-					const nextHeight = seat.offsetHeight;
-					const growth = nextHeight - previousHeight;
-					if (growth > 1) {
-						const uncovered = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight;
-						if (uncovered >= growth - 2 && uncovered <= growth + 48) scroller.scrollTop += uncovered;
-					}
-					previousHeight = nextHeight;
-					scroller.style.setProperty("--dsh-composer-height", `${nextHeight}px`);
+					scroller.style.setProperty("--dsh-composer-height", `${seat.offsetHeight}px`);
 					scroller.style.setProperty("--dsh-conversation-viewport-height", `${scroller.clientHeight}px`);
 				});
 				seatObserver.current.observe(seat);
 				seatObserver.current.observe(scroller);
 			}, []);
-			const rootEl = (0, react.useRef)(null);
-			const rootObserver = (0, react.useRef)(null);
-			const publishWidths = (0, react.useCallback)((root) => {
-				const column = root.offsetWidth;
-				root.style.setProperty("--dsh-conversation-column-width", `${column}px`);
-				const preference = readWidthPreference();
-				if (preference === null) root.style.removeProperty("--dsh-chat-user-width");
-				else root.style.setProperty("--dsh-chat-user-width", `${resolveContentWidth(column, preference)}px`);
-			}, []);
-			const rootResizeRef = (0, react.useCallback)((root) => {
-				rootObserver.current?.disconnect();
-				rootObserver.current = null;
-				rootEl.current = root;
-				if (root === null) return;
-				rootObserver.current = new ResizeObserver(() => {
-					publishWidths(root);
-				});
-				rootObserver.current.observe(root);
-				publishWidths(root);
-			}, [publishWidths]);
-			const onHandleStart = (0, react.useCallback)(() => {
-				const root = rootEl.current;
-				/* v8 ignore next -- handles render inside the root, so the ref is always attached. */
-				if (root === null) return 680;
-				return resolveContentWidth(root.offsetWidth, readWidthPreference());
-			}, []);
-			const onHandleDrag = (0, react.useCallback)((width) => {
-				const root = rootEl.current;
-				/* v8 ignore next -- handles render inside the root, so the ref is always attached. */
-				if (root === null) return;
-				const clamped = resolveContentWidth(root.offsetWidth, width);
-				root.style.setProperty("--dsh-chat-user-width", `${clamped}px`);
-			}, []);
-			const onHandleCommit = (0, react.useCallback)((width) => {
-				const root = rootEl.current;
-				/* v8 ignore next -- handles render inside the root, so the ref is always attached. */
-				if (root === null) return;
-				localStorage.setItem(WIDTH_PREF_KEY, `${resolveContentWidth(root.offsetWidth, width)}`);
-			}, []);
-			const onHandleEnd = (0, react.useCallback)(() => {
-				const root = rootEl.current;
-				if (root !== null) publishWidths(root);
-			}, [publishWidths]);
 			const sessionWorkspace = sessionId === void 0 ? void 0 : workspaces.items.find((workspace) => workspace.sessionIds.includes(sessionId));
 			const pendingWorkspace = workspaces.items.find((workspace) => workspace.workspaceId === pendingWorkspaceId);
 			(0, react.useEffect)(() => {
@@ -14198,17 +17794,14 @@ window.__ModuleLoader__.load({
 				workspaces.phase,
 				pendingWorkspace
 			]);
-			const parentAvailabilityPending = session?.subagent?.address.mode === "continuable" && session.subagent.parentAvailable === void 0;
-			const settling = sessionId !== void 0 && (shellPhase === "blank" && openState === "loading" && summaryBlank !== true || parentAvailabilityPending);
-			const hero = sessionId === void 0 || shellPhase === "blank" && (openState === "open" || summaryBlank === true);
 			const zone = session === void 0 || inputState === void 0 ? void 0 : {
 				session,
 				input: inputState
 			};
-			const chipTitle = pendingWorkspace?.title ?? (sessionId === void 0 ? void 0 : sessionWorkspace?.title ?? (workspaces.phase === "ready" || cwd === void 0 || cwd === "" ? void 0 : workspaceLabel(cwd)));
+			const storedChipTitle = pendingWorkspace?.title ?? (sessionId === void 0 ? void 0 : sessionWorkspace?.title ?? (workspaces.phase === "ready" || cwd === void 0 || cwd === "" ? void 0 : workspaceLabel(cwd)));
+			const chipTitle = storedChipTitle === void 0 ? void 0 : workspaceDisplayTitle(storedChipTitle, t("workspace.defaultName"));
 			const heroWorkspaceRow = (0, react_jsx_runtime.jsxs)("div", {
 				className: ConversationRoot_module_css_default.heroWorkspaceRow,
-				"data-hero-workspace-row": "",
 				children: [
 					(0, react_jsx_runtime.jsx)(WorkspaceChip, {
 						buttonRef: pickerAnchor,
@@ -14235,7 +17828,10 @@ window.__ModuleLoader__.load({
 						}
 					}),
 					renderSlot("conversation.hero.agentPreset", {}),
-					renderSlot("conversation.hero.accessory", {})
+					sessionId === void 0 ? null : (0, react_jsx_runtime.jsx)("div", {
+						className: ConversationRoot_module_css_default.heroOptions,
+						children: renderSlot("conversation.hero.options", {})
+					})
 				]
 			});
 			const inert = sessionId === void 0 || hero && chipTitle === void 0;
@@ -14251,11 +17847,7 @@ window.__ModuleLoader__.load({
 				} : !inert && composerBlock !== void 0 ? {
 					blocked: composerBlock,
 					placeholder: composerBlock.reason
-				} : hero ? { placeholder: t("placeholder.hero") } : {},
-				overlay: sessionId === void 0 ? void 0 : renderSlot("conversation.input.overlay", {}),
-				leftItems: zone === void 0 ? null : renderSlot("conversation.input.left", zone),
-				rightItems: zone === void 0 ? null : renderSlot("conversation.input.right", zone),
-				footer: !hero && zone !== void 0 ? renderSlot("conversation.composer.dock", zone) : null
+				} : hero ? { placeholder: t("placeholder.hero") } : {}
 			});
 			const composerBar = (0, react_jsx_runtime.jsxs)("div", {
 				className: clsx(ConversationRoot_module_css_default.composerStack, hero && ConversationRoot_module_css_default.composerHero),
@@ -14269,7 +17861,6 @@ window.__ModuleLoader__.load({
 					inputBar
 				]
 			});
-			const phase = settling ? "settling" : hero ? "hero" : "active";
 			const composer = renderSlotChain("conversation.composer", {
 				sessionId,
 				session,
@@ -14283,37 +17874,104 @@ window.__ModuleLoader__.load({
 				ref: seatResizeRef,
 				className: ConversationRoot_module_css_default.composerSeat,
 				"data-composer-seat": "",
+				"data-conversation-region": "composer",
 				children: composer
 			});
 			return (0, react_jsx_runtime.jsxs)("div", {
-				ref: rootResizeRef,
-				className: ConversationRoot_module_css_default.root,
-				"data-conversation-root": true,
-				"data-phase": phase,
-				children: [sessionId === void 0 ? null : renderSlot("conversation.session.header", {}), (0, react_jsx_runtime.jsxs)("div", {
-					className: ConversationRoot_module_css_default.body,
-					children: [(0, react_jsx_runtime.jsxs)("div", {
-						className: ConversationRoot_module_css_default.scrollBody,
-						"data-conversation-scroll": "",
-						children: [sessionId === void 0 ? null : renderSlot("conversation.session", {}), composerSeat]
-					}), phase === "active" && ["left", "right"].map((side) => (0, react_jsx_runtime.jsx)(WidthHandle, {
-						side,
-						onStart: onHandleStart,
-						onDrag: onHandleDrag,
-						onCommit: onHandleCommit,
-						onEnd: onHandleEnd
-					}, side))]
+				ref: setBody,
+				className: clsx(ConversationRoot_module_css_default.body, props.variant === "embedded" && ConversationRoot_module_css_default.embeddedBody),
+				"data-conversation-content": "",
+				"data-conversation-session": sessionId,
+				"data-conversation-region": "chat",
+				"data-content-phase": phase,
+				children: [(0, react_jsx_runtime.jsxs)("div", {
+					className: ConversationRoot_module_css_default.scrollBody,
+					"data-conversation-scroll": "",
+					children: [sessionId === void 0 ? null : (0, react_jsx_runtime.jsx)(Views, {}), composerSeat]
+				}), (0, react_jsx_runtime.jsx)(WidthControls, {
+					container: body,
+					phase
 				})]
+			});
+		}
+		//#endregion
+		//#region lib/types/client/skeleton/ConversationPanel.js
+		/**
+		* Render the Conversation with optional current-Session binding.
+		* @param props - main-slot inputs and the declared Conversation renderer.
+		* @returns the Conversation subtree.
+		*/
+		function ConversationPanel({ renderSlot }) {
+			return renderSlot("main.conversation", {});
+		}
+		//#endregion
+		//#region lib/types/client/skeleton/ConversationHeader.js
+		/** Resident conversation navigation and Session-specific header content. */
+		/**
+		* Keeps global navigation available before a Session exists.
+		* @param props - Optional Session sources and authorized header slots.
+		* @returns The persistent header with any selected Session's title and views.
+		*/
+		function ConversationHeader({ sessionId, useSession, useConversation, renderSlot }) {
+			const session = useSession((s) => s);
+			const conversation = useConversation((s) => s);
+			const blank = session === void 0 || conversation === void 0 || session.blank && conversationPhase(session, conversation) === "blank";
+			return (0, react_jsx_runtime.jsxs)("header", {
+				className: clsx(ConversationRoot_module_css_default.header, blank && ConversationRoot_module_css_default.headerBlank, sessionId === void 0 && ConversationRoot_module_css_default.headerSessionless),
+				"data-window-drag": true,
+				children: [(0, react_jsx_runtime.jsx)("div", {
+					className: ConversationRoot_module_css_default.headerLeading,
+					"data-conversation-header-leading": "",
+					children: renderSlot("conversation.header.leading", {})
+				}), sessionId === void 0 ? (0, react_jsx_runtime.jsx)("div", { className: ConversationRoot_module_css_default.titleRow }) : renderSlot("conversation.session.header", { hideChrome: blank })]
+			});
+		}
+		/**
+		* Resolve a preferred registered View, then Chat, without choosing another View.
+		* @param tabs - currently registered Views.
+		* @param selectedId - preferred View identity, when one is stored.
+		* @returns the selected View, Chat fallback, or undefined when neither is registered.
+		*/
+		function resolveActiveView(tabs, selectedId) {
+			return (selectedId === null ? void 0 : tabs.find((view) => view.id === selectedId)) ?? tabs.find((view) => view.id === "chat");
+		}
+		//#endregion
+		//#region lib/types/client/skeleton/DefaultConversationViews.js
+		/**
+		* Renders the active Session view inside the resident scrollport and keeps
+		* the input draft persisted while blank Hero chrome is visible.
+		* @param props - Strict Session input/store, view ledger, and render shares.
+		* @returns the active view area, or null while the Session remains blank.
+		*/
+		function DefaultConversationViews({ view, useSession, useConversation, useConversationViews, inputActions, useStore, actions, renderSlot, bindDraftPersistence, openView, useInspectCall }) {
+			const tabs = useConversationViews((value) => value);
+			const inspectCall = useInspectCall((value) => value);
+			const active = resolveActiveView(tabs, useStore((s) => s.view));
+			const session = useSession((s) => s);
+			const conversation = useConversation((s) => s);
+			const viewRequest = useStore((s) => s.viewRequest ?? null);
+			(0, react.useEffect)(() => {
+				const unbindDraftPersistence = bindDraftPersistence(actions.setDraft);
+				inputActions.persistDraft();
+				return () => {
+					unbindDraftPersistence();
+				};
+			}, [inputActions]);
+			if (session.blank && conversationPhase(session, conversation) === "blank") return null;
+			const viewId = view ?? active?.id;
+			return (0, react_jsx_runtime.jsx)("div", {
+				className: ConversationRoot_module_css_default.viewArea,
+				children: viewId !== void 0 && renderSlot("conversation.view", {
+					inspectCall,
+					viewRequest,
+					openView,
+					completeViewRequest: actions.completeViewRequest
+				}, { only: viewId })
 			});
 		}
 		//#endregion
 		//#region lib/types/client/skeleton/ConversationSession.js
 		/** Strict per-session header/body content inserted into the resident conversation layout. */
-		const DEFAULT_VIEW_ID = "chat";
-		/** Resolve a persisted selection, then registered Chat, without choosing another View. */
-		function resolveActiveView(tabs, selectedId) {
-			return (selectedId === null ? void 0 : tabs.find((view) => view.id === selectedId)) ?? tabs.find((view) => view.id === DEFAULT_VIEW_ID);
-		}
 		function deriveAncestry(list, id) {
 			const chain = [];
 			const seen = /* @__PURE__ */ new Set();
@@ -14342,15 +18000,12 @@ window.__ModuleLoader__.load({
 		/**
 		* Keeps session actions and view navigation reachable without the title bar.
 		* @param props - Strict Session store, view ledger, navigation, render, and locale shares.
-		* @returns compact controls and the composer-mounted subagent catalog.
+		* @returns Session navigation controls, with title and tabs after conversation starts.
 		*/
-		function ConversationSessionHeader({ sessionId, useSession, useSessions, useConversation, useConversationViews, useStore, actions, renderSlot, t }) {
+		function ConversationSessionHeader({ sessionId, hideChrome, useSessions, useConversationViews, useStore, selectView, renderSlot, t }) {
 			const tabs = useConversationViews((value) => value);
 			const active = resolveActiveView(tabs, useStore((s) => s.view));
 			const ancestry = useSessions((s) => deriveAncestry(s, sessionId), equalBreadcrumbs);
-			const session = useSession((s) => s);
-			const conversation = useConversation((s) => s);
-			const hideChrome = session.blank && conversationPhase(session, conversation) === "blank";
 			const [seat, setSeat] = (0, react.useState)(null);
 			(0, react.useLayoutEffect)(() => {
 				const next = document.querySelector("[data-composer-subagents]");
@@ -14364,8 +18019,7 @@ window.__ModuleLoader__.load({
 			return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 				(0, react_jsx_runtime.jsx)("header", {
 					"data-conversation-header": true,
-					hidden: true,
-					className: ConversationRoot_module_css_default.headerHidden
+					hidden: true
 				}),
 				!hideChrome && (0, react_jsx_runtime.jsxs)("div", {
 					"data-conversation-controls": true,
@@ -14380,41 +18034,24 @@ window.__ModuleLoader__.load({
 							"aria-selected": viewTab.id === active?.id,
 							className: ConversationRoot_module_css_default.sessionViewTab,
 							onClick: () => {
-								actions.setView(viewTab.id);
+								selectView(viewTab.id);
 							},
 							children: viewTab.label
 						}, viewTab.id))
 					}), (0, react_jsx_runtime.jsxs)("div", {
 						className: ConversationRoot_module_css_default.sessionActions,
-						children: [renderSlot("conversation.session.header.actions", {}), renderSlot("conversation.session.header.utilities", {})]
+						children: [
+							renderSlot("conversation.session.header.actions", {}),
+							renderSlot("conversation.session.header.utilities", {}),
+							renderSlot("conversation.session.header.corner", {})
+						]
 					})]
 				}),
 				seat !== null && lineage !== null ? (0, react_dom.createPortal)(lineage, seat) : null
 			] });
 		}
-		function ConversationSession({ useSession, useConversation, useConversationViews, useInput, inputActions, useStore, actions, renderSlot, bindDraftMirror }) {
-			const active = resolveActiveView(useConversationViews((value) => value), useStore((s) => s.view));
-			const session = useSession((s) => s);
-			const conversation = useConversation((s) => s);
-			const inputState = useInput((s) => s);
-			const storedDraft = useStore((s) => s.draft);
-			const viewRequest = useStore((s) => s.viewRequest ?? null);
-			(0, react.useEffect)(() => {
-				if (inputState.draft === "" && storedDraft !== "") inputActions.setDraft(storedDraft);
-				const unmirror = bindDraftMirror(actions.setDraft);
-				return () => {
-					unmirror();
-				};
-			}, [inputActions]);
-			if (session.blank && conversationPhase(session, conversation) === "blank") return null;
-			return (0, react_jsx_runtime.jsx)("div", {
-				className: ConversationRoot_module_css_default.viewArea,
-				children: active !== void 0 && renderSlot("conversation.view", {
-					viewRequest,
-					openView: actions.openView,
-					completeViewRequest: actions.completeViewRequest
-				}, { only: active.id })
-			});
+		function ConversationSession(props) {
+			return (0, react_jsx_runtime.jsx)(DefaultConversationViews, { ...props });
 		}
 		//#endregion
 		//#region lib/types/client/input/editor/ComposerContentEditable.js
@@ -14483,6 +18120,46 @@ window.__ModuleLoader__.load({
 			}) });
 		}
 		//#endregion
+		//#region lib/types/client/input/editor/DraftEditor.js
+		/**
+		* Render the existing scrollport, editable surface, placeholder, and chip portals.
+		* @param props - borrowed editor and presentation values; this component owns no Hooks.
+		* @returns the existing text-area DOM without an additional wrapper.
+		*/
+		function DraftEditor({ classNames: css, editor, scrollRef, editable, editorDisabled, phase, placeholderText, ariaLabel, workspaceTrigger, workspacePickerOpen, onWorkspaceKeyDown, hint, showPlaceholder }) {
+			return (0, react_jsx_runtime.jsx)("div", {
+				ref: scrollRef,
+				className: css.scroll,
+				"data-input-scroll": true,
+				children: (0, react_jsx_runtime.jsxs)("div", {
+					className: css.grow,
+					children: [
+						(0, react_jsx_runtime.jsx)(ComposerContentEditable, {
+							editor: workspaceTrigger ? null : editor,
+							editable,
+							className: clsx(css.input, editorDisabled && css.inputDisabled),
+							"data-phase": phase,
+							"aria-disabled": editorDisabled || void 0,
+							"data-placeholder": placeholderText,
+							"aria-label": ariaLabel,
+							"aria-haspopup": workspaceTrigger ? "menu" : void 0,
+							"aria-expanded": workspaceTrigger ? workspacePickerOpen : void 0,
+							tabIndex: workspaceTrigger ? 0 : void 0,
+							onKeyDown: workspaceTrigger ? onWorkspaceKeyDown : void 0,
+							style: hint === null ? void 0 : { "--dsh-composer-hint": JSON.stringify(hint) }
+						}),
+						showPlaceholder && (0, react_jsx_runtime.jsx)("div", {
+							"aria-hidden": true,
+							className: css.placeholder,
+							"data-composer-placeholder": true,
+							children: placeholderText
+						}),
+						(0, react_jsx_runtime.jsx)(DecoratorPortals, { editor: workspaceTrigger ? null : editor })
+					]
+				})
+			});
+		}
+		//#endregion
 		//#region lib/types/client/input/editor/keymap.js
 		/** Composition state a keydown can trust (see the module doc's Safari note). */
 		function isComposingEvent(event, recentlyComposing) {
@@ -14497,17 +18174,23 @@ window.__ModuleLoader__.load({
 		function registerComposerKeymap(editor, handlers) {
 			let composing = false;
 			let composingUntil = 0;
+			let rootElement = null;
+			const syncComposition = () => {
+				rootElement?.toggleAttribute("data-composer-composing", composing || editor.isComposing());
+			};
 			const onCompositionStart = () => {
 				composing = true;
+				syncComposition();
 			};
 			const onCompositionEnd = () => {
 				composing = false;
 				composingUntil = Date.now() + 10;
+				editor.update(() => {}, { onUpdate: syncComposition });
 			};
 			const recentlyComposing = () => composing || Date.now() < composingUntil;
 			const arrow = (key) => (event) => {
 				const inComposition = event !== null && isComposingEvent(event, recentlyComposing);
-				if (handlers.arbitrate(key, inComposition) === "consumed") {
+				if (handlers.arbitrate(key, inComposition) !== "pass") {
 					event?.preventDefault();
 					return true;
 				}
@@ -14516,9 +18199,14 @@ window.__ModuleLoader__.load({
 			return Eu(editor.registerRootListener((root, prevRoot) => {
 				prevRoot?.removeEventListener("compositionstart", onCompositionStart);
 				prevRoot?.removeEventListener("compositionend", onCompositionEnd);
+				prevRoot?.removeAttribute("data-composer-composing");
+				composing = false;
+				composingUntil = 0;
+				rootElement = root;
 				root?.addEventListener("compositionstart", onCompositionStart);
 				root?.addEventListener("compositionend", onCompositionEnd);
-			}), editor.registerCommand(sn$1, arrow("up"), 4), editor.registerCommand(ln, arrow("down"), 4), editor.registerCommand(hn$1, arrow("tab"), 4), editor.registerCommand(fn, (event) => {
+				syncComposition();
+			}), editor.registerUpdateListener(syncComposition), editor.registerCommand(sn$1, arrow("up"), 4), editor.registerCommand(ln, arrow("down"), 4), editor.registerCommand(hn$1, (event) => arrow(event.shiftKey ? "tabBack" : "tab")(event), 4), editor.registerCommand(fn, (event) => {
 				handlers.dismissPopup();
 				if (handlers.arbitrate("escape", isComposingEvent(event, recentlyComposing)) === "consumed") {
 					event.preventDefault();
@@ -14533,6 +18221,7 @@ window.__ModuleLoader__.load({
 				}
 				return false;
 			}, 4), editor.registerCommand(cn$1, (event) => {
+				if (event !== null && (event.altKey || event.getModifierState("AltGraph") || event.ctrlKey && event.metaKey || event.shiftKey && (event.ctrlKey || event.metaKey))) return true;
 				if (event?.shiftKey === true) return false;
 				if (event !== null && isComposingEvent(event, recentlyComposing)) return true;
 				if (handlers.arbitrate("enter", false) !== "pass") {
@@ -14547,8 +18236,16 @@ window.__ModuleLoader__.load({
 			}, 4), editor.registerCommand(Je$2, (event) => {
 				const clipboardData = event.clipboardData ?? null;
 				if (clipboardData === null) return false;
-				const files = Array.from(clipboardData.items).filter((item) => item.kind === "file").map((item) => item.getAsFile()).filter((file) => file !== null);
-				if (files.length > 0) handlers.intakeFiles(files);
+				const files = [];
+				const directories = /* @__PURE__ */ new Set();
+				for (const item of clipboardData.items) {
+					if (item.kind !== "file") continue;
+					const file = item.getAsFile();
+					if (file === null) continue;
+					files.push(file);
+					if (typeof item.webkitGetAsEntry === "function" && item.webkitGetAsEntry()?.isDirectory === true) directories.add(file);
+				}
+				if (files.length > 0) handlers.intakeFiles(files, directories.size === 0 ? void 0 : directories);
 				const text = clipboardData.getData("text/plain");
 				if (text === "") {
 					if (files.length === 0) return false;
@@ -14559,6 +18256,124 @@ window.__ModuleLoader__.load({
 				handlers.pasteText(text);
 				return true;
 			}, 4));
+		}
+		//#endregion
+		//#region lib/types/client/input/editor/view-binding.js
+		/**
+		* Reveal the DOM selection within the draft's own scrollport.
+		* @param scrollRef - the InputBar-owned scrollport reference.
+		*/
+		function revealDraftSelection(scrollRef) {
+			const scrollEl = scrollRef.current;
+			if (scrollEl === null || scrollEl.scrollHeight <= scrollEl.clientHeight) return;
+			const selection = window.getSelection();
+			if (selection === null || selection.rangeCount === 0) return;
+			let rect = selection.getRangeAt(0).getBoundingClientRect();
+			if (rect.height === 0 && rect.width === 0) {
+				const anchor = selection.anchorNode;
+				const el = anchor instanceof HTMLElement ? anchor : anchor?.parentElement;
+				if (el === void 0 || el === null) return;
+				rect = el.getBoundingClientRect();
+			}
+			const box = scrollEl.getBoundingClientRect();
+			if (rect.bottom > box.bottom) scrollEl.scrollTop += rect.bottom - box.bottom;
+			else if (rect.top < box.top) scrollEl.scrollTop -= box.top - rect.top;
+		}
+		/**
+		* Focus the borrowed editor and reveal its restored selection.
+		* @param editor - the Session-owned editor.
+		* @param revealSelection - reveal the selection after Lexical restores it.
+		*/
+		function focusDraftEditor(editor, revealSelection) {
+			editor.getRootElement()?.focus({ preventScroll: true });
+			editor.focus(() => {
+				revealSelection();
+			});
+		}
+		/**
+		* Forward wheel movement at the draft's edge to its conversation scrollport.
+		* @param scrollRef - the InputBar-owned scrollport reference.
+		* @returns the listener cleanup, or undefined when the element is absent.
+		*/
+		function installDraftWheel(scrollRef) {
+			const el = scrollRef.current;
+			if (el === null) return;
+			const onWheel = (e) => {
+				const host = el.closest("[data-conversation-scroll]");
+				if (!(host instanceof HTMLElement) || e.deltaY === 0) return;
+				const atTop = el.scrollTop <= 0;
+				const atEnd = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+				if (e.deltaY < 0 && !atTop || e.deltaY > 0 && !atEnd) return;
+				e.preventDefault();
+				host.scrollTop += e.deltaY;
+			};
+			el.addEventListener("wheel", onWheel, { passive: false });
+			return () => {
+				el.removeEventListener("wheel", onWheel);
+			};
+		}
+		/**
+		* Bind this view's file dialog through the existing keyboard face.
+		* @param keyboard - the Session-owned composer operations.
+		* @param gate - live intake availability retained by InputBar.
+		* @param fileInputRef - the view's native file input.
+		* @returns the picker unbind disposer.
+		*/
+		function installDraftFilePicker(keyboard, gate, fileInputRef) {
+			return keyboard.bindFilePicker({
+				available: () => gate.current.canAcceptDrop && fileInputRef.current !== null && !fileInputRef.current.disabled,
+				open: () => {
+					fileInputRef.current?.click();
+				}
+			});
+		}
+		/**
+		* Bind editor gestures to the view's live guards and Session operations.
+		* @param editor - the borrowed Session-owned editor.
+		* @param keyboard - the existing composer keyboard operations.
+		* @param gate - live view values read by the installed handlers.
+		* @returns the keymap disposer.
+		*/
+		function installDraftKeymap(editor, keyboard, gate) {
+			return registerComposerKeymap(editor, {
+				arbitrate: (key, composing) => keyboard.arbitrate(key, composing),
+				space: () => {
+					if (gate.current.machineBusy || gate.current.locked) return false;
+					return keyboard.space();
+				},
+				dismissPopup: () => {
+					keyboard.dismissPopup();
+				},
+				canSubmit: () => !gate.current.locked && !gate.current.machineBusy,
+				submit: (accelerated) => {
+					const g = gate.current;
+					if (accelerated && g.canSteerQueue) {
+						keyboard.steerQueue();
+						return;
+					}
+					if (g.uploadsPending) {
+						g.showToast(g.t("file.stillUploading"));
+						return;
+					}
+					keyboard.submit(resolveSubmitMode(g.busyEnter, g.running, accelerated ? "accelerated" : "enter", g.steeringAvailable), "enter");
+				},
+				intakeFiles: (files, directories) => {
+					gate.current.intakeFiles(files, directories);
+				},
+				pasteText: (text) => {
+					if (gate.current.machineBusy || gate.current.locked) return;
+					keyboard.paste(text);
+				}
+			});
+		}
+		/**
+		* Keep a toolbar press from moving focus away from the draft.
+		* @param event - the toolbar button's mouse event.
+		* @param editor - the borrowed editor, absent in the inert view.
+		*/
+		function keepDraftFocus(event, editor) {
+			event.preventDefault();
+			editor?.getRootElement()?.focus({ preventScroll: true });
 		}
 		//#endregion
 		//#region lib/types/client/image-labels.js
@@ -14574,7 +18389,7 @@ window.__ModuleLoader__.load({
 		}
 		/**
 		* Product copy for a host attachment rejection (the `details.reason` of
-		* `session/attachment-invalid` or `subagent/attachment-unsupported`).
+		* `session/attachment-invalid` or `subagent/attachment-invalid`).
 		* User-solvable reasons name the limit and the way out;
 		* reasons the user cannot act on fold into one send-failed line carrying the
 		* reason code for a bug report.
@@ -14586,7 +18401,7 @@ window.__ModuleLoader__.load({
 		function attachmentErrorText(t, reason, limits) {
 			switch (reason) {
 				case "MODEL_DOES_NOT_SUPPORT_IMAGES": return t("image.modelUnsupported");
-				case "SUBAGENT_IMAGE_UNSUPPORTED": return t("image.subagentUnsupported");
+				case "FILE_NOT_STAGED": return t("file.notStaged");
 				case "IMAGE_TOO_MANY_PIXELS": return t("image.tooManyPixels");
 				case "IMAGE_DIMENSION_TOO_LARGE":
 					if (limits !== void 0) return t("image.dimensionTooLarge", { size: limits.maxImageDimension });
@@ -14624,37 +18439,37 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-conversation/src/client/skeleton/ContextMeter.module.css.mjs
-		const css$3 = "._00XU8q_root{display:inline-flex;position:relative}._00XU8q_trigger{width:28px;height:28px;color:var(--dsw-alias-label-secondary);cursor:pointer;background:0 0;border:none;border-radius:999px;flex:none;place-items:center;display:grid}._00XU8q_trigger:hover{background:var(--dsw-alias-interactive-bg-hover)}._00XU8q_track{fill:none;stroke:var(--dsw-alias-border-l3);stroke-width:2px}._00XU8q_fill{fill:none;stroke:var(--dsw-alias-label-tertiary);stroke-width:2px;stroke-linecap:round}._00XU8q_panel{z-index:100;box-sizing:border-box;border:1px solid var(--dsw-alias-border-inverted);background:var(--dsw-specific-menu);width:264px;box-shadow:var(--dsw-shadow-lv3);color:var(--dsw-alias-label-secondary);cursor:default;border-radius:12px;padding:12px;font-size:12px;line-height:20px;position:absolute;bottom:calc(100% + 8px);right:0}._00XU8q_header{align-items:center;gap:6px;display:flex}._00XU8q_figures{font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-primary);margin-left:auto;font-weight:500}._00XU8q_percent{color:var(--dsw-alias-label-primary);font-weight:500}._00XU8q_headline{color:var(--dsw-alias-label-tertiary)}._00XU8q_headline:empty{display:none}._00XU8q_bar{background:var(--dsw-alias-interactive-bg-hover);border-radius:999px;gap:1px;height:4px;margin:10px 0 12px;display:flex;overflow:hidden}._00XU8q_segment{background:var(--meter-tint,var(--dsw-alias-label-tertiary));border-radius:1px;flex:none;min-width:2px;height:100%}._00XU8q_swatch{background:var(--meter-tint);vertical-align:baseline;border-radius:2px;width:8px;height:8px;margin-right:6px;display:inline-block}._00XU8q_colorSystem{--meter-tint:var(--dsw-static-neutral-bluish-400)}._00XU8q_colorTools{--meter-tint:#a78bfa}._00XU8q_colorMessages{--meter-tint:var(--dsw-static-blue-450)}._00XU8q_rows{margin:6px 0 0}._00XU8q_row{justify-content:space-between;align-items:center;gap:12px;padding:2px 0;display:flex}._00XU8q_row dt{color:var(--dsw-alias-label-secondary)}._00XU8q_row dd{font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-primary);margin:0}";
-		const tagId$3 = "@deepseek-ai/dsh-client-ui-conversation/ContextMeter.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$3) + "]") === null) {
+		const css$2 = "._0Lb50q_root{flex:none;display:inline-flex}._0Lb50q_trigger{border-radius:var(--dsw-radius-sm);color:var(--dsw-alias-label-tertiary);font-family:inherit;font-size:var(--dsh-content-font-size-secondary,13px);font-variant-numeric:tabular-nums;line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));white-space:nowrap;cursor:pointer;background:0 0;border:none;flex:none;align-items:center;gap:6px;padding:1px 8px;display:inline-flex}._0Lb50q_trigger:hover,._0Lb50q_trigger[aria-expanded=true]{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-secondary)}._0Lb50q_track{fill:none;stroke:var(--dsw-alias-border-l3);stroke-width:2px}._0Lb50q_fill{fill:none;stroke:var(--dsw-alias-label-tertiary);stroke-width:2px;stroke-linecap:round}._0Lb50q_panel{z-index:1100;box-sizing:border-box;border-radius:var(--dsw-radius-lg);background:var(--dsw-specific-menu);width:min(264px,100vw - 24px);backdrop-filter:var(--dsw-menu-backdrop-filter);--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);box-shadow:var(--dsw-elevation-prominent);color:var(--dsw-alias-label-secondary);cursor:default;border:0;padding:12px;font-size:12px;line-height:20px;position:fixed}._0Lb50q_header{align-items:center;gap:6px;display:flex}._0Lb50q_figures{font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-primary);margin-left:auto;font-weight:500}._0Lb50q_percent{color:var(--dsw-alias-label-primary);font-weight:500}._0Lb50q_headline{color:var(--dsw-alias-label-tertiary)}._0Lb50q_headline:empty{display:none}._0Lb50q_bar{corner-shape:round;background:var(--dsw-alias-interactive-bg-hover);border-radius:999px;gap:1px;height:4px;margin:10px 0 12px;display:flex;overflow:hidden}._0Lb50q_segment{background:var(--meter-tint,var(--dsw-alias-label-tertiary));border-radius:1px;flex:none;min-width:2px;height:100%}._0Lb50q_swatch{background:var(--meter-tint);vertical-align:baseline;border-radius:2px;width:8px;height:8px;margin-right:6px;display:inline-block}._0Lb50q_colorSystem{--meter-tint:var(--dsw-static-neutral-bluish-400)}._0Lb50q_colorTools{--meter-tint:#a78bfa}._0Lb50q_colorMessages{--meter-tint:var(--dsw-static-blue-450)}._0Lb50q_rows{margin:6px 0 0}._0Lb50q_row{justify-content:space-between;align-items:center;gap:12px;padding:2px 0;display:flex}._0Lb50q_row dt{color:var(--dsw-alias-label-secondary)}._0Lb50q_row dd{font-variant-numeric:tabular-nums;color:var(--dsw-alias-label-primary);margin:0}";
+		const tagId$2 = "@deepseek-ai/dsh-client-ui-conversation/ContextMeter.module.css";
+		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$2) + "]") === null) {
 			const tag = document.createElement("style");
 			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
-			tag.dataset.pluginCss = tagId$3;
-			tag.textContent = css$3;
+			tag.dataset.pluginCss = tagId$2;
+			tag.textContent = css$2;
 			document.head.appendChild(tag);
 		}
 		var ContextMeter_module_css_default = {
-			"bar": "_00XU8q_bar",
-			"colorMessages": "_00XU8q_colorMessages",
-			"colorSystem": "_00XU8q_colorSystem",
-			"colorTools": "_00XU8q_colorTools",
-			"figures": "_00XU8q_figures",
-			"fill": "_00XU8q_fill",
-			"header": "_00XU8q_header",
-			"headline": "_00XU8q_headline",
-			"panel": "_00XU8q_panel",
-			"percent": "_00XU8q_percent",
-			"root": "_00XU8q_root",
-			"row": "_00XU8q_row",
-			"rows": "_00XU8q_rows",
-			"segment": "_00XU8q_segment",
-			"swatch": "_00XU8q_swatch",
-			"track": "_00XU8q_track",
-			"trigger": "_00XU8q_trigger"
+			"bar": "_0Lb50q_bar",
+			"colorMessages": "_0Lb50q_colorMessages",
+			"colorSystem": "_0Lb50q_colorSystem",
+			"colorTools": "_0Lb50q_colorTools",
+			"figures": "_0Lb50q_figures",
+			"fill": "_0Lb50q_fill",
+			"header": "_0Lb50q_header",
+			"headline": "_0Lb50q_headline",
+			"panel": "_0Lb50q_panel",
+			"percent": "_0Lb50q_percent",
+			"root": "_0Lb50q_root",
+			"row": "_0Lb50q_row",
+			"rows": "_0Lb50q_rows",
+			"segment": "_0Lb50q_segment",
+			"swatch": "_0Lb50q_swatch",
+			"track": "_0Lb50q_track",
+			"trigger": "_0Lb50q_trigger"
 		};
 		//#endregion
 		//#region lib/types/client/skeleton/ContextMeter.js
-		/** Composer context-occupancy meter: a ring beside the send button fed by the
+		/** Composer context-occupancy meter: a ring and percentage below the card fed by the
 		* `contextPressure` projection, with a click-open panel of the heuristic
 		* `contextBreakdown` composition (system prompt, tools, conversation).
 		* Renders nothing until a provider reports both pressure and a route
@@ -14703,24 +18518,28 @@ window.__ModuleLoader__.load({
 			const breakdown = useProjection("contextBreakdown");
 			const [open, setOpen] = (0, react.useState)(false);
 			const rootRef = (0, react.useRef)(null);
+			const panelRef = (0, react.useRef)(null);
 			const context = contextOccupancy(pressure);
 			const available = context !== null;
+			const position = (0, _deepseek_ai_dsh_client_ui_primitives.useAnchoredPosition)({
+				open: open && available,
+				anchorRef: rootRef,
+				panelRef,
+				side: "top",
+				gap: 8,
+				margin: 12
+			});
+			(0, _deepseek_ai_dsh_client_ui_primitives.useDismissOnOutsidePointer)(rootRef, open && available, setOpen, panelRef);
 			(0, react.useEffect)(() => {
 				if (!available && open) setOpen(false);
 			}, [available, open]);
 			(0, react.useEffect)(() => {
 				if (!open || !available) return;
-				const onPointerDown = (e) => {
-					if (e.target instanceof Node && rootRef.current?.contains(e.target) === true) return;
-					setOpen(false);
-				};
 				const onKeyDown = (e) => {
 					if (e.key === "Escape") setOpen(false);
 				};
-				document.addEventListener("pointerdown", onPointerDown);
 				document.addEventListener("keydown", onKeyDown);
 				return () => {
-					document.removeEventListener("pointerdown", onPointerDown);
 					document.removeEventListener("keydown", onKeyDown);
 				};
 			}, [available, open]);
@@ -14746,7 +18565,7 @@ window.__ModuleLoader__.load({
 					side: "top",
 					delayMs: 200,
 					disabled: open,
-					children: (0, react_jsx_runtime.jsx)("button", {
+					children: (0, react_jsx_runtime.jsxs)("button", {
 						type: "button",
 						className: ContextMeter_module_css_default.trigger,
 						"aria-label": t("context.aria", { percent: reading }),
@@ -14755,7 +18574,7 @@ window.__ModuleLoader__.load({
 						onClick: () => {
 							setOpen(!open);
 						},
-						children: (0, react_jsx_runtime.jsxs)("svg", {
+						children: [(0, react_jsx_runtime.jsxs)("svg", {
 							viewBox: "0 0 14 14",
 							width: "14",
 							height: "14",
@@ -14773,10 +18592,16 @@ window.__ModuleLoader__.load({
 								strokeDasharray: `${CIRCUMFERENCE * percent / 100} ${CIRCUMFERENCE}`,
 								transform: "rotate(-90 7 7)"
 							})]
-						})
+						}), (0, react_jsx_runtime.jsx)("span", { children: reading })]
 					})
-				}), open && (0, react_jsx_runtime.jsxs)("div", {
+				}), open && (0, react_dom.createPortal)((0, react_jsx_runtime.jsxs)("div", {
+					ref: panelRef,
 					className: ContextMeter_module_css_default.panel,
+					style: position ?? {
+						visibility: "hidden",
+						left: 0,
+						top: 0
+					},
 					role: "dialog",
 					"aria-label": t("context.used"),
 					children: [
@@ -14819,278 +18644,51 @@ window.__ModuleLoader__.load({
 							}, row.key))
 						})
 					]
-				})]
+				}), document.body)]
 			});
 		}
 		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Eye.es.js
-		const a = /* @__PURE__ */ new Map([
-			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M251,123.13c-.37-.81-9.13-20.26-28.48-39.61C196.63,57.67,164,44,128,44S59.37,57.67,33.51,83.52C14.16,102.87,5.4,122.32,5,123.13a12.08,12.08,0,0,0,0,9.75c.37.82,9.13,20.26,28.49,39.61C59.37,198.34,92,212,128,212s68.63-13.66,94.48-39.51c19.36-19.35,28.12-38.79,28.49-39.61A12.08,12.08,0,0,0,251,123.13Zm-46.06,33C183.47,177.27,157.59,188,128,188s-55.47-10.73-76.91-31.88A130.36,130.36,0,0,1,29.52,128,130.45,130.45,0,0,1,51.09,99.89C72.54,78.73,98.41,68,128,68s55.46,10.73,76.91,31.89A130.36,130.36,0,0,1,226.48,128,130.45,130.45,0,0,1,204.91,156.12ZM128,84a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,84Zm0,64a20,20,0,1,1,20-20A20,20,0,0,1,128,148Z" }))],
-			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
-				d: "M128,56C48,56,16,128,16,128s32,72,112,72,112-72,112-72S208,56,128,56Zm0,112a40,40,0,1,1,40-40A40,40,0,0,1,128,168Z",
-				opacity: "0.2"
-			}), /* @__PURE__ */ react.createElement("path", { d: "M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z" }))],
-			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,168a40,40,0,1,1,40-40A40,40,0,0,1,128,168Z" }))],
-			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M245.48,125.57c-.34-.78-8.66-19.23-27.24-37.81C201,70.54,171.38,50,128,50S55,70.54,37.76,87.76c-18.58,18.58-26.9,37-27.24,37.81a6,6,0,0,0,0,4.88c.34.77,8.66,19.22,27.24,37.8C55,185.47,84.62,206,128,206s73-20.53,90.24-37.75c18.58-18.58,26.9-37,27.24-37.8A6,6,0,0,0,245.48,125.57ZM128,194c-31.38,0-58.78-11.42-81.45-33.93A134.77,134.77,0,0,1,22.69,128,134.56,134.56,0,0,1,46.55,95.94C69.22,73.42,96.62,62,128,62s58.78,11.42,81.45,33.94A134.56,134.56,0,0,1,233.31,128C226.94,140.21,195,194,128,194Zm0-112a46,46,0,1,0,46,46A46.06,46.06,0,0,0,128,82Zm0,80a34,34,0,1,1,34-34A34,34,0,0,1,128,162Z" }))],
-			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z" }))],
-			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M243.66,126.38c-.34-.76-8.52-18.89-26.83-37.2C199.87,72.22,170.7,52,128,52S56.13,72.22,39.17,89.18c-18.31,18.31-26.49,36.44-26.83,37.2a4.08,4.08,0,0,0,0,3.25c.34.77,8.52,18.89,26.83,37.2,17,17,46.14,37.17,88.83,37.17s71.87-20.21,88.83-37.17c18.31-18.31,26.49-36.43,26.83-37.2A4.08,4.08,0,0,0,243.66,126.38Zm-32.7,35c-23.07,23-51,34.62-83,34.62s-59.89-11.65-83-34.62A135.71,135.71,0,0,1,20.44,128,135.69,135.69,0,0,1,45,94.62C68.11,71.65,96,60,128,60s59.89,11.65,83,34.62A135.79,135.79,0,0,1,235.56,128,135.71,135.71,0,0,1,211,161.38ZM128,84a44,44,0,1,0,44,44A44.05,44.05,0,0,0,128,84Zm0,80a36,36,0,1,1,36-36A36,36,0,0,1,128,164Z" }))]
-		]);
-		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/defs/Key.es.js
-		const e$1 = /* @__PURE__ */ new Map([
-			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M196,76a16,16,0,1,1-16-16A16,16,0,0,1,196,76Zm48,22.74A84.3,84.3,0,0,1,160.11,180H160a83.52,83.52,0,0,1-23.65-3.38l-7.86,7.87A12,12,0,0,1,120,188H108v12a12,12,0,0,1-12,12H84v12a12,12,0,0,1-12,12H40a20,20,0,0,1-20-20V187.31a19.86,19.86,0,0,1,5.86-14.14l53.52-53.52A84,84,0,1,1,244,98.74ZM202.43,53.57A59.48,59.48,0,0,0,158,36c-32,1-58,27.89-58,59.89a59.69,59.69,0,0,0,4.2,22.19,12,12,0,0,1-2.55,13.21L44,189v23H60V200a12,12,0,0,1,12-12H84V176a12,12,0,0,1,12-12h19l9.65-9.65a12,12,0,0,1,13.22-2.55A59.58,59.58,0,0,0,160,156h.08c32,0,58.87-26.07,59.89-58A59.55,59.55,0,0,0,202.43,53.57Z" }))],
-			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
-				d: "M232,98.36C230.73,136.92,198.67,168,160.09,168a71.68,71.68,0,0,1-26.92-5.17h0L120,176H96v24H72v24H40a8,8,0,0,1-8-8V187.31a8,8,0,0,1,2.34-5.65l58.83-58.83h0A71.68,71.68,0,0,1,88,95.91c0-38.58,31.08-70.64,69.64-71.87A72,72,0,0,1,232,98.36Z",
-				opacity: "0.2"
-			}), /* @__PURE__ */ react.createElement("path", { d: "M216.57,39.43A80,80,0,0,0,83.91,120.78L28.69,176A15.86,15.86,0,0,0,24,187.31V216a16,16,0,0,0,16,16H72a8,8,0,0,0,8-8V208H96a8,8,0,0,0,8-8V184h16a8,8,0,0,0,5.66-2.34l9.56-9.57A79.73,79.73,0,0,0,160,176h.1A80,80,0,0,0,216.57,39.43ZM224,98.1c-1.09,34.09-29.75,61.86-63.89,61.9H160a63.7,63.7,0,0,1-23.65-4.51,8,8,0,0,0-8.84,1.68L116.69,168H96a8,8,0,0,0-8,8v16H72a8,8,0,0,0-8,8v16H40V187.31l58.83-58.82a8,8,0,0,0,1.68-8.84A63.72,63.72,0,0,1,96,95.92c0-34.14,27.81-62.8,61.9-63.89A64,64,0,0,1,224,98.1ZM192,76a12,12,0,1,1-12-12A12,12,0,0,1,192,76Z" }))],
-			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216.57,39.43A80,80,0,0,0,83.91,120.78L28.69,176A15.86,15.86,0,0,0,24,187.31V216a16,16,0,0,0,16,16H72a8,8,0,0,0,8-8V208H96a8,8,0,0,0,8-8V184h16a8,8,0,0,0,5.66-2.34l9.56-9.57A79.73,79.73,0,0,0,160,176h.1A80,80,0,0,0,216.57,39.43ZM180,92a16,16,0,1,1,16-16A16,16,0,0,1,180,92Z" }))],
-			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M215.15,40.85A78,78,0,0,0,86.2,121.31l-56.1,56.1a13.94,13.94,0,0,0-4.1,9.9V216a14,14,0,0,0,14,14H72a6,6,0,0,0,6-6V206H96a6,6,0,0,0,6-6V182h18a6,6,0,0,0,4.24-1.76l10.45-10.44A77.59,77.59,0,0,0,160,174h.1A78,78,0,0,0,215.15,40.85ZM226,98.16c-1.12,35.16-30.67,63.8-65.88,63.84a65.93,65.93,0,0,1-24.51-4.67,6,6,0,0,0-6.64,1.26L117.51,170H96a6,6,0,0,0-6,6v18H72a6,6,0,0,0-6,6v18H40a2,2,0,0,1-2-2V187.31a2,2,0,0,1,.58-1.41l58.83-58.83a6,6,0,0,0,1.26-6.64A65.61,65.61,0,0,1,94,95.92C94,60.71,122.68,31.16,157.83,30A66,66,0,0,1,226,98.16ZM190,76a10,10,0,1,1-10-10A10,10,0,0,1,190,76Z" }))],
-			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M216.57,39.43A80,80,0,0,0,83.91,120.78L28.69,176A15.86,15.86,0,0,0,24,187.31V216a16,16,0,0,0,16,16H72a8,8,0,0,0,8-8V208H96a8,8,0,0,0,8-8V184h16a8,8,0,0,0,5.66-2.34l9.56-9.57A79.73,79.73,0,0,0,160,176h.1A80,80,0,0,0,216.57,39.43ZM224,98.1c-1.09,34.09-29.75,61.86-63.89,61.9H160a63.7,63.7,0,0,1-23.65-4.51,8,8,0,0,0-8.84,1.68L116.69,168H96a8,8,0,0,0-8,8v16H72a8,8,0,0,0-8,8v16H40V187.31l58.83-58.82a8,8,0,0,0,1.68-8.84A63.72,63.72,0,0,1,96,95.92c0-34.14,27.81-62.8,61.9-63.89A64,64,0,0,1,224,98.1ZM192,76a12,12,0,1,1-12-12A12,12,0,0,1,192,76Z" }))],
-			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M213.74,42.26A76,76,0,0,0,88.51,121.84l-57,57A11.93,11.93,0,0,0,28,187.31V216a12,12,0,0,0,12,12H72a4,4,0,0,0,4-4V204H96a4,4,0,0,0,4-4V180h20a4,4,0,0,0,2.83-1.17l11.33-11.34A75.72,75.72,0,0,0,160,172h.1A76,76,0,0,0,213.74,42.26Zm14.22,56c-1.15,36.22-31.6,65.72-67.87,65.77H160a67.52,67.52,0,0,1-25.21-4.83,4,4,0,0,0-4.45.83l-12,12H96a4,4,0,0,0-4,4v20H72a4,4,0,0,0-4,4v20H40a4,4,0,0,1-4-4V187.31a4.06,4.06,0,0,1,1.17-2.83L96,125.66a4,4,0,0,0,.83-4.45A67.51,67.51,0,0,1,92,95.91C92,59.64,121.55,29.19,157.77,28A68,68,0,0,1,228,98.23ZM188,76a8,8,0,1,1-8-8A8,8,0,0,1,188,76Z" }))]
-		]);
-		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/defs/ShieldCheck.es.js
-		const e = /* @__PURE__ */ new Map([
-			["bold", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,36H48A20,20,0,0,0,28,56v56c0,54.29,26.32,87.22,48.4,105.29,23.71,19.39,47.44,26,48.44,26.29a12.1,12.1,0,0,0,6.32,0c1-.28,24.73-6.9,48.44-26.29,22.08-18.07,48.4-51,48.4-105.29V56A20,20,0,0,0,208,36Zm-4,76c0,35.71-13.09,64.69-38.91,86.15A126.28,126.28,0,0,1,128,219.38a126.14,126.14,0,0,1-37.09-21.23C65.09,176.69,52,147.71,52,112V60H204ZM79.51,144.49a12,12,0,1,1,17-17L112,143l47.51-47.52a12,12,0,0,1,17,17l-56,56a12,12,0,0,1-17,0Z" }))],
-			["duotone", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", {
-				d: "M216,56v56c0,96-88,120-88,120S40,208,40,112V56a8,8,0,0,1,8-8H208A8,8,0,0,1,216,56Z",
-				opacity: "0.2"
-			}), /* @__PURE__ */ react.createElement("path", { d: "M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z" }))],
-			["fill", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm-34.32,69.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z" }))],
-			["light", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,42H48A14,14,0,0,0,34,56v56c0,51.94,25.12,83.4,46.2,100.64,22.73,18.6,45.27,24.89,46.22,25.15a6,6,0,0,0,3.16,0c.95-.26,23.49-6.55,46.22-25.15C196.88,195.4,222,163.94,222,112V56A14,14,0,0,0,208,42Zm2,70c0,37.76-13.94,68.39-41.44,91.06A131.17,131.17,0,0,1,128,225.72a130.94,130.94,0,0,1-40.56-22.66C59.94,180.39,46,149.76,46,112V56a2,2,0,0,1,2-2H208a2,2,0,0,1,2,2ZM172.24,99.76a6,6,0,0,1,0,8.48l-56,56a6,6,0,0,1-8.48,0l-24-24a6,6,0,0,1,8.48-8.48L112,151.51l51.76-51.75A6,6,0,0,1,172.24,99.76Z" }))],
-			["regular", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Zm0,72c0,37.07-13.66,67.16-40.6,89.42A129.3,129.3,0,0,1,128,223.62a128.25,128.25,0,0,1-38.92-21.81C61.82,179.51,48,149.3,48,112l0-56,160,0ZM82.34,141.66a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32l-56,56a8,8,0,0,1-11.32,0Z" }))],
-			["thin", /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement("path", { d: "M208,44H48A12,12,0,0,0,36,56v56c0,51.16,24.73,82.12,45.47,99.1,22.4,18.32,44.55,24.5,45.48,24.76a4,4,0,0,0,2.1,0c.93-.26,23.08-6.44,45.48-24.76,20.74-17,45.47-47.94,45.47-99.1V56A12,12,0,0,0,208,44Zm4,68c0,38.44-14.23,69.63-42.29,92.71A132.45,132.45,0,0,1,128,227.82a132.23,132.23,0,0,1-41.71-23.11C58.23,181.63,44,150.44,44,112V56a4,4,0,0,1,4-4H208a4,4,0,0,1,4,4Zm-41.17-10.83a4,4,0,0,1,0,5.66l-56,56a4,4,0,0,1-5.66,0l-24-24a4,4,0,0,1,5.66-5.66L112,154.34l53.17-53.17A4,4,0,0,1,170.83,101.17Z" }))]
-		]);
-		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/lib/context.es.js
-		const o$3 = (0, react.createContext)({
-			color: "currentColor",
-			size: "1em",
-			weight: "regular",
-			mirrored: !1
-		});
-		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/lib/IconBase.es.js
-		const p = react.forwardRef((s, a) => {
-			const { alt: n, color: r, size: t, weight: o, mirrored: c, children: i, weights: m, ...x } = s, { color: d = "currentColor", size: l, weight: f = "regular", mirrored: g = !1, ...w } = react.useContext(o$3);
-			return /* @__PURE__ */ react.createElement("svg", {
-				ref: a,
-				xmlns: "http://www.w3.org/2000/svg",
-				width: t != null ? t : l,
-				height: t != null ? t : l,
-				fill: r != null ? r : d,
-				viewBox: "0 0 256 256",
-				transform: c || g ? "scale(-1, 1)" : void 0,
-				...w,
-				...x
-			}, !!n && /* @__PURE__ */ react.createElement("title", null, n), i, m.get(o != null ? o : f));
-		});
-		p.displayName = "IconBase";
-		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Eye.es.js
-		const o$2 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p, {
-			ref: t,
-			...r,
-			weights: a
-		}));
-		o$2.displayName = "EyeIcon";
-		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/csr/Key.es.js
-		const o$1 = react.forwardRef((r, t) => /* @__PURE__ */ react.createElement(p, {
-			ref: t,
-			...r,
-			weights: e$1
-		}));
-		o$1.displayName = "KeyIcon";
-		//#endregion
-		//#region ../../node_modules/@phosphor-icons/react/dist/csr/ShieldCheck.es.js
-		const o = react.forwardRef((c, r) => /* @__PURE__ */ react.createElement(p, {
-			ref: r,
-			...c,
-			weights: e
-		}));
-		o.displayName = "ShieldCheckIcon";
-		//#endregion
-		//#region \0dsh-css:packages/client-ui-conversation/src/client/skeleton/PermissionSelect.module.css.mjs
-		const css$2 = ".KiaVRG_trigger{min-width:0;max-width:220px;height:28px;color:var(--dsw-alias-label-secondary);cursor:pointer;background:0 0;border:none;border-radius:24px;outline:none;align-items:center;gap:4px;padding:0 4px 0 8px;font-size:13px;font-weight:500;line-height:20px;display:inline-flex}.KiaVRG_trigger:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover)}.KiaVRG_trigger:focus-visible{box-shadow:0 0 0 2px var(--dsw-alias-border-l3)}.KiaVRG_trigger:disabled{color:var(--dsw-alias-label-dimmed);cursor:default}.KiaVRG_triggerIcon{flex:none;display:inline-flex}.KiaVRG_modeIcon{background:color-mix(in srgb, currentColor 10%, transparent);border-radius:8px;flex:none;justify-content:center;align-items:center;width:26px;height:26px;display:inline-flex}.KiaVRG_readOnlyIcon{color:var(--qs-accent,#5b8cde)}.KiaVRG_limitedIcon{color:#47a78c}.KiaVRG_fullAccessIcon{color:#c28b40}.KiaVRG_triggerIcon .KiaVRG_modeIcon{border-radius:7px;width:22px;height:22px}.KiaVRG_triggerIcon svg{width:17px;height:17px}.KiaVRG_triggerLabel{text-overflow:ellipsis;white-space:nowrap;min-width:0;overflow:hidden}.KiaVRG_chevron{color:var(--dsw-alias-label-caption);flex:none;transition:transform .12s;display:inline-flex}@container (width<=460px){.KiaVRG_trigger:has(.KiaVRG_triggerIcon) .KiaVRG_triggerLabel{display:none}}.KiaVRG_chevronOpen{transform:rotate(180deg)}";
-		const tagId$2 = "@deepseek-ai/dsh-client-ui-conversation/PermissionSelect.module.css";
-		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$2) + "]") === null) {
-			const tag = document.createElement("style");
-			tag.dataset.plugin = "@deepseek-ai/dsh-client-ui-conversation";
-			tag.dataset.pluginCss = tagId$2;
-			tag.textContent = css$2;
-			document.head.appendChild(tag);
-		}
-		var PermissionSelect_module_css_default = {
-			"chevron": "KiaVRG_chevron",
-			"chevronOpen": "KiaVRG_chevronOpen",
-			"fullAccessIcon": "KiaVRG_fullAccessIcon",
-			"limitedIcon": "KiaVRG_limitedIcon",
-			"modeIcon": "KiaVRG_modeIcon",
-			"readOnlyIcon": "KiaVRG_readOnlyIcon",
-			"trigger": "KiaVRG_trigger",
-			"triggerIcon": "KiaVRG_triggerIcon",
-			"triggerLabel": "KiaVRG_triggerLabel"
-		};
-		//#endregion
-		//#region lib/types/client/skeleton/PermissionSelect.js
-		const FULL_ACCESS = "danger-full-access";
-		/** Distinct, familiar silhouettes make the three access scopes easy to scan. */
-		const permissionGlyphs = /* @__PURE__ */ new Map([
-			["read-only", (0, react_jsx_runtime.jsx)("span", {
-				className: clsx(PermissionSelect_module_css_default.modeIcon, PermissionSelect_module_css_default.readOnlyIcon),
-				"aria-hidden": true,
-				children: (0, react_jsx_runtime.jsx)(o$2, {
-					size: 20,
-					weight: "duotone"
-				})
-			})],
-			["workspace-write", (0, react_jsx_runtime.jsx)("span", {
-				className: clsx(PermissionSelect_module_css_default.modeIcon, PermissionSelect_module_css_default.limitedIcon),
-				"aria-hidden": true,
-				children: (0, react_jsx_runtime.jsx)(o, {
-					size: 20,
-					weight: "duotone"
-				})
-			})],
-			[FULL_ACCESS, (0, react_jsx_runtime.jsx)("span", {
-				className: clsx(PermissionSelect_module_css_default.modeIcon, PermissionSelect_module_css_default.fullAccessIcon),
-				"aria-hidden": true,
-				children: (0, react_jsx_runtime.jsx)(o$1, {
-					size: 20,
-					weight: "duotone"
-				})
-			})]
-		]);
-		/** Glyph for a permission option value; host-configured names outside the design set get none. */
-		function permissionGlyph(value) {
-			return permissionGlyphs.get(value);
-		}
+		//#region lib/types/client/skeleton/control-row-layout.js
+		/** Content-sized model collapse for the composer's two control groups. */
 		/**
-		* Display transform: built-in machine names render as locale product labels;
-		* non-kebab host-configured names pass through.
+		* Collapse the model text only when the expanded controls cannot share a line.
+		* The model seat consumes the row's inherited display variables; wrapping remains
+		* available when even the icon cannot fit. Each notification is measured synchronously.
+		* @param row - Composer control row with its leading and trailing groups.
+		* @returns Disconnect the layout observers and font listener.
 		*/
-		function displayName(name) {
-			if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(name)) return name;
-			return name.split("-").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-		}
-		const BUILT_IN_PERMISSION_NAMES = /* @__PURE__ */ new Map([
-			["read-only", en["access.preset.readOnly"]],
-			["workspace-write", en["access.preset.workspaceWrite"]],
-			[FULL_ACCESS, en["access.preset.fullAccess"]]
-		]);
-		function permissionLabel(value, name, t) {
-			const builtInName = BUILT_IN_PERMISSION_NAMES.get(value);
-			if (builtInName !== void 0 && (name === value || name === builtInName)) {
-				if (value === "read-only") return t("access.preset.readOnly");
-				if (value === "workspace-write") return t("access.preset.workspaceWrite");
-				if (value === FULL_ACCESS) return t("access.preset.fullAccess");
-			}
-			return displayName(name);
-		}
-		function PermissionSelect({ value, locked, command, t }) {
-			const [pick, setPick] = (0, react.useState)(null);
-			const [open, setOpen] = (0, react.useState)(false);
-			const [confirmation, setConfirmation] = (0, react.useState)(null);
-			const [acknowledged, setAcknowledged] = (0, react.useState)(false);
-			(0, react.useEffect)(() => {
-				if (!locked && value !== void 0) return;
-				setOpen(false);
-				setAcknowledged(false);
-				setConfirmation(null);
-			}, [locked, value]);
-			if (value === void 0) return null;
-			const currentValue = pick ?? value.currentValue;
-			const current = value.options.find((option) => option.value === currentValue);
-			const currentLabel = current === void 0 ? permissionLabel(currentValue, currentValue, t) : permissionLabel(current.value, current.name, t);
-			const busy = pick !== null || confirmation !== null;
-			const items = value.options.filter((o) => o.value !== "custom").map((option) => {
-				const icon = permissionGlyph(option.value);
-				return {
-					id: option.value,
-					label: permissionLabel(option.value, option.name, t),
-					...icon === void 0 ? {} : { icon }
-				};
+		function observeControlRow(row) {
+			const measure = () => {
+				row.removeAttribute("data-model-compact");
+				const style = getComputedStyle(row);
+				const available = row.getBoundingClientRect().width - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+				const widths = Array.from(row.children, (child) => child.getBoundingClientRect().width).filter((width) => width > 0);
+				const needed = widths.reduce((sum, width) => sum + width, 0) + Math.max(0, widths.length - 1) * parseFloat(style.columnGap);
+				row.toggleAttribute("data-model-compact", needed > available);
+			};
+			const resize = new ResizeObserver(measure);
+			resize.observe(row);
+			for (const child of row.children) resize.observe(child);
+			const mutation = new MutationObserver(measure);
+			mutation.observe(row, {
+				subtree: true,
+				childList: true,
+				characterData: true,
+				attributes: true,
+				attributeFilter: ["hidden"]
 			});
-			const submit = (id) => {
-				setPick(id);
-				command(`/permission ${id}`).catch(() => false).then(() => {
-					setPick(null);
-				});
+			const fonts = document.fonts;
+			fonts.addEventListener("loadingdone", measure);
+			measure();
+			return () => {
+				resize.disconnect();
+				mutation.disconnect();
+				fonts.removeEventListener("loadingdone", measure);
 			};
-			const choose = (id) => {
-				setOpen(false);
-				if (id === value.currentValue) return;
-				if (id === FULL_ACCESS) {
-					setAcknowledged(false);
-					setConfirmation(id);
-					return;
-				}
-				submit(id);
-			};
-			const closeConfirmation = () => {
-				setAcknowledged(false);
-				setConfirmation(null);
-			};
-			const confirmFullAccess = () => {
-				if (locked || !acknowledged || confirmation === null) return;
-				const id = confirmation;
-				closeConfirmation();
-				submit(id);
-			};
-			return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Menu, {
-				open,
-				items,
-				selectedId: currentValue,
-				onSelect: choose,
-				onClose: () => {
-					setOpen(false);
-				},
-				side: "top",
-				anchor: (0, react_jsx_runtime.jsxs)("button", {
-					type: "button",
-					className: PermissionSelect_module_css_default.trigger,
-					"aria-label": t("input.accessMode", { name: currentLabel }),
-					title: current?.description,
-					disabled: locked || busy,
-					onClick: () => {
-						setOpen(!open);
-					},
-					children: [
-						permissionGlyph(currentValue) !== void 0 && (0, react_jsx_runtime.jsx)("span", {
-							className: PermissionSelect_module_css_default.triggerIcon,
-							"aria-hidden": true,
-							children: permissionGlyph(currentValue)
-						}),
-						(0, react_jsx_runtime.jsx)("span", {
-							className: PermissionSelect_module_css_default.triggerLabel,
-							children: currentLabel
-						}),
-						(0, react_jsx_runtime.jsx)("span", {
-							className: clsx(PermissionSelect_module_css_default.chevron, open && PermissionSelect_module_css_default.chevronOpen),
-							"aria-hidden": true,
-							children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, {})
-						})
-					]
-				})
-			}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.RiskConfirmation, {
-				open: confirmation !== null,
-				title: t("access.confirm.title"),
-				description: t("access.confirm.description"),
-				acknowledgeLabel: t("access.confirm.acknowledge"),
-				cancelLabel: t("access.confirm.cancel"),
-				closeLabel: t("close"),
-				confirmLabel: t("access.confirm.enable"),
-				acknowledged,
-				disabled: locked,
-				onAcknowledgedChange: setAcknowledged,
-				onCancel: closeConfirmation,
-				onConfirm: confirmFullAccess
-			})] });
 		}
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-conversation/src/client/skeleton/InputBar.module.css.mjs
-		const css$1 = ".WIyPZa_root{padding:0 var(--dsh-composer-side-clearance) 8px;flex-direction:column;align-items:center;display:flex}.WIyPZa_hero{padding:0 var(--dsh-composer-side-clearance)}.WIyPZa_notice{width:100%;max-width:var(--dsh-composer-card-max-width);background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-secondary);border-radius:8px;margin-bottom:6px;padding:4px 8px;font-size:12px;line-height:18px}.WIyPZa_card{box-sizing:border-box;width:100%;max-width:var(--dsh-composer-card-max-width);border:1px solid var(--dsw-alias-border-l2-darkmode-thin);background:var(--dsw-specific-input-major);box-shadow:var(--dsw-shadow-lv2);font-size:var(--dsh-content-font-size,14px);line-height:calc(24px + var(--dsh-content-font-delta,0px));--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2);--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2);border-radius:22px;flex-direction:column;gap:12px;padding-top:10px;display:flex;position:relative}.WIyPZa_cardWorkspaceTrigger{cursor:pointer;border-color:#0000}.WIyPZa_cardWorkspaceTrigger:after{content:\"\";background:var(--dsw-alias-border-l4);pointer-events:none;border-radius:22px;transition:background-color .1s;position:absolute;inset:-1px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='none' rx='22' ry='22' stroke='black' stroke-width='2' stroke-dasharray='4 4'/%3E%3C/svg%3E\");mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100%25' height='100%25' fill='none' rx='22' ry='22' stroke='black' stroke-width='2' stroke-dasharray='4 4'/%3E%3C/svg%3E\")}.WIyPZa_cardWorkspaceTrigger :disabled{pointer-events:none}.WIyPZa_cardWorkspaceTrigger:hover:after{background:var(--dsw-alias-state-business-primary)}.WIyPZa_accessory{align-items:center;gap:8px;padding:10px 12px 0;display:flex}.WIyPZa_overlayAnchor{height:0;position:absolute;inset:0 0 auto}.WIyPZa_scroll{max-height:var(--dsh-composer-text-max-height);margin-right:4px;overflow-y:auto}.WIyPZa_scroll::-webkit-scrollbar-track{margin-top:8px}.WIyPZa_grow{position:relative}.WIyPZa_pending{background:var(--dsw-alias-state-business-primary);border-radius:50%;width:8px;height:8px;animation:1s ease-in-out infinite alternate WIyPZa_input-pending}@keyframes WIyPZa_input-pending{0%{opacity:.35}to{opacity:1}}.WIyPZa_input{box-sizing:border-box;font-family:var(--dsw-font-family);font-size:inherit;line-height:inherit;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;color:var(--dsw-alias-label-primary);caret-color:var(--dsw-alias-state-business-primary);outline:none;padding:4px 8px 0 16px}.WIyPZa_input p{margin:0}.WIyPZa_input p:last-child:after{content:var(--dsh-composer-hint);color:var(--dsw-alias-label-caption)}.WIyPZa_placeholder{color:var(--dsw-alias-label-caption);pointer-events:none;user-select:none;position:absolute;inset:4px 8px auto 16px}.WIyPZa_inputDisabled{color:var(--dsw-alias-label-tertiary);cursor:not-allowed}.WIyPZa_input[aria-haspopup=menu]{cursor:pointer}.WIyPZa_hero .WIyPZa_input{min-height:52px}.WIyPZa_row{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;min-width:0;padding:2px 8px 6px;display:flex;container-type:inline-size}body[data-qs-plugin-theme] .WIyPZa_row{gap:8px;padding:6px 12px 12px}body[data-qs-plugin-theme] .WIyPZa_tools{gap:8px}body[data-qs-plugin-theme] .WIyPZa_modes,body[data-qs-plugin-theme] .WIyPZa_trailing{gap:6px}body[data-qs-plugin-theme] .WIyPZa_add{background:var(--qs-chrome);width:34px;height:34px;color:var(--qs-secondary);border-radius:11px}.WIyPZa_tools,.WIyPZa_modes,.WIyPZa_trailing{align-items:center;min-width:0;display:flex}.WIyPZa_tools{gap:16px}.WIyPZa_modes{gap:12px}.WIyPZa_trailing{flex:none;gap:12px;margin-left:auto}.WIyPZa_add{background:var(--dsw-specific-selector);width:28px;height:28px;color:var(--dsw-alias-label-primary);cursor:pointer;border:none;border-radius:999px;flex:none;place-items:center;display:grid}.WIyPZa_add:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover-solid)}.WIyPZa_add:disabled{opacity:.5;cursor:default}.WIyPZa_select{max-width:220px;height:28px;color:var(--dsw-alias-label-secondary);white-space:nowrap;cursor:pointer;appearance:none;background-color:#0000;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2381858C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\");background-position:right 4px center;background-repeat:no-repeat;background-size:12px 12px;border:none;border-radius:8px;outline:none;padding:0 20px 0 8px;font-size:13px;font-weight:500;line-height:20px}.WIyPZa_select:hover:not(:disabled){background-color:var(--dsw-alias-interactive-bg-hover)}.WIyPZa_select:disabled{opacity:.5;cursor:default}.WIyPZa_primary{background:var(--dsw-alias-button-info-fill);color:#fff;cursor:pointer;border:none;border-radius:999px;flex:none;place-items:center;width:34px;height:34px;transition:background-color .1s;display:grid;transform:translateY(-2px)}.WIyPZa_primary:hover:not(:disabled){background:var(--dsw-alias-button-info-hover)}.WIyPZa_primary:disabled{opacity:.4;cursor:default}.WIyPZa_retry{color:inherit;cursor:pointer;background:0 0;border:1px solid;border-radius:4px;margin-left:8px;padding:1px 8px;font-size:12px}@media (width<=840px){body[data-qs-mobile] .WIyPZa_card{border-radius:20px;gap:6px}body[data-qs-mobile] .WIyPZa_input{padding-inline:14px;font-size:16px;line-height:24px}body[data-qs-mobile] .WIyPZa_row{gap:6px;padding:4px 8px 8px}body[data-qs-mobile] .WIyPZa_tools{gap:6px}body[data-qs-mobile] .WIyPZa_modes{gap:4px}body[data-qs-mobile] .WIyPZa_trailing{gap:6px;max-width:100%}body[data-qs-mobile] :is(.WIyPZa_add,.WIyPZa_primary){width:40px;height:40px}}";
+		const css$1 = ".do8BbG_root{padding:0 var(--dsh-composer-side-clearance) 4px;flex-direction:column;align-items:center;display:flex}.do8BbG_dock{justify-content:center;align-items:center;gap:12px;max-width:100%;padding-top:4px;display:flex}.do8BbG_hero .do8BbG_dock:empty{display:none}.do8BbG_hero{padding:0 var(--dsh-composer-side-clearance)}.do8BbG_notice{width:100%;max-width:var(--dsh-composer-card-max-width);border-radius:var(--dsw-radius-md);background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-secondary);margin-bottom:6px;padding:4px 8px;font-size:12px;line-height:18px}.do8BbG_card{box-sizing:border-box;width:100%;max-width:var(--dsh-composer-card-max-width);--dsw-elevation-stroke-color:var(--dsw-alias-border-l2);border-radius:var(--dsw-radius-panel);background:var(--dsw-specific-input-major);box-shadow:var(--dsw-elevation-soft);font-size:var(--dsh-content-font-size,14px);line-height:calc(24px + var(--dsh-content-font-delta,0px));--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2);--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2);border:0;flex-direction:column;gap:12px;padding-top:8px;display:flex;position:relative}.do8BbG_cardWorkspaceTrigger{--dsw-elevation-stroke-color:transparent;cursor:pointer}.do8BbG_cardWorkspaceTrigger:after{content:\"\";box-sizing:border-box;border-radius:var(--dsw-radius-panel);color:var(--dsw-alias-border-l4);pointer-events:none;border:1px dashed;transition:color .1s;position:absolute;inset:0}.do8BbG_cardWorkspaceTrigger :disabled{pointer-events:none}.do8BbG_cardWorkspaceTrigger:hover:after{color:var(--dsw-alias-state-business-primary)}.do8BbG_accessory{align-items:center;gap:8px;padding:10px 12px 0;display:flex}.do8BbG_overlayAnchor{height:0;position:absolute;inset:0 0 auto}.do8BbG_scroll{max-height:var(--dsh-composer-text-max-height);margin-right:4px;overflow-y:auto}.do8BbG_scroll::-webkit-scrollbar-track{margin-top:8px}.do8BbG_grow{position:relative}.do8BbG_pending{corner-shape:round;background:var(--dsw-alias-state-business-primary);border-radius:50%;width:8px;height:8px;animation:1s ease-in-out infinite alternate do8BbG_input-pending}@keyframes do8BbG_input-pending{0%{opacity:.35}to{opacity:1}}.do8BbG_input{box-sizing:border-box;min-height:36px;font-family:var(--dsw-font-family);font-size:inherit;line-height:inherit;white-space:pre-wrap;word-break:break-word;overflow-wrap:anywhere;color:var(--dsw-alias-label-primary);caret-color:var(--dsw-alias-state-business-primary);outline:none;padding:4px 8px 0 14px}.do8BbG_input p{margin:0}.do8BbG_input p:last-child:after{content:var(--dsh-composer-hint);color:var(--dsw-alias-label-caption)}.do8BbG_input[data-composer-composing] p:last-child:after{content:none}.do8BbG_input[data-composer-chip-selected]{caret-color:#0000}.do8BbG_input[data-composer-composing]+.do8BbG_placeholder{visibility:hidden}.do8BbG_placeholder{color:var(--dsw-alias-label-caption);white-space:nowrap;text-overflow:ellipsis;pointer-events:none;user-select:none;position:absolute;inset:4px 8px auto 14px;overflow:hidden}.do8BbG_inputDisabled{color:var(--dsw-alias-label-tertiary);cursor:not-allowed}.do8BbG_input[aria-haspopup=menu]{cursor:pointer}.do8BbG_hero .do8BbG_input{min-height:52px}.do8BbG_hero .do8BbG_placeholder{white-space:normal;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;display:-webkit-box}.do8BbG_row{flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;min-width:0;padding:2px 8px 6px;display:flex;container-type:inline-size}body[data-qs-plugin-theme] .do8BbG_row{gap:8px;padding:6px 12px 12px}body[data-qs-plugin-theme] .do8BbG_tools{gap:8px}body[data-qs-plugin-theme] .do8BbG_modes,body[data-qs-plugin-theme] .do8BbG_trailing{gap:6px}body[data-qs-plugin-theme] .do8BbG_add{background:var(--qs-chrome);width:34px;height:34px;color:var(--qs-secondary);border-radius:11px}.do8BbG_row[data-model-compact]{--dsh-composer-model-text-display:none;--dsh-composer-model-icon-display:block}.do8BbG_tools,.do8BbG_modes,.do8BbG_trailing{align-items:center;min-width:0;display:flex}.do8BbG_tools,.do8BbG_modes{gap:12px}.do8BbG_trailing{flex:none;gap:12px;margin-left:auto}@container (width<=560px){.do8BbG_tools,.do8BbG_modes,.do8BbG_trailing{gap:8px}}.do8BbG_add{corner-shape:round;background:var(--dsw-specific-selector);width:28px;height:28px;color:var(--dsw-alias-label-primary);cursor:pointer;border:none;border-radius:999px;flex:none;place-items:center;display:grid}.do8BbG_add:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover-solid)}.do8BbG_add:disabled{opacity:.5;cursor:default}.do8BbG_select{border-radius:var(--dsw-radius-sm);max-width:220px;height:28px;color:var(--dsw-alias-label-secondary);white-space:nowrap;cursor:pointer;appearance:none;background-color:#0000;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%2381858C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\");background-position:right 4px center;background-repeat:no-repeat;background-size:12px 12px;border:none;outline:none;padding:0 20px 0 8px;font-size:13px;font-weight:500;line-height:20px}.do8BbG_select:hover:not(:disabled){background-color:var(--dsw-alias-interactive-bg-hover)}.do8BbG_select:disabled{opacity:.5;cursor:default}.do8BbG_primary{corner-shape:round;background:var(--dsw-alias-button-info-fill);color:#fff;cursor:pointer;border:none;border-radius:999px;flex:none;place-items:center;width:34px;height:34px;transition:background-color .1s;display:grid;transform:translateY(-2px)}.do8BbG_primary:hover:not(:disabled){background:var(--dsw-alias-button-info-hover)}.do8BbG_primary:disabled{opacity:.4;cursor:default}.do8BbG_retry{border-radius:var(--dsw-radius-sm);color:inherit;cursor:pointer;background:0 0;border:1px solid;margin-left:8px;padding:1px 8px;font-size:12px}.do8BbG_standardControls{align-items:center;gap:12px;min-width:0;display:flex}.do8BbG_tools[hidden],.do8BbG_standardControls[hidden]{display:none}.do8BbG_trailingActive{flex:1;margin-left:0}.do8BbG_activity{flex:none;align-items:center;display:flex}.do8BbG_activity:empty{display:none}.do8BbG_activityExpanded{flex:1;min-width:0}";
 		const tagId$1 = "@deepseek-ai/dsh-client-ui-conversation/InputBar.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$1) + "]") === null) {
 			const tag = document.createElement("style");
@@ -15100,28 +18698,33 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var InputBar_module_css_default = {
-			"accessory": "WIyPZa_accessory",
-			"add": "WIyPZa_add",
-			"card": "WIyPZa_card",
-			"cardWorkspaceTrigger": "WIyPZa_cardWorkspaceTrigger",
-			"grow": "WIyPZa_grow",
-			"hero": "WIyPZa_hero",
-			"input": "WIyPZa_input",
-			"input-pending": "WIyPZa_input-pending",
-			"inputDisabled": "WIyPZa_inputDisabled",
-			"modes": "WIyPZa_modes",
-			"notice": "WIyPZa_notice",
-			"overlayAnchor": "WIyPZa_overlayAnchor",
-			"pending": "WIyPZa_pending",
-			"placeholder": "WIyPZa_placeholder",
-			"primary": "WIyPZa_primary",
-			"retry": "WIyPZa_retry",
-			"root": "WIyPZa_root",
-			"row": "WIyPZa_row",
-			"scroll": "WIyPZa_scroll",
-			"select": "WIyPZa_select",
-			"tools": "WIyPZa_tools",
-			"trailing": "WIyPZa_trailing"
+			"accessory": "do8BbG_accessory",
+			"activity": "do8BbG_activity",
+			"activityExpanded": "do8BbG_activityExpanded",
+			"add": "do8BbG_add",
+			"card": "do8BbG_card",
+			"cardWorkspaceTrigger": "do8BbG_cardWorkspaceTrigger",
+			"dock": "do8BbG_dock",
+			"grow": "do8BbG_grow",
+			"hero": "do8BbG_hero",
+			"input": "do8BbG_input",
+			"input-pending": "do8BbG_input-pending",
+			"inputDisabled": "do8BbG_inputDisabled",
+			"modes": "do8BbG_modes",
+			"notice": "do8BbG_notice",
+			"overlayAnchor": "do8BbG_overlayAnchor",
+			"pending": "do8BbG_pending",
+			"placeholder": "do8BbG_placeholder",
+			"primary": "do8BbG_primary",
+			"retry": "do8BbG_retry",
+			"root": "do8BbG_root",
+			"row": "do8BbG_row",
+			"scroll": "do8BbG_scroll",
+			"select": "do8BbG_select",
+			"standardControls": "do8BbG_standardControls",
+			"tools": "do8BbG_tools",
+			"trailing": "do8BbG_trailing",
+			"trailingActive": "do8BbG_trailingActive"
 		};
 		//#endregion
 		//#region lib/types/client/skeleton/InputBar.js
@@ -15129,8 +18732,8 @@ window.__ModuleLoader__.load({
 		* Machine state arrives through the standard provide channel
 		* (useInput + inputActions); the keyboard/DOM command face and stop arrive
 		* through this entry's own inject, whose hooks compartment binds
-		* useNotices/useLexicon; layout-phase inputs (variant, placeholder,
-		* region-slot content) ride the owner props. Session facts
+		* useNotices/useLexicon; layout-phase inputs (variant and placeholder) ride
+		* the owner props. Session facts
 		* (running/removed/promptError) are self-selected via useSession.
 		*
 		* The text surface is the shell-owned Lexical editor bound here through
@@ -15139,10 +18742,16 @@ window.__ModuleLoader__.load({
 		* The no-session state renders the SAME div inert as the Workspace-picker
 		* trigger instead of a parallel tree.
 		*/
-		function InputBar({ useSession, useInput, inputActions, keyboard, addImages, removeImage, draftImages, resolveSubmitMode, toggleCommandMenu, stop, command, t, renderSlot, useNotices, useLexicon, useMenuLauncher, useProjection, sessionId, variant, disabled: inert = false, blocked, workspacePickerOpen = false, onRequestWorkspace, placeholder, accessory, overlay, leftItems, rightItems, footer }) {
+		const InputBar = (0, react.memo)(function InputBar({ useSession, useInput, inputActions, keyboard, addFiles, removeAttachment, resolveDraftAttachments, retryFileUpload, toggleCommandMenu, stop, t, renderSlot, useBusyEnter, useFileUploads, useNotices, useLexicon, useMenuLauncher, useStopShortcut, useProjection, sessionId, variant, disabled: inert = false, blocked, workspacePickerOpen = false, onRequestWorkspace, placeholder, accessory }) {
 			const input = useInput((s) => s);
 			const notice = useNotices((s) => s);
-			const commandMenuOpen = useMenuLauncher((source) => source !== null);
+			const busyEnter = useBusyEnter((s) => s);
+			const stopKeys = useStopShortcut((keys) => keys);
+			const commandMenuOpen = useMenuLauncher((source) => source === "command");
+			const [activity, setActivity] = (0, react.useState)(false);
+			(0, react.useEffect)(() => {
+				setActivity(false);
+			}, [sessionId]);
 			const promptError = useSession((s) => s.promptError) ?? null;
 			const running = useSession((s) => s.running) ?? false;
 			const subagent = useSession((s) => s.subagent) ?? null;
@@ -15152,8 +18761,10 @@ window.__ModuleLoader__.load({
 			const live = input !== void 0 && keyboard !== void 0 && inputActions !== void 0;
 			const draft = input?.draft ?? "";
 			const editor = keyboard?.editor ?? null;
-			const attachments = (0, react.useMemo)(() => input === void 0 || draftImages === void 0 ? [] : draftImages(input.imageIds), [draftImages, input?.imageIds]);
+			const attachments = (0, react.useMemo)(() => input === void 0 || resolveDraftAttachments === void 0 ? [] : resolveDraftAttachments(input.attachmentIds), [resolveDraftAttachments, input?.attachmentIds]);
 			const empty = draft.trim() === "" && attachments.length === 0;
+			const uploads = useFileUploads((snapshot) => snapshot);
+			const uploadsPending = attachments.some((attachment) => attachment.kind === "file" && uploads[attachment.id]?.status !== "ready");
 			const [toast, setToast] = (0, react.useState)(null);
 			const toastSeq = (0, react.useRef)(0);
 			const showToast = (0, react.useCallback)((text) => {
@@ -15170,7 +18781,11 @@ window.__ModuleLoader__.load({
 			(0, react.useEffect)(() => {
 				if (promptError === null) return;
 				const { error } = promptError;
-				showToast(error.code === "session/attachment-invalid" || error.code === "subagent/attachment-unsupported" ? attachmentErrorText(t, error.details.reason, imageLimits) : `${error.message} (${error.code})`);
+				if (error.code === "session/writer-held") {
+					showToast(t("error.sessionInUse"));
+					return;
+				}
+				showToast(error.code === "session/attachment-invalid" || error.code === "subagent/attachment-invalid" ? attachmentErrorText(t, error.details.reason, imageLimits) : `${error.message} (${error.code})`);
 			}, [
 				promptError,
 				showToast,
@@ -15180,9 +18795,14 @@ window.__ModuleLoader__.load({
 			(0, react.useEffect)(() => {
 				if (notice?.level === "error") showToast(notice.text);
 			}, [notice, showToast]);
+			const rowRef = (0, react.useRef)(null);
+			(0, react.useLayoutEffect)(() => {
+				const row = rowRef.current;
+				if (row === null) return;
+				return observeControlRow(row);
+			}, []);
 			const cardRef = (0, react.useRef)(null);
 			const scrollRef = (0, react.useRef)(null);
-			const permissions = useProjection("permissions");
 			const continuable = subagent?.address.mode === "continuable";
 			const parentOffline = continuable && subagent.parentAvailable !== true;
 			const disabled = removed || inert || !live || blocked !== void 0 || parentOffline;
@@ -15192,37 +18812,22 @@ window.__ModuleLoader__.load({
 			const workspaceTrigger = inert && !removed && onRequestWorkspace !== void 0;
 			const editorDisabled = removed || locked && !workspaceTrigger;
 			const editable = live && !locked && !machineBusy;
-			const canSteerQueue = !locked && !machineBusy && !commandMenuOpen && empty && running && subagent === null && input.queue.some((row) => row.placement === "queued");
+			const steeringAvailable = subagent === null || subagent.address.mode === "continuable";
+			const canSteerQueue = !locked && !machineBusy && !commandMenuOpen && empty && running && steeringAvailable && input.queue.length > 0;
 			(0, react.useEffect)(() => {
 				if (input === void 0 || inputActions === void 0) return;
-				if (attachments.length !== input.imageIds.length) inputActions.pruneImages(attachments.map((attachment) => attachment.id));
+				if (attachments.length !== input.attachmentIds.length) inputActions.pruneAttachments(attachments.map((attachment) => attachment.id));
 			}, [
 				attachments,
-				input?.imageIds,
+				input?.attachmentIds,
 				inputActions
 			]);
 			const revealSelection = () => {
-				const scrollEl = scrollRef.current;
-				if (scrollEl === null || scrollEl.scrollHeight <= scrollEl.clientHeight) return;
-				const selection = window.getSelection();
-				if (selection === null || selection.rangeCount === 0) return;
-				let rect = selection.getRangeAt(0).getBoundingClientRect();
-				if (rect.height === 0 && rect.width === 0) {
-					const anchor = selection.anchorNode;
-					const el = anchor instanceof HTMLElement ? anchor : anchor?.parentElement;
-					if (el === void 0 || el === null) return;
-					rect = el.getBoundingClientRect();
-				}
-				const box = scrollEl.getBoundingClientRect();
-				if (rect.bottom > box.bottom) scrollEl.scrollTop += rect.bottom - box.bottom;
-				else if (rect.top < box.top) scrollEl.scrollTop -= box.top - rect.top;
+				revealDraftSelection(scrollRef);
 			};
 			(0, react.useEffect)(() => {
 				if (locked || editor === null) return;
-				editor.getRootElement()?.focus({ preventScroll: true });
-				editor.focus(() => {
-					revealSelection();
-				});
+				focusDraftEditor(editor, revealSelection);
 			}, [
 				locked,
 				sessionId,
@@ -15233,111 +18838,93 @@ window.__ModuleLoader__.load({
 				revealSelection();
 			}, [draft !== ""]);
 			(0, react.useEffect)(() => {
-				const el = scrollRef.current;
-				if (el === null) return;
-				const onWheel = (e) => {
-					const host = el.closest("[data-conversation-scroll]");
-					if (!(host instanceof HTMLElement) || e.deltaY === 0) return;
-					const atTop = el.scrollTop <= 0;
-					const atEnd = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
-					if (e.deltaY < 0 && !atTop || e.deltaY > 0 && !atEnd) return;
-					e.preventDefault();
-					host.scrollTop += e.deltaY;
-				};
-				el.addEventListener("wheel", onWheel, { passive: false });
-				return () => {
-					el.removeEventListener("wheel", onWheel);
-				};
+				return installDraftWheel(scrollRef);
 			}, []);
-			const intakeImages = (0, react.useCallback)((files) => {
-				if (files.length === 0) return;
-				const allowed = imageLimits?.mediaTypes ?? [
-					"image/png",
-					"image/jpeg",
-					"image/webp",
-					"image/gif"
-				];
-				const images = [];
-				const others = [];
-				for (const file of files) if (allowed.includes(file.type)) images.push(file);
-				else others.push(file);
-				if (others.length > 0) if (sessionId === void 0) showToast(t("image.dropBlocked"));
-				else window.dispatchEvent(new CustomEvent("qs-composer-files", { detail: {
-					sessionId,
-					files: others
-				} }));
-				if (images.length === 0 || addImages === void 0) return;
+			const intakeFiles = (0, react.useCallback)((files, directories) => {
+				if (locked || machineBusy || subagent !== null && !continuable || addFiles === void 0 || files.length === 0) return;
 				const rejected = (() => {
+					if (continuable && files.some((file) => directories?.has(file) || !isImageMediaType(file.type))) return t("image.unsupportedType");
 					if (imageLimits !== void 0) {
-						if (attachments.length + images.length > imageLimits.maxImagesPerMessage) return t("image.tooMany", { count: imageLimits.maxImagesPerMessage });
+						const mediaTypes = imageLimits.mediaTypes;
+						const images = files.filter((file) => mediaTypes.includes(file.type));
+						const imageAttachments = attachments.filter((attachment) => attachment.kind === "image");
+						if (imageAttachments.length + images.length > imageLimits.maxImagesPerMessage) return t("image.tooMany", { count: imageLimits.maxImagesPerMessage });
 						if (images.some((file) => file.size > imageLimits.maxImageBytes)) return t("image.fileTooLarge", { size: imageSizeText(imageLimits.maxImageBytes) });
-						if (attachments.reduce((sum, attachment) => sum + attachment.file.size, 0) + images.reduce((sum, file) => sum + file.size, 0) > imageLimits.maxMessageImageBytes) return t("image.totalTooLarge", { size: imageSizeText(imageLimits.maxMessageImageBytes) });
+						if (imageAttachments.reduce((sum, attachment) => sum + attachment.file.size, 0) + images.reduce((sum, file) => sum + file.size, 0) > imageLimits.maxMessageImageBytes) return t("image.totalTooLarge", { size: imageSizeText(imageLimits.maxMessageImageBytes) });
 					}
-					return addImages(images);
+					return addFiles(files, directories);
 				})();
 				if (rejected !== null) showToast(rejected);
 			}, [
-				addImages,
+				locked,
+				machineBusy,
+				subagent,
+				continuable,
+				addFiles,
 				attachments,
 				imageLimits,
-				sessionId,
 				showToast,
 				t
 			]);
-			const canAcceptDrop = !locked && !machineBusy && addImages !== void 0;
+			const canAcceptDrop = (subagent === null || continuable) && !locked && !machineBusy && addFiles !== void 0;
+			const fileInputRef = (0, react.useRef)(null);
+			const onPickFiles = (e) => {
+				const picked = e.target.files === null ? [] : [...e.target.files];
+				e.target.value = "";
+				if (picked.length > 0) intakeFiles(picked);
+			};
 			const gate = (0, react.useRef)({
 				locked,
 				machineBusy,
 				canSteerQueue,
 				running,
-				subagent,
-				resolveSubmitMode,
-				intakeImages
+				steeringAvailable,
+				busyEnter,
+				intakeFiles,
+				uploadsPending,
+				showToast,
+				t,
+				canAcceptDrop
 			});
 			gate.current = {
 				locked,
 				machineBusy,
 				canSteerQueue,
 				running,
-				subagent,
-				resolveSubmitMode,
-				intakeImages
+				steeringAvailable,
+				busyEnter,
+				intakeFiles,
+				uploadsPending,
+				showToast,
+				t,
+				canAcceptDrop
 			};
 			(0, react.useEffect)(() => {
+				if (keyboard === void 0) return;
+				return installDraftFilePicker(keyboard, gate, fileInputRef);
+			}, [keyboard]);
+			(0, react.useEffect)(() => {
 				if (editor === null || keyboard === void 0) return;
-				return registerComposerKeymap(editor, {
-					arbitrate: (key, composing) => keyboard.arbitrate(key, composing),
-					space: () => {
-						if (gate.current.machineBusy || gate.current.locked) return false;
-						return keyboard.space();
-					},
-					dismissPopup: () => {
-						keyboard.dismissPopup();
-					},
-					canSubmit: () => !gate.current.locked && !gate.current.machineBusy,
-					submit: (accelerated) => {
-						const g = gate.current;
-						if (accelerated && g.canSteerQueue) {
-							keyboard.steerQueue();
-							return;
-						}
-						keyboard.submit(g.resolveSubmitMode(g.running, accelerated ? "accelerated" : "enter", g.subagent === null));
-					},
-					intakeFiles: (files) => {
-						gate.current.intakeImages(files);
-					},
-					pasteText: (text) => {
-						if (gate.current.machineBusy || gate.current.locked) return;
-						keyboard.paste(text);
-					}
-				});
+				return installDraftKeymap(editor, keyboard, gate);
 			}, [editor, keyboard]);
 			const keepFocus = (e) => {
+				keepDraftFocus(e, editor);
+			};
+			const onCardMouseDown = (e) => {
+				if (!editable || editor === null || e.button !== 0 || e.defaultPrevented) return;
+				const target = e.target;
+				if (!(target instanceof Element) || !e.currentTarget.contains(target)) return;
+				if (target.closest("[data-composer-overlay]") !== null) return;
+				if (scrollRef.current?.contains(target)) return;
+				const control = target.closest("button, a, input, select, textarea, [role=\"button\"], [contenteditable], [tabindex]");
+				if (control !== null && e.currentTarget.contains(control)) return;
 				e.preventDefault();
-				editor?.getRootElement()?.focus({ preventScroll: true });
+				if (document.activeElement !== editor.getRootElement()) focusDraftEditor(editor, revealSelection);
 			};
 			const onToggleCommandMenu = () => {
-				if (keyboard !== void 0) toggleCommandMenu?.(keyboard.caretSpan());
+				if (keyboard === void 0) return;
+				if (editor !== null) focusDraftEditor(editor, revealSelection);
+				toggleCommandMenu?.(keyboard.caretSpan());
 			};
 			const onWorkspaceKeyDown = (e) => {
 				if (!workspaceTrigger) return;
@@ -15347,28 +18934,25 @@ window.__ModuleLoader__.load({
 				}
 			};
 			const primaryStops = running && subagent === null && (empty || blocked !== void 0);
+			const primaryDisabled = primaryStops ? stop === void 0 : empty || disabled || machineBusy || uploadsPending;
 			const interruptible = running && continuable;
-			const primaryLabel = primaryStops ? t("input.stop") : t("input.send");
+			const primarySubmitMode = resolveSubmitMode(busyEnter, running, "enter", steeringAvailable);
+			const plainMessageDraft = !empty && input?.phase === "plain" && !draft.trimStart().startsWith("/");
+			const primaryLabel = primaryStops ? t("input.stop") : running && steeringAvailable && !disabled && !uploadsPending && plainMessageDraft ? t(primarySubmitMode === "steer" ? "input.send.steer" : "input.send.queue") : t("input.send");
 			const onPrimary = () => {
 				if (primaryStops) {
 					stop?.();
 					return;
 				}
-				if (inputActions === void 0) return;
-				/* v8 ignore next -- defensive: the primary button is disabled while empty||disabled, so a click cannot reach the false arm. */
-				if (!empty && !disabled && !machineBusy) inputActions.submit();
+				if (keyboard === void 0) return;
+				/* v8 ignore next -- defensive: the primary button is disabled for empty, disabled, and pending-upload states. */
+				if (!empty && !disabled && !machineBusy && !uploadsPending) keyboard.submit(primarySubmitMode, "click");
 			};
-			const accessSelect = command === void 0 ? null : (0, react_jsx_runtime.jsx)(PermissionSelect, {
-				value: permissions,
-				locked,
-				command,
-				t
-			}, sessionId);
 			const claimActive = (input?.phase === "claimed" || input?.phase === "submitting") && input.claim !== void 0 && draft.startsWith(input.claim.token);
 			const rawHint = claimActive && input.claim.hint !== void 0 && draft.slice(input.claim.token.length).trim() === "" ? input.claim.hint : null;
 			const hint = (() => {
 				if (rawHint === null) return null;
-				const commandName = input?.claim?.token.slice(1).trim() ?? "";
+				const commandName = input?.claim?.name ?? "";
 				const hintKey = `hint.${commandName === "goal" && hasGoal ? "goal.active" : commandName}`;
 				const translated = t(hintKey);
 				return translated !== hintKey ? translated : rawHint;
@@ -15379,7 +18963,7 @@ window.__ModuleLoader__.load({
 				children: [
 					toast !== null && (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Toast, {
 						text: toast.text,
-						icon: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconWarningOutline16, {}),
+						icon: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconWarningOutlineRegular, {}),
 						anchor: cardRef.current,
 						onDone: dismissToast
 					}, toast.seq),
@@ -15398,10 +18982,12 @@ window.__ModuleLoader__.load({
 						onPointerDown: workspaceTrigger ? (e) => {
 							e.stopPropagation();
 						} : void 0,
+						onMouseDown: onCardMouseDown,
 						children: [
-							overlay !== void 0 && (0, react_jsx_runtime.jsx)("div", {
+							sessionId !== void 0 && (0, react_jsx_runtime.jsx)("div", {
 								className: InputBar_module_css_default.overlayAnchor,
-								children: overlay
+								"data-composer-overlay": true,
+								children: renderSlot("conversation.input.overlay", {})
 							}),
 							accessory !== void 0 && (0, react_jsx_runtime.jsx)("div", {
 								className: InputBar_module_css_default.accessory,
@@ -15410,164 +18996,174 @@ window.__ModuleLoader__.load({
 							renderSlot("conversation.input.attachments", {
 								attachments,
 								canAcceptDrop,
-								onAddImages: intakeImages,
-								onRemoveImage: (id) => {
-									removeImage?.(id);
+								onAddFiles: intakeFiles,
+								onRemoveAttachment: (id) => {
+									removeAttachment?.(id);
+								},
+								uploads,
+								onRetryFile: (id) => {
+									retryFileUpload?.(id);
 								},
 								dropLimits: imageLimits === void 0 ? void 0 : {
 									count: imageLimits.maxImagesPerMessage,
 									size: imageSizeText(imageLimits.maxImageBytes)
 								}
 							}),
-							(0, react_jsx_runtime.jsx)("div", {
-								ref: scrollRef,
-								className: InputBar_module_css_default.scroll,
-								"data-input-scroll": true,
-								children: (0, react_jsx_runtime.jsxs)("div", {
-									className: InputBar_module_css_default.grow,
-									children: [
-										(0, react_jsx_runtime.jsx)(ComposerContentEditable, {
-											editor: workspaceTrigger ? null : editor,
-											editable,
-											className: clsx(InputBar_module_css_default.input, editorDisabled && InputBar_module_css_default.inputDisabled),
-											"data-phase": input?.phase ?? "inert",
-											"aria-disabled": editorDisabled || void 0,
-											"data-placeholder": placeholderText,
-											"aria-label": workspaceTrigger ? t("hero.chooseWorkspace") : placeholderText,
-											"aria-haspopup": workspaceTrigger ? "menu" : void 0,
-											"aria-expanded": workspaceTrigger ? workspacePickerOpen : void 0,
-											tabIndex: workspaceTrigger ? 0 : void 0,
-											onKeyDown: workspaceTrigger ? onWorkspaceKeyDown : void 0,
-											style: hint === null ? void 0 : { "--dsh-composer-hint": JSON.stringify(hint) }
-										}),
-										empty && !claimActive && (0, react_jsx_runtime.jsx)("div", {
-											"aria-hidden": true,
-											className: InputBar_module_css_default.placeholder,
-											"data-composer-placeholder": true,
-											children: placeholderText
-										}),
-										(0, react_jsx_runtime.jsx)(DecoratorPortals, { editor: workspaceTrigger ? null : editor })
-									]
-								})
+							(0, react_jsx_runtime.jsx)(DraftEditor, {
+								classNames: InputBar_module_css_default,
+								editor,
+								scrollRef,
+								editable,
+								editorDisabled,
+								phase: input?.phase ?? "inert",
+								placeholderText,
+								ariaLabel: workspaceTrigger ? t("hero.chooseWorkspace") : placeholderText,
+								workspaceTrigger,
+								workspacePickerOpen,
+								onWorkspaceKeyDown,
+								hint,
+								showPlaceholder: draft === "" && attachments.length === 0 && !claimActive
 							}),
 							(0, react_jsx_runtime.jsxs)("div", {
+								ref: rowRef,
 								className: InputBar_module_css_default.row,
-								"data-composer-toolbar": "",
-								children: [
-									(0, react_jsx_runtime.jsx)("div", { "data-composer-subagents": "" }),
-									(0, react_jsx_runtime.jsxs)("div", {
-										className: InputBar_module_css_default.tools,
-										children: [
-											(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
-												label: t("input.commands"),
-												side: "top",
-												delayMs: 500,
-												children: (0, react_jsx_runtime.jsx)("button", {
-													type: "button",
-													className: InputBar_module_css_default.add,
-													"aria-label": t("input.commands"),
-													"aria-haspopup": "listbox",
-													"aria-expanded": commandMenuOpen,
-													disabled: locked || toggleCommandMenu === void 0,
-													onMouseDown: keepFocus,
-													onClick: onToggleCommandMenu,
-													children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconPlusOutline16, { size: 14 })
-												})
-											}),
-											(0, react_jsx_runtime.jsxs)("div", {
-												className: InputBar_module_css_default.modes,
-												children: [accessSelect, sessionId === void 0 ? null : renderSlot("conversation.input.plan", { locked })]
-											}),
-											leftItems
-										]
-									}),
-									(0, react_jsx_runtime.jsxs)("div", {
-										className: InputBar_module_css_default.trailing,
-										children: [
-											rightItems,
-											sessionId === void 0 ? null : renderSlot("conversation.input.model", { locked: modelSeatLocked }),
-											(0, react_jsx_runtime.jsx)(ContextMeter, {
-												useProjection,
-												t
-											}),
-											interruptible && (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
-												label: t("input.stop"),
-												side: "top",
-												delayMs: 500,
-												children: (0, react_jsx_runtime.jsx)("button", {
-													type: "button",
-													className: InputBar_module_css_default.primary,
-													"data-composer-primary-action": true,
-													"aria-label": t("input.stop"),
-													disabled: stop === void 0,
-													onMouseDown: keepFocus,
-													onClick: stop,
-													children: (0, react_jsx_runtime.jsx)("svg", {
-														viewBox: "0 0 16 16",
-														width: "16",
-														height: "16",
-														"aria-hidden": true,
-														children: (0, react_jsx_runtime.jsx)("rect", {
-															x: "3",
-															y: "3",
-															width: "10",
-															height: "10",
-															rx: "3",
-															fill: "currentColor"
-														})
-													})
-												})
-											}),
-											(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
-												label: primaryLabel,
-												side: "top",
-												delayMs: 500,
-												children: (0, react_jsx_runtime.jsx)("button", {
-													type: "button",
-													className: InputBar_module_css_default.primary,
-													"data-composer-primary-action": true,
-													"aria-label": primaryLabel,
-													disabled: primaryStops ? stop === void 0 : empty || disabled || machineBusy,
-													onMouseDown: keepFocus,
-													onClick: onPrimary,
-													children: primaryStops ? (0, react_jsx_runtime.jsx)("svg", {
-														viewBox: "0 0 16 16",
-														width: "16",
-														height: "16",
-														"aria-hidden": true,
-														children: (0, react_jsx_runtime.jsx)("rect", {
-															x: "3",
-															y: "3",
-															width: "10",
-															height: "10",
-															rx: "3",
-															fill: "currentColor"
-														})
-													}) : (0, react_jsx_runtime.jsx)("svg", {
-														viewBox: "0 0 16 16",
-														width: "16",
-														height: "16",
-														"aria-hidden": true,
-														children: (0, react_jsx_runtime.jsx)("path", {
-															d: "M8.3125 0.980183C8.66767 1.0531 8.97902 1.20418 9.2627 1.43233C9.48724 1.61297 9.73029 1.85793 9.97949 2.10714L14.707 6.83468L13.293 8.24874L9 3.95577V15.0417H7V3.95577L2.70703 8.24874L1.29297 6.83468L6.02051 2.10714C6.26971 1.85793 6.51277 1.61297 6.7373 1.43233C6.97662 1.23986 7.28445 1.04402 7.6875 0.980183C7.8973 0.947006 8.1031 0.95516 8.3125 0.980183Z",
-															fill: "currentColor"
-														})
+								children: [(0, react_jsx_runtime.jsxs)("div", {
+									className: InputBar_module_css_default.tools,
+									hidden: activity,
+									children: [
+										(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+											label: t("input.commands"),
+											side: "top",
+											delayMs: 500,
+											children: (0, react_jsx_runtime.jsx)("button", {
+												type: "button",
+												className: InputBar_module_css_default.add,
+												"aria-label": t("input.commands"),
+												"aria-haspopup": "listbox",
+												"aria-expanded": commandMenuOpen,
+												disabled: locked || toggleCommandMenu === void 0,
+												onMouseDown: keepFocus,
+												onClick: onToggleCommandMenu,
+												children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconPlusOutlineMedium, { size: 14 })
+											})
+										}),
+										(0, react_jsx_runtime.jsx)("input", {
+											ref: fileInputRef,
+											type: "file",
+											multiple: true,
+											disabled: subagent !== null,
+											hidden: true,
+											onChange: onPickFiles
+										}),
+										(0, react_jsx_runtime.jsxs)("div", {
+											className: InputBar_module_css_default.modes,
+											children: [sessionId === void 0 ? null : renderSlot("conversation.input.permission", { locked }), sessionId === void 0 ? null : renderSlot("conversation.input.plan", { locked })]
+										}),
+										input === void 0 || sessionId === void 0 ? null : renderSlot("conversation.input.left", {})
+									]
+								}), (0, react_jsx_runtime.jsxs)("div", {
+									className: clsx(InputBar_module_css_default.trailing, activity && InputBar_module_css_default.trailingActive),
+									children: [
+										(0, react_jsx_runtime.jsxs)("div", {
+											className: InputBar_module_css_default.standardControls,
+											hidden: activity,
+											children: [input === void 0 || sessionId === void 0 ? null : renderSlot("conversation.input.right", {}), sessionId === void 0 ? null : renderSlot("conversation.input.model", { locked: modelSeatLocked })]
+										}),
+										input === void 0 || sessionId === void 0 ? null : (0, react_jsx_runtime.jsx)("div", {
+											className: activity ? InputBar_module_css_default.activityExpanded : InputBar_module_css_default.activity,
+											children: renderSlot("conversation.input.activity", {
+												locked,
+												onActiveChange: setActivity
+											})
+										}),
+										interruptible && (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+											label: t("input.stop"),
+											shortcutKeys: stopKeys,
+											side: "top",
+											delayMs: 500,
+											disabled: stop === void 0,
+											children: (0, react_jsx_runtime.jsx)("button", {
+												type: "button",
+												className: InputBar_module_css_default.primary,
+												"data-composer-primary-action": true,
+												"aria-label": t("input.stop"),
+												disabled: stop === void 0,
+												onMouseDown: keepFocus,
+												onClick: stop,
+												children: (0, react_jsx_runtime.jsx)("svg", {
+													viewBox: "0 0 16 16",
+													width: "16",
+													height: "16",
+													"aria-hidden": true,
+													children: (0, react_jsx_runtime.jsx)("rect", {
+														x: "3",
+														y: "3",
+														width: "10",
+														height: "10",
+														rx: "3",
+														fill: "currentColor"
 													})
 												})
 											})
-										]
-									})
-								]
+										}),
+										(0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.Tooltip, {
+											label: primaryStops ? t("input.stop") : primaryLabel,
+											shortcutKeys: primaryStops ? stopKeys : void 0,
+											side: "top",
+											delayMs: 500,
+											disabled: primaryDisabled,
+											children: (0, react_jsx_runtime.jsx)("button", {
+												type: "button",
+												className: InputBar_module_css_default.primary,
+												"data-composer-primary-action": true,
+												"aria-label": primaryLabel,
+												disabled: primaryDisabled,
+												onMouseDown: keepFocus,
+												onClick: onPrimary,
+												children: primaryStops ? (0, react_jsx_runtime.jsx)("svg", {
+													viewBox: "0 0 16 16",
+													width: "16",
+													height: "16",
+													"aria-hidden": true,
+													children: (0, react_jsx_runtime.jsx)("rect", {
+														x: "3",
+														y: "3",
+														width: "10",
+														height: "10",
+														rx: "3",
+														fill: "currentColor"
+													})
+												}) : (0, react_jsx_runtime.jsx)("svg", {
+													viewBox: "0 0 16 16",
+													width: "16",
+													height: "16",
+													"aria-hidden": true,
+													children: (0, react_jsx_runtime.jsx)("path", {
+														d: "M8.3125 0.980183C8.66767 1.0531 8.97902 1.20418 9.2627 1.43233C9.48724 1.61297 9.73029 1.85793 9.97949 2.10714L14.707 6.83468L13.293 8.24874L9 3.95577V15.0417H7V3.95577L2.70703 8.24874L1.29297 6.83468L6.02051 2.10714C6.26971 1.85793 6.51277 1.61297 6.7373 1.43233C6.97662 1.23986 7.28445 1.04402 7.6875 0.980183C7.8973 0.947006 8.1031 0.95516 8.3125 0.980183Z",
+														fill: "currentColor"
+													})
+												})
+											})
+										})
+									]
+								})]
 							})
 						]
 					}),
-					footer
+					(0, react_jsx_runtime.jsxs)("div", {
+						className: InputBar_module_css_default.dock,
+						"data-composer-dock": true,
+						children: [variant === "composer" && input !== void 0 && sessionId !== void 0 ? renderSlot("conversation.composer.dock", {}) : null, activity ? null : (0, react_jsx_runtime.jsx)(ContextMeter, {
+							useProjection,
+							t
+						})]
+					})
 				]
 			});
-		}
+		});
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-conversation/src/client/skeleton/TodoPanel.module.css.mjs
-		const css = "._i8GEW_root{box-sizing:border-box;width:calc(100% - var(--dsh-composer-side-clearance) - var(--dsh-composer-side-clearance) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset));max-width:calc(var(--dsh-composer-card-max-width) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset));border:1px solid var(--dsw-alias-border-l1);background:var(--dsw-specific-tip);--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2);--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2);border-radius:12px;flex:none;margin:0 auto;overflow:hidden}._i8GEW_body{flex-direction:column;gap:8px;padding:6px 12px;display:flex}._i8GEW_header{text-align:left;cursor:pointer;background:0 0;border:none;align-items:center;gap:10px;width:100%;padding:0;display:flex}._i8GEW_lead{color:var(--dsw-alias-label-tertiary);flex:none;place-items:center;display:grid}._i8GEW_title{color:var(--dsw-alias-label-primary);flex:none;font-size:13px;font-weight:500;line-height:24px}._i8GEW_progress{min-width:0;color:var(--dsw-alias-label-tertiary);text-overflow:ellipsis;white-space:nowrap;flex:auto;font-size:13px;font-weight:400;line-height:20px;overflow:hidden}._i8GEW_chevron{color:var(--dsw-alias-label-tertiary);flex:none;place-items:center;display:grid}._i8GEW_list{flex-direction:column;gap:8px;max-height:180px;margin:0;padding:0;list-style:none;display:flex;overflow-y:auto}._i8GEW_item{min-width:0;color:var(--dsw-alias-label-secondary);align-items:center;gap:10px;font-size:13px;line-height:20px;display:flex}._i8GEW_glyph{flex:none;place-items:center;width:16px;height:16px;display:grid}._i8GEW_glyphCompleted{color:var(--dsw-alias-state-success-primary)}._i8GEW_glyphPending{color:var(--dsw-alias-label-caption)}._i8GEW_glyphProgress{color:var(--dsw-alias-state-business-primary);animation:1s linear infinite _i8GEW_todo-progress-spin}@keyframes _i8GEW_todo-progress-spin{to{transform:rotate(360deg)}}._i8GEW_content{text-overflow:ellipsis;white-space:nowrap;min-width:0;overflow:hidden}";
+		const css = ".ttHp9q_root{box-sizing:border-box;width:calc(100% - var(--dsh-composer-side-clearance) - var(--dsh-composer-side-clearance) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset));max-width:calc(var(--dsh-composer-card-max-width) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset) - var(--dsh-composer-dock-inset));--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);border-radius:var(--dsw-radius-lg);background:var(--dsw-specific-menu);backdrop-filter:var(--dsw-menu-backdrop-filter);box-shadow:var(--dsw-elevation-panel);--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2);--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2);border:0;flex:none;margin:0 auto;overflow:hidden}.ttHp9q_body{flex-direction:column;gap:8px;padding:6px 12px;display:flex}.ttHp9q_header{text-align:left;cursor:pointer;background:0 0;border:none;align-items:center;gap:10px;width:100%;padding:0;display:flex}.ttHp9q_lead{color:var(--dsw-alias-label-tertiary);flex:none;place-items:center;display:grid}.ttHp9q_title{color:var(--dsw-alias-label-primary);flex:none;font-size:13px;font-weight:500;line-height:24px}.ttHp9q_progress{min-width:0;color:var(--dsw-alias-label-tertiary);text-overflow:ellipsis;white-space:nowrap;flex:auto;font-size:13px;font-weight:400;line-height:20px;overflow:hidden}.ttHp9q_chevron{color:var(--dsw-alias-label-tertiary);flex:none;place-items:center;display:grid}.ttHp9q_list{flex-direction:column;gap:8px;max-height:180px;margin:0;padding:0;list-style:none;display:flex;overflow-y:auto}.ttHp9q_item{min-width:0;color:var(--dsw-alias-label-secondary);align-items:center;gap:10px;font-size:13px;line-height:20px;display:flex}.ttHp9q_glyph{flex:none;place-items:center;width:16px;height:16px;display:grid}.ttHp9q_content{text-overflow:ellipsis;white-space:nowrap;min-width:0;overflow:hidden}";
 		const tagId = "@deepseek-ai/dsh-client-ui-conversation/TodoPanel.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -15577,21 +19173,17 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var TodoPanel_module_css_default = {
-			"body": "_i8GEW_body",
-			"chevron": "_i8GEW_chevron",
-			"content": "_i8GEW_content",
-			"glyph": "_i8GEW_glyph",
-			"glyphCompleted": "_i8GEW_glyphCompleted",
-			"glyphPending": "_i8GEW_glyphPending",
-			"glyphProgress": "_i8GEW_glyphProgress",
-			"header": "_i8GEW_header",
-			"item": "_i8GEW_item",
-			"lead": "_i8GEW_lead",
-			"list": "_i8GEW_list",
-			"progress": "_i8GEW_progress",
-			"root": "_i8GEW_root",
-			"title": "_i8GEW_title",
-			"todo-progress-spin": "_i8GEW_todo-progress-spin"
+			"body": "ttHp9q_body",
+			"chevron": "ttHp9q_chevron",
+			"content": "ttHp9q_content",
+			"glyph": "ttHp9q_glyph",
+			"header": "ttHp9q_header",
+			"item": "ttHp9q_item",
+			"lead": "ttHp9q_lead",
+			"list": "ttHp9q_list",
+			"progress": "ttHp9q_progress",
+			"root": "ttHp9q_root",
+			"title": "ttHp9q_title"
 		};
 		//#endregion
 		//#region lib/types/client/skeleton/TodoPanel.js
@@ -15600,82 +19192,22 @@ window.__ModuleLoader__.load({
 		function assertNever(value) {
 			throw new Error(`unreachable todo status: ${String(value)}`);
 		}
-		/** Status glyphs share the figma 14×14 artboard; the 16×16 `.glyph` cell centers them. */
-		function CompletedGlyph() {
-			return (0, react_jsx_runtime.jsxs)("svg", {
-				width: 14,
-				height: 14,
-				viewBox: "0 0 14 14",
-				fill: "none",
-				"aria-hidden": "true",
-				className: TodoPanel_module_css_default.glyphCompleted,
-				children: [(0, react_jsx_runtime.jsx)("circle", {
-					cx: "7",
-					cy: "7",
-					r: "6.4",
-					stroke: "currentColor",
-					strokeWidth: "1.2"
-				}), (0, react_jsx_runtime.jsx)("path", {
-					d: "M10.9631 5.71411L7.70154 8.97571C7.48011 9.19714 7.27736 9.40099 7.09229 9.54993C6.89742 9.70669 6.66314 9.85279 6.3634 9.90027C6.2049 9.92534 6.04339 9.92534 5.88489 9.90027C5.58515 9.85279 5.35087 9.70669 5.15601 9.54993C4.97093 9.40099 4.76818 9.19714 4.54675 8.97571L3.03516 7.46411L3.96313 6.53613L5.47473 8.04773C5.7169 8.28989 5.86196 8.43389 5.97888 8.52795C6.08597 8.61409 6.10875 8.60701 6.08997 8.604C6.11259 8.60758 6.13571 8.60758 6.15833 8.604C6.13954 8.60701 6.16232 8.61409 6.26941 8.52795C6.38633 8.43389 6.53139 8.28989 6.77356 8.04773L10.0352 4.78613L10.9631 5.71411Z",
-					fill: "currentColor"
-				})]
-			});
-		}
-		/** In-progress: business-blue ring fading out; CSS spins the svg. */
-		function ProgressGlyph() {
-			const gradientId = (0, react.useId)();
-			return (0, react_jsx_runtime.jsxs)("svg", {
-				width: 14,
-				height: 14,
-				viewBox: "0 0 14 14",
-				fill: "none",
-				"aria-hidden": "true",
-				className: TodoPanel_module_css_default.glyphProgress,
-				children: [(0, react_jsx_runtime.jsx)("defs", { children: (0, react_jsx_runtime.jsxs)("linearGradient", {
-					id: gradientId,
-					x1: "2.5",
-					y1: "12",
-					x2: "10.5",
-					y2: "3.5",
-					gradientUnits: "userSpaceOnUse",
-					children: [(0, react_jsx_runtime.jsx)("stop", { stopColor: "currentColor" }), (0, react_jsx_runtime.jsx)("stop", {
-						offset: "1",
-						stopColor: "currentColor",
-						stopOpacity: "0"
-					})]
-				}) }), (0, react_jsx_runtime.jsx)("circle", {
-					cx: "7",
-					cy: "7",
-					r: "6.4",
-					stroke: `url(#${gradientId})`,
-					strokeWidth: "1.2"
-				})]
-			});
-		}
-		/** Pending: dashed unstarted ring (figma dash 2.4 2.4). */
-		function PendingGlyph() {
-			return (0, react_jsx_runtime.jsx)("svg", {
-				width: 14,
-				height: 14,
-				viewBox: "0 0 14 14",
-				fill: "none",
-				"aria-hidden": "true",
-				className: TodoPanel_module_css_default.glyphPending,
-				children: (0, react_jsx_runtime.jsx)("circle", {
-					cx: "7",
-					cy: "7",
-					r: "6.4",
-					stroke: "currentColor",
-					strokeWidth: "1.2",
-					strokeDasharray: "2.4 2.4"
-				})
-			});
-		}
-		function StatusGlyph({ status }) {
+		/** Map Todo lifecycle state onto the shared compact status language. */
+		function statusDotState(status) {
 			switch (status) {
-				case "completed": return (0, react_jsx_runtime.jsx)(CompletedGlyph, {});
-				case "in_progress": return (0, react_jsx_runtime.jsx)(ProgressGlyph, {});
-				case "pending": return (0, react_jsx_runtime.jsx)(PendingGlyph, {});
+				case "completed": return "done";
+				case "in_progress": return "ongoing";
+				case "pending": return "idle";
+				/* v8 ignore next -- closed TodoItem status union */
+				default: return assertNever(status);
+			}
+		}
+		/** Return the localized status announced beside one decorative marker. */
+		function statusLabel(status, t) {
+			switch (status) {
+				case "completed": return t("todo.status.completed");
+				case "in_progress": return t("todo.status.inProgress");
+				case "pending": return t("todo.status.pending");
 				/* v8 ignore next -- closed TodoItem status union */
 				default: return assertNever(status);
 			}
@@ -15711,7 +19243,7 @@ window.__ModuleLoader__.load({
 							(0, react_jsx_runtime.jsx)("span", {
 								className: TodoPanel_module_css_default.lead,
 								"aria-hidden": true,
-								children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChecklistOutline14, {})
+								children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChecklistOutlineRegular, {})
 							}),
 							(0, react_jsx_runtime.jsx)("span", {
 								className: TodoPanel_module_css_default.title,
@@ -15724,7 +19256,7 @@ window.__ModuleLoader__.load({
 							(0, react_jsx_runtime.jsx)("span", {
 								className: TodoPanel_module_css_default.chevron,
 								"aria-hidden": true,
-								children: collapsed ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronUpOutline14, {}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutline14, {})
+								children: collapsed ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronUpOutlineRegular, {}) : (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronDownOutlineRegular, {})
 							})
 						]
 					}), !collapsed && (0, react_jsx_runtime.jsx)("ul", {
@@ -15734,8 +19266,9 @@ window.__ModuleLoader__.load({
 							"data-status": item.status,
 							children: [(0, react_jsx_runtime.jsx)("span", {
 								className: TodoPanel_module_css_default.glyph,
-								"aria-hidden": true,
-								children: (0, react_jsx_runtime.jsx)(StatusGlyph, { status: item.status })
+								role: "img",
+								"aria-label": statusLabel(item.status, t),
+								children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.StateDot, { state: statusDotState(item.status) })
 							}), (0, react_jsx_runtime.jsx)("span", {
 								className: TodoPanel_module_css_default.content,
 								children: item.content
@@ -15766,16 +19299,145 @@ window.__ModuleLoader__.load({
 			}
 		};
 		//#endregion
+		//#region lib/types/client/stop-sequence.js
+		/** One short-lived first press, cleared before an accepted cancellation runs. */
+		var StopSequence = class {
+			intervalMs;
+			release;
+			first;
+			timer;
+			/**
+			* @param intervalMs - validated maximum time between independent presses.
+			* @param release - releases observations retained by the pending first press.
+			*/
+			constructor(intervalMs, release) {
+				this.intervalMs = intervalMs;
+				this.release = release;
+			}
+			/** Clear the first press and its expiry timer. */
+			reset() {
+				this.first = void 0;
+				clearTimeout(this.timer);
+				this.timer = void 0;
+				this.release();
+			}
+			/**
+			* Accept one eligible, non-repeated Escape against freshly resolved current state.
+			* @param target - live turn and actual focused input region.
+			* @returns whether this press requested cancellation.
+			*/
+			press(target) {
+				const first = this.first;
+				this.reset();
+				if (first !== void 0 && performance.now() <= first.deadline && first.target.sessionId === target.sessionId && first.target.turn === target.turn && first.target.generation === target.generation && first.target.region === target.region) {
+					target.cancel();
+					return true;
+				}
+				this.first = {
+					target,
+					deadline: performance.now() + this.intervalMs
+				};
+				this.timer = setTimeout(() => {
+					this.reset();
+				}, this.intervalMs + 1);
+				return false;
+			}
+		};
+		//#endregion
+		//#region lib/types/client/stop-shortcut.js
+		/**
+		* Subscribe fixed input to the same Session cancellation used by the stop button.
+		* @param shortcuts - window keyboard arbitration and validated sequence interval.
+		* @param sessions - live Session identities and lifecycle sources.
+		* @param openTurn - stable current-turn source for a live Session binding.
+		* @param uiSession - current pending-interaction status.
+		* @param cancel - scoped stop operation that preserves Queue and reports failures.
+		* @returns disposer releasing the input subscription, pending watches and expiry timer.
+		*/
+		function installStopShortcut(shortcuts, sessions, openTurn, uiSession, cancel) {
+			let unwatch = () => {};
+			const sequence = new StopSequence(shortcuts.stopSequenceMs, () => {
+				unwatch();
+				unwatch = () => {};
+			});
+			const reset = () => {
+				sequence.reset();
+			};
+			const off = shortcuts.observeFixedInput((input) => {
+				if (input.type === "reset") {
+					reset();
+					return;
+				}
+				const { gesture, context } = input;
+				if (gesture.code !== "Escape" || gesture.repeat || gesture.composing || gesture.defaultPrevented || gesture.control || gesture.alt || gesture.shift || gesture.meta || context.modal !== null || context.region === "terminal" || context.target === null) {
+					reset();
+					return;
+				}
+				const target = context.target;
+				const occurrence = target.closest("[data-conversation-session]");
+				const region = target.closest("[data-conversation-region]");
+				if (occurrence === null || region === null || !occurrence.contains(region) || target.closest("[data-approval-key], iframe, .xterm, [inert]") !== null) {
+					reset();
+					return;
+				}
+				const sessionId = occurrence.dataset.conversationSession;
+				const binding = sessions.binding(sessionId);
+				if (binding === void 0) {
+					reset();
+					return;
+				}
+				const turnSource = openTurn(binding);
+				const currentTurn = () => {
+					const session = binding.session.getSnapshot();
+					if (!session.running || session.removed || session.subagent !== null && session.subagent.address.mode !== "continuable" || uiSession.sessionStatus.getSnapshot().get(sessionId)?.pendingInteraction !== void 0) return void 0;
+					return turnSource.getSnapshot();
+				};
+				const turn = currentTurn();
+				if (turn === void 0) {
+					reset();
+					return;
+				}
+				input.consume();
+				if (sequence.press({
+					sessionId,
+					turn,
+					generation: binding,
+					region,
+					cancel: () => {
+						cancel(sessionId);
+					}
+				})) return;
+				const changed = () => {
+					if (sessions.binding(sessionId) !== binding || currentTurn() !== turn) reset();
+				};
+				const disposers = [
+					turnSource.subscribe(changed),
+					binding.session.subscribe(changed),
+					uiSession.sessionStatus.subscribe(changed)
+				];
+				unwatch = () => {
+					for (const dispose of disposers) dispose();
+				};
+			});
+			return () => {
+				off();
+				reset();
+			};
+		}
+		//#endregion
 		//#region lib/types/client/apply.js
 		/** Services required by the Conversation plugin. */
 		const inject = [
 			"slots",
 			"sessions",
+			"fileUpload",
 			"uiSession",
 			"uiWorkspace",
 			"locale",
-			"settingsScope"
+			"configForms"
 		];
+		/** Validated Conversation runtime configuration. */
+		const Config = Schema.object({ maxConcurrentFileUploads: Schema.natural().min(1).default(2) });
 		const ABSENT_NOTICES = {
 			getSnapshot: () => null,
 			subscribe: () => () => {}
@@ -15793,6 +19455,15 @@ window.__ModuleLoader__.load({
 			getSnapshot: () => null,
 			subscribe: () => () => {}
 		};
+		const EMPTY_FILE_UPLOADS = {};
+		const ABSENT_FILE_UPLOADS = {
+			getSnapshot: () => EMPTY_FILE_UPLOADS,
+			subscribe: () => () => {}
+		};
+		/** The shell-installed bridge, when this document runs inside the Desktop application. */
+		function hostPathBridge() {
+			return globalThis.__DSH_HOST_PATHS__;
+		}
 		/** Resolve the session-scoped Conversation action face, failing loud. */
 		function scopedConversation(sessions, id) {
 			const scoped = sessions.scope(id);
@@ -15811,18 +19482,56 @@ window.__ModuleLoader__.load({
 		* Mount the Conversation core and target-neutral presentation.
 		* @param ctx - Client root context.
 		*/
-		function apply(ctx) {
+		function apply(ctx, config = Config({})) {
 			const sessions = ctx.sessions;
 			const slots = ctx.slots;
+			const maxConcurrentFileUploads = config.maxConcurrentFileUploads;
 			const workspaceNavigation = ctx.get("uiWorkspace");
 			const uiConversation = new UiConversation(ctx, sessions);
+			uiConversation.userText.register(sessionReferenceRule);
+			uiConversation.userText.register(collapseWhitespaceRule);
+			uiConversation.userText.register(trimWhitespaceRule);
+			slots.registerFactory({
+				name: "conversation.user.text",
+				scope: "session",
+				children: { "conversation.user.text.node": {
+					kind: "keyed",
+					scope: "session",
+					inline: true
+				} },
+				inject: () => ({
+					hooks: { userTextRevision: {
+						getSnapshot: () => uiConversation.userText.getSnapshot(),
+						subscribe: (listener) => uiConversation.userText.subscribe(listener)
+					} },
+					createUserTextEvaluator: () => uiConversation.userText.createEvaluator(),
+					reportTransformFailure: (error) => {
+						console.error("[ui-conversation] user-text transformation failed:", error);
+					}
+				})
+			}, UserText);
+			slots.inject("conversation.user.text.node", function* () {
+				yield slots.register({
+					name: "conversation.user.text.node",
+					key: "text",
+					priority: 100
+				}, PlainUserText);
+				yield slots.register({
+					name: "conversation.user.text.node",
+					key: "session",
+					priority: 100
+				}, SessionReference);
+			});
 			ctx.effect(() => ctx.locale.register(NS, {
 				zh,
 				en
 			}), "ui-conversation: dictionaries");
 			const t = ctx.locale.bind(NS);
 			const conversationStore = createConversationStore();
-			const submissionPolicy = new ComposerSubmissionPolicy(ctx.settingsScope.bind({ namespace: CONVERSATION_SETTINGS_NAMESPACE }));
+			const submissionPolicy = new ComposerSubmissionPolicy(ctx.configForms.get(CONVERSATION_SETTINGS_NAMESPACE));
+			ctx.effect(() => () => {
+				submissionPolicy.dispose();
+			});
 			ctx.slots.inject("settings.general.item", () => ctx.slots.register({
 				name: "settings.general.item",
 				id: "composer-enter",
@@ -15840,6 +19549,7 @@ window.__ModuleLoader__.load({
 				for (const entry of slots.entries("conversation.view")) {
 					/* v8 ignore next -- list registration validates id at load. */
 					if (entry.options.id === void 0) continue;
+					if (!ctx.configForms.developerTools.enabled.getSnapshot() && entry.options.id === "trajectory") continue;
 					tabs.push({
 						id: entry.options.id,
 						label: (0, _deepseek_ai_dsh_client_ui_slots.resolveSlotLabel)(entry.options.label) ?? entry.options.id
@@ -15847,34 +19557,158 @@ window.__ModuleLoader__.load({
 				}
 				return tabs;
 			};
+			const activateView = (sessionId, preferred) => {
+				const active = resolveActiveView(viewTabs(), preferred);
+				if (active !== void 0) uiConversation.binding(sessionId).activate(active.id);
+			};
+			const restoreView = (sessionId) => {
+				activateView(sessionId, readConversationViewPreference(sessionId));
+			};
 			const conversationViews = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(viewTabs());
+			const bindings = /* @__PURE__ */ new Set();
+			const trackedBindings = /* @__PURE__ */ new WeakSet();
+			const trackBinding = (binding) => {
+				if (trackedBindings.has(binding)) return;
+				trackedBindings.add(binding);
+				bindings.add(binding);
+				binding.ctx.effect(() => () => {
+					bindings.delete(binding);
+				}, "ui-conversation: active Provider binding");
+			};
 			const refreshViews = () => {
 				const current = conversationViews.getSnapshot();
 				const next = viewTabs();
-				if (current.length === next.length && current.every((tab, index) => {
+				if (!(current.length === next.length && current.every((tab, index) => {
 					const candidate = next.at(index);
 					return candidate !== void 0 && tab.id === candidate.id && tab.label === candidate.label;
-				})) return;
-				conversationViews.set(next);
+				}))) conversationViews.set(next);
+				for (const binding of bindings) restoreView(binding.sessionId);
 			};
 			ctx.effect(() => {
 				const disposeViews = slots.subscribe("conversation.view", refreshViews);
 				const disposeLocale = ctx.locale.subscribe(refreshViews);
+				const disposeDeveloperTools = ctx.configForms.developerTools.enabled.subscribe(refreshViews);
 				return () => {
+					disposeDeveloperTools();
 					disposeLocale();
 					disposeViews();
 				};
-			}, "ui-conversation: View roster");
+			}, "ui-conversation: View selection");
+			const stop = (sessionId) => {
+				scopedConversation(sessions, sessionId).cancel().catch((_error) => {});
+			};
+			const stopShortcut = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)([]);
+			ctx.inject(["shortcuts"], (scope) => {
+				const fixedInputs = [
+					{
+						id: "fixed.send",
+						label: () => t("input.send"),
+						keys: ["Enter"],
+						bindings: [{
+							code: "Enter",
+							modifiers: []
+						}],
+						group: "input"
+					},
+					{
+						id: "fixed.newline",
+						label: () => t("shortcut.newline"),
+						keys: scope.shortcuts.describeBinding({
+							code: "Enter",
+							modifiers: ["shift"]
+						}).keys,
+						bindings: [{
+							code: "Enter",
+							modifiers: ["shift"]
+						}],
+						group: "input"
+					},
+					{
+						id: "fixed.complementary",
+						label: () => t("shortcut.complementary"),
+						keys: scope.shortcuts.describeBinding({
+							code: "Enter",
+							modifiers: ["primary"]
+						}).keys,
+						bindings: [{
+							code: "Enter",
+							modifiers: ["control"]
+						}, {
+							code: "Enter",
+							modifiers: ["meta"]
+						}],
+						group: "input"
+					},
+					{
+						id: "fixed.slash",
+						label: () => t("shortcut.slash"),
+						keys: ["/"],
+						bindings: [{
+							code: "Slash",
+							modifiers: []
+						}],
+						group: "input"
+					},
+					{
+						id: "fixed.mention",
+						label: () => t("shortcut.mention"),
+						keys: ["@"],
+						bindings: [{
+							code: "Digit2",
+							modifiers: ["shift"]
+						}],
+						group: "input"
+					}
+				];
+				for (const command of fixedInputs) scope.effect(() => scope.shortcuts.registerFixed(command), `ui-conversation: ${command.id}`);
+				scope.effect(() => installStopShortcut(scope.shortcuts, sessions, (binding) => uiConversation.binding(binding).openTurn, ctx.uiSession, stop), "ui-conversation: fixed stop input");
+				scope.effect(() => {
+					const command = {
+						id: "response.stop",
+						label: () => t("input.stop"),
+						keys: ["Esc", "Esc"],
+						bindings: [{
+							code: "Escape",
+							modifiers: []
+						}],
+						group: "input"
+					};
+					const dispose = scope.shortcuts.registerFixed(command);
+					stopShortcut.set(command.keys);
+					return () => {
+						stopShortcut.set([]);
+						dispose();
+					};
+				}, "ui-conversation: fixed stop reference");
+			});
 			const inputHub = new InputHub(ctx, t);
 			const composerBlocks = new ComposerBlockRegistry();
+			ctx.inject(["commandUi"], (scope) => {
+				const commands = scope.get("commandUi");
+				scope.effect(() => commands.register({
+					name: "file",
+					label: () => t("input.file"),
+					icon: _deepseek_ai_dsh_client_ui_primitives.IconPaperclipOutlineRegular,
+					available: (session) => inputHub.canPickFiles(session.sessionId),
+					ui: {
+						kind: "action",
+						run: (session) => {
+							inputHub.pickFiles(session.sessionId);
+						}
+					}
+				}), "ui-conversation: File action");
+			});
 			ctx.uiSession.provide({
 				hooks: ["conversation", "input"],
 				props: ["inputActions"],
 				resolve: (binding) => {
+					trackBinding(binding);
 					const shell = inputHub.shellFor(binding);
+					const conversation = uiConversation.binding(binding);
+					restoreView(binding.sessionId);
 					return {
 						hooks: {
-							conversation: uiConversation.binding(binding).snapshot,
+							conversation: conversation.snapshot,
 							input: shell.state
 						},
 						props: { inputActions: shell.actions }
@@ -15882,14 +19716,18 @@ window.__ModuleLoader__.load({
 				}
 			});
 			const registerConversationRoot = () => slots.register({
-				name: "conversation",
+				name: "main.conversation",
+				children: { "conversation.header": {
+					kind: "single",
+					scope: "session-maybe"
+				} }
+			}, ConversationRoot);
+			const registerConversationContent = () => slots.registerFactory({
+				name: "conversation.content",
+				scope: "session-maybe",
 				locale: NS,
 				children: {
 					"conversation.session": {
-						kind: "single",
-						scope: "session"
-					},
-					"conversation.session.header": {
 						kind: "single",
 						scope: "session"
 					},
@@ -15901,23 +19739,7 @@ window.__ModuleLoader__.load({
 						kind: "single",
 						scope: "session-maybe"
 					},
-					"conversation.input.overlay": {
-						kind: "list",
-						scope: "session"
-					},
 					"conversation.input.dock": {
-						kind: "list",
-						scope: "session"
-					},
-					"conversation.composer.dock": {
-						kind: "list",
-						scope: "session"
-					},
-					"conversation.input.left": {
-						kind: "list",
-						scope: "session"
-					},
-					"conversation.input.right": {
 						kind: "list",
 						scope: "session"
 					},
@@ -15935,34 +19757,38 @@ window.__ModuleLoader__.load({
 					},
 					"conversation.hero.agentPreset": {
 						kind: "single",
-						scope: "root"
+						scope: "session-maybe"
 					},
-					"conversation.hero.accessory": {
+					"conversation.hero.options": {
 						kind: "list",
-						scope: "root"
+						scope: "session"
 					}
+				},
+				slots: {
+					views: { scope: "session" },
+					widthControls: { scope: "root" }
 				},
 				inject: (sessionId) => ({
 					hooks: { composerBlock: sessionId === void 0 ? ABSENT_BLOCK : composerBlocks.storeFor(sessionId) },
-					selectWorkspace: async (workspaceId) => {
-						const nextId = await workspaceNavigation.connectWorkspace(workspaceId);
+					selectWorkspace: (workspaceId) => workspaceNavigation.openWorkspace(workspaceId, (nextId) => {
 						if (sessionId !== void 0 && nextId !== sessionId) {
 							const from = inputHub.shell(sessionId);
-							const draft = from.snapshot.draft;
-							const imageIds = from.snapshot.imageIds;
+							const draft = from.draftSnapshot;
+							const attachmentIds = from.snapshot.attachmentIds;
 							const next = inputHub.shell(nextId);
-							if (imageIds.length === 0 || next.addImages(imageIds)) {
-								if (draft !== "") {
+							if (attachmentIds.length === 0 || next.addAttachments(attachmentIds)) {
+								if (sessions.binding(nextId) === void 0) throw new Error(`ui-conversation: session "${nextId}" resolved no binding`);
+								concreteConversation(ctx).rebindDraftFiles(nextId, attachmentIds);
+								if (draft.text !== "") {
 									next.setDraft(draft);
 									from.setDraft("");
 								}
-								if (imageIds.length > 0) for (const id of imageIds) from.removeImage(id);
+								if (attachmentIds.length > 0) for (const id of attachmentIds) from.removeAttachment(id);
 							}
 						}
-						sessions.open(nextId);
-					}
+					})
 				})
-			}, ConversationRoot);
+			}, ConversationContent);
 			const registerConversationSession = () => slots.register({
 				name: "conversation.session",
 				children: { "conversation.view": {
@@ -15970,12 +19796,51 @@ window.__ModuleLoader__.load({
 					scope: "session"
 				} },
 				store: conversationStore,
-				inject: (sessionId, _actions) => ({
-					hooks: { conversationViews },
-					bindDraftMirror: (write) => inputHub.shell(sessionId).bindMirror(write)
-				})
+				inject: (sessionId, actions) => {
+					const openView = (view, focus) => {
+						if (!viewTabs().some((tab) => tab.id === view)) return;
+						activateView(sessionId, view);
+						actions.openView(view, focus);
+					};
+					const inspectionTarget = () => uiConversation.views.entries().find((definition) => definition.toolCallFocus !== void 0 && conversationViews.getSnapshot().some((view) => view.id === definition.target));
+					const inspectCall = (callId) => {
+						const target = inspectionTarget();
+						if (target?.toolCallFocus !== void 0) openView(target.target, target.toolCallFocus(callId));
+					};
+					return {
+						hooks: {
+							conversationViews,
+							inspectCall: {
+								getSnapshot: () => inspectionTarget() === void 0 ? void 0 : inspectCall,
+								subscribe: (listener) => {
+									const disposeViews = conversationViews.subscribe(listener);
+									const disposeDefinitions = uiConversation.views.subscribe(listener);
+									return () => {
+										disposeViews();
+										disposeDefinitions();
+									};
+								}
+							}
+						},
+						bindDraftPersistence: (write) => inputHub.shell(sessionId).bindDraftPersistence(write),
+						openView
+					};
+				}
 			}, ConversationSession);
-			const registerConversationHeader = () => slots.register({
+			const registerHeader = () => slots.register({
+				name: "conversation.header",
+				children: {
+					"conversation.header.leading": {
+						kind: "single",
+						scope: "root"
+					},
+					"conversation.session.header": {
+						kind: "single",
+						scope: "session"
+					}
+				}
+			}, ConversationHeader);
+			const registerSessionHeader = () => slots.register({
 				name: "conversation.session.header",
 				locale: NS,
 				children: {
@@ -15990,13 +19855,21 @@ window.__ModuleLoader__.load({
 					"conversation.session.header.utilities": {
 						kind: "list",
 						scope: "session"
+					},
+					"conversation.session.header.corner": {
+						kind: "single",
+						scope: "session"
 					}
 				},
 				store: conversationStore,
-				inject: () => ({
+				inject: (sessionId, actions) => ({
 					hooks: { conversationViews },
 					open: (id) => {
-						sessions.open(id);
+						workspaceNavigation.openSession(id);
+					},
+					selectView: (view) => {
+						activateView(sessionId, view);
+						actions.setView(view);
 					}
 				})
 			}, ConversationSessionHeader);
@@ -16008,26 +19881,52 @@ window.__ModuleLoader__.load({
 						kind: "single",
 						scope: "session-maybe"
 					},
+					"conversation.input.overlay": {
+						kind: "list",
+						scope: "session"
+					},
+					"conversation.input.permission": {
+						kind: "single",
+						scope: "session"
+					},
+					"conversation.input.left": {
+						kind: "list",
+						scope: "session"
+					},
 					"conversation.input.plan": {
 						kind: "single",
 						scope: "session"
 					},
+					"conversation.input.right": {
+						kind: "list",
+						scope: "session"
+					},
 					"conversation.input.model": {
 						kind: "single",
+						scope: "session"
+					},
+					"conversation.input.activity": {
+						kind: "single",
+						scope: "session"
+					},
+					"conversation.composer.dock": {
+						kind: "list",
 						scope: "session"
 					}
 				},
 				inject: (sessionId) => {
 					if (sessionId === void 0) return {
 						keyboard: void 0,
-						addImages: void 0,
-						removeImage: void 0,
-						draftImages: void 0,
-						resolveSubmitMode: (running, gesture, steeringAvailable) => submissionPolicy.resolve(running, gesture, steeringAvailable),
+						addFiles: void 0,
+						removeAttachment: void 0,
+						resolveDraftAttachments: void 0,
+						retryFileUpload: void 0,
 						toggleCommandMenu: void 0,
 						stop: void 0,
-						command: void 0,
 						hooks: {
+							stopShortcut,
+							busyEnter: submissionPolicy.busyEnter,
+							fileUploads: ABSENT_FILE_UPLOADS,
 							notices: ABSENT_NOTICES,
 							lexicon: ABSENT_LEXICON,
 							menuLauncher: ABSENT_MENU_LAUNCHER
@@ -16036,24 +19935,58 @@ window.__ModuleLoader__.load({
 					const conversation = concreteConversation(ctx);
 					const shell = inputHub.shell(sessionId);
 					const inputTriggers = inputHub.inputTriggers(sessionId);
+					const bridge = hostPathBridge();
 					return {
 						keyboard: shell,
-						addImages: (files) => {
+						addFiles: (files, directories = /* @__PURE__ */ new Set()) => {
+							if (sessions.binding(sessionId) === void 0) return t("file.sessionUnavailable");
+							if (shell.snapshot.phase === "adjudicating" || shell.snapshot.phase === "submitting") return t("attachment.dropBlocked");
+							const uploads = [];
+							const references = [];
+							const cwd = sessions.list.getSnapshot().byId[sessionId]?.cwd;
+							for (const file of files) {
+								const directory = directories.has(file);
+								if (bridge === void 0 && directory) return t("attachment.directoryDesktopOnly");
+								const path = bridge?.pathFor(file) ?? "";
+								if (directory && path === "") return t("attachment.pathUnavailable");
+								if (path === "" || !directory && isImageMediaType(file.type)) {
+									uploads.push(file);
+									continue;
+								}
+								const relative = relativizeToCwd(path, cwd);
+								const mention = formatFileMention({
+									path: directory ? `${relative}/` : relative,
+									kind: "file"
+								}, false);
+								if (mention === void 0) return t("attachment.pathUnsupported");
+								const label = workspaceTitleOf(path) || file.name;
+								references.push({
+									source: "reference",
+									ref: mention,
+									label: directory ? `${label}/` : label,
+									appearance: directory ? "folder" : "file",
+									clipboardText: mention
+								});
+							}
 							try {
-								const images = conversation.createDraftImages(files);
-								if (!shell.addImages(images.map((image) => image.id))) conversation.releaseDraftImages(images);
+								const drafts = conversation.createDrafts(sessionId, uploads);
+								if (!shell.addFiles(references, drafts.map((draft) => draft.id))) {
+									conversation.releaseDraftAttachments(drafts);
+									return t("attachment.dropBlocked");
+								}
 								return null;
 							} catch (error) {
 								if (error instanceof UnsupportedImageMediaTypeError) return t("image.unsupportedType");
 								return error instanceof Error ? error.message : String(error);
 							}
 						},
-						removeImage: (id) => {
-							conversation.releaseDraftImage(id);
-							shell.removeImage(id);
+						removeAttachment: (id) => {
+							if (shell.removeAttachment(id)) conversation.releaseDraftAttachment(id);
 						},
-						draftImages: (ids) => conversation.draftImages(ids),
-						resolveSubmitMode: (running, gesture, steeringAvailable) => submissionPolicy.resolve(running, gesture, steeringAvailable),
+						resolveDraftAttachments: (ids) => conversation.resolveDraftAttachments(ids),
+						retryFileUpload: (id) => {
+							if (sessions.binding(sessionId) !== void 0) conversation.retryFileUpload(sessionId, id);
+						},
 						toggleCommandMenu: inputTriggers === void 0 ? void 0 : (selection) => {
 							shell.dismissPopup();
 							const snapshot = shell.snapshot;
@@ -16069,15 +20002,12 @@ window.__ModuleLoader__.load({
 							});
 						},
 						stop: () => {
-							scopedConversation(sessions, sessionId).cancel().catch(() => {});
-						},
-						command: async (line) => {
-							const session = sessions.binding(sessionId)?.session;
-							if (session === void 0) return false;
-							const result = await session.command(line);
-							return result.ok && result.value.matched;
+							stop(sessionId);
 						},
 						hooks: {
+							stopShortcut,
+							busyEnter: submissionPolicy.busyEnter,
+							fileUploads: conversation.fileUploads,
 							notices: shell.notices,
 							lexicon: shell.lexicon,
 							menuLauncher: inputTriggers?.launcher ?? ABSENT_MENU_LAUNCHER
@@ -16085,20 +20015,32 @@ window.__ModuleLoader__.load({
 					};
 				}
 			}, InputBar);
-			slots.inject("conversation", function* () {
+			slots.inject("main", function* () {
+				yield slots.register({
+					name: "main",
+					key: "conversation",
+					children: { "main.conversation": {
+						kind: "single",
+						scope: "session-maybe"
+					} }
+				}, ConversationPanel);
 				yield registerConversationRoot();
+				yield registerConversationContent();
 				yield registerConversationSession();
-				yield registerConversationHeader();
+				yield registerHeader();
+				yield registerSessionHeader();
 				yield registerComposerBar();
 			});
 			ctx.plugin(ConversationController, {
 				input: inputHub,
-				blocks: composerBlocks
+				blocks: composerBlocks,
+				maxConcurrentFileUploads
 			});
 			ctx.plugin(todoDockEntry);
 			ctx.plugin(queueDockEntry);
 		}
 		//#endregion
+		exports.Config = Config;
 		exports.ConversationController = ConversationController;
 		exports.ConversationDefinitionRegistry = ConversationDefinitionRegistry;
 		exports.ConversationEventRegistry = ConversationEventRegistry;

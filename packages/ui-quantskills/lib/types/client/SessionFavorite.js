@@ -1,9 +1,10 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { selectedSession } from "./selected-session.js";
 import { StarIcon } from '@phosphor-icons/react';
 import css from './QuantSkillsApp.module.css';
 /** Favorite the owning capability, so every future session can reuse it. */
 export function SessionFavorite({ useSessions, useView, useAgents, useSkills, toggle }) {
-    const current = useSessions(state => state.current);
+    const current = useSessions(state => selectedSession(state));
     const agent = useAgents(state => state.archives.find(item => item.sessionId === current)?.agent);
     const team = useAgents(state => state.teamArchives.find(item => item.sessionId === current)?.team);
     const skill = useSkills(state => state.archives.find(item => item.sessionId === current)?.binding);

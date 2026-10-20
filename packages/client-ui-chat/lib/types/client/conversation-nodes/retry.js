@@ -65,7 +65,7 @@ export const retryDefinition = {
         if (current === undefined)
             return null;
         const data = { attempts, current };
-        return chatNode(context, 'model-retry', attempts[0]?.seq ?? current.seq, data);
+        return chatNode(context, 'model-retry', attempts[0]?.seq ?? current.seq, data, { groupTree: 'process' });
     },
 };
 /**

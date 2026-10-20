@@ -1,4 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { selectedSession } from "./selected-session.js";
 import { useEffect, useRef, useState } from 'react';
 import { ActionDialog } from "./ActionDialog.js";
 import { ContestPlans } from "./ContestPlans.js";
@@ -9,7 +10,7 @@ import css from './ContestPage.module.css';
 import { waitForCompetition } from "./competition-async.js";
 /** Normal sessions never mount a contest poller or load account context. */
 export function ContestReview({ useSessions, access, openContest }) {
-    const session = useSessions(state => state.current ? state.byId[state.current] : undefined);
+    const session = useSessions(state => { const id = selectedSession(state); return id ? state.byId[id] : undefined; });
     const binding = session?.projectionValues?.quantSkillsPlainSession;
     if (!session || binding?.purpose !== 'contest')
         return null;

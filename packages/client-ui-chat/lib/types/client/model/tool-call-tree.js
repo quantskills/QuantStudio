@@ -1,3 +1,4 @@
+import { PartialArguments } from '@deepseek-ai/dsh-util-values';
 /** Fixed wire-safety ceiling for every recursive Tool call consumer. */
 export const MAX_TOOL_CALL_TREE_DEPTH = 256;
 function sameReferences(left, right) {
@@ -5,7 +6,7 @@ function sameReferences(left, right) {
         && left.every((block, index) => block === right[index]);
 }
 /**
- * Owns Code Dispatch pairing and projects its private parent index into the
+ * Owns PTC dispatch pairing and projects its private parent index into the
  * recursive Tool call contract exposed by conversation snapshots.
  */
 export class ToolCallTree {
@@ -23,18 +24,20 @@ export class ToolCallTree {
         this.revision++;
     }
     /**
-     * Fold one event when it belongs to the Code Dispatch lifecycle.
+     * Fold one event when it belongs to the PTC dispatch lifecycle.
      * @param event - Session event from the current live or history window.
      * @returns Whether the event was consumed as a child-call lifecycle event.
      */
     apply(event) {
-        if (event.type === 'tool/code-dispatch-start') {
+        if (event.type === 'tool/ptc-dispatch-start') {
             const data = event.data;
             const running = {
+                phase: 'start',
                 callId: data.subCallId,
                 parentCallId: data.parentCallId,
                 name: data.name,
                 argsRaw: JSON.stringify(data.arguments),
+                args: PartialArguments.fromObject(data.arguments),
                 turn: 0,
                 step: 0,
                 time: event.time,
@@ -47,7 +50,7 @@ export class ToolCallTree {
             this.revision++;
             return true;
         }
-        if (event.type !== 'tool/code-dispatch')
+        if (event.type !== 'tool/ptc-dispatch')
             return false;
         const data = event.data;
         const siblings = this.childrenByParent.get(data.parentCallId) ?? [];
@@ -61,6 +64,8 @@ export class ToolCallTree {
             time: event.time,
             callId: data.subCallId,
             parentCallId: data.parentCallId,
+            name: data.name,
+            args: started !== undefined && !('kind' in started) ? started.args : PartialArguments.fromObject(data.arguments),
             call: { name: data.name, argsRaw: JSON.stringify(data.arguments) },
             callTime: started?.time ?? null,
             content: data.content,

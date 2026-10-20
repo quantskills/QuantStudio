@@ -2,10 +2,11 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 /**
  * Apply searchable hidden state without unmounting a stable subtree.
  * @param hidden - whether the subtree is currently hidden.
- * @param reveal - callback for browser find's `beforematch` reveal.
+ * @param reveal - callback for browser find's beforematch reveal.
+ * @param transition - optional caller-owned visibility operation; otherwise apply synchronously.
  * @returns ref for the stable subtree root.
  */
-export function useSearchableHidden(hidden, reveal) {
+export function useSearchableHidden(hidden, reveal, transition) {
     const ref = useRef(null);
     useLayoutEffect(() => {
         const element = ref.current;
@@ -15,11 +16,17 @@ export function useSearchableHidden(hidden, reveal) {
             reveal();
             return;
         }
-        if (hidden)
-            element.setAttribute('hidden', 'until-found');
+        const commit = () => {
+            if (hidden)
+                element.setAttribute('hidden', 'until-found');
+            else
+                element.removeAttribute('hidden');
+        };
+        if (transition === undefined)
+            commit();
         else
-            element.removeAttribute('hidden');
-    }, [hidden, reveal]);
+            transition(element, hidden, commit);
+    }, [hidden, reveal, transition]);
     useEffect(() => {
         const element = ref.current;
         if (element === null)

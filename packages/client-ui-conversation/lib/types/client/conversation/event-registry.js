@@ -2,6 +2,9 @@ import { ConversationDefinitionRegistry } from "./definition-registry.js";
 /** Runtime registry of independently owned Conversation business Definitions. */
 export class ConversationEventRegistry extends ConversationDefinitionRegistry {
     fallback;
+    routes = new Map();
+    unrestricted = new Set();
+    tables = new WeakMap();
     /**
      * Register a uniquely named business Definition for the caller's lifetime.
      * @param definition - Definition contribution.
@@ -9,20 +12,21 @@ export class ConversationEventRegistry extends ConversationDefinitionRegistry {
      */
     register(definition) {
         assertDefinitionTarget(definition);
-        return this.registerDefinition(definition.kind, definition, `conversation Definition "${definition.kind}" is already registered`, `uiConversation.events.register(${JSON.stringify(definition.kind)})`);
+        return this.registerDefinition(definition.kind, this.resolve(definition), `conversation Definition "${definition.kind}" is already registered`, `uiConversation.events.register(${JSON.stringify(definition.kind)})`);
     }
     /**
      * Register the sole fallback used only when no ordinary Definition matches.
-     * @param definition - fallback Definition.
+     * @param input - fallback Definition.
      * @returns idempotent disposer.
      */
-    registerFallback(definition) {
-        assertDefinitionTarget(definition);
-        const target = definition.target;
+    registerFallback(input) {
+        assertDefinitionTarget(input);
+        const target = input.target;
         if (target === undefined)
             throw new Error('conversation fallback Definition must declare a target');
         if (this.fallback !== undefined)
             throw new Error('conversation fallback Definition is already registered');
+        const definition = this.resolve(input);
         const dispose = this.ctx.effect(() => {
             this.fallback = definition;
             this.refresh();
@@ -41,6 +45,51 @@ export class ConversationEventRegistry extends ConversationDefinitionRegistry {
      */
     fallbackEntry() {
         return this.fallback;
+    }
+    /**
+     * Read precomputed candidates in registration order; the returned Set is borrowed read-only.
+     * @param type - current event type.
+     * @returns table handlers for this type together with all function-form handlers.
+     */
+    forEvent(type) {
+        return this.routes.get(type) ?? this.unrestricted;
+    }
+    resolve(input) {
+        if (typeof input.match === 'function')
+            return input;
+        const table = new Map(Object.entries(input.match));
+        const definition = {
+            ...input,
+            match: event => table.get(event.type)?.call(definition, event) ?? null,
+        };
+        this.tables.set(definition, table);
+        return definition;
+    }
+    refresh() {
+        const routes = new Map();
+        const unrestricted = new Set();
+        for (const definition of this.definitions.values()) {
+            const table = this.tables.get(definition);
+            if (table === undefined) {
+                const route = { definition, match: definition.match.bind(definition) };
+                unrestricted.add(route);
+                for (const candidates of routes.values())
+                    candidates.add(route);
+            }
+            else {
+                for (const [type, match] of table) {
+                    let candidates = routes.get(type);
+                    if (candidates === undefined) {
+                        candidates = new Set(unrestricted);
+                        routes.set(type, candidates);
+                    }
+                    candidates.add({ definition, match: match.bind(definition) });
+                }
+            }
+        }
+        this.routes = routes;
+        this.unrestricted = unrestricted;
+        super.refresh();
     }
 }
 function assertDefinitionTarget(definition) {

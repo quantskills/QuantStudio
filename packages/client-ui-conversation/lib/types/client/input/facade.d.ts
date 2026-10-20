@@ -9,43 +9,48 @@
  * listeners onto it.
  */
 import type { Context } from '@deepseek-ai/cordis';
+import type { InboxState } from '@deepseek-ai/dsh-agent/types';
 import { type ObservableSnapshot, type SnapshotStore } from '@deepseek-ai/dsh-client-store';
 import type { LexicalEditor } from 'lexical';
-import type { ArbitrateKey, ArbitrateOutcome, CommandClaim, ConsumeTokenRequest, DraftAttachmentId, InputActions, InputNotice, InputState, InputTriggerController, QueuedMessage, ReferenceInsert, SessionInput, SubmitImageAttachment, SubmitOutcome, TokenSpan } from '../contract/input.ts';
-import type { InputSubmitMode } from '../contract/composer-submission.ts';
+import type { CommandClaim, ConsumeTokenRequest, DraftAttachmentId, DraftInitializationOptions, DraftInitializationResult, InputActions, InputNotice, InputState, InputTriggerController, SessionInput, SubmitAttachment, SubmitOutcome } from '../contract/input.ts';
+import type { ArbitrateKey, ArbitrateOutcome, ComposerKeyboard, DraftInput, DraftSnapshot, ReferenceInsert, TokenSpan } from '../contract/draft-editor.ts';
+import type { InputSubmitMode, MessageSubmission, MessageSubmissionState } from '../contract/composer-submission.ts';
 /** Popup face the shell needs (dismissal only; typed structurally to avoid a value import). */
 export interface PopupDismissFace {
     dismiss(): void;
 }
 /**
- * Construction dependencies of one facade. The slash/popup faces are THUNKS: the
- * shell is created inside the sessions provide materialization (before the
- * scope record is queryable), where `slash.sessionOf`/`command.popupFor`
- * cannot resolve yet — resolution defers to first interactive use.
+ * Construction dependencies of one input model. Trigger and popup callbacks
+ * resolve the currently available Session-scoped services on demand. InputHub
+ * owns the lexicon subscription through the Session scope's inject lifecycle.
  */
 export interface SessionInputDeps {
     /** Session-scope ctx handed to claim.submit transactions. */
     actx: Context;
+    /** Snapshot the Session facts before asynchronous command arbitration. */
+    submissionState?: () => MessageSubmissionState;
+    /** Notify one ordinary message attempt before reference serialization. */
+    messageSubmitted?: (submission: MessageSubmission) => void;
     /** Enter adjudication face resolver; absent/undefined answer = every '/' line falls to the default sink. */
     inputTriggers?: (() => InputTriggerController | undefined) | undefined;
     /** PopupSelect shell face resolver (dismissal on submit lock / escape). */
     popup?: (() => PopupDismissFace | undefined) | undefined;
-    /** Queue read face; overlaid onto InputState.queue (absent = empty). */
-    queue?: ObservableSnapshot<readonly QueuedMessage[]> | undefined;
+    /** Agent Inbox projection; its next-turn list is overlaid onto InputState.queue. */
+    inbox?: ObservableSnapshot<InboxState | undefined> | undefined;
     /**
      * Steer every still-pending queued message into the running turn, in FIFO
      * order (the empty-draft accelerated-Enter gesture); absent = unsupported.
      */
     steerQueue?: (() => void) | undefined;
     /** The plain-message sink (send choreography / materialize fork — the hub owns it). */
-    defaultSink(text: string, imageIds: readonly DraftAttachmentId[], mode: InputSubmitMode, signal: AbortSignal): Promise<SubmitOutcome>;
-    /** Command-plane image plumbing (the hub owns the conversation face and the copy). */
-    commandImages: {
+    defaultSink(text: string, attachmentIds: readonly DraftAttachmentId[], mode: InputSubmitMode, signal: AbortSignal): Promise<SubmitOutcome>;
+    /** Command-plane attachment plumbing (the hub owns the conversation face and the copy). */
+    commandAttachments: {
         /** Resolve ordered draft ids to wire payloads without sending them; rejects when an id no longer resolves. */
-        serialize(ids: readonly DraftAttachmentId[]): Promise<readonly SubmitImageAttachment[]>;
-        /** Free consumed draft images after a successful command submit. */
+        serialize(ids: readonly DraftAttachmentId[]): Promise<readonly SubmitAttachment[]>;
+        /** Free consumed draft attachments after a successful command submit. */
         release(ids: readonly DraftAttachmentId[]): void;
-        /** Localized composer notice for a claimed command that does not accept images. */
+        /** Localized composer notice for a claimed command that does not accept attachments. */
         unsupportedNotice(token: string): string;
     };
 }
@@ -61,82 +66,101 @@ export declare class SessionInputShell implements SessionInput {
     /** Latest surfaced notice (null after clear); the bar renders errors as banners and information inline. */
     readonly notices: SnapshotStore<InputNotice | null>;
     /** The shell-owned editor (text + chip truth); the composer binds its contenteditable to it. */
-    readonly editor: LexicalEditor;
+    get editor(): LexicalEditor;
     /** The public provide-channel action face (one stable identity per session). */
     readonly actions: InputActions;
     private readonly core;
-    private projection;
+    private readonly draftEditor;
+    private get projection();
     private rev;
-    /** Stable occurrence ids per chip NodeKey (undo restores keys, so ids survive it too). */
-    private readonly occurrenceIds;
-    private occurrenceSeq;
     private readonly unregister;
     private noticeSeq;
-    private lastMirroredDraft;
-    private imageIds;
+    private lastPublishedDraft;
+    private draftSnapshotCache;
+    private attachmentIds;
     private disposed;
-    /** Draft persistence mirror (Conversation store write; receives the clipboard projection). */
-    private mirrorFn;
-    /** Live lexicon subscription disposer; undefined until the controller resolves. */
-    private lexiconOff;
-    /** Default sends retained until admission settles or scope disposal releases their images. */
+    /** Conversation store writer for the current semantic document. */
+    private persistDraft;
+    /** A restored draft's command token waiting for the trigger pipeline, with the revision its restore produced. */
+    private pendingCommand;
+    /** The in-flight claim resolution for a restored command chip. */
+    private commandRestore;
+    /** The mounted composer's file-picker opener (scoped pick-files event target). */
+    private filePicker;
+    /** Default sends retained until admission settles or scope disposal releases their attachments. */
     private readonly detachedDrafts;
     /** Failed default sends waiting to be restored together in submission order. */
     private readonly failedDetached;
     /** Revision of the last automatic failure restoration. */
     private failedRestoreRev;
     private restoringFailures;
-    private imageFlightSeq;
-    /** Image-only sends retained until admission settles or scope disposal releases their images. */
-    private readonly imageFlights;
+    private attachmentFlightSeq;
+    /** Attachment-only sends retained until admission settles or scope disposal releases their attachments. */
+    private readonly attachmentFlights;
+    private readonly unsubscribeInbox;
     constructor(deps: SessionInputDeps);
-    /**
-     * Run one editor edit whose result is observable on return. At the top
-     * level this is a discrete update. Inside this editor's own update —
-     * command handlers land here synchronously (space/enter picks, paste) —
-     * $-functions are already legal, and wrapping them in update() would DEFER
-     * them past the synchronous bail answer (and a nested discrete throws);
-     * the body runs directly and the outer update commits it.
-     * @param fn - the $-edit body.
-     */
-    private applyEdit;
-    /**
-     * Subscribe the text-ref re-scan to the controller's lexicon once the
-     * controller resolves. The deps thunk cannot resolve at construction (the
-     * shell is created inside the sessions provide materialization), so the
-     * first interactive updates retry until it can.
-     */
-    private ensureLexiconSubscription;
-    /** Re-project, run the claim watch, publish, and feed trigger tracking after every editor commit. */
+    /** Re-project, sync the claim with the leading command chip, publish, and feed trigger tracking after every editor commit. */
     private onEditorUpdate;
-    private occurrenceIdOf;
     /**
      * Replace the whole draft (persisted-draft seed and programmatic writes).
      * Placeholder-sanitized; newlines split paragraphs; the caret lands at the
      * end. Merged into history so a seed is not an undoable step of its own.
-     * @param text - the full next draft.
+     * @param text - plain text or the complete semantic document.
      */
-    setDraft(text: string): void;
-    /** Append ordered image ids unless an admission transaction is locked. */
-    addImages(ids: readonly DraftAttachmentId[]): boolean;
+    setDraft(text: DraftInput): void;
     /**
-     * Remove one image id from this draft. Busy admission phases refuse, like
-     * {@link addImages}: a removal landing while a command submit serializes
+     * Reconnect optional catalog notifications and resume a pending command
+     * chip restore without waiting for another edit.
+     */
+    refreshLexiconSubscription(): void;
+    /**
+     * Rebuild the command chip a restored draft carried once the trigger
+     * pipeline can resolve its claim. The rebuild applies only at the revision
+     * the restore produced: an edit made while the claim resolves keeps the
+     * literal token, which Enter still adjudicates as the command.
+     */
+    private restoreCommand;
+    /** Drop a pending or in-flight command chip restore. */
+    private cancelCommandRestore;
+    /** Current semantic document, stable until its content revision changes. */
+    get draftSnapshot(): DraftSnapshot;
+    /** Persist the latest document without changing the editor or binding a writer. */
+    persistCurrentDraft(): void;
+    /**
+     * Apply one new-task request to this already-initialized input model.
+     * @param options - replacement content and explicit permission to clear existing text.
+     * @returns applied when the requested text is adopted, even if unchanged;
+     * preserved when the current draft is kept; blocked after disposal or during a pending submission.
+     */
+    requestDraftInitialization(options: DraftInitializationOptions): DraftInitializationResult;
+    private draftInitializationBlocked;
+    /** Append ordered attachment ids unless an admission transaction is locked. */
+    addAttachments(ids: readonly DraftAttachmentId[]): boolean;
+    /**
+     * Add validated file references and attachment ids while admission is editable.
+     * @param references - reference chips in source order.
+     * @param ids - newly allocated attachment ids.
+     * @returns false when admission is locked or the editor refuses the insertion.
+     */
+    addFiles(references: readonly ReferenceInsert[], ids: readonly DraftAttachmentId[]): boolean;
+    /**
+     * Remove one attachment id from this draft. Busy admission phases refuse, like
+     * {@link addAttachments}: a removal landing while a command submit serializes
      * would otherwise vanish from the rail yet still ride the in-flight send.
      */
-    removeImage(id: DraftAttachmentId): void;
+    removeAttachment(id: DraftAttachmentId): boolean;
     /**
-     * Keep only image ids that still resolve in the browser attachment registry.
+     * Keep only ids that still resolve in the browser attachment registry.
      * @param available - live registry ids.
      */
-    pruneImages(available: readonly DraftAttachmentId[]): void;
+    pruneAttachments(available: readonly DraftAttachmentId[]): void;
     /**
      * Clear the draft as a successful-send commit: the editor empties (no undo
      * unit) and the undo history is cut, so Ctrl/Cmd-Z cannot resurrect sent
      * content (the command path gets the same discipline from submit-settled).
-     * @param imageIds - admitted image ids to remove from this draft.
+     * @param attachmentIds - admitted attachment ids to remove from this draft.
      */
-    commitSend(imageIds: readonly DraftAttachmentId[]): void;
+    commitSend(attachmentIds: readonly DraftAttachmentId[]): void;
     /**
      * Insert pasted plain text over the current editor selection
      * (placeholder-sanitized). The paste event's own default is suppressed by
@@ -151,7 +175,7 @@ export declare class SessionInputShell implements SessionInput {
      * (adjudicating/submitting) force-closes the transient layers: the popup
      * dismisses and the menu tracks frozen.
      */
-    submit(mode?: InputSubmitMode): void;
+    submit(mode?: InputSubmitMode, source?: 'click' | 'enter'): void;
     /**
      * Keyboard arbitration while the menu is open.
      * @param key - the intercepted key.
@@ -192,13 +216,19 @@ export declare class SessionInputShell implements SessionInput {
     readonly lexicon: ObservableSnapshot<ReadonlyMap<'/' | '@', readonly string[]>>;
     /**
      * Apply one command claim (scoped begin-command event listener body): the
-     * editor replaces [0, span.end) with the claim token, then the machine
-     * enters claimed.
+     * editor replaces [0, span.end) with the command chip and its separator,
+     * then the machine enters claimed.
      * @param claim - the command claim from the pick path.
      * @param span - pick-time span snapshot (detect coordinates).
      * @returns whether the edit applied (phase, span CAS, and leading guard passed).
      */
     beginCommand(claim: CommandClaim, span: TokenSpan): boolean;
+    /**
+     * Replace [0, span.end) with the command chip and enter claimed.
+     * @param mergeHistory - merge the edit into the previous history entry.
+     * @returns whether the edit applied.
+     */
+    private applyClaim;
     /**
      * Apply one reference insertion (scoped insert-reference event listener
      * body): the editor replaces the span with one chip node, followed by a
@@ -237,25 +267,42 @@ export declare class SessionInputShell implements SessionInput {
      */
     notify(level: 'info' | 'error', text: string): void;
     /**
-     * Teardown the shell and return every browser-owned image still retained by
+     * Return the keyboard to the composer with the caret it last held. Lexical's
+     * own focus restores its stored selection; a bare DOM focus on the
+     * contenteditable would land the caret at the start instead.
+     */
+    focus(): void;
+    /**
+     * Teardown the shell and return every browser-owned attachment still retained by
      * the draft or an unsettled default send.
-     * @returns image ids the scope disposer must release.
+     * @returns attachment ids the scope disposer must release.
      */
     dispose(): readonly DraftAttachmentId[];
     /** Read the live input state (guard derivation reads here). */
     get snapshot(): InputState;
     /**
-     * Bind the draft persistence mirror (Conversation store write). Adopt-on-bind: the
-     * store draft may hold a persisted value from a previous mount; the caller
-     * seeds it via setDraft BEFORE binding, and afterwards every editor-adopted
-     * draft mirrors out.
-     * @param write - store draft write.
+     * Bind the Conversation store writer without importing or saving content.
+     * @param write - semantic draft writer; persistCurrentDraft flushes the initial value.
      * @returns the unbind disposer.
      */
-    bindMirror(write: (text: string) => void): () => void;
-    /** The claim token the decoration transform styles; null while unclaimed. */
-    private activeClaimToken;
-    /** Dispatch + execute, refreshing the claim decoration when the styled token flips. */
+    bindDraftPersistence(write: (draft: DraftSnapshot) => void): () => void;
+    /**
+     * Bind the mounted composer's file action and live intake availability.
+     * @param picker - availability query and native file-dialog opener.
+     * @returns the unbind disposer.
+     */
+    bindFilePicker(picker: Parameters<ComposerKeyboard['bindFilePicker']>[0]): () => void;
+    /**
+     * Read the mounted composer's live file-intake availability.
+     * @returns false when no accepting composer is mounted.
+     */
+    canPickFiles(): boolean;
+    /**
+     * Open the native file dialog when the mounted composer accepts files.
+     * @returns whether the opener was called.
+     */
+    pickFiles(): boolean;
+    /** Dispatch one machine event and execute its effects. */
     private dispatchRun;
     private run;
     private execute;
@@ -272,21 +319,22 @@ export declare class SessionInputShell implements SessionInput {
      * its editor snapshot. Chip-free drafts skip the async detour.
      */
     private sinkSerialized;
+    private notifySubmission;
     /** Settle one detached default send independently of other sends. */
     private settleSink;
     /** Restore one failed detached send without overwriting text entered after a restoration. */
     private settleDetachedFailure;
     /** Rebuild all currently failed snapshots in submission order. */
     private restoreFailedDrafts;
-    /** Return failed-send images to the head of the rail (ids still resolve — release happens only after success). */
-    private restoreImages;
+    /** Return failed-send attachments to the head of the rail; release happens only after success. */
+    private restoreAttachments;
     /** Enter adjudication: poll the session controller; failure = notice + draft retained (never a silent downgrade). */
     private adjudicate;
     /**
      * The submit transaction: claim.submit against the session scope; ok maps
      * from the outcome kind. An accepting claim receives the serialized draft
-     * images, which are cleared and released only on a success outcome; a
-     * failure (serialize, transport, or handler error) keeps draft and images
+     * attachments, which are cleared and released only on a success outcome; a
+     * failure (serialize, transport, or handler error) keeps draft and attachments
      * for correction.
      */
     private beginSubmit;

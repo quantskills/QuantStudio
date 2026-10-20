@@ -1,11 +1,5 @@
-import { isAppendSurfaceEvent } from '@deepseek-ai/dsh-session/surface';
 import { CHAT_SYNTHETIC_SEQ_OFFSETS, chatNode } from "./common.js";
 import { emptyAssistantBlock, isTokenDelta, toAssistantBlock, toAssistantBlocks, } from "./event-projection.js";
-function isChunkRunEvent(event) {
-    return event.type === 'chunkrow/text-chunks'
-        || event.type === 'chunkrow/reasoning-chunks'
-        || event.type === 'chunkrow/tool-call-chunks';
-}
 function initialState(turn, step) {
     return {
         turn,
@@ -15,7 +9,6 @@ function initialState(turn, step) {
         firstVisibleSeq: undefined,
         firstVisibleTime: undefined,
         firstTokenTime: undefined,
-        hidden: false,
         final: undefined,
         usage: undefined,
     };
@@ -51,13 +44,16 @@ function resetForRetry(state) {
     return {
         ...initialState(state.turn, state.step),
         firstTokenTime: state.firstTokenTime,
-        hidden: true,
     };
 }
-function updateChunk(state, match) {
-    if (match.event.type !== 'assistant/chunk')
-        return state;
-    const chunk = match.event.data.chunk;
+function updateChunk(state, chunk, seq, time) {
+    if (chunk.type === 'tool-call-delta') {
+        const previous = state.blocks[chunk.index];
+        if (previous?.kind === 'tool-call' && previous.callId !== ''
+            && (chunk.name === undefined || chunk.name === previous.name)
+            && (state.firstTokenTime !== undefined || !isTokenDelta(chunk)))
+            return state;
+    }
     const blocks = [...state.blocks];
     let changedIndex = -1;
     let previousVisible = false;
@@ -85,14 +81,12 @@ function updateChunk(state, match) {
             const previous = blocks[chunk.index];
             changedIndex = chunk.index;
             previousVisible = blockIsVisible(previous);
-            const base = previous?.kind === 'tool-call'
-                ? previous
-                : { kind: 'tool-call', callId: '', name: '', argsRaw: '' };
+            // Tool Nodes own streamed arguments; Assistant protocol blocks retain identity until full settlement.
             blocks[chunk.index] = {
                 kind: 'tool-call',
-                callId: base.callId || String(chunk.id),
-                name: chunk.name ?? base.name,
-                argsRaw: base.argsRaw + chunk.argumentsDelta,
+                callId: (previous?.kind === 'tool-call' ? previous.callId : '') || String(chunk.id),
+                name: chunk.name ?? (previous?.kind === 'tool-call' ? previous.name : ''),
+                argsRaw: previous?.kind === 'tool-call' ? previous.argsRaw : '',
             };
             break;
         }
@@ -114,81 +108,22 @@ function updateChunk(state, match) {
         ...state,
         blocks,
         visibleBlocks,
-        hidden: visibleBlocks > 0 ? false : state.hidden,
         ...visibleBlocks > 0 && state.firstVisibleSeq === undefined
-            ? { firstVisibleSeq: match.event.seq, firstVisibleTime: match.event.time }
+            ? { firstVisibleSeq: seq, firstVisibleTime: time }
             : {},
         ...firstToken && state.firstTokenTime === undefined
-            ? { firstTokenTime: match.event.time }
+            ? { firstTokenTime: time }
             : {},
     };
 }
-function chunkRunBoundaries(event, needsToken, needsVisible, visibleFromStart) {
-    const fragments = event.type === 'chunkrow/tool-call-chunks' ? event.data.args : event.data.texts;
-    const nameStartsToken = event.type === 'chunkrow/tool-call-chunks'
-        && Object.hasOwn(event.data, 'name');
-    let firstTokenTime;
-    let firstVisible;
-    let time = event.time;
-    for (let index = 0; index < fragments.length; index++) {
-        const fragment = fragments[index];
-        if (needsToken && firstTokenTime === undefined && (nameStartsToken || fragment !== '')) {
-            firstTokenTime = time;
-        }
-        if (needsVisible && firstVisible === undefined
-            && (visibleFromStart
-                || (event.type !== 'chunkrow/tool-call-chunks' && fragment.trim() !== ''))) {
-            firstVisible = { seq: event.seq + index, time };
-        }
-        if ((!needsToken || firstTokenTime !== undefined)
-            && (!needsVisible || firstVisible !== undefined))
-            break;
-        time += event.data.dt[index] ?? 0;
-    }
-    return { firstTokenTime, firstVisible };
-}
-function updateChunkRun(state, event) {
-    const blocks = [...state.blocks];
-    const previous = blocks[event.data.index];
-    const previousVisible = blockIsVisible(previous);
-    let visibleFromStart = state.visibleBlocks - Number(previousVisible) > 0;
-    if (event.type === 'chunkrow/text-chunks') {
-        const text = previous?.kind === 'text' ? previous.text : '';
-        visibleFromStart ||= text.trim() !== '';
-        blocks[event.data.index] = { kind: 'text', text: text + event.data.texts.join('') };
-    }
-    else if (event.type === 'chunkrow/reasoning-chunks') {
-        const text = previous?.kind === 'reasoning' ? previous.text : '';
-        visibleFromStart ||= text.trim() !== '';
-        blocks[event.data.index] = { kind: 'reasoning', text: text + event.data.texts.join('') };
-    }
-    else {
-        const base = previous?.kind === 'tool-call'
-            ? previous
-            : { kind: 'tool-call', callId: '', name: '', argsRaw: '' };
-        blocks[event.data.index] = {
-            kind: 'tool-call',
-            callId: base.callId || String(event.data.id),
-            name: Object.hasOwn(event.data, 'name') ? event.data.name : base.name,
-            argsRaw: base.argsRaw + event.data.args.join(''),
-        };
-    }
-    const boundaries = chunkRunBoundaries(event, state.firstTokenTime === undefined, state.firstVisibleSeq === undefined, visibleFromStart);
-    const visibleBlocks = state.visibleBlocks
-        - Number(previousVisible)
-        + Number(blockIsVisible(blocks[event.data.index]));
+function settleMessage(state, match, event) {
+    const blocks = toAssistantBlocks(event.data.message.content);
     return {
         ...state,
         blocks,
-        visibleBlocks,
-        hidden: visibleBlocks > 0 ? false : state.hidden,
-        ...(boundaries.firstVisible === undefined ? {} : {
-            firstVisibleSeq: boundaries.firstVisible.seq,
-            firstVisibleTime: boundaries.firstVisible.time,
-        }),
-        ...(boundaries.firstTokenTime === undefined ? {} : {
-            firstTokenTime: boundaries.firstTokenTime,
-        }),
+        visibleBlocks: countVisibleBlocks(blocks),
+        final: match,
+        usage: event.data.usage,
     };
 }
 function closedBoundary(location) {
@@ -242,27 +177,14 @@ function finalNode(state, context) {
 function fallbackState(context) {
     let state;
     for (const match of context.matches) {
-        if (isChunkRunEvent(match.event)) {
+        if (match.event.type === 'assistant/live-chunk') {
             state ??= initialState(match.event.data.turn, match.event.data.step);
-            state = updateChunkRun(state, match.event);
-            continue;
-        }
-        if (match.event.type === 'assistant/chunk') {
-            state ??= initialState(match.event.data.turn, match.event.data.step);
-            state = updateChunk(state, match);
+            state = updateChunk(state, match.event.data.chunk, match.event.seq, match.event.time);
             continue;
         }
         if (match.event.type === 'assistant/message') {
             state ??= initialState(match.event.data.turn, match.event.data.step);
-            const blocks = toAssistantBlocks(match.event.data.message.content);
-            state = {
-                ...state,
-                blocks,
-                visibleBlocks: countVisibleBlocks(blocks),
-                hidden: false,
-                final: match,
-                usage: match.event.data.usage,
-            };
+            state = settleMessage(state, match, match.event);
             continue;
         }
         if (match.event.type === 'llm/retry' && state !== undefined) {
@@ -281,7 +203,8 @@ function projectAssistant(context) {
     const status = settled?.interrupted === true
         ? 'interrupted'
         : settled === undefined ? 'running' : 'settled';
-    const anchorSeq = settled?.seq ?? state.firstVisibleSeq ?? context.matches[0]?.event.seq ?? 0;
+    const anchorSeq = (settled?.interrupted === true ? settled.seq : state.firstVisibleSeq ?? settled?.seq)
+        ?? context.matches[0]?.event.seq ?? 0;
     const time = settled?.time ?? state.firstVisibleTime ?? context.matches[0]?.event.time ?? 0;
     return {
         anchorSeq,
@@ -298,18 +221,19 @@ function projectAssistant(context) {
         },
     };
 }
-/** Per-step Assistant streaming/final/interruption Definition. */
+function publishedAssistantData(context) {
+    const location = context.start?.location ?? context.matches.at(-1)?.location;
+    return location?.kind === 'step' ? location.step.data.get('assistant-step') : undefined;
+}
+/** Per-step Assistant lifecycle; materialized keys survive cleared stream content as hidden Nodes. */
 export const assistantDefinition = {
     kind: 'assistant-step',
     target: 'chat',
     match: (event) => {
         if (event.type === 'step/start')
             return { id: `${event.data.turn}:${event.data.step}`, role: 'start' };
-        if (event.type === 'assistant/chunk'
-            || (event.type === 'assistant/message' && isAppendSurfaceEvent(event))) {
-            return { id: `${event.data.turn}:${event.data.step}`, role: 'update' };
-        }
-        if (isChunkRunEvent(event)) {
+        if (event.type === 'assistant/live-chunk'
+            || (event.type === 'assistant/message' && event.surfaceOp === 'append')) {
             return { id: `${event.data.turn}:${event.data.step}`, role: 'update' };
         }
         if (event.type === 'llm/retry') {
@@ -323,22 +247,11 @@ export const assistantDefinition = {
         return initialState(match.event.data.turn, match.event.data.step);
     },
     update: (context, match) => {
-        if (isChunkRunEvent(match.event)) {
-            return updateChunkRun(context.state, match.event);
+        if (match.event.type === 'assistant/live-chunk') {
+            return updateChunk(context.state, match.event.data.chunk, match.event.seq, match.event.time);
         }
-        if (match.event.type === 'assistant/chunk')
-            return updateChunk(context.state, match);
-        if (match.event.type === 'assistant/message') {
-            const blocks = toAssistantBlocks(match.event.data.message.content);
-            return {
-                ...context.state,
-                blocks,
-                visibleBlocks: countVisibleBlocks(blocks),
-                hidden: false,
-                final: match,
-                usage: match.event.data.usage,
-            };
-        }
+        if (match.event.type === 'assistant/message')
+            return settleMessage(context.state, match, match.event);
         if (match.event.type === 'llm/retry') {
             return resetForRetry(context.state);
         }
@@ -347,9 +260,7 @@ export const assistantDefinition = {
     publication: (match) => {
         if (match.event.type === 'step/start')
             return 'none';
-        if (isChunkRunEvent(match.event))
-            return 'animation-frame';
-        if (match.event.type !== 'assistant/chunk')
+        if (match.event.type !== 'assistant/live-chunk')
             return 'immediate';
         const type = match.event.data.chunk.type;
         return type === 'usage' || type === 'finish' ? 'none' : 'animation-frame';
@@ -369,19 +280,21 @@ export const assistantDefinition = {
         };
     },
     buildViewNode: (context) => {
-        const projected = projectAssistant(context);
-        if (projected === undefined)
-            return null;
-        if (projected.settled === undefined && !projected.visible) {
-            const state = context.state ?? fallbackState(context);
-            if (state === undefined)
-                return null;
-            const current = context.current.get('chat');
-            if (!state.hidden || current === undefined || current === null)
-                return null;
+        const current = context.current.get('chat');
+        const state = context.state ?? fallbackState(context);
+        const data = publishedAssistantData(context);
+        if (state === undefined || data === undefined) {
+            return current == null ? null : { ...current, visibility: 'hidden' };
         }
-        return chatNode(context, 'assistant-step', projected.anchorSeq, projected.data, {
-            visibility: projected.settled?.interrupted === true || projected.visible ? 'visible' : 'hidden',
+        const settled = data.finalNode;
+        const visible = settled === undefined ? state.visibleBlocks > 0 : hasVisibleContent(data.blocks);
+        if (settled === undefined && !visible && current == null)
+            return null;
+        // A successful message retains its live anchor alongside pending Tool calls.
+        const anchorSeq = (settled?.interrupted === true ? settled.seq : state.firstVisibleSeq ?? settled?.seq)
+            ?? context.matches[0]?.event.seq ?? 0;
+        return chatNode(context, 'assistant-step', anchorSeq, data, {
+            visibility: settled?.interrupted === true || visible ? 'visible' : 'hidden',
         });
     },
 };
@@ -390,6 +303,15 @@ export const assistantDefinition = {
  * @param ctx - owning UI Conversation context.
  */
 export function registerAssistantConversationNode(ctx) {
-    ctx.uiConversation.events.register(assistantDefinition);
+    const match = assistantDefinition.match.bind(assistantDefinition);
+    ctx.uiConversation.events.register({
+        ...assistantDefinition,
+        match: {
+            'step/start': match,
+            'assistant/live-chunk': match,
+            'assistant/message': match,
+            'llm/retry': match,
+        },
+    });
 }
 //# sourceMappingURL=assistant.js.map

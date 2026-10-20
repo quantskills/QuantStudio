@@ -1,161 +1,121 @@
 import { jsx as _jsx } from "react/jsx-runtime";
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { JsonBlock } from '@deepseek-ai/dsh-client-ui-primitives';
-import { decodeTurnProcess, TURN_PROCESS_INDEPENDENT_KINDS, turnProcessGeneration, } from "../contract/turn-process.js";
-import { storedTurnProcessEntry } from "../stores.js";
-import { useSearchableHidden } from "./searchable-hidden.js";
+import { createSnapshotStore } from '@deepseek-ai/dsh-client-store';
+import { isAtOrOutside } from "../contract/group-tree.js";
+import { turnProcessAlwaysOpen } from "../contract/turn-process.js";
+import { turnProcessOpen } from "../stores.js";
+import { hiddenOrCollapsing } from "./flow-motion.js";
 import css from './ChatView.module.css';
-const EMPTY_PROCESS_KEYS = [];
-function turnProcessOpeningHumanAnchor(keys, nodes, spec) {
-    let anchor;
-    for (const key of keys) {
-        const node = nodes.get(key);
-        if ((node?.kind === 'user' || node?.kind === 'steering')
-            && node.anchorSeq < spec.controlAnchorSeq) {
-            anchor = Math.min(anchor ?? node.anchorSeq, node.anchorSeq);
-        }
-    }
-    return anchor;
+function turnDataOf(node) {
+    const location = node?.location;
+    return location?.kind === 'turn' || location?.kind === 'step' ? location.turn.data : undefined;
 }
-/** Derive disclosure facts from one content-revisioned Turn index. */
-function turnProcessLayout(keys, nodes, spec) {
-    let hasExternalProcess = false;
-    let compactAnswer = true;
-    const openingHumanAnchor = turnProcessOpeningHumanAnchor(keys, nodes, spec);
-    for (const key of keys) {
-        const node = nodes.get(key);
-        if (node === undefined || node.kind === 'turn-process')
-            continue;
-        if ((node.kind === 'user' || node.kind === 'steering')
-            && (openingHumanAnchor === undefined || node.anchorSeq > openingHumanAnchor)
-            && (spec.answerAnchorSeq === null || node.anchorSeq < spec.answerAnchorSeq)) {
-            compactAnswer = false;
-        }
-        if (TURN_PROCESS_INDEPENDENT_KINDS.has(node.kind)
-            || node.anchorSeq < spec.processStartSeq
-            || (spec.answerAnchorSeq !== null && node.anchorSeq >= spec.answerAnchorSeq))
-            continue;
-        if (node.kind !== 'assistant-step' || spec.answerStep === null || node.data.step !== spec.answerStep) {
-            hasExternalProcess = true;
-        }
-    }
-    return { hasExternalProcess, compactAnswer };
+function turnOf(node) {
+    const location = node?.location;
+    return location?.kind === 'turn' || location?.kind === 'step' ? location.turn.turn : undefined;
 }
-/** Subscribe, apply Turn-process visibility, and dispatch one stable Context key. */
-export const ChatNodeSeat = memo(function ChatNodeSeat({ nodeKey, historyIncomplete, compactTranscript, selectedCallId, cwd, openFile, inspectCall, forkAt, renderMessageImages, fileMentions, useChat, useStore, actions, renderSlot, t, }) {
-    const node = useChat(snapshot => snapshot.nodes.get(nodeKey));
-    const processSignature = useChat((snapshot) => {
-        const current = snapshot.nodes.get(nodeKey);
-        const location = current?.location;
-        return location?.kind === 'turn' || location?.kind === 'step'
-            ? location.turn.data.get('turn-process')
-            : undefined;
-    });
-    const processSpec = useMemo(() => processSignature === undefined ? undefined : decodeTurnProcess(processSignature), [processSignature]);
-    const nodeStore = useChat(snapshot => snapshot.nodes);
-    const processLayoutKeys = useChat((snapshot) => {
-        if (!compactTranscript || historyIncomplete || processSpec === undefined)
-            return EMPTY_PROCESS_KEYS;
-        const current = snapshot.nodes.get(nodeKey);
-        const location = current?.location;
-        if (current === undefined
-            || (location?.kind !== 'turn' && location?.kind !== 'step')
-            || location.turn.status !== 'closed'
-            || location.turn.turn !== processSpec.turn)
-            return EMPTY_PROCESS_KEYS;
-        const ownsLayout = current.kind === 'turn-process'
-            || (current.kind === 'assistant-step' && current.data.step === processSpec.answerStep);
-        return ownsLayout ? snapshot.locations.getTurn(processSpec.turn) : EMPTY_PROCESS_KEYS;
-    });
-    const processLayout = useMemo(() => processSpec === undefined || processLayoutKeys.length === 0
-        ? undefined
-        : turnProcessLayout(processLayoutKeys, nodeStore, processSpec), [nodeStore, processLayoutKeys, processSpec]);
-    const processGeneration = useMemo(() => processSpec === undefined ? undefined : turnProcessGeneration(processSpec), [processSpec]);
-    const storedEntry = useStore(state => processSpec === undefined
-        ? undefined
-        : storedTurnProcessEntry(state, processSpec.turn));
-    const processEntry = storedEntry?.generation === processGeneration ? storedEntry : undefined;
-    const processOpen = processEntry !== undefined;
-    const setOpen = useCallback((open) => {
-        if (processGeneration !== undefined && processSpec !== undefined) {
-            actions.setTurnProcessOpen(processSpec.turn, processGeneration, open);
-        }
-    }, [actions, processGeneration, processSpec]);
+/**
+ * Subscribe, apply Turn-process visibility, and dispatch one stable Context key.
+ * Policy reads select this seat's own conclusion, so a mode change re-renders
+ * only seats whose visibility actually changes.
+ */
+export const ChatNodeSeat = memo(function ChatNodeSeat({ nodeKey, groupPart, useChatNode, useChatNodeProcess, usePresentation, cwd, openFile, inspectCall, forkAt, loadImage, fileMentions, useStore, actions, renderSlot, t, useChatNodeBottom, deferCollapse, useGroupAction, }) {
+    const bottom = useChatNodeBottom(nodeKey);
+    const node = useChatNode(nodeKey);
     const routedNode = node;
-    const sameTurn = routedNode !== undefined
-        && processSpec !== undefined
-        && (routedNode.location.kind === 'turn' || routedNode.location.kind === 'step')
-        && routedNode.location.turn.turn === processSpec.turn;
-    const turnClosed = sameTurn
-        && routedNode.location.turn.status === 'closed';
+    const turn = turnOf(routedNode);
+    const processPresentation = useChatNodeProcess(nodeKey);
+    const processSpec = processPresentation?.spec;
+    const storedOpen = useStore(state => processSpec !== undefined
+        && turnProcessOpen(state, processSpec, bottom === true && deferCollapse));
+    const liveProcess = processPresentation !== undefined && !processPresentation.turnClosed;
+    const interleavedInput = processPresentation?.hasInterleavedInput === true;
+    const alwaysOpen = liveProcess || interleavedInput || turnProcessAlwaysOpen(routedNode);
+    const processOpen = alwaysOpen || storedOpen;
+    const setOpen = useCallback((open) => {
+        if (processSpec !== undefined && !alwaysOpen) {
+            actions.setTurnProcessOpen(processSpec.turn, processSpec.answerStep ?? 0, open);
+        }
+    }, [actions, processSpec, alwaysOpen]);
+    const foldCompleted = usePresentation(policy => policy.foldCompletedTurns);
+    // A loaded end makes a partial historical Turn eligible without its start.
     const processWindowReady = processSpec !== undefined
-        && compactTranscript
-        && processSpec.answerAnchorSeq !== null
-        && turnClosed
-        && !historyIncomplete;
-    const processMember = sameTurn
+        && processPresentation !== undefined
+        && foldCompleted
+        && processPresentation.turn === processSpec.turn
+        && (processPresentation.turnStarted || processPresentation.turnClosed);
+    const processMember = routedNode !== undefined
         && processWindowReady
-        && !TURN_PROCESS_INDEPENDENT_KINDS.has(routedNode.kind)
+        && !isAtOrOutside(routedNode, 'turn')
         && routedNode.anchorSeq >= processSpec.processStartSeq
-        && routedNode.anchorSeq < processSpec.answerAnchorSeq;
-    const processAnswer = sameTurn
+        && (liveProcess || processSpec.answerAnchorSeq === null || routedNode.anchorSeq < processSpec.answerAnchorSeq
+            || (groupPart === 'reasoning' && routedNode.kind === 'assistant-step' && routedNode.data.step === processSpec.answerStep));
+    const processAnswer = routedNode !== undefined
         && processWindowReady
+        && !liveProcess
+        && groupPart !== 'reasoning'
         && routedNode.kind === 'assistant-step'
         && routedNode.data.step === processSpec.answerStep;
     const ownsDisclosure = routedNode?.kind === 'turn-process' || processAnswer;
     const foldable = processWindowReady
-        && (processMember || (ownsDisclosure
-            && ((processLayout?.hasExternalProcess ?? false) || processSpec.inlineReasoning)));
-    const turnProcess = useMemo(() => processGeneration === undefined || processSpec === undefined
+        && (liveProcess || processMember || ownsDisclosure);
+    const turnProcess = useMemo(() => processSpec === undefined
         ? undefined
         : {
             spec: processSpec,
             foldable,
+            hasContent: !interleavedInput && (processPresentation?.hasExternalProcess === true || processSpec.inlineReasoning),
             open: processOpen,
             setOpen,
         }, [
-        foldable, processGeneration, processOpen, processSpec, setOpen,
+        foldable, interleavedInput, processOpen, processSpec, processPresentation?.hasExternalProcess, setOpen,
     ]);
     const controllerInactive = routedNode?.kind === 'turn-process'
-        && !foldable;
+        && foldCompleted && !foldable;
     const compactAnswer = processAnswer
         && foldable
-        && processLayout?.compactAnswer === true
+        && processPresentation.compactAnswer
         && !processOpen;
     const processHidden = controllerInactive || (foldable && processMember && !processOpen);
     const revealProcess = useCallback(() => {
         if (processMember)
             setOpen(true);
     }, [processMember, setOpen]);
-    const wrapperRef = useSearchableHidden(processHidden, revealProcess);
+    const wrapperRef = useGroupAction(processHidden, revealProcess);
+    const [disclosureReset] = useState(() => createSnapshotStore(0));
+    const turnData = turnDataOf(routedNode);
+    const hookContext = useMemo(() => ({ turnData, disclosureReset, useGroupAction }), [turnData, disclosureReset, useGroupAction]);
+    useEffect(() => {
+        if (processMember && processHidden && wrapperRef.current !== null && hiddenOrCollapsing(wrapperRef.current)) {
+            disclosureReset.set(disclosureReset.getSnapshot() + 1);
+        }
+    }, [processMember, processHidden, wrapperRef, disclosureReset]);
     const owner = useMemo(() => node === undefined
         ? null
         : {
-            selectedCallId,
+            ...groupPart === undefined ? {} : { groupPart },
             cwd,
             openFile,
             inspectCall,
             forkAt,
-            renderMessageImages,
+            loadImage,
             fileMentions,
             turnProcess,
         }, [
-        node, selectedCallId, cwd, openFile, inspectCall, forkAt,
-        renderMessageImages, fileMentions, turnProcess,
+        node, groupPart, cwd, openFile, inspectCall, forkAt,
+        loadImage, fileMentions, turnProcess,
     ]);
     if (routedNode === undefined || owner === null)
         return null;
-    const location = routedNode.location;
-    const turn = location.kind === 'turn' || location.kind === 'step'
-        ? location.turn.turn
-        : undefined;
     // Runtime dispatch owns the correlation: every Node's discriminant is the
     // keyed-slot entry passed alongside that same Node. TypeScript does not
     // distribute an object containing a union into a union of objects itself.
     const routedOwner = { ...owner, node: routedNode };
-    return (_jsx("div", { ref: wrapperRef, className: css.flowItem, "data-chat-anchor-key": routedNode.key, "data-chat-flow-key": routedNode.key, "data-chat-flow-kind": routedNode.kind, "data-chat-turn": turn, "data-turn-process-member": processMember || undefined, "data-turn-process-hidden": processHidden || undefined, "data-turn-process-answer": compactAnswer || undefined, children: renderSlot('conversation.chat.node', routedOwner, {
+    const flowKey = groupPart === undefined || groupPart === 'response' ? routedNode.key : JSON.stringify([routedNode.key, groupPart]);
+    return (_jsx("div", { ref: wrapperRef, className: css.flowItem, "data-chat-anchor-key": flowKey, "data-chat-flow-key": flowKey, "data-chat-paging-anchor": routedNode.kind !== 'turn-process' || undefined, "data-chat-node-key": routedNode.key, "data-chat-group-part": groupPart, "data-chat-flow-kind": routedNode.kind, "data-chat-turn": turn, "data-turn-process-member": processMember || undefined, "data-turn-process-hidden": processHidden || undefined, "data-turn-process-answer": compactAnswer || undefined, children: renderSlot('conversation.chat.node', routedOwner, {
             entryKey: routedNode.kind,
-            hookContext: nodeKey,
+            hookContext,
             fallback: (_jsx(JsonBlock, { label: t('message.unknownSurface', { type: routedNode.kind }), payload: routedNode.data, truncatedLabel: total => t('json.truncated', { total }) })),
         }) }));
 });

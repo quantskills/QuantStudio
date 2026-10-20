@@ -1,3 +1,4 @@
+import { selectedSession } from "./selected-session.js";
 import { createElement } from 'react';
 import { artifactDownload } from "./artifact-resource.js";
 import { bindComposerSubagentMenu } from "./composer-subagents.js";
@@ -24,6 +25,7 @@ import { connectFlyTransport } from "./fly/transport.js";
 import { FactorContestReview } from "./FactorContestReview.js";
 import { AuthoringReview } from "./AuthoringReview.js";
 import { SessionFavorite } from "./SessionFavorite.js";
+import { LegacyTeamRecovery } from "./LegacyTeamRecovery.js";
 import { QuantSkillsTeamDraftCard, } from "./QuantSkillsTeamDraftCard.js";
 import { QuantSkillsGravityLaneModelSelect } from "./QuantSkillsGravityLaneModelSelect.js";
 import { QuantSkillsAssetDraftCard, } from "./QuantSkillsAssetDraftCard.js";
@@ -32,7 +34,7 @@ import { QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE, QUANTSKILLS_ASSET_DISPLAY_NA
 export { createQuantSkillsLayoutStore, createQuantSkillsNotificationStore, createQuantSkillsViewStore, } from "./store.js";
 /** Services required by the QuantSkills application. */
 export const inject = [
-    'slots', 'sessions', 'workspaces', 'connection',
+    'slots', 'sessions', 'workspaces', 'uiWorkspace', 'connection',
     'inputTriggers', 'modelDirectories',
     'settingsSchema', 'remote.settings',
     'remote', 'remote.commands', 'remote.session',
@@ -111,6 +113,15 @@ function hasSameAgentSnapshot(actual, expected) {
         });
 }
 class QuantSkillsLayoutController {
+    panel = { activePanelId: null };
+    panelListeners = new Set();
+    navigation = new AbortController();
+    panelInfo = { getSnapshot: () => this.panel, subscribe: (listener) => { this.panelListeners.add(listener); return () => { this.panelListeners.delete(listener); }; } };
+    selectPanel(id) { this.navigation.abort(); this.panel = { activePanelId: id }; for (const listener of this.panelListeners)
+        listener(); }
+    beginNavigation() { this.navigation.abort(); this.navigation = new AbortController(); return this.navigation.signal; }
+    openRightbar(_track, _fullscreen) { this.openDetails(); }
+    closeRightbar() { this.closeDetails(); }
     actions;
     sidebarReservations = new Map();
     sidebarClaim;
@@ -464,7 +475,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         ...view.actions,
         closePlugin: () => {
             sessionOpenGeneration += 1;
-            suppressedPluginSessionId = ctx.sessions.list.getSnapshot().current;
+            suppressedPluginSessionId = selectedSession(ctx.sessions.list.getSnapshot());
             view.actions.closePlugin();
         },
         showPluginConversationIndex: () => {
@@ -645,7 +656,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         const sessions = ctx.sessions.list.getSnapshot();
         const summary = sessions.byId[id];
         if (summary !== undefined) {
-            ctx.sessions.open(id);
+            ctx.uiWorkspace.openSession(id);
             if (ctx.sessions.binding(id) !== undefined) {
                 if (ensureMissing) {
                     void unwrapRemote(ctx.remote.quantSkillsSessions.sessionEnsure({ sessionId: id }, lifetime.signal)).catch((cause) => {
@@ -666,7 +677,7 @@ export function mountQuantSkillsApplication(ctx, options) {
             const adopted = await adoptSession(id, lifetime.signal);
             if (generation !== sessionOpenGeneration || lifetime.signal.aborted)
                 return;
-            ctx.sessions.open(adopted.sessionId);
+            ctx.uiWorkspace.openSession(adopted.sessionId);
         })().catch((cause) => {
             if (generation !== sessionOpenGeneration || lifetime.signal.aborted)
                 return;
@@ -683,6 +694,7 @@ export function mountQuantSkillsApplication(ctx, options) {
     connectFlyTransport(flyAccess);
     if (options.mode === 'standalone') {
         ctx.effect(() => {
+            const disposePanelInfo = ctx.slots.provideRoot({ hooks: { panelInfo: layout.panelInfo } });
             const disposeService = ctx.reflect.provide('layout', layout);
             const disposeRoot = ctx.slots.register({
                 name: 'root',
@@ -690,8 +702,8 @@ export function mountQuantSkillsApplication(ctx, options) {
                     'sidebar': { kind: 'single', scope: 'root' },
                     'quantskills.page': { kind: 'single', scope: 'root' },
                     'quantskills.results': { kind: 'single', scope: 'session' },
-                    'conversation': { kind: 'single', scope: 'session-maybe' },
-                    'details': { kind: 'single', scope: 'session' },
+                    'main': { kind: 'keyed', scope: 'root' },
+                    'rightbar': { kind: 'single', scope: 'root' },
                     'shell.overlay': { kind: 'list', scope: 'root' },
                 },
                 store: createQuantSkillsLayoutStore,
@@ -720,6 +732,7 @@ export function mountQuantSkillsApplication(ctx, options) {
             }, QuantSkillsFrame);
             return () => {
                 disposeRoot();
+                disposePanelInfo();
                 void disposeService();
             };
         }, 'ui-quantskills: standalone root frame and layout service');
@@ -785,9 +798,9 @@ export function mountQuantSkillsApplication(ctx, options) {
             }),
         }, QuantSkillsPluginLauncher));
         ctx.effect(() => {
-            let observedSessionId = ctx.sessions.list.getSnapshot().current;
+            let observedSessionId = selectedSession(ctx.sessions.list.getSnapshot());
             const sync = () => {
-                const current = ctx.sessions.list.getSnapshot().current;
+                const current = selectedSession(ctx.sessions.list.getSnapshot());
                 if (current !== observedSessionId) {
                     observedSessionId = current;
                     if (current !== suppressedPluginSessionId)
@@ -828,8 +841,8 @@ export function mountQuantSkillsApplication(ctx, options) {
         name: 'conversation.hero.identity',
         inject: conversationBrand,
     }, QuantSkillsConversationHeroIdentity));
-    ctx.slots.inject('conversation.hero.accessory', () => ctx.slots.register({
-        name: 'conversation.hero.accessory',
+    ctx.slots.inject('conversation.hero.options', () => ctx.slots.register({
+        name: 'conversation.hero.options',
         id: 'quantskills-panda-mcp',
         order: 10,
         inject: () => ({
@@ -843,7 +856,7 @@ export function mountQuantSkillsApplication(ctx, options) {
             downloadFile: (path) => artifactDownload(sessionId, path),
             openWorkbench: (path) => {
                 // Bind to the rendered answer's session, never whichever session a stale callback finds.
-                if (ctx.sessions.list.getSnapshot().current !== sessionId)
+                if (selectedSession(ctx.sessions.list.getSnapshot()) !== sessionId)
                     return;
                 resultTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
                 view.actions.requestResultPreview(sessionId, path);
@@ -872,15 +885,15 @@ export function mountQuantSkillsApplication(ctx, options) {
                 load: () => { if (available)
                     void directory.load(); },
                 select: selection => available
-                    ? directory.select(selection).then(() => true, () => false)
-                    : Promise.resolve(false),
+                    ? directory.select(selection)
+                    : Promise.resolve(undefined),
             };
         },
     }, QuantSkillsGravityLaneModelSelect));
     const legacySessionWorkspace = () => {
         const sessions = ctx.sessions.list.getSnapshot();
         const workspaces = ctx.workspaces.list.getSnapshot();
-        const current = sessions.current;
+        const current = selectedSession(sessions);
         const currentWorkspaceId = current === undefined
             ? undefined
             : workspaces.items.find(item => item.sessionIds.includes(current))?.workspaceId;
@@ -968,7 +981,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         inspect: (sessionId, signal) => unwrapRemote(ctx.remote.quantSkillsSessions.contestInspect({ sessionId: sessionId }, signal)),
         requestResearch: async (sessionId, text) => {
             const current = ctx.sessions.list.getSnapshot();
-            if (current.current !== sessionId || current.byId[sessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'contest') {
+            if (selectedSession(current) !== sessionId || current.byId[sessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'contest') {
                 throw new Error('请在对应比赛会话中发起研究。');
             }
             const session = ctx.sessions.binding(sessionId)?.session;
@@ -1016,7 +1029,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         reconcilePlan: planId => unwrapRemote(ctx.remote.quantSkillsSessions.factorReconcilePlan({ planId })),
         requestResearch: async (sessionId, text) => {
             const current = ctx.sessions.list.getSnapshot();
-            if (current.current !== sessionId || current.byId[sessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'factor-contest')
+            if (selectedSession(current) !== sessionId || current.byId[sessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'factor-contest')
                 throw new Error('请在对应因子比赛会话中发起研究。');
             const session = ctx.sessions.binding(sessionId)?.session;
             if (!session)
@@ -1046,7 +1059,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         },
     };
     const changeSessions = async (ids, action, fileTokens) => {
-        const current = ctx.sessions.list.getSnapshot().current;
+        const current = selectedSession(ctx.sessions.list.getSnapshot());
         const completed = new Set();
         try {
             for (const sessionId of new Set(ids)) {
@@ -1297,7 +1310,7 @@ export function mountQuantSkillsApplication(ctx, options) {
             ? lifetime.signal
             : AbortSignal.any([lifetime.signal, callerSignal]);
         signal.throwIfAborted();
-        const current = ctx.sessions.list.getSnapshot().current;
+        const current = selectedSession(ctx.sessions.list.getSnapshot());
         const workspace = await resolveSessionWorkspace();
         const requestedSessionId = `session-${crypto.randomUUID()}`;
         const created = await unwrapRemote(ctx.remote.quantSkillsSessions.plainSessionCreate({
@@ -1310,7 +1323,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         try {
             adopted = await adoptSession(sessionId, signal);
             const session = adopted.session;
-            ctx.sessions.open(sessionId);
+            ctx.uiWorkspace.openSession(sessionId);
             if (request.model !== undefined) {
                 const selected = await ctx.remote.session.selectModel({
                     sessionId,
@@ -1344,19 +1357,17 @@ export function mountQuantSkillsApplication(ctx, options) {
         finally {
             if (adopted?.session.getSnapshot().running)
                 await adopted.session.cancel();
-            await ctx.workspaces.archiveSession(sessionId).catch((error) => {
+            await ctx.uiWorkspace.archiveSession(sessionId).catch((error) => {
                 console.warn('QuantSkills AI role helper could not archive its temporary Session.', error);
             });
-            if (current === undefined)
-                ctx.sessions.clear();
-            else if (ctx.sessions.list.getSnapshot().byId[current] !== undefined)
-                ctx.sessions.open(current);
+            if (current !== undefined && ctx.sessions.list.getSnapshot().byId[current] !== undefined)
+                ctx.uiWorkspace.openSession(current);
         }
     };
     const matchSkillForTask = async (request, skills) => {
         const signal = lifetime.signal;
         signal.throwIfAborted();
-        const current = ctx.sessions.list.getSnapshot().current;
+        const current = selectedSession(ctx.sessions.list.getSnapshot());
         const workspace = await resolveSessionWorkspace();
         const requestedSessionId = `session-${crypto.randomUUID()}`;
         const created = await unwrapRemote(ctx.remote.quantSkillsSessions.plainSessionCreate({
@@ -1368,7 +1379,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         let adopted;
         try {
             adopted = await adoptSession(sessionId, signal);
-            ctx.sessions.open(sessionId);
+            ctx.uiWorkspace.openSession(sessionId);
             const prompt = buildSkillGuidePrompt(request, skills);
             const response = await adopted.session.prompt([{ type: 'text', text: prompt }], 'queue', signal);
             if (!response.ok)
@@ -1379,13 +1390,11 @@ export function mountQuantSkillsApplication(ctx, options) {
         finally {
             if (adopted?.session.getSnapshot().running)
                 await adopted.session.cancel();
-            await ctx.workspaces.archiveSession(sessionId).catch((error) => {
+            await ctx.uiWorkspace.archiveSession(sessionId).catch((error) => {
                 console.warn('QuantSkills AI catalog matcher could not archive its temporary Session.', error);
             });
-            if (current === undefined)
-                ctx.sessions.clear();
-            else if (ctx.sessions.list.getSnapshot().byId[current] !== undefined)
-                ctx.sessions.open(current);
+            if (current !== undefined && ctx.sessions.list.getSnapshot().byId[current] !== undefined)
+                ctx.uiWorkspace.openSession(current);
         }
     };
     const importAgent = async (asset, version) => {
@@ -1517,7 +1526,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         inject: () => ({ ...conversationBrand(), ...pandaMcp }),
     }, QuantSkillsPandaMcpControl));
     const send = async (text) => {
-        const sessionId = ctx.sessions.list.getSnapshot().current;
+        const sessionId = selectedSession(ctx.sessions.list.getSnapshot());
         const bound = sessionId === undefined
             ? undefined
             : boundSessions.source.getSnapshot().archives.find(archive => archive.sessionId === sessionId);
@@ -1606,6 +1615,13 @@ export function mountQuantSkillsApplication(ctx, options) {
         }),
     }, SessionFavorite));
     ctx.slots.inject('conversation.session.header.actions', () => ctx.slots.register({
+        name: 'conversation.session.header.actions', id: 'quantskills-legacy-team-recovery', order: 25,
+        inject: () => ({
+            hooks: { sessions: ctx.sessions.list },
+            recover: (sessionId, continuePending) => unwrapRemote(ctx.remote.quantSkillsSessions.legacyTeamRecovery({ sessionId, continuePending })),
+        }),
+    }, LegacyTeamRecovery));
+    ctx.slots.inject('conversation.session.header.actions', () => ctx.slots.register({
         name: 'conversation.session.header.actions', id: 'quantskills-authoring-review', order: 10,
         inject: () => ({
             hooks: { sessions: ctx.sessions.list },
@@ -1652,7 +1668,7 @@ export function mountQuantSkillsApplication(ctx, options) {
     ctx.effect(() => bindQuantSkillsResultMentionClicks(document, (path, trigger) => {
         if (resultPreviewRank(path) >= 4)
             return false;
-        const sessionId = ctx.sessions.list.getSnapshot().current;
+        const sessionId = selectedSession(ctx.sessions.list.getSnapshot());
         if (sessionId === undefined)
             return false;
         const sessionSnapshot = boundSessions.source.getSnapshot();
@@ -1943,7 +1959,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         window.addEventListener('focus', refresh);
         return () => { window.removeEventListener('focus', refresh); };
     }, 'ui-quantskills: refresh Agents when the browser regains focus');
-    ctx.effect(() => bindComposerSubagentMenu(document, ctx.sessions), 'ui-quantskills: open a subagent chat in a dialog and return to the main session');
+    ctx.effect(() => bindComposerSubagentMenu(document, ctx.sessions, ctx.uiWorkspace), 'ui-quantskills: open a subagent chat in a dialog and return to the main session');
 }
 /**
  * Mount QuantSkills in the composition selected by the surrounding DSH shell.
