@@ -4527,7 +4527,7 @@ function SettingsPage(props: PageProps) {
     ['updates', <Clock/>, '自动更新'],
     ['permissions', <Shield/>, '模型与权限'],
     ['models', <Wrench/>, '模型服务'],
-    ['plugins', <GridFour/>, '插件市场'],
+    ['plugins', <GridFour/>, '插件与市场'],
     ['appearance', <Palette/>, '外观'],
     ['panda-data', <Database/>, 'PandaData'],
     ['brand-support', <Globe/>, '品牌与支持'],

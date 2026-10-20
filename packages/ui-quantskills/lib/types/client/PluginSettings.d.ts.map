@@ -1,0 +1,1 @@
+{"version":3,"file":"PluginSettings.d.ts","sourceRoot":"","sources":["../../../src/client/PluginSettings.tsx"],"names":[],"mappings":"AAAA,OAAO,EAAY,KAAK,SAAS,EAAE,MAAM,OAAO,CAAA;AAGhD,oFAAoF;AACpF,wBAAgB,cAAc,CAAC,EAAE,WAAW,EAAE,SAAS,EAAE,EAAE;IACzD,WAAW,CAAC,EAAE,CAAC,MAAM,IAAI,CAAC,GAAG,SAAS,CAAA;IACtC,SAAS,CAAC,EAAE,SAAS,CAAA;CACtB,+BAkBA"}

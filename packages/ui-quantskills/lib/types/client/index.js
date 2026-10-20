@@ -1,5 +1,6 @@
 import { selectedSession } from "./selected-session.js";
 import { createElement } from 'react';
+import { PluginSettings } from "./PluginSettings.js";
 import { artifactDownload } from "./artifact-resource.js";
 import { bindComposerSubagentMenu } from "./composer-subagents.js";
 import { retryHostRead } from "./remote-read.js";
@@ -1839,14 +1840,21 @@ export function mountQuantSkillsApplication(ctx, options) {
             applicationUpdateStatus: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStatus()),
             applicationUpdateCheck: (request) => unwrapRemote(ctx.remote.quantSkills.applicationUpdateCheck(request)),
             applicationUpdateStart: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStart()),
-            // dshmarket 1.45.1 exposes a self-contained, closure-bound section.
-            // It owns its locale, request state and error boundary; no child slots or store
-            // are borrowed/redeclared here, preserving the stock settings owner.
+            // Open the native manager through its public panel navigation. Do not
+            // transplant its component: its store and nested slots belong to that panel.
+            // Keep the old market slot while provenance migration is still incomplete.
             renderPluginMarket: () => {
                 const entry = ctx.slots.entriesOfSlot('settings.section').find(item => item.options.id === 'market');
-                if (!entry || entry.children || entry.store)
-                    return createElement('p', { role: 'status' }, '插件市场尚未就绪，请稍后重新打开设置。');
-                return createElement(entry.component, { close: () => view.actions.navigate('home') });
+                const manager = ctx.slots.entriesOfSlot('main').some(item => item.options.key === 'plugins');
+                return createElement(PluginSettings, {
+                    openManager: manager ? () => {
+                        ctx.layout.selectPanel('plugins');
+                        viewActions.closePlugin();
+                    } : undefined,
+                    community: entry && !entry.children && !entry.store
+                        ? createElement(entry.component, { close: () => view.actions.navigate('home') })
+                        : undefined,
+                });
             },
             databaseAccess: {
                 list: () => unwrapRemote(ctx.remote.pandaMcp.databaseList()),

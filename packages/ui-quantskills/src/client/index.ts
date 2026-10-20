@@ -3,6 +3,7 @@ import type { MainPanelId, PanelInfo } from '@deepseek-ai/dsh-client-ui-layout/c
 import { selectedSession } from './selected-session.ts'
 import type { SessionHistoryAccess, SessionFileDeletionAccess } from './ArchivedSessions.tsx'
 import { createElement, type ComponentType } from 'react'
+import { PluginSettings } from './PluginSettings.tsx'
 import { artifactDownload } from './artifact-resource.ts'
 import { bindComposerSubagentMenu } from './composer-subagents.ts'
 import { retryHostRead } from './remote-read.ts'
@@ -2097,13 +2098,21 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
           ctx.remote.quantSkills.applicationUpdateCheck(request),
         ),
         applicationUpdateStart: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStart()),
-        // dshmarket 1.45.1 exposes a self-contained, closure-bound section.
-        // It owns its locale, request state and error boundary; no child slots or store
-        // are borrowed/redeclared here, preserving the stock settings owner.
+        // Open the native manager through its public panel navigation. Do not
+        // transplant its component: its store and nested slots belong to that panel.
+        // Keep the old market slot while provenance migration is still incomplete.
         renderPluginMarket: () => {
           const entry = ctx.slots.entriesOfSlot('settings.section').find(item => item.options.id === 'market')
-          if (!entry || entry.children || entry.store) return createElement('p', { role: 'status' }, '插件市场尚未就绪，请稍后重新打开设置。')
-          return createElement(entry.component as ComponentType<{ close: () => void }>, { close: () => view.actions.navigate('home') })
+          const manager = ctx.slots.entriesOfSlot('main').some(item => item.options.key === 'plugins')
+          return createElement(PluginSettings, {
+            openManager: manager ? () => {
+              ctx.layout.selectPanel('plugins' as MainPanelId)
+              viewActions.closePlugin()
+            } : undefined,
+            community: entry && !entry.children && !entry.store
+              ? createElement(entry.component as ComponentType<{ close: () => void }>, { close: () => view.actions.navigate('home') })
+              : undefined,
+          })
         },
         databaseAccess: {
           list: () => unwrapRemote(ctx.remote.pandaMcp.databaseList()),

@@ -2372,6 +2372,11 @@ body[data-qs-plugin-theme] :has(> .researchStatus) { height:auto; min-height:36p
 .agentLaunchTitle h2 { white-space:normal; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-height:1.45; }
 .agentCardTools { display:flex; align-items:center; gap:2px; }
 .pluginMarket { min-height:560px; min-width:0; }
+.pluginSettings > header { padding:4px 4px 24px; border-bottom:1px solid var(--qs-line); }
+.pluginSettings h2, .pluginSettings h3 { margin:0 0 10px; }
+.pluginSettings p { margin:0 0 18px; color:var(--qs-muted); line-height:1.6; }
+.pluginSettings > section { padding-top:24px; }
+.pluginSettings [role="alert"] { margin-top:12px; }
 .pluginMarket > .segmented { margin-bottom:20px; }
 .settingsContent:has(.pluginMarket) { padding:20px; overflow:hidden; background:var(--qs-surface); border:1px solid var(--qs-line); border-radius:18px; }
 .settingsLayout:has(.pluginMarket) { grid-template-columns:180px minmax(0,1fr); max-width:none; }

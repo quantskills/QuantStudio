@@ -2604,7 +2604,7 @@ function SettingsPage(props) {
         ['updates', _jsx(Clock, {}), '自动更新'],
         ['permissions', _jsx(Shield, {}), '模型与权限'],
         ['models', _jsx(Wrench, {}), '模型服务'],
-        ['plugins', _jsx(GridFour, {}), '插件市场'],
+        ['plugins', _jsx(GridFour, {}), '插件与市场'],
         ['appearance', _jsx(Palette, {}), '外观'],
         ['panda-data', _jsx(Database, {}), 'PandaData'],
         ['brand-support', _jsx(Globe, {}), '品牌与支持'],
