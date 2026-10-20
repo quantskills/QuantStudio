@@ -58,3 +58,16 @@ jobs:
 
       - name: Smoke-test clean DSH installation
         run: pnpm run ci:smoke
+
+      - name: Check out the fixed pre-upgrade baseline
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: 8312624953d62a9aec5cde2c0c2f1175342482fe
+          path: .ci-legacy-core
+          persist-credentials: false
+
+      - name: Install the old core without changing its versions
+        run: pnpm --dir .ci-legacy-core install --frozen-lockfile
+
+      - name: Verify the new launcher can still run the old core
+        run: pnpm run ci:legacy -- .ci-legacy-core
