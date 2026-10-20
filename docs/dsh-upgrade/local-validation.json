@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "commit": "aa375e4f9936f016b8465bc130b91fab47436eb1",
+  "runtime": "0.2.1-rc.2",
+  "node": "22.23.2",
+  "pnpm": "11.7.0",
+  "platform": "Windows x64",
+  "suite": {
+    "files": 134,
+    "passed": 1412,
+    "failed": 0,
+    "skipped": 1,
+    "skipReason": "POSIX-only isolated process group test"
+  },
+  "nativeSmoke": {
+    "result": "passed",
+    "generation": "empty-ci-fixture",
+    "artifact": "72b4656ba4ed4b085e6627486246550cb0b62c595a00f567c451a785dd7fa4c6",
+    "isolationPostflight": "passed",
+    "cleanup": "passed"
+  },
+  "originalModifiedSourceFiles": {
+    "checked": 48,
+    "unchanged": 48
+  },
+  "productionActivation": false,
+  "completePlanAcceptance": false
+}
