@@ -196,13 +196,24 @@ export async function assertIsolatedFixture(home, allowedRoot, runtime = undefin
     }
   }
   const inspect = (value, key = '', file = '', metadata = false) => {
+    // Tool calls store structured input as JSON strings. Inspect that inner
+    // document too: a copied pending call must not hide an executable path.
+    if (typeof value === 'string' && key === 'arguments' && value.trim()) {
+      let decoded
+      try { decoded = JSON.parse(value) } catch { throw new Error('Uninspectable fixture tool arguments.') }
+      if (!decoded || typeof decoded !== 'object') throw new Error('Uninspectable fixture tool arguments.')
+      inspect(decoded, '', file, metadata)
+    }
+    if (key === 'scripts' && value && (typeof value !== 'object' || Object.keys(value).length)) {
+      throw new Error('Runnable fixture contains executable package scripts.')
+    }
     if (!metadata && typeof value === 'string' && /^(link:|file:)/.test(value)) {
       const target = resolve(dirname(file), value.slice(value.indexOf(':') + 1))
       const lockedCode = basename(file) === 'pnpm-lock.yaml' && ['specifier', 'version'].includes(key)
         && [...trustedPackages.values()].includes(target)
       if (!inside(target) && trustedPackages.get(key) !== target && !lockedCode) throw new Error(`Fixture dependency escapes isolated root (${basename(file)}:${key}).`)
     }
-    if (typeof value === 'string' && /^(?:command|script|shell|executable)$/i.test(key) && value.trim()) {
+    if (typeof value === 'string' && /^(?:command|cmd|script|shell|executable)$/i.test(key) && value.trim()) {
       throw new Error('Runnable fixture contains an executable command.')
     }
     if (typeof value === 'string' && /^(?:cron|rrule|schedule)$/i.test(key) && value.trim()) {

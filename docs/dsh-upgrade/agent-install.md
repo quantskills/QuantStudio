@@ -39,7 +39,10 @@
    使用测试脚本给出的 stopFile 结束本次测试；不要结束任何无关或日常进程。
    macOS /tmp 可能映射到 /private/tmp，路径验证使用真实路径。
 
-6. 如需历史兼容验证，仅使用已经一致性备份的离线副本，执行 audit-session-copy / migrateSessionCopy。
+6. 启动器过渡另用独立旧源码目录：克隆仓库并 checkout 8312624953d62a9aec5cde2c0c2f1175342482fe，
+   在旧目录只运行固定 pnpm install --frozen-lockfile；回到候选目录运行 corepack pnpm run ci:legacy -- /完整/旧目录。
+   脚本检查固定提交，创建独立空数据目录验证新启动器运行旧核心，结束后清理。不要传入原数据目录。
+   如需历史兼容验证，仅使用已经一致性备份的离线副本，执行 audit-session-copy / migrateSessionCopy。
    不对副本启动完整 Host。报告只给数量、校验摘要和错误类别，不输出会话原文、路径中的私有信息或凭据。
    任何不确定的迁移阶段、来源、接收方历史和旧版可读性都应停止，不绕过保护。
 
@@ -87,7 +90,10 @@
    如用 Start-Process，必须 -WindowStyle Hidden，并记录自己启动的进程；仅结束本次测试的进程树。
    使用脚本给出的 stopFile 结束浏览器测试。不要关闭或迁移用户日常服务。
 
-6. 历史数据只能来自一致性备份的离线副本。调用 audit-session-copy / migrateSessionCopy，保留原文件和校验清单。
+6. 启动器过渡另用固定旧基线的独立源码目录：checkout 8312624953d62a9aec5cde2c0c2f1175342482fe，
+   在旧目录运行固定 pnpm install --frozen-lockfile，再回到候选目录运行 corepack pnpm run ci:legacy -- "C:/独立旧源码目录"。
+   它只使用新建临时数据目录，不改变原实例。历史数据只能来自一致性备份的离线副本。
+   调用 audit-session-copy / migrateSessionCopy，保留原文件和校验清单。
    不用完整 Host 打开兼容副本。不要打印原文、凭据或账户配置。
    所有删除/移动使用 PowerShell -LiteralPath；递归操作前核对绝对目标在本次测试目录内。
    未知状态、路径越界、来源不明或旧版可读性不明时停止，不绕过检查。

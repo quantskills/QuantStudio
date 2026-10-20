@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   validate:
-    name: ${{ matrix.os }} / Node 22.19
+    name: ${{ matrix.os }} / Node ${{ matrix.node }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     strategy:
@@ -26,6 +26,10 @@ jobs:
           - windows-latest
           - ubuntu-latest
           - macos-latest
+        node: [22.19.0]
+        include:
+          - os: ubuntu-latest
+            node: 24.0.0
 
     steps:
       - name: Check out source
@@ -34,7 +38,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 22.19.0
+          node-version: ${{ matrix.node }}
 
       - name: Activate pinned pnpm
         run: |

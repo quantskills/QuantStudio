@@ -6,6 +6,8 @@ import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { publishBootstrapVersion, writeAtomic, assertIsolatedFixture, artifactDigest, candidateArtifact } from './runtime-protocol.mjs'
 import { randomBytes } from 'node:crypto'
+import { smokeDiagnostics } from './smoke-diagnostics.mjs'
+import { stopSmokeProcess } from './smoke-process.mjs'
 
 const sourceArg = process.argv.slice(2).filter(arg => arg !== '--')[0]
 if (!sourceArg) throw new Error('Supply an independently installed old QS checkout.')
@@ -54,7 +56,7 @@ await assertIsolatedFixture(home, fixtureRoot, { source: root, pnpm: pnpmCli }, 
 let host, passed = false
 try {
   host = fork(path.join(base, 'launcher.mjs'), ['--port', String(port), '--no-open'], {
-    cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe', 'ipc'], windowsHide: true,
+    cwd: root, env: environment, stdio: ['ignore', 'pipe', 'pipe', 'ipc'], windowsHide: true, detached: process.platform !== 'win32',
   })
   // Retain diagnostics locally, but never publish authentication links printed by upstream.
   let output = ''
@@ -83,19 +85,12 @@ try {
     console.log(JSON.stringify({ result: 'passed', runtime: proof.runtime, commit: proof.commit, generation: proof.generation, artifact: proof.artifact }))
   } catch(error) {
     await writeFile(path.join(home, 'smoke.log'), output, { mode: 0o600 })
+    console.error(smokeDiagnostics(output, [browserSecret]))
     console.error(`Isolated evidence retained: ${home}`)
     throw error
   }
 } finally {
-  if (host && host.exitCode === null) {
-    if (process.platform === 'win32') spawnSync('taskkill', ['/pid', String(host.pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' })
-    else host.kill('SIGTERM')
-    await new Promise(yes => {
-      if (host.exitCode !== null) return yes()
-      const timer = setTimeout(() => { host.kill('SIGKILL'); yes() }, 5000)
-      host.once('exit', () => { clearTimeout(timer); yes() })
-    })
-  }
+  await stopSmokeProcess(host)
   if (passed) {
     if (path.dirname(fixtureRoot) !== await realpath(tmpdir()) || !path.basename(fixtureRoot).startsWith('quantskills-ci-')) throw new Error('Refused unsafe cleanup')
     await rm(fixtureRoot, { recursive: true, force: true })

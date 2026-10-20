@@ -93,6 +93,17 @@ describe('core migration activation boundary', () => {
     await writeFile(join(home, 'settings.json'), '{"apiKey":"not-for-test"}')
     await expect(assertIsolatedFixture(home, home)).rejects.toThrow(/credentials/)
   })
+  it('inspects serialized pending tool arguments and rejects executable profile scripts', async () => {
+    const home = await temp(), outside = await temp(), file = join(home, 'pending.json')
+    for (const argumentsValue of [JSON.stringify({ file_path: join(outside, 'report.txt') }), JSON.stringify({ cmd: 'erase original' }), 'broken-json']) {
+      await writeFile(file, JSON.stringify({ type: 'tool/call', data: { arguments: argumentsValue } }))
+      await expect(assertIsolatedFixture(home, home)).rejects.toThrow(/fixture/)
+    }
+    await writeFile(file, JSON.stringify({ arguments: JSON.stringify({ file_path: join(home, 'safe.txt') }) }))
+    await expect(assertIsolatedFixture(home, home)).resolves.toBeUndefined()
+    await writeFile(join(home, 'package.json'), JSON.stringify({ scripts: { preinstall: 'arbitrary command' } }))
+    await expect(assertIsolatedFixture(home, home)).rejects.toThrow(/package scripts/)
+  })
   it('accepts a canonical root alias but still rejects a nested escaping link', async () => {
     const outer = await temp(), root = join(outer, 'actual'), alias = join(outer, 'alias'), outside = await temp()
     await mkdir(join(root, 'home'), { recursive: true })
