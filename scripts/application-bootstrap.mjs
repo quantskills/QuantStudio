@@ -195,6 +195,9 @@ export async function recoverApplicationState(versionsRoot) {
  */
 export async function repairApplicationState(state, versionsRoot, dshHome) {
   let repaired = state
+  // A source checkout has no managed-version pointers. Its selected runtime is
+  // checked by startSelected; this is not a rollback to an older generation.
+  if (state.active === undefined && state.pending === undefined && state.previous === undefined) return state
   if (repaired.pending !== undefined
     && !await validApplicationRoot(managedVersionPath(versionsRoot, repaired.pending))) {
     if (dshHome) await assertRollbackSafe(dshHome)
@@ -239,7 +242,7 @@ async function startSelected(root, config, hostArgs, dshHome) {
   const environment = { DSH_HOME: dshHome, QUANTSKILLS_PNPM_CLI: config.pnpmCli,
     QUANTSKILLS_PROFILE: profile, QUANTSKILLS_PROFILE_RECEIPT: receipt,
     QUANTSKILLS_BOOTSTRAP_PROTOCOL: String(BOOTSTRAP_PROTOCOL), QUANTSKILLS_READY_EXPECTED: JSON.stringify(expected) }
-  let host
+  let host, receiptResolved = false
   try {
     await runPnpm(config, ['run', 'install:plugin'], root, dshHome, environment)
     host = spawn(config.nodeExecutable, isCandidate ? [join(root, 'scripts/run-profile.mjs'), ...hostArgs] : [config.pnpmCli, 'exec', 'dsh', '--profile', profile, ...hostArgs], {
@@ -252,19 +255,24 @@ async function startSelected(root, config, hostArgs, dshHome) {
     await waitForHealthyHost(host, readPort(hostArgs, config.defaultPort), config.healthTimeoutMs)
     if (isCandidate && await candidateArtifact(root) !== expected.artifact) throw new Error('Candidate build changed during activation.')
     if (isCandidate && process.send) process.send({ type: 'quantskills:activated', protocol: BOOTSTRAP_PROTOCOL, ...expected })
+    receiptResolved = true
     return host
   } catch (error) {
     stopProcessTree(host)
     let transaction
     try { transaction = await readJson(receipt) } catch (missing) { if (!isCode(missing, 'ENOENT')) throw missing }
     if (transaction) {
-      await assertRollbackSafe(dshHome)
+      try { await assertRollbackSafe(dshHome) }
+      catch (rollbackError) {
+        throw new AggregateError([error, rollbackError], 'Candidate startup failed; automatic rollback is unsafe. Profile receipt and backup retained.')
+      }
       if (transaction.home !== resolve(dshHome) || transaction.profile !== profile) throw new Error('Invalid profile startup receipt.', { cause: error })
       await restoreProfileTransaction(transaction)
+      receiptResolved = true
       console.error('[QuantStudio] Startup failed; the previous profile was restored.')
     }
     throw error
-  } finally { await unlink(receipt).catch(() => undefined) }
+  } finally { if (receiptResolved) await unlink(receipt).catch(() => undefined) }
 }
 
 async function runPnpm(config, args, cwd, dshHome, environment = {}) {

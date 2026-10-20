@@ -9,6 +9,8 @@ import { tmpdir } from 'node:os'
 import { pathToFileURL } from 'node:url'
 import { boot, initProfile, loadProfileDirectory, readProfilePatches } from '@deepseek-ai/dsh-app-boot'
 import PluginManager from '@deepseek-ai/dsh-plugin-manager'
+import { recoverPluginTransaction } from '@deepseek-ai/dsh-plugin-manager/operations'
+import { parse as parseYaml, stringify as stringifyYaml } from 'yaml'
 import { capturePluginSources, assertPluginSourcesPreserved } from './plugin-sources.mjs'
 
 const cli = process.env.npm_execpath
@@ -132,15 +134,81 @@ try {
   assert.equal(await readFile(join(dir, 'package.json'), 'utf8'), savedManifest)
   assert.equal(await readFile(join(dir, 'pnpm-lock.yaml'), 'utf8'), savedLock)
   assertPluginSourcesPreserved(sources, await capturePluginSources(dir))
+  // Resolve unknown identities before touching the live profile: core names can
+  // hide in a tarball, Git repository, or npm alias.
+  const core = await archive('@quantskills/dsh-plugin', '99.0.0', '/artifacts/core-spoof.tgz')
+  metadata.set(core.name, { name: core.name, 'dist-tags': { latest: core.version }, versions: { [core.version]: core } })
+  const coreGit = join(root, 'core-spoof-git')
+  await packageAt(coreGit, core.name, '99.0.0')
+  command('git', ['init', '--quiet'], coreGit)
+  command('git', ['add', '.'], coreGit)
+  command('git', ['-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--quiet', '-m', 'Core identity fixture'], coreGit)
+  const coreCommit = command('git', ['rev-parse', 'HEAD'], coreGit)
+  for (const spec of [core.dist.tarball, `git+${pathToFileURL(coreGit).href}#${coreCommit}`, `qs-core-alias@npm:${core.name}@99.0.0`]) {
+    const result = await manager.installBundle(spec, { registry: base })
+    assert.equal(result.application, 'failed', 'remote or aliased application identity must be refused')
+    assert.equal(await readFile(join(dir, 'package.json'), 'utf8'), savedManifest)
+    assert.equal(await readFile(join(dir, 'pnpm-lock.yaml'), 'utf8'), savedLock)
+    assertPluginSourcesPreserved(sources, await capturePluginSources(dir))
+  }
+  const registryGit = await archive('qs-fixture-git', '1.0.2', '/artifacts/git-as-npm.tgz')
+  metadata.set(registryGit.name, { name: registryGit.name, 'dist-tags': { latest: registryGit.version }, versions: { [registryGit.version]: registryGit } })
+  assert.equal((await manager.installBundle('qs-fixture-git@1.0.2', { registry: base })).application, 'failed')
+  assert.equal(await readFile(join(dir, 'package.json'), 'utf8'), savedManifest)
+  assert.equal(await readFile(join(dir, 'node_modules/qs-fixture-git/package.json'), 'utf8'),
+    await readFile(join(repository, 'package.json'), 'utf8'), 'Git installation must survive a catalog npm substitution')
+  const unknownManifest = JSON.parse(savedManifest), unknownLock = parseYaml(savedLock)
+  unknownManifest.dependencies[npmName] = 'legacy-channel'
+  unknownLock.importers['.'].dependencies[npmName].specifier = 'legacy-channel'
+  const unknownManifestText = JSON.stringify(unknownManifest), unknownLockText = stringifyYaml(unknownLock)
+  await writeFile(join(dir, 'package.json'), unknownManifestText)
+  await writeFile(join(dir, 'pnpm-lock.yaml'), unknownLockText)
+  assert.equal((await manager.installBundle(`${npmName}@1.0.1`, { registry: base })).application, 'failed')
+  assert.equal(await readFile(join(dir, 'package.json'), 'utf8'), unknownManifestText)
+  assert.equal(await readFile(join(dir, 'pnpm-lock.yaml'), 'utf8'), unknownLockText)
+  await writeFile(join(dir, 'package.json'), savedManifest)
+  await writeFile(join(dir, 'pnpm-lock.yaml'), savedLock)
   const concurrent = await Promise.all([manager.setBundleEnabled(npmName, false), manager.setBundleEnabled('qs-fixture-release', false)])
   concurrent.forEach(result => requireSaved(result, 'serialized mutation'))
   assert.equal((await manager.listBundles()).find(row => row.name === npmName)?.enabled, false)
   assert.equal((await manager.listBundles()).find(row => row.name === 'qs-fixture-release')?.enabled, false)
   requireSaved(await manager.removeBundle(npmName), 'remove installed fixture')
   assert.equal((await capturePluginSources(dir)).some(row => row.name === npmName), false)
+  // Simulate power loss between manifest publication and the frozen install.
+  // Repair must run with both the Host stopped and the official Profile lock.
+  await ctx.fiber.dispose(); ctx = undefined
+  const originals = Object.fromEntries(await Promise.all(['package.json', 'pnpm-lock.yaml']
+    .map(async name => [name, await readFile(join(dir, name), 'utf8')])))
+  const interrupted = { ...originals, 'package.json': JSON.stringify({ ...JSON.parse(originals['package.json']), description: 'interrupted publication' }) }
+  const journal = { schemaVersion: 1, phase: 'publishing', original: originals,
+    nextHashes: Object.fromEntries(Object.entries(interrupted).map(([name, text]) => [name, createHash('sha256').update(text).digest('hex')])) }
+  const marker = join(dir, 'quantskills-plugin-transaction.json')
+  await writeFile(marker, JSON.stringify(journal))
+  await writeFile(join(dir, 'package.json'), interrupted['package.json'])
+  const launchLock = join(env.DSH_HOME, 'quantskills/application/launch.lock')
+  await mkdir(join(env.DSH_HOME, 'quantskills/application'), { recursive: true })
+  await writeFile(launchLock, '{}')
+  const recoveryContext = { ...profile, profile: 'fixture' }
+  const recoveryOptions = { command: process.execPath, args: [cli], env, outputBytes: 4096 }
+  await assert.rejects(recoverPluginTransaction(recoveryContext, recoveryOptions), { code: 'EEXIST' })
+  assert.equal(await readFile(join(dir, 'package.json'), 'utf8'), interrupted['package.json'])
+  await rm(launchLock)
+  await writeFile(marker, JSON.stringify({ ...journal, schemaVersion: 99 }))
+  await assert.rejects(recoverPluginTransaction(recoveryContext, recoveryOptions), /Unknown/)
+  await writeFile(marker, JSON.stringify(journal))
+  await writeFile(join(dir, 'package.json'), interrupted['package.json'] + '\n')
+  await assert.rejects(recoverPluginTransaction(recoveryContext, recoveryOptions), /Profile changed/)
+  await writeFile(join(dir, 'package.json'), interrupted['package.json'])
+  assert.deepEqual(await recoverPluginTransaction(recoveryContext, recoveryOptions), { recovered: true, preserved: true })
+  assert.equal(await readFile(join(dir, 'package.json'), 'utf8'), originals['package.json'])
+  assert.equal(await readFile(join(dir, 'pnpm-lock.yaml'), 'utf8'), originals['pnpm-lock.yaml'])
+  assert.equal(JSON.parse(await readFile(join(dir, 'node_modules/qs-fixture-git/package.json'), 'utf8')).version, '1.0.1')
+  assert.deepEqual(await recoverPluginTransaction(recoveryContext, recoveryOptions), { recovered: false })
   passed = true
   console.log(JSON.stringify({ result: 'passed', manager: '0.2.1-rc.2', sources: ['npm', 'release-archive', 'local-link', 'git-commit', 'git-subdirectory'],
     updatesForAllFiveSources: 'passed', npmAliasIntegrity: 'passed', failedInstallPreservedManifestAndLock: 'passed', concurrentInstallsAndProfileMutations: 'passed', removal: 'passed',
+    coreIdentityBeforeMutation: 'passed', gitToNpmReplacementRefused: 'passed', unknownSourceReplacementRefused: 'passed',
+    interruptedPublicationRecovery: 'passed', runningHostRecoveryRefused: 'passed', unknownJournalAndChangedProfileRefused: 'passed',
     publicNetwork: false, productionHomeUsed: false }))
 } finally {
   await ctx?.fiber.dispose()

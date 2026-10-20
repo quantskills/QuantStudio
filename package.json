@@ -108,6 +108,7 @@
     "@types/node": "^24.0.0",
     "jsdom": "29.1.1",
     "lightningcss": "1.32.0",
+    "playwright": "1.64.0",
     "tsdown": "0.22.2",
     "typescript": "^5.9.2",
     "vitest": "4.1.11"

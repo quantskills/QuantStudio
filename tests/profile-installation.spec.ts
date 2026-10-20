@@ -6,7 +6,7 @@ import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
 import { resolveDshHome, resolveProfile, prepareProfileStage, activateProfileStage, restoreProfileTransaction } from '../scripts/profile-state.mjs'
 import { publishBootstrapVersion, writeAtomic, migrationPath } from '../scripts/runtime-protocol.mjs'
-import { installProfile, selectProfileBundles } from '../scripts/install-profile.mjs'
+import { installProfile, selectProfileBundles, OFFICIAL_MARKET_BUNDLE } from '../scripts/install-profile.mjs'
 
 const roots: string[] = []
 async function temp() { const root = await mkdtemp(join(tmpdir(), 'qs-profile-')); roots.push(root); return root }
@@ -30,7 +30,16 @@ describe('isolated profile installation', () => {
     const options = { selected: ['base', 'unknown-local', 'removed'], detected: new Set(['new-core', 'removed', 'dshmarket']),
       applicationBundles: ['new-core'], previousDependencies: [], removed: ['removed'] }
     expect(selectProfileBundles(options)).toEqual(['base', 'unknown-local', 'new-core'])
-    expect(selectProfileBundles({ ...options, fresh: true })).toEqual(['base', 'unknown-local', 'new-core', 'dshmarket'])
+    expect(selectProfileBundles({ ...options, fresh: true })).toEqual(['base', 'unknown-local', 'new-core'])
+  })
+
+  it('continues an enabled legacy market through the official bundle without enabling it for other profiles', () => {
+    const options = { selected: ['base', 'dshmarket'], detected: new Set(['dshmarket']),
+      applicationBundles: [], previousDependencies: ['dshmarket'] }
+    expect(selectProfileBundles(options)).toEqual(['base', OFFICIAL_MARKET_BUNDLE])
+    expect(selectProfileBundles({ ...options, selected: ['base'] })).toEqual(['base'])
+    expect(selectProfileBundles({ ...options, removed: [OFFICIAL_MARKET_BUNDLE] })).toEqual(['base'])
+    expect(selectProfileBundles({ ...options, selected: ['base', OFFICIAL_MARKET_BUNDLE] })).toEqual(['base', OFFICIAL_MARKET_BUNDLE])
   })
 
   it('leaves an ordinary DSH home separate, recognizes legacy QuantStudio data, and honors an explicit home', async () => {

@@ -15,7 +15,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const packagePaths = ['.', 'packages/agent-team', 'packages/tool-agent-team', 'packages/quantskills-host',
   'packages/quantskills-session', 'packages/panda-mcp', 'packages/client-ui-layout', 'packages/client-ui-input-trigger',
   'packages/client-ui-conversation', 'packages/client-ui-chat', 'packages/client-remotes-quantskills',
-  'node_modules/dsh-file-upload', 'packages/ui-quantskills', 'node_modules/dshmarket']
+  'node_modules/dsh-file-upload', 'packages/ui-quantskills']
+export const OFFICIAL_MARKET_BUNDLE = '@deepseek-ai/dsh-experimental-plugin-market-bundle'
 
 function installationSignature(value, inputs) {
   return createHash('sha256').update(JSON.stringify({ dependencies: value.dependencies,
@@ -26,11 +27,14 @@ function installationSignature(value, inputs) {
 // Installed does not mean enabled. Preserve selections, including unreadable user
 // bundles, instead of using package discovery as a replacement for user intent.
 export function selectProfileBundles({ selected, detected, applicationBundles, previousDependencies, removed = [], fresh = false }) {
-  const excluded = new Set(['dsh-context', 'dsh-file-upload', ...removed])
+  const excluded = new Set(['dsh-context', 'dsh-file-upload', 'dshmarket', ...removed])
   const prior = new Set(previousDependencies)
   const core = new Set(applicationBundles)
   const additions = [...detected].filter(name => fresh || (core.has(name) && !prior.has(name)))
-  return [...new Set([...selected, ...additions])].filter(name => !excluded.has(name))
+  // This is continuation of an existing selected capability. New installations
+  // and users who had disabled the old market keep the optional market off.
+  const migrated = selected.includes('dshmarket') && !removed.includes(OFFICIAL_MARKET_BUNDLE) ? [OFFICIAL_MARKET_BUNDLE] : []
+  return [...new Set([...selected, ...additions, ...migrated])].filter(name => !excluded.has(name))
 }
 
 export async function installProfile(environment = process.env, remove = false) {
@@ -118,6 +122,12 @@ export async function installProfile(environment = process.env, remove = false) 
     await writeFile(file, JSON.stringify(after, null, 2) + '\n')
     const migratedSources = await capturePluginSources(transaction.stage, [...coreNames, 'dsh-context'])
     assertPluginSourcesPreserved(preservedSources, migratedSources)
+    after.quantskills.marketMigration ??= {
+      schemaVersion: 1, from: 'dshmarket', to: OFFICIAL_MARKET_BUNDLE,
+      previouslySelected: previous?.dsh?.profile?.bundles?.includes('dshmarket') ?? false,
+      dependencyAndConfigurationPreserved: true,
+    }
+    await writeFile(file, JSON.stringify(after, null, 2) + '\n')
     // Private provenance retains original link syntax; never serialize this ledger into client remotes.
     await writeFile(join(transaction.stage, 'quantskills-plugin-sources.json'), JSON.stringify({
       schemaVersion: 1, core: TARGET_DSH, sources: migratedSources.map(item => ({ ...item,

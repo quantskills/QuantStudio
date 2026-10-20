@@ -273,6 +273,7 @@ minimumReleaseAgeExclude:
 
 
 patchedDependencies:
+  '@deepseek-ai/dsh-experimental-plugin-market-bundle@0.2.1-rc.2': patches/@deepseek-ai__dsh-experimental-plugin-market-bundle@0.2.1-rc.2.patch
   '@deepseek-ai/dsh-subprocess-local@0.2.1-rc.2': patches/@deepseek-ai__dsh-subprocess-local@0.2.1-rc.2.patch
   '@deepseek-ai/dsh@0.2.1-rc.2': patches/@deepseek-ai__dsh@0.2.1-rc.2.patch
   '@deepseek-ai/dsh-plugin-manager@0.2.1-rc.2': patches/@deepseek-ai__dsh-plugin-manager@0.2.1-rc.2.patch

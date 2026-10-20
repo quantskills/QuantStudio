@@ -26,6 +26,18 @@ afterEach(async () => {
 })
 
 describe('stable application bootstrap', () => {
+  it('leaves an empty source-checkout state for runtime-specific validation instead of treating it as old-core rollback', async () => {
+    const root = await mkdtemp(join(tmpdir(), 'quantskills-source-state-'))
+    roots.push(root)
+    await mkdir(join(root, 'quantskills/application'), { recursive: true })
+    await writeFile(join(root, 'quantskills/application/migration.json'), JSON.stringify({
+      schemaVersion: 1, sourceRuntime: '0.1.2-alpha.2', targetRuntime: '0.2.1-rc.2',
+      generation: 'f'.repeat(64), backupId: 'test', phase: 'validated', oldReadable: 'no',
+    }))
+    const state = parseApplicationState({ schemaVersion: 1, failedCandidates: [] })
+    expect(await repairApplicationState(state, join(root, 'versions'), root)).toEqual(state)
+    await expect(repairApplicationState({ ...state, active: first }, join(root, 'versions'), root)).rejects.toThrow(/rollback/)
+  })
   it('recognizes direct invocation through a symlinked directory', async () => {
     const root = await mkdtemp(join(tmpdir(), 'quantskills-launcher-path-'))
     roots.push(root)

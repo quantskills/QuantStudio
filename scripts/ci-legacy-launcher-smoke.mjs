@@ -8,6 +8,10 @@ import { publishBootstrapVersion, writeAtomic, assertIsolatedFixture, artifactDi
 import { randomBytes } from 'node:crypto'
 import { smokeDiagnostics } from './smoke-diagnostics.mjs'
 import { stopSmokeProcess } from './smoke-process.mjs'
+import { zstdCompressSync } from 'node:zlib'
+import { migrateHomeCopy } from './home-migration.mjs'
+import { preserveAndRestoreCopy, inventoryOfflineTree } from './offline-recovery.mjs'
+import { verifyLegacySessionCopy } from './verify-legacy-session-copy.mjs'
 
 const sourceArg = process.argv.slice(2).filter(arg => arg !== '--')[0]
 if (!sourceArg) throw new Error('Supply an independently installed old QS checkout.')
@@ -18,8 +22,24 @@ const dirty = spawnSync('git', ['diff', '--quiet', 'HEAD'], { cwd:root, windowsH
 if (checkout.status !== 0 || checkout.stdout.trim() !== baseline || dirty.status !== 0) throw new Error('Legacy checkout is not the unchanged baseline.')
 if (!pnpmCli) throw new Error('Run with the pinned pnpm CLI.')
 const fixtureRoot = await realpath(await mkdtemp(path.join(tmpdir(), 'quantskills-ci-')))
-const home = path.join(fixtureRoot, 'dsh-home')
-await mkdir(home)
+const restore = process.argv.includes('--restore')
+const recovery = path.join(fixtureRoot, 'recovery')
+const home = restore ? path.join(recovery, 'restored-baseline') : path.join(fixtureRoot, 'dsh-home')
+if (restore) {
+  const original = path.join(fixtureRoot, 'original')
+  const converted = path.join(fixtureRoot, 'converted')
+  await mkdir(path.join(original, 'sessions/_no-cwd/restored-parent'), { recursive: true })
+  await mkdir(path.join(original, 'attachments'))
+  await writeFile(path.join(original, 'sessions/_no-cwd/restored-parent/session.jsonl.zstd'),
+    zstdCompressSync(Buffer.from(JSON.stringify({ type: 'session', version: 0, id: 'restored-parent', createdAt: 1,
+      delegationDepth: 0, agentPreset: 'code', seedLength: 0 }) + '\n')))
+  await writeFile(path.join(original, 'attachments/retained.dat'), 'old attachment')
+  const options = { consistency: 'verified-offline-snapshot', backupId: 'constructed-old-core-recovery' }
+  await migrateHomeCopy(original, converted, options)
+  await writeFile(path.join(converted, 'home/attachments/new.dat'), 'post-upgrade increment')
+  await preserveAndRestoreCopy(original, path.join(converted, 'home'), recovery, options)
+  console.log(JSON.stringify({ restoredOldReader: await verifyLegacySessionCopy(root, recovery) }))
+} else await mkdir(home)
 // Do not inherit account, model, proxy or trading credentials from the operator's shell.
 const environment = Object.fromEntries(Object.entries(process.env).filter(([key]) =>
   /^(PATH|SystemRoot|ComSpec|TEMP|TMP|LOCALAPPDATA|APPDATA|USERPROFILE|ProgramFiles|ProgramFiles\(x86\)|OS|PATHEXT)$/i.test(key)))
@@ -74,11 +94,18 @@ try {
     if (!reachable) throw new Error('Legacy launch failed')
     await new Promise(yes=>setTimeout(yes,2000))
     if(host.exitCode !== null) throw new Error('Legacy process exited')
-    const proof = { runtime:core.version, commit:baseline, generation:'fresh-legacy-fixture', artifact:await candidateArtifact(root) }
+    const proof = { runtime:core.version, commit:baseline, generation:restore ? 'restored-legacy-fixture' : 'fresh-legacy-fixture', artifact:await candidateArtifact(root) }
     const response = await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(5000) })
     const html = await response.text()
     if (!response.ok || !html.includes('<html')) throw new Error('Frontend entry did not expose its built module roster')
     await assertIsolatedFixture(home, fixtureRoot, { source: root, pnpm: pnpmCli }, generated)
+    if (restore) {
+      if (await readFile(path.join(home, 'attachments/retained.dat'), 'utf8') !== 'old attachment'
+        || await readFile(path.join(recovery, 'preserved-candidate/attachments/new.dat'), 'utf8') !== 'post-upgrade increment') throw new Error('Recovery lost an attachment or candidate increment.')
+      const journal = JSON.parse(await readFile(path.join(recovery, 'migration.json'), 'utf8'))
+      if ((await inventoryOfflineTree(path.join(fixtureRoot, 'original'))).generation !== journal.baselineGeneration) throw new Error('Old snapshot was modified.')
+      console.log(JSON.stringify({ restoredOldHost: 'passed', candidateIncrementsPreserved: true }))
+    }
     console.log(JSON.stringify({ legacyLaunch: 'passed', runtime: proof.runtime, commit: proof.commit, generation: proof.generation, artifact: proof.artifact, port }))
     await assertIsolatedFixture(home, fixtureRoot, { source: root, pnpm: pnpmCli }, generated)
     passed = true

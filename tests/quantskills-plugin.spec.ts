@@ -194,7 +194,7 @@ describe('dsh-quantskills-plugin bundle', () => {
       dshmarket: '1.45.1',
       'dsh-file-upload': 'github:GLFzr/dsh-file-upload#baa569938c03404b4eac6c6740c27afb49b60ba8',
     })
-    expect(patches(resolve(root, manifest.dsh!.bundle!.patch!))).toHaveLength(6)
+    expect(patches(resolve(root, manifest.dsh!.bundle!.patch!))).toHaveLength(5)
   })
 
   it('keeps the native DSH shell owners enabled and appends QuantSkills once', () => {
@@ -210,7 +210,6 @@ describe('dsh-quantskills-plugin bundle', () => {
       { id: 'system-prompt', name: '@deepseek-ai/dsh-system-prompt' },
       { id: 'web-runtime', name: '@deepseek-ai/dsh-web-app' },
       { id: 'skill-badge', name: '@deepseek-ai/dsh-skill-badge' },
-      { id: 'dsh-market', name: 'dshmarket' },
       { id: 'ui-conversation', name: '@deepseek-ai/dsh-client-ui-conversation' },
       { id: 'ui-tool', name: '@deepseek-ai/dsh-client-ui-tool' },
     ], overlay, (message, ...args) => {
@@ -247,7 +246,7 @@ describe('dsh-quantskills-plugin bundle', () => {
     expect(entries.find(row => row.id === 'system-prompt')).toMatchObject({ config: { includeHarnessIdentity: false, personaPrefix: expect.stringContaining('You are QuantSkills') } })
     expect(entries.find(row => row.id === 'web-runtime')).toMatchObject({ config: { surfaceContext: false } })
     expect(entries.find(row => row.id === 'skill-badge')).toMatchObject({ disabled: true })
-    expect(entries.find(row => row.id === 'dsh-market')).toMatchObject({ config: { allowRestart: false } })
+    expect(entries.find(row => row.id === 'dsh-market')).toBeUndefined()
     expect(entries.filter(row => row.id === 'ui-quantskills')).toEqual([{
       id: 'ui-quantskills',
       name: '@deepseek-ai/dsh-client-ui-quantskills',

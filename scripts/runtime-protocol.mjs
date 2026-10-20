@@ -66,6 +66,7 @@ export function parseMigration(value) {
     || typeof value.sourceRuntime !== 'string' || typeof value.targetRuntime !== 'string'
     || typeof value.generation !== 'string' || !value.generation || typeof value.backupId !== 'string' || !value.backupId
     || !['yes', 'no', 'unknown'].includes(value.oldReadable)
+    || (value.kind !== undefined && !['offline-session-copy', 'offline-recovery-copy', 'whole-home-copy', 'isolated-whole-home'].includes(value.kind))
     || (value.runnable !== undefined && typeof value.runnable !== 'boolean')) throw new Error('Unsupported or corrupt migration record; startup stopped.')
   return value
 }
@@ -76,6 +77,7 @@ export async function readMigration(home) {
 }
 
 export async function assertMigrationReady(home, runtime) {
+  await assertPluginTransactionsComplete(home)
   const migration = await readMigration(home)
   if (!migration) {
     if (runtime === TARGET_DSH) throw new Error('Migration validation is required before starting the candidate core.')
@@ -85,6 +87,13 @@ export async function assertMigrationReady(home, runtime) {
     throw new Error('An offline session report cannot authorize a runnable data home; startup stopped.')
   }
   if (migration.phase !== 'validated') throw new Error(`Migration ${migration.phase}; automatic startup and rollback stopped.`)
+  if (migration.kind === 'isolated-whole-home') {
+    const proof = JSON.parse(await readFile(join(home, 'quantskills/application/migration-proof.json'), 'utf8'))
+    if (proof.certificate !== 'isolated-whole-home' || proof.runnable !== true
+      || proof.sourceGeneration !== migration.generation || proof.backupId !== migration.backupId
+      || proof.certifiedHome !== await realpath(home)
+      || artifactDigest(JSON.stringify(proof)) !== migration.proofHash) throw new Error('Whole-home migration proof does not match; startup stopped.')
+  }
   if (migration.targetRuntime !== runtime && (migration.sourceRuntime !== runtime || migration.oldReadable !== 'yes')) {
     throw new Error('This data generation is not verified readable by the selected core; rollback stopped.')
   }
@@ -92,9 +101,24 @@ export async function assertMigrationReady(home, runtime) {
 }
 
 export async function assertRollbackSafe(home) {
+  await assertPluginTransactionsComplete(home)
   const migration = await readMigration(home)
   if (migration && (migration.runnable === false || migration.kind === 'offline-session-copy' || migration.phase !== 'validated' || migration.oldReadable !== 'yes')) {
     throw new Error('Data compatibility is unknown or incompatible; automatic rollback stopped. Preserve new data before restoring a snapshot.')
+  }
+}
+
+/** An interrupted package publication must not be mistaken for a valid Profile. */
+export async function assertPluginTransactionsComplete(home) {
+  let profiles
+  try { profiles = await readdir(join(home, 'profiles'), { withFileTypes: true }) }
+  catch (error) { if (error.code === 'ENOENT') return; throw error }
+  for (const profile of profiles) {
+    if (profile.name.startsWith('.') || (!profile.isDirectory() && !profile.isSymbolicLink())) continue
+    try {
+      await lstat(join(home, 'profiles', profile.name, 'quantskills-plugin-transaction.json'))
+      throw new Error('An unfinished plugin transaction requires stopped-profile recovery; startup and rollback stopped.')
+    } catch (error) { if (error.code !== 'ENOENT') throw error }
   }
 }
 

@@ -38,7 +38,7 @@ export async function inventoryOfflineTree(directory) {
   return { root, generation: digest(JSON.stringify(entries)), entries }
 }
 
-async function copyVerified(source, destination, inventory) {
+export async function copyVerified(source, destination, inventory) {
   try { await mkdir(destination, { mode: 0o700 }) }
   catch (error) { if (error.code !== 'EEXIST') throw error }
   if (!(await lstat(destination)).isDirectory() || (await lstat(destination)).isSymbolicLink()) throw new Error('Unsafe recovery output.')

@@ -17,6 +17,18 @@ const ready = { ...expected, type: 'quantskills:ready', protocol: 2, migrationPh
   services: Object.fromEntries(REQUIRED_SERVICES.map((name: string) => [name, true])) }
 
 describe('core migration activation boundary', () => {
+  it.each(['{"schemaVersion":1,"phase":"publishing"}', '{"schemaVersion":99}', 'corrupt'])(
+    'refuses both cores and rollback while a plugin publication is unfinished: %s', async journal => {
+      const home = await temp(), profile = join(home, 'profiles/web')
+      await mkdir(profile, { recursive: true })
+      await writeAtomic(migrationPath(home), { ...migration, oldReadable: 'yes' })
+      await writeFile(join(profile, 'quantskills-plugin-transaction.json'), journal)
+      await expect(assertMigrationReady(home, expected.runtime)).rejects.toThrow(/plugin transaction/)
+      await expect(assertMigrationReady(home, migration.sourceRuntime)).rejects.toThrow(/plugin transaction/)
+      await expect(assertRollbackSafe(home)).rejects.toThrow(/plugin transaction/)
+      expect(await readFile(join(profile, 'quantskills-plugin-transaction.json'), 'utf8')).toBe(journal)
+    },
+  )
   it('publishes one immutable launcher version and rejects tampering or an interrupted installer', async () => {
     const root = await temp(), base = join(root, 'bootstrap'), config = { protocol: 2, profile: 'web' }
     const version = await publishBootstrapVersion(base, resolve('scripts'), config)

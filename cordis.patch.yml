@@ -28,12 +28,6 @@
 - id: skill-badge
   disabled: true
 
-# Keep the legacy market mounted until source-migration acceptance is complete.
-# Process lifecycle remains owned by the QuantStudio launcher.
-- id: dsh-market
-  config:
-    allowRestart: false
-
 - insert:
     - id: quantskills-model-services
       name: '@deepseek-ai/dsh-quantskills-session/model-policy'
