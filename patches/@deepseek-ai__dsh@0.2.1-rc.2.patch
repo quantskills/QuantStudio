@@ -1,0 +1,30 @@
+diff --git a/lib/bin.js b/lib/bin.js
+index 5cd5b00c368fa5ea0d8a9bd7d4f6291606297180..39bd456a83844fa9af1ddf3408962a092b936b24 100644
+--- a/lib/bin.js
++++ b/lib/bin.js
+@@ -6,6 +6,8 @@ import { randomUUID } from "node:crypto";
+ import { mkdir, writeFile } from "node:fs/promises";
+ import { join } from "node:path";
+ import { inspect } from "node:util";
++import { realpathSync } from "node:fs";
++import { fileURLToPath } from "node:url";
+ //#region lib/types/args.js
+ /**
+ * Commander adapter for the `dsh` command line.
+@@ -249,6 +251,15 @@ async function runCli(options = {}) {
+ 		default: throw new Error(`dsh: unhandled invocation mode ${JSON.stringify(invocation)}`);
+ 	}
+ }
+-if (import.meta.main) await runCli();
++// Node 24.0/24.1 predate import.meta.main (backported to 22.18).
++// Keep imports inert and resolve aliases for direct executable entry points.
++const isMain = import.meta.main ?? (() => {
++	try {
++		return process.argv[1] !== void 0 && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url));
++	} catch {
++		return false;
++	}
++})();
++if (isMain) await runCli();
+ //#endregion
+ export { runCli };
