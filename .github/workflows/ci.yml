@@ -54,6 +54,9 @@ jobs:
       - name: Verify native subprocess containment
         run: pnpm exec vitest run tests/background-subprocess.spec.ts
 
+      - name: Verify actual plugin sources and serialized operations in an isolated profile
+        run: pnpm run ci:plugins
+
       - name: Check source and types
         run: pnpm run check
 

@@ -24,8 +24,8 @@ overrides:
 
 # CI installs and exercises native packages on each matrix runner.
 supportedArchitectures:
-  os: [ current ]
-  cpu: [ current ]
+  os: [current]
+  cpu: [current]
 
 allowBuilds:
   # Required by the official DSH Windows process-tree provider.
@@ -270,7 +270,11 @@ minimumReleaseAgeExclude:
   - '@deepseek-ai/dsh@0.2.1-rc.2'
   - '@deepseek-ai/schemastery@3.18.2'
 
+
+
 patchedDependencies:
+  '@deepseek-ai/dsh-subprocess-local@0.2.1-rc.2': patches/@deepseek-ai__dsh-subprocess-local@0.2.1-rc.2.patch
+  '@deepseek-ai/dsh@0.2.1-rc.2': patches/@deepseek-ai__dsh@0.2.1-rc.2.patch
   '@deepseek-ai/dsh-plugin-manager@0.2.1-rc.2': patches/@deepseek-ai__dsh-plugin-manager@0.2.1-rc.2.patch
   '@deepseek-ai/dsh-agent@0.2.1-rc.2': patches/@deepseek-ai__dsh-agent@0.2.1-rc.2.patch
   '@deepseek-ai/dsh-session-persistence-jsonl@0.2.1-rc.2': patches/@deepseek-ai__dsh-session-persistence-jsonl@0.2.1-rc.2.patch
@@ -279,8 +283,6 @@ patchedDependencies:
   '@deepseek-ai/dsh-workspace@0.2.1-rc.2': patches/@deepseek-ai__dsh-workspace@0.2.1-rc.2.patch
   '@deepseek-ai/dsh-experimental-agent-team@0.2.1-rc.2': patches/@deepseek-ai__dsh-experimental-agent-team@0.2.1-rc.2.patch
   '@deepseek-ai/dsh-experimental-tool-agent-team@0.2.1-rc.2': patches/@deepseek-ai__dsh-experimental-tool-agent-team@0.2.1-rc.2.patch
-  '@deepseek-ai/dsh-subprocess-local@0.2.1-rc.2': patches/@deepseek-ai__dsh-subprocess-local@0.2.1-rc.2.patch
-  '@deepseek-ai/dsh@0.2.1-rc.2': patches/@deepseek-ai__dsh@0.2.1-rc.2.patch
 
 # Published client-store uses these at runtime but declares them as devDependencies.
 packageExtensions:
