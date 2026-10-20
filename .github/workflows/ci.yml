@@ -51,6 +51,9 @@ jobs:
       - name: Test installation entry point
         run: pnpm exec vitest run tests/application-bootstrap.spec.ts
 
+      - name: Verify native subprocess containment
+        run: pnpm exec vitest run tests/background-subprocess.spec.ts
+
       - name: Check source and types
         run: pnpm run check
 
