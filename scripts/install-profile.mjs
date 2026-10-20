@@ -1,4 +1,5 @@
 /** Install through the pinned CLI in staging; never invoke pnpm from PATH. */
+import { assertBootstrapInstalled, assertMigrationReady, TARGET_DSH } from './runtime-protocol.mjs'
 import { spawnSync } from 'node:child_process'
 import { readFile, writeFile, realpath } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -15,15 +16,19 @@ const packagePaths = ['.', 'packages/agent-team', 'packages/tool-agent-team', 'p
   'packages/client-ui-conversation', 'packages/client-ui-chat', 'packages/client-remotes-quantskills',
   'node_modules/dsh-file-upload', 'packages/ui-quantskills', 'node_modules/dshmarket']
 
-function installationSignature(value) {
+function installationSignature(value, inputs) {
   return createHash('sha256').update(JSON.stringify({ dependencies: value.dependencies,
     devDependencies: value.devDependencies, optionalDependencies: value.optionalDependencies,
-    dsh: value.dsh, packageManager: value.packageManager })).digest('hex')
+    dsh: value.dsh, packageManager: value.packageManager, inputs })).digest('hex')
 }
 
 export async function installProfile(environment = process.env, remove = false) {
   const home = resolveDshHome(environment), profile = resolveProfile(environment)
   const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
+  if (manifest.devDependencies?.['@deepseek-ai/dsh'] === TARGET_DSH) {
+    await assertBootstrapInstalled(home, environment)
+    await assertMigrationReady(home, TARGET_DSH)
+  }
   const cli = environment.QUANTSKILLS_PNPM_CLI || environment.npm_execpath
   if (!cli || !/\.[cm]?js$/.test(cli)) throw new Error('Run this command with the project-pinned pnpm: pnpm run install:plugin.')
   const version = spawnSync(process.execPath, [cli, '--version'], { cwd: root, env: environment, encoding: 'utf8', windowsHide: true })
@@ -40,8 +45,9 @@ export async function installProfile(environment = process.env, remove = false) 
     const directory = resolve(root, p)
     return { directory, manifest: JSON.parse(await readFile(join(directory, 'package.json'), 'utf8')) }
   }))
+  const inputs = { core: manifest.devDependencies['@deepseek-ai/dsh'], lock: createHash('sha256').update(await readFile(join(root, 'pnpm-lock.yaml'))).digest('hex'), plugins: packages.map(p => p.manifest) }
   if (!remove && previous?.quantskills?.managedProfile && previous.packageManager === manifest.packageManager
-    && previous.quantskills.installationSignature === installationSignature(previous)
+    && previous.quantskills.installationSignature === installationSignature(previous, inputs)
     && !previous.dependencies?.['dsh-context'] && packages.every(p => previous.dependencies?.[p.manifest.name] === `link:${p.directory.replaceAll('\\', '/')}`)) {
     const linked = await Promise.all(packages.map(async p => {
       try { return await realpath(join(target, 'node_modules', p.manifest.name)) === await realpath(p.directory) } catch { return false }
@@ -92,7 +98,7 @@ export async function installProfile(environment = process.env, remove = false) 
     after.dsh.profile.bundles = [...new Set([
       ...after.dsh.profile.bundles.filter(name => (!beforeDeps.has(name) && !deps.includes(name)) || bundled.has(name)), ...bundled,
     ])]
-    after.quantskills.installationSignature = installationSignature(after)
+    after.quantskills.installationSignature = installationSignature(after, inputs)
     await writeFile(file, JSON.stringify(after, null, 2) + '\n')
     activated = await activateProfileStage(transaction)
     if (environment.QUANTSKILLS_PROFILE_RECEIPT) await writeFile(environment.QUANTSKILLS_PROFILE_RECEIPT, JSON.stringify(activated), { flag: 'wx', mode: 0o600 })

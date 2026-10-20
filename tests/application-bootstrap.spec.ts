@@ -50,7 +50,7 @@ describe('stable application bootstrap', () => {
     const home = join(root, 'home')
     await mkdir(join(source, 'scripts'), { recursive: true })
     await mkdir(join(source, 'assets'), { recursive: true })
-    for (const file of ['application-bootstrap.mjs', 'install-application-bootstrap.mjs', 'profile-state.mjs']) {
+    for (const file of ['application-bootstrap.mjs', 'install-application-bootstrap.mjs', 'profile-state.mjs', 'runtime-protocol.mjs', 'bootstrap-dispatcher.mjs']) {
       await copyFile(resolve('scripts', file), join(source, 'scripts', file))
     }
     await copyFile(resolve('.gitignore'), join(source, '.gitignore'))

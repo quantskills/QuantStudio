@@ -3,6 +3,7 @@
 import { spawnSync } from 'node:child_process'
 import { existsSync, realpathSync } from 'node:fs'
 import { copyFile, mkdir, readFile, realpath, rename, rm, stat, writeFile } from 'node:fs/promises'
+import { artifactDigest, BOOTSTRAP_PROTOCOL } from './runtime-protocol.mjs'
 import { randomUUID } from 'node:crypto'
 import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -34,13 +35,10 @@ await Promise.all([
   mkdir(versionsRoot, { recursive: true, mode: 0o700 }),
   mkdir(stagingRoot, { recursive: true, mode: 0o700 }),
 ])
-await copyFile(join(scriptRoot, 'application-bootstrap.mjs'), join(bootstrapRoot, 'launcher.mjs'))
-await copyFile(join(scriptRoot, 'profile-state.mjs'), join(bootstrapRoot, 'profile-state.mjs'))
-await copyFile(join(sourceRoot, 'assets', 'quantskills.ico'), join(bootstrapRoot, 'quantskills.ico'))
-
 const existingPort = process.platform === 'win32' ? await readExistingPort(dshHome) : undefined
 const config = {
   schemaVersion: 1,
+  protocol: BOOTSTRAP_PROTOCOL,
   nodeExecutable: process.execPath,
   pnpmCli: resolve(pnpmCli),
   profile: resolveProfile(),
@@ -48,6 +46,23 @@ const config = {
   defaultPort: existingPort ?? 3097,
   healthTimeoutMs: 120_000,
 }
+// Publish complete immutable content before switching the single pointer.
+const bootstrapFiles = ['application-bootstrap.mjs', 'profile-state.mjs', 'runtime-protocol.mjs']
+const contents = await Promise.all(bootstrapFiles.map(file => readFile(join(scriptRoot, file), 'utf8')))
+const version = artifactDigest(JSON.stringify([contents, config]))
+const versionRoot = join(bootstrapRoot, 'versions', version)
+await mkdir(versionRoot, { recursive: true })
+for (let index = 0; index < bootstrapFiles.length; index++) {
+  await writeFile(join(versionRoot, bootstrapFiles[index]), contents[index], 'utf8')
+}
+await writeAtomic(join(versionRoot, 'config.json'), config)
+await writeAtomic(join(bootstrapRoot, 'current.json'), { protocol: BOOTSTRAP_PROTOCOL, version })
+// Replacing the legacy entry is atomic too. Interrupted installs leave the old entry or the complete new one.
+const entry = join(bootstrapRoot, `.launcher-${randomUUID()}.mjs`)
+await copyFile(join(scriptRoot, 'bootstrap-dispatcher.mjs'), entry)
+await rename(entry, join(bootstrapRoot, 'launcher.mjs'))
+await copyFile(join(sourceRoot, 'assets', 'quantskills.ico'), join(bootstrapRoot, 'quantskills.ico'))
+// Legacy home discovery reads this file only; launches use the versioned config.
 await writeAtomic(join(bootstrapRoot, 'config.json'), config)
 
 let state = await readState(statePath)
