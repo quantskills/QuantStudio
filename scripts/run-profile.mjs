@@ -14,7 +14,9 @@ const root = dirname(dirname(fileURLToPath(import.meta.url))), require = createR
 const home = resolveDshHome(), profileName = resolveProfile()
 await assertBootstrapInstalled(home, process.env)
 const migration = await assertMigrationReady(home, TARGET_DSH)
-if (process.env.QUANTSKILLS_FIXTURE_ROOT) await assertIsolatedFixture(home, process.env.QUANTSKILLS_FIXTURE_ROOT, { source: root, pnpm: process.env.QUANTSKILLS_PNPM_CLI })
+if (process.env.QUANTSKILLS_FIXTURE_ROOT) await assertIsolatedFixture(home, process.env.QUANTSKILLS_FIXTURE_ROOT,
+  { source: root, pnpm: process.env.QUANTSKILLS_PNPM_CLI },
+  { browserSecretHash: process.env.QUANTSKILLS_FIXTURE_BROWSER_SECRET_HASH })
 if (!process.send) throw new Error('Start the candidate through the QuantStudio launcher; IPC is required.')
 const expected = JSON.parse(process.env.QUANTSKILLS_READY_EXPECTED ?? 'null')
 if (!expected?.nonce) throw new Error('Missing launch identity.')

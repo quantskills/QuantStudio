@@ -128,10 +128,35 @@ export async function waitForReady(child, expected, timeoutMs) {
 }
 
 /** Inspect a runnable fixture before any service constructor can replay deletion or automation. */
-export async function assertIsolatedFixture(home, allowedRoot, runtime = undefined) {
+export async function assertIsolatedFixture(home, allowedRoot, runtime = undefined, generated = undefined) {
   const root = await realpath(allowedRoot)
   const inside = path => { const child = relative(root, resolve(path)); return child === '' || (!child.startsWith('..') && !isAbsolute(child)) }
   if (!inside(await realpath(home))) throw new Error('Fixture home is outside the isolated root.')
+  // Only the fresh smoke harness can certify an auth record created after its
+  // empty-home preflight. Never admit a copied vault merely because it is well formed.
+  const vaultPath = join(home, '.credentials.yaml')
+  const fixtureRefs = new Set()
+  try {
+    const info = await lstat(vaultPath)
+    if (!info.isFile() || info.isSymbolicLink()) throw new Error('Invalid fixture credential store.')
+    const { parseDocument } = await import('yaml')
+    const document = parseDocument(await readFile(vaultPath, 'utf8'), { uniqueKeys: true })
+    if (document.errors.length || document.warnings.length) throw new Error('Invalid fixture credential store.')
+    const vault = document.toJS(), records = vault?.records, record = records?.['client-connection/browser-session']
+    const only = (value, keys) => value && typeof value === 'object' && !Array.isArray(value)
+      && Object.keys(value).every(key => keys.includes(key))
+    if (!only(vault, ['version', 'records', 'refs']) || vault.version !== 1
+      || !only(records, ['client-connection/browser-session'])
+      || !only(record, ['kind', 'payload']) || record.kind !== 'grant'
+      || !only(record.payload, ['version', 'secret']) || record.payload.version !== 1
+      || typeof record.payload.secret !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(record.payload.secret)
+      || !generated?.browserSecretHash || artifactDigest(record.payload.secret) !== generated.browserSecretHash
+      || !only(vault.refs ?? {}, Object.keys(vault.refs ?? {}))) throw new Error('Fixture contains unverified credentials.')
+    for (const [ref, value] of Object.entries(vault.refs ?? {})) {
+      if (!/^QS_MODEL_[A-F0-9_]{36}$/.test(ref) || value !== 'local-no-auth') throw new Error('Fixture contains non-test credentials.')
+      fixtureRefs.add(ref)
+    }
+  } catch (error) { if (error.code !== 'ENOENT') throw error }
   // Only launcher configuration created for this exact candidate may reference its code/runtime.
   const trustedConfigs = new Set()
   const trustedPackages = new Map()
@@ -181,7 +206,8 @@ export async function assertIsolatedFixture(home, allowedRoot, runtime = undefin
     } else if (Array.isArray(value)) value.forEach(item => inspect(item, key, file, metadata))
     else if (value && typeof value === 'object') {
       for (const [field, item] of Object.entries(value)) {
-        if (/(?:api.?key|password|access.?token|refresh.?token|secret)/i.test(field) && item && item !== 'TEST_ONLY') throw new Error('Fixture contains credentials.')
+        const syntheticReference = field === 'apiKeyEnv' && fixtureRefs.has(item)
+        if (/(?:api.?key|password|access.?token|refresh.?token|secret)/i.test(field) && item && item !== 'TEST_ONLY' && !syntheticReference) throw new Error('Fixture contains credentials.')
         inspect(item, field, file, metadata)
       }
     }
@@ -192,6 +218,7 @@ export async function assertIsolatedFixture(home, allowedRoot, runtime = undefin
       if (info.isSymbolicLink()) { if (!inside(await realpath(path))) throw new Error('Fixture link escapes isolated root.'); continue }
       if (entry.name === 'node_modules' || entry.name === '.git') continue
       if (info.isDirectory()) { await walk(path); continue }
+      if (path === vaultPath) continue // Strictly validated above, including all opaque ref values.
       if (/^\.env(?:\.|$)/.test(entry.name) && (await readFile(path, 'utf8')).trim()) throw new Error('Fixture contains environment configuration.')
       if (/\.ya?ml$/.test(entry.name)) {
         const { parseDocument } = await import('yaml')

@@ -4,7 +4,8 @@ import { mkdtemp, mkdir, writeFile, rm, readFile } from 'node:fs/promises'
 import { createServer } from 'node:net'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { publishBootstrapVersion, writeAtomic, migrationPath, assertIsolatedFixture, TARGET_DSH } from './runtime-protocol.mjs'
+import { publishBootstrapVersion, writeAtomic, migrationPath, assertIsolatedFixture, artifactDigest, TARGET_DSH } from './runtime-protocol.mjs'
+import { randomBytes } from 'node:crypto'
 
 const root = path.resolve('.'), pnpmCli = process.env.npm_execpath
 if (!pnpmCli) throw new Error('Run with the pinned pnpm CLI.')
@@ -39,6 +40,14 @@ await writeFile(path.join(base, 'launcher.mjs'), await readFile(path.join(root, 
 await writeAtomic(migrationPath(home), { schemaVersion: 1, sourceRuntime: 'empty-fixture', targetRuntime: TARGET_DSH,
   generation: 'empty-ci-fixture', backupId: 'no-original-user-data', phase: 'validated', oldReadable: 'yes' })
 await assertIsolatedFixture(home, fixtureRoot, { source: root, pnpm: pnpmCli })
+// Seed the official browser-auth record with a new test-only secret. Its exact
+// digest is held in this process, never inferred from a copied credential file.
+const browserSecret = randomBytes(32).toString('base64url')
+const generated = { browserSecretHash: artifactDigest(browserSecret) }
+environment.QUANTSKILLS_FIXTURE_BROWSER_SECRET_HASH = generated.browserSecretHash
+await writeFile(path.join(home, '.credentials.yaml'), JSON.stringify({ version: 1,
+  records: { 'client-connection/browser-session': { kind: 'grant', payload: { version: 1, secret: browserSecret } } }, refs: {} }), { flag: 'wx', mode: 0o600 })
+await assertIsolatedFixture(home, fixtureRoot, { source: root, pnpm: pnpmCli }, generated)
 let host, passed = false
 try {
   host = fork(path.join(base, 'launcher.mjs'), ['--port', String(port), '--no-open'], {
@@ -59,6 +68,7 @@ try {
     const response = await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(5000) })
     const html = await response.text()
     if (!response.ok || !html.includes('__DSH_BOOT__')) throw new Error('Frontend entry did not expose its built module roster')
+    await assertIsolatedFixture(home, fixtureRoot, { source: root, pnpm: pnpmCli }, generated)
     console.log(JSON.stringify({ activation: 'passed', runtime: proof.runtime, commit: proof.commit, generation: proof.generation, artifact: proof.artifact, port }))
     // Explicit local browser verification only. CI never keeps the instance running.
     if (process.argv.includes('--browser')) {
@@ -70,7 +80,7 @@ try {
         await new Promise(yes => setTimeout(yes, 500))
       }
     }
-    await assertIsolatedFixture(home, fixtureRoot, { source: root, pnpm: pnpmCli })
+    await assertIsolatedFixture(home, fixtureRoot, { source: root, pnpm: pnpmCli }, generated)
     passed = true
     console.log(JSON.stringify({ result: 'passed', runtime: proof.runtime, commit: proof.commit, generation: proof.generation, artifact: proof.artifact }))
   } catch(error) {

@@ -5,7 +5,7 @@ import { fork } from 'node:child_process'
 import { afterEach, describe, expect, it } from 'vitest'
 import { assertBootstrapInstalled, assertIsolatedFixture, assertMigrationReady, assertRollbackSafe,
   migrationPath, parseMigration, REQUIRED_SERVICES, validateReady, waitForReady, writeAtomic,
-  publishBootstrapVersion, verifyBootstrapVersion } from '../scripts/runtime-protocol.mjs'
+  publishBootstrapVersion, verifyBootstrapVersion, artifactDigest } from '../scripts/runtime-protocol.mjs'
 
 const roots: string[] = []
 async function temp() { const path = await mkdtemp(join(tmpdir(), 'qs-protocol-')); roots.push(path); return path }
@@ -92,5 +92,21 @@ describe('core migration activation boundary', () => {
     await rm(join(home, 'workspace'))
     await writeFile(join(home, 'settings.json'), '{"apiKey":"not-for-test"}')
     await expect(assertIsolatedFixture(home, home)).rejects.toThrow(/credentials/)
+  })
+  it('admits only freshly attested browser auth and synthetic loopback refs after startup', async () => {
+    const home = await temp(), secret = 'a'.repeat(43), ref = 'QS_MODEL_' + 'A'.repeat(36)
+    const vault = { version: 1, records: { 'client-connection/browser-session': { kind: 'grant', payload: { version: 1, secret } } }, refs: { [ref]: 'local-no-auth' } }
+    const file = join(home, '.credentials.yaml')
+    await writeFile(file, JSON.stringify(vault))
+    await writeFile(join(home, 'config.json'), JSON.stringify({ apiKeyEnv: ref }))
+    await expect(assertIsolatedFixture(home, home)).rejects.toThrow(/unverified credentials/)
+    await expect(assertIsolatedFixture(home, home, undefined, { browserSecretHash: artifactDigest(secret) })).resolves.toBeUndefined()
+    await expect(assertIsolatedFixture(home, home, undefined, { browserSecretHash: artifactDigest('other') })).rejects.toThrow(/unverified credentials/)
+    vault.refs[ref] = 'copied-production-secret'
+    await writeFile(file, JSON.stringify(vault))
+    await expect(assertIsolatedFixture(home, home, undefined, { browserSecretHash: artifactDigest(secret) })).rejects.toThrow(/non-test credentials/)
+    vault.refs[ref] = 'local-no-auth'
+    await writeFile(file, JSON.stringify({ ...vault, records: { ...vault.records, 'another/credential': { payload: {} } } }))
+    await expect(assertIsolatedFixture(home, home, undefined, { browserSecretHash: artifactDigest(secret) })).rejects.toThrow(/unverified credentials/)
   })
 })

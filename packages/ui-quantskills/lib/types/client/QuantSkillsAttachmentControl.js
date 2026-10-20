@@ -85,6 +85,10 @@ export function QuantSkillsAttachmentControl({ sessionId, controller, upload, ap
     const [status, setStatus] = useState();
     const draft = useInput(state => state.draft);
     const chips = useMemo(() => draftFileChips(draft), [draft]);
+    // Successful intake describes the current draft, not a past upload. Keep
+    // in-flight/error messages, but clear success once sent or manually removed.
+    const visibleStatus = status?.startsWith('已附加 ')
+        ? (chips.length ? `已附加 ${String(chips.length)} 个文件` : undefined) : status;
     const [card, setCard] = useState(null);
     const choose = useCallback(() => {
         if (!busy)
@@ -154,6 +158,6 @@ export function QuantSkillsAttachmentControl({ sessionId, controller, upload, ap
             .replace(/\n{3,}/g, '\n\n').trimEnd());
     };
     const chipRow = chips.length === 0 ? null : (_jsx("div", { className: css.composerFileChips, "data-composer-file-chips": "", children: chips.map(chip => (_jsxs("span", { className: css.composerFileChip, children: [_jsx("span", { children: chip.name }), _jsx("button", { type: "button", "aria-label": `移除文件 ${chip.name}`, onClick: () => { removeChip(chip); }, children: "\u00D7" })] }, chip.id))) }));
-    return _jsxs(_Fragment, { children: [_jsx("span", { ref: anchorRef, hidden: true }), card !== null && chipRow !== null ? createPortal(chipRow, card) : chipRow, _jsx("input", { ref: inputRef, className: css.attachmentInput, type: "file", multiple: true, tabIndex: -1, "aria-hidden": true, onChange: changed }), status && _jsx("span", { className: css.attachmentStatus, role: "status", children: status })] });
+    return _jsxs(_Fragment, { children: [_jsx("span", { ref: anchorRef, hidden: true }), card !== null && chipRow !== null ? createPortal(chipRow, card) : chipRow, _jsx("input", { ref: inputRef, className: css.attachmentInput, type: "file", multiple: true, tabIndex: -1, "aria-hidden": true, onChange: changed }), visibleStatus && _jsx("span", { className: css.attachmentStatus, role: "status", children: visibleStatus })] });
 }
 //# sourceMappingURL=QuantSkillsAttachmentControl.js.map

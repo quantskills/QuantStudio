@@ -130627,6 +130627,7 @@ void main() {
 			const [status, setStatus] = (0, react.useState)();
 			const draft = useInput((state) => state.draft);
 			const chips = (0, react.useMemo)(() => draftFileChips(draft), [draft]);
+			const visibleStatus = status?.startsWith("已附加 ") ? chips.length ? `已附加 ${String(chips.length)} 个文件` : void 0 : status;
 			const [card, setCard] = (0, react.useState)(null);
 			const choose = (0, react.useCallback)(() => {
 				if (!busy) inputRef.current?.click();
@@ -130725,10 +130726,10 @@ void main() {
 					"aria-hidden": true,
 					onChange: changed
 				}),
-				status && (0, react_jsx_runtime.jsx)("span", {
+				visibleStatus && (0, react_jsx_runtime.jsx)("span", {
 					className: QuantSkillsApp_module_css_default.attachmentStatus,
 					role: "status",
-					children: status
+					children: visibleStatus
 				})
 			] });
 		}

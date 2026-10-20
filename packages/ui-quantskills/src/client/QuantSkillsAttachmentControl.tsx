@@ -115,6 +115,10 @@ export function QuantSkillsAttachmentControl({
   const [status, setStatus] = useState<string | undefined>()
   const draft = useInput(state => state.draft)
   const chips = useMemo(() => draftFileChips(draft), [draft])
+  // Successful intake describes the current draft, not a past upload. Keep
+  // in-flight/error messages, but clear success once sent or manually removed.
+  const visibleStatus = status?.startsWith('已附加 ')
+    ? (chips.length ? `已附加 ${String(chips.length)} 个文件` : undefined) : status
   const [card, setCard] = useState<HTMLElement | null>(null)
   const choose = useCallback((): void => {
     if (!busy) inputRef.current?.click()
@@ -196,6 +200,6 @@ export function QuantSkillsAttachmentControl({
       aria-hidden
       onChange={changed}
     />
-    {status && <span className={css.attachmentStatus} role="status">{status}</span>}
+    {visibleStatus && <span className={css.attachmentStatus} role="status">{visibleStatus}</span>}
   </>
 }
