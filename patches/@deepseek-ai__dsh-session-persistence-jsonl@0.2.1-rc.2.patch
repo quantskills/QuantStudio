@@ -1,0 +1,93 @@
+diff --git a/lib/index.js b/lib/index.js
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -61,6 +61,7 @@
+ 	* @returns a slice carrying the aliasing state established by its producer.
+ 	*/
+ 	async read(offset = 0, length = Number.MAX_SAFE_INTEGER, options) {
++		await this.storage.assertNotDeleted(this.id);
+ 		this.assertOpen("read");
+ 		if (!Number.isSafeInteger(offset) || offset < 0) throw new TypeError(`read offset must be a non-negative safe integer, got ${String(offset)}`);
+ 		if (!Number.isSafeInteger(length) || length < 0) throw new TypeError(`read length must be a non-negative safe integer, got ${String(length)}`);
+@@ -2462,9 +2463,57 @@
+ 	* @param options - optional cancellation.
+ 	* @returns the owned write handle.
+ 	*/
++	deletedPath(id) { return join(this.root, `.qs-deleted-${encodeSegment(id)}`); }
++	async assertNotDeleted(id) {
++		if (await this.exists(this.deletedPath(id))) throw new SessionPersistenceNotFoundError(id);
++	}
++	/** QS deletion: fence all generations, retain the marker across interrupted cleanup. */
++	async deleteSession(id) {
++		this.tracker.claimWrite(id);
++		let lease;
++		try {
++			const dirs = [];
++			for (const project of await this.listProjectDirs()) {
++				const dir = join(project, encodeSegment(id));
++				try {
++					const info = await lstat(dir);
++					if (!info.isDirectory() || info.isSymbolicLink() || await realpath(dir) !== dir)
++						throw new Error("refusing noncanonical session deletion directory");
++					dirs.push(dir);
++				} catch (error) { if (!isENOENT(error)) throw error; }
++			}
++			if (dirs.length > 1) throw new Error("refusing duplicate session deletion identity");
++			if (dirs[0]) lease = await this.acquireLease(id, void 0, dirs[0]);
++			// Validate every generation before fencing or deleting any bytes.
++			for (const dir of dirs) for (const entry of await readdir(dir, {withFileTypes:true})) {
++				const version = parseGenerationLogFilename(entry.name, this.compression);
++				if (parseGenerationLogFilename(entry.name, this.oppositeCompression()) !== void 0) throw this.encodingMismatch(join(dir, entry.name));
++				if (version === void 0) continue;
++				if (!entry.isFile() || entry.isSymbolicLink()) throw new Error("refusing nonregular session generation");
++				const path = join(dir, entry.name);
++				if (!await this.readGenerationHeader({sourcePath:path, sourceVersion:version, currentPath:path}, id))
++					throw new Error("refusing deletion of malformed session generation");
++			}
++			await mkdir(this.root, {recursive:true});
++			let marker;
++			try {
++				marker = await open(this.deletedPath(id), "wx", 384);
++				await marker.writeFile(JSON.stringify({version:1, id}));
++				await marker.sync();
++			} catch (error) { if (error.code !== "EEXIST") throw error; }
++			finally { await marker?.close(); }
++			this.coldLogMemo.delete(id);
++			for (const dir of dirs) for (const entry of await readdir(dir, {withFileTypes:true})) {
++				if (parseGenerationLogFilename(entry.name, "none") === void 0 && parseGenerationLogFilename(entry.name, "zstd") === void 0) continue;
++				if (!entry.isFile() || entry.isSymbolicLink()) throw new Error("refusing nonregular session generation");
++				await rm(join(dir, entry.name), {force:true});
++			}
++		} finally { try { await lease?.release(); } finally { this.tracker.releaseClaim(id); } }
++	}
+ 	async create(header, options) {
+ 		options?.signal?.throwIfAborted();
+ 		const snapshot = materializeCreateHeader(header);
++		await this.assertNotDeleted(snapshot.id);
+ 		toHeaderLine(snapshot, options?.inheritedEventCount);
+ 		const inheritedEventCount = SessionLogOffset(options?.inheritedEventCount ?? 0);
+ 		await this.ensureRootEncoding();
+@@ -2486,6 +2535,7 @@
+ 	* @returns the open handle.
+ 	*/
+ 	async open(id, access, options) {
++		await this.assertNotDeleted(id);
+ 		options?.signal?.throwIfAborted();
+ 		await this.ensureRootEncoding();
+ 		options?.signal?.throwIfAborted();
+@@ -3409,6 +3459,7 @@
+ 	}
+ 	/** Select the numerically highest canonical generation in one Session directory. */
+ 	async resolveGenerationInDirectory(dir, signal) {
++		if (await this.exists(join(this.root, `.qs-deleted-${basename(dir)}`))) return void 0;
+ 		signal?.throwIfAborted();
+ 		let entries;
+ 		try {
+@@ -3442,6 +3493,7 @@
+ 	}
+ 	/** Find the unique authoritative generation for an id across project directories. */
+ 	async findLog(id, signal) {
++		await this.assertNotDeleted(id);
+ 		const matches = [];
+ 		for (const project of await this.listProjectDirs(signal)) {
+ 			signal?.throwIfAborted();

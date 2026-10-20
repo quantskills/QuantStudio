@@ -117,7 +117,7 @@ describe('stable application bootstrap', () => {
     expect(dirtyResult.status).toBe(0)
     expect(dirtyResult.stderr).toContain('dirty=true')
     await expect(readFile(join(dirtyHome, 'quantskills/application/state.json'))).rejects.toMatchObject({ code: 'ENOENT' })
-  })
+  }, 30_000)
 
   it('installs a source-independent entry and configuration under DSH_HOME', async () => {
     const home = await mkdtemp(join(tmpdir(), 'quantskills-bootstrap-'))

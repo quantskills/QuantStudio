@@ -12,7 +12,7 @@ import { z } from "zod";
 import { Buffer as Buffer$1 } from "node:buffer";
 import { isSkillName } from "@deepseek-ai/dsh-skill";
 import { isIP } from "node:net";
-//#region lib/types/error.js
+//#region packages/quantskills-host/lib/types/error.js
 /** Host-owned failure carrying a stable non-secret error code. */
 var QuantSkillsHostError = class extends Error {
 	/** Stable non-secret failure category. */
@@ -29,7 +29,7 @@ var QuantSkillsHostError = class extends Error {
 	}
 };
 //#endregion
-//#region lib/types/display-names.js
+//#region packages/quantskills-host/lib/types/display-names.js
 /** Stable localized display-name resolution for trusted QuantSkills catalog assets. */
 const HAN_PATTERN = /[\u3400-\u9fff]/u;
 const LEADING_SUMMARY_VERB = /^(?:使用|通过|基于|面向|提供|构建|执行|用于|从|按|用|在|以|将|把)\s*/u;
@@ -443,7 +443,7 @@ function containsHan(value) {
 	return HAN_PATTERN.test(value);
 }
 //#endregion
-//#region lib/types/catalog.js
+//#region packages/quantskills-host/lib/types/catalog.js
 /** Trusted QuantSkills catalog download and validation. */
 const SNAPSHOT_PATTERN = /^sha256:[a-f0-9]{64}$/;
 const COMMIT_PATTERN = /^[a-f0-9]{40}$/;
@@ -657,7 +657,7 @@ async function readCatalogResponse(response, maxBytes) {
 	}
 }
 //#endregion
-//#region lib/types/tree.js
+//#region packages/quantskills-host/lib/types/tree.js
 /** Git tree validation for immutable QuantSkills installations. */
 const TREE_LINE = /^([0-7]{6}) (blob|commit) ([a-f0-9]{40}) +(-|\d+)\t([\s\S]+)$/;
 const WINDOWS_DEVICE = /^(?:con|prn|aux|nul|conin\$|conout\$|com[1-9¹²³]|lpt[1-9¹²³])(?:\..*)?$/i;
@@ -731,7 +731,7 @@ function validateGitTree(output, declaration, limits) {
 	});
 }
 //#endregion
-//#region lib/types/prompt-form.js
+//#region packages/quantskills-host/lib/types/prompt-form.js
 /** Parser for optional, non-executable QuantSkills `qsh-form` v1 metadata. */
 const MAX_FORM_BYTES = 16 * 1024;
 const MAX_FIELDS = 12;
@@ -908,7 +908,7 @@ function isRecord$2(value) {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 //#endregion
-//#region lib/types/skill-provider.js
+//#region packages/quantskills-host/lib/types/skill-provider.js
 /** `ctx.skills` provider for Host-committed QuantSkills versions. */
 const PROVIDER_NAME = "quantskills-host";
 const PROVIDER_RANK = 50;
@@ -1102,7 +1102,7 @@ function isRecord$1(value) {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 //#endregion
-//#region lib/types/agent-template.js
+//#region packages/quantskills-host/lib/types/agent-template.js
 /** Parser for standard QuantSkills `AGENTS.md` declarations. */
 const ASSET_PATTERN$1 = /^agent-[a-z0-9](?:[a-z0-9_-]{0,98}[a-z0-9])?$/;
 const SKILL_PATTERN = /^skill-[a-z0-9](?:[a-z0-9_-]{0,98}[a-z0-9])?$/;
@@ -1185,7 +1185,7 @@ function yamlScalar(value) {
 	return JSON.stringify(value);
 }
 //#endregion
-//#region lib/types/readme.js
+//#region packages/quantskills-host/lib/types/readme.js
 /** Bounded, fixed-commit QuantSkills repository README transport. */
 /**
 * Build the only upstream URL accepted for an approved asset README.
@@ -1851,7 +1851,7 @@ function isMissing$1(error) {
 	return error instanceof Error && "code" in error && error.code === "ENOENT";
 }
 //#endregion
-//#region lib/types/local-browser-access.js
+//#region packages/quantskills-host/lib/types/local-browser-access.js
 function header(request, name) {
 	if (request.headers instanceof Headers) return request.headers.get(name) ?? void 0;
 	const value = request.headers[name];
@@ -1888,12 +1888,23 @@ function installLocalBrowserAccess(connection) {
 	const prior = {
 		requestRejection: Object.getOwnPropertyDescriptor(connection, "requestRejection"),
 		authorizeIndex: Object.getOwnPropertyDescriptor(connection, "authorizeIndex"),
-		authenticatedUrl: Object.getOwnPropertyDescriptor(connection, "authenticatedUrl")
+		authenticatedUrl: Object.getOwnPropertyDescriptor(connection, "authenticatedUrl"),
+		admit: Object.getOwnPropertyDescriptor(connection, "admit")
 	};
 	const originalRejection = connection.requestRejection;
 	const originalIndex = connection.authorizeIndex;
 	const originalUrl = connection.authenticatedUrl;
+	const originalAdmit = connection.admit;
+	const localPeer = connection.createPeer?.({
+		principal: { kind: "owner" },
+		interactions: "answer"
+	});
 	const replacements = {
+		...originalAdmit && localPeer ? { admit: ((request) => {
+			const result = originalAdmit.call(connection, request);
+			if ("rejection" in result && result.rejection === 401 && !localPeer.signal.aborted && isDirectLocalBrowserRequest(request)) return { peer: localPeer };
+			return result;
+		}) } : {},
 		requestRejection(request) {
 			const rejection = originalRejection.call(connection, request);
 			return rejection === 401 && isDirectLocalBrowserRequest(request) ? void 0 : rejection;
@@ -1940,6 +1951,7 @@ function installLocalBrowserAccess(connection) {
 		value: replacements[key]
 	});
 	return () => {
+		localPeer?.dispose();
 		for (const key of Object.keys(replacements)) {
 			if (Object.getOwnPropertyDescriptor(connection, key)?.value !== replacements[key]) continue;
 			const descriptor = prior[key];
@@ -1949,7 +1961,7 @@ function installLocalBrowserAccess(connection) {
 	};
 }
 //#endregion
-//#region lib/types/index.js
+//#region packages/quantskills-host/lib/types/index.js
 /** Trusted QuantSkills catalog gateway and immutable fixed-commit Host installer. */
 var __runInitializers = function(thisArg, initializers, value) {
 	var useValue = arguments.length > 2;

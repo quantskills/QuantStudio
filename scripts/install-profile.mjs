@@ -1,5 +1,6 @@
 /** Install through the pinned CLI in staging; never invoke pnpm from PATH. */
 import { assertBootstrapInstalled, assertMigrationReady, TARGET_DSH } from './runtime-protocol.mjs'
+import { capturePluginSources, assertPluginSourcesPreserved } from './plugin-sources.mjs'
 import { spawnSync } from 'node:child_process'
 import { readFile, writeFile, realpath } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -41,10 +42,14 @@ export async function installProfile(environment = process.env, remove = false) 
     throw new Error(`Profile "${profile}" belongs to another installation. Choose a different QUANTSKILLS_PROFILE; its files were not changed.`)
   }
   if (remove && !previous) return
-  const packages = await Promise.all(packagePaths.map(async p => {
+  const allPackages = await Promise.all(packagePaths.map(async p => {
     const directory = resolve(root, p)
     return { directory, manifest: JSON.parse(await readFile(join(directory, 'package.json'), 'utf8')) }
   }))
+  const coreNames = allPackages.filter(p => !['dshmarket', 'dsh-file-upload'].includes(p.manifest.name)).map(p => p.manifest.name)
+  const preservedSources = previous ? await capturePluginSources(target, [...coreNames, 'dsh-context']) : []
+  // A user-installed community package keeps its original source even when QS carries a catalog copy.
+  const packages = allPackages.filter(p => coreNames.includes(p.manifest.name) || !preservedSources.some(item => item.name === p.manifest.name))
   const inputs = { core: manifest.devDependencies['@deepseek-ai/dsh'], lock: createHash('sha256').update(await readFile(join(root, 'pnpm-lock.yaml'))).digest('hex'), plugins: packages.map(p => p.manifest) }
   if (!remove && previous?.quantskills?.managedProfile && previous.packageManager === manifest.packageManager
     && previous.quantskills.installationSignature === installationSignature(previous, inputs)
@@ -92,14 +97,21 @@ export async function installProfile(environment = process.env, remove = false) 
     for (const name of deps) {
       try {
         const dir = resolveBundleDir('dsh', name, require.resolve('@deepseek-ai/dsh/package.json'), transaction.stage)
-        if (readProfileManifest('dsh', dir).dsh?.bundle?.patch) bundled.add(name)
+        if (name !== 'dsh-file-upload' && readProfileManifest('dsh', dir).dsh?.bundle?.patch) bundled.add(name)
       } catch { /* Plain dependencies are not profile layers. */ }
     }
     after.dsh.profile.bundles = [...new Set([
-      ...after.dsh.profile.bundles.filter(name => (!beforeDeps.has(name) && !deps.includes(name)) || bundled.has(name)), ...bundled,
+      ...after.dsh.profile.bundles.filter(name => name !== 'dsh-file-upload' && ((!beforeDeps.has(name) && !deps.includes(name)) || bundled.has(name))), ...bundled,
     ])]
     after.quantskills.installationSignature = installationSignature(after, inputs)
     await writeFile(file, JSON.stringify(after, null, 2) + '\n')
+    const migratedSources = await capturePluginSources(transaction.stage, [...coreNames, 'dsh-context'])
+    assertPluginSourcesPreserved(preservedSources, migratedSources)
+    // Private provenance retains original link syntax; never serialize this ledger into client remotes.
+    await writeFile(join(transaction.stage, 'quantskills-plugin-sources.json'), JSON.stringify({
+      schemaVersion: 1, core: TARGET_DSH, sources: migratedSources.map(item => ({ ...item,
+        originalSpec: preservedSources.find(prior => prior.name === item.name)?.originalSpec ?? item.originalSpec })),
+    }, null, 2), { mode: 0o600 })
     activated = await activateProfileStage(transaction)
     if (environment.QUANTSKILLS_PROFILE_RECEIPT) await writeFile(environment.QUANTSKILLS_PROFILE_RECEIPT, JSON.stringify(activated), { flag: 'wx', mode: 0o600 })
     if (activated.backup) console.log(`[QuantStudio] Previous profile saved at ${activated.backup}`)

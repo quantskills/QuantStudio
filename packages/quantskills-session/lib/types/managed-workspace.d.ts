@@ -4,6 +4,8 @@ import type { WorkspaceId, WorkspaceRegistry } from '@deepseek-ai/dsh-workspace'
 import type { QuantSkillsWorkspaceResolveResult, QuantSkillsWorkspaceStatusResult } from './types.ts';
 /** Replaceable host inputs used by managed-path tests. */
 export interface QuantSkillsDocumentsResolverOptions {
+    /** Explicit deployment root, including isolated compatibility environments. */
+    readonly documentsDirectory?: string;
     readonly platform?: NodeJS.Platform;
     readonly env?: Readonly<Record<string, string | undefined>>;
     readonly home?: string;

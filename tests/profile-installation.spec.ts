@@ -5,11 +5,18 @@ import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
 import { resolveDshHome, resolveProfile, prepareProfileStage, activateProfileStage, restoreProfileTransaction } from '../scripts/profile-state.mjs'
+import { publishBootstrapVersion, writeAtomic, migrationPath } from '../scripts/runtime-protocol.mjs'
 import { installProfile } from '../scripts/install-profile.mjs'
 
 const roots: string[] = []
 async function temp() { const root = await mkdtemp(join(tmpdir(), 'qs-profile-')); roots.push(root); return root }
 afterEach(async () => { await Promise.all(roots.splice(0).map(root => rm(root, { recursive: true, force: true }))) })
+
+async function provision(home: string) {
+  await publishBootstrapVersion(join(home, 'quantskills/application/bootstrap'), resolve('scripts'), { protocol: 2 })
+  await writeAtomic(migrationPath(home), { schemaVersion: 1, sourceRuntime: '0.1.2-alpha.2', targetRuntime: '0.2.1-rc.2',
+    generation: 'constructed-fixture', backupId: 'empty-fixture', phase: 'validated', oldReadable: 'yes' })
+}
 
 describe('isolated profile installation', () => {
   it('leaves an ordinary DSH home separate, recognizes legacy QuantStudio data, and honors an explicit home', async () => {
@@ -29,6 +36,7 @@ describe('isolated profile installation', () => {
 
   it('preserves all original profile files and links when the pinned installer fails', async () => {
     const home = await temp(), profile = join(home, 'profiles/quantstudio')
+    await provision(home)
     await mkdir(join(profile, 'node_modules'), { recursive: true })
     const original = '{"dependencies":{"@quantskills/dsh-plugin":"1.0.0","dsh-context":"1.0.0"},"dsh":{"profile":{"bundles":["dsh-context"]}}}'
     await writeFile(join(profile, 'package.json'), original)
@@ -36,7 +44,7 @@ describe('isolated profile installation', () => {
     await writeFile(join(profile, 'cordis.patch.yml'), '# original customization\n')
     const cli = join(home, 'pnpm-failure.mjs')
     await writeFile(cli, `import {writeFileSync} from 'node:fs'; if(process.argv[2]==='--version')console.log('11.7.0');else{writeFileSync('package.json','{"damaged":true}');process.exitCode=7}`)
-    await expect(installProfile({ ...process.env, DSH_HOME: home, QUANTSKILLS_PROFILE:'quantstudio', QUANTSKILLS_PNPM_CLI:cli })).rejects.toThrow(/original profile was preserved/)
+    await expect(installProfile({ ...process.env, QUANTSKILLS_BOOTSTRAP_PROTOCOL:'2', DSH_HOME: home, QUANTSKILLS_PROFILE:'quantstudio', QUANTSKILLS_PNPM_CLI:cli })).rejects.toThrow(/original profile was preserved/)
     expect(await readFile(join(profile, 'package.json'), 'utf8')).toBe(original)
     expect(await readFile(join(profile, 'node_modules/original.txt'), 'utf8')).toBe('original dependency files')
     expect(await readFile(join(profile, 'cordis.patch.yml'), 'utf8')).toBe('# original customization\n')
@@ -45,16 +53,18 @@ describe('isolated profile installation', () => {
 
   it('refuses an occupied foreign profile before changing its manifest', async () => {
     const home = await temp(), profile = join(home, 'profiles/web')
+    await provision(home)
     await mkdir(profile, { recursive: true })
     const original = '{"dependencies":{"user-plugin":"^3.0.0"}}'
     await writeFile(join(profile, 'package.json'), original)
     const cli = join(home, 'pnpm-version.mjs'); await writeFile(cli, "console.log('11.7.0')")
-    await expect(installProfile({ ...process.env, DSH_HOME:home, QUANTSKILLS_PROFILE:'web', QUANTSKILLS_PNPM_CLI:cli })).rejects.toThrow(/belongs to another installation/)
+    await expect(installProfile({ ...process.env, QUANTSKILLS_BOOTSTRAP_PROTOCOL:'2', DSH_HOME:home, QUANTSKILLS_PROFILE:'web', QUANTSKILLS_PNPM_CLI:cli })).rejects.toThrow(/belongs to another installation/)
     expect(await readFile(join(profile, 'package.json'), 'utf8')).toBe(original)
   })
 
   it('restores a complete profile after activation, including the previous materialized dependencies', async () => {
     const home = await temp(), profile = join(home, 'profiles/quantstudio')
+    await provision(home)
     await mkdir(join(profile, 'node_modules'), { recursive:true })
     await writeFile(join(profile, 'package.json'), '{"old":true}')
     await writeFile(join(profile, 'node_modules/old.txt'), 'keep this')
@@ -70,6 +80,7 @@ describe('isolated profile installation', () => {
   it('restores the previous profile when a real launcher child exits before becoming healthy', async () => {
     const home = await temp(), application = join(home, 'quantskills/application'), bootstrap = join(application, 'bootstrap')
     const profile = join(home, 'profiles/quantstudio')
+    await provision(home)
     await mkdir(bootstrap, { recursive:true }); await mkdir(profile, { recursive:true })
     await writeFile(join(profile,'package.json'), '{"old":true}')
     const cli = join(home,'pnpm-startup-failure.mjs')

@@ -1,7 +1,7 @@
 /** Stable QuantSkills launcher with pending activation and rollback. */
 
 import { createRequire } from 'node:module'
-import { assertMigrationReady, assertRollbackSafe, waitForReady, BOOTSTRAP_PROTOCOL, TARGET_DSH } from './runtime-protocol.mjs'
+import { assertMigrationReady, assertRollbackSafe, waitForReady, candidateArtifact, BOOTSTRAP_PROTOCOL, TARGET_DSH } from './runtime-protocol.mjs'
 import { spawn, spawnSync } from 'node:child_process'
 import { open, readFile, readdir, realpath, rename, rm, stat, unlink, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
@@ -229,7 +229,8 @@ async function startSelected(root, config, hostArgs, dshHome) {
   const commitResult = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8', windowsHide: true })
   const commit = commitResult.stdout?.trim()
   if (isCandidate && !SHA_PATTERN.test(commit ?? '')) throw new Error('Candidate commit is unknown.')
-  const expected = { nonce: randomUUID(), commit, runtime, generation: migration?.generation ?? 'legacy' }
+  const expected = { nonce: randomUUID(), commit, runtime, generation: migration?.generation ?? 'legacy',
+    ...(isCandidate ? { artifact: await candidateArtifact(root) } : {}) }
 
   // Retain the old profile only when rolling back to a version predating isolation.
   const profile = existsSync(join(root, 'scripts', 'install-profile.mjs'))
@@ -249,6 +250,8 @@ async function startSelected(root, config, hostArgs, dshHome) {
     })
     if (isCandidate) await waitForReady(host, expected, config.healthTimeoutMs)
     await waitForHealthyHost(host, readPort(hostArgs, config.defaultPort), config.healthTimeoutMs)
+    if (isCandidate && await candidateArtifact(root) !== expected.artifact) throw new Error('Candidate build changed during activation.')
+    if (isCandidate && process.send) process.send({ type: 'quantskills:activated', protocol: BOOTSTRAP_PROTOCOL, ...expected })
     return host
   } catch (error) {
     stopProcessTree(host)

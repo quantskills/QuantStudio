@@ -5,12 +5,14 @@ import { contestContractParts } from "./contest-contract.js";
 export function historyFailure(error, stage) {
     const value = error;
     const text = `${value?.code ?? ''} ${value?.status ?? ''} ${value?.name ?? ''} ${value?.message ?? ''}`;
-    const [code, retryable, help] = /401|403|unauthori|forbidden|登录|权限|认证|token.*expir/i.test(text) ? ['AUTH_REQUIRED', false, '请检查 PandaData 登录与数据权限。']
-        : /timeout|timed?out|ETIMEDOUT|超时/i.test(text) ? ['TIMEOUT', true, '数据源响应超时，将自动重试。']
-            : /429|rate.limit|频率|限流/i.test(text) ? ['RATE_LIMIT', true, '数据源限流，将稍后重试。']
-                : /network|fetch failed|ECONN|ENOTFOUND|offline|网络|连接失败/i.test(text) ? ['NETWORK', true, '网络或数据源暂时不可用，将自动重试。']
-                    : /column|preview|truncat|table|malformed|字段|列|表格|截断/i.test(text) ? ['INVALID_DATA', false, '请检查数据源返回内容与列映射。']
-                        : ['READ_FAILED', true, '原因未明确，将自动重试；请在数据库页检查该数据源。'];
+    const [code, retryable, help] = /\bhttp[_ ](?:500|502|503|504)\b/i.test(text) || [500, 502, 503, 504].includes(value?.status ?? 0)
+        ? ['SERVICE_UNAVAILABLE', true, '数据服务暂时不可用，等待服务恢复后重试。']
+        : /401|403|unauthori|forbidden|登录|权限|认证|token.*expir/i.test(text) ? ['AUTH_REQUIRED', false, '请检查 PandaData 登录与数据权限。']
+            : /timeout|timed?out|ETIMEDOUT|超时/i.test(text) ? ['TIMEOUT', true, '数据源响应超时，将自动重试。']
+                : /429|rate.limit|频率|限流/i.test(text) ? ['RATE_LIMIT', true, '数据源限流，将稍后重试。']
+                    : /network|fetch failed|ECONN|ENOTFOUND|offline|网络|连接失败/i.test(text) ? ['NETWORK', true, '网络或数据源暂时不可用，将自动重试。']
+                        : /column|preview|truncat|table|malformed|字段|列|表格|截断/i.test(text) ? ['INVALID_DATA', false, '请检查数据源返回内容与列映射。']
+                            : ['READ_FAILED', true, '原因未明确，将自动重试；请在数据库页检查该数据源。'];
     return { issue: `历史数据读取失败（${stage}/${code}）；${help}`, diagnostic: { stage, code, retryable } };
 }
 export async function watchDatasets(ctx) {

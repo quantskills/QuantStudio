@@ -1,4 +1,3 @@
-/** Exact-version QuantSkills session composition and log-backed archive remotes. */
 var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
     var useValue = arguments.length > 2;
     for (var i = 0; i < initializers.length; i++) {
@@ -33,8 +32,11 @@ var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, 
     if (target) Object.defineProperty(target, contextIn.name, descriptor);
     done = true;
 };
+import { inspectSession, listSessionHeaders } from "./session-storage.js";
+/** Exact-version QuantSkills session composition and log-backed archive remotes. */
 import { QuantSkillsLibraryStore } from "./library-store.js";
 import { SessionLifecycle } from "./session-lifecycle.js";
+import { recoverLegacyTeam } from "./legacy-team-recovery.js";
 import { ContestService, sameContest } from "./contest-service.js";
 import { FlyService } from "./fly-service.js";
 import { OfficialContestCli } from "./contest-cli.js";
@@ -654,6 +656,7 @@ let QuantSkillsSessionService = (() => {
     let _instanceExtraInitializers = [];
     let _modelsAccess_decorators;
     let _workspaceStatus_decorators;
+    let _legacyTeamRecovery_decorators;
     let _workspaceResolve_decorators;
     let _flyStatus_decorators;
     let _flyInstall_decorators;
@@ -735,6 +738,7 @@ let QuantSkillsSessionService = (() => {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(_classSuper[Symbol.metadata] ?? null) : void 0;
             _modelsAccess_decorators = [Remote('modelsAccess')];
             _workspaceStatus_decorators = [Remote('workspaceStatus')];
+            _legacyTeamRecovery_decorators = [Remote('legacyTeamRecovery')];
             _workspaceResolve_decorators = [Remote('workspaceResolve')];
             _flyStatus_decorators = [Remote('flyStatus')];
             _flyInstall_decorators = [Remote('flyInstall')];
@@ -813,6 +817,7 @@ let QuantSkillsSessionService = (() => {
             _resultPreview_decorators = [Remote('resultPreview')];
             __esDecorate(this, null, _modelsAccess_decorators, { kind: "method", name: "modelsAccess", static: false, private: false, access: { has: obj => "modelsAccess" in obj, get: obj => obj.modelsAccess }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _workspaceStatus_decorators, { kind: "method", name: "workspaceStatus", static: false, private: false, access: { has: obj => "workspaceStatus" in obj, get: obj => obj.workspaceStatus }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _legacyTeamRecovery_decorators, { kind: "method", name: "legacyTeamRecovery", static: false, private: false, access: { has: obj => "legacyTeamRecovery" in obj, get: obj => obj.legacyTeamRecovery }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _workspaceResolve_decorators, { kind: "method", name: "workspaceResolve", static: false, private: false, access: { has: obj => "workspaceResolve" in obj, get: obj => obj.workspaceResolve }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _flyStatus_decorators, { kind: "method", name: "flyStatus", static: false, private: false, access: { has: obj => "flyStatus" in obj, get: obj => obj.flyStatus }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _flyInstall_decorators, { kind: "method", name: "flyInstall", static: false, private: false, access: { has: obj => "flyInstall" in obj, get: obj => obj.flyInstall }, metadata: _metadata }, null, _instanceExtraInitializers);
@@ -909,6 +914,7 @@ let QuantSkillsSessionService = (() => {
         ];
         static Config = s.object({
             dshHome: s.string(),
+            documentsDirectory: s.string(),
             maxTextAttachmentBytes: s.number().step(1).min(1).default(DEFAULT_MAX_TEXT_ATTACHMENT_BYTES),
             maxDocumentAttachmentBytes: s.number().step(1).min(1).default(DEFAULT_MAX_DOCUMENT_ATTACHMENT_BYTES),
             maxFileAttachmentBytes: s.number().step(1).min(1).default(DEFAULT_MAX_FILE_ATTACHMENT_BYTES),
@@ -920,6 +926,8 @@ let QuantSkillsSessionService = (() => {
             teamForkProvider: s.string().default('fork'),
         });
         libraryStore = __runInitializers(this, _instanceExtraInitializers);
+        /** Local startup barrier; not exposed through the client remote API. */
+        whenLifecycleReady() { return this.sessionLifecycle.ready; }
         sessionLifecycle;
         modelAccess;
         /** Manage model providers through the Host settings and credential services. */
@@ -950,6 +958,7 @@ let QuantSkillsSessionService = (() => {
         teamFreshProvider;
         teamForkProvider;
         workspaceResolver;
+        legacyTeamRecoveryDirectory;
         contest;
         fly;
         contestWatcher;
@@ -1001,8 +1010,13 @@ let QuantSkillsSessionService = (() => {
             this.liveTradingToolNames = validateLiveTradingToolNames(config.liveTradingToolNames ?? []);
             this.teamFreshProvider = requiredProvider(config.teamFreshProvider ?? 'spawn', 'teamFreshProvider');
             this.teamForkProvider = requiredProvider(config.teamForkProvider ?? 'fork', 'teamForkProvider');
-            this.workspaceResolver = new QuantSkillsWorkspaceResolver(ctx.workspaceRegistry, () => resolveQuantSkillsManagedPath({ signal: this.lifetime.signal }));
-            ctx.subagents.registerContinuableSetup(childCtx => this.setupTeamMember(childCtx));
+            this.legacyTeamRecoveryDirectory = join(resolveDshHome(config.dshHome), 'quantskills', 'migration', 'team-mailboxes');
+            this.workspaceResolver = new QuantSkillsWorkspaceResolver(ctx.workspaceRegistry, () => resolveQuantSkillsManagedPath({ signal: this.lifetime.signal,
+                ...config.documentsDirectory === undefined ? {} : { documentsDirectory: config.documentsDirectory } }));
+            ctx.on('agent/created', async ({ agent }) => {
+                if (agent.session.header.origin === 'subagent')
+                    this.setupTeamMember(agent.ctx, agent);
+            });
             ctx.sessionProjections.register({
                 key: 'quantSkillsPlainSession',
                 stateSchema: plainSessionBindingSchema.nullable(),
@@ -1169,6 +1183,14 @@ let QuantSkillsSessionService = (() => {
          */
         workspaceStatus(request) {
             return this.workspaceResolver.status(request.preferredWorkspaceId);
+        }
+        /** Audit or explicitly continue historical messages; opening a Session never replays them. */
+        async legacyTeamRecovery(request, signal) {
+            await this.sessionLifecycle.ready;
+            const lead = this.requireLiveQuantSkillsAgent(request.sessionId);
+            if (foldQuantSkillsAgentTeamSession(lead.session.snapshotEvents()) === null)
+                throw new Error('请选择原专家团主会话。');
+            return recoverLegacyTeam(this.ctx, this.legacyTeamRecoveryDirectory, request, this.operationSignal(signal));
         }
         /**
          * Select the preferred Workspace or create and register the managed fallback.
@@ -1402,7 +1424,7 @@ let QuantSkillsSessionService = (() => {
                 if (agent === undefined)
                     throw new Error(`session "${request.sessionId}" did not become live`);
                 await this.ensureAgentSetup(agent);
-                const published = foldQuantSkillsPlainSessionBinding(agent.session.events);
+                const published = foldQuantSkillsPlainSessionBinding(agent.session.snapshotEvents());
                 if (published === null || !samePlainBinding(published, binding)) {
                     throw new Error(`session "${request.sessionId}" was published without its complete QuantSkills setup`);
                 }
@@ -1470,7 +1492,7 @@ let QuantSkillsSessionService = (() => {
                 if (agent === undefined)
                     throw new Error(`session "${request.sessionId}" did not become live`);
                 await this.ensureAgentSetup(agent);
-                const published = foldQuantSkillsSessionBinding(agent.session.events);
+                const published = foldQuantSkillsSessionBinding(agent.session.snapshotEvents());
                 if (published === null || !sameBinding(published, binding)
                     || !(await this.agentMatchesResidentLog(agent, active))) {
                     throw new Error(`session "${request.sessionId}" was published without its exact QuantSkills setup`);
@@ -1596,7 +1618,7 @@ let QuantSkillsSessionService = (() => {
                 await this.ensureSkillSession(agent, active);
                 const runtime = this.requireResidentRuntime(request.sessionId);
                 const binding = bindingFrom(resolved.version);
-                const current = foldQuantSkillsResidentSkills(agent.session.events);
+                const current = foldQuantSkillsResidentSkills(agent.session.snapshotEvents());
                 const occupied = current.find(item => item.assetId === binding.assetId);
                 if (occupied !== undefined) {
                     if (!sameBinding(occupied, binding)) {
@@ -1618,7 +1640,7 @@ let QuantSkillsSessionService = (() => {
                     registered.dispose();
                     throw error;
                 }
-                return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.events) });
+                return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.snapshotEvents()) });
             });
         }
         /**
@@ -1631,7 +1653,7 @@ let QuantSkillsSessionService = (() => {
                 const agent = this.requireLiveQuantSkillsAgent(request.sessionId);
                 await this.ensureAgentSetup(agent);
                 const runtime = this.requireResidentRuntime(request.sessionId);
-                const current = foldQuantSkillsResidentSkills(agent.session.events);
+                const current = foldQuantSkillsResidentSkills(agent.session.snapshotEvents());
                 const binding = current.find(item => item.assetId === request.assetId);
                 if (binding === undefined)
                     return Object.freeze({ skills: current });
@@ -1643,7 +1665,7 @@ let QuantSkillsSessionService = (() => {
                 const registered = runtime.entries.get(request.assetId);
                 runtime.entries.delete(request.assetId);
                 registered?.dispose();
-                return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.events) });
+                return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.snapshotEvents()) });
             });
         }
         /**
@@ -1658,7 +1680,7 @@ let QuantSkillsSessionService = (() => {
             if (agent === undefined)
                 throw new Error(`QuantSkills Session "${request.sessionId}" is not live.`);
             // Opening the capability menu is read-only; an ordinary conversation has no forms yet.
-            if (!isQuantSkillsSession(agent.session.events))
+            if (!isQuantSkillsSession(agent.session.snapshotEvents()))
                 return Object.freeze({ forms: Object.freeze([]) });
             return Object.freeze({ forms: await this.listPromptForms(agent, active) });
         }
@@ -1679,7 +1701,7 @@ let QuantSkillsSessionService = (() => {
             if (capability.promptForm.status === 'invalid') {
                 throw new Error(`QuantSkills parameter form is unavailable: ${capability.promptForm.reason}`);
             }
-            const attachments = foldQuantSkillsSessionFileAttachments(agent.session.events);
+            const attachments = foldQuantSkillsSessionFileAttachments(agent.session.snapshotEvents());
             return Object.freeze({
                 text: renderPromptForm(capability, request, attachments),
             });
@@ -1866,14 +1888,14 @@ let QuantSkillsSessionService = (() => {
             return this.withSessionLock(this.authoringCommitTails, request.sessionId, async () => {
                 active.throwIfAborted();
                 const agent = this.requireLiveQuantSkillsAgent(request.sessionId);
-                const authoringKind = foldQuantSkillsAuthoringStarted(agent.session.events);
+                const authoringKind = foldQuantSkillsAuthoringStarted(agent.session.snapshotEvents());
                 if (authoringKind === null)
                     throw new Error('QuantSkills Session is not an authoring Session.');
-                const prior = foldQuantSkillsAuthoringCommitted(agent.session.events)
+                const prior = foldQuantSkillsAuthoringCommitted(agent.session.snapshotEvents())
                     .find(commit => commit.toolCallId === request.toolCallId && commit.treeDigest === request.expectedTreeDigest);
                 if (prior !== undefined)
                     return prior.result;
-                const logged = successfulAuthoringToolResult(agent.session.events, request.toolCallId, authoringKind);
+                const logged = successfulAuthoringToolResult(agent.session.snapshotEvents(), request.toolCallId, authoringKind);
                 if (logged.treeDigest !== request.expectedTreeDigest) {
                     throw new Error('QuantSkills draft changed after the confirmation card was rendered.');
                 }
@@ -1900,7 +1922,7 @@ let QuantSkillsSessionService = (() => {
                             model: member.model,
                         })),
                     };
-                    const previous = [...foldQuantSkillsAuthoringCommitted(agent.session.events)].reverse()
+                    const previous = [...foldQuantSkillsAuthoringCommitted(agent.session.snapshotEvents())].reverse()
                         .find(commit => commit.result.kind === 'agent-team');
                     const team = previous?.result.kind === 'agent-team'
                         ? await this.agentTeamUpdate({
@@ -1947,7 +1969,7 @@ let QuantSkillsSessionService = (() => {
                                 throw new Error(`QuantSkills authored Agent requires missing Skill "${assetId}".`);
                             return selected.versionId;
                         });
-                        const previous = [...foldQuantSkillsAuthoringCommitted(agent.session.events)].reverse()
+                        const previous = [...foldQuantSkillsAuthoringCommitted(agent.session.snapshotEvents())].reverse()
                             .find(commit => commit.result.kind === 'agent');
                         const fields = {
                             name: template.name,
@@ -2044,7 +2066,7 @@ let QuantSkillsSessionService = (() => {
                 if (agent === undefined)
                     throw new Error(`session "${request.sessionId}" did not become live`);
                 await this.ensureAgentSetup(agent);
-                const published = foldQuantSkillsAgentSession(agent.session.events);
+                const published = foldQuantSkillsAgentSession(agent.session.snapshotEvents());
                 if (published === null || !sameAgent(published, definition)
                     || !(await this.agentMatchesResidentLog(agent, active))) {
                     throw new Error(`session "${request.sessionId}" was published without its exact QuantSkills Agent setup`);
@@ -2201,7 +2223,7 @@ let QuantSkillsSessionService = (() => {
                 if (agent === undefined)
                     throw new Error(`session "${request.sessionId}" did not become live`);
                 await this.ensureAgentSetup(agent);
-                const published = foldQuantSkillsAgentTeamSession(agent.session.events);
+                const published = foldQuantSkillsAgentTeamSession(agent.session.snapshotEvents());
                 if (published === null || !sameTeamSession(published, reservation.binding)
                     || !(await this.agentMatchesResidentLog(agent, active))) {
                     throw new Error(`session "${request.sessionId}" was published without its exact QuantSkills Agent Team setup`);
@@ -2242,7 +2264,7 @@ let QuantSkillsSessionService = (() => {
                 active.throwIfAborted();
                 const agent = this.requireLiveQuantSkillsAgent(request.sessionId);
                 const input = decodeQuantSkillsFileAttachment(request, this.fileStore.limits.maxFileBytes);
-                const current = foldQuantSkillsSessionFileAttachments(agent.session.events);
+                const current = foldQuantSkillsSessionFileAttachments(agent.session.snapshotEvents());
                 const aggregateBytes = current.reduce((total, item) => total + item.file.bytes, 0);
                 if (aggregateBytes + input.data.byteLength > this.fileStore.limits.maxSessionFileBytes) {
                     throw new Error('QuantSkills Session attachment bytes exceed the configured aggregate limit.');
@@ -2743,7 +2765,7 @@ let QuantSkillsSessionService = (() => {
             const current = this.agentSetups.get(agent);
             if (current !== undefined)
                 return current;
-            const operation = this.setupAgent(agent.ctx);
+            const operation = this.setupAgent(agent.ctx, agent);
             const guarded = operation.catch((error) => {
                 if (this.agentSetups.get(agent) === guarded)
                     this.agentSetups.delete(agent);
@@ -2752,19 +2774,18 @@ let QuantSkillsSessionService = (() => {
             this.agentSetups.set(agent, guarded);
             return guarded;
         }
-        async setupAgent(agentCtx) {
-            const agent = agentCtx.agent;
+        async setupAgent(agentCtx, agent) {
             if (agent === undefined)
                 throw new Error('quantskills-session: setup has no scoped agent');
             const plainReservation = this.plainReservations.get(agent.session.id);
-            const loggedPlain = foldQuantSkillsPlainSessionBinding(agent.session.events);
+            const loggedPlain = foldQuantSkillsPlainSessionBinding(agent.session.snapshotEvents());
             const teamReservation = this.teamReservations.get(agent.session.id);
-            const loggedTeam = foldQuantSkillsAgentTeamSession(agent.session.events);
+            const loggedTeam = foldQuantSkillsAgentTeamSession(agent.session.snapshotEvents());
             const agentReservation = this.agentReservations.get(agent.session.id);
-            const loggedAgent = foldQuantSkillsAgentSession(agent.session.events);
-            const loggedAuthoring = foldQuantSkillsAuthoringStarted(agent.session.events);
+            const loggedAgent = foldQuantSkillsAgentSession(agent.session.snapshotEvents());
+            const loggedAuthoring = foldQuantSkillsAuthoringStarted(agent.session.snapshotEvents());
             const reservation = this.reservations.get(agent.session.id);
-            const logged = foldQuantSkillsSessionBinding(agent.session.events);
+            const logged = foldQuantSkillsSessionBinding(agent.session.snapshotEvents());
             const kinds = [
                 loggedPlain !== null || plainReservation !== undefined,
                 loggedTeam !== null || teamReservation !== undefined,
@@ -2785,7 +2806,7 @@ let QuantSkillsSessionService = (() => {
                 const binding = loggedPlain ?? plainReservation?.binding;
                 if (binding === undefined)
                     return;
-                const resident = await this.resolveBindings(foldQuantSkillsResidentSkills(agent.session.events), this.lifetime.signal);
+                const resident = await this.resolveBindings(foldQuantSkillsResidentSkills(agent.session.snapshotEvents()), this.lifetime.signal);
                 this.installResidentRuntime(agentCtx, agent, resident);
                 this.registerAttachmentTool(agentCtx, agent);
                 this.registerLiveTradingApproval(agentCtx, agent);
@@ -2811,7 +2832,7 @@ let QuantSkillsSessionService = (() => {
                     return;
                 const residentBindings = loggedTeam === null
                     ? resolved.binding.lead.skills
-                    : foldQuantSkillsResidentSkills(agent.session.events);
+                    : foldQuantSkillsResidentSkills(agent.session.snapshotEvents());
                 const leadResolved = sameBindingList(residentBindings, resolved.binding.lead.skills)
                     ? resolved.leadResolved
                     : await this.resolveBindings(residentBindings, this.lifetime.signal);
@@ -2858,7 +2879,7 @@ let QuantSkillsSessionService = (() => {
                     ?? await this.resolveBindings(definition.skills, this.lifetime.signal);
                 const residentBindings = loggedAgent === null
                     ? definition.skills
-                    : foldQuantSkillsResidentSkills(agent.session.events);
+                    : foldQuantSkillsResidentSkills(agent.session.snapshotEvents());
                 const resolved = sameBindingList(residentBindings, definition.skills)
                     ? baseResolved
                     : await this.resolveBindings(residentBindings, this.lifetime.signal);
@@ -2904,7 +2925,7 @@ let QuantSkillsSessionService = (() => {
             }
             const residentBindings = logged === null
                 ? Object.freeze([binding])
-                : foldQuantSkillsResidentSkills(agent.session.events);
+                : foldQuantSkillsResidentSkills(agent.session.snapshotEvents());
             const onlyResident = residentBindings[0];
             const resolved = residentBindings.length === 1 && onlyResident !== undefined && sameBinding(onlyResident, binding)
                 ? Object.freeze([baseResolved])
@@ -2915,12 +2936,11 @@ let QuantSkillsSessionService = (() => {
             if (logged === null)
                 agent.session.append(BINDING_EVENT, binding);
         }
-        setupTeamMember(agentCtx) {
-            const agent = agentCtx.agent;
+        setupTeamMember(agentCtx, agent) {
             if (agent === undefined)
                 throw new Error('quantskills-session: continuable setup has no scoped agent');
             const reservation = this.teamMemberReservations.get(agent.session.id);
-            const logged = foldQuantSkillsAgentTeamMemberSession(agent.session.events);
+            const logged = foldQuantSkillsAgentTeamMemberSession(agent.session.snapshotEvents());
             if (logged === null && reservation === undefined)
                 return () => { };
             const binding = logged ?? reservation?.binding;
@@ -3482,11 +3502,11 @@ let QuantSkillsSessionService = (() => {
                 disposeOutputPolicy = registerLiteralPromptSection(systemPrompt, {
                     name: 'quantskills:artifact-output',
                     order: 114,
-                    text: () => ['contest', 'factor-contest'].includes((foldQuantSkillsPlainSessionBinding(agent.session.events) ?? this.plainReservations.get(agent.session.id)?.binding)?.purpose ?? '')
+                    text: () => ['contest', 'factor-contest'].includes((foldQuantSkillsPlainSessionBinding(agent.session.snapshotEvents()) ?? this.plainReservations.get(agent.session.id)?.binding)?.purpose ?? '')
                         ? '比赛研究在本对话中交付。仅使用本会话已开放的工具和已附文件，不使用 Shell 或任意代码，不声称创建了未生成的文件。'
                         : [
                             'Write every generated artifact under `output/` in the current Session workspace.',
-                            renderArtifactTheme(this.ctx.get('settings')?.get('ui-quantskills')),
+                            renderArtifactTheme(this.ctx.get('settings')?.describe().find(entry => entry.ns === 'ui-quantskills')?.value),
                             'After creating and checking real files, add one final fenced quantskills-deliverables JSON block: {"version":1,"items":[{"path":"output/report.html","title":"报告","presentation":"interactive"}]}. Use interactive for self-contained HTML, card for other files. Never declare files that do not exist. Include images, audio, video and PDF when delivered. Self-contained HTML must inline scripts and styles; external network resources are unavailable in previews.',
                             'Treat every installed QuantSkills Skill resource directory as read-only source material; never write generated files into a Skill resource directory.',
                             'When a Skill instruction names a relative `output/` path, resolve it against the current Session workspace, not the installed Skill resource directory.',
@@ -3581,7 +3601,7 @@ let QuantSkillsSessionService = (() => {
                 },
                 isConcurrencySafe: () => true,
                 execute: async (args, exec) => {
-                    const result = await this.readTextAttachment(agent.session.events, args.attachment_id, exec.signal);
+                    const result = await this.readTextAttachment(agent.session.snapshotEvents(), args.attachment_id, exec.signal);
                     return result.text;
                 },
                 presentCall: args => ({
@@ -3729,7 +3749,7 @@ let QuantSkillsSessionService = (() => {
                 }
                 if (event.type !== 'tool/result')
                     continue;
-                const result = event.data.message.content[0];
+                const result = event.data.message;
                 const callId = String(result.toolCallId);
                 if (settledCalls.has(callId))
                     continue;
@@ -3768,10 +3788,10 @@ let QuantSkillsSessionService = (() => {
         async ensureSkillSession(agent, signal) {
             await this.ensureAgentSetup(agent);
             signal.throwIfAborted();
-            if (isQuantSkillsSession(agent.session.events))
+            if (isQuantSkillsSession(agent.session.snapshotEvents()))
                 return;
             const sessionId = agent.session.id;
-            if (agent.session.header.parentSession !== undefined && agent.session.header.seedLength === undefined) {
+            if (agent.session.header.parentSession !== undefined && !agent.session.header.isSeeded) {
                 throw new Error('子代理会话的能力由所属任务管理，请在主会话中加载技能。');
             }
             if (!agent.session.header.cwd)
@@ -3796,7 +3816,7 @@ let QuantSkillsSessionService = (() => {
             const agent = this.ctx.agents.get(sessionId);
             if (agent === undefined)
                 throw new Error(`QuantSkills Session "${sessionId}" is not live.`);
-            if (!isQuantSkillsSession(agent.session.events)) {
+            if (!isQuantSkillsSession(agent.session.snapshotEvents())) {
                 throw new Error(`Session "${sessionId}" is not owned by QuantSkills.`);
             }
             return agent;
@@ -3804,7 +3824,7 @@ let QuantSkillsSessionService = (() => {
         async listPromptForms(agent, signal) {
             const forms = [];
             const seen = new Set();
-            for (const binding of foldQuantSkillsResidentSkills(agent.session.events)) {
+            for (const binding of foldQuantSkillsResidentSkills(agent.session.snapshotEvents())) {
                 signal.throwIfAborted();
                 if (seen.has(binding.versionId))
                     continue;
@@ -3819,7 +3839,7 @@ let QuantSkillsSessionService = (() => {
                     }));
                 }
             }
-            for (const versionId of promptFormAgentSources(agent.session.events)) {
+            for (const versionId of promptFormAgentSources(agent.session.snapshotEvents())) {
                 signal.throwIfAborted();
                 if (seen.has(versionId))
                     continue;
@@ -3867,7 +3887,7 @@ let QuantSkillsSessionService = (() => {
                 && skill.resourceBase.path === resolved.definition.resourceBase.path;
         }
         async agentMatchesResidentLog(agent, signal) {
-            const resolved = await this.resolveBindings(foldQuantSkillsResidentSkills(agent.session.events), signal);
+            const resolved = await this.resolveBindings(foldQuantSkillsResidentSkills(agent.session.snapshotEvents()), signal);
             return this.agentHasResolvedSkills(agent, resolved, signal);
         }
         async agentHasResolvedSkills(agent, resolved, signal) {
@@ -3981,17 +4001,17 @@ let QuantSkillsSessionService = (() => {
         async inspectExisting(sessionId, signal) {
             const live = this.ctx.sessions.get(sessionId);
             if (live !== undefined)
-                return { header: live.header, events: live.events };
-            const stored = (await this.ctx.sessionPersistence.list(signal)).find(header => header.id === sessionId);
+                return { header: live.header, events: live.snapshotEvents() };
+            const stored = (await listSessionHeaders(this.ctx.sessionPersistence, signal)).find(header => header.id === sessionId);
             if (stored === undefined)
                 return undefined;
-            const inspected = await this.ctx.sessionPersistence.inspect(sessionId, signal);
+            const inspected = await inspectSession(this.ctx.sessionPersistence, sessionId, signal);
             return { header: inspected.meta, events: inspected.events };
         }
         async listArchives(request, signal) {
             await this.sessionLifecycle.ready;
             const headers = new Map();
-            for (const header of await this.ctx.sessionPersistence.list(signal))
+            for (const header of await listSessionHeaders(this.ctx.sessionPersistence, signal))
                 headers.set(header.id, header);
             for (const session of this.ctx.sessions.list())
                 headers.set(session.id, session.header);
@@ -4002,11 +4022,10 @@ let QuantSkillsSessionService = (() => {
                 if (header.origin === 'subagent' || (request.includeArchived !== true && archived.has(header.id)))
                     continue;
                 const live = this.ctx.sessions.get(header.id);
-                const events = live === undefined
-                    ? (await this.ctx.sessionPersistence.inspect(header.id, signal)).events
-                    : live.events;
+                const inspected = live === undefined ? await inspectSession(this.ctx.sessionPersistence, header.id, signal) : undefined;
+                const events = live?.snapshotEvents() ?? inspected.events;
                 const snapshot = live === undefined
-                    ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
+                    ? this.ctx.sessionProjectionCache.coldSnapshot(header, inspected.inheritedEventCount, events)
                     : this.ctx.sessionProjections.snapshot(live);
                 const binding = projectionBinding(snapshot);
                 if (binding === null)
@@ -4032,7 +4051,7 @@ let QuantSkillsSessionService = (() => {
         async listPlainArchives(request, signal) {
             await this.sessionLifecycle.ready;
             const headers = new Map();
-            for (const header of await this.ctx.sessionPersistence.list(signal))
+            for (const header of await listSessionHeaders(this.ctx.sessionPersistence, signal))
                 headers.set(header.id, header);
             for (const session of this.ctx.sessions.list())
                 headers.set(session.id, session.header);
@@ -4043,11 +4062,10 @@ let QuantSkillsSessionService = (() => {
                 if (header.origin === 'subagent' || (request.includeArchived !== true && archived.has(header.id)))
                     continue;
                 const live = this.ctx.sessions.get(header.id);
-                const events = live === undefined
-                    ? (await this.ctx.sessionPersistence.inspect(header.id, signal)).events
-                    : live.events;
+                const inspected = live === undefined ? await inspectSession(this.ctx.sessionPersistence, header.id, signal) : undefined;
+                const events = live?.snapshotEvents() ?? inspected.events;
                 const snapshot = live === undefined
-                    ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
+                    ? this.ctx.sessionProjectionCache.coldSnapshot(header, inspected.inheritedEventCount, events)
                     : this.ctx.sessionProjections.snapshot(live);
                 const binding = projectionPlainBinding(snapshot);
                 if (binding?.purpose !== 'ordinary' && binding?.purpose !== 'contest' && binding?.purpose !== 'factor-contest')
@@ -4073,7 +4091,7 @@ let QuantSkillsSessionService = (() => {
         async listAgentArchives(request, signal) {
             await this.sessionLifecycle.ready;
             const headers = new Map();
-            for (const header of await this.ctx.sessionPersistence.list(signal))
+            for (const header of await listSessionHeaders(this.ctx.sessionPersistence, signal))
                 headers.set(header.id, header);
             for (const session of this.ctx.sessions.list())
                 headers.set(session.id, session.header);
@@ -4084,11 +4102,10 @@ let QuantSkillsSessionService = (() => {
                 if (header.origin === 'subagent' || (request.includeArchived !== true && archived.has(header.id)))
                     continue;
                 const live = this.ctx.sessions.get(header.id);
-                const events = live === undefined
-                    ? (await this.ctx.sessionPersistence.inspect(header.id, signal)).events
-                    : live.events;
+                const inspected = live === undefined ? await inspectSession(this.ctx.sessionPersistence, header.id, signal) : undefined;
+                const events = live?.snapshotEvents() ?? inspected.events;
                 const snapshot = live === undefined
-                    ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
+                    ? this.ctx.sessionProjectionCache.coldSnapshot(header, inspected.inheritedEventCount, events)
                     : this.ctx.sessionProjections.snapshot(live);
                 const agent = projectionAgent(snapshot);
                 if (agent === null)
@@ -4114,7 +4131,7 @@ let QuantSkillsSessionService = (() => {
         async listTeamArchives(request, signal) {
             await this.sessionLifecycle.ready;
             const headers = new Map();
-            for (const header of await this.ctx.sessionPersistence.list(signal))
+            for (const header of await listSessionHeaders(this.ctx.sessionPersistence, signal))
                 headers.set(header.id, header);
             for (const session of this.ctx.sessions.list())
                 headers.set(session.id, session.header);
@@ -4125,11 +4142,10 @@ let QuantSkillsSessionService = (() => {
                 if (header.origin === 'subagent' || (request.includeArchived !== true && archived.has(header.id)))
                     continue;
                 const live = this.ctx.sessions.get(header.id);
-                const events = live === undefined
-                    ? (await this.ctx.sessionPersistence.inspect(header.id, signal)).events
-                    : live.events;
+                const inspected = live === undefined ? await inspectSession(this.ctx.sessionPersistence, header.id, signal) : undefined;
+                const events = live?.snapshotEvents() ?? inspected.events;
                 const snapshot = live === undefined
-                    ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
+                    ? this.ctx.sessionProjectionCache.coldSnapshot(header, inspected.inheritedEventCount, events)
                     : this.ctx.sessionProjections.snapshot(live);
                 const team = projectionTeam(snapshot);
                 if (team === null)
@@ -4482,7 +4498,7 @@ function successfulSkillToolResourceBases(events) {
         }
         if (event.type !== 'tool/result')
             continue;
-        const result = event.data.message.content[0];
+        const result = event.data.message;
         if (result.isError || !skillCalls.has(result.toolCallId))
             continue;
         for (const block of result.content) {
@@ -4522,7 +4538,7 @@ export function applyAuthoringReview(state, event) {
     }
     if (event.type !== 'tool/result')
         return state;
-    const result = event.data.message.content[0];
+    const result = event.data.message;
     if (result.isError || !state.calls.includes(result.toolCallId))
         return state;
     try {
@@ -4557,7 +4573,7 @@ function successfulAuthoringToolResult(events, toolCallId, kind) {
     const matches = events.filter((event) => {
         if (event.type !== 'tool/result')
             return false;
-        const block = event.data.message.content[0];
+        const block = event.data.message;
         return block.toolCallId === toolCallId && !block.isError;
     });
     if (matches.length !== 1) {
@@ -4567,7 +4583,7 @@ function successfulAuthoringToolResult(events, toolCallId, kind) {
     if (event === undefined || event.type !== 'tool/result') {
         throw new Error('QuantSkills authoring draft Tool result disappeared during validation.');
     }
-    const result = event.data.message.content[0];
+    const result = event.data.message;
     const text = result.content.filter(block => block.type === 'text').map(block => block.text).join('');
     let value;
     try {

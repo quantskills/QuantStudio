@@ -24,9 +24,7 @@ const packageDirs = [
 const requiredRootFiles = [
   'cordis.patch.yml',
   'lib/index.js',
-  'lib/invariant.js',
   'src/index.ts',
-  'src/invariant.ts',
 ]
 
 const bundledPackages = [

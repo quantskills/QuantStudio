@@ -366,11 +366,11 @@ export class PandaWorkerClient {
     runtimeRoot: string,
     sdkVersion: string,
     request: PandaScriptExecutionRequest,
-    argvWrapper: (argv: readonly string[]) => PandaExecutionArgv,
+    argvWrapper: (argv: readonly string[]) => PandaExecutionArgv | Promise<PandaExecutionArgv>,
     signal?: AbortSignal,
   ): Promise<PandaScriptExecutionResult> {
     const active = this.operationSignal(signal, this.config.bootstrapTimeoutMs)
-    const wrapped = argvWrapper(this.executionArgv(runtimeRoot))
+    const wrapped = await argvWrapper(this.executionArgv(runtimeRoot))
     let handle: SubprocessHandle
     try {
       handle = this.subprocess.spawn({

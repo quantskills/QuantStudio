@@ -740,4 +740,14 @@ export interface ArchivedConversation {
     readonly updatedAt: number;
     readonly running: boolean;
 }
+export interface LegacyTeamRecoveryRequest {
+    sessionId: SessionId;
+    continuePending?: boolean;
+}
+export interface LegacyTeamRecoveryResult {
+    delivered: number;
+    pending: number;
+    uncertain: number;
+    unknownEvents: number;
+}
 //# sourceMappingURL=types.d.ts.map

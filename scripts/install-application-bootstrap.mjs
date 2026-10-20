@@ -3,7 +3,7 @@
 import { spawnSync } from 'node:child_process'
 import { existsSync, realpathSync } from 'node:fs'
 import { copyFile, mkdir, readFile, realpath, rename, rm, stat, writeFile } from 'node:fs/promises'
-import { artifactDigest, BOOTSTRAP_PROTOCOL } from './runtime-protocol.mjs'
+import { publishBootstrapVersion, BOOTSTRAP_PROTOCOL } from './runtime-protocol.mjs'
 import { randomUUID } from 'node:crypto'
 import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -47,16 +47,7 @@ const config = {
   healthTimeoutMs: 120_000,
 }
 // Publish complete immutable content before switching the single pointer.
-const bootstrapFiles = ['application-bootstrap.mjs', 'profile-state.mjs', 'runtime-protocol.mjs']
-const contents = await Promise.all(bootstrapFiles.map(file => readFile(join(scriptRoot, file), 'utf8')))
-const version = artifactDigest(JSON.stringify([contents, config]))
-const versionRoot = join(bootstrapRoot, 'versions', version)
-await mkdir(versionRoot, { recursive: true })
-for (let index = 0; index < bootstrapFiles.length; index++) {
-  await writeFile(join(versionRoot, bootstrapFiles[index]), contents[index], 'utf8')
-}
-await writeAtomic(join(versionRoot, 'config.json'), config)
-await writeAtomic(join(bootstrapRoot, 'current.json'), { protocol: BOOTSTRAP_PROTOCOL, version })
+await publishBootstrapVersion(bootstrapRoot, scriptRoot, config)
 // Replacing the legacy entry is atomic too. Interrupted installs leave the old entry or the complete new one.
 const entry = join(bootstrapRoot, `.launcher-${randomUUID()}.mjs`)
 await copyFile(join(scriptRoot, 'bootstrap-dispatcher.mjs'), entry)

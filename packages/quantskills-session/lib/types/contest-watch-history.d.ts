@@ -5,7 +5,7 @@ export declare function historyFailure(error: unknown, stage: string): {
     issue: string;
     diagnostic: {
         stage: string;
-        code: "AUTH_REQUIRED" | "TIMEOUT" | "RATE_LIMIT" | "NETWORK" | "INVALID_DATA" | "READ_FAILED";
+        code: "SERVICE_UNAVAILABLE" | "AUTH_REQUIRED" | "TIMEOUT" | "RATE_LIMIT" | "NETWORK" | "INVALID_DATA" | "READ_FAILED";
         retryable: boolean;
     };
 };

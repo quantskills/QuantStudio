@@ -1,0 +1,31 @@
+diff --git a/lib/index.js b/lib/index.js
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -14,6 +14,7 @@
+ ];
+ /** Loader schema for the opt-in Team tool plugin. */
+ const Config = z.object({
++	spawnToolEnabled: z.boolean().default(true),
+ 	interrupt: z.boolean().default(true),
+ 	freshProvider: z.string().default("spawn"),
+ 	forkProvider: z.string().default("fork")
+@@ -247,7 +248,7 @@
+ To message another teammate, use send_message({ target: "<teammate name>", message: "..." }).`;
+ 			}
+ 		}));
+-		register(scoped.tools.register(defineTool({
++		if (config.spawnToolEnabled !== false) register(scoped.tools.register(defineTool({
+ 			name: "spawn_teammate",
+ 			description: "Create one named, durable teammate. Only the Team Lead may call this tool.",
+ 			parameters: {
+diff --git a/lib/types/index.d.ts b/lib/types/index.d.ts
+--- a/lib/types/index.d.ts
++++ b/lib/types/index.d.ts
+@@ -7,6 +7,7 @@
+ export declare const inject: string[];
+ /** Tool routing configuration. */
+ export interface Config {
++    spawnToolEnabled?: boolean;
+     /** Register `interrupt_agent` and its policy guidance. Defaults to true; false leaves the domain API available. */
+     readonly interrupt?: boolean;
+     /** Continuable-subagent provider used for fresh teammates. */

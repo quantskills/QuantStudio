@@ -10,6 +10,7 @@ function fixture() {
   const ctx = new Context()
   contexts.push(ctx)
   const browserAuth = {
+    authenticateApi: () => undefined,
     isAuthenticated: (req: { headers: Record<string, string> }) => req.headers.cookie === 'valid-session',
     authorizeIndex: vi.fn((_req: unknown, res: { writeHead(status: number): void; end(): void }) => { res.writeHead(401); res.end(); return false }),
     authenticatedUrl: vi.fn((url: string) => `${url}/?token=remote-test-token`),
@@ -61,6 +62,8 @@ describe('QuantSkills local browser access', () => {
   it('allows same-origin browser API calls', () => {
     const { connection } = fixture()
     expect(connection.requestRejection(request('localhost:3198', { origin: 'http://localhost:3198', 'sec-fetch-site': 'same-origin' }))).toBeUndefined()
+    expect(connection.admit(request('localhost:3198', { origin: 'http://localhost:3198' }))).toHaveProperty('peer.principal.kind', 'owner')
+    expect(connection.admit(request('localhost:3198', { origin: 'https://evil.example' }))).toEqual({ rejection: 403 })
   })
 
   it.each(['evil.example:3198', 'localhost.evil.example:3198', '192.168.1.10:3198'])('does not grant anonymous access to %s', host => {
@@ -110,6 +113,7 @@ describe('QuantSkills local browser access', () => {
     const other = ctx.get('connection') as unknown as LocalBrowserConnection
     expect(other.requestRejection(request())).toBeUndefined()
     restore()
+    expect(connection.admit(request())).toEqual({ rejection: 401 })
     expect(connection.requestRejection(request())).toBe(401)
     expect(other.requestRejection(request())).toBe(401)
     expect(connection.authenticatedUrl('http://127.0.0.1:3198')).toContain('token=')

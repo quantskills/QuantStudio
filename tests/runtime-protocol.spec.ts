@@ -1,21 +1,39 @@
 import { mkdtemp, mkdir, writeFile, readFile, rm, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { fork } from 'node:child_process'
 import { afterEach, describe, expect, it } from 'vitest'
 import { assertBootstrapInstalled, assertIsolatedFixture, assertMigrationReady, assertRollbackSafe,
-  migrationPath, parseMigration, REQUIRED_SERVICES, validateReady, waitForReady, writeAtomic } from '../scripts/runtime-protocol.mjs'
+  migrationPath, parseMigration, REQUIRED_SERVICES, validateReady, waitForReady, writeAtomic,
+  publishBootstrapVersion, verifyBootstrapVersion } from '../scripts/runtime-protocol.mjs'
 
 const roots: string[] = []
 async function temp() { const path = await mkdtemp(join(tmpdir(), 'qs-protocol-')); roots.push(path); return path }
 afterEach(async () => { for (const root of roots.splice(0)) await rm(root, { recursive: true, force: true }) })
 const migration = { schemaVersion: 1, sourceRuntime: '0.1.2-alpha.2', targetRuntime: '0.2.1-rc.2',
   generation: 'fixture-generation', backupId: 'fixture-snapshot', phase: 'validated', oldReadable: 'unknown' }
-const expected = { nonce: 'this-process-only', commit: 'a'.repeat(40), runtime: '0.2.1-rc.2', generation: migration.generation }
+const expected = { nonce: 'this-process-only', artifact: 'f'.repeat(64), commit: 'a'.repeat(40), runtime: '0.2.1-rc.2', generation: migration.generation }
 const ready = { ...expected, type: 'quantskills:ready', protocol: 2, migrationPhase: 'validated',
   services: Object.fromEntries(REQUIRED_SERVICES.map((name: string) => [name, true])) }
 
 describe('core migration activation boundary', () => {
+  it('publishes one immutable launcher version and rejects tampering or an interrupted installer', async () => {
+    const root = await temp(), base = join(root, 'bootstrap'), config = { protocol: 2, profile: 'web' }
+    const version = await publishBootstrapVersion(base, resolve('scripts'), config)
+    const directory = join(base, 'versions', version)
+    expect(await verifyBootstrapVersion(directory, version)).toEqual(config)
+    expect(await publishBootstrapVersion(base, resolve('scripts'), config)).toBe(version)
+    await writeFile(join(directory, 'profile-state.mjs'), 'damaged')
+    await expect(publishBootstrapVersion(base, resolve('scripts'), config)).rejects.toThrow(/integrity/)
+    expect(JSON.parse(await readFile(join(base, 'current.json'), 'utf8')).version).toBe(version)
+    await writeFile(join(base, 'install.lock'), 'interrupted')
+    await expect(publishBootstrapVersion(base, resolve('scripts'), config)).rejects.toMatchObject({ code: 'EEXIST' })
+  })
+  it.each(['cwd: C:/production/workspace', 'cwd: ../../original', 'cwd: file:///C:/original', 'command: !!js process.exit()', 'apiKey: private-key', 'rrule: FREQ=MINUTELY'])('blocks unsafe YAML before Host construction: %s', async content => {
+    const home = await temp()
+    await writeFile(join(home, 'config.yml'), content)
+    await expect(assertIsolatedFixture(home, home)).rejects.toThrow()
+  })
   it('rejects legacy launchers before any profile write', async () => {
     const home = await temp(), profile = join(home, 'profiles/web')
     await mkdir(profile, { recursive: true }); await writeFile(join(profile, 'package.json'), '{"user":"unchanged"}')
@@ -43,7 +61,7 @@ describe('core migration activation boundary', () => {
     await writeFile(migrationPath(home), '{')
     await expect(assertRollbackSafe(home)).rejects.toThrow()
   })
-  it.each(['nonce', 'commit', 'runtime', 'generation'])('rejects a mismatched %s even with an HTTP healthy page', key => {
+  it.each(['nonce', 'commit', 'runtime', 'generation', 'artifact'])('rejects a mismatched %s even with an HTTP healthy page', key => {
     expect(() => validateReady({ ...ready, [key]: 'wrong' }, expected)).toThrow(/mismatch/)
   })
   it('rejects incomplete services and migration', () => {

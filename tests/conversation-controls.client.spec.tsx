@@ -8,7 +8,7 @@ afterEach(cleanup)
 
 function headerProps(options: { selectedView?: string; kind?: 'skill' | 'agent' | 'team'; blank?: boolean } = {}): ConversationSessionHeaderProps {
   const session = {
-    id: 'parent', displayTitle: '创作', blank: options.blank ?? false, running: false,
+    retainedBy: { mainView: 1 }, id: 'parent', displayTitle: '创作', blank: options.blank ?? false, running: false,
     projectionValues: { quantSkillsAuthoringPending: {
       kind: options.kind ?? 'skill', toolCallId: 'prepared', treeDigest: 'sha256:123',
       name: '研究助手', description: '生成每日研究报告', members: [],
@@ -16,12 +16,12 @@ function headerProps(options: { selectedView?: string; kind?: 'skill' | 'agent' 
   }
   const list = { current: 'parent', ids: ['parent'], byId: { parent: session } }
   return {
-    sessionId: 'parent', useSession: (select: (state: typeof session) => unknown) => select(session),
+    hideChrome: options.blank ?? false, sessionId: 'parent', useSession: (select: (state: typeof session) => unknown) => select(session),
     useSessions: (select: (state: typeof list) => unknown) => select(list),
     useConversation: (select: (state: { activeTargets: Set<string> }) => unknown) => select({ activeTargets: new Set() }),
     useConversationViews: (select: (state: { id: string; label: string }[]) => unknown) => select([{ id: 'chat', label: '聊天' }, { id: 'trajectory', label: '轨迹' }]),
     useStore: (select: (state: { view: string }) => unknown) => select({ view: options.selectedView ?? 'chat' }),
-    actions: { setView: vi.fn() }, renderSlot: () => null, open: vi.fn(), t: (key: string) => key,
+    selectView: vi.fn(), renderSlot: () => null, open: vi.fn(), t: (key: string) => key,
   } as unknown as ConversationSessionHeaderProps
 }
 
@@ -43,7 +43,7 @@ it('lets a session viewing trajectory switch back to chat', () => {
   render(<ConversationSessionHeader {...props} />)
   expect(screen.getByRole('tab', { name: '轨迹' }).getAttribute('aria-selected')).toBe('true')
   fireEvent.click(screen.getByRole('tab', { name: '聊天' }))
-  expect(props.actions.setView).toHaveBeenCalledWith('chat')
+  expect(props.selectView).toHaveBeenCalledWith('chat')
 })
 
 it('falls back to chat when a persisted view no longer exists', () => {

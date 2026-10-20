@@ -46,17 +46,20 @@
     "@deepseek-ai/dsh-quantskills-session": "workspace:^"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-api-remotes": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-typert-protocol": "0.1.2-alpha.2"
+    "@deepseek-ai/cordis": "4.0.5",
+    "@deepseek-ai/dsh-api-remotes": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.2.1-rc.2"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-api-remotes": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-typert-protocol": "0.1.2-alpha.2"
+    "@deepseek-ai/cordis": "4.0.5",
+    "@deepseek-ai/dsh-api-remotes": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.2.1-rc.2"
   },
   "scripts": {
     "bundle": "tsdown",
     "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "engines": {
+    "dsh": "0.2.1-rc.2"
   }
 }

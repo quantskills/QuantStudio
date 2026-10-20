@@ -1,3 +1,4 @@
+import { listSessionHeaders } from './session-storage.ts'
 import type { Context } from '@deepseek-ai/cordis'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
@@ -37,9 +38,12 @@ export class SessionLifecycle {
       if (request.filesToken !== undefined && action !== 'delete') throw new Error('文件删除仅适用于完整删除操作。')
       if (this.ctx.agents.get(id)?.status === 'running') throw new Error('会话正在运行，请停止后再操作。')
       if (action === 'archive') return this.ctx.workspaceRegistry.archiveSession(id)
-      if (action === 'restore') return this.ctx.workspaceRegistry.restoreSession(id)
+      if (action === 'restore') {
+        if (!this.ctx.sessions.get(id) && !await this.ctx.sessionPersistence.stat(id)) throw new Error('会话不存在或已删除。')
+        return this.ctx.workspaceRegistry.unarchiveSession(id)
+      }
       const headers = new Map<SessionId, SessionHeader>()
-      for (const header of await this.ctx.sessionPersistence.list()) headers.set(header.id, header)
+      for (const header of await listSessionHeaders(this.ctx.sessionPersistence)) headers.set(header.id, header)
       for (const session of this.ctx.sessions.list()) headers.set(session.id, session.header)
       const ids = new Set<SessionId>([id])
       // Child worker logs belong to the conversation. Independent forks do not.
@@ -85,7 +89,7 @@ export class SessionLifecycle {
       await this.finishPending()
       await assertOwned()
       const headers = new Map<SessionId, SessionHeader>()
-      for (const header of await this.ctx.sessionPersistence.list()) headers.set(header.id, header)
+      for (const header of await listSessionHeaders(this.ctx.sessionPersistence)) headers.set(header.id, header)
       for (const session of this.ctx.sessions.list()) headers.set(session.id, session.header)
       const ids = new Set<SessionId>([id])
       for (let size = -1; size !== ids.size;) {

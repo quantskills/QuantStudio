@@ -493,7 +493,7 @@ export class PandaMcpGateway extends TypertRemoteService {
       }))
     }
     for (const agent of this.ctx.agents.list()) maybeInstall(agent)
-    this.ctx.on('agent/created', ({ agent }) => { maybeInstall(agent) })
+    this.ctx.on('agent/created', ({ agent }) => { maybeInstall(agent); return undefined })
     this.ctx.on('agent/disposed', ({ agent }) => {
       this.promptDisposers.get(agent)?.()
       this.promptDisposers.delete(agent)

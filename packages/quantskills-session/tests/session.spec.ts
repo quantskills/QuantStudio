@@ -289,29 +289,28 @@ async function harness(options: {
   const snapshot = (session: Session): void => {
     stored.set(session.id, {
       header: structuredClone(session.header),
-      events: structuredClone(session.events) as SessionEvent[],
+      events: structuredClone(session.snapshotEvents()) as SessionEvent[],
     })
   }
   ctx.on('session/created', snapshot)
   ctx.on('session/event', (session) => { snapshot(session) })
   ctx.provide('sessionPersistence', {
-    list: (signal?: AbortSignal) => {
-      signal?.throwIfAborted()
-      return Promise.resolve([...stored.values()].map(entry => entry.header))
+    list: (options?: { signal?: AbortSignal }) => {
+      options?.signal?.throwIfAborted()
+      return Promise.resolve([...stored.values()].map(entry => ({ header: entry.header, revision: 'fixture' })))
     },
-    inspect: (id: SessionId, signal?: AbortSignal) => {
-      signal?.throwIfAborted()
+    open: async (id: SessionId, _access: string, options?: { signal?: AbortSignal }) => {
+      options?.signal?.throwIfAborted()
       const entry = stored.get(id)
-      if (entry === undefined) return Promise.reject(new Error(`session "${id}" not found`))
-      return Promise.resolve({ meta: entry.header, events: entry.events })
+      if (entry === undefined) throw new Error(`session "${id}" not found`)
+      return { header: entry.header, inheritedEventCount: 0,
+        read: async () => ({ events: structuredClone(entry.events) }), close: async () => {} }
     },
+    stat: async (id: SessionId) => stored.has(id) ? { header: stored.get(id)!.header } : undefined,
   } as never)
   ctx.provide('sessionProjectionCache', {
-    coldSnapshot: (id: SessionId, signal?: AbortSignal) => {
-      signal?.throwIfAborted()
-      const entry = stored.get(id)
-      if (entry === undefined) return Promise.reject(new Error(`session "${id}" not found`))
-      return Promise.resolve(ctx.sessionProjections.restore({}, entry.events, 0).snapshot)
+    coldSnapshot: (header: SessionHeader, inherited: number, events: SessionEvent[]) => {
+      return Promise.resolve(ctx.sessionProjections.restore(header, inherited, events).snapshot)
     },
   } as never)
   ctx.provide('workspaceRegistry', {
@@ -363,11 +362,12 @@ async function harness(options: {
     let detachSession: (() => void) | undefined
     let detachAgent: (() => void) | undefined
     try {
-      const commit = await setup?.(agentCtx)
+      const commit = await setup?.(agentCtx, agent)
       commit?.commit()
       detachSession = ctx.sessions.enter(session)
-      detachAgent = ctx.agents.register(agent)
+      detachAgent = ctx.agents.enter(agent, undefined)
       ctx.sessions.announce(session)
+      await ctx.agents.announce(agent)
       const handle: AgentHandle = {
         agent,
         dispose: async () => {
@@ -389,7 +389,7 @@ async function harness(options: {
     createAgent: (ownerCtx: Context, options: CreateAgentOptions) => publish(
       ownerCtx,
       ctx.sessions.prepare(options.sessionId, {
-        ...options.seed === undefined ? {} : { seed: options.seed },
+        ...options.seed === undefined ? {} : { seed: options.seed, inheritedEventCount: options.inheritedEventCount },
         ...options.meta === undefined ? {} : { meta: options.meta },
       }),
       options.setup,
@@ -400,7 +400,7 @@ async function harness(options: {
       return publish(ownerCtx, ctx.sessions.prepare(entry.header.id, {
         seed: structuredClone(entry.events),
         meta: structuredClone(entry.header),
-        seedSource: 'persistence',
+        inheritedEventCount: 0, eventState: 'detached',
       }), options.setup)
     },
   })
@@ -483,11 +483,12 @@ async function harness(options: {
       const sessionId = SessionId(`session-test-fork-${String(++forkSequence)}`)
       await ctx.agents.create({
         sessionId,
-        seed: [...source.events],
+        seed: [...source.snapshotEvents()],
+        inheritedEventCount: source.snapshotEvents().length,
         meta: {
           ...(source.header.cwd === undefined ? {} : { cwd: source.header.cwd }),
           parentSession: source.id,
-          seedLength: source.events.length,
+          isSeeded: true,
         },
       })
       return { sessionId }
@@ -710,8 +711,8 @@ describe('QuantSkills exact-version sessions', () => {
       cwd: fixture.root,
     })
     const agent = fixture.ctx.agents.get(sessionId)!
-    expect(foldQuantSkillsPlainSessionBinding(agent.session.events)).toEqual({ purpose: 'ordinary' })
-    expect(foldQuantSkillsPandaRuntimeBinding(agent.session.events)).toBeNull()
+    expect(foldQuantSkillsPlainSessionBinding(agent.session.snapshotEvents())).toEqual({ purpose: 'ordinary' })
+    expect(foldQuantSkillsPandaRuntimeBinding(agent.session.snapshotEvents())).toBeNull()
     expect(fixture.ctx.tools.get('quantskills_panda_python', agent)).toBeUndefined()
     expect(fixture.ctx.tools.get('quantskills_contest_query', agent)).toBeUndefined()
     expect(fixture.ctx.tools.get('quantskills_contest_prepare', agent)).toBeUndefined()
@@ -745,8 +746,8 @@ describe('QuantSkills exact-version sessions', () => {
       cwd: fixture.root,
     })
     const resumed = fixture.ctx.agents.get(sessionId)!
-    expect(resumed.session.events.filter(event => event.type === 'quantskills/plain-session')).toHaveLength(1)
-    expect(resumed.session.events.filter(event => event.type === 'panda/runtime-bound')).toHaveLength(0)
+    expect(resumed.session.snapshotEvents().filter(event => event.type === 'quantskills/plain-session')).toHaveLength(1)
+    expect(resumed.session.snapshotEvents().filter(event => event.type === 'panda/runtime-bound')).toHaveLength(0)
     expect(fixture.ctx.tools.get('quantskills_panda_python', resumed)).toBeUndefined()
     await fixture.ctx.fiber.dispose()
   })
@@ -772,7 +773,7 @@ describe('QuantSkills exact-version sessions', () => {
     const sessionId = SessionId('contest-session')
     await service.plainSessionCreate({ sessionId, purpose: 'contest', cwd: fixture.root })
     const agent = fixture.ctx.agents.get(sessionId)!
-    expect(foldQuantSkillsPlainSessionBinding(agent.session.events)).toEqual({ purpose: 'contest', contest: identity })
+    expect(foldQuantSkillsPlainSessionBinding(agent.session.snapshotEvents())).toEqual({ purpose: 'contest', contest: identity })
     expect(fixture.ctx.tools.get('quantskills_contest_query', agent)).toBeDefined()
     expect(fixture.ctx.tools.get('quantskills_contest_prepare', agent)).toBeDefined()
     expect(fixture.ctx.tools.get('quantskills_contest_jev_evaluate', agent)).toBeDefined()
@@ -939,8 +940,8 @@ describe('QuantSkills exact-version sessions', () => {
     const sessionId = SessionId('native-session-without-quantskills-owner')
     await fixture.sessionController.create({ sessionId })
     const agent = fixture.ctx.agents.get(sessionId)!
-    expect(foldQuantSkillsPlainSessionBinding(agent.session.events)).toBeNull()
-    expect(foldQuantSkillsPandaRuntimeBinding(agent.session.events)).toBeNull()
+    expect(foldQuantSkillsPlainSessionBinding(agent.session.snapshotEvents())).toBeNull()
+    expect(foldQuantSkillsPandaRuntimeBinding(agent.session.snapshotEvents())).toBeNull()
     expect(fixture.ctx.tools.get('quantskills_panda_python', agent)).toBeUndefined()
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent })))
       .not.toContain('PandaData is the default data source')
@@ -953,21 +954,21 @@ describe('QuantSkills exact-version sessions', () => {
     await mkdir(cwd)
     await fixture.sessionController.create({ sessionId, cwd })
     const agent = fixture.ctx.agents.get(sessionId)!
-    agent.session.append('assistant/message', { turn: 1, step: 1, message: createMessage({
+    agent.session.append('assistant/message', { turn: 1, step: 1, stream: [], message: createMessage({
       role: 'assistant', content: [{ type: 'text', text: '保留已有研究结论与后续任务。' }],
       source: { kind: 'model', provider: 'test', model: 'test' },
     }) }, { surfaceOp: 'append' })
-    const header = structuredClone(agent.session.header), history = [...agent.session.events]
+    const header = structuredClone(agent.session.header), history = [...agent.session.snapshotEvents()]
     await expect(service.promptFormList({ sessionId })).resolves.toEqual({ forms: [] })
-    expect(foldQuantSkillsPlainSessionBinding(agent.session.events)).toBeNull()
+    expect(foldQuantSkillsPlainSessionBinding(agent.session.snapshotEvents())).toBeNull()
     await Promise.all([assetId, secondAssetId, assetId].map(id => service.residentSkillAttach({
       sessionId, versionId: `${id}@${commitV1}` as QuantSkillsInstalledVersionId,
     })))
     expect(fixture.ctx.agents.get(sessionId)).toBe(agent)
     expect(agent.session.header).toEqual(header)
-    expect(agent.session.events.slice(0, history.length)).toEqual(history)
-    expect(agent.session.events.filter(event => event.type === 'quantskills/plain-session')).toHaveLength(1)
-    expect(foldQuantSkillsResidentSkills(agent.session.events).map(binding => binding.assetId)).toEqual([assetId, secondAssetId])
+    expect(agent.session.snapshotEvents().slice(0, history.length)).toEqual(history)
+    expect(agent.session.snapshotEvents().filter(event => event.type === 'quantskills/plain-session')).toHaveLength(1)
+    expect(foldQuantSkillsResidentSkills(agent.session.snapshotEvents()).map(binding => binding.assetId)).toEqual([assetId, secondAssetId])
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain('version one')
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain('beta version')
     expect(fixture.ctx.tools.get('quantskills_contest_prepare', agent)).toBeUndefined()
@@ -976,7 +977,7 @@ describe('QuantSkills exact-version sessions', () => {
     await service.sessionEnsure({ sessionId })
     const resumed = fixture.ctx.agents.get(sessionId)!
     expect(resumed.session.header.cwd).toBe(cwd)
-    expect(resumed.session.events.slice(0, history.length)).toEqual(history)
+    expect(resumed.session.snapshotEvents().slice(0, history.length)).toEqual(history)
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).toContain('version one')
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).toContain('beta version')
     await service.residentSkillDetach({ sessionId, assetId })
@@ -990,7 +991,7 @@ describe('QuantSkills exact-version sessions', () => {
     await expect(fixture.ctx.quantSkillsSessions.residentSkillAttach({
       sessionId, versionId: 'missing@unknown' as QuantSkillsInstalledVersionId,
     })).rejects.toThrow()
-    expect(foldQuantSkillsPlainSessionBinding(fixture.ctx.agents.get(sessionId)!.session.events)).toBeNull()
+    expect(foldQuantSkillsPlainSessionBinding(fixture.ctx.agents.get(sessionId)!.session.snapshotEvents())).toBeNull()
     await fixture.ctx.fiber.dispose()
   })
 
@@ -1001,9 +1002,9 @@ describe('QuantSkills exact-version sessions', () => {
     const child = await fixture.ctx.agents.create({ sessionId: childId, meta: { cwd: fixture.root, parentSession: parentId } })
     await expect(service.residentSkillAttach({ sessionId: childId,
       versionId: `${assetId}@${commitV1}` as QuantSkillsInstalledVersionId })).rejects.toThrow('主会话')
-    expect(foldQuantSkillsPlainSessionBinding(child.agent.session.events)).toBeNull()
-    expect(foldQuantSkillsPlainSessionBinding(fixture.ctx.agents.get(parentId)!.session.events)).toBeNull()
-    expect(foldQuantSkillsResidentSkills(child.agent.session.events)).toEqual([])
+    expect(foldQuantSkillsPlainSessionBinding(child.agent.session.snapshotEvents())).toBeNull()
+    expect(foldQuantSkillsPlainSessionBinding(fixture.ctx.agents.get(parentId)!.session.snapshotEvents())).toBeNull()
+    expect(foldQuantSkillsResidentSkills(child.agent.session.snapshotEvents())).toEqual([])
     await fixture.ctx.fiber.dispose()
   })
 
@@ -1040,17 +1041,17 @@ describe('QuantSkills exact-version sessions', () => {
 
     const firstAgent = fixture.ctx.agents.get(first)!
     const secondAgent = fixture.ctx.agents.get(second)!
-    expect(foldQuantSkillsPandaRuntimeBinding(firstAgent.session.events)).toBeNull()
+    expect(foldQuantSkillsPandaRuntimeBinding(firstAgent.session.snapshotEvents())).toBeNull()
     expect(fixture.ctx.tools.get('quantskills_panda_python', firstAgent)).toBeUndefined()
     await expect(fixture.ctx.skills.get(assetId, { scope: firstAgent })).resolves.toMatchObject({ content: 'version one' })
     await expect(fixture.ctx.skills.get(assetId, { scope: secondAgent })).resolves.toMatchObject({ content: 'version two' })
-    expect(firstAgent.session.events.filter(event => event.type === 'quantskills/session-bound')).toHaveLength(1)
+    expect(firstAgent.session.snapshotEvents().filter(event => event.type === 'quantskills/session-bound')).toHaveLength(1)
 
     await fixture.ctx.quantSkillsSessions.create({
       sessionId: first,
       versionId: `${assetId}@${commitV1}` as QuantSkillsInstalledVersionId,
     })
-    expect(firstAgent.session.events.filter(event => event.type === 'quantskills/session-bound')).toHaveLength(1)
+    expect(firstAgent.session.snapshotEvents().filter(event => event.type === 'quantskills/session-bound')).toHaveLength(1)
     await expect(fixture.ctx.quantSkillsSessions.create({
       sessionId: first,
       versionId: `${assetId}@${commitV2}` as QuantSkillsInstalledVersionId,
@@ -1063,7 +1064,7 @@ describe('QuantSkills exact-version sessions', () => {
     const sessionId = await createBound(fixture, 'session-resident-hot-plug')
     const agent = fixture.ctx.agents.get(sessionId)!
 
-    expect(foldQuantSkillsResidentSkills(agent.session.events).map(binding => binding.assetId)).toEqual([assetId])
+    expect(foldQuantSkillsResidentSkills(agent.session.snapshotEvents()).map(binding => binding.assetId)).toEqual([assetId])
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain('version one')
 
     await Promise.all([
@@ -1076,16 +1077,16 @@ describe('QuantSkills exact-version sessions', () => {
         versionId: `${secondAssetId}@${commitV1}` as QuantSkillsInstalledVersionId,
       }),
     ])
-    expect(foldQuantSkillsResidentSkills(agent.session.events).map(binding => binding.assetId))
+    expect(foldQuantSkillsResidentSkills(agent.session.snapshotEvents()).map(binding => binding.assetId))
       .toEqual([assetId, secondAssetId])
-    expect(agent.session.events.filter(event => event.type === 'quantskills/resident-skill-changed'))
+    expect(agent.session.snapshotEvents().filter(event => event.type === 'quantskills/resident-skill-changed'))
       .toHaveLength(1)
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain('beta version')
     await expect(fixture.ctx.skills.get(secondAssetId, { scope: agent }))
       .resolves.toMatchObject({ content: 'beta version' })
 
     await fixture.ctx.quantSkillsSessions.residentSkillDetach({ sessionId, assetId })
-    expect(foldQuantSkillsResidentSkills(agent.session.events).map(binding => binding.assetId)).toEqual([secondAssetId])
+    expect(foldQuantSkillsResidentSkills(agent.session.snapshotEvents()).map(binding => binding.assetId)).toEqual([secondAssetId])
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).not.toContain('version one')
     await expect(fixture.ctx.skills.get(assetId, { scope: agent })).resolves.toBeUndefined()
 
@@ -1095,7 +1096,7 @@ describe('QuantSkills exact-version sessions', () => {
       versionId: `${assetId}@${commitV1}` as QuantSkillsInstalledVersionId,
     })
     const resumed = fixture.ctx.agents.get(sessionId)!
-    expect(foldQuantSkillsResidentSkills(resumed.session.events).map(binding => binding.assetId)).toEqual([secondAssetId])
+    expect(foldQuantSkillsResidentSkills(resumed.session.snapshotEvents()).map(binding => binding.assetId)).toEqual([secondAssetId])
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).toContain('beta version')
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).not.toContain('version one')
     await fixture.ctx.fiber.dispose()
@@ -1254,9 +1255,9 @@ describe('QuantSkills exact-version sessions', () => {
     const response = await fixture.sessionController.fork({ sessionId: sourceId })
     await fixture.ctx.quantSkillsSessions.sessionEnsure({ sessionId: response.sessionId })
     const child = fixture.ctx.agents.get(response.sessionId)!
-    expect(foldQuantSkillsSessionBinding(child.session.events)?.versionId)
+    expect(foldQuantSkillsSessionBinding(child.session.snapshotEvents())?.versionId)
       .toBe(`${assetId}@${commitV1}`)
-    expect(child.session.events.filter(event => event.type === 'quantskills/session-bound')).toHaveLength(1)
+    expect(child.session.snapshotEvents().filter(event => event.type === 'quantskills/session-bound')).toHaveLength(1)
     await expect(fixture.ctx.skills.get(assetId, { scope: child })).resolves.toMatchObject({ content: 'version one' })
     await fixture.ctx.fiber.dispose()
   })
@@ -1272,7 +1273,7 @@ describe('QuantSkills exact-version sessions', () => {
     })
 
     const child = fixture.ctx.agents.get(response.sessionId)!
-    expect(foldQuantSkillsResidentSkills(child.session.events).map(binding => binding.assetId))
+    expect(foldQuantSkillsResidentSkills(child.session.snapshotEvents()).map(binding => binding.assetId))
       .toEqual([assetId, secondAssetId])
     await expect(fixture.ctx.skills.get(assetId, { scope: child }))
       .resolves.toMatchObject({ content: 'version one' })
@@ -1287,7 +1288,7 @@ describe('QuantSkills exact-version sessions', () => {
     await createBound(fixture, 'session-bound-one')
     await createBound(fixture, 'session-bound-two')
 
-    expect(foldQuantSkillsSessionBinding(fixture.ctx.sessions.get(SessionId('session-ordinary'))!.events)).toBeNull()
+    expect(foldQuantSkillsSessionBinding(fixture.ctx.sessions.get(SessionId('session-ordinary'))!.snapshotEvents())).toBeNull()
     const archives = await fixture.ctx.quantSkillsSessions.list({})
     expect(archives.map(item => item.sessionId).sort()).toEqual([
       SessionId('session-bound-one'),
@@ -1327,7 +1328,7 @@ describe('QuantSkills generic attachments', () => {
       file: { name: 'returns.csv', mediaType: 'text/csv' },
       parsing: { status: 'ready', kind: 'utf8-text' },
     })
-    expect(JSON.stringify(fixture.ctx.sessions.get(sessionId)!.events)).not.toContain(data)
+    expect(JSON.stringify(fixture.ctx.sessions.get(sessionId)!.snapshotEvents())).not.toContain(data)
     await expect(fixture.ctx.quantSkillsSessions.fileList({ sessionId })).resolves.toMatchObject({
       files: [attached],
       limits: fixture.fileLimits,
@@ -2021,8 +2022,8 @@ describe('QuantSkills live-trading approval', () => {
     await expect(execute('call-order-3', 'order-3')).resolves.toMatchObject({ isError: false })
     expect(asked).toEqual(['submit_live_order', 'submit_live_order', 'submit_live_order'])
     expect(fixture.liveOrders).toEqual(['order-1', 'order-3'])
-    expect(agent.session.events.filter(event => event.type === 'approval/asked')).toHaveLength(3)
-    expect(agent.session.events.filter(event => event.type === 'approval/decided')).toHaveLength(3)
+    expect(agent.session.snapshotEvents().filter(event => event.type === 'approval/asked')).toHaveLength(3)
+    expect(agent.session.snapshotEvents().filter(event => event.type === 'approval/decided')).toHaveLength(3)
     await fixture.ctx.fiber.dispose()
   })
 })
@@ -2046,8 +2047,8 @@ describe('QuantSkills user Agents', () => {
     })
 
     const agent = fixture.ctx.agents.get(sessionId)!
-    expect(foldQuantSkillsAgentSession(agent.session.events)).toEqual(definition)
-    expect(foldQuantSkillsPandaRuntimeBinding(agent.session.events)).toBeNull()
+    expect(foldQuantSkillsAgentSession(agent.session.snapshotEvents())).toEqual(definition)
+    expect(foldQuantSkillsPandaRuntimeBinding(agent.session.snapshotEvents())).toBeNull()
     expect(fixture.ctx.tools.get('quantskills_panda_python', agent)).toBeUndefined()
     const prompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
     expect(prompt).toContain('no resident Skill section is present')
@@ -2156,9 +2157,9 @@ describe('QuantSkills user Agents', () => {
     })
 
     const agent = fixture.ctx.agents.get(sessionId)!
-    expect(foldQuantSkillsSessionBinding(agent.session.events)).toBeNull()
-    expect(foldQuantSkillsAgentSession(agent.session.events)).toEqual(definition)
-    expect(agent.session.events.filter(event => event.type === 'quantskills/agent-session')).toHaveLength(1)
+    expect(foldQuantSkillsSessionBinding(agent.session.snapshotEvents())).toBeNull()
+    expect(foldQuantSkillsAgentSession(agent.session.snapshotEvents())).toEqual(definition)
+    expect(agent.session.snapshotEvents().filter(event => event.type === 'quantskills/agent-session')).toHaveLength(1)
     await expect(fixture.ctx.skills.get(assetId, { scope: agent })).resolves.toMatchObject({ content: 'version one' })
     await expect(fixture.ctx.skills.get(secondAssetId, { scope: agent }))
       .resolves.toMatchObject({ content: 'beta version' })
@@ -2220,7 +2221,7 @@ describe('QuantSkills user Agents', () => {
     await fixture.sessionController.create({ sessionId })
     await fixture.ctx.quantSkillsSessions.sessionEnsure({ sessionId })
     const resumed = fixture.ctx.agents.get(sessionId)!
-    expect(foldQuantSkillsAgentSession(resumed.session.events)).toEqual(definition)
+    expect(foldQuantSkillsAgentSession(resumed.session.snapshotEvents())).toEqual(definition)
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).toContain(literalRole)
     await expect(fixture.ctx.skills.get(secondAssetId, { scope: resumed }))
       .resolves.toMatchObject({ content: 'beta version' })
@@ -2253,9 +2254,9 @@ describe('QuantSkills user Agents', () => {
     const response = await fixture.sessionController.fork({ sessionId: sourceId })
     await fixture.ctx.quantSkillsSessions.sessionEnsure({ sessionId: response.sessionId })
     const child = fixture.ctx.agents.get(response.sessionId)!
-    expect(foldQuantSkillsAgentSession(child.session.events)).toEqual(definition)
-    expect(foldQuantSkillsSessionBinding(child.session.events)).toBeNull()
-    expect(child.session.events.filter(event => event.type === 'quantskills/agent-session')).toHaveLength(1)
+    expect(foldQuantSkillsAgentSession(child.session.snapshotEvents())).toEqual(definition)
+    expect(foldQuantSkillsSessionBinding(child.session.snapshotEvents())).toBeNull()
+    expect(child.session.snapshotEvents().filter(event => event.type === 'quantskills/agent-session')).toHaveLength(1)
     await expect(fixture.ctx.skills.get(assetId, { scope: child })).resolves.toMatchObject({ content: 'version one' })
     await expect(fixture.ctx.skills.get(secondAssetId, { scope: child }))
       .resolves.toMatchObject({ content: 'beta version' })
@@ -2297,7 +2298,7 @@ describe('QuantSkills user Agents', () => {
       expectedRevision: definition.revision,
     })
     fixture.ctx.sessions.get(duplicateId)!.append('quantskills/agent-session', definition)
-    expect(() => foldQuantSkillsAgentSession(fixture.ctx.sessions.get(duplicateId)!.events))
+    expect(() => foldQuantSkillsAgentSession(fixture.ctx.sessions.get(duplicateId)!.snapshotEvents()))
       .toThrow('more than one quantskills/agent-session event')
     await fixture.handles.get(duplicateId)!.dispose()
 
@@ -2308,7 +2309,7 @@ describe('QuantSkills user Agents', () => {
       expectedRevision: definition.revision,
     })
     fixture.ctx.sessions.get(mixedId)!.append('quantskills/session-bound', definition.skills[0]!)
-    expect(() => foldQuantSkillsResidentSkills(fixture.ctx.sessions.get(mixedId)!.events))
+    expect(() => foldQuantSkillsResidentSkills(fixture.ctx.sessions.get(mixedId)!.snapshotEvents()))
       .toThrow('must precede resident Skill transitions')
     await fixture.ctx.fiber.dispose()
   })
@@ -2342,7 +2343,7 @@ describe('QuantSkills local authoring', () => {
       cwd: fixture.root,
     })
     const authoringAgent = fixture.ctx.agents.get(sessionId)!
-    expect(foldQuantSkillsPandaRuntimeBinding(authoringAgent.session.events)).toBeNull()
+    expect(foldQuantSkillsPandaRuntimeBinding(authoringAgent.session.snapshotEvents())).toBeNull()
     expect(fixture.ctx.tools.get('quantskills_panda_python', authoringAgent)).toBeUndefined()
     const tool = fixture.ctx.tools.get('quantskills_asset_draft', authoringAgent)
     expect(tool).toBeDefined()
@@ -2357,7 +2358,7 @@ describe('QuantSkills local authoring', () => {
     expect(prepared.isError).toBe(false)
     const text = prepared.content.filter(block => block.type === 'text').map(block => block.text).join('')
     const value = JSON.parse(text) as { draft: { treeDigest: QuantSkillsTreeDigest } }
-    expect(foldQuantSkillsAuthoringCommitted(authoringAgent.session.events)).toEqual([])
+    expect(foldQuantSkillsAuthoringCommitted(authoringAgent.session.snapshotEvents())).toEqual([])
     appendLoggedToolResult(authoringAgent.session, callId, 'quantskills_asset_draft', text)
 
     const committed = await fixture.ctx.quantSkillsSessions.authoringCommit({
@@ -2380,7 +2381,7 @@ describe('QuantSkills local authoring', () => {
       toolCallId: callId,
       expectedTreeDigest: value.draft.treeDigest,
     })).resolves.toEqual(committed)
-    expect(foldQuantSkillsAuthoringCommitted(authoringAgent.session.events)).toHaveLength(1)
+    expect(foldQuantSkillsAuthoringCommitted(authoringAgent.session.snapshotEvents())).toHaveLength(1)
     await fixture.ctx.fiber.dispose()
   })
 
@@ -2423,7 +2424,7 @@ describe('QuantSkills local authoring', () => {
       toolCallId: callId,
       expectedTreeDigest: value.draft.treeDigest,
     })).rejects.toThrow('draft changed')
-    expect(foldQuantSkillsAuthoringCommitted(agent.session.events)).toEqual([])
+    expect(foldQuantSkillsAuthoringCommitted(agent.session.snapshotEvents())).toEqual([])
     await fixture.ctx.fiber.dispose()
   })
 })
@@ -2533,7 +2534,7 @@ describe('QuantSkills Agent Teams', () => {
     })
     const authoringAgent = fixture.ctx.agents.get(authoringSessionId)!
     expect(fixture.ctx.tools.get('quantskills_team_draft', authoringAgent)).toBeDefined()
-    expect(foldQuantSkillsAuthoringStarted(authoringAgent.session.events)).toBe('agent-team')
+    expect(foldQuantSkillsAuthoringStarted(authoringAgent.session.snapshotEvents())).toBe('agent-team')
 
     const createMembers = () => fixture.ctx.tools.execute({
       callId: 'call-create-members' as never, name: 'quantskills_team_draft',
@@ -2626,7 +2627,7 @@ describe('QuantSkills Agent Teams', () => {
       toolCallId: commitCallId,
       expectedTreeDigest: preparedValue.treeDigest,
     })).resolves.toEqual(committed)
-    expect(foldQuantSkillsAuthoringCommitted(authoringAgent.session.events)).toHaveLength(1)
+    expect(foldQuantSkillsAuthoringCommitted(authoringAgent.session.snapshotEvents())).toHaveLength(1)
 
     const ordinarySessionId = SessionId('ordinary-agent-session')
     await fixture.ctx.quantSkillsSessions.agentSessionCreate({
@@ -2826,9 +2827,9 @@ describe('QuantSkills Agent Teams', () => {
       expectedRevision: team.revision,
     })
     const root = fixture.ctx.agents.get(sessionId)!
-    expect(foldQuantSkillsAgentTeamSession(root.session.events)).toEqual(team)
-    expect(foldQuantSkillsAgentTeamMemberSession(root.session.events)).toBeNull()
-    expect(foldQuantSkillsPandaRuntimeBinding(root.session.events)).toBeNull()
+    expect(foldQuantSkillsAgentTeamSession(root.session.snapshotEvents())).toEqual(team)
+    expect(foldQuantSkillsAgentTeamMemberSession(root.session.snapshotEvents())).toBeNull()
+    expect(foldQuantSkillsPandaRuntimeBinding(root.session.snapshotEvents())).toBeNull()
     expect(fixture.ctx.tools.get('quantskills_panda_python', root)).toBeUndefined()
     await expect(fixture.ctx.skills.get(assetId, { scope: root })).resolves.toMatchObject({ content: 'version one' })
     await expect(fixture.ctx.skills.get(secondAssetId, { scope: root })).resolves.toBeUndefined()
@@ -2860,8 +2861,8 @@ describe('QuantSkills Agent Teams', () => {
     expect(fixture.teamSpawnRequests.at(-1)?.agentOptions)
       .toEqual({ provider: 'test', model: 'member-model' })
     const child = fixture.ctx.agents.get(SessionId(result.sessionId))!
-    expect(foldQuantSkillsAgentTeamSession(child.session.events)).toBeNull()
-    expect(foldQuantSkillsAgentTeamMemberSession(child.session.events)).toEqual({
+    expect(foldQuantSkillsAgentTeamSession(child.session.snapshotEvents())).toBeNull()
+    expect(foldQuantSkillsAgentTeamMemberSession(child.session.snapshotEvents())).toEqual({
       teamId: team.teamId,
       teamRevision: team.revision,
       memberName: 'signal-validator',
@@ -2871,7 +2872,7 @@ describe('QuantSkills Agent Teams', () => {
         selection: { provider: 'test', model: 'member-model', reasoningEffort: 'high' },
       },
     })
-    expect(foldQuantSkillsPandaRuntimeBinding(child.session.events)).toBeNull()
+    expect(foldQuantSkillsPandaRuntimeBinding(child.session.snapshotEvents())).toBeNull()
     expect(fixture.ctx.tools.get('quantskills_panda_python', child)).toBeUndefined()
     await expect(fixture.ctx.skills.get(secondAssetId, { scope: child }))
       .resolves.toMatchObject({ content: 'beta version' })
@@ -2907,7 +2908,7 @@ describe('QuantSkills Agent Teams', () => {
       expectedRevision: team.revision,
     })
     const resumed = fixture.ctx.agents.get(sessionId)!
-    expect(foldQuantSkillsAgentTeamSession(resumed.session.events)).toEqual(team)
+    expect(foldQuantSkillsAgentTeamSession(resumed.session.snapshotEvents())).toEqual(team)
     await expect(fixture.ctx.skills.get(assetId, { scope: resumed })).resolves.toMatchObject({ content: 'version one' })
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).toContain(teamDescription)
     await fixture.ctx.fiber.dispose()

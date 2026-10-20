@@ -18,7 +18,7 @@ export function englishJevBody(value: unknown): string {
   return body
 }
 export function translationModels(ctx: Context): JevTranslator[] {
-  const policies = (ctx.get('settings')?.get?.(MODEL_ACCESS_NS) as ModelAccessSettings | undefined)?.connections ?? {}
+  const policies = (ctx.get('settings')?.describe().find(entry => entry.ns === MODEL_ACCESS_NS)?.value as ModelAccessSettings | undefined)?.connections ?? {}
   return Object.entries(policies).flatMap(([provider, policy]) => policy.state === 'verified'
     ? policy.verifiedModels.map(model => ({ provider, model })) : [])
 }

@@ -16,6 +16,8 @@ export declare class ContestCliError extends Error {
     constructor(code: string, message: string, retryAfterSeconds?: number | undefined);
 }
 export declare const transientContestCodes: Set<string>;
+/** Older CLIs wrap gateway HTML errors as bad_response. Keep only the HTTP status. */
+export declare function contestFailureCode(rawCode: unknown, message: unknown): string;
 export declare function record(value: unknown): Record<string, JsonValue>;
 /** Remove credential fields even if upstream adds them to a response. */
 export declare function safeData(value: unknown): JsonValue;

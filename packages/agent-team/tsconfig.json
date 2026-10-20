@@ -5,6 +5,7 @@
     "outDir": "lib/types"
   },
   "include": [
-    "src"
+    "src/index.ts",
+    "src/legacy-mailbox.ts"
   ]
 }

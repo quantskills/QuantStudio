@@ -320,7 +320,7 @@ let PandaConnector = (() => {
                         workdir: request.workdir,
                         account: credential.account,
                         password: credential.password,
-                    }, argv => this.confineExecution(argv, request.workspaceRoot, request.sessionId).wrapped, this.operationSignal(signal));
+                    }, async (argv) => (await this.confineExecution(argv, request.workspaceRoot, request.sessionId)).wrapped, this.operationSignal(signal));
                 }
                 catch (error) {
                     if (error instanceof PandaWorkerError)
@@ -577,8 +577,8 @@ let PandaConnector = (() => {
                 return code;
             }
         }
-        confineExecution(argv, workspaceRoot, sessionId) {
-            const confined = this.ctx.sandbox.confine(argv, {
+        async confineExecution(argv, workspaceRoot, sessionId) {
+            const confined = await this.ctx.sandbox.confine(argv, {
                 mode: 'workspace-write',
                 workspaceRoot,
                 ...(sessionId === undefined ? {} : { sessionId }),
@@ -603,7 +603,7 @@ let PandaConnector = (() => {
                 probeRoot = createdProbeRoot;
                 const scriptPath = join(createdProbeRoot, 'panda_execution_probe.py');
                 await copyFile(EXECUTION_PROBE_SOURCE, scriptPath);
-                const preparedConfinement = this.confineExecution(this.worker.executionArgv(environment.root), createdProbeRoot, undefined);
+                const preparedConfinement = await this.confineExecution(this.worker.executionArgv(environment.root), createdProbeRoot, undefined);
                 confinement = preparedConfinement;
                 const cached = this.findExecutionEvidence(environment, preparedConfinement.backend);
                 if (cached !== undefined) {

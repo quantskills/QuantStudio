@@ -15,7 +15,7 @@ async function fixture(output = '["Only trade RB2610, no more than 1 lot.","Clos
   const root = await mkdtemp(join(tmpdir(), 'jev-english-')); roots.push(root)
   const policy = { service: 'custom', auto: false, state: 'verified', verifiedModels: [route.model] }
   const stream = vi.fn(async function* () { yield { type: 'text-delta', text: output }; yield { type: 'finish', reason: { kind: 'stop' } } })
-  const ctx = { get: (name: string) => name === 'settings' ? { get: () => ({ connections: { [route.provider]: policy } }) } : { describe: async () => ({ configured: true, writable: true }), resolve: async () => ({ value: 'test-secret' }) }, llm: { stream } } as unknown as Context
+  const ctx = { get: (name: string) => name === 'settings' ? { describe: () => [{ ns: 'quantskills-model-services', value: { connections: { [route.provider]: policy } } }] } : { describe: async () => ({ configured: true, writable: true }), resolve: async () => ({ value: 'test-secret' }) }, llm: { stream } } as unknown as Context
   return { root, ctx, stream, policy }
 }
 describe('English-only Jev input', () => {

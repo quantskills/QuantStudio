@@ -1,0 +1,38 @@
+diff --git a/lib/index.js b/lib/index.js
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -262,6 +262,15 @@
+ 	* @param session - the live session to checkpoint.
+ 	* @returns resolution after durability and event emission.
+ 	*/
++
++	deletedSessions = new Set();
++	async deleteSession(id) {
++		this.deletedSessions.add(id);
++		for (const session of this.dirty.keys()) {
++			if (session.id === id) { this.markClean(session); this.dirty.delete(session); }
++		}
++		await this.requireTable().delete(id);
++	}
+ 	async write(session) {
+ 		const rows = this.ctx.sessionProjections.checkpoint(session);
+ 		this.markClean(session);
+@@ -346,6 +355,7 @@
+ 	}
+ 	/** Replace one session's stored record with its log identity and a detached snapshot of `rows`. */
+ 	async put(id, identity, rows) {
++		if (this.deletedSessions.has(id)) return;
+ 		const detached = snapshotJsonValue(rows);
+ 		if (detached === void 0) throw new TypeError("projection checkpoint is not losslessly JSON-serializable (a unit state violates the plain-JSON contract)");
+ 		await this.requireTable().put(id, {
+diff --git a/lib/types/index.d.ts b/lib/types/index.d.ts
+--- a/lib/types/index.d.ts
++++ b/lib/types/index.d.ts
+@@ -135,6 +135,7 @@
+      * @param session - the live session to checkpoint.
+      * @returns resolution after durability and event emission.
+      */
++    deleteSession(id: SessionId): Promise<void>;
+     write(session: Session): Promise<void>;
+     /**
+      * Cold-read one session's projections from its complete log. Each unit is

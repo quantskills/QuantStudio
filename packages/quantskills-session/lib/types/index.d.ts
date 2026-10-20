@@ -1,4 +1,4 @@
-/** Exact-version QuantSkills session composition and log-backed archive remotes. */
+import { type LegacyTeamRecoveryRequest, type LegacyTeamRecoveryResult } from './legacy-team-recovery.ts';
 import type { SessionLifecycleRequest, SessionDeletionPreview, ArchivedConversation } from './types.ts';
 import type { FlyRequest, FlyRuntimeStatus } from './fly-runtime.ts';
 import type { ContestJevSettings, ContestJevUsage, ContestWatchConfig, ContestWatchDataset, ContestWatchTemplate, ContestWatchStatus } from './contest-watch-types.ts';
@@ -60,6 +60,8 @@ declare module '@deepseek-ai/dsh-session/types' {
 export interface Config {
     /** Harness home override. */
     readonly dshHome?: string;
+    /** Optional deployment override for the managed Documents workspace root. */
+    readonly documentsDirectory?: string;
     /** Maximum UTF-8 bytes exposed by the built-in attachment reader. */
     readonly maxTextAttachmentBytes?: number;
     /** Maximum PDF or Office source bytes admitted to the built-in parser. */
@@ -200,6 +202,8 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     static inject: string[];
     static Config: s<Config>;
     private readonly libraryStore;
+    /** Local startup barrier; not exposed through the client remote API. */
+    whenLifecycleReady(): Promise<void>;
     private readonly sessionLifecycle;
     private readonly modelAccess;
     /** Manage model providers through the Host settings and credential services. */
@@ -228,6 +232,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private readonly teamFreshProvider;
     private readonly teamForkProvider;
     private readonly workspaceResolver;
+    private readonly legacyTeamRecoveryDirectory;
     private readonly contest;
     private readonly fly;
     private readonly contestWatcher;
@@ -244,6 +249,8 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
      * @returns current Workspace targets and preference health.
      */
     workspaceStatus(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceStatusResult>;
+    /** Audit or explicitly continue historical messages; opening a Session never replays them. */
+    legacyTeamRecovery(request: LegacyTeamRecoveryRequest, signal: AbortSignal): Promise<LegacyTeamRecoveryResult>;
     /**
      * Select the preferred Workspace or create and register the managed fallback.
      * @param request - optional user-selected Workspace.

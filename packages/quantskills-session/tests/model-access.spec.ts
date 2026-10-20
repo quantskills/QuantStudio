@@ -17,7 +17,7 @@ function harness(response: () => Promise<Response> = async () => Response.json({
   } })
   const ctx: any = {
     inject: (_: unknown, cb: any) => cb(ctx),
-    settings: { register: vi.fn(), get: (ns: string) => docs[ns], mutate },
+    settings: { register: vi.fn(), describe: () => Object.entries(docs).map(([ns,value]) => ({ ns, value })), mutate },
     credentials: { describe: async (ref: string) => ({ configured: secrets.has(ref) }), resolve: async (ref: string) => ({ value: secrets.get(ref) }),
       set: async (ref: string, value: string) => { secrets.set(ref, value) }, unset: async (ref: string) => { secrets.delete(ref) } },
     llm: { listModels: async () => [], stream: async function* () { yield { type: 'text-delta', text: 'OK' } } },

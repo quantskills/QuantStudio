@@ -1,4 +1,5 @@
 import { isIP } from 'node:net'
+import type { HostConnectionHandle } from '@deepseek-ai/dsh-client-connection'
 
 interface BrowserRequest {
   readonly headers: Headers | Readonly<Record<string, string | readonly string[] | undefined>>
@@ -14,6 +15,8 @@ interface BrowserResponse {
 
 /** Public Connection boundary; no dependency on its private credentials or token. */
 export interface LocalBrowserConnection {
+  admit?: HostConnectionHandle['admit']
+  createPeer?: HostConnectionHandle['createPeer']
   requestRejection(request: BrowserRequest): 401 | 403 | undefined
   authorizeIndex(request: BrowserRequest, response: BrowserResponse): boolean
   authenticatedUrl(baseUrl: string): string
@@ -57,11 +60,23 @@ export function installLocalBrowserAccess(connection: LocalBrowserConnection): (
     requestRejection: Object.getOwnPropertyDescriptor(connection, 'requestRejection'),
     authorizeIndex: Object.getOwnPropertyDescriptor(connection, 'authorizeIndex'),
     authenticatedUrl: Object.getOwnPropertyDescriptor(connection, 'authenticatedUrl'),
+    admit: Object.getOwnPropertyDescriptor(connection, 'admit'),
   }
   const originalRejection = connection.requestRejection
   const originalIndex = connection.authorizeIndex
   const originalUrl = connection.authenticatedUrl
+  const originalAdmit = connection.admit
+  // New DSH transports authorize through Peer admission, not requestRejection alone.
+  const localPeer = connection.createPeer?.({ principal: { kind: 'owner' }, interactions: 'answer' })
   const replacements: LocalBrowserConnection = {
+    ...(originalAdmit && localPeer ? {
+      admit: ((request) => {
+        const result = originalAdmit.call(connection, request)
+        if ('rejection' in result && result.rejection === 401 && !localPeer.signal.aborted
+          && isDirectLocalBrowserRequest(request)) return { peer: localPeer }
+        return result
+      }) as HostConnectionHandle['admit'],
+    } : {}),
     requestRejection(request) {
       const rejection = originalRejection.call(connection, request)
       return rejection === 401 && isDirectLocalBrowserRequest(request) ? undefined : rejection
@@ -101,9 +116,10 @@ export function installLocalBrowserAccess(connection: LocalBrowserConnection): (
     Object.defineProperty(connection, key, { configurable: true, writable: true, value: replacements[key] })
   }
   return () => {
+    void localPeer?.dispose()
     for (const key of Object.keys(replacements) as (keyof LocalBrowserConnection)[]) {
       if (Object.getOwnPropertyDescriptor(connection, key)?.value !== replacements[key]) continue
-      const descriptor = prior[key]
+      const descriptor = prior[key as keyof typeof prior]
       if (descriptor) Object.defineProperty(connection, key, descriptor)
       else Reflect.deleteProperty(connection, key)
     }

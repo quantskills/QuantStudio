@@ -6,7 +6,7 @@ const digest = 'sha256:' + 'a'.repeat(64)
 const started = (kind: string) => ({ type: 'quantskills/authoring-started', data: { kind } }) as SessionEvent
 const call = (name: string, callId = 'draft') => ({ type: 'tool/call', data: { name, callId } }) as SessionEvent
 const output = (value: unknown, callId = 'draft', isError = false) => ({ type: 'tool/result', data: { message: {
-  content: [{ toolCallId: callId, isError, content: [{ type: 'text', text: JSON.stringify(value) }] }],
+  toolCallId: callId, isError, content: [{ type: 'text', text: JSON.stringify(value) }],
 } } }) as SessionEvent
 const asset = (kind: 'skill' | 'agent') => ({ kind: 'draft', draft: {
   assetId: kind + '-research', assetKind: kind, declaration: kind === 'skill' ? 'SKILL.md' : 'AGENTS.md',

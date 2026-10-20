@@ -1,0 +1,44 @@
+diff --git a/lib/index.js b/lib/index.js
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -1009,7 +1009,7 @@
+ 		const root = membership.root;
+ 		const name = this.memberName(request.name);
+ 		const description = requiredText(request.description, "description", 200);
+-		const childId = brandString(randomUUID());
++		const childId = request.childId ?? brandString(randomUUID());
+ 		const member = {
+ 			id: childId,
+ 			name,
+@@ -1020,6 +1020,10 @@
+ 		};
+ 		await this.journal.transact(root.id, async () => {
+ 			const state = this.journal.state(root);
++			if (request.childId !== undefined && (childId === root.id || state.members.some(member => member.id === childId)
++				|| this.ctx.agents.get(childId) !== undefined || this.ctx.sessions.get(childId) !== undefined
++				|| (await this.ctx.sessionPersistence.list({signal})).some(entry => entry.header.id === childId)))
++				throw new TeamError("reserved teammate identity already exists", "TEAM_MEMBER_ID_TAKEN");
+ 			if (state.members.some((member) => member.name === name)) throw new TeamError(`teammate name "${name}" was already used in this Team`, "TEAM_MEMBER_NAME_TAKEN");
+ 			if (state.members.length >= this.maxMembers) throw new TeamError(`Team member limit ${this.maxMembers} reached`, "TEAM_MEMBER_LIMIT");
+ 			await this.journal.appendAndFlush(root, "team/member", {
+@@ -1036,6 +1040,7 @@
+ 				label: description,
+ 				request: {
+ 					prompt: request.prompt,
++					...(request.agentOptions === undefined ? {} : {agentOptions: request.agentOptions}),
+ 					parent: root
+ 				},
+ 				signal
+diff --git a/lib/types/types.d.ts b/lib/types/types.d.ts
+--- a/lib/types/types.d.ts
++++ b/lib/types/types.d.ts
+@@ -136,6 +136,9 @@
+ }
+ /** Input for creating one durable teammate. */
+ export interface SpawnTeammateRequest {
++    /** QS host reservation identity; model-facing tools cannot provide it. */
++    readonly childId?: import('@deepseek-ai/dsh-session').SessionId;
++    readonly agentOptions?: import('@deepseek-ai/dsh-agent').AgentOptions;
+     readonly name: string;
+     readonly description: string;
+     readonly prompt: ContentBlock[];

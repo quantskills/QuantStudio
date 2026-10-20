@@ -137,10 +137,10 @@ describe('fly contest bridge', () => {
     const f = await fixture(), route = { provider: 'my-provider', model: 'my-model' }
     const stream = vi.fn(async function* () { yield { type: 'text-delta', text: 'ready' } })
     Object.assign(f.ctx, { llm: { stream } })
-    f.ctx.get.mockImplementation(key => key === 'settings' ? { get: () => ({ connections: {
+    f.ctx.get.mockImplementation(key => key === 'settings' ? { describe: () => [{ ns: 'quantskills-model-services', value: { connections: {
       'my-provider': { state: 'verified', verifiedModels: ['my-model'] },
       'pending-provider': { state: 'saved', verifiedModels: ['pending-model'] },
-    } }) } : key === 'credentials' ? { describe: async () => ({ configured: true }) } : undefined)
+    } } }] } : key === 'credentials' ? { describe: async () => ({ configured: true }) } : undefined)
     expect(await f.call('models', {})).toMatchObject({ profiles: [{ provider_id: JSON.stringify(route), label: 'my-provider / my-model' }], jev_configured: true })
     expect(await f.call('language', { route: JSON.stringify(route), system: 'Test', payload: {} })).toEqual({ text: 'ready' })
     expect(stream).toHaveBeenCalledWith(expect.objectContaining(route))
@@ -163,7 +163,7 @@ describe('fly contest bridge', () => {
 
   it('preserves a terminal model failure instead of turning every error into configuration failure', async () => {
     const f = await fixture(), route = { provider: 'verified', model: 'model' }
-    f.ctx.get.mockReturnValue({ get: () => ({ connections: { verified: { state: 'verified', verifiedModels: ['model'] } } }) })
+    f.ctx.get.mockReturnValue({ describe: () => [{ ns: 'quantskills-model-services', value: { connections: { verified: { state: 'verified', verifiedModels: ['model'] } } } }] })
     Object.assign(f.ctx, { llm: { stream: async function* () {
       yield { type: 'finish', reason: { kind: 'error', failure: { code: 'timeout', message: 'private endpoint secret' } } }
     } } })
