@@ -16,12 +16,18 @@ it('collects background CLI output and cancels its process tree without opening 
       cwd: process.cwd(), signal: AbortSignal.timeout(10_000), graceMs: 100,
       stdio: { stdin: 'ignore', stdout: { maxBytes: 1024 }, stderr: { maxBytes: 1024 } } })
     let ids: { parent: number; child: number } | undefined
+    let outcome = 'running'
+    void handle.done.then(result => { outcome = JSON.stringify(result) }, () => { outcome = 'provider rejected launch' })
     try {
       await vi.waitFor(() => {
         const output = handle.collected.stdout?.readFrom(0)?.text ?? ''
         // A real child may take longer than Vitest's default 1 s under CI load.
         // Wait for its complete line before parsing a possibly partial pipe chunk.
-        expect(output.endsWith('\n')).toBe(true)
+        if (!output.endsWith('\n')) {
+          const stderr = handle.collected.stderr?.readFrom(0)?.text ?? ''
+          // This fixed fixture has no user input or credentials; never log spawn options/env.
+          throw new Error(`Native fixture not ready (${outcome}); stderr=${stderr.slice(-1024)}`)
+        }
         ids = JSON.parse(output)
         expect(ids?.child).toBeGreaterThan(0)
       }, { timeout: 5000 })
