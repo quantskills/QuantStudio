@@ -14,7 +14,7 @@ afterEach(async () => {
   }
 })
 
-async function fixture() {
+async function fixture(ownedComponent = false) {
   const home = await mkdtemp(join(tmpdir(), 'qs-manager-policy-'))
   const cleanup: { home: string; ctx?: Context } = { home }
   fixtures.push(cleanup)
@@ -25,7 +25,9 @@ async function fixture() {
     const root = join(dir, 'node_modules', name)
     await mkdir(root, { recursive: true })
     await writeFile(join(root, 'package.json'), JSON.stringify({ name, version: '1.0.0', dsh: { bundle: { patch: './cordis.patch.yml' } } }))
-    await writeFile(join(root, 'cordis.patch.yml'), JSON.stringify([{ insert: name === 'manager' ? [{ id: 'manager', name: 'cordis:manager' }] : [] }]))
+    const rows = name === 'manager' ? [{ id: 'manager', name: 'cordis:manager' }]
+      : name === '@quantskills/dsh-plugin' && ownedComponent ? [{ id: 'owned-service', name: 'cordis:owned' }] : []
+    await writeFile(join(root, 'cordis.patch.yml'), JSON.stringify([{ insert: rows }]))
   }
   const manifestPath = join(dir, 'package.json')
   const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
@@ -39,6 +41,7 @@ async function fixture() {
     cleanup.ctx = ctx
     ctx.provide('profileContext', profile)
     ctx.loader.builtins.manager = PluginManager
+    ctx.loader.builtins.owned = { apply() {} }
   })
   return { manager: ctx.pluginManager, manifestPath }
 }
@@ -52,6 +55,15 @@ it('keeps the QS application bundle read-only even when its patch is empty', asy
   expect(await manager.removeBundle('@quantskills/dsh-plugin')).toMatchObject({ application: 'failed', changed: false })
   expect(await readFile(manifestPath, 'utf8')).toBe(before)
   expect(await manager.setBundleEnabled('user-addon', false)).toMatchObject({ changed: true })
+})
+
+it('also protects upstream services mounted by the application bundle', async () => {
+  const { manager, manifestPath } = await fixture(true)
+  const before = await readFile(manifestPath, 'utf8')
+  const row = (await manager.listPlugins()).find(item => item.moduleName === 'cordis:owned')!
+  expect(row).toMatchObject({ readOnlyReason: 'management-required' })
+  expect(await manager.setPluginEnabled(row.entryId, false)).toMatchObject({ application: 'failed', changed: false })
+  expect(await readFile(manifestPath, 'utf8')).toBe(before)
 })
 
 it('refuses direct application/core replacement before any package manager runs', async () => {
