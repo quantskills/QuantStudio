@@ -18,9 +18,13 @@ it('collects background CLI output and cancels its process tree without opening 
     let ids: { parent: number; child: number } | undefined
     try {
       await vi.waitFor(() => {
-        ids = JSON.parse(handle.collected.stdout?.readFrom(0)?.text ?? '')
+        const output = handle.collected.stdout?.readFrom(0)?.text ?? ''
+        // A real child may take longer than Vitest's default 1 s under CI load.
+        // Wait for its complete line before parsing a possibly partial pipe chunk.
+        expect(output.endsWith('\n')).toBe(true)
+        ids = JSON.parse(output)
         expect(ids?.child).toBeGreaterThan(0)
-      })
+      }, { timeout: 5000 })
       // windowsHide is Windows-only; assert the scalar so a failure cannot dump env.
       if (process.platform === 'win32') expect(vi.mocked(spawn).mock.calls.at(-1)?.[2]?.windowsHide).toBe(true)
     } finally {
@@ -39,4 +43,4 @@ it('collects background CLI output and cancels its process tree without opening 
       }
     }, { timeout: 5000 })
   } finally { await ctx.fiber.dispose(); vi.restoreAllMocks(); syncBuiltinESMExports() }
-})
+}, 20_000)

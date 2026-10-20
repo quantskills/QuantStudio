@@ -8,7 +8,10 @@ it.skipIf(process.platform === 'win32')('terminates the isolated launcher group 
   const child = spawn(process.execPath, ['-e', script], { detached: true, stdio: ['ignore', 'pipe', 'pipe'] })
   let output = ''; child.stdout.on('data', data => { output += data })
   try {
-    await vi.waitFor(() => expect(Number(output.trim())).toBeGreaterThan(0))
+    await vi.waitFor(() => {
+      expect(output.endsWith('\n')).toBe(true)
+      expect(Number(output.trim())).toBeGreaterThan(0)
+    }, { timeout: 5000 })
     const descendant = Number(output.trim())
     await stopSmokeProcess(child)
     await vi.waitFor(async () => {
@@ -20,4 +23,4 @@ it.skipIf(process.platform === 'win32')('terminates the isolated launcher group 
       expect(alive).toBe(false)
     }, { timeout: 5000 })
   } finally { await stopSmokeProcess(child) }
-})
+}, 20_000)
