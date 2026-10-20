@@ -1846,9 +1846,10 @@ export function mountQuantSkillsApplication(ctx, options) {
             renderPluginMarket: () => {
                 const entry = ctx.slots.entriesOfSlot('settings.section').find(item => item.options.id === 'market');
                 const manager = ctx.slots.entriesOfSlot('main').some(item => item.options.key === 'plugins');
+                const stockLayout = ctx.get('layout');
                 return createElement(PluginSettings, {
-                    openManager: manager ? () => {
-                        ctx.layout.selectPanel('plugins');
+                    openManager: manager && stockLayout ? () => {
+                        stockLayout.selectPanel('plugins');
                         viewActions.closePlugin();
                     } : undefined,
                     community: entry && !entry.children && !entry.store
