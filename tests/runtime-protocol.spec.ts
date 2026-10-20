@@ -61,6 +61,15 @@ describe('core migration activation boundary', () => {
     await writeFile(migrationPath(home), '{')
     await expect(assertRollbackSafe(home)).rejects.toThrow()
   })
+  it('cannot reuse an offline conversion report as permission to start or roll back a home', async () => {
+    const home = await temp()
+    for (const extra of [{ runnable: false }, { kind: 'offline-session-copy' }]) {
+      await writeAtomic(migrationPath(home), { ...migration, oldReadable: 'yes', ...extra })
+      await expect(assertMigrationReady(home, expected.runtime)).rejects.toThrow(/offline/)
+      await expect(assertRollbackSafe(home)).rejects.toThrow(/rollback stopped/)
+    }
+    expect(() => parseMigration({ ...migration, runnable: 'true' })).toThrow()
+  })
   it.each(['nonce', 'commit', 'runtime', 'generation', 'artifact'])('rejects a mismatched %s even with an HTTP healthy page', key => {
     expect(() => validateReady({ ...ready, [key]: 'wrong' }, expected)).toThrow(/mismatch/)
   })

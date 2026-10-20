@@ -65,7 +65,8 @@ export function parseMigration(value) {
   if (!value || value.schemaVersion !== 1 || !['prepared', 'migrating', 'validated', 'failed'].includes(value.phase)
     || typeof value.sourceRuntime !== 'string' || typeof value.targetRuntime !== 'string'
     || typeof value.generation !== 'string' || !value.generation || typeof value.backupId !== 'string' || !value.backupId
-    || !['yes', 'no', 'unknown'].includes(value.oldReadable)) throw new Error('Unsupported or corrupt migration record; startup stopped.')
+    || !['yes', 'no', 'unknown'].includes(value.oldReadable)
+    || (value.runnable !== undefined && typeof value.runnable !== 'boolean')) throw new Error('Unsupported or corrupt migration record; startup stopped.')
   return value
 }
 
@@ -80,6 +81,9 @@ export async function assertMigrationReady(home, runtime) {
     if (runtime === TARGET_DSH) throw new Error('Migration validation is required before starting the candidate core.')
     return
   }
+  if (migration.runnable === false || migration.kind === 'offline-session-copy') {
+    throw new Error('An offline session report cannot authorize a runnable data home; startup stopped.')
+  }
   if (migration.phase !== 'validated') throw new Error(`Migration ${migration.phase}; automatic startup and rollback stopped.`)
   if (migration.targetRuntime !== runtime && (migration.sourceRuntime !== runtime || migration.oldReadable !== 'yes')) {
     throw new Error('This data generation is not verified readable by the selected core; rollback stopped.')
@@ -89,7 +93,7 @@ export async function assertMigrationReady(home, runtime) {
 
 export async function assertRollbackSafe(home) {
   const migration = await readMigration(home)
-  if (migration && (migration.phase !== 'validated' || migration.oldReadable !== 'yes')) {
+  if (migration && (migration.runnable === false || migration.kind === 'offline-session-copy' || migration.phase !== 'validated' || migration.oldReadable !== 'yes')) {
     throw new Error('Data compatibility is unknown or incompatible; automatic rollback stopped. Preserve new data before restoring a snapshot.')
   }
 }
