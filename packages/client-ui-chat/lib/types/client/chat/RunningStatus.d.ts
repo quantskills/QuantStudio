@@ -1,6 +1,6 @@
 import type { PropsRenderSlots } from '@deepseek-ai/dsh-client-ui-slots';
 import type { ChatViewSlotProps } from '../contract/slots.ts';
-interface RunningStatusProps extends PropsRenderSlots<'conversation.chat.turnStatus'> {
+interface RunningStatusProps extends Partial<PropsRenderSlots<'conversation.chat.turnStatus'>> {
     readonly startTime: number | undefined;
     readonly t: ChatViewSlotProps['t'];
 }

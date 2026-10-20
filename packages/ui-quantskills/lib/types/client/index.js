@@ -1842,9 +1842,7 @@ export function mountQuantSkillsApplication(ctx, options) {
             applicationUpdateStart: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStart()),
             // Open the native manager through its public panel navigation. Do not
             // transplant its component: its store and nested slots belong to that panel.
-            // Keep the old market slot while provenance migration is still incomplete.
             renderPluginMarket: () => {
-                const entry = ctx.slots.entriesOfSlot('settings.section').find(item => item.options.id === 'market');
                 const manager = ctx.slots.entriesOfSlot('main').some(item => item.options.key === 'plugins');
                 const stockLayout = ctx.get('layout');
                 return createElement(PluginSettings, {
@@ -1852,9 +1850,6 @@ export function mountQuantSkillsApplication(ctx, options) {
                         stockLayout.selectPanel('plugins');
                         viewActions.closePlugin();
                     } : undefined,
-                    community: entry && !entry.children && !entry.store
-                        ? createElement(entry.component, { close: () => view.actions.navigate('home') })
-                        : undefined,
                 });
             },
             databaseAccess: {

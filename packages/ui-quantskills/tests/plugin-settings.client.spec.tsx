@@ -5,17 +5,17 @@ import { PluginSettings } from '../src/client/PluginSettings.tsx'
 
 afterEach(cleanup)
 
-it('keeps official management accessible when the legacy community section is unavailable', () => {
+it('routes community discovery and modifications to the official manager', () => {
   const open = vi.fn()
   render(<PluginSettings openManager={open} />)
   fireEvent.click(screen.getByRole('button', { name: '打开插件管理' }))
   expect(open).toHaveBeenCalledOnce()
-  expect(screen.getByRole('status').textContent).toContain('已安装的插件与配置保持不变')
+  expect(screen.getByRole('region', { name: '社区市场' }).textContent).toContain('来源与配置会保留')
+  expect(screen.getByRole('region', { name: '社区市场' }).textContent).toContain('统一由插件管理器处理')
 })
 
-it('preserves a loaded community section and reports a failed native navigation', () => {
-  render(<PluginSettings openManager={() => { throw new Error('panel unloaded') }} community={<p>Community catalog</p>} />)
-  expect(screen.getByText('Community catalog')).toBeTruthy()
+it('reports a failed native navigation without exposing a second installer', () => {
+  render(<PluginSettings openManager={() => { throw new Error('panel unloaded') }} />)
   fireEvent.click(screen.getByRole('button', { name: '打开插件管理' }))
   expect(screen.getByRole('alert').textContent).toContain('暂时无法打开')
 })

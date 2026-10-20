@@ -1,7 +1,8 @@
 /** Strict per-session header/body content inserted into the resident conversation layout. */
 
-import { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import clsx from 'clsx'
 import type { SessionListState, SessionSummary } from '@deepseek-ai/dsh-api-session-controller/client'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import type {
@@ -58,28 +59,57 @@ function equalBreadcrumbs(left: readonly Breadcrumb[], right: readonly Breadcrum
  */
 export function ConversationSessionHeader({
   sessionId, hideChrome, useSessions, useConversationViews, useStore,
-  selectView, renderSlot, t,
+  selectView, renderSlot, open, t,
 }: ConversationSessionHeaderProps) {
   const tabs = useConversationViews(value => value)
   const selectedId = useStore(s => s.view)
   const active = resolveActiveView(tabs, selectedId)
   const ancestry = useSessions(s => deriveAncestry(s, sessionId), equalBreadcrumbs)
   const [seat, setSeat] = useState<HTMLElement | null>(null)
+  const seatRef = useRef<HTMLElement | null>(null)
+  const header = useRef<HTMLElement>(null)
   useLayoutEffect(() => {
-    const next = document.querySelector('[data-composer-subagents]')
-    setSeat(current => current === next ? current : next instanceof HTMLElement ? next : null)
-  })
+    const scope = header.current?.closest('[data-conversation-surface]')
+    if (scope === undefined || scope === null) { seatRef.current = null; setSeat(null); return }
+    const sync = () => {
+      const next = [...scope.querySelectorAll<HTMLElement>('[data-composer-subagents]')]
+        .find(element => element.dataset.composerSubagents === sessionId) ?? null
+      // Avoid publishing unchanged state from our own portal DOM mutations.
+      if (seatRef.current !== next) { seatRef.current = next; setSeat(next) }
+    }
+    sync()
+    const observer = new MutationObserver(sync)
+    observer.observe(scope, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-composer-subagents'] })
+    return () => { observer.disconnect() }
+  }, [sessionId])
   const current = ancestry.at(-1)
-  const lineage = hideChrome || current === undefined ? null : renderSlot(
+  const lineage = hideChrome || current === undefined ? null : current.subagent ? (
+    <nav className={css.crumbs} aria-label={t('session.hierarchy')}>
+      {ancestry.map((summary, index) => {
+        const last = index === ancestry.length - 1
+        const title = last
+          ? <span className={clsx(css.crumb, css.crumbSubagent, css.crumbCurrent)}>{summary.displayTitle}</span>
+          : <button type="button" className={clsx(css.crumb, summary.subagent && css.crumbSubagent)}
+              onClick={() => { open(summary.id) }}>{summary.displayTitle}</button>
+        return <span key={summary.id} className={css.crumbSeg}>
+          {index > 0 && <span className={css.crumbSep}>/</span>}
+          {summary.subagent ? renderSlot('conversation.session.header.lineage', {
+            lineageSessionId: summary.id, displayTitle: summary.displayTitle,
+            ...last ? {} : { openTitle: () => { open(summary.id) } },
+          }, { fallback: title }) : title}
+        </span>
+      })}
+    </nav>
+  ) : renderSlot(
     'conversation.session.header.lineage',
     { lineageSessionId: current.id, displayTitle: current.displayTitle },
     { fallback: null },
   )
   return (
     <>
-      <header data-conversation-header hidden />
+      <header ref={header} data-conversation-header hidden />
       {!hideChrome && <div data-conversation-controls className={css.sessionControls}>
-        {tabs.length > 1 && <div className={css.sessionViews} role="tablist" aria-label={t('session.views')}>
+        {tabs.length > 1 && <div className={css.sessionViews} role="tablist" data-conversation-tabs="" aria-label={t('session.views')}>
           {tabs.map(viewTab => <button
             key={viewTab.id}
             type="button"
@@ -93,7 +123,11 @@ export function ConversationSessionHeader({
           {renderSlot('conversation.session.header.actions', {})}
           {renderSlot('conversation.session.header.utilities', {})}
           {renderSlot('conversation.session.header.corner', {})}
+          {seat === null ? lineage : null}
         </div>
+      </div>}
+      {hideChrome && <div className={css.sessionActions} data-conversation-header-corner="">
+        {renderSlot('conversation.session.header.corner', {})}
       </div>}
       {seat !== null && lineage !== null ? createPortal(lineage, seat) : null}
     </>

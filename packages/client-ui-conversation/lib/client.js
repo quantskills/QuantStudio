@@ -17553,6 +17553,7 @@ window.__ModuleLoader__.load({
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: ConversationRoot_module_css_default.root,
 				"data-phase": phase,
+				"data-conversation-surface": true,
 				children: [renderSlot("conversation.header", {}), renderFactorySlot("conversation.content", {
 					variant: "main",
 					phase,
@@ -18002,22 +18003,77 @@ window.__ModuleLoader__.load({
 		* @param props - Strict Session store, view ledger, navigation, render, and locale shares.
 		* @returns Session navigation controls, with title and tabs after conversation starts.
 		*/
-		function ConversationSessionHeader({ sessionId, hideChrome, useSessions, useConversationViews, useStore, selectView, renderSlot, t }) {
+		function ConversationSessionHeader({ sessionId, hideChrome, useSessions, useConversationViews, useStore, selectView, renderSlot, open, t }) {
 			const tabs = useConversationViews((value) => value);
 			const active = resolveActiveView(tabs, useStore((s) => s.view));
 			const ancestry = useSessions((s) => deriveAncestry(s, sessionId), equalBreadcrumbs);
 			const [seat, setSeat] = (0, react.useState)(null);
+			const seatRef = (0, react.useRef)(null);
+			const header = (0, react.useRef)(null);
 			(0, react.useLayoutEffect)(() => {
-				const next = document.querySelector("[data-composer-subagents]");
-				setSeat((current) => current === next ? current : next instanceof HTMLElement ? next : null);
-			});
+				const scope = header.current?.closest("[data-conversation-surface]");
+				if (scope === void 0 || scope === null) {
+					seatRef.current = null;
+					setSeat(null);
+					return;
+				}
+				const sync = () => {
+					const next = [...scope.querySelectorAll("[data-composer-subagents]")].find((element) => element.dataset.composerSubagents === sessionId) ?? null;
+					if (seatRef.current !== next) {
+						seatRef.current = next;
+						setSeat(next);
+					}
+				};
+				sync();
+				const observer = new MutationObserver(sync);
+				observer.observe(scope, {
+					childList: true,
+					subtree: true,
+					attributes: true,
+					attributeFilter: ["data-composer-subagents"]
+				});
+				return () => {
+					observer.disconnect();
+				};
+			}, [sessionId]);
 			const current = ancestry.at(-1);
-			const lineage = hideChrome || current === void 0 ? null : renderSlot("conversation.session.header.lineage", {
+			const lineage = hideChrome || current === void 0 ? null : current.subagent ? (0, react_jsx_runtime.jsx)("nav", {
+				className: ConversationRoot_module_css_default.crumbs,
+				"aria-label": t("session.hierarchy"),
+				children: ancestry.map((summary, index) => {
+					const last = index === ancestry.length - 1;
+					const title = last ? (0, react_jsx_runtime.jsx)("span", {
+						className: clsx(ConversationRoot_module_css_default.crumb, ConversationRoot_module_css_default.crumbSubagent, ConversationRoot_module_css_default.crumbCurrent),
+						children: summary.displayTitle
+					}) : (0, react_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: clsx(ConversationRoot_module_css_default.crumb, summary.subagent && ConversationRoot_module_css_default.crumbSubagent),
+						onClick: () => {
+							open(summary.id);
+						},
+						children: summary.displayTitle
+					});
+					return (0, react_jsx_runtime.jsxs)("span", {
+						className: ConversationRoot_module_css_default.crumbSeg,
+						children: [index > 0 && (0, react_jsx_runtime.jsx)("span", {
+							className: ConversationRoot_module_css_default.crumbSep,
+							children: "/"
+						}), summary.subagent ? renderSlot("conversation.session.header.lineage", {
+							lineageSessionId: summary.id,
+							displayTitle: summary.displayTitle,
+							...last ? {} : { openTitle: () => {
+								open(summary.id);
+							} }
+						}, { fallback: title }) : title]
+					}, summary.id);
+				})
+			}) : renderSlot("conversation.session.header.lineage", {
 				lineageSessionId: current.id,
 				displayTitle: current.displayTitle
 			}, { fallback: null });
 			return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
 				(0, react_jsx_runtime.jsx)("header", {
+					ref: header,
 					"data-conversation-header": true,
 					hidden: true
 				}),
@@ -18027,6 +18083,7 @@ window.__ModuleLoader__.load({
 					children: [tabs.length > 1 && (0, react_jsx_runtime.jsx)("div", {
 						className: ConversationRoot_module_css_default.sessionViews,
 						role: "tablist",
+						"data-conversation-tabs": "",
 						"aria-label": t("session.views"),
 						children: tabs.map((viewTab) => (0, react_jsx_runtime.jsx)("button", {
 							type: "button",
@@ -18043,9 +18100,15 @@ window.__ModuleLoader__.load({
 						children: [
 							renderSlot("conversation.session.header.actions", {}),
 							renderSlot("conversation.session.header.utilities", {}),
-							renderSlot("conversation.session.header.corner", {})
+							renderSlot("conversation.session.header.corner", {}),
+							seat === null ? lineage : null
 						]
 					})]
+				}),
+				hideChrome && (0, react_jsx_runtime.jsx)("div", {
+					className: ConversationRoot_module_css_default.sessionActions,
+					"data-conversation-header-corner": "",
+					children: renderSlot("conversation.session.header.corner", {})
 				}),
 				seat !== null && lineage !== null ? (0, react_dom.createPortal)(lineage, seat) : null
 			] });
@@ -19067,7 +19130,11 @@ window.__ModuleLoader__.load({
 										(0, react_jsx_runtime.jsxs)("div", {
 											className: InputBar_module_css_default.standardControls,
 											hidden: activity,
-											children: [input === void 0 || sessionId === void 0 ? null : renderSlot("conversation.input.right", {}), sessionId === void 0 ? null : renderSlot("conversation.input.model", { locked: modelSeatLocked })]
+											children: [
+												sessionId === void 0 ? null : (0, react_jsx_runtime.jsx)("div", { "data-composer-subagents": sessionId }),
+												input === void 0 || sessionId === void 0 ? null : renderSlot("conversation.input.right", {}),
+												sessionId === void 0 ? null : renderSlot("conversation.input.model", { locked: modelSeatLocked })
+											]
 										}),
 										input === void 0 || sessionId === void 0 ? null : (0, react_jsx_runtime.jsx)("div", {
 											className: activity ? InputBar_module_css_default.activityExpanded : InputBar_module_css_default.activity,

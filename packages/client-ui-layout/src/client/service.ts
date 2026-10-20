@@ -118,15 +118,15 @@ export class LayoutController implements ILayout {
   private navigation = new AbortController()
   selectPanel(panelId: MainPanelId | null): void {
     if (panelId !== null && !this.hasMainPanel(panelId)) throw new Error(`Unknown main panel: ${panelId}`)
-    this.navigation.abort(); this.panels.selectPanel(panelId)
+    this.navigation.abort(); this.#require().selectPanel(panelId)
   }
   beginNavigation(): AbortSignal { this.navigation.abort(); this.navigation = new AbortController(); return this.navigation.signal }
   dispose(): void { this.navigation.abort() }
 
-  constructor(private readonly panels: PanelActions, private readonly hasMainPanel: (id: MainPanelId) => boolean, readonly panelInfo: HostObservable<PanelInfo>) { this.attachPanels(panels) }
+  constructor(panels: PanelActions, private readonly hasMainPanel: (id: MainPanelId) => boolean, readonly panelInfo: HostObservable<PanelInfo>) { this.attachPanels(panels) }
 
-  openRightbar(track: boolean, fullscreen: boolean): void { this.panels.openRightbar(track, fullscreen) }
-  closeRightbar(): void { this.panels.closeRightbar() }
+  openRightbar(track: boolean, fullscreen: boolean): void { this.#require().openRightbar(track, fullscreen) }
+  closeRightbar(): void { this.#require().closeRightbar() }
 
   #panels: PanelActions | undefined
   readonly #sidebarReservations = new Map<symbol, number>()

@@ -36,7 +36,7 @@ export function ConversationMainPanel(props) {
     const hero = sessionId === undefined
         || (shellPhase === 'blank' && (openState === 'open' || summaryBlank === true));
     const phase = settling ? 'settling' : hero ? 'hero' : 'active';
-    return (_jsxs("div", { className: css.root, "data-phase": phase, children: [renderSlot('conversation.header', {}), renderFactorySlot('conversation.content', {
+    return (_jsxs("div", { className: css.root, "data-phase": phase, "data-conversation-surface": true, children: [renderSlot('conversation.header', {}), renderFactorySlot('conversation.content', {
                 variant: 'main',
                 phase,
                 hero,

@@ -16,8 +16,8 @@ function reactHandler(node: Element, name: "onMouseEnter" | "onMouseLeave"): (()
   return typeof handler === "function" ? handler as () => void : undefined
 }
 
-function hoverRoot(): Element | undefined {
-  const seat = document.querySelector("[data-composer-subagents]")
+function hoverRoot(button: HTMLElement): Element | undefined {
+  const seat = button.closest("[data-composer-subagents]")
   if (seat === null) return undefined
   return [seat, ...seat.querySelectorAll("*")].find(node => reactHandler(node, "onMouseEnter") !== undefined)
 }
@@ -29,7 +29,7 @@ function catalogMenu(): HTMLElement | undefined {
 }
 
 function placeComposerSubagentMenu(): void {
-  const trigger = document.querySelector("[data-composer-subagents] button")
+  const trigger = document.querySelector("[data-composer-subagents] button[aria-expanded='true']")
   const panel = catalogMenu()
   if (!(trigger instanceof HTMLElement) || panel === undefined) return
   if (trigger.getAttribute("aria-expanded") !== "true") return
@@ -47,7 +47,7 @@ function placeComposerSubagentMenu(): void {
 }
 
 function toggleComposerSubagentMenu(button: HTMLElement): void {
-  const root = hoverRoot()
+  const root = hoverRoot(button)
   if (root === undefined) return
   const open = button.getAttribute("aria-expanded") === "true"
   const call = reactHandler(root, open ? "onMouseLeave" : "onMouseEnter")

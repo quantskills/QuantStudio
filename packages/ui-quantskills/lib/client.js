@@ -555,7 +555,7 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region lib/types/client/PluginSettings.js
 		/** Keep the native manager's slots and state owned by its registered main panel. */
-		function PluginSettings$1({ openManager, community }) {
+		function PluginSettings$1({ openManager }) {
 			const [error, setError] = (0, react.useState)();
 			return (0, react_jsx_runtime.jsxs)("section", {
 				className: QuantSkillsApp_module_css_default.pluginSettings,
@@ -586,10 +586,11 @@ window.__ModuleLoader__.load({
 					})
 				] }), (0, react_jsx_runtime.jsxs)("section", {
 					"aria-label": "社区市场",
-					children: [(0, react_jsx_runtime.jsx)("h3", { children: "社区市场" }), community ?? (0, react_jsx_runtime.jsx)("p", {
-						role: "status",
-						children: "社区市场暂不可用。已安装的插件与配置保持不变。"
-					})]
+					children: [
+						(0, react_jsx_runtime.jsx)("h3", { children: "社区市场" }),
+						(0, react_jsx_runtime.jsx)("p", { children: "社区插件在插件管理的「发现」中浏览，安装、更新和卸载统一由插件管理器处理。" }),
+						(0, react_jsx_runtime.jsx)("p", { children: "首次使用时，在「官方扩展」启用「插件市场」。已有社区插件的来源与配置会保留。" })
+					]
 				})]
 			});
 		}
@@ -648,8 +649,8 @@ window.__ModuleLoader__.load({
 			const handler = node[key]?.[name];
 			return typeof handler === "function" ? handler : void 0;
 		}
-		function hoverRoot() {
-			const seat = document.querySelector("[data-composer-subagents]");
+		function hoverRoot(button) {
+			const seat = button.closest("[data-composer-subagents]");
 			if (seat === null) return void 0;
 			return [seat, ...seat.querySelectorAll("*")].find((node) => reactHandler(node, "onMouseEnter") !== void 0);
 		}
@@ -659,7 +660,7 @@ window.__ModuleLoader__.load({
 			});
 		}
 		function placeComposerSubagentMenu() {
-			const trigger = document.querySelector("[data-composer-subagents] button");
+			const trigger = document.querySelector("[data-composer-subagents] button[aria-expanded='true']");
 			const panel = catalogMenu();
 			if (!(trigger instanceof HTMLElement) || panel === void 0) return;
 			if (trigger.getAttribute("aria-expanded") !== "true") return;
@@ -676,7 +677,7 @@ window.__ModuleLoader__.load({
 			panel.dataset.qsSubagentMenu = "above";
 		}
 		function toggleComposerSubagentMenu(button) {
-			const root = hoverRoot();
+			const root = hoverRoot(button);
 			if (root === void 0) return;
 			reactHandler(root, button.getAttribute("aria-expanded") === "true" ? "onMouseLeave" : "onMouseEnter")?.();
 			window.setTimeout(placeComposerSubagentMenu, 180);
@@ -134904,16 +134905,12 @@ void main() {
 					applicationUpdateCheck: (request) => unwrapRemote(ctx.remote.quantSkills.applicationUpdateCheck(request)),
 					applicationUpdateStart: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStart()),
 					renderPluginMarket: () => {
-						const entry = ctx.slots.entriesOfSlot("settings.section").find((item) => item.options.id === "market");
 						const manager = ctx.slots.entriesOfSlot("main").some((item) => item.options.key === "plugins");
 						const stockLayout = ctx.get("layout");
-						return (0, react.createElement)(PluginSettings$1, {
-							openManager: manager && stockLayout ? () => {
-								stockLayout.selectPanel("plugins");
-								viewActions.closePlugin();
-							} : void 0,
-							community: entry && !entry.children && !entry.store ? (0, react.createElement)(entry.component, { close: () => view.actions.navigate("home") }) : void 0
-						});
+						return (0, react.createElement)(PluginSettings$1, { openManager: manager && stockLayout ? () => {
+							stockLayout.selectPanel("plugins");
+							viewActions.closePlugin();
+						} : void 0 });
 					},
 					databaseAccess: {
 						list: () => unwrapRemote(ctx.remote.pandaMcp.databaseList()),

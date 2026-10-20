@@ -10,8 +10,8 @@ function reactHandler(node, name) {
     const handler = props?.[name];
     return typeof handler === "function" ? handler : undefined;
 }
-function hoverRoot() {
-    const seat = document.querySelector("[data-composer-subagents]");
+function hoverRoot(button) {
+    const seat = button.closest("[data-composer-subagents]");
     if (seat === null)
         return undefined;
     return [seat, ...seat.querySelectorAll("*")].find(node => reactHandler(node, "onMouseEnter") !== undefined);
@@ -22,7 +22,7 @@ function catalogMenu() {
     });
 }
 function placeComposerSubagentMenu() {
-    const trigger = document.querySelector("[data-composer-subagents] button");
+    const trigger = document.querySelector("[data-composer-subagents] button[aria-expanded='true']");
     const panel = catalogMenu();
     if (!(trigger instanceof HTMLElement) || panel === undefined)
         return;
@@ -41,7 +41,7 @@ function placeComposerSubagentMenu() {
     panel.dataset.qsSubagentMenu = "above";
 }
 function toggleComposerSubagentMenu(button) {
-    const root = hoverRoot();
+    const root = hoverRoot(button);
     if (root === undefined)
         return;
     const open = button.getAttribute("aria-expanded") === "true";

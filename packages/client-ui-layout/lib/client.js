@@ -312,7 +312,7 @@ window.__ModuleLoader__.load({
 				actions.setRightbar(rightbarBase.current - dx);
 			}, [actions]);
 			const productTitle = {}.DSH_CLIENT_TITLE ?? t("brand.localBuild");
-			const rightbarMax = cols.rightbar;
+			const rightbarMax = layoutInfo.sidebarExclusive || layoutInfo.detailsExclusive || layoutInfo.sidebarReservation > 0 || layoutInfo.detailsReservation > 0 ? cols.rightbar : cols.rightbar === 0 ? 0 : clampWidth(rightbarPreference, 300, viewport * RIGHTBAR_MAX_RATIO);
 			const sidebar = (0, react.useMemo)(() => renderSlot("sidebar", {
 				collapsed: sidebarCollapsed,
 				width: cols.sidebar
@@ -495,14 +495,13 @@ window.__ModuleLoader__.load({
 		//#region lib/types/client/service.js
 		/** Cross-plugin panel-action face (ctx.layout). */
 		var LayoutController = class {
-			panels;
 			hasMainPanel;
 			panelInfo;
 			navigation = new AbortController();
 			selectPanel(panelId) {
 				if (panelId !== null && !this.hasMainPanel(panelId)) throw new Error(`Unknown main panel: ${panelId}`);
 				this.navigation.abort();
-				this.panels.selectPanel(panelId);
+				this.#require().selectPanel(panelId);
 			}
 			beginNavigation() {
 				this.navigation.abort();
@@ -513,16 +512,15 @@ window.__ModuleLoader__.load({
 				this.navigation.abort();
 			}
 			constructor(panels, hasMainPanel, panelInfo) {
-				this.panels = panels;
 				this.hasMainPanel = hasMainPanel;
 				this.panelInfo = panelInfo;
 				this.attachPanels(panels);
 			}
 			openRightbar(track, fullscreen) {
-				this.panels.openRightbar(track, fullscreen);
+				this.#require().openRightbar(track, fullscreen);
 			}
 			closeRightbar() {
-				this.panels.closeRightbar();
+				this.#require().closeRightbar();
 			}
 			#panels;
 			#sidebarReservations = /* @__PURE__ */ new Map();

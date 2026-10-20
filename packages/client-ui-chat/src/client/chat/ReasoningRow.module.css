@@ -2,9 +2,6 @@
   display: flex;
   flex-direction: column;
 }
-.friendlySummary { display:none; }
-body[data-qs-plugin-theme] .friendlySummary { display:inline; color:var(--qs-secondary); font-size:12px; }
-body[data-qs-plugin-theme] .summary { display:none; }
 body[data-qs-plugin-theme] .root { margin:6px 0; border-radius:12px; background:var(--qs-chrome); border:1px solid var(--qs-line); }
 body[data-qs-plugin-theme] .row { padding:8px 12px; }
 body[data-qs-plugin-theme] .root[data-state='running'] .row::after { display:none; }

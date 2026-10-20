@@ -8,7 +8,7 @@ import { RunningWhaleTail } from './RunningWhaleTail.tsx'
 import a11yCss from './accessibility.module.css'
 import css from './ChatView.module.css'
 
-interface RunningStatusProps extends PropsRenderSlots<'conversation.chat.turnStatus'> {
+interface RunningStatusProps extends Partial<PropsRenderSlots<'conversation.chat.turnStatus'>> {
   readonly startTime: number | undefined
   readonly t: ChatViewSlotProps['t']
 }
@@ -35,7 +35,7 @@ export const RunningStatus = memo(function RunningStatus({ startTime, renderSlot
       <span className={css.runningDivider} aria-hidden="true" />
       <span className={css.runningContent}>
         <RunningWhaleTail />
-        <TextShimmer active className={css.runningText}>{renderSlot('conversation.chat.turnStatus', { defaultLabel: label }, { fallback: label })}</TextShimmer>
+        <TextShimmer active className={css.runningText}>{renderSlot ? renderSlot('conversation.chat.turnStatus', { defaultLabel: label }, { fallback: label }) : label}</TextShimmer>
       </span>
     </div>
   )

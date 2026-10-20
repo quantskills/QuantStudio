@@ -5630,7 +5630,7 @@ window.__ModuleLoader__.load({
 						children: [(0, react_jsx_runtime.jsx)(RunningWhaleTail, {}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.TextShimmer, {
 							active: true,
 							className: ChatView_module_css_default.runningText,
-							children: renderSlot("conversation.chat.turnStatus", { defaultLabel: label }, { fallback: label })
+							children: renderSlot ? renderSlot("conversation.chat.turnStatus", { defaultLabel: label }, { fallback: label }) : label
 						})]
 					})
 				]
@@ -6106,7 +6106,7 @@ window.__ModuleLoader__.load({
 		};
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/ReasoningRow.module.css.mjs
-		const css$9 = "._Itt_G_root{flex-direction:column;display:flex}._Itt_G_friendlySummary{display:none}body[data-qs-plugin-theme] ._Itt_G_friendlySummary{color:var(--qs-secondary);font-size:12px;display:inline}body[data-qs-plugin-theme] ._Itt_G_summary{display:none}body[data-qs-plugin-theme] ._Itt_G_root{background:var(--qs-chrome);border:1px solid var(--qs-line);border-radius:12px;margin:6px 0}body[data-qs-plugin-theme] ._Itt_G_row{padding:8px 12px}body[data-qs-plugin-theme] ._Itt_G_root[data-state=running] ._Itt_G_row:after{display:none}body[data-qs-plugin-theme] ._Itt_G_thinkBody{border-top:1px solid var(--qs-line);max-height:300px;color:var(--qs-secondary);padding:12px 16px;line-height:1.75;overflow:auto}._Itt_G_root:not([data-expanded]){contain:size layout;height:calc(24px + var(--dsh-content-font-delta,0px))}._Itt_G_row{overflow:hidden}._Itt_G_root[data-expanded] [data-open] [data-disclosure-header]{z-index:1;background:var(--dsw-alias-bg-base);position:sticky;top:0}._Itt_G_leading{flex-shrink:0}._Itt_G_title{font-weight:400}._Itt_G_separator{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}._Itt_G_summary{min-width:0;font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));white-space:nowrap;flex:auto;overflow:hidden}._Itt_G_summaryText{text-overflow:ellipsis;display:block;overflow:hidden}._Itt_G_summary[data-streaming]{mask-image:linear-gradient(90deg,#000 calc(100% - 48px),#0000)}._Itt_G_summary[data-streaming] ._Itt_G_summaryText{text-overflow:clip;overflow:visible}._Itt_G_root:not([data-preview]) ._Itt_G_separator,._Itt_G_root:not([data-preview]) ._Itt_G_summary{display:none}._Itt_G_thinkBody{padding:4px 0 4px calc(22px + var(--dsh-content-font-delta,0px));min-width:0}";
+		const css$9 = "._Itt_G_root{flex-direction:column;display:flex}body[data-qs-plugin-theme] ._Itt_G_root{background:var(--qs-chrome);border:1px solid var(--qs-line);border-radius:12px;margin:6px 0}body[data-qs-plugin-theme] ._Itt_G_row{padding:8px 12px}body[data-qs-plugin-theme] ._Itt_G_root[data-state=running] ._Itt_G_row:after{display:none}body[data-qs-plugin-theme] ._Itt_G_thinkBody{border-top:1px solid var(--qs-line);max-height:300px;color:var(--qs-secondary);padding:12px 16px;line-height:1.75;overflow:auto}._Itt_G_root:not([data-expanded]){contain:size layout;height:calc(24px + var(--dsh-content-font-delta,0px))}._Itt_G_row{overflow:hidden}._Itt_G_root[data-expanded] [data-open] [data-disclosure-header]{z-index:1;background:var(--dsw-alias-bg-base);position:sticky;top:0}._Itt_G_leading{flex-shrink:0}._Itt_G_title{font-weight:400}._Itt_G_separator{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}._Itt_G_summary{min-width:0;font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));white-space:nowrap;flex:auto;overflow:hidden}._Itt_G_summaryText{text-overflow:ellipsis;display:block;overflow:hidden}._Itt_G_summary[data-streaming]{mask-image:linear-gradient(90deg,#000 calc(100% - 48px),#0000)}._Itt_G_summary[data-streaming] ._Itt_G_summaryText{text-overflow:clip;overflow:visible}._Itt_G_root:not([data-preview]) ._Itt_G_separator,._Itt_G_root:not([data-preview]) ._Itt_G_summary{display:none}._Itt_G_thinkBody{padding:4px 0 4px calc(22px + var(--dsh-content-font-delta,0px));min-width:0}";
 		const tagId$9 = "@deepseek-ai/dsh-client-ui-chat/ReasoningRow.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$9) + "]") === null) {
 			const tag = document.createElement("style");
@@ -6116,7 +6116,6 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var ReasoningRow_module_css_default = {
-			"friendlySummary": "_Itt_G_friendlySummary",
 			"leading": "_Itt_G_leading",
 			"root": "_Itt_G_root",
 			"row": "_Itt_G_row",

@@ -1,10 +1,9 @@
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import css from './QuantSkillsApp.module.css'
 
 /** Keep the native manager's slots and state owned by its registered main panel. */
-export function PluginSettings({ openManager, community }: {
+export function PluginSettings({ openManager }: {
   openManager?: (() => void) | undefined
-  community?: ReactNode
 }) {
   const [error, setError] = useState<string>()
   return <section className={css.pluginSettings}>
@@ -20,7 +19,8 @@ export function PluginSettings({ openManager, community }: {
     </header>
     <section aria-label="社区市场">
       <h3>社区市场</h3>
-      {community ?? <p role="status">社区市场暂不可用。已安装的插件与配置保持不变。</p>}
+      <p>社区插件在插件管理的「发现」中浏览，安装、更新和卸载统一由插件管理器处理。</p>
+      <p>首次使用时，在「官方扩展」启用「插件市场」。已有社区插件的来源与配置会保留。</p>
     </section>
   </section>
 }

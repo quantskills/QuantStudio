@@ -2,7 +2,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-workspace/client'
 import type { MainPanelId, PanelInfo } from '@deepseek-ai/dsh-client-ui-layout/client'
 import { selectedSession } from './selected-session.ts'
 import type { SessionHistoryAccess, SessionFileDeletionAccess } from './ArchivedSessions.tsx'
-import { createElement, type ComponentType } from 'react'
+import { createElement } from 'react'
 import { PluginSettings } from './PluginSettings.tsx'
 import { artifactDownload } from './artifact-resource.ts'
 import { bindComposerSubagentMenu } from './composer-subagents.ts'
@@ -2100,9 +2100,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
         applicationUpdateStart: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStart()),
         // Open the native manager through its public panel navigation. Do not
         // transplant its component: its store and nested slots belong to that panel.
-        // Keep the old market slot while provenance migration is still incomplete.
         renderPluginMarket: () => {
-          const entry = ctx.slots.entriesOfSlot('settings.section').find(item => item.options.id === 'market')
           const manager = ctx.slots.entriesOfSlot('main').some(item => item.options.key === 'plugins')
           const stockLayout = ctx.get('layout')
           return createElement(PluginSettings, {
@@ -2110,9 +2108,6 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
               stockLayout.selectPanel('plugins' as MainPanelId)
               viewActions.closePlugin()
             } : undefined,
-            community: entry && !entry.children && !entry.store
-              ? createElement(entry.component as ComponentType<{ close: () => void }>, { close: () => view.actions.navigate('home') })
-              : undefined,
           })
         },
         databaseAccess: {

@@ -472,6 +472,7 @@ export const InputBar = memo(function InputBar({
           </div>
           <div className={clsx(css.trailing, activity && css.trailingActive)}>
             <div className={css.standardControls} hidden={activity}>
+              {sessionId === undefined ? null : <div data-composer-subagents={sessionId} />}
               {input === undefined || sessionId === undefined
                 ? null
                 : renderSlot('conversation.input.right', {})}

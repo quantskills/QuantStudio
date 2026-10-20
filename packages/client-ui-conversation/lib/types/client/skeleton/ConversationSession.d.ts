@@ -9,6 +9,6 @@ export type ConversationSessionHeaderProps = ConversationSessionHeaderSlotProps;
  * @param props - Strict Session store, view ledger, navigation, render, and locale shares.
  * @returns Session navigation controls, with title and tabs after conversation starts.
  */
-export declare function ConversationSessionHeader({ sessionId, hideChrome, useSessions, useConversationViews, useStore, selectView, renderSlot, t, }: ConversationSessionHeaderProps): import("react").JSX.Element;
+export declare function ConversationSessionHeader({ sessionId, hideChrome, useSessions, useConversationViews, useStore, selectView, renderSlot, open, t, }: ConversationSessionHeaderProps): import("react").JSX.Element;
 export declare function ConversationSession(props: ConversationSessionProps): import("react").JSX.Element;
 //# sourceMappingURL=ConversationSession.d.ts.map

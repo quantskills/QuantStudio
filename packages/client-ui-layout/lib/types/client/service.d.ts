@@ -110,7 +110,6 @@ export interface ILayout {
 /** Cross-plugin panel-action face (ctx.layout). */
 export declare class LayoutController implements ILayout {
     #private;
-    private readonly panels;
     private readonly hasMainPanel;
     readonly panelInfo: HostObservable<PanelInfo>;
     private navigation;

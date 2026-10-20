@@ -1,0 +1,860 @@
+{
+  "upstream": "687f282e8625c6b8d11ff58211a90524be2e4317",
+  "license": "MIT (LICENSES/DeepSeek-Harness-MIT.txt)",
+  "files": [
+    {
+      "file": "packages/client-ui-chat/tests/apply-inject.client.spec.tsx",
+      "upstream": "ui-chat/tests/apply-inject.client.spec.tsx",
+      "upstreamSha256": "3c20e515fe67105a21cb7388948bebeda946789ec069f2bff22e9c2569ee2b2e",
+      "status": "ported",
+      "candidateSha256": "3c20e515fe67105a21cb7388948bebeda946789ec069f2bff22e9c2569ee2b2e"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/approval-command.client.spec.tsx",
+      "upstream": "ui-chat/tests/approval-command.client.spec.tsx",
+      "upstreamSha256": "dadcea7097f3059c48f1df7a86bb629c79556a3339bfaef691f9475663859d28",
+      "status": "ported",
+      "candidateSha256": "dadcea7097f3059c48f1df7a86bb629c79556a3339bfaef691f9475663859d28"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/assistant-markdown-path-images.client.spec.tsx",
+      "upstream": "ui-chat/tests/assistant-markdown-path-images.client.spec.tsx",
+      "upstreamSha256": "5c0d7c7e520558866282969be3fbc1a314872555cbcf325b61b118cd43d84ce2",
+      "status": "ported",
+      "candidateSha256": "5c0d7c7e520558866282969be3fbc1a314872555cbcf325b61b118cd43d84ce2"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-apply.client.spec.tsx",
+      "upstream": "ui-chat/tests/chat-apply.client.spec.tsx",
+      "upstreamSha256": "9825961165675aa968aa0507127563a423b2e0148cdca6d5ea3ec11d6195eca0",
+      "status": "ported",
+      "candidateSha256": "9825961165675aa968aa0507127563a423b2e0148cdca6d5ea3ec11d6195eca0"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-branch-tails.client.spec.tsx",
+      "upstream": "ui-chat/tests/chat-branch-tails.client.spec.tsx",
+      "upstreamSha256": "6203719378aa3775d843b91f9ac88f85b04ac0a87a58b13a17eb1fe63e61dc62",
+      "status": "ported",
+      "candidateSha256": "413011024904cec5d193c65fe981e57e1889b7fd7b7f037950f99e31f1b9241f"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-font-axis-styles.client.spec.ts",
+      "upstream": "ui-chat/tests/chat-font-axis-styles.client.spec.ts",
+      "upstreamSha256": "3db8d0e7c3540f2c683575ce475ddf43dcc7b38381a535bedd488ed38bf853dd",
+      "status": "ported",
+      "candidateSha256": "3db8d0e7c3540f2c683575ce475ddf43dcc7b38381a535bedd488ed38bf853dd"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-node-bottom.client.spec.ts",
+      "upstream": "ui-chat/tests/chat-node-bottom.client.spec.ts",
+      "upstreamSha256": "36efefc850dd89926bd35e57bc0e00bcfbd756c3cad1841d09b7e6221cc191f3",
+      "status": "ported",
+      "candidateSha256": "36efefc850dd89926bd35e57bc0e00bcfbd756c3cad1841d09b7e6221cc191f3"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-node-source.client.spec.ts",
+      "upstream": "ui-chat/tests/chat-node-source.client.spec.ts",
+      "upstreamSha256": "a47327754f820e03b23c5124656b8d9c21653a32cabeb4e5ef8d6749d047636c",
+      "status": "ported",
+      "candidateSha256": "a47327754f820e03b23c5124656b8d9c21653a32cabeb4e5ef8d6749d047636c"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-scroll.client.spec.tsx",
+      "upstream": "ui-chat/tests/chat-scroll.client.spec.tsx",
+      "upstreamSha256": "fc15174f1c7d3be8a0f791e257ad60cf96a89eab3eb3a2de09da894a103875f0",
+      "status": "ported",
+      "candidateSha256": "fc15174f1c7d3be8a0f791e257ad60cf96a89eab3eb3a2de09da894a103875f0"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-snapshot-fixture.client.ts",
+      "upstream": "ui-chat/tests/chat-snapshot-fixture.client.ts",
+      "upstreamSha256": "563093a1d801b570ce236800a8f187134c7f6a6defde505a1dc47fd9926e1fde",
+      "status": "ported",
+      "candidateSha256": "563093a1d801b570ce236800a8f187134c7f6a6defde505a1dc47fd9926e1fde"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-stats.client.spec.tsx",
+      "upstream": "ui-chat/tests/chat-stats.client.spec.tsx",
+      "upstreamSha256": "4e9a2e9e09b9474d27d692199ff174c7c6c6b266752ce1ba9553ddd3ffe0b7f7",
+      "status": "ported",
+      "candidateSha256": "4e9a2e9e09b9474d27d692199ff174c7c6c6b266752ce1ba9553ddd3ffe0b7f7"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-store.client.spec.ts",
+      "upstream": "ui-chat/tests/chat-store.client.spec.ts",
+      "upstreamSha256": "f8ed7ba0b26fdd5b49f17e096a8bb503b8e1e26da61817aac9b373769a27cbf8",
+      "status": "ported",
+      "candidateSha256": "f8ed7ba0b26fdd5b49f17e096a8bb503b8e1e26da61817aac9b373769a27cbf8"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-view.client.spec.tsx",
+      "upstream": "ui-chat/tests/chat-view.client.spec.tsx",
+      "upstreamSha256": "db0007fbedf6858f1ae2eb48184e2ec9dada0ff3d608ae34a2c546ab9cf66e90",
+      "status": "ported",
+      "candidateSha256": "a503bc9c321c583ec382e468226203cc4311b3373265b50b302e45c965c81e72"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/chat-viewport.client.spec.ts",
+      "upstream": "ui-chat/tests/chat-viewport.client.spec.ts",
+      "upstreamSha256": "d9020f8c169fd2bd1cef7e25ea6f636077730f7bd2776b8b591893cf72ea09c2",
+      "status": "ported",
+      "candidateSha256": "d9020f8c169fd2bd1cef7e25ea6f636077730f7bd2776b8b591893cf72ea09c2"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/config.host.spec.ts",
+      "upstream": "ui-chat/tests/config.host.spec.ts",
+      "upstreamSha256": "5e4941bc91f47b6619d30035b85882e6dc557b593325a5472951bc2b86db8d64",
+      "status": "ported",
+      "candidateSha256": "48b605844ebe464414683d82787429b8147175f9bd5adae8cdaacf31a166d521"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/conversation-node-definitions.client.spec.ts",
+      "upstream": "ui-chat/tests/conversation-node-definitions.client.spec.ts",
+      "upstreamSha256": "837a8c22056cae909a7f26b5330f79153d99292b36a0159381a1aee9c7bedccb",
+      "status": "ported",
+      "candidateSha256": "4824f0ef4a66ade40117feb6184658d1c5c49f83ea48de2c3fdad494cd81b5bf"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/conversation.client.spec.ts",
+      "upstream": "ui-chat/tests/conversation.client.spec.ts",
+      "upstreamSha256": "c101f31f17a76ccbb9921b87197e8e21d4854011fa1b0eb35bb3400ba67d1850",
+      "status": "ported",
+      "candidateSha256": "c101f31f17a76ccbb9921b87197e8e21d4854011fa1b0eb35bb3400ba67d1850"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/coverage-tails.client.spec.tsx",
+      "upstream": "ui-chat/tests/coverage-tails.client.spec.tsx",
+      "upstreamSha256": "3051f9d7a76f849e7004fa3c16a7baf22cfb8dc4264481f76126badab783308b",
+      "status": "ported",
+      "candidateSha256": "3051f9d7a76f849e7004fa3c16a7baf22cfb8dc4264481f76126badab783308b"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/event-projection.client.spec.ts",
+      "upstream": "ui-chat/tests/event-projection.client.spec.ts",
+      "upstreamSha256": "a48f484cb14396a7dd1f558b40545902ae31d335480de67614b05a849af664b4",
+      "status": "ported",
+      "candidateSha256": "a48f484cb14396a7dd1f558b40545902ae31d335480de67614b05a849af664b4"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/flow-motion-scope.client.spec.tsx",
+      "upstream": "ui-chat/tests/flow-motion-scope.client.spec.tsx",
+      "upstreamSha256": "baaef76328bb75addca5895e9158ef56a54e5e28c00d845014b16703acde6849",
+      "status": "ported",
+      "candidateSha256": "baaef76328bb75addca5895e9158ef56a54e5e28c00d845014b16703acde6849"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/flow-motion.client.spec.tsx",
+      "upstream": "ui-chat/tests/flow-motion.client.spec.tsx",
+      "upstreamSha256": "3c73b4ec3d38c228c43eee55a0a3d84f636e83983da9e4499d716ac835ef0157",
+      "status": "ported",
+      "candidateSha256": "3c73b4ec3d38c228c43eee55a0a3d84f636e83983da9e4499d716ac835ef0157"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/fold-follow.client.spec.ts",
+      "upstream": "ui-chat/tests/fold-follow.client.spec.ts",
+      "upstreamSha256": "ee09621e60e63c7096353406796af414db21cbef4f3df72067b0116a0800c13f",
+      "status": "ported",
+      "candidateSha256": "ee09621e60e63c7096353406796af414db21cbef4f3df72067b0116a0800c13f"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/gate-branch-tails.client.spec.tsx",
+      "upstream": "ui-chat/tests/gate-branch-tails.client.spec.tsx",
+      "upstreamSha256": "49b00022d98cee234899e4d01d9dc69aa31d0dc01aee52764836e12e29014dbf",
+      "status": "ported",
+      "candidateSha256": "49b00022d98cee234899e4d01d9dc69aa31d0dc01aee52764836e12e29014dbf"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/group-tree-segments.client.spec.ts",
+      "upstream": "ui-chat/tests/group-tree-segments.client.spec.ts",
+      "upstreamSha256": "4e82aa7e83def0f4d54dc213a32a9c18b5b52650f917923593e9c68150cb6c90",
+      "status": "ported",
+      "candidateSha256": "4e82aa7e83def0f4d54dc213a32a9c18b5b52650f917923593e9c68150cb6c90"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/image-labels.client.spec.tsx",
+      "upstream": "ui-chat/tests/image-labels.client.spec.tsx",
+      "upstreamSha256": "db55a5b0f7f15795121d47c686043fd2a67c0d2f360d02fcefb91e1c36b40471",
+      "status": "ported",
+      "candidateSha256": "db55a5b0f7f15795121d47c686043fd2a67c0d2f360d02fcefb91e1c36b40471"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/performance-usage.client.spec.ts",
+      "upstream": "ui-chat/tests/performance-usage.client.spec.ts",
+      "upstreamSha256": "1cd184f454c3aef2572837da40423b6560ef9fbda60a3dfaf7938c6383bfaa64",
+      "status": "ported",
+      "candidateSha256": "1cd184f454c3aef2572837da40423b6560ef9fbda60a3dfaf7938c6383bfaa64"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/presentation-fixture.client.ts",
+      "upstream": "ui-chat/tests/presentation-fixture.client.ts",
+      "upstreamSha256": "9d4f886f2b39a34cee137b2e966440c375a73c05e45f1b3354acfd3bea62958f",
+      "status": "ported",
+      "candidateSha256": "9d4f886f2b39a34cee137b2e966440c375a73c05e45f1b3354acfd3bea62958f"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/presentation-policy.client.spec.tsx",
+      "upstream": "ui-chat/tests/presentation-policy.client.spec.tsx",
+      "upstreamSha256": "d6ef45fde7daf14fc50e969a08e891f84ea4bdd00279cabc8c0a2be44db0adc9",
+      "status": "ported",
+      "candidateSha256": "d6ef45fde7daf14fc50e969a08e891f84ea4bdd00279cabc8c0a2be44db0adc9"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/process-groups.client.spec.ts",
+      "upstream": "ui-chat/tests/process-groups.client.spec.ts",
+      "upstreamSha256": "62050ab26106a9d8153b9c0349fab35d7dbb67a7b3355ff47c93f6cd219f9dba",
+      "status": "ported",
+      "candidateSha256": "d7f4f3e33f9ba19162e72975ffd77f45594ae29aa548e7022662c41a13cee09b"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/quota-notice.client.spec.tsx",
+      "upstream": "ui-chat/tests/quota-notice.client.spec.tsx",
+      "upstreamSha256": "a7587168d5f47986ff214772de3bc6372fa77a9a2cb891e40f458fd316c54223",
+      "status": "ported",
+      "candidateSha256": "a7587168d5f47986ff214772de3bc6372fa77a9a2cb891e40f458fd316c54223"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/reasoning-component-fixture.tsx",
+      "upstream": "ui-chat/tests/reasoning-component-fixture.tsx",
+      "upstreamSha256": "f28eb5c20a4a1976b6ed9bfcadbcdce73120dc508ac55061294ef1b6b1b3352e",
+      "status": "ported",
+      "candidateSha256": "f28eb5c20a4a1976b6ed9bfcadbcdce73120dc508ac55061294ef1b6b1b3352e"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/reasoning-content.client.spec.tsx",
+      "upstream": "ui-chat/tests/reasoning-content.client.spec.tsx",
+      "upstreamSha256": "067f0c392e88d25a6fdad0ce922156a48f410a0bb140afc46163e3b18dab2ea3",
+      "status": "ported",
+      "candidateSha256": "067f0c392e88d25a6fdad0ce922156a48f410a0bb140afc46163e3b18dab2ea3"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/reasoning-render-fixture.tsx",
+      "upstream": "ui-chat/tests/reasoning-render-fixture.tsx",
+      "upstreamSha256": "7f2c567b58201610622ba5013b62d9a2aa7b662bd18a33809b9e5e33e2c6d6a5",
+      "status": "ported",
+      "candidateSha256": "7f2c567b58201610622ba5013b62d9a2aa7b662bd18a33809b9e5e33e2c6d6a5"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/reasoning-row.client.spec.tsx",
+      "upstream": "ui-chat/tests/reasoning-row.client.spec.tsx",
+      "upstreamSha256": "b7781955972179a259782fed7158272aefd34f939d2365912c48fbebf62a457a",
+      "status": "ported",
+      "candidateSha256": "b7781955972179a259782fed7158272aefd34f939d2365912c48fbebf62a457a"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/running-status.client.spec.tsx",
+      "upstream": "ui-chat/tests/running-status.client.spec.tsx",
+      "upstreamSha256": "0cda3fd3a5e0039ead203be42bc25a436eb549de8551294c476b05a83de3a2a3",
+      "status": "ported",
+      "candidateSha256": "0cda3fd3a5e0039ead203be42bc25a436eb549de8551294c476b05a83de3a2a3"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/running-whale-tail.client.spec.tsx",
+      "upstream": "ui-chat/tests/running-whale-tail.client.spec.tsx",
+      "upstreamSha256": "0a9f9744798810b9bcb4359474323f2700a12dae96d076f126145a44a8cafd9f",
+      "status": "ported",
+      "candidateSha256": "0a9f9744798810b9bcb4359474323f2700a12dae96d076f126145a44a8cafd9f"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/scroll-follow.client.spec.ts",
+      "upstream": "ui-chat/tests/scroll-follow.client.spec.ts",
+      "upstreamSha256": "fd0d5510343a2918dae2c3302df64d7f484b178a91c21229a89cd4a6b7438e69",
+      "status": "ported",
+      "candidateSha256": "fd0d5510343a2918dae2c3302df64d7f484b178a91c21229a89cd4a6b7438e69"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/skill-name-projector.client.spec.ts",
+      "upstream": "ui-chat/tests/skill-name-projector.client.spec.ts",
+      "upstreamSha256": "0daef0a0a1c6ed9046d4c5f3d0f603ada1c00e975b5ef939312350634d9f326a",
+      "status": "ported",
+      "candidateSha256": "0daef0a0a1c6ed9046d4c5f3d0f603ada1c00e975b5ef939312350634d9f326a"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/sticky-header-styles.client.spec.ts",
+      "upstream": "ui-chat/tests/sticky-header-styles.client.spec.ts",
+      "upstreamSha256": "d9d8f8c7ad8117a2759a0667f74ed8f2028588fa0acc0939bfcb11666f419ab9",
+      "status": "ported",
+      "candidateSha256": "d9d8f8c7ad8117a2759a0667f74ed8f2028588fa0acc0939bfcb11666f419ab9"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/system-prompt-row.client.spec.tsx",
+      "upstream": "ui-chat/tests/system-prompt-row.client.spec.tsx",
+      "upstreamSha256": "b71672011a086b98cde6e3ef9eb7c4c3006c4ceaebc5bb58756bd132dee6867f",
+      "status": "ported",
+      "candidateSha256": "b71672011a086b98cde6e3ef9eb7c4c3006c4ceaebc5bb58756bd132dee6867f"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/tool-call-tree.client.spec.ts",
+      "upstream": "ui-chat/tests/tool-call-tree.client.spec.ts",
+      "upstreamSha256": "245696d5006f3e1d33cd74399c3f5d42406d8213d837abeb859800a49fffad46",
+      "status": "ported",
+      "candidateSha256": "245696d5006f3e1d33cd74399c3f5d42406d8213d837abeb859800a49fffad46"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/tool-preparation.client.spec.ts",
+      "upstream": "ui-chat/tests/tool-preparation.client.spec.ts",
+      "upstreamSha256": "ef8d28bd4b18f344b9f81b23fe89cc8346d79dc49d2adcc2d484b0ff9efd6003",
+      "status": "ported",
+      "candidateSha256": "ef8d28bd4b18f344b9f81b23fe89cc8346d79dc49d2adcc2d484b0ff9efd6003"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/tool-updates.client.spec.tsx",
+      "upstream": "ui-chat/tests/tool-updates.client.spec.tsx",
+      "upstreamSha256": "44578a934777de905620d9a24f438c82bdd0a92bc523beba59e61b608dc598b4",
+      "status": "ported",
+      "candidateSha256": "44578a934777de905620d9a24f438c82bdd0a92bc523beba59e61b608dc598b4"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/transcript-view-policy.client.spec.ts",
+      "upstream": "ui-chat/tests/transcript-view-policy.client.spec.ts",
+      "upstreamSha256": "5327d90eba3b2089a952274953924d69a716adfbc10eeb55d50a530d49cd9a3f",
+      "status": "ported",
+      "candidateSha256": "5327d90eba3b2089a952274953924d69a716adfbc10eeb55d50a530d49cd9a3f"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/transcript-view-row.client.spec.tsx",
+      "upstream": "ui-chat/tests/transcript-view-row.client.spec.tsx",
+      "upstreamSha256": "4dd08b2b2665edf969010e792d242f33f5a07b70e06805d95ab44f6d81a0e86c",
+      "status": "ported",
+      "candidateSha256": "4dd08b2b2665edf969010e792d242f33f5a07b70e06805d95ab44f6d81a0e86c"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/turn-metrics.client.spec.ts",
+      "upstream": "ui-chat/tests/turn-metrics.client.spec.ts",
+      "upstreamSha256": "5faa7979755943f2e4d54df78ee00961c38192acdc67cadfb532efadec7e1066",
+      "status": "ported",
+      "candidateSha256": "5faa7979755943f2e4d54df78ee00961c38192acdc67cadfb532efadec7e1066"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/turn-navigator-fixture.ts",
+      "upstream": "ui-chat/tests/turn-navigator-fixture.ts",
+      "upstreamSha256": "c3a063a0fd01e56b0e5bd042aa834788f5ce2b9f47958fa24be1633d5ff51d89",
+      "status": "ported",
+      "candidateSha256": "c3a063a0fd01e56b0e5bd042aa834788f5ce2b9f47958fa24be1633d5ff51d89"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/turn-navigator.client.spec.tsx",
+      "upstream": "ui-chat/tests/turn-navigator.client.spec.tsx",
+      "upstreamSha256": "3a3b03ae665b9372e5a42da3b1e48e515ea41be244d6d474e7315fc104d8c536",
+      "status": "ported",
+      "candidateSha256": "3a3b03ae665b9372e5a42da3b1e48e515ea41be244d6d474e7315fc104d8c536"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/turn-process-tail.client.spec.ts",
+      "upstream": "ui-chat/tests/turn-process-tail.client.spec.ts",
+      "upstreamSha256": "1ba0d51b499e16d73386dc6c1451c25c939699408f90602534635c0f80d99341",
+      "status": "ported",
+      "candidateSha256": "1ba0d51b499e16d73386dc6c1451c25c939699408f90602534635c0f80d99341"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/turn-rail-items.client.spec.ts",
+      "upstream": "ui-chat/tests/turn-rail-items.client.spec.ts",
+      "upstreamSha256": "aad174bdb1afd58cac2ea7ee2250d3b16277ac440fb32e1df05ea9e66885034a",
+      "status": "ported",
+      "candidateSha256": "aad174bdb1afd58cac2ea7ee2250d3b16277ac440fb32e1df05ea9e66885034a"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/turn-tail-spacing.client.spec.ts",
+      "upstream": "ui-chat/tests/turn-tail-spacing.client.spec.ts",
+      "upstreamSha256": "efa4608864f050ab4a12d5f3fe65c6294937172757ff0d016769c2d3c8d620fa",
+      "status": "ported",
+      "candidateSha256": "efa4608864f050ab4a12d5f3fe65c6294937172757ff0d016769c2d3c8d620fa"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/turn-trigger.client.spec.tsx",
+      "upstream": "ui-chat/tests/turn-trigger.client.spec.tsx",
+      "upstreamSha256": "af887e352f21678797a32acf6dfa4cb6187abe1d113c769c7bc7a39c8fb31b4d",
+      "status": "ported",
+      "candidateSha256": "af887e352f21678797a32acf6dfa4cb6187abe1d113c769c7bc7a39c8fb31b4d"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/turn-usage-panel.client.spec.tsx",
+      "upstream": "ui-chat/tests/turn-usage-panel.client.spec.tsx",
+      "upstreamSha256": "00acc5146ea06f1aec2cd86574e63345229b72513b1c6ce07e90aec756154a91",
+      "status": "ported",
+      "candidateSha256": "00acc5146ea06f1aec2cd86574e63345229b72513b1c6ce07e90aec756154a91"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/use-disclosure.client.spec.tsx",
+      "upstream": "ui-chat/tests/use-disclosure.client.spec.tsx",
+      "upstreamSha256": "5c0465d03c0dfcca6d87f76b3025de9a8aac2012899cb55acd16f155679aa615",
+      "status": "ported",
+      "candidateSha256": "5c0465d03c0dfcca6d87f76b3025de9a8aac2012899cb55acd16f155679aa615"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/user-content-component-fixture.tsx",
+      "upstream": "ui-chat/tests/user-content-component-fixture.tsx",
+      "upstreamSha256": "dd8ff6141002646bc7c1cc0aab0f2e5a46e22e9ea71c19ddebb3d6592806a2ef",
+      "status": "ported",
+      "candidateSha256": "24439d96cfe673949f8dba335ca5c3473acb98639b498fd796d87cb2cc50d5ff"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/user-content.client.spec.tsx",
+      "upstream": "ui-chat/tests/user-content.client.spec.tsx",
+      "upstreamSha256": "65e891dcc1cf24d574327f981c9bf4490941b38589c9822278938b0d6d32b584",
+      "status": "ported",
+      "candidateSha256": "821c2c64d8456738a75ae91ca35f1a1d749158e440c3f7a90f11e717ce949431"
+    },
+    {
+      "file": "packages/client-ui-chat/tests/views-type-chain.client.spec.tsx",
+      "upstream": "ui-chat/tests/views-type-chain.client.spec.tsx",
+      "upstreamSha256": "a7a0735c7e0247e38d8cc97e918d882967c272fc1027a423fca60e52954e89f8",
+      "status": "ported",
+      "candidateSha256": "a7a0735c7e0247e38d8cc97e918d882967c272fc1027a423fca60e52954e89f8"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/apply-inject.client.spec.tsx",
+      "upstream": "ui-conversation/tests/apply-inject.client.spec.tsx",
+      "upstreamSha256": "e8801aa97ea861f0f511bd8c8ba8aaeb0fe2ec98d4a13d1be268fc855326d74f",
+      "status": "ported",
+      "candidateSha256": "9145b0d46bd6caf7688fbbb84b54ec3b2f585453287f4f5d75f7a3ce55ae662a"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/apply-wiring.client.spec.tsx",
+      "upstream": "ui-conversation/tests/apply-wiring.client.spec.tsx",
+      "upstreamSha256": "bd8f728b0ba17f09748f3795d8fc1c0c46248660c59f6cdd3fbba6d6acbc4d50",
+      "status": "ported",
+      "candidateSha256": "bd8f728b0ba17f09748f3795d8fc1c0c46248660c59f6cdd3fbba6d6acbc4d50"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/assembly-surfaces.client.spec.tsx",
+      "upstream": "ui-conversation/tests/assembly-surfaces.client.spec.tsx",
+      "upstreamSha256": "23a9d88060f396a8b2dbf398a68220749533d7bec6237e00ddb132947d248ee2",
+      "status": "ported",
+      "candidateSha256": "1cf5ca15182e41fbd2cf3d179affd5918c437bf9f14dbe3dcea863d9d66e1855"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/async-insertion.client.spec.ts",
+      "upstream": "ui-conversation/tests/async-insertion.client.spec.ts",
+      "upstreamSha256": "2e5d2ed0792b1268b1a31aa7402e5f4e3a8d4248b61a65817f532a189607c8ae",
+      "status": "ported",
+      "candidateSha256": "2e5d2ed0792b1268b1a31aa7402e5f4e3a8d4248b61a65817f532a189607c8ae"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/composer-blocks.client.spec.ts",
+      "upstream": "ui-conversation/tests/composer-blocks.client.spec.ts",
+      "upstreamSha256": "b2f078d0a87a2faaa49756acadad2d6c1273a9c17932541c0f0d89ddfc09e4cd",
+      "status": "ported",
+      "candidateSha256": "b2f078d0a87a2faaa49756acadad2d6c1273a9c17932541c0f0d89ddfc09e4cd"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/config.host.spec.ts",
+      "upstream": "ui-conversation/tests/config.host.spec.ts",
+      "upstreamSha256": "5553ade76333522cb59cbea83d11d1adc7dae2fe0b0edbd045ef7a52ec17736d",
+      "status": "ported",
+      "candidateSha256": "725b9bfba6fa6b2647cc482f0bb79efa7f18f7e58c0383b4ae147d316f172524"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/context-meter.client.spec.tsx",
+      "upstream": "ui-conversation/tests/context-meter.client.spec.tsx",
+      "upstreamSha256": "1c3d2d3e6a1d25eb79a88c41cba145dd2244b5b564bf8306a784736a680d2a14",
+      "status": "ported",
+      "candidateSha256": "1c3d2d3e6a1d25eb79a88c41cba145dd2244b5b564bf8306a784736a680d2a14"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/control-row-dom.ts",
+      "upstream": "ui-conversation/tests/control-row-dom.ts",
+      "upstreamSha256": "877868cff244fc57b6392b012bf70b4552b2212a22d421bbb9bd966932118076",
+      "status": "ported",
+      "candidateSha256": "a545f7bcf76f1180da7d0dff0f09a1a27907d5398f03631fd9315e695d2282be"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/control-row-layout.client.spec.ts",
+      "upstream": "ui-conversation/tests/control-row-layout.client.spec.ts",
+      "upstreamSha256": "35bb94b05e185b4b3e72bb2c70fc79d207e3726fd7f9a62a6734d9a6108f6f9f",
+      "status": "ported",
+      "candidateSha256": "35bb94b05e185b4b3e72bb2c70fc79d207e3726fd7f9a62a6734d9a6108f6f9f"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/conversation-assembler.client.spec.ts",
+      "upstream": "ui-conversation/tests/conversation-assembler.client.spec.ts",
+      "upstreamSha256": "25713473975bdda6d440c7fc9c7e004c48a9c241cbe223635bd6c21027cf0302",
+      "status": "ported",
+      "candidateSha256": "25713473975bdda6d440c7fc9c7e004c48a9c241cbe223635bd6c21027cf0302"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/conversation-group-store.client.spec.ts",
+      "upstream": "ui-conversation/tests/conversation-group-store.client.spec.ts",
+      "upstreamSha256": "d222c8c11c4e473d5b4615516a097b31f8e09c2f8258cfb9cb9b7fb98084f072",
+      "status": "ported",
+      "candidateSha256": "d222c8c11c4e473d5b4615516a097b31f8e09c2f8258cfb9cb9b7fb98084f072"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/conversation-groups.client.spec.ts",
+      "upstream": "ui-conversation/tests/conversation-groups.client.spec.ts",
+      "upstreamSha256": "1801b323192ff60d7eeadff9aebd326d7b2745d666cbd1f3925947f45ea59df9",
+      "status": "ported",
+      "candidateSha256": "1801b323192ff60d7eeadff9aebd326d7b2745d666cbd1f3925947f45ea59df9"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/conversation-registry.client.spec.ts",
+      "upstream": "ui-conversation/tests/conversation-registry.client.spec.ts",
+      "upstreamSha256": "bae37e50c08b87c900b4306936012917aaf5df8713896d6ff7caf3060b846883",
+      "status": "ported",
+      "candidateSha256": "bae37e50c08b87c900b4306936012917aaf5df8713896d6ff7caf3060b846883"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/conversation-routing.client.spec.ts",
+      "upstream": "ui-conversation/tests/conversation-routing.client.spec.ts",
+      "upstreamSha256": "2d7fc7a98d103d8959f9d33a8e2dac80cd5ec1a8be281008ae398031b43f3152",
+      "status": "ported",
+      "candidateSha256": "2d7fc7a98d103d8959f9d33a8e2dac80cd5ec1a8be281008ae398031b43f3152"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/conversation-store.client.spec.ts",
+      "upstream": "ui-conversation/tests/conversation-store.client.spec.ts",
+      "upstreamSha256": "ed579e06c751b2a5f95ef6031bf796410cef594a87f5ff8b4a1cdef7632e93ab",
+      "status": "ported",
+      "candidateSha256": "ed579e06c751b2a5f95ef6031bf796410cef594a87f5ff8b4a1cdef7632e93ab"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/draft-document.client.spec.ts",
+      "upstream": "ui-conversation/tests/draft-document.client.spec.ts",
+      "upstreamSha256": "c642ae57416f5e6853d57b57f3bcaa5a18a5def85b8aad67aeaead9425ef3a6c",
+      "status": "ported",
+      "candidateSha256": "c642ae57416f5e6853d57b57f3bcaa5a18a5def85b8aad67aeaead9425ef3a6c"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/draft-hub.client.spec.ts",
+      "upstream": "ui-conversation/tests/draft-hub.client.spec.ts",
+      "upstreamSha256": "67d84ee60c51ad9b3972ed1ecdf8924dd49303dd47075ca9a0b2335f429a60ac",
+      "status": "ported",
+      "candidateSha256": "67d84ee60c51ad9b3972ed1ecdf8924dd49303dd47075ca9a0b2335f429a60ac"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/editor-focus.client.spec.ts",
+      "upstream": "ui-conversation/tests/editor-focus.client.spec.ts",
+      "upstreamSha256": "684a9bc09dffd4e08bd459ef4646aefe9ca444d2586dd9bd45b5b0256db7b8d0",
+      "status": "ported",
+      "candidateSha256": "684a9bc09dffd4e08bd459ef4646aefe9ca444d2586dd9bd45b5b0256db7b8d0"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/enter-behavior-row.client.spec.tsx",
+      "upstream": "ui-conversation/tests/enter-behavior-row.client.spec.tsx",
+      "upstreamSha256": "3fa41a87b185e0c1621de7ae00aa9861dbcc05b7e7d2db6ac6ea7f4ab9b3d611",
+      "status": "ported",
+      "candidateSha256": "3fa41a87b185e0c1621de7ae00aa9861dbcc05b7e7d2db6ac6ea7f4ab9b3d611"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/historical-images.client.spec.ts",
+      "upstream": "ui-conversation/tests/historical-images.client.spec.ts",
+      "upstreamSha256": "7af44bf128d35160a2e33273bc2a903da488d2641b21b9afcaef85c26d9737fe",
+      "status": "ported",
+      "candidateSha256": "7af44bf128d35160a2e33273bc2a903da488d2641b21b9afcaef85c26d9737fe"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/history-transport.perf.client.ts",
+      "upstream": "ui-conversation/tests/history-transport.perf.client.ts",
+      "upstreamSha256": "92621538031e7bcbfbe479d75e62b2e3938a6fc2e62b0e08b7fe865599c52965",
+      "status": "ported",
+      "candidateSha256": "92621538031e7bcbfbe479d75e62b2e3938a6fc2e62b0e08b7fe865599c52965"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/image-labels.client.spec.ts",
+      "upstream": "ui-conversation/tests/image-labels.client.spec.ts",
+      "upstreamSha256": "306b4f5885fa67cfb6a086d50c969b8c05e99e6c4b83309097895260fe90eb3e",
+      "status": "ported",
+      "candidateSha256": "306b4f5885fa67cfb6a086d50c969b8c05e99e6c4b83309097895260fe90eb3e"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/input-bar.client.spec.tsx",
+      "upstream": "ui-conversation/tests/input-bar.client.spec.tsx",
+      "upstreamSha256": "903e6b956f9dd5d99f43b911d8f02f9ea65e986bd08af2f2f80f13f9baad4312",
+      "status": "ported",
+      "candidateSha256": "903e6b956f9dd5d99f43b911d8f02f9ea65e986bd08af2f2f80f13f9baad4312"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/input-matrix.client.spec.tsx",
+      "upstream": "ui-conversation/tests/input-matrix.client.spec.tsx",
+      "upstreamSha256": "32a46485c55f0a0b06b142081b859a57ec086c13ddf4cf661e1ff792aa951d20",
+      "status": "ported",
+      "candidateSha256": "32a46485c55f0a0b06b142081b859a57ec086c13ddf4cf661e1ff792aa951d20"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/input-reference-submit.client.spec.ts",
+      "upstream": "ui-conversation/tests/input-reference-submit.client.spec.ts",
+      "upstreamSha256": "609e89b161063a9e16b7868050ec3d87e19b042db7617bbad61cad8e382704bb",
+      "status": "ported",
+      "candidateSha256": "609e89b161063a9e16b7868050ec3d87e19b042db7617bbad61cad8e382704bb"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/input-scenarios.client.spec.tsx",
+      "upstream": "ui-conversation/tests/input-scenarios.client.spec.tsx",
+      "upstreamSha256": "9beb883b5276d49c412e905fbe3da0ee0bd43363142d721ebe6b05fb453a781a",
+      "status": "ported",
+      "candidateSha256": "9beb883b5276d49c412e905fbe3da0ee0bd43363142d721ebe6b05fb453a781a"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/keymap-routing.client.spec.tsx",
+      "upstream": "ui-conversation/tests/keymap-routing.client.spec.tsx",
+      "upstreamSha256": "74723bfd00762dce094553bf548de3f3662233cbfe8ad63ff4420435d1c573fd",
+      "status": "ported",
+      "candidateSha256": "74723bfd00762dce094553bf548de3f3662233cbfe8ad63ff4420435d1c573fd"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/lexical-editor-core.client.spec.tsx",
+      "upstream": "ui-conversation/tests/lexical-editor-core.client.spec.tsx",
+      "upstreamSha256": "496ee481c320bd3925cf1ff5e6cc2849f65cfebf3a766cd882598e4a8a514e63",
+      "status": "ported",
+      "candidateSha256": "496ee481c320bd3925cf1ff5e6cc2849f65cfebf3a766cd882598e4a8a514e63"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/queue-dock.client.spec.tsx",
+      "upstream": "ui-conversation/tests/queue-dock.client.spec.tsx",
+      "upstreamSha256": "8c46f3a36bfff74e4e1c8e31a2894642ac7db8e363a586d4b6acd5e940734c6e",
+      "status": "ported",
+      "candidateSha256": "cc8a33374f07d62b326d247ea6af325fb975f06565451df70e9c143cfd3fba91"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/reference-activation.client.spec.ts",
+      "upstream": "ui-conversation/tests/reference-activation.client.spec.ts",
+      "upstreamSha256": "27c3b12e08abfe0800989b55debc5da518c6263ed05bcea14abadda5ac2b51d5",
+      "status": "ported",
+      "candidateSha256": "27c3b12e08abfe0800989b55debc5da518c6263ed05bcea14abadda5ac2b51d5"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/reference-chip.client.spec.tsx",
+      "upstream": "ui-conversation/tests/reference-chip.client.spec.tsx",
+      "upstreamSha256": "751a8f6d2c80751ff16c87bfdd61bab7257b0c120b09cac56b6c8306ca393e4e",
+      "status": "ported",
+      "candidateSha256": "751a8f6d2c80751ff16c87bfdd61bab7257b0c120b09cac56b6c8306ca393e4e"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/request-inspection.client.spec.ts",
+      "upstream": "ui-conversation/tests/request-inspection.client.spec.ts",
+      "upstreamSha256": "b25fac899ed960c6a2c26c504a9705b73986d77ea46bad3ebb096bd515dbdf81",
+      "status": "ported",
+      "candidateSha256": "b25fac899ed960c6a2c26c504a9705b73986d77ea46bad3ebb096bd515dbdf81"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/safari.client.spec.ts",
+      "upstream": "ui-conversation/tests/safari.client.spec.ts",
+      "upstreamSha256": "66d129fab851cd6687723a5984261694388c66a6d0a89f39ef13c2b95c92b73e",
+      "status": "ported",
+      "candidateSha256": "66d129fab851cd6687723a5984261694388c66a6d0a89f39ef13c2b95c92b73e"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/selection-survival.client.spec.tsx",
+      "upstream": "ui-conversation/tests/selection-survival.client.spec.tsx",
+      "upstreamSha256": "7032a35d7dc198dd921919ba35fd5ce1af01461f094a2e63497bba63c76a50ce",
+      "status": "ported",
+      "candidateSha256": "7032a35d7dc198dd921919ba35fd5ce1af01461f094a2e63497bba63c76a50ce"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/service-orchestration.client.spec.ts",
+      "upstream": "ui-conversation/tests/service-orchestration.client.spec.ts",
+      "upstreamSha256": "5a767f0a5a001b0e480ffe1e50b3afa9252474c163d93f3c0e3d981526b602ba",
+      "status": "ported",
+      "candidateSha256": "5a767f0a5a001b0e480ffe1e50b3afa9252474c163d93f3c0e3d981526b602ba"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/skeleton.client.spec.tsx",
+      "upstream": "ui-conversation/tests/skeleton.client.spec.tsx",
+      "upstreamSha256": "5d11031d20022c4ac2ca18511726a768221e10dbb79ef01f43970acbc24a9a2e",
+      "status": "ported",
+      "candidateSha256": "c5e6d17456a6bc4c5c7ec16b4167f71062d77de53efa4e2fab3f4c5b786a566e"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/stop-sequence.client.spec.ts",
+      "upstream": "ui-conversation/tests/stop-sequence.client.spec.ts",
+      "upstreamSha256": "8f537777a6d5e9742a29ec72988d8c97b3ace4577077579802247b711a17aa32",
+      "status": "ported",
+      "candidateSha256": "8f537777a6d5e9742a29ec72988d8c97b3ace4577077579802247b711a17aa32"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/stop-shortcut.client.spec.ts",
+      "upstream": "ui-conversation/tests/stop-shortcut.client.spec.ts",
+      "upstreamSha256": "6ccde27dd44687d1b20f3030d768b644a9ddfcf5e1ed4d73b5f17e0dfee14ebc",
+      "status": "ported",
+      "candidateSha256": "6ccde27dd44687d1b20f3030d768b644a9ddfcf5e1ed4d73b5f17e0dfee14ebc"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/submission-policy.client.spec.ts",
+      "upstream": "ui-conversation/tests/submission-policy.client.spec.ts",
+      "upstreamSha256": "0461eec3b4369bf250672084f36956fe2859e8501f5514982f17563a7b471308",
+      "status": "ported",
+      "candidateSha256": "0461eec3b4369bf250672084f36956fe2859e8501f5514982f17563a7b471308"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/submit-machine.client.spec.ts",
+      "upstream": "ui-conversation/tests/submit-machine.client.spec.ts",
+      "upstreamSha256": "f7a82f1e96c1b7e251bdaf0bd60807eed45c46e1e4b2561145f19d20a2528e96",
+      "status": "ported",
+      "candidateSha256": "f7a82f1e96c1b7e251bdaf0bd60807eed45c46e1e4b2561145f19d20a2528e96"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/system-prompt.client.spec.ts",
+      "upstream": "ui-conversation/tests/system-prompt.client.spec.ts",
+      "upstreamSha256": "a4260a628d37b212c95bf47fc1b352316bb129e1aa393f19366871347f090b33",
+      "status": "ported",
+      "candidateSha256": "a4260a628d37b212c95bf47fc1b352316bb129e1aa393f19366871347f090b33"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/todo-panel.client.spec.tsx",
+      "upstream": "ui-conversation/tests/todo-panel.client.spec.tsx",
+      "upstreamSha256": "f1db464212778a7eacc44e9761a8fc27405de8933e6549afb9ae65d2ce2e865d",
+      "status": "ported",
+      "candidateSha256": "f1db464212778a7eacc44e9761a8fc27405de8933e6549afb9ae65d2ce2e865d"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/user-text-component-fixture.client.tsx",
+      "upstream": "ui-conversation/tests/user-text-component-fixture.client.tsx",
+      "upstreamSha256": "1f762ea2aa998b07bc1ce4d6bc4feed440f57d59e5623e6a42ca861f7737f7d2",
+      "status": "ported",
+      "candidateSha256": "a4d2102df53fc4b93a713da94d60c2ffa6c823096fd1b097ddd63fb8137c2259"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/user-text-reference-composition.client.spec.ts",
+      "upstream": "ui-conversation/tests/user-text-reference-composition.client.spec.ts",
+      "upstreamSha256": "9cf98a912abc9805e744093e1d991e1c5e16a3fde5ae807c784935784bddd88d",
+      "status": "ported",
+      "candidateSha256": "cd0d711e57c4a47d09fcade2bc0d953c5cfec6d802f26f9b64dd1b1dba97aaa4"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/user-text-registry.client.spec.ts",
+      "upstream": "ui-conversation/tests/user-text-registry.client.spec.ts",
+      "upstreamSha256": "754d28ab4977e0e9cbb981a6158635ba4edd9f0ad7a4e07e7da141272a30a257",
+      "status": "ported",
+      "candidateSha256": "754d28ab4977e0e9cbb981a6158635ba4edd9f0ad7a4e07e7da141272a30a257"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/user-text-scheduling.client.spec.ts",
+      "upstream": "ui-conversation/tests/user-text-scheduling.client.spec.ts",
+      "upstreamSha256": "799a8e566c2ec74857d595dabdd4f41183deeea9261fe667d7bef7d534398226",
+      "status": "ported",
+      "candidateSha256": "799a8e566c2ec74857d595dabdd4f41183deeea9261fe667d7bef7d534398226"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/user-text-whitespace.client.spec.ts",
+      "upstream": "ui-conversation/tests/user-text-whitespace.client.spec.ts",
+      "upstreamSha256": "adc16a094c8e4d40994836bf7f70ee9a9ba7f2d4fe0ebd89089cb92407bd4d92",
+      "status": "ported",
+      "candidateSha256": "adc16a094c8e4d40994836bf7f70ee9a9ba7f2d4fe0ebd89089cb92407bd4d92"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/user-text.client.spec.tsx",
+      "upstream": "ui-conversation/tests/user-text.client.spec.tsx",
+      "upstreamSha256": "001248832b49931c750573d079146ca0d3faba2ce8283f26e9739f3c74d1c0b8",
+      "status": "ported",
+      "candidateSha256": "a8a11f8f93ac7a0deefba0ba4d8640d0e39cb751b2603a7c0eeab156a2e5a6be"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/view-selection.client.spec.ts",
+      "upstream": "ui-conversation/tests/view-selection.client.spec.ts",
+      "upstreamSha256": "622213eebb3e3aa0a43817cf495838b2d48fa9f224322838cd6216c6d7bf85b6",
+      "status": "ported",
+      "candidateSha256": "622213eebb3e3aa0a43817cf495838b2d48fa9f224322838cd6216c6d7bf85b6"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/views-type-chain.client.spec.tsx",
+      "upstream": "ui-conversation/tests/views-type-chain.client.spec.tsx",
+      "upstreamSha256": "c5f60d4e0eb87df31ddc0d49e0750964e96ec6fab5fd73d78bdeb9f8dc6c959e",
+      "status": "ported",
+      "candidateSha256": "c5f60d4e0eb87df31ddc0d49e0750964e96ec6fab5fd73d78bdeb9f8dc6c959e"
+    },
+    {
+      "file": "packages/client-ui-conversation/tests/width-handle-styles.client.spec.ts",
+      "upstream": "ui-conversation/tests/width-handle-styles.client.spec.ts",
+      "upstreamSha256": "a9c264485fad961ca83ba926f49d19754b548a81d4e38ddaee97d2929dcd435d",
+      "status": "ported",
+      "candidateSha256": "a9c264485fad961ca83ba926f49d19754b548a81d4e38ddaee97d2929dcd435d"
+    },
+    {
+      "file": "packages/client-ui-layout/tests/app-frame.client.spec.tsx",
+      "upstream": "ui-layout/tests/app-frame.client.spec.tsx",
+      "upstreamSha256": "a052df910f6d536423e3558c8ca9c8b08e6a174ac95dd7a5b0e5b1e0e59ec429",
+      "status": "ported",
+      "candidateSha256": "a052df910f6d536423e3558c8ca9c8b08e6a174ac95dd7a5b0e5b1e0e59ec429"
+    },
+    {
+      "file": "packages/client-ui-layout/tests/apply.client.spec.ts",
+      "upstream": "ui-layout/tests/apply.client.spec.ts",
+      "upstreamSha256": "986c2b4c1560e6bba22fc4f88553cd4810ae28501106ad2ac50f76288ee92b6d",
+      "status": "ported",
+      "candidateSha256": "92fcbbd72ce72707a2e5491ef1617b7b12d4893c4279ed570c337760338c104d"
+    },
+    {
+      "file": "packages/client-ui-layout/tests/columns.client.spec.ts",
+      "upstream": "ui-layout/tests/columns.client.spec.ts",
+      "upstreamSha256": "a92ecae03fc126db480d151d9085aa2a8e19f716c18840504aeabc32cbdd9fdb",
+      "status": "ported",
+      "candidateSha256": "a92ecae03fc126db480d151d9085aa2a8e19f716c18840504aeabc32cbdd9fdb"
+    },
+    {
+      "file": "packages/client-ui-layout/tests/document-title.client.spec.tsx",
+      "upstream": "ui-layout/tests/document-title.client.spec.tsx",
+      "upstreamSha256": "8a6a1d0a08b81432b224d7c6a0d478d6cfb47d9f31f87afba0f5e2f8a0076e98",
+      "status": "ported",
+      "candidateSha256": "8a6a1d0a08b81432b224d7c6a0d478d6cfb47d9f31f87afba0f5e2f8a0076e98"
+    },
+    {
+      "file": "packages/client-ui-layout/tests/layout-store.client.spec.ts",
+      "upstream": "ui-layout/tests/layout-store.client.spec.ts",
+      "upstreamSha256": "2450546eb7acd6be44d839f6be6f3a4f1c288cf83888174c99341edfbc838de6",
+      "status": "ported",
+      "candidateSha256": "73dd7d81aeefeef2ec0c2b9e7aa17e5d2d6630bca9b240a9f0e38dd2f56e5510"
+    },
+    {
+      "file": "packages/client-ui-layout/tests/service.client.spec.ts",
+      "upstream": "ui-layout/tests/service.client.spec.ts",
+      "upstreamSha256": "f81c44bec86ce747502c3855c15998c659481c1a13550236afbc3ec2db840bc3",
+      "status": "ported",
+      "candidateSha256": "a0da02a5d786fd88cef9d3a2a04e1d1ba7e3bdef8ed9bb2cf807ae34071e9896"
+    },
+    {
+      "file": "packages/client-ui-layout/tests/theme-presenter.client.spec.ts",
+      "upstream": "ui-layout/tests/theme-presenter.client.spec.ts",
+      "upstreamSha256": "a17bd35b053268d12ca3e60efed26d02a7a94c0799865ef3ca8860afbc3f199b",
+      "status": "ported",
+      "candidateSha256": "a17bd35b053268d12ca3e60efed26d02a7a94c0799865ef3ca8860afbc3f199b"
+    },
+    {
+      "file": "packages/client-ui-input-trigger/tests/apply.client.spec.ts",
+      "upstream": "ui-input-trigger/tests/apply.client.spec.ts",
+      "upstreamSha256": "65de7d2ad9244d3a14951d2afafcfef84972d6c030ff0923b4e34514d1f5585e",
+      "status": "ported",
+      "candidateSha256": "65de7d2ad9244d3a14951d2afafcfef84972d6c030ff0923b4e34514d1f5585e"
+    },
+    {
+      "file": "packages/client-ui-input-trigger/tests/core-detect.client.spec.ts",
+      "upstream": "ui-input-trigger/tests/core-detect.client.spec.ts",
+      "upstreamSha256": "e2446c573b07c2af179fc6cb077918ddb185a1597d050ce681995fd545eedf75",
+      "status": "ported",
+      "candidateSha256": "e2446c573b07c2af179fc6cb077918ddb185a1597d050ce681995fd545eedf75"
+    },
+    {
+      "file": "packages/client-ui-input-trigger/tests/core-menu.client.spec.ts",
+      "upstream": "ui-input-trigger/tests/core-menu.client.spec.ts",
+      "upstreamSha256": "1086d1565063335b562a5cdc43db2c16ae6b98ea18a5877c0502f3a86a7ce1e2",
+      "status": "ported",
+      "candidateSha256": "1086d1565063335b562a5cdc43db2c16ae6b98ea18a5877c0502f3a86a7ce1e2"
+    },
+    {
+      "file": "packages/client-ui-input-trigger/tests/menu-view.client.spec.tsx",
+      "upstream": "ui-input-trigger/tests/menu-view.client.spec.tsx",
+      "upstreamSha256": "6c1163b08a8f84f0fd429fbe4ef809043e8036015f7845d58bcf443e8df23b59",
+      "status": "ported",
+      "candidateSha256": "6c1163b08a8f84f0fd429fbe4ef809043e8036015f7845d58bcf443e8df23b59"
+    },
+    {
+      "file": "packages/client-ui-input-trigger/tests/service.client.spec.ts",
+      "upstream": "ui-input-trigger/tests/service.client.spec.ts",
+      "upstreamSha256": "3400e1c1e4ef65921186fca9772f07c4251bbbd4844845b8d32b59acdf598a28",
+      "status": "ported",
+      "candidateSha256": "3400e1c1e4ef65921186fca9772f07c4251bbbd4844845b8d32b59acdf598a28"
+    }
+  ],
+  "testSupport": "Fixed upstream source, resolved through vitest.upstream-ui.config.ts; four customized packages always resolve to QS source.",
+  "adaptations": [
+    "Relative cross-package test support resolves to the pinned upstream checkout.",
+    "QS title-free ordinary session layout and identity slot expectations; subagent navigation remains tested.",
+    "QS extension slots included in strict test renderers.",
+    "QS layout reservation actions and initial state included in fixtures.",
+    "jsdom ResizeObserver/font geometry shim; real geometry is covered by Chromium acceptance."
+  ],
+  "result": {
+    "files": 114,
+    "passed": 1909,
+    "failed": 0,
+    "skipped": 0
+  }
+}

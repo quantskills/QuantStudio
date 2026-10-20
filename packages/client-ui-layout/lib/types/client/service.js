@@ -1,6 +1,5 @@
 /** Cross-plugin panel-action face (ctx.layout). */
 export class LayoutController {
-    panels;
     hasMainPanel;
     panelInfo;
     navigation = new AbortController();
@@ -8,18 +7,17 @@ export class LayoutController {
         if (panelId !== null && !this.hasMainPanel(panelId))
             throw new Error(`Unknown main panel: ${panelId}`);
         this.navigation.abort();
-        this.panels.selectPanel(panelId);
+        this.#require().selectPanel(panelId);
     }
     beginNavigation() { this.navigation.abort(); this.navigation = new AbortController(); return this.navigation.signal; }
     dispose() { this.navigation.abort(); }
     constructor(panels, hasMainPanel, panelInfo) {
-        this.panels = panels;
         this.hasMainPanel = hasMainPanel;
         this.panelInfo = panelInfo;
         this.attachPanels(panels);
     }
-    openRightbar(track, fullscreen) { this.panels.openRightbar(track, fullscreen); }
-    closeRightbar() { this.panels.closeRightbar(); }
+    openRightbar(track, fullscreen) { this.#require().openRightbar(track, fullscreen); }
+    closeRightbar() { this.#require().closeRightbar(); }
     #panels;
     #sidebarReservations = new Map();
     #sidebarClaim;

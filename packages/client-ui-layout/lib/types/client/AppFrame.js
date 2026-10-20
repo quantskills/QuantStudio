@@ -16,7 +16,7 @@ import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-run
  * shares — zero cordis or framework imports, zero self-made hooks.
  */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { applyColumnClaims, computeColumns, CENTER_MIN, RIGHTBAR_DEFAULT_RATIO, SIDEBAR_AUTO_COLLAPSE, SIDEBAR_COLLAPSED, SIDEBAR_DEFAULT } from "./columns.js";
+import { applyColumnClaims, clampWidth, computeColumns, CENTER_MIN, RIGHTBAR_DEFAULT_RATIO, RIGHTBAR_MIN, RIGHTBAR_MAX_RATIO, SIDEBAR_AUTO_COLLAPSE, SIDEBAR_COLLAPSED, SIDEBAR_DEFAULT } from "./columns.js";
 import { DocumentTitle } from "./DocumentTitle.js";
 import css from './AppFrame.module.css';
 /** Center column grid item (session-body building block). */
@@ -219,7 +219,10 @@ export function AppFrame({ useStore, useSessions, usePanelInfo, actions, renderS
     // it priced the squeeze itself, the centre column absorbed each width change
     // whole and was corrected two frames later — visible jitter. cols keeps only
     // the discrete decisions (track present, collapse state) and the drag base.
-    const rightbarMax = cols.rightbar;
+    const hasClaims = layoutInfo.sidebarExclusive || layoutInfo.detailsExclusive
+        || layoutInfo.sidebarReservation > 0 || layoutInfo.detailsReservation > 0;
+    const rightbarMax = hasClaims ? cols.rightbar
+        : cols.rightbar === 0 ? 0 : clampWidth(rightbarPreference, RIGHTBAR_MIN, viewport * RIGHTBAR_MAX_RATIO);
     const sidebar = useMemo(() => renderSlot('sidebar', {
         collapsed: sidebarCollapsed,
         width: cols.sidebar,

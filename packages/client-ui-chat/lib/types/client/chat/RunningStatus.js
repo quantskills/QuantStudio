@@ -23,6 +23,6 @@ export const RunningStatus = memo(function RunningStatus({ startTime, renderSlot
     const label = startTime === undefined ? t('chat.deepDiving') : t('chat.deepDivingFor', {
         duration: formatRunDuration(Math.max(1000, now - startTime), t).map(part => part.text).join(''),
     });
-    return (_jsxs("div", { className: css.running, "data-chat-running": true, children: [_jsx("span", { className: a11yCss.visuallyHidden, role: "status", "aria-live": "polite", "aria-atomic": "true", children: t('chat.deepDiving') }), _jsx("span", { className: css.runningDivider, "aria-hidden": "true" }), _jsxs("span", { className: css.runningContent, children: [_jsx(RunningWhaleTail, {}), _jsx(TextShimmer, { active: true, className: css.runningText, children: renderSlot('conversation.chat.turnStatus', { defaultLabel: label }, { fallback: label }) })] })] }));
+    return (_jsxs("div", { className: css.running, "data-chat-running": true, children: [_jsx("span", { className: a11yCss.visuallyHidden, role: "status", "aria-live": "polite", "aria-atomic": "true", children: t('chat.deepDiving') }), _jsx("span", { className: css.runningDivider, "aria-hidden": "true" }), _jsxs("span", { className: css.runningContent, children: [_jsx(RunningWhaleTail, {}), _jsx(TextShimmer, { active: true, className: css.runningText, children: renderSlot ? renderSlot('conversation.chat.turnStatus', { defaultLabel: label }, { fallback: label }) : label })] })] }));
 });
 //# sourceMappingURL=RunningStatus.js.map

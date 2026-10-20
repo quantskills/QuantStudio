@@ -53,18 +53,45 @@ it('falls back to chat when a persisted view no longer exists', () => {
 
 it('mounts action and utility controls while keeping subagents in the composer', () => {
   const seat = document.createElement('div')
-  seat.setAttribute('data-composer-subagents', '')
-  document.body.append(seat)
+  seat.setAttribute('data-composer-subagents', 'parent')
+  const surface = document.createElement('div')
+  surface.setAttribute('data-conversation-surface', '')
+  surface.append(seat)
+  document.body.append(surface)
+  const container = document.createElement('div')
+  surface.append(container)
   try {
     const props = headerProps()
     props.renderSlot = ((name: string) => name.endsWith('.actions') ? <button>收藏会话</button>
       : name.endsWith('.utilities') ? <button>会话菜单</button>
         : name.endsWith('.lineage') ? <button>子智能体</button> : null) as never
-    const view = render(<ConversationSessionHeader {...props} />)
+    const view = render(<ConversationSessionHeader {...props} />, { container })
     expect(view.container.querySelector('[data-conversation-controls]')?.contains(screen.getByRole('button', { name: '收藏会话' }))).toBe(true)
     expect(screen.getByRole('button', { name: '会话菜单' })).toBeTruthy()
     expect(seat.contains(screen.getByRole('button', { name: '子智能体' }))).toBe(true)
-  } finally { seat.remove() }
+  } finally { surface.remove() }
+})
+
+it('keeps lineage reachable without a composer and follows its own composer remount without entering another session', async () => {
+  const props = headerProps()
+  props.renderSlot = ((name: string) => name.endsWith('.lineage') ? <button>当前会话子智能体</button> : null) as never
+  const view = render(<>
+    <div data-conversation-surface><div data-composer-subagents="parent" data-other-seat /></div>
+    <div data-conversation-surface data-current-surface><ConversationSessionHeader {...props} /></div>
+  </>)
+  const scope = view.container.querySelector('[data-current-surface]')!
+  expect(scope.querySelector('[data-conversation-controls]')?.contains(screen.getByRole('button'))).toBe(true)
+  const seat = document.createElement('div')
+  seat.dataset.composerSubagents = 'parent'
+  scope.append(seat)
+  await waitFor(() => expect(seat.contains(screen.getByRole('button'))).toBe(true))
+  expect(view.container.querySelector('[data-other-seat]')?.childElementCount).toBe(0)
+  seat.remove()
+  await waitFor(() => expect(scope.querySelector('[data-conversation-controls]')?.contains(screen.getByRole('button'))).toBe(true))
+  const next = document.createElement('div')
+  next.dataset.composerSubagents = 'parent'
+  scope.append(next)
+  await waitFor(() => expect(next.contains(screen.getByRole('button'))).toBe(true))
 })
 
 it('keeps blank conversations free of session controls', () => {

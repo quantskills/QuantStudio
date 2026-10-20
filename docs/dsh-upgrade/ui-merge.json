@@ -9,8 +9,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/apply.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Preserved QS extension slots; verified target factories, inject contracts and renderer registration.",
+      "sourceSha256": "4b15a709e302b8ae5703f5ec833c97667987ebced443ffd5193abec9b71310a8",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/ApprovalCommand.tsx",
@@ -29,8 +32,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/AssistantNodeView.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Preserved QS assistant presentation; upstream transcript and reasoning behaviors covered.",
+      "sourceSha256": "a64a07ad21d4391892dde2ffa3e7aa528a26f04cfb2f7f7d2dcf9fcd21693959",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/ChatNodeSeat.tsx",
@@ -44,8 +50,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/ChatView.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Retained shared scroll owner and QS layout; target node subscription, pending echoes and scrolling regressions covered.",
+      "sourceSha256": "5b9262bc2727dfa79bd801bdaae68f356cbbf4f17363554e75f32315bc694239",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/CommandNodeView.tsx",
@@ -79,8 +88,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/ContextInjectionRow.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Retained QS context display; upstream context projection and grouping covered.",
+      "sourceSha256": "3bc4d2bc3e3fd0801f7591f46018adaf104837978df37b3fc0cc2bd7bf427d59",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/GenericCommandCard.module.css",
@@ -109,18 +121,27 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/MessageItem.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Retained QS message rendering; upstream content, copy and reference tests covered.",
+      "sourceSha256": "d2719dd95253d419a560cc0fee7b43952ff7c70ecfcc146637ec1b4ace583676",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/ReasoningRow.module.css",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Removed obsolete rule hiding native summary; kept QS typography.",
+      "sourceSha256": "c89a8c4e879899f58c6e61108b4330cb52ba4c0c288f873b77255e2b46004f03",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/ReasoningRow.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target disclosure and reasoning content behavior preserved.",
+      "sourceSha256": "91b735d2c42fe0d861afb3c4592f9b6f1efba02839ece117a2900736f93decba",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/StatsLine.module.css",
@@ -164,8 +185,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/TurnTailNodeView.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target turn metrics and completion tails preserved.",
+      "sourceSha256": "e50ea98ef94c46a7e56b5de4524b65c5daa29f118144dba36138758a145ab168",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/TurnUsagePanel.module.css",
@@ -189,8 +213,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/register-node-renderers.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target renderers and QS slots registered once.",
+      "sourceSha256": "6c77d8b29d750d27514ad65d475950e8a714666a5c3b1d8d2580e442ca5a7010",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/searchable-hidden.ts",
@@ -229,8 +256,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/contract/slots.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS slots extend target contracts; dispatch and ownership exercised by assembly suites.",
+      "sourceSha256": "6300804eaf47a29cd067d61ec0c7b61766404da03a0cb02d10cd03feeac8793a",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/contract/snapshot.ts",
@@ -364,8 +394,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/index.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target exports retained with QS extensions.",
+      "sourceSha256": "4159d4390622d8d44f6e0329db0d981196ce1579c5ffeda5d892bf212ed4dc41",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-chat/src/client/locale.ts",
@@ -659,8 +692,11 @@
     },
     {
       "file": "packages/client-ui-conversation/src/client/apply.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Preserved QS extension slots; verified target factories, inject contracts and renderer registration.",
+      "sourceSha256": "98a948703b19ed3749f214c90c78c502a2f41602d07d198f4140dd1aa7ae73a0",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-conversation/src/client/context-occupancy.ts",
@@ -709,8 +745,11 @@
     },
     {
       "file": "packages/client-ui-conversation/src/client/contract/slots.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS slots extend target contracts; dispatch and ownership exercised by assembly suites.",
+      "sourceSha256": "e82399caea37d34c388ef028465b6999b0d02f3b34e8d7f0c38de975c661e517",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-conversation/src/client/contract/snapshot.ts",
@@ -764,8 +803,11 @@
     },
     {
       "file": "packages/client-ui-conversation/src/client/index.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target exports retained with QS extensions.",
+      "sourceSha256": "5e1a613393f137b876963330437b72460db0a72947fadee5b7679fdf7aad6baf",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-conversation/src/client/input/blocks.ts",
@@ -859,8 +901,11 @@
     },
     {
       "file": "packages/client-ui-conversation/src/client/locales.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target locale entries retained; QS product identity remains slot-provided.",
+      "sourceSha256": "bff9bb16e29577e1610119e1db6553ee4883ec52ef1d2e0e2d650b9d1e0b01aa",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-conversation/src/client/queue/QueueDock.module.css",
@@ -899,23 +944,35 @@
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/ConversationRoot.module.css",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS desktop/mobile layout retained; resident composer and scrollport behavior covered.",
+      "sourceSha256": "b097c555f3cb08b42233167479f001b2e2045f7803ce8a940ebed6ca5be9910d",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/ConversationRoot.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target resident composer lifecycle retained.",
+      "sourceSha256": "d1438a132ae4fa0a9f7cbd819ff6485aaa99cd4b087f7ac1f394d74703ee88d1",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/ConversationSession.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Scoped composer portal by session; fallback parent navigation; no repeated observer publication; retains QS title-free ordinary layout.",
+      "sourceSha256": "01f67f277664e80555bd439ec0acacbbe5418b1d8ae69c2e17e83d36a2871a00",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/EmptyHero.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS identity extension retained with upstream brand fallback and workspace controls.",
+      "sourceSha256": "78c7a82c6b06e1d1c1101ddebb81af03f3252c2bab6d7aceaf1606c7b4f2cc3e",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/HeroShell.module.css",
@@ -924,13 +981,19 @@
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/InputBar.module.css",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS tool row and attachment layout retained with target editable surface.",
+      "sourceSha256": "9640a8b50928bbdcfaeb74088ada77abd74390739793c97ec334ebd13c74a75d",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/InputBar.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target command, attachment, pending, IME and steer semantics; restored session-scoped subagent seat.",
+      "sourceSha256": "e20f5514d50c6fab0da6486e03f1c9f62ee97623d3a9fc1bb6a266ccaede2d9c",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/PermissionSelect.module.css",
@@ -1241,13 +1304,19 @@
     },
     {
       "file": "packages/client-ui-layout/src/client/AppFrame.module.css",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS reservation and mobile layout preserved.",
+      "sourceSha256": "efd032707cb7387d03de4bf8f2fa155497bce041eecc95a6f78d867cc3a1fe5e",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-layout/src/client/AppFrame.tsx",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Use upstream rightbar clamping without active QS claims; retain reservation behavior when claimed.",
+      "sourceSha256": "9655678747a4a4f38e50eed19d84c28ab2a23814d5cc0f6fd9f46a06bedb4467",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-layout/src/client/DocumentTitle.tsx",
@@ -1256,23 +1325,35 @@
     },
     {
       "file": "packages/client-ui-layout/src/client/columns.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Merged upstream column constraints with QS reservations.",
+      "sourceSha256": "9a4f88e37e3b4eb80490bec59befb5c560320fcc4103b53be4469805cbd1e98a",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-layout/src/client/index.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target exports retained with QS extensions.",
+      "sourceSha256": "8c320a31c2536dff13f7f69eb596c01ad91a00a7a041f00ccbc7e881d5ddf1dd",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-layout/src/client/service.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Controller delegates to current attachment after remount, including rightbar actions.",
+      "sourceSha256": "a81731ce0f5aec984278af74c96f1166f60a47892d341ae9099b99590c53da5f",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-layout/src/client/stores.ts",
-      "outcome": "upstream-contract-ported-custom-review-pending",
-      "custom": true
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS claims extend upstream state and navigation without duplicate service.",
+      "sourceSha256": "e35612c3d2fdf5d248fae2fc6507d74098563c708440965c3031cc2f18e8712d",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
     },
     {
       "file": "packages/client-ui-layout/src/client/theme-presenter.ts",
@@ -1310,5 +1391,12 @@
       "custom": false
     }
   ],
-  "acceptance": "partial: types/build/unit tests pass; 27 conflict files require full browser behavior review"
+  "acceptance": "partial: types/build/unit tests pass; 27 conflict files require full browser behavior review",
+  "reviewSummary": {
+    "conflictFilesReviewed": 27,
+    "targetUiTestFiles": 114,
+    "targetUiTestsPassed": 1909,
+    "excludedUpstreamTests": 0,
+    "browser": "see test-report.md, separate from source tests"
+  }
 }
