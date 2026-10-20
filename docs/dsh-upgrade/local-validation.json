@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "commit": "aa375e4f9936f016b8465bc130b91fab47436eb1",
+  "commit": "a96c8cfff38e4de5b85dbe6dbbd0a0aa1e909dc4",
   "runtime": "0.2.1-rc.2",
   "node": "22.23.2",
   "pnpm": "11.7.0",
   "platform": "Windows x64",
   "suite": {
-    "files": 134,
-    "passed": 1412,
+    "files": 138,
+    "passed": 1428,
     "failed": 0,
     "skipped": 1,
     "skipReason": "POSIX-only isolated process group test"
@@ -15,7 +15,7 @@
   "nativeSmoke": {
     "result": "passed",
     "generation": "empty-ci-fixture",
-    "artifact": "72b4656ba4ed4b085e6627486246550cb0b62c595a00f567c451a785dd7fa4c6",
+    "artifact": "6772ed9fac437801956c8d1457e6463a438efd1875d90747f291b6b2f4d1625d",
     "isolationPostflight": "passed",
     "cleanup": "passed"
   },
@@ -24,5 +24,52 @@
     "unchanged": 48
   },
   "productionActivation": false,
-  "completePlanAcceptance": false
+  "completePlanAcceptance": false,
+  "baselineFull": {
+    "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+    "files": 126,
+    "passed": 1236,
+    "failed": 8,
+    "performedAfterImplementation": true
+  },
+  "browser": {
+    "commit": "4a05f3bb2cbd6ff300d9354c14ab2bf36f894ced",
+    "artifact": "38fa9d58601f6d7fa02575bcf5b56865b0bb46bcd542b6f2b48c021adb158219",
+    "officialManagerNavigation": "passed",
+    "applicationBundleAndEightComponentsReadOnly": "passed",
+    "isolationPostflight": "passed",
+    "cleanup": "passed"
+  },
+  "pluginSourceMatrix": {
+    "result": "passed",
+    "actualOfficialManager": true,
+    "sources": [
+      "npm",
+      "release-archive",
+      "local-link",
+      "git-commit",
+      "git-subdirectory"
+    ],
+    "updatesForAllFiveSources": "passed",
+    "npmAliasIntegrity": "passed",
+    "failedInstallPreservedManifestAndLock": "passed",
+    "concurrentInstallsAndProfileMutations": "passed",
+    "removal": "passed",
+    "publicNetwork": false,
+    "productionHomeUsed": false
+  },
+  "offlineRecovery": {
+    "testsPassed": 7,
+    "candidateIncrementPreserved": true,
+    "sqliteIntegrityAndTradeRecords": "passed",
+    "runnable": false,
+    "oldReadable": "unknown"
+  },
+  "node24NativeEntrypoints": {
+    "node": "24.0.0",
+    "platform": "Windows x64",
+    "commit": "80bb346e111ce6c578dbd6a1f280c28d56b0151c",
+    "testsPassed": 4,
+    "fullSuite": false
+  }
 }

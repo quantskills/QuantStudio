@@ -25,6 +25,7 @@
    corepack pnpm run check
    corepack pnpm run build
    corepack pnpm exec vitest run
+   corepack pnpm run ci:plugins
    每一步检查退出码；错误要修复或标记失败，不能删锁文件、跳过测试或升级到 latest。
 
 4. 使用 corepack pnpm run ci:smoke 启动自动构造的无凭据临时样本。
@@ -43,12 +44,13 @@
    在旧目录只运行固定 pnpm install --frozen-lockfile；回到候选目录运行 corepack pnpm run ci:legacy -- /完整/旧目录。
    脚本检查固定提交，创建独立空数据目录验证新启动器运行旧核心，结束后清理。不要传入原数据目录。
    如需历史兼容验证，仅使用已经一致性备份的离线副本，执行 audit-session-copy / migrateSessionCopy。
+   回退构造样本已由 offline-recovery 测试覆盖；真实历史恢复按 migration-rollback.md 使用 preserveAndRestoreCopy，先保全新增数据，输出仍不可运行。
    不对副本启动完整 Host。报告只给数量、校验摘要和错误类别，不输出会话原文、路径中的私有信息或凭据。
    任何不确定的迁移阶段、来源、接收方历史和旧版可读性都应停止，不绕过保护。
 
 7. 交付平台、工具版本、提交 SHA、制品摘要、各项通过/失败/受阻/不适用结果及清理范围。
    对账号、语音硬件、SSH、外部比赛服务条件不足的项目标记受阻。
-   官方插件管理器迁移、全数据激活、真实旧核心启动与回退尚未验收时，PR 保持 Draft。
+   官方插件管理器迁移、全数据激活和完整核心回退未验收时，PR 保持 Draft。
    不修改日常数据目录、原 Profile 和用户当前服务。
 ```
 
@@ -76,6 +78,7 @@
    corepack pnpm run check
    corepack pnpm run build
    corepack pnpm exec vitest run
+   corepack pnpm run ci:plugins
    Corepack 缺失或签名失败时修复工具，不删锁文件、不改用 latest、不绕过安装和测试。
 
 4. 运行 corepack pnpm run ci:smoke。
@@ -94,6 +97,7 @@
    在旧目录运行固定 pnpm install --frozen-lockfile，再回到候选目录运行 corepack pnpm run ci:legacy -- "C:/独立旧源码目录"。
    它只使用新建临时数据目录，不改变原实例。历史数据只能来自一致性备份的离线副本。
    调用 audit-session-copy / migrateSessionCopy，保留原文件和校验清单。
+   离线整目录恢复使用 migration-rollback.md 中的 preserveAndRestoreCopy，先保全候选新增数据；输出不可直接启动。
    不用完整 Host 打开兼容副本。不要打印原文、凭据或账户配置。
    所有删除/移动使用 PowerShell -LiteralPath；递归操作前核对绝对目标在本次测试目录内。
    未知状态、路径越界、来源不明或旧版可读性不明时停止，不绕过检查。

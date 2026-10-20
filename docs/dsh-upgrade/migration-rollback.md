@@ -56,4 +56,21 @@ PowerShell 可以同样调用这两个 Node 入口，使用完整 Windows 路径
 - 将已验证的旧一致性快照恢复到另一个目录，使用对应旧核心检查 ID、父子关系、消息、附件、自建内容、交易记录和配置，再安排人工切换。
 - 自动清理遇到迁移记录时保留版本；迁移备份、回退所需版本及未处理增量不得删除。
 
-**整目录回退演练尚未完成，属于 Draft 合并阻塞项。** 当前测试验证拒绝不安全回退和 Profile 事务恢复，不能替代完整生产数据演练。
+### 离线保全与恢复工具
+
+仅针对已经停写、具有一致性证明的离线目录使用；`backupId` 应填写校验过的原备份标识。文件前后两次校验不能替代数据库一致性快照，工具不会替你声明活动数据库已经安全备份。
+
+```js
+import { preserveAndRestoreCopy } from './scripts/offline-recovery.mjs'
+await preserveAndRestoreCopy('/isolated/verified-old-home', '/isolated/stopped-candidate-home',
+  '/isolated/recovery-output', {
+    consistency: 'verified-offline-snapshot',
+    backupId: '<verified-backup-sha256>',
+  })
+```
+
+输出目录首次必须不存在。先写入并完整验证 `preserved-candidate/`，然后写 `restored-baseline/`；两个原目录均只读。每个文件以摘要校验，包含空目录及链接文本。链接不被遍历或执行。候选新增会话、成交、配置和附件保留在完整候选副本中；旧代际也保留，不能用旧文件覆盖新文件来“合并”。
+
+独立 `migration.json` 与 `inventories.json` 记录两个代际、备份标识及阶段。中断可用同样参数重跑；已存在的每个文件须与源一致，变化的源、未知阶段、篡改输出、嵌套目录和并发恢复均拒绝。失败产物保留供检查，不自动删除。
+
+构造样本的 7 项测试已覆盖恢复、新增记录保全、幂等、中断、锁、外部链接保护及关闭后的 SQLite 快照 `integrity_check` 和成交金额核对。**输出始终 `runnable:false`、`oldReadable:unknown`**：不能把该复制报告当作整个数据目录与旧核心兼容的证明；实际核心读取、Profile 路径、删除日志及自动任务核验仍是激活前阻塞项。
