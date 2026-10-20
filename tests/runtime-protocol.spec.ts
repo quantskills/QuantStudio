@@ -93,6 +93,15 @@ describe('core migration activation boundary', () => {
     await writeFile(join(home, 'settings.json'), '{"apiKey":"not-for-test"}')
     await expect(assertIsolatedFixture(home, home)).rejects.toThrow(/credentials/)
   })
+  it('accepts a canonical root alias but still rejects a nested escaping link', async () => {
+    const outer = await temp(), root = join(outer, 'actual'), alias = join(outer, 'alias'), outside = await temp()
+    await mkdir(join(root, 'home'), { recursive: true })
+    await symlink(root, alias, 'junction')
+    await writeFile(join(root, 'home', 'settings.json'), JSON.stringify({ cwd: join(alias, 'home', 'workspace') }))
+    await expect(assertIsolatedFixture(join(alias, 'home'), alias)).resolves.toBeUndefined()
+    await symlink(outside, join(root, 'home', 'escape'), 'junction')
+    await expect(assertIsolatedFixture(join(alias, 'home'), alias)).rejects.toThrow(/escapes/)
+  })
   it('admits only freshly attested browser auth and synthetic loopback refs after startup', async () => {
     const home = await temp(), secret = 'a'.repeat(43), ref = 'QS_MODEL_' + 'A'.repeat(36)
     const vault = { version: 1, records: { 'client-connection/browser-session': { kind: 'grant', payload: { version: 1, secret } } }, refs: { [ref]: 'local-no-auth' } }

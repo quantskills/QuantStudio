@@ -130,7 +130,16 @@ export async function waitForReady(child, expected, timeoutMs) {
 /** Inspect a runnable fixture before any service constructor can replay deletion or automation. */
 export async function assertIsolatedFixture(home, allowedRoot, runtime = undefined, generated = undefined) {
   const root = await realpath(allowedRoot)
-  const inside = path => { const child = relative(root, resolve(path)); return child === '' || (!child.startsWith('..') && !isAbsolute(child)) }
+  const lexicalRoot = resolve(allowedRoot)
+  const within = child => child === '' || (child !== '..' && !child.startsWith(`..${process.platform === 'win32' ? '\\' : '/'}`) && !isAbsolute(child))
+  // macOS /var and /tmp aliases (or a Windows test junction) can name the same
+  // isolated root. Only translate that verified root prefix; nested links are
+  // still checked against their real targets by walk().
+  const inside = path => {
+    const absolute = resolve(path), lexical = relative(lexicalRoot, absolute)
+    const canonical = within(lexical) ? resolve(root, lexical) : absolute
+    return within(relative(root, canonical))
+  }
   if (!inside(await realpath(home))) throw new Error('Fixture home is outside the isolated root.')
   // Only the fresh smoke harness can certify an auth record created after its
   // empty-home preflight. Never admit a copied vault merely because it is well formed.

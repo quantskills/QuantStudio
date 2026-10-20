@@ -1,6 +1,6 @@
 /** Start the real stable launcher against a newly constructed, credential-free home. */
 import { fork, spawnSync } from 'node:child_process'
-import { mkdtemp, mkdir, writeFile, rm, readFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, writeFile, rm, readFile, realpath } from 'node:fs/promises'
 import { createServer } from 'node:net'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -9,7 +9,7 @@ import { randomBytes } from 'node:crypto'
 
 const root = path.resolve('.'), pnpmCli = process.env.npm_execpath
 if (!pnpmCli) throw new Error('Run with the pinned pnpm CLI.')
-const fixtureRoot = await mkdtemp(path.join(tmpdir(), 'quantskills-ci-'))
+const fixtureRoot = await realpath(await mkdtemp(path.join(tmpdir(), 'quantskills-ci-')))
 const home = path.join(fixtureRoot, 'dsh-home')
 await mkdir(home)
 // Do not inherit account, model, proxy or trading credentials from the operator's shell.
@@ -99,7 +99,7 @@ try {
     })
   }
   if (passed) {
-    if (path.dirname(fixtureRoot) !== path.resolve(tmpdir()) || !path.basename(fixtureRoot).startsWith('quantskills-ci-')) throw new Error('Refused unsafe cleanup')
+    if (path.dirname(fixtureRoot) !== await realpath(tmpdir()) || !path.basename(fixtureRoot).startsWith('quantskills-ci-')) throw new Error('Refused unsafe cleanup')
     await rm(fixtureRoot, { recursive: true, force: true })
   }
 }

@@ -23,6 +23,16 @@ function installationSignature(value, inputs) {
     dsh: value.dsh, packageManager: value.packageManager, inputs })).digest('hex')
 }
 
+// Installed does not mean enabled. Preserve selections, including unreadable user
+// bundles, instead of using package discovery as a replacement for user intent.
+export function selectProfileBundles({ selected, detected, applicationBundles, previousDependencies, removed = [], fresh = false }) {
+  const excluded = new Set(['dsh-context', 'dsh-file-upload', ...removed])
+  const prior = new Set(previousDependencies)
+  const core = new Set(applicationBundles)
+  const additions = [...detected].filter(name => fresh || (core.has(name) && !prior.has(name)))
+  return [...new Set([...selected, ...additions])].filter(name => !excluded.has(name))
+}
+
 export async function installProfile(environment = process.env, remove = false) {
   const home = resolveDshHome(environment), profile = resolveProfile(environment)
   const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
@@ -91,7 +101,6 @@ export async function installProfile(environment = process.env, remove = false) 
       if (result.status !== 0) throw new Error(`Pinned pnpm failed (${result.status}); the original profile was preserved.`)
     }
     const after = JSON.parse(await readFile(file, 'utf8'))
-    const beforeDeps = new Set(Object.keys(previous?.dependencies ?? {}))
     const deps = Object.keys(after.dependencies ?? {})
     const bundled = new Set()
     for (const name of deps) {
@@ -100,9 +109,11 @@ export async function installProfile(environment = process.env, remove = false) 
         if (name !== 'dsh-file-upload' && readProfileManifest('dsh', dir).dsh?.bundle?.patch) bundled.add(name)
       } catch { /* Plain dependencies are not profile layers. */ }
     }
-    after.dsh.profile.bundles = [...new Set([
-      ...after.dsh.profile.bundles.filter(name => name !== 'dsh-file-upload' && ((!beforeDeps.has(name) && !deps.includes(name)) || bundled.has(name))), ...bundled,
-    ])]
+    after.dsh.profile.bundles = selectProfileBundles({
+      selected: after.dsh.profile.bundles, detected: bundled, applicationBundles: coreNames,
+      previousDependencies: Object.keys({ ...previous?.dependencies, ...previous?.devDependencies, ...previous?.optionalDependencies }),
+      removed: remove ? args.slice(1) : [], fresh: !previous,
+    })
     after.quantskills.installationSignature = installationSignature(after, inputs)
     await writeFile(file, JSON.stringify(after, null, 2) + '\n')
     const migratedSources = await capturePluginSources(transaction.stage, [...coreNames, 'dsh-context'])

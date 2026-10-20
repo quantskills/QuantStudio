@@ -33,7 +33,11 @@ async function regularFile(root: string, path: string) {
   if (!isAbsolute(root) || !isAbsolute(path) || !contained(root, path)) throw new Error('文件不在会话工作区内')
   const parts = relative(root, path).split(sep)
   if (parts.some(part => part.startsWith('.') || /[:\u0000-\u001f]/u.test(part))) throw new Error('保留工作区配置或特殊路径')
-  if (key(await realpath(root)) !== key(root)) throw new Error('工作区路径含链接')
+  const rootStat = await lstat(root)
+  if (!rootStat.isDirectory() || rootStat.isSymbolicLink()) throw new Error('工作区路径含链接')
+  // macOS /var is an ancestor alias. Resolve the workspace boundary once;
+  // links inside that boundary remain forbidden.
+  const canonicalRoot = await realpath(root)
   let current = root
   for (const part of parts) {
     current = resolve(current, part)
@@ -42,7 +46,7 @@ async function regularFile(root: string, path: string) {
   }
   const stat = await lstat(path)
   if (!stat.isFile()) throw new Error('仅清理明确列出的文件，保留目录')
-  if (key(await realpath(path)) !== key(path)) throw new Error('文件路径含链接')
+  if (key(await realpath(path)) !== key(resolve(canonicalRoot, ...parts))) throw new Error('文件路径含链接')
   return stat
 }
 async function fingerprint(root: string, path: string): Promise<GeneratedFile> {

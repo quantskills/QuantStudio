@@ -115,6 +115,25 @@ function writeEvidence(session: Session, path: string, operation = 'Created') {
 }
 
 describe('durable conversation lifecycle with the real DSH storage backends', () => {
+  it('supports an aliased ancestor while still retaining links inside a workspace', async () => {
+    const outer = await mkdtemp(join(tmpdir(), 'qs-session-lifecycle-')); roots.push(outer)
+    await mkdir(join(outer, 'physical/work'), { recursive: true })
+    await symlink(join(outer, 'physical'), join(outer, 'alias'), 'junction')
+    const h = await harness(join(outer, 'alias/work'))
+    const main = await h.create('aliased-parent', { createdAt: Date.now() - 2000 })
+    await writeFile(join(h.root, 'created.txt'), 'test report'); writeEvidence(main.agent.session, 'created.txt')
+    await mkdir(join(outer, 'protected')); await writeFile(join(outer, 'protected/keep.txt'), 'keep')
+    await symlink(join(outer, 'protected'), join(h.root, 'link'), 'junction')
+    writeEvidence(main.agent.session, 'link/keep.txt')
+    const preview = await h.lifecycle.preview(main.agent.id, owned)
+    expect(preview.files.map(file => file.path)).toEqual([join(h.root, 'created.txt')])
+    expect(preview.retained.map(file => file.reason).join(' ')).toContain('链接')
+    await h.lifecycle.run({ sessionId: main.agent.id, action: 'delete', filesToken: preview.token }, owned)
+    await expect(readFile(join(h.root, 'created.txt'))).rejects.toMatchObject({ code: 'ENOENT' })
+    expect(await readFile(join(outer, 'protected/keep.txt'), 'utf8')).toBe('keep')
+    expect(await h.ctx.sessionPersistence.list()).toEqual([])
+  })
+
   it('previews and permanently removes only reviewed generated files, including child results', async () => {
     const h = await harness(), main = await h.create('files-main', { createdAt: Date.now() - 2000 }), id = main.agent.id
     const child = await h.create('files-child', { parentSession: id, origin: 'subagent', createdAt: Date.now() - 1500 })

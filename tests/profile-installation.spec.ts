@@ -6,7 +6,7 @@ import { pathToFileURL } from 'node:url'
 import { afterEach, describe, expect, it } from 'vitest'
 import { resolveDshHome, resolveProfile, prepareProfileStage, activateProfileStage, restoreProfileTransaction } from '../scripts/profile-state.mjs'
 import { publishBootstrapVersion, writeAtomic, migrationPath } from '../scripts/runtime-protocol.mjs'
-import { installProfile } from '../scripts/install-profile.mjs'
+import { installProfile, selectProfileBundles } from '../scripts/install-profile.mjs'
 
 const roots: string[] = []
 async function temp() { const root = await mkdtemp(join(tmpdir(), 'qs-profile-')); roots.push(root); return root }
@@ -19,6 +19,20 @@ async function provision(home: string) {
 }
 
 describe('isolated profile installation', () => {
+  it('keeps disabled packages disabled and preserves selected bundles whose metadata cannot be read', () => {
+    expect(selectProfileBundles({ selected: ['base', 'enabled', 'unknown-local', 'dsh-context', 'dsh-file-upload'],
+      detected: new Set(['enabled', 'disabled', 'old-core', 'new-core', 'dshmarket']),
+      applicationBundles: ['old-core', 'new-core'], previousDependencies: ['enabled', 'disabled', 'old-core'],
+    })).toEqual(['base', 'enabled', 'unknown-local', 'new-core'])
+  })
+
+  it('mounts the new-install defaults but removes only explicitly uninstalled bundles', () => {
+    const options = { selected: ['base', 'unknown-local', 'removed'], detected: new Set(['new-core', 'removed', 'dshmarket']),
+      applicationBundles: ['new-core'], previousDependencies: [], removed: ['removed'] }
+    expect(selectProfileBundles(options)).toEqual(['base', 'unknown-local', 'new-core'])
+    expect(selectProfileBundles({ ...options, fresh: true })).toEqual(['base', 'unknown-local', 'new-core', 'dshmarket'])
+  })
+
   it('leaves an ordinary DSH home separate, recognizes legacy QuantStudio data, and honors an explicit home', async () => {
     const root = await temp()
     await mkdir(join(root, '.dsh/profiles/web'), { recursive: true })

@@ -21,7 +21,8 @@ it('collects background CLI output and cancels its process tree without opening 
         ids = JSON.parse(handle.collected.stdout?.readFrom(0)?.text ?? '')
         expect(ids?.child).toBeGreaterThan(0)
       })
-      expect(vi.mocked(spawn).mock.calls.at(-1)?.[2]).toMatchObject({ windowsHide: true })
+      // windowsHide is Windows-only; assert the scalar so a failure cannot dump env.
+      if (process.platform === 'win32') expect(vi.mocked(spawn).mock.calls.at(-1)?.[2]?.windowsHide).toBe(true)
     } finally {
       handle.terminate()
       await handle.waitForExit(AbortSignal.timeout(5000))

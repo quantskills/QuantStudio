@@ -1393,7 +1393,7 @@ describe('QuantSkills generic attachments', () => {
       expect(read.truncated).toBe(false)
     }
     await fixture.ctx.fiber.dispose()
-  })
+  }, 30_000) // Cold PDF/Office module loading is slower on Windows CI.
 
   it('retains document candidates and invalid-text objects without exposing invented content', async () => {
     const fixture = await harness()

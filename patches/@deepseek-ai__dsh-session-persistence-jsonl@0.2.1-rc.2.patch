@@ -1,6 +1,15 @@
 diff --git a/lib/index.js b/lib/index.js
 --- a/lib/index.js
 +++ b/lib/index.js
+@@ -2,7 +2,7 @@
+ import { SessionFormatUnsupportedMigrationError, createSessionFormatCatalogWithChildren, historicalSessionFormatCatalog, sessionFormatCatalog } from "@deepseek-ai/dsh-session-format-catalog";
+ import { readdirSync } from "node:fs";
+ import { link, lstat, mkdir, mkdtemp, open, readFile, readdir, realpath, rm, stat, truncate } from "node:fs/promises";
+-import { basename, dirname, isAbsolute, join, parse, resolve, toNamespacedPath } from "node:path";
++import { basename, dirname, isAbsolute, join, parse, relative, resolve, toNamespacedPath } from "node:path";
+ import { performance } from "node:perf_hooks";
+ import { scheduler } from "node:timers/promises";
+ import { createHash, randomBytes } from "node:crypto";
 @@ -61,6 +61,7 @@
  	* @returns a slice carrying the aliasing state established by its producer.
  	*/
@@ -9,7 +18,7 @@ diff --git a/lib/index.js b/lib/index.js
  		this.assertOpen("read");
  		if (!Number.isSafeInteger(offset) || offset < 0) throw new TypeError(`read offset must be a non-negative safe integer, got ${String(offset)}`);
  		if (!Number.isSafeInteger(length) || length < 0) throw new TypeError(`read length must be a non-negative safe integer, got ${String(length)}`);
-@@ -2462,9 +2463,57 @@
+@@ -2462,9 +2463,59 @@
  	* @param options - optional cancellation.
  	* @returns the owned write handle.
  	*/
@@ -27,7 +36,9 @@ diff --git a/lib/index.js b/lib/index.js
 +				const dir = join(project, encodeSegment(id));
 +				try {
 +					const info = await lstat(dir);
-+					if (!info.isDirectory() || info.isSymbolicLink() || await realpath(dir) !== dir)
++					const rootInfo = await lstat(this.root);
++					const canonical = join(await realpath(this.root), relative(this.root, dir));
++					if (!rootInfo.isDirectory() || rootInfo.isSymbolicLink() || !info.isDirectory() || info.isSymbolicLink() || await realpath(dir) !== canonical)
 +						throw new Error("refusing noncanonical session deletion directory");
 +					dirs.push(dir);
 +				} catch (error) { if (!isENOENT(error)) throw error; }
@@ -67,7 +78,7 @@ diff --git a/lib/index.js b/lib/index.js
  		toHeaderLine(snapshot, options?.inheritedEventCount);
  		const inheritedEventCount = SessionLogOffset(options?.inheritedEventCount ?? 0);
  		await this.ensureRootEncoding();
-@@ -2486,6 +2535,7 @@
+@@ -2486,6 +2537,7 @@
  	* @returns the open handle.
  	*/
  	async open(id, access, options) {
@@ -75,7 +86,7 @@ diff --git a/lib/index.js b/lib/index.js
  		options?.signal?.throwIfAborted();
  		await this.ensureRootEncoding();
  		options?.signal?.throwIfAborted();
-@@ -3409,6 +3459,7 @@
+@@ -3409,6 +3461,7 @@
  	}
  	/** Select the numerically highest canonical generation in one Session directory. */
  	async resolveGenerationInDirectory(dir, signal) {
@@ -83,7 +94,7 @@ diff --git a/lib/index.js b/lib/index.js
  		signal?.throwIfAborted();
  		let entries;
  		try {
-@@ -3442,6 +3493,7 @@
+@@ -3442,6 +3495,7 @@
  	}
  	/** Find the unique authoritative generation for an id across project directories. */
  	async findLog(id, signal) {
