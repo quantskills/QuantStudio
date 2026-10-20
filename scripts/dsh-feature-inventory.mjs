@@ -27,17 +27,22 @@ layers.push(await capture(join(root, 'cordis.patch.yml'), 'QuantStudio/cordis.pa
 const flatten = rows => rows.flatMap(row => [row, ...(Array.isArray(row.config) ? flatten(row.config) : [])])
 const rows = flatten(composeEntries(layers)).map(row => ({ id: row.id, package: row.name,
   defaultState: row.disabled === true ? 'disabled' : row.disabled === undefined || row.disabled === false ? 'enabled' : 'conditional',
-  entry: 'Web composition', acceptance: `boot:${row.id}`, result: 'not-run-individually' }))
+  entry: 'Web composition', acceptance: `boot:${row.id}`, result: 'see-current-artifact-evidence',
+  evidence: 'ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)' }))
 const webDir = dirname(require.resolve('@deepseek-ai/dsh-web-app/package.json')), presets = []
 for (const file of (await readdir(join(webDir, 'presets'))).filter(file => file.endsWith('.yml')).sort()) {
   const patches = await capture(join(webDir, 'presets', file), `@deepseek-ai/dsh-web-app/presets/${file}`)
   presets.push({ name: file.replace('.patch.yml', ''), rows: flatten(composeEntries([patches])).map(row => ({ id: row.id, package: row.name })),
-    entry: 'Conversation mode picker', acceptance: `preset:${file}`, result: 'not-run-individually' })
+    entry: 'Conversation mode picker', acceptance: `preset:${file}`, result: 'see-feature-acceptance',
+    evidence: 'feature-acceptance.md#模式与创作' })
 }
 const optional = OPTIONAL_BUNDLES.map(name => ({ name, version: core.version, defaultState: 'disabled',
-  entry: 'Plugins / Official', acceptance: `optional:${name}:enable-error-restart-disable`, result: 'not-run' }))
+  entry: 'Plugins / Official', acceptance: `optional:${name}:enable-error-restart-disable`, result: 'see-current-artifact-evidence',
+  evidence: 'ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)' }))
 const onDemand = OFFICIAL_ON_DEMAND_CATALOG.map(item => ({ ...item, defaultState: 'not-installed',
-  entry: 'Plugins / Official', acceptance: `catalog:${item.packageName}:inspect-install-error-remove`, result: 'not-run' }))
+  version: core.version, installSpec: `${item.packageName}@${core.version}`,
+  entry: 'Plugins / Official', acceptance: `catalog:${item.packageName}:fixed-target-and-default-off`,
+  result: 'see-ci-optional-bundles; external delegation blocked without a separate test login' }))
 const packages = []
 for (const entry of (await readdir(join(root, 'packages'), { withFileTypes: true })).filter(entry => entry.isDirectory()).map(entry => entry.name).sort()) {
   const manifest = JSON.parse(await readFile(join(root, 'packages', entry, 'package.json'), 'utf8'))

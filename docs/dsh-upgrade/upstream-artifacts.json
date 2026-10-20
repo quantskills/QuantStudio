@@ -117,5 +117,15 @@
     "integrity": "sha512-cVOE7ucS693WuBFgwOEdHSqyoDeEJMAMKz94yvkg3vefArXDHWI7vUh1B7TntTogWyqfCBiS/V7DBI67P1eoVw==",
     "tarball": "https://registry.npmjs.org/@deepseek-ai/dsh-experimental-agent-team/-/dsh-experimental-agent-team-0.2.1-rc.2.tgz",
     "files": 38
+  },
+  {
+    "name": "dsh-plugin-catalog",
+    "version": "2026.1020.8394",
+    "integrity": "sha512-kKdfz2pfd9fZZNjCRD8KyAokCX1bMNTRdxIF0uw/FvAgoxt4dkD19HRCLJ5cQe5FNqWCOTMpjm627JzQSqSuxw==",
+    "tarball": "https://registry.npmjs.org/dsh-plugin-catalog/-/dsh-plugin-catalog-2026.1020.8394.tgz",
+    "catalogUrl": "https://cdn.jsdelivr.net/npm/dsh-plugin-catalog@2026.1020.8394/index.json",
+    "catalogSha256": "fbd9299250ef9cff2ab82e9ee065ae7a83de7a131647bf0ab39d5a9ac87d0f5c",
+    "format": 1,
+    "entries": 3112
   }
 ]

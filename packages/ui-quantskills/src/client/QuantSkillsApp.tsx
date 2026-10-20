@@ -202,6 +202,8 @@ export interface QuantSkillsAppInjected {
   readSkillDeclaration: (versionId: string, signal: AbortSignal) => Promise<string>
 
   renderPluginMarket?: () => ReactNode
+  /** Open the upstream-owned workbench or durable-task panel without replacing its state. */
+  openAdvancedWorkbench?: (panel: 'conversation' | 'schedules') => void
   databaseAccess?: DatabaseAccess
   contestAccess?: ContestAccess
   flyAccess?: FlyAccess
@@ -4495,6 +4497,11 @@ function PluginSettings(props: PageProps) {
 
 function SettingsPage(props: PageProps) {
   const section = props.useStore(state => state.settingsSection)
+  const [advancedError, setAdvancedError] = useState<string>()
+  const openAdvanced = (panel: 'conversation' | 'schedules'): void => {
+    try { props.openAdvancedWorkbench?.(panel); setAdvancedError(undefined) }
+    catch (cause) { setAdvancedError(cause instanceof Error ? cause.message : '工作台入口暂不可用，请刷新页面后重试。') }
+  }
   const interfaceScale = props.useStore(state => state.interfaceScale)
   const conversationScale = props.useStore(state => state.conversationScale)
   const conversationBrightness = props.useStore(state => state.conversationBrightness)
@@ -4528,6 +4535,7 @@ function SettingsPage(props: PageProps) {
     ['permissions', <Shield/>, '模型与权限'],
     ['models', <Wrench/>, '模型服务'],
     ['plugins', <GridFour/>, '插件与市场'],
+    ['advanced', <Wrench/>, '更多能力'],
     ['appearance', <Palette/>, '外观'],
     ['panda-data', <Database/>, 'PandaData'],
     ['brand-support', <Globe/>, '品牌与支持'],
@@ -4551,7 +4559,19 @@ function SettingsPage(props: PageProps) {
           <p>界面 {Math.round(interfaceScale * 100)}% · 对话文字 {Math.round(conversationScale * 100)}%</p>
         </aside>
         <section className={css.settingsContent}>
-          {section === 'archives' ? <ArchivedSessions access={props.sessionHistory}/> : section === 'plugins' ? <PluginSettings {...props}/> : section === 'models' ? <QuantSkillsModelServices access={props.modelAccess} jevAccess={props.contestAccess?.watch}/> : section === 'workspace' ? <WorkspaceSettings props={props}/> : section === 'appearance' ? <>
+          {section === 'advanced' ? <section className={css.settingsPanel}>
+            <h2>更多能力</h2>
+            <p>完整工作台中，插件页提供搜索与网页读取、语音及其他扩展配置；设置中提供账号、快捷键和开发者工具。</p>
+            <div className={css.settingsActions}>
+              <button type="button" className={css.primaryButton} disabled={!props.openAdvancedWorkbench}
+                onClick={() => { openAdvanced('conversation') }}>打开完整工作台</button>
+              <button type="button" className={css.outlineButton} disabled={!props.openAdvancedWorkbench}
+                onClick={() => { openAdvanced('schedules') }}>管理自动化任务</button>
+            </div>
+            {advancedError && <p role="alert">{advancedError}</p>}
+            <p>进入后，点击左下角账号或设置按钮查看配置。自动化任务可以查看详情、暂停、继续或删除；新任务从会话中创建。</p>
+            <p>实验扩展默认关闭，可在插件管理中按需启用。点击侧栏的 QuantSkills 可返回本工作台。</p>
+          </section> : section === 'archives' ? <ArchivedSessions access={props.sessionHistory}/> : section === 'plugins' ? <PluginSettings {...props}/> : section === 'models' ? <QuantSkillsModelServices access={props.modelAccess} jevAccess={props.contestAccess?.watch}/> : section === 'workspace' ? <WorkspaceSettings props={props}/> : section === 'appearance' ? <>
             <h2>外观</h2>
             <p>QuantSkills 的配色、界面比例和会话文字均可独立调整，并即时预览。</p>
             <QuantSkillsThemePicker

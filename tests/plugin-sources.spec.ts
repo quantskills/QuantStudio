@@ -1,9 +1,21 @@
 import { describe, expect, it } from 'vitest'
+import { spawnSync } from 'node:child_process'
 import { assertPluginSourcesPreserved, classifyPluginSource } from '../scripts/plugin-sources.mjs'
 
 const installed = { name: 'actual-plugin', version: '1.2.3' }, integrity = 'sha512-fixture-integrity'
 const classify = (spec: string, locked?: string, resolution: object = {}) =>
   classifyPluginSource('plugin-alias', spec, locked, resolution, installed, '/isolated/plugin')
+
+it('recovery help is read-only and omitted profile selection cannot target a default home', () => {
+  const env = { ...process.env }
+  delete env.DSH_HOME; delete env.QUANTSKILLS_PROFILE; delete env.npm_execpath
+  const help = spawnSync(process.execPath, ['scripts/recover-plugin-transaction.mjs', '--help'], { env, encoding: 'utf8', windowsHide: true })
+  expect(help.status).toBe(0)
+  expect(help.stdout).toContain('Set DSH_HOME and QUANTSKILLS_PROFILE explicitly')
+  const refused = spawnSync(process.execPath, ['scripts/recover-plugin-transaction.mjs'], { env, encoding: 'utf8', windowsHide: true })
+  expect(refused.status).not.toBe(0)
+  expect(refused.stderr).toContain('default home recovery is not allowed')
+})
 
 describe('plugin source migration', () => {
   it('uses actual npm identity and integrity instead of catalog naming', () => {

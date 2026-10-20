@@ -6,6 +6,13 @@ QuantStudio is offered under `GPL-3.0-or-later` or a separate [PandaAI commercia
 
 The dependency notices below are retained from the integrated DSH baseline. Some entries describe the full upstream runtime rather than packages directly present in this application repository. The exact installed application dependency graph is recorded in pnpm-lock.yaml. References to upstream vendor or Python source trees belong to the upstream DSH project.
 
+The rc.2 compatibility tests and `tests/fixtures/dsh-0.2.1-rc.2/dom-environment.ts`
+derive from DeepSeek Harness commit `687f282e8625c6b8d11ff58211a90524be2e4317`
+under the same preserved MIT license. The DOM fixture is copied from
+`scripts/test-dom-environment.ts`; it models initial resize delivery for jsdom,
+not real browser geometry. Test provenance and local adaptations are recorded
+in `docs/dsh-upgrade/upstream-ui-tests.json` and `upstream-feature-tests.json`.
+
 ## Vendored source (`vendor/`)
 
 The Cordis framework and its foundation libraries are source-vendored into this repository rather than consumed from npm, and republished under the `@deepseek-ai` scope. All are MIT-licensed; each directory preserves its upstream `LICENSE` file. Exact upstream commits and local modifications are recorded in [`vendor/README.md`](vendor/README.md).

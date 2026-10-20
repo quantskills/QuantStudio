@@ -20,6 +20,8 @@ export interface QuantSkillsAppInjected {
     manualSkillSave?: ManualSkillSave;
     readSkillDeclaration: (versionId: string, signal: AbortSignal) => Promise<string>;
     renderPluginMarket?: () => ReactNode;
+    /** Open the upstream-owned workbench or durable-task panel without replacing its state. */
+    openAdvancedWorkbench?: (panel: 'conversation' | 'schedules') => void;
     databaseAccess?: DatabaseAccess;
     contestAccess?: ContestAccess;
     flyAccess?: FlyAccess;

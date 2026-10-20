@@ -4,7 +4,7 @@ import { createRequire } from 'node:module'
 import { mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises'
 import { join, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
-import { boot, initProfile, OPTIONAL_BUNDLES, resolveBundleDir } from '@deepseek-ai/dsh-app-boot'
+import { boot, initProfile, OPTIONAL_BUNDLES, OFFICIAL_ON_DEMAND_CATALOG, resolveBundleDir } from '@deepseek-ai/dsh-app-boot'
 import PluginManager from '@deepseek-ai/dsh-plugin-manager'
 
 const require = createRequire(import.meta.url)
@@ -21,6 +21,14 @@ try {
     context.provide('profileContext', profile); context.loader.builtins.manager = PluginManager
   })
   ctx = await start()
+  const onDemand = []
+  for (const { packageName } of OFFICIAL_ON_DEMAND_CATALOG) {
+    const item = (await ctx.pluginManager.listBundles()).find(row => row.name === packageName)
+    assert.equal(item?.enabled, false)
+    assert.equal(item?.installed, false)
+    assert.deepEqual(item?.installTarget, { spec: `${packageName}@0.2.1-rc.2`, version: '0.2.1-rc.2' })
+    onDemand.push({ name: packageName, spec: item.installTarget.spec, defaultNotInstalled: true })
+  }
   const manifest = async () => JSON.parse(await readFile(join(dir, 'package.json'), 'utf8'))
   const selected = async () => (await manifest()).dsh.profile.bundles
   const saved = result => assert.ok(['applied', 'restart-required'].includes(result.application), JSON.stringify(result))
@@ -50,7 +58,7 @@ try {
   for (const name of OPTIONAL_BUNDLES) assert.equal((await ctx.pluginManager.listBundles()).find(row => row.name === name)?.enabled, false)
   passed = true
   console.log(JSON.stringify({ result: 'passed', runtime: '0.2.1-rc.2', scope: 'official-manager-on-disk-settings',
-    invalidSelectionPreservesProfile: true, externalCapabilitiesExecuted: false, results }))
+    invalidSelectionPreservesProfile: true, externalCapabilitiesExecuted: false, onDemand, results }))
 } finally {
   await ctx?.fiber.dispose()
   if (passed) {

@@ -86,8 +86,22 @@ export async function verifyBrowser({ url, fixtureRoot, proof }) {
     assert.ok(modelCalls >= 4, 'Native host did not perform all expected local inference calls')
     await writeFile(join(output, 'conversation.txt'), await page.locator('body').innerText())
     await page.screenshot({ path: join(output, 'workspace.png') })
+    await page.setViewportSize({ width: 1440, height: 1000 })
+    await page.getByRole('button', { name: '设置', exact: true }).click()
+    await page.getByRole('button', { name: '更多能力', exact: true }).click()
+    await page.getByRole('button', { name: '管理自动化任务', exact: true }).click()
+    await page.getByRole('heading', { name: '自动化任务', exact: true }).waitFor()
+    await page.getByText('还没有自动化任务，在会话中创建的任务会显示在这里', { exact: true }).waitFor()
+    await page.getByRole('button', { name: '账号菜单', exact: true }).click()
+    await page.getByRole('menuitem', { name: /^设置/ }).click()
+    await page.getByText('显示代码工作视图', { exact: true }).waitFor()
+    await page.getByRole('button', { name: '关闭', exact: true }).click()
+    await page.getByRole('button', { name: '插件', exact: true }).click()
+    await page.getByRole('button', { name: '查看 网页搜索', exact: true }).click()
+    await writeFile(join(output, 'advanced-settings.txt'), await page.locator('body').innerText())
+    await page.screenshot({ path: join(output, 'advanced-settings.png') })
     if (errors.length) throw new Error('Browser page errors: ' + errors.join('; '))
-    console.log(JSON.stringify({ browser: 'passed', scope: 'model-settings-streaming-attachment-draft-reload-resize',
+    console.log(JSON.stringify({ browser: 'passed', scope: 'model-settings-streaming-attachment-draft-reload-resize-automation-search-settings',
       modelCalls, commit: proof.commit, artifact: proof.artifact }))
   } catch (error) {
     await writeFile(join(output, 'failure.txt'), await page.locator('body').innerText())

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "target": "0.2.1-rc.2",
   "upstreamCommit": "687f282e8625c6b8d11ff58211a90524be2e4317",
-  "lockSha256": "60a9708aee11f4066ad48a9888402aefd5585a9451e8e9dc08ead6ebf9cd20a5",
+  "lockSha256": "9b0fb08d136ae3aff93473e4b256c3342828e1ae2b3cda20d9f995eed9775d0a",
   "templates": {
     "acp": {
       "bundles": [
@@ -61,7 +61,7 @@
     },
     {
       "file": "QuantStudio/cordis.patch.yml",
-      "sha256": "af8719536120e1b388cb80ca6504b46bf773c3020305028baff4258b35ecea99"
+      "sha256": "361827950698671d7ff3a4d415e8c6a66b9ae5593e4c8ac1d3cb8d9b81314f4a"
     },
     {
       "file": "@deepseek-ai/dsh-web-app/presets/cordis.patch.yml",
@@ -849,7 +849,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-plugin-manager",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "plugin-manager",
@@ -857,7 +858,8 @@
       "defaultState": "conditional",
       "entry": "Web composition",
       "acceptance": "boot:plugin-manager",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "timer",
@@ -865,7 +867,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:timer",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "hmr",
@@ -873,7 +876,8 @@
       "defaultState": "conditional",
       "entry": "Web composition",
       "acceptance": "boot:hmr",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "llm",
@@ -881,7 +885,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:llm",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "deepseek-llm-api-extensions",
@@ -889,7 +894,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:deepseek-llm-api-extensions",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session",
@@ -897,7 +903,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-log-deepseek",
@@ -905,7 +912,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-log-deepseek",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "typert",
@@ -913,7 +921,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:typert",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "typert-loader",
@@ -921,7 +930,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:typert-loader",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "typert-gateway",
@@ -929,7 +939,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:typert-gateway",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "remote-access",
@@ -937,7 +948,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:remote-access",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-title",
@@ -945,7 +957,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-title",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-title-llm",
@@ -953,7 +966,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-title-llm",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "user-questions",
@@ -961,7 +975,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:user-questions",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "agent",
@@ -969,7 +984,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:agent",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "plugin-package-inventory-deepseek",
@@ -977,7 +993,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:plugin-package-inventory-deepseek",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "agent-default-model",
@@ -985,7 +1002,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:agent-default-model",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "jobs",
@@ -993,7 +1011,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:jobs",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "llm-retry",
@@ -1001,7 +1020,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:llm-retry",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "config-editor",
@@ -1009,7 +1029,8 @@
       "defaultState": "conditional",
       "entry": "Web composition",
       "acceptance": "boot:config-editor",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "settings",
@@ -1017,7 +1038,8 @@
       "defaultState": "conditional",
       "entry": "Web composition",
       "acceptance": "boot:settings",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "authorization",
@@ -1025,7 +1047,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:authorization",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "deepseek-account",
@@ -1033,7 +1056,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:deepseek-account",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "credentials",
@@ -1041,7 +1065,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:credentials",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "llm-pi-ai",
@@ -1049,7 +1074,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:llm-pi-ai",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-persistence-jsonl",
@@ -1057,7 +1083,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-persistence-jsonl",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "attachment-local",
@@ -1065,7 +1092,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:attachment-local",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-query-sqlite",
@@ -1073,7 +1101,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-query-sqlite",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "working-directory",
@@ -1081,7 +1110,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:working-directory",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-working-directory",
@@ -1089,7 +1119,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-working-directory",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-projection",
@@ -1097,7 +1128,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-projection",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "storage",
@@ -1105,7 +1137,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:storage",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "storage-json",
@@ -1113,7 +1146,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:storage-json",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "storage-domain",
@@ -1121,7 +1155,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:storage-domain",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-projection-cache",
@@ -1129,7 +1164,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-projection-cache",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "otel",
@@ -1137,7 +1173,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:otel",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-telemetry-otel",
@@ -1145,7 +1182,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-telemetry-otel",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "subprocess",
@@ -1153,7 +1191,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:subprocess",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "sandbox",
@@ -1161,7 +1200,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:sandbox",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "sandbox-policy",
@@ -1169,7 +1209,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:sandbox-policy",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "bash-sandbox",
@@ -1177,7 +1218,8 @@
       "defaultState": "conditional",
       "entry": "Web composition",
       "acceptance": "boot:bash-sandbox",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "pwsh-sandbox",
@@ -1185,7 +1227,8 @@
       "defaultState": "conditional",
       "entry": "Web composition",
       "acceptance": "boot:pwsh-sandbox",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "approval",
@@ -1193,7 +1236,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:approval",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "permission",
@@ -1201,7 +1245,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:permission",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "shell-env",
@@ -1209,7 +1254,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:shell-env",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-bash",
@@ -1217,7 +1263,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-bash",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-pwsh",
@@ -1225,7 +1272,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-pwsh",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-jobs",
@@ -1233,7 +1281,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-jobs",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "fs-observation-policy",
@@ -1241,7 +1290,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:fs-observation-policy",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-fs",
@@ -1249,7 +1299,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-fs",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-fs-search",
@@ -1257,7 +1308,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-fs-search",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "agent-instructions",
@@ -1265,7 +1317,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:agent-instructions",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "skill",
@@ -1273,7 +1326,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:skill",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "skill-filesystem",
@@ -1281,7 +1335,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:skill-filesystem",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-skill",
@@ -1289,7 +1344,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-skill",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "commands",
@@ -1297,7 +1353,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:commands",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "command-feedback",
@@ -1305,7 +1362,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:command-feedback",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "goal",
@@ -1313,7 +1371,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:goal",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "goal-round-driver",
@@ -1321,7 +1380,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:goal-round-driver",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "command-goal",
@@ -1329,7 +1389,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:command-goal",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "plan-mode",
@@ -1337,7 +1398,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:plan-mode",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "token-meter",
@@ -1345,7 +1407,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:token-meter",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "compaction-basic",
@@ -1353,7 +1416,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:compaction-basic",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "command-compact",
@@ -1361,7 +1425,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:command-compact",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "subagent",
@@ -1369,7 +1434,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:subagent",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "subagent-spawn-in-process",
@@ -1377,7 +1443,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:subagent-spawn-in-process",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "subagent-fork-in-process",
@@ -1385,7 +1452,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:subagent-fork-in-process",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-subagent-control",
@@ -1393,7 +1461,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-subagent-control",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-subagent-list-agents",
@@ -1401,7 +1470,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-subagent-list-agents",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-subagent",
@@ -1409,7 +1479,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-subagent",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-subagent-fork",
@@ -1417,7 +1488,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-subagent-fork",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ptc-runtime",
@@ -1425,7 +1497,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ptc-runtime",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "workflow-ptc",
@@ -1433,7 +1506,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:workflow-ptc",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-workflow",
@@ -1441,7 +1515,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-workflow",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "timeout-policy",
@@ -1449,7 +1524,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:timeout-policy",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "spill-local",
@@ -1457,7 +1533,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:spill-local",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "spill-policy",
@@ -1465,7 +1542,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:spill-policy",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-checkpoint-policy",
@@ -1473,7 +1551,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-checkpoint-policy",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-result-pruner",
@@ -1481,7 +1560,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-result-pruner",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "image-offload",
@@ -1489,7 +1569,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:image-offload",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-todo",
@@ -1497,7 +1578,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-todo",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-goal",
@@ -1505,7 +1587,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-goal",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "repeat-tool-reminder",
@@ -1513,7 +1596,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:repeat-tool-reminder",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "web",
@@ -1521,7 +1605,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:web",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "web-search-deepseek",
@@ -1529,7 +1614,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:web-search-deepseek",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "web-deepseek-api",
@@ -1537,7 +1623,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:web-deepseek-api",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "web-fetch-http",
@@ -1545,7 +1632,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:web-fetch-http",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-web",
@@ -1553,7 +1641,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-web",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "mcp-resources",
@@ -1561,7 +1650,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:mcp-resources",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tools",
@@ -1569,7 +1659,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:tools",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "system-prompt",
@@ -1577,7 +1668,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:system-prompt",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "agent-loop",
@@ -1585,7 +1677,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:agent-loop",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "fs-sandbox",
@@ -1593,7 +1686,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:fs-sandbox",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "llm-deepseek",
@@ -1601,7 +1695,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:llm-deepseek",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "llm-deepseek-account",
@@ -1609,7 +1704,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:llm-deepseek-account",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "desktop-product-telemetry",
@@ -1617,7 +1713,8 @@
       "defaultState": "conditional",
       "entry": "Web composition",
       "acceptance": "boot:desktop-product-telemetry",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "product-analytics",
@@ -1625,7 +1722,8 @@
       "defaultState": "conditional",
       "entry": "Web composition",
       "acceptance": "boot:product-analytics",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "subagent-model-selection-settings",
@@ -1633,7 +1731,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:subagent-model-selection-settings",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "message-feedback",
@@ -1641,7 +1740,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:message-feedback",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-log-download",
@@ -1649,7 +1749,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-log-download",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "open-in-app",
@@ -1657,7 +1758,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:open-in-app",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-open-in-app",
@@ -1665,7 +1767,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-open-in-app",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "workspace",
@@ -1673,7 +1776,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:workspace",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-reference",
@@ -1681,7 +1785,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-reference",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "file-reference-local",
@@ -1689,7 +1794,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:file-reference-local",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-stats",
@@ -1697,7 +1803,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-stats",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-turn-outline",
@@ -1705,7 +1812,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-turn-outline",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "directory-picker",
@@ -1713,7 +1821,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:directory-picker",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "plugin-inventory",
@@ -1721,7 +1830,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:plugin-inventory",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "session-controller",
@@ -1729,7 +1839,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:session-controller",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "job-controller",
@@ -1737,7 +1848,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:job-controller",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "terminal-controller",
@@ -1745,7 +1857,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:terminal-controller",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "workspace-files",
@@ -1753,7 +1866,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:workspace-files",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "schedule",
@@ -1761,7 +1875,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:schedule",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings-account",
@@ -1769,7 +1884,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings-account",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "account-controller",
@@ -1777,7 +1893,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:account-controller",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "settings-controller",
@@ -1785,7 +1902,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:settings-controller",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "workspace-controller",
@@ -1793,7 +1911,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:workspace-controller",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "cordis-host-runner",
@@ -1801,7 +1920,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:cordis-host-runner",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "cordis-inspect-providers",
@@ -1809,7 +1929,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:cordis-inspect-providers",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "web-startup",
@@ -1817,7 +1938,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:web-startup",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "webserver",
@@ -1825,7 +1947,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:webserver",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "web-runtime",
@@ -1833,7 +1956,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:web-runtime",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "harness-dev-context",
@@ -1841,7 +1965,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:harness-dev-context",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "client-hmr",
@@ -1849,7 +1974,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:client-hmr",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "modules",
@@ -1857,7 +1983,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:modules",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "connection",
@@ -1865,7 +1992,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:connection",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "file-upload",
@@ -1873,7 +2001,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:file-upload",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "api-remotes",
@@ -1881,7 +2010,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:api-remotes",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "cordis-client-runner",
@@ -1889,7 +2019,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:cordis-client-runner",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-theme",
@@ -1897,7 +2028,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-theme",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "locale",
@@ -1905,7 +2037,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:locale",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "shortcuts",
@@ -1913,7 +2046,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:shortcuts",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-shortcuts",
@@ -1921,7 +2055,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-shortcuts",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-layout",
@@ -1929,7 +2064,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-layout",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-renderer",
@@ -1937,7 +2073,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-renderer",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-session",
@@ -1945,7 +2082,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-session",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "resources",
@@ -1953,7 +2091,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:resources",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-sidebar",
@@ -1961,7 +2100,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-sidebar",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-sidebar-right",
@@ -1969,7 +2109,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-sidebar-right",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "office-to-pdf",
@@ -1977,7 +2118,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:office-to-pdf",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-sidebar-documentpreview",
@@ -1985,7 +2127,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-sidebar-documentpreview",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-sidebar-browser",
@@ -1993,7 +2136,8 @@
       "defaultState": "conditional",
       "entry": "Web composition",
       "acceptance": "boot:ui-sidebar-browser",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-sidebar-terminal",
@@ -2001,7 +2145,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-sidebar-terminal",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-sidebar-files",
@@ -2009,7 +2154,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-sidebar-files",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings",
@@ -2017,7 +2163,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings-general",
@@ -2025,7 +2172,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings-general",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings-models",
@@ -2033,7 +2181,8 @@
       "defaultState": "disabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings-models",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-plugin-manager",
@@ -2041,7 +2190,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-plugin-manager",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings-plugin-inventory",
@@ -2049,7 +2199,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings-plugin-inventory",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-conversation",
@@ -2057,7 +2208,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-conversation",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-approval",
@@ -2065,7 +2217,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-approval",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-chat",
@@ -2073,7 +2226,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-chat",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-brand-official",
@@ -2081,7 +2235,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-brand-official",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-attachment",
@@ -2089,7 +2244,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-attachment",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-tool",
@@ -2097,7 +2253,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-tool",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-cordis",
@@ -2105,7 +2262,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-cordis",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-deliverables",
@@ -2113,7 +2271,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-deliverables",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "workspace-changes",
@@ -2121,7 +2280,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:workspace-changes",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-workspace",
@@ -2129,7 +2289,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-workspace",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-workflow-run",
@@ -2137,7 +2298,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-workflow-run",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-input-trigger",
@@ -2145,7 +2307,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-input-trigger",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-commands",
@@ -2153,7 +2316,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-commands",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-skill",
@@ -2161,7 +2325,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-skill",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-subagent",
@@ -2169,7 +2334,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-subagent",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-reference",
@@ -2177,7 +2343,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-reference",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-secret-mask",
@@ -2185,7 +2352,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-secret-mask",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-jobs",
@@ -2193,7 +2361,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-jobs",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-schedule",
@@ -2201,7 +2370,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-schedule",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-goal",
@@ -2209,7 +2379,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-goal",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-message-feedback",
@@ -2217,7 +2388,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-message-feedback",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-model-selection",
@@ -2225,7 +2397,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-model-selection",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-deepseek-model-label-1017",
@@ -2233,7 +2406,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-deepseek-model-label-1017",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-permission",
@@ -2241,7 +2415,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-permission",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-agent-preset",
@@ -2249,7 +2424,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-agent-preset",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings-session-log",
@@ -2257,7 +2433,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings-session-log",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings-plugins",
@@ -2265,7 +2442,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings-plugins",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings-shell",
@@ -2273,7 +2451,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings-shell",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings-agent-loop",
@@ -2281,7 +2460,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings-agent-loop",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings-subagent",
@@ -2289,7 +2469,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings-subagent",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-settings-web-search",
@@ -2297,7 +2478,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-settings-web-search",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-plan",
@@ -2305,7 +2487,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-plan",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-user-questions",
@@ -2313,7 +2496,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-user-questions",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-trajectory",
@@ -2321,7 +2505,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-trajectory",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "agent-preset-registry",
@@ -2329,7 +2514,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:agent-preset-registry",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "preset-standard",
@@ -2337,7 +2523,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:preset-standard",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "preset-ptc",
@@ -2345,7 +2532,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:preset-ptc",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "preset-minimal",
@@ -2353,7 +2541,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:preset-minimal",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "preset-cordis",
@@ -2361,7 +2550,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:preset-cordis",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "quantskills-model-services",
@@ -2369,7 +2559,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:quantskills-model-services",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "agent-team",
@@ -2377,7 +2568,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:agent-team",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "tool-agent-team",
@@ -2385,7 +2577,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:tool-agent-team",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "quantskills-host",
@@ -2393,7 +2586,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:quantskills-host",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "quantskills-session",
@@ -2401,7 +2595,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:quantskills-session",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "panda-mcp",
@@ -2409,7 +2604,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:panda-mcp",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "client-remotes-quantskills",
@@ -2417,7 +2613,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:client-remotes-quantskills",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     },
     {
       "id": "ui-quantskills",
@@ -2425,7 +2622,8 @@
       "defaultState": "enabled",
       "entry": "Web composition",
       "acceptance": "boot:ui-quantskills",
-      "result": "not-run-individually"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-validation.json; feature-acceptance.md (boot readiness is not functional acceptance)"
     }
   ],
   "presets": [
@@ -2439,7 +2637,8 @@
       ],
       "entry": "Conversation mode picker",
       "acceptance": "preset:cordis.patch.yml",
-      "result": "not-run-individually"
+      "result": "see-feature-acceptance",
+      "evidence": "feature-acceptance.md#模式与创作"
     },
     {
       "name": "minimal",
@@ -2451,7 +2650,8 @@
       ],
       "entry": "Conversation mode picker",
       "acceptance": "preset:minimal.patch.yml",
-      "result": "not-run-individually"
+      "result": "see-feature-acceptance",
+      "evidence": "feature-acceptance.md#模式与创作"
     },
     {
       "name": "ptc",
@@ -2463,7 +2663,8 @@
       ],
       "entry": "Conversation mode picker",
       "acceptance": "preset:ptc.patch.yml",
-      "result": "not-run-individually"
+      "result": "see-feature-acceptance",
+      "evidence": "feature-acceptance.md#模式与创作"
     },
     {
       "name": "standard",
@@ -2475,7 +2676,8 @@
       ],
       "entry": "Conversation mode picker",
       "acceptance": "preset:standard.patch.yml",
-      "result": "not-run-individually"
+      "result": "see-feature-acceptance",
+      "evidence": "feature-acceptance.md#模式与创作"
     }
   ],
   "optional": [
@@ -2485,7 +2687,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-session-search:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-ralph-bundle",
@@ -2493,7 +2696,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-ralph-bundle:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-terminal-bundle",
@@ -2501,7 +2705,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-terminal-bundle:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-badge-skill-bundle",
@@ -2509,7 +2714,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-badge-skill-bundle:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-session-titles-bundle",
@@ -2517,7 +2723,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-session-titles-bundle:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-agent-team-profile",
@@ -2525,7 +2732,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-agent-team-profile:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-voice-input-bundle",
@@ -2533,7 +2741,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-voice-input-bundle:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-cot-translation-bundle",
@@ -2541,7 +2750,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-cot-translation-bundle:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-auto-review",
@@ -2549,7 +2759,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-auto-review:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-inspector-profile",
@@ -2557,7 +2768,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-inspector-profile:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-plugin-market-bundle",
@@ -2565,7 +2777,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-plugin-market-bundle:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     },
     {
       "name": "@deepseek-ai/dsh-experimental-tool-worktree",
@@ -2573,7 +2786,8 @@
       "defaultState": "disabled",
       "entry": "Plugins / Official",
       "acceptance": "optional:@deepseek-ai/dsh-experimental-tool-worktree:enable-error-restart-disable",
-      "result": "not-run"
+      "result": "see-current-artifact-evidence",
+      "evidence": "ci-optional-bundles.mjs; feature-acceptance.md (external execution has separate conditions)"
     }
   ],
   "onDemand": [
@@ -2591,9 +2805,11 @@
         "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYiIGhlaWdodD0iMzYiIHZpZXdCb3g9IjAgMCAzNiAzNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSIxNC45ODkzIiB5PSIxNS4xODc3IiB3aWR0aD0iMTIuMjM2NSIgaGVpZ2h0PSIxMi4yMzY1IiByeD0iMiIgZmlsbD0idXJsKCNkc2hfcGx1Z2luX2FydF9SMGEpIiBmaWxsLW9wYWNpdHk9IjAuOCI+PC9yZWN0PjxyZWN0IHg9IjguODcxMDkiIHk9IjkuMDY5NyIgd2lkdGg9IjEyLjIzNjUiIGhlaWdodD0iMTIuMjM2NSIgcng9IjIiIGZpbGw9InVybCgjZHNoX3BsdWdpbl9hcnRfUjBiKSIgZmlsbC1vcGFjaXR5PSIwLjgiPjwvcmVjdD48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImRzaF9wbHVnaW5fYXJ0X1IwYSIgeDE9IjIxLjEwNzUiIHkxPSIxNS4xODc3IiB4Mj0iMjEuMTA3NSIgeTI9IjI3LjQyNDMiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDVFN0E0Ij48L3N0b3A+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDU5MDlEIj48L3N0b3A+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImRzaF9wbHVnaW5fYXJ0X1IwYiIgeDE9IjE0Ljk4OTQiIHkxPSI5LjA2OTciIHgyPSIxNC45ODk0IiB5Mj0iMjEuMzA2MyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiM2OUI5RkYiPjwvc3RvcD48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMzMjRERTIiPjwvc3RvcD48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4K"
       },
       "defaultState": "not-installed",
+      "version": "0.2.1-rc.2",
+      "installSpec": "@deepseek-ai/dsh-subagent-claude-code@0.2.1-rc.2",
       "entry": "Plugins / Official",
-      "acceptance": "catalog:@deepseek-ai/dsh-subagent-claude-code:inspect-install-error-remove",
-      "result": "not-run"
+      "acceptance": "catalog:@deepseek-ai/dsh-subagent-claude-code:fixed-target-and-default-off",
+      "result": "see-ci-optional-bundles; external delegation blocked without a separate test login"
     },
     {
       "packageName": "@deepseek-ai/dsh-subagent-codex",
@@ -2609,9 +2825,11 @@
         "icon": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzYiIGhlaWdodD0iMzYiIHZpZXdCb3g9IjAgMCAzNiAzNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB4PSIxNC45ODkzIiB5PSIxNS4xODc3IiB3aWR0aD0iMTIuMjM2NSIgaGVpZ2h0PSIxMi4yMzY1IiByeD0iMiIgZmlsbD0idXJsKCNkc2hfcGx1Z2luX2FydF9SMGEpIiBmaWxsLW9wYWNpdHk9IjAuOCI+PC9yZWN0PjxyZWN0IHg9IjguODcxMDkiIHk9IjkuMDY5NyIgd2lkdGg9IjEyLjIzNjUiIGhlaWdodD0iMTIuMjM2NSIgcng9IjIiIGZpbGw9InVybCgjZHNoX3BsdWdpbl9hcnRfUjBiKSIgZmlsbC1vcGFjaXR5PSIwLjgiPjwvcmVjdD48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImRzaF9wbHVnaW5fYXJ0X1IwYSIgeDE9IjIxLjEwNzUiIHkxPSIxNS4xODc3IiB4Mj0iMjEuMTA3NSIgeTI9IjI3LjQyNDMiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj48c3RvcCBzdG9wLWNvbG9yPSIjNDVFN0E0Ij48L3N0b3A+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDU5MDlEIj48L3N0b3A+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImRzaF9wbHVnaW5fYXJ0X1IwYiIgeDE9IjE0Ljk4OTQiIHkxPSI5LjA2OTciIHgyPSIxNC45ODk0IiB5Mj0iMjEuMzA2MyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiM2OUI5RkYiPjwvc3RvcD48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMzMjRERTIiPjwvc3RvcD48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4K"
       },
       "defaultState": "not-installed",
+      "version": "0.2.1-rc.2",
+      "installSpec": "@deepseek-ai/dsh-subagent-codex@0.2.1-rc.2",
       "entry": "Plugins / Official",
-      "acceptance": "catalog:@deepseek-ai/dsh-subagent-codex:inspect-install-error-remove",
-      "result": "not-run"
+      "acceptance": "catalog:@deepseek-ai/dsh-subagent-codex:fixed-target-and-default-off",
+      "result": "see-ci-optional-bundles; external delegation blocked without a separate test login"
     }
   ],
   "packages": [

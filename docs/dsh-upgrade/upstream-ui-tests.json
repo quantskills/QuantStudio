@@ -41,8 +41,8 @@
       "file": "packages/client-ui-chat/tests/chat-font-axis-styles.client.spec.ts",
       "upstream": "ui-chat/tests/chat-font-axis-styles.client.spec.ts",
       "upstreamSha256": "3db8d0e7c3540f2c683575ce475ddf43dcc7b38381a535bedd488ed38bf853dd",
-      "status": "ported",
-      "candidateSha256": "3db8d0e7c3540f2c683575ce475ddf43dcc7b38381a535bedd488ed38bf853dd"
+      "status": "adapted-for-windows-crlf",
+      "candidateSha256": "1b7434a88554ee7b96b1cfbfdc29bce28eb1f6a955ef44a455e08463876f13b7"
     },
     {
       "file": "packages/client-ui-chat/tests/chat-node-bottom.client.spec.ts",
@@ -849,7 +849,8 @@
     "QS title-free ordinary session layout and identity slot expectations; subagent navigation remains tested.",
     "QS extension slots included in strict test renderers.",
     "QS layout reservation actions and initial state included in fixtures.",
-    "jsdom ResizeObserver/font geometry shim; real geometry is covered by Chromium acceptance."
+    "jsdom ResizeObserver/font geometry shim; real geometry is covered by Chromium acceptance.",
+    "CSS text fixture normalizes CRLF to LF before multiline assertions; selectors and assertions remain unchanged."
   ],
   "result": {
     "files": 114,

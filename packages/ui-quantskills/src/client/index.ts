@@ -2098,6 +2098,14 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
           ctx.remote.quantSkills.applicationUpdateCheck(request),
         ),
         applicationUpdateStart: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStart()),
+        openAdvancedWorkbench: (panel) => {
+          const stockLayout = ctx.get('layout')
+          if (!stockLayout || !ctx.slots.entriesOfSlot('main').some(item => item.options.key === panel)) {
+            throw new Error('工作台入口暂不可用，请刷新页面后重试。')
+          }
+          stockLayout.selectPanel(panel as MainPanelId)
+          viewActions.closePlugin()
+        },
         // Open the native manager through its public panel navigation. Do not
         // transplant its component: its store and nested slots belong to that panel.
         renderPluginMarket: () => {

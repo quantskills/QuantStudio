@@ -1840,6 +1840,14 @@ export function mountQuantSkillsApplication(ctx, options) {
             applicationUpdateStatus: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStatus()),
             applicationUpdateCheck: (request) => unwrapRemote(ctx.remote.quantSkills.applicationUpdateCheck(request)),
             applicationUpdateStart: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStart()),
+            openAdvancedWorkbench: (panel) => {
+                const stockLayout = ctx.get('layout');
+                if (!stockLayout || !ctx.slots.entriesOfSlot('main').some(item => item.options.key === panel)) {
+                    throw new Error('工作台入口暂不可用，请刷新页面后重试。');
+                }
+                stockLayout.selectPanel(panel);
+                viewActions.closePlugin();
+            },
             // Open the native manager through its public panel navigation. Do not
             // transplant its component: its store and nested slots belong to that panel.
             renderPluginMarket: () => {

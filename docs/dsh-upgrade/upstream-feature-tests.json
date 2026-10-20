@@ -1,0 +1,445 @@
+{
+  "upstreamCommit": "687f282e8625c6b8d11ff58211a90524be2e4317",
+  "license": "MIT (LICENSES/DeepSeek-Harness-MIT.txt)",
+  "fileCount": 106,
+  "files": [
+    {
+      "path": "packages/client/ui-settings-web-search/tests/apply.client.spec.ts",
+      "sha256": "32ec02b2e217d44ff2d392fa198e354f88d727bcff4be1b02f055767aeb3d6b9"
+    },
+    {
+      "path": "packages/client/ui-settings-web-search/tests/card.client.spec.tsx",
+      "sha256": "1c58cd1534c0a43a90350a1e67042266adc7280095b79049729f77c3ea2ab4c8"
+    },
+    {
+      "path": "packages/client/ui-settings-web-search/tests/controller.client.spec.ts",
+      "sha256": "987a181335d3b571db78b9b4d0356d879da3a57350591dec2c2d9180144ea1ce"
+    },
+    {
+      "path": "packages/client/ui-settings-general/tests/apply.client.spec.ts",
+      "sha256": "8e0aace568246a75a4dcbed5151ca229525b8d4b6944ed2a43d197fcf82cd9a6"
+    },
+    {
+      "path": "packages/client/ui-settings-general/tests/components.client.spec.tsx",
+      "sha256": "6a120e68a5d9d69d2fb8d620122b60839ae7113a060f3c34e9e09c3d027a7635"
+    },
+    {
+      "path": "packages/client/ui-settings-general/tests/config.host.spec.ts",
+      "sha256": "5be78ec9bb4b18d8222b475cbd9503ec0482dd2b29ce7bdd4738bb5c0061a5f1"
+    },
+    {
+      "path": "packages/client/ui-settings-general/tests/desktop-update.client.spec.tsx",
+      "sha256": "ed83a495a1180b626bcf99c888b46b0224f08c86a84ea4b74463362d38734bc8"
+    },
+    {
+      "path": "packages/client/ui-settings-general/tests/settings-document-store.client.spec.ts",
+      "sha256": "7fab1795e9531a2e02356aa85b8b4742289ff2a4ffc1bb9e0f42f865076f7cc0"
+    },
+    {
+      "path": "packages/client/ui-settings-general/tests/settings-root.client.spec.tsx",
+      "sha256": "e188a4b77bc7a082214672e8a9189a9e354580c82bf675b724d73f16c9f50c43"
+    },
+    {
+      "path": "packages/client/ui-settings-general/tests/shell.client.spec.ts",
+      "sha256": "db11a8d5c3657ba7f902e2471000f3ea1dc34602b2b1e6c895d78058e36b900f"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/account-avatar.client.spec.ts",
+      "sha256": "ead573641f316d4b86960ca522ddaed20594c8b6643d1ceb3b930f8b830df364"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/account-refresh.client.spec.ts",
+      "sha256": "e384ed217f51a691a66cb4aeda3b7311e91b31d72bdf4f96dfbb3136519b91db"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/account.client.spec.tsx",
+      "sha256": "64d3bd56f0977073232cb5890dc722481469b2737aed62520ec7d0f330217e76"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/apply.client.spec.ts",
+      "sha256": "b3d15c869e55217520a89be5b5aa76f97987e472040244195a498b98d1879b77"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/bonus-notices.client.spec.ts",
+      "sha256": "67aef1c667c30dcd54d59f6d335e85d369c5462ec1c58c2775f5e29e5f24c573"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/browser-login.client.spec.ts",
+      "sha256": "cc02e68d25cb016e66ed8dc86240b304f01410bd4eed74fcfd97ab7c4d3fa60d"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/client-metadata.client.spec.ts",
+      "sha256": "475f1f3b60aee7ba54f302cfdeecb0d8fa92d6631606e57c47dc6aa9ce6eac22"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/config.client.spec.ts",
+      "sha256": "fe49ffe1ddc36bae66bfe0fc443461ca2d916064de22c8480bc8c07c24adb42c"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/contact-url.client.spec.ts",
+      "sha256": "999b42c595e932997424d773dc1aa9ce83ce56175fc036c8b1cf4e3e611e25ae"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/desktop-onboarding-entry.client.spec.tsx",
+      "sha256": "51b6337eb3ab28759d8a020d290004ec8f8d5abc60a09a3dcdc5a2214f97b866"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/desktop-onboarding.client.spec.tsx",
+      "sha256": "6abee822360e9b3ec9614a2eba80a8edb3be95e9d44bf07f676979c93cb856dc"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/formatBalance.client.spec.ts",
+      "sha256": "5abf747469f0ee8ec8b509856e69931cd84d06a9919cc2a331895515bc467823"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/initialization.client.spec.ts",
+      "sha256": "a4499c35ab06b652d079abade89dad1f085098f14bc3b14618b4543bcac468db"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/notice-transition.client.spec.ts",
+      "sha256": "4105ee528a2b28a77fef22b14c4c1ad84ab4f7040f626d085950994a090021cc"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/notice.client.spec.tsx",
+      "sha256": "547320682a37c119082202a51c4e308810b3bdbf4815c86d43be3bc003335ff5"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/onboarding-credentials.client.spec.ts",
+      "sha256": "40ac02b8ac2a59e93db8421a8331d3356d516d3730a2047792bf86d67ae66667"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/onboarding-state.client.spec.ts",
+      "sha256": "63428dc004dd27bae9b58b6794f43e8db35d1e34707ac9f3f9b855f8abaf667d"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/onboarding-surface.client.spec.tsx",
+      "sha256": "9211b445d5da080cb73a1f8a4fcf14a12e4e6bf7f37c1a0744c4f91e3494186a"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/onboarding.client.spec.tsx",
+      "sha256": "d6f80f959da09212334d130ba0895ec3f342b9277c6b4447598e39759181fe95"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/platform-overlay-caption.client.spec.ts",
+      "sha256": "5c5ab6f03eed5b99fc92a390a2bd18c3c8cb81e4582c86aea64aa3e4d5875fd1"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/platform-pages.client.spec.ts",
+      "sha256": "f28bc181119d9886e87f36520cebe0ae8685599590e14fae5fc76e0664f5d759"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/quota-notice-hold.client.spec.tsx",
+      "sha256": "bdb4208e33a1b858edcfb2385a56a5e70cbb5a0218cd03a52fb93f5b40f42647"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/quota-notice.client.spec.tsx",
+      "sha256": "547cb10c4398ea5810f0dd85ef977d2470342e3c1cafc7ccf620cee8eef0c0e3"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/sign-in-dialog.client.spec.tsx",
+      "sha256": "b9a36b9d845210c0119f60ffbcdb816ba7c5b659ca671ffc48310119fabd486e"
+    },
+    {
+      "path": "packages/client/ui-settings-account/tests/sign-out-dialog.client.spec.tsx",
+      "sha256": "1a007a1fb18685700a3c7811e9e808eae697183921c2da38754de09f4598ad1c"
+    },
+    {
+      "path": "packages/client/ui-plugin-manager/tests/browser-plugin.client.spec.tsx",
+      "sha256": "d16c12d76f2e70f34b3f41b838f28b59dc82763761d488c4cc456a3375470c5c"
+    },
+    {
+      "path": "packages/client/ui-plugin-manager/tests/components.client.spec.tsx",
+      "sha256": "9de07442a8c624b24d60661846e6fd97ebb031eb9b873def7b3bfd79b1708cbc"
+    },
+    {
+      "path": "packages/client/ui-plugin-manager/tests/config-ledger.client.spec.ts",
+      "sha256": "e5aa3fc4872c4bca256ea9e78d71de0e26a9b83574c82d73d7d6a670c12c1df0"
+    },
+    {
+      "path": "packages/client/ui-plugin-manager/tests/manager-store.client.spec.ts",
+      "sha256": "02245e6775147a8f98bda24ce289f0ca1f9fb173e0f37a9089045521585fcc69"
+    },
+    {
+      "path": "packages/client/ui-plugin-manager/tests/registry-probe.host.spec.ts",
+      "sha256": "03eddea201ddd5fb27807cbac6d97bcb24f8e1ec5b2746eaf3d864f5c2783e27"
+    },
+    {
+      "path": "packages/client/ui-plugin-manager/tests/sanitize-install-input.client.spec.ts",
+      "sha256": "753260b36093c2fb6b1961d4b925ce31044316993883d0d08298e503c5865e88"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/browser-plugin.client.spec.ts",
+      "sha256": "15fae94e3e73f7a3f7f85700a2b0327068ac3fc917ee54d17cbe8f6659e0d85d"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/catalog-source.client.spec.ts",
+      "sha256": "963c10bcd0c5924605a95aa49562662b131e99515296c2d77f1aedc56ca4873b"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/definition.client.spec.ts",
+      "sha256": "a78573ea76d2225d9f4bb0cd61622604668e0520beca534dd606e238b208e325"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/delete-toast.client.spec.tsx",
+      "sha256": "d9649483616300d7f0611dd0f2a646218d034981f9f767fe19229c5a3f4a248f"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/delivery-history.client.spec.tsx",
+      "sha256": "8b9a6894d5255b39d8cf2a75c69724e5495d0088d6a5ca9d4b3b03db4fd3a326"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/recent-time-zones.client.spec.ts",
+      "sha256": "8e3a2b0deaab19b7f2b2419959d05c1b7c0f6019ef324523947ba81e5f18e845"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/schedule-catalog-action.client.spec.tsx",
+      "sha256": "a01c9c7bdb1526e8ea7367f986c4dc1168443e74420555cc6ddd33e011c0f5df"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/schedule-create-card.client.spec.tsx",
+      "sha256": "3fab8c5d86de3ee1026deccd60028ffb780f2aa10bfa26b8ede93e96a7fbdb64"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/schedule-format.client.spec.ts",
+      "sha256": "04c8199ebb97ff891c35d359a805aa3c7efd753e77583e20402bcd81a9e1bcac"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/schedule-task-tab.client.spec.tsx",
+      "sha256": "106d95d24edd0c6310a4b059bb15758ef18ffcf01c4dc0f9f303128253fa024b"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/schedule-turn-card.client.spec.tsx",
+      "sha256": "ad40277643d7d37e043ea5e4a68e30adcbf493ddae1dc49b63e76e03deea8d5f"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/session-link.client.spec.ts",
+      "sha256": "2f3387edd97e919886a29f28321b480a48fac6e1748481ee4b722a99574e84eb"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/session-schedule-hover.client.spec.tsx",
+      "sha256": "c018dca14daeca54effef97143efd6ce6ba6488e24bc71602b12bb14c85bf4d6"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/session-schedule-mark.client.spec.tsx",
+      "sha256": "e7679e1548918b711b3eefa0ada6d5ebb46ecc2f04ece6aa314dafb873cfaaca"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/session-schedule-shared.client.spec.tsx",
+      "sha256": "f28f53b3d457308be9a2482748b43ef1794f382722d43e2010814fc96e84b2bb"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/session-schedule-state.client.spec.ts",
+      "sha256": "c8f83045f76e96e4ca1ebf1ae21c3159692b4016591433a90a605795055fa079"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/task-cron.client.spec.ts",
+      "sha256": "aa844f91bfae39a05f8bdec455faf773f2e51e210e28ae5f2335392dee1d6a9c"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/task-detail.client.spec.tsx",
+      "sha256": "b998749f0549861511f3efed5fb02adbf58e1ab07cc1aa0e6d3fcac32b922938"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/task-manager-page.client.spec.tsx",
+      "sha256": "8b058583bd58879d521ed5b05321e163f114f07340b6ffe5775a9fe182736fa1"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/task-menu.client.spec.tsx",
+      "sha256": "1363f247101a335da9d16a444662e772ccdda2191e3d4be60d3db8aa7a50410a"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/task-tab-bindings.client.spec.ts",
+      "sha256": "07ee82c04abc456b89df5f06343d16610eed872b0a30681be2799e70d65b8f1b"
+    },
+    {
+      "path": "packages/client/ui-schedule/tests/task-timing.client.spec.tsx",
+      "sha256": "ffd5677dad6d3aec3197fc785a14a5abb33f44bd4b7ca10e2d1c0c15d7ac9e72"
+    },
+    {
+      "path": "packages/client/ui-agent-preset/tests/apply.client.spec.ts",
+      "sha256": "8af3794b0eb3c2b98fead979e82e36d4233e7b6a8f6d6e6c191c4f3408788c07"
+    },
+    {
+      "path": "packages/client/ui-agent-preset/tests/components.client.spec.tsx",
+      "sha256": "5516e22d81ecd3c2d3d805dfc6c1326331b71570279b30b34ca6db3f97167e94"
+    },
+    {
+      "path": "packages/client/ui-agent-preset/tests/create-plugin-menu-item.client.spec.tsx",
+      "sha256": "44a714c6ac522453e38cd247995727b7c2d919e31497359868faa1b282d8b265"
+    },
+    {
+      "path": "packages/client/ui-agent-preset/tests/locales.client.spec.ts",
+      "sha256": "c84d5090aab1d32a38be4841fc6b937cfa7d669a777229f15f59e5b625e3230d"
+    },
+    {
+      "path": "packages/client/ui-agent-preset/tests/section-store.client.spec.ts",
+      "sha256": "129f8a4eb89915058ef5eeb8438b0b33bd58487a998f015ed33b6c91646c3eca"
+    },
+    {
+      "path": "packages/client/ui-agent-preset/tests/section.client.spec.tsx",
+      "sha256": "444100721f670f20bd4c539a077ac6964606ff85b0819608e99fbc645654f81c"
+    },
+    {
+      "path": "packages/client/ui-agent-preset/tests/settings-store.client.spec.ts",
+      "sha256": "c0478de3d5e0fd43a139cdb44d6bc181d446d51aef98ca3de5053b3df6a66a38"
+    },
+    {
+      "path": "packages/client/ui-model-selection/tests/browser-plugin.client.spec.ts",
+      "sha256": "b7aeb2b23583185484834be8de8411a85922d2cf7edcee0fb6d6123cb66d4909"
+    },
+    {
+      "path": "packages/client/ui-model-selection/tests/catalog.client.spec.ts",
+      "sha256": "38f150d9dae4c68c8d739a84efcc79dc37fbf50b67ab609b3e44c4658b02484b"
+    },
+    {
+      "path": "packages/client/ui-model-selection/tests/model-select.client.spec.tsx",
+      "sha256": "990e4718232338321a225607c56c00d41a45c0f0a7a6a7e8a2f16b92723eeb1d"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/apply.client.spec.ts",
+      "sha256": "abb47a03193d04c2ac5b47ec3e146494c4a69d567639ba371fc62e47393be825"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/components.client.spec.tsx",
+      "sha256": "1f79e2212744347c9b71f0ae7dfd823e95b8a061859215cd1962a1fdbf40ab30"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/model-input-types.client.spec.tsx",
+      "sha256": "3ca08403060d51c185d126c91571cfbdbbd0b8cef7228aaaf1b25bc93ba41ae7"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/model-list-catalog.client.spec.tsx",
+      "sha256": "09f0e59ef63c42027580f4a511141c6bdafa20f027d4e581744878699450c4e6"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/model-reasoning-efforts.client.spec.tsx",
+      "sha256": "9b57ee1699f925bd4dcab52d39bb5afeb5ea5cb9f70a67922c6a8b6248b8c734"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/onboarding-dialog.client.spec.tsx",
+      "sha256": "de95dd981861645500cbeb071f41ba3ce15a0d71e4fbac219ce12b5f8c2fc3ab"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/provider-form.client.spec.tsx",
+      "sha256": "98326c27d1867565585f7e1c4eb54a7f4fe22b1171d12654625014ac6be82ac8"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/readiness.client.spec.ts",
+      "sha256": "3b257d973fa3c949bde2c0e77a0721926da8151a9ecf5f05cf765110dfd2b20e"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/store.client.spec.ts",
+      "sha256": "48f56eade5f448ba628ba97db69efa139b8fc9f726ac3862bc332f3d6eec2d09"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/styles.client.spec.ts",
+      "sha256": "bb65dbeadd2f5c2076d9047a1832dcfd613ed928a0be56b846ef25e74a6d2753"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/welcome-notice.client.spec.tsx",
+      "sha256": "30c397111544173fc24716d6b91f1c813cd87ccb45248c9735face30037ec4d0"
+    },
+    {
+      "path": "packages/client/ui-settings-models/tests/welcome-store.client.spec.ts",
+      "sha256": "5ddfce41a1866ef3178c6e9662acc86b253945b4d5f2df24fd6881a28a2957df"
+    },
+    {
+      "path": "packages/client/ui-settings-subagent/tests/apply.client.spec.ts",
+      "sha256": "5bad828ee39ba6e7a12b5254049466f019cf88a0b214cda7e5886874b915f582"
+    },
+    {
+      "path": "packages/client/ui-settings-subagent/tests/card.client.spec.tsx",
+      "sha256": "ddb42668c964bde79f0e178da319bbd72ba73b9b7cc8e7381f4369c2736bd8a7"
+    },
+    {
+      "path": "packages/client/ui-settings-subagent/tests/controllers.client.spec.ts",
+      "sha256": "d0c3836d3b32dc65caee5db74770b3094cdca2b103146f05acad17c30135137d"
+    },
+    {
+      "path": "packages/client/ui-subagent/tests/browser-plugin.client.spec.ts",
+      "sha256": "95960e13b30f49f0cd67fc4fe58c1cf08c5858cae9dcce4fe3368d9940f5d7e2"
+    },
+    {
+      "path": "packages/client/ui-subagent/tests/conversation-ui.client.spec.tsx",
+      "sha256": "884d90e82a17ead8c2728912baef02a73ada3681cf1123c7c1ddafc3e1745bac"
+    },
+    {
+      "path": "packages/client/ui-subagent/tests/sidebar-chat.client.spec.tsx",
+      "sha256": "f21a5c16838474d2c72f93a3c066cedf5168020fffe4d3322db68cd5c46b8a73"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/animated-rows.client.spec.tsx",
+      "sha256": "b5f62f2304caf9aec988d8c28e1b29c27f892b215cb2b1240116dcd53b40be1d"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/apply.client.spec.ts",
+      "sha256": "c9b7f3d20c099b6854aaea3983170e4f874fdd5b4c4cf5805a8fd88983628154"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/browser-styles.client.spec.ts",
+      "sha256": "02920911c7f3b3af682d48a881e86d78afb069ac8613ea27d0c0f74100328068"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/host-home-staleness.client.spec.tsx",
+      "sha256": "cae1eb5ae29a444d79aacea0b7c61faa9f418450bab8d0707650d4d80c035458"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/rename-assembly.client.spec.tsx",
+      "sha256": "bcad5a2f0a515b309f0c9a6851553228c3f71e0f32c6b2dad9007a541fbc7542"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/rows.client.spec.tsx",
+      "sha256": "04e4dc793b7d07edde0c49ab1bfe2a69e6a08e47fdcf06097c54eca47ac82064"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/session-actions.client.spec.tsx",
+      "sha256": "0309fe80c0d4a37ea0a73c50574afd8132e698a53fbcaedab48e4891b6dcd168"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/shortcuts.client.spec.ts",
+      "sha256": "af291ecdb657769918f7a5b1357784f1b57622672e9249f13a98a43e3d478ea9"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/tree.client.spec.ts",
+      "sha256": "649ec5bce0592fddbab60482c4f8c9edebe3d301c1d750b59c79283d74ce9810"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/workspace-browser.client.spec.tsx",
+      "sha256": "626e80139fface62c0e2c1380fc51526ea82d98a1ebaab245efe7bc872f208f8"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/workspace-picker.client.spec.tsx",
+      "sha256": "178f143de294929f4a47db1964f996d9dc372a06484862bac036a4a61ffe0afa"
+    },
+    {
+      "path": "packages/client/ui-workspace/tests/workspaces-service.client.spec.ts",
+      "sha256": "cc1a0586c4b8becac8c713e6688e4c9faf03c77996d035aa917412cf2b029eff"
+    },
+    {
+      "path": "packages/client/ui-reference/tests/browser-plugin.client.spec.ts",
+      "sha256": "e4e3e8d9ae27f21d2e6088646f08bf97d103457d526604b709be34171349b65e"
+    },
+    {
+      "path": "packages/client/ui-reference/tests/file-reference.client.spec.tsx",
+      "sha256": "4b5285021fd8cee7c27060d0581e9e7a8a183be5d614b56e33ebd8f7838cf1c9"
+    },
+    {
+      "path": "packages/client/ui-reference/tests/user-text-rules.client.spec.ts",
+      "sha256": "1eeec26f53bfe4243d217e000f84622a227559fe59e7db8e10de818d8f11210c"
+    }
+  ],
+  "hashNormalization": "CRLF to LF; bytes otherwise unchanged",
+  "config": "vitest.upstream-features.config.ts",
+  "domFixture": {
+    "source": "scripts/test-dom-environment.ts",
+    "sha256": "b9f090e266d1f35d9a12384a77330a03ae875100940813c9e2a2f37fd238bdb1"
+  },
+  "adaptations": [
+    "Fixed upstream module aliases and standard decorator compilation.",
+    "Automatic JSX runtime; source-only DOM observer fixture.",
+    "Test roster reads candidate installed package manifests via a test-only anchor transform.",
+    "All four customized UI packages resolve to QS source.",
+    "One React 18.3.1 instance, matching fixed upstream renderer; fixed dependencies in lockfile."
+  ],
+  "scope": "Official source behavior with mocked remote services. Real browser and installed runtime contracts are reported separately."
+}

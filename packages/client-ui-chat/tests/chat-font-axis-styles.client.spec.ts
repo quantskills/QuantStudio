@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 const read = (name: string): string =>
-  readFileSync(fileURLToPath(new URL(`../src/client/chat/${name}`, import.meta.url)), 'utf8')
+  readFileSync(fileURLToPath(new URL(`../src/client/chat/${name}`, import.meta.url)), 'utf8').replace(/\r\n/g, '\n')
 
 function declarationsFrom(source: string, selector: string): string[] {
   const declarationText = source.replace(/\/\*[\s\S]*?\*\//g, ' ')

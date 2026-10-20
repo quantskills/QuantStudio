@@ -79,6 +79,11 @@ jobs:
         env:
           QS_UPSTREAM_SOURCE: .ci-dsh-upstream
 
+      - name: Test fixed upstream Web settings, models, plugins, schedules and collaboration
+        run: pnpm exec vitest run --config vitest.upstream-features.config.ts
+        env:
+          QS_UPSTREAM_SOURCE: .ci-dsh-upstream
+
       - name: Smoke-test clean DSH installation
         run: pnpm run ci:smoke
 

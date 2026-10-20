@@ -5,6 +5,9 @@ nodeLinker: hoisted
 injectWorkspacePackages: true
 
 overrides:
+  # One React instance for QS and the fixed rc.2 Web renderer/test harness.
+  react: 18.3.1
+  react-dom: 18.3.1
   '@deepseek-ai/cordis': 4.0.5
   '@deepseek-ai/cordis-plugin-group': 1.0.2
   '@deepseek-ai/schemastery': 3.18.5

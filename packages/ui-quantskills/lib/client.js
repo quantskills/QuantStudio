@@ -3485,7 +3485,7 @@ window.__ModuleLoader__.load({
 			"viewer": "Y1wWTG_viewer"
 		};
 		//#endregion
-		//#region ../../node_modules/pdfjs-dist/build/pdf.mjs
+		//#region node_modules/pdfjs-dist/build/pdf.mjs
 		var pdf_exports = /* @__PURE__ */ __exportAll({
 			AbortException: () => AbortException,
 			AnnotationEditorLayer: () => AnnotationEditorLayer,
@@ -128213,6 +128213,15 @@ void main() {
 		}
 		function SettingsPage(props) {
 			const section = props.useStore((state) => state.settingsSection);
+			const [advancedError, setAdvancedError] = (0, react.useState)();
+			const openAdvanced = (panel) => {
+				try {
+					props.openAdvancedWorkbench?.(panel);
+					setAdvancedError(void 0);
+				} catch (cause) {
+					setAdvancedError(cause instanceof Error ? cause.message : "工作台入口暂不可用，请刷新页面后重试。");
+				}
+			};
 			const interfaceScale = props.useStore((state) => state.interfaceScale);
 			const conversationScale = props.useStore((state) => state.conversationScale);
 			const conversationBrightness = props.useStore((state) => state.conversationBrightness);
@@ -128271,6 +128280,11 @@ void main() {
 					"插件与市场"
 				],
 				[
+					"advanced",
+					(0, react_jsx_runtime.jsx)(o, {}),
+					"更多能力"
+				],
+				[
 					"appearance",
 					(0, react_jsx_runtime.jsx)(t$2, {}),
 					"外观"
@@ -128317,7 +128331,39 @@ void main() {
 							]
 						}), (0, react_jsx_runtime.jsx)("section", {
 							className: QuantSkillsApp_module_css_default.settingsContent,
-							children: section === "archives" ? (0, react_jsx_runtime.jsx)(ArchivedSessions, { access: props.sessionHistory }) : section === "plugins" ? (0, react_jsx_runtime.jsx)(PluginSettings, { ...props }) : section === "models" ? (0, react_jsx_runtime.jsx)(QuantSkillsModelServices, {
+							children: section === "advanced" ? (0, react_jsx_runtime.jsxs)("section", {
+								className: QuantSkillsApp_module_css_default.settingsPanel,
+								children: [
+									(0, react_jsx_runtime.jsx)("h2", { children: "更多能力" }),
+									(0, react_jsx_runtime.jsx)("p", { children: "完整工作台中，插件页提供搜索与网页读取、语音及其他扩展配置；设置中提供账号、快捷键和开发者工具。" }),
+									(0, react_jsx_runtime.jsxs)("div", {
+										className: QuantSkillsApp_module_css_default.settingsActions,
+										children: [(0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											className: QuantSkillsApp_module_css_default.primaryButton,
+											disabled: !props.openAdvancedWorkbench,
+											onClick: () => {
+												openAdvanced("conversation");
+											},
+											children: "打开完整工作台"
+										}), (0, react_jsx_runtime.jsx)("button", {
+											type: "button",
+											className: QuantSkillsApp_module_css_default.outlineButton,
+											disabled: !props.openAdvancedWorkbench,
+											onClick: () => {
+												openAdvanced("schedules");
+											},
+											children: "管理自动化任务"
+										})]
+									}),
+									advancedError && (0, react_jsx_runtime.jsx)("p", {
+										role: "alert",
+										children: advancedError
+									}),
+									(0, react_jsx_runtime.jsx)("p", { children: "进入后，点击左下角账号或设置按钮查看配置。自动化任务可以查看详情、暂停、继续或删除；新任务从会话中创建。" }),
+									(0, react_jsx_runtime.jsx)("p", { children: "实验扩展默认关闭，可在插件管理中按需启用。点击侧栏的 QuantSkills 可返回本工作台。" })
+								]
+							}) : section === "archives" ? (0, react_jsx_runtime.jsx)(ArchivedSessions, { access: props.sessionHistory }) : section === "plugins" ? (0, react_jsx_runtime.jsx)(PluginSettings, { ...props }) : section === "models" ? (0, react_jsx_runtime.jsx)(QuantSkillsModelServices, {
 								access: props.modelAccess,
 								jevAccess: props.contestAccess?.watch
 							}) : section === "workspace" ? (0, react_jsx_runtime.jsx)(WorkspaceSettings, { props }) : section === "appearance" ? (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
@@ -134904,6 +134950,12 @@ void main() {
 					applicationUpdateStatus: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStatus()),
 					applicationUpdateCheck: (request) => unwrapRemote(ctx.remote.quantSkills.applicationUpdateCheck(request)),
 					applicationUpdateStart: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStart()),
+					openAdvancedWorkbench: (panel) => {
+						const stockLayout = ctx.get("layout");
+						if (!stockLayout || !ctx.slots.entriesOfSlot("main").some((item) => item.options.key === panel)) throw new Error("工作台入口暂不可用，请刷新页面后重试。");
+						stockLayout.selectPanel(panel);
+						viewActions.closePlugin();
+					},
 					renderPluginMarket: () => {
 						const manager = ctx.slots.entriesOfSlot("main").some((item) => item.options.key === "plugins");
 						const stockLayout = ctx.get("layout");

@@ -2,7 +2,7 @@
 
 ## 当前边界
 
-本候选提供可重复的**离线会话转换器**和运行时保护，还没有提供经整体验收的一键生产迁移。保持日常实例运行于原版本。不要指向日常 `DSH_HOME` 运行候选 `web` 或 `install:plugin`；迁移校验不足时启动器会拒绝启动。
+本候选提供**完整离线代际迁移、会话格式转换、保全恢复和构造样本激活**。真实备份副本只做离线兼容核对，不提供不经复核的一键生产切换。保持日常实例运行于原版本。不要指向日常 `DSH_HOME` 运行候选 `web` 或 `install:plugin`；迁移校验不足时启动器会拒绝启动。
 
 三层数据必须分开：原始一致性备份、仅离线读取的兼容副本、无凭据且所有路径均在临时目录内的运行样本。数据库使用一致性快照或停写备份。复制文件数相同不能证明备份一致或语义完整。
 
@@ -73,4 +73,46 @@ await preserveAndRestoreCopy('/isolated/verified-old-home', '/isolated/stopped-c
 
 独立 `migration.json` 与 `inventories.json` 记录两个代际、备份标识及阶段。中断可用同样参数重跑；已存在的每个文件须与源一致，变化的源、未知阶段、篡改输出、嵌套目录和并发恢复均拒绝。失败产物保留供检查，不自动删除。
 
-构造样本的 7 项测试已覆盖恢复、新增记录保全、幂等、中断、锁、外部链接保护及关闭后的 SQLite 快照 `integrity_check` 和成交金额核对。**输出始终 `runnable:false`、`oldReadable:unknown`**：不能把该复制报告当作整个数据目录与旧核心兼容的证明；实际核心读取、Profile 路径、删除日志及自动任务核验仍是激活前阻塞项。
+构造样本的 7 项测试已覆盖恢复、新增记录保全、幂等、中断、锁、外部链接保护及关闭后的 SQLite 快照 `integrity_check` 和成交金额核对。**输出始终 `runnable:false`、`oldReadable:unknown`**：不能把该复制报告当作整个数据目录与旧核心兼容的证明；真实旧核心的离线读取已通过；原生旧核心恢复启动只在构造样本中验证。将来实际切换前仍须检查届时的 Profile 路径、删除日志及自动任务。
+
+## 整目录迁移与语义核对
+
+```js
+import { migrateHomeCopy } from './scripts/home-migration.mjs'
+await migrateHomeCopy('/isolated/verified-old-home', '/isolated/migrated', {
+  consistency: 'verified-offline-snapshot',
+  backupId: '<verified-backup-sha256>',
+})
+```
+
+该工具先保存独立阶段日志，复制并验证整个目录，再执行会话转换，最后生成 `proof.json`。原文件原样保留；允许的新增仅为目标会话格式文件。逐一校验原文件摘要，并对 SQLite 做 `integrity_check`、schema/逐表行数/规范化内容摘要。SQLite 检查在另一个临时副本上进行；非空 WAL、未知格式、变化的源代际和篡改目标均拒绝。仅“文件数一致”不会通过。
+
+`prepared` → `migrating` → `validated`；异常写为 `failed`，重跑前重新核验源和已产生内容。真实副本日志为 `runnable:false`，不能作为生产启动证书。`certifyIsolatedHome` 只接受路径隔离、无凭据、无执行任务且已先安装新启动器的构造样本，不接受原数据目录或真实兼容副本。
+
+可重复的完整原生验收：
+
+```sh
+pnpm run ci:smoke -- --whole-home --legacy-market
+node scripts/ci-optional-bundles.mjs
+pnpm exec playwright install --with-deps chromium
+pnpm run ci:smoke -- --whole-home --legacy-market --all-optional --browser-e2e
+pnpm run ci:legacy -- /isolated/fixed-old-source --restore
+```
+
+`--all-optional` 只修改本次临时样本的选择。日常配置与新安装默认值不变。浏览器使用本机随机端口的模拟模型；该模型返回固定文本，不能证明外部模型能力。
+
+真实旧代际的只读解析验证：
+
+```sh
+node scripts/verify-legacy-session-copy.mjs /isolated/fixed-old-source /isolated/recovery
+```
+
+先检查脚本参数和旧基线提交；只挂载旧版解析器与声明式 QS 事件目录，不启动完整 Host，不恢复任务，不发送消息。旧版展开事件数与新版转换事件数的口径不同；对比依据是保留原文、允许转换清单、ID/关联和规范化摘要。
+
+## 插件来源迁移与中断恢复
+
+实际 manifest、lock 和安装记录优先于目录推荐。npm 保留实际包名、精确解析版本和完整性；Git 保留固定提交与子目录；压缩包保留 URL、仓库归属及校验；本地链接保留语义及目标；来源不明者保留但禁止自动更新或替换。迁移成功后才撤下旧市场挂载；禁用者不会被自动启用。
+
+官方管理器的修改操作按 Profile 加锁。新包在隔离 staging 中禁用安装脚本后解析真实名称，检查 QS 核心保护后才允许发布到 Profile；Git、压缩包和 npm 别名不能绕过名称检查。核心更新只能走应用升级。
+
+如存在未完成事务，启动器拒绝启动或回退。停止本次候选进程后使用 `node scripts/recover-plugin-transaction.mjs --help` 检查参数，再按记录恢复原 Profile 和冻结依赖。工具核对记录、原文件摘要，同时取得 Profile 和启动锁；未知阶段和篡改不能通过。失败证据会保留，不能手删标记后启动。
