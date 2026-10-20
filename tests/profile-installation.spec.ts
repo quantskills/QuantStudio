@@ -108,5 +108,5 @@ if(process.argv[2]==='run'){const t=await prepareProfileStage(process.env.DSH_HO
     expect(result.status).not.toBe(0)
     expect(result.stderr).toContain('the previous profile was restored')
     expect(await readFile(join(profile,'package.json'),'utf8')).toBe('{"old":true}')
-  })
+  }, 20_000) // The real child has a 15 s OS timeout; allow its result to reach Vitest.
 })
