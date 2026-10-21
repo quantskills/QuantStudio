@@ -6,8 +6,9 @@
       "file": "packages/client-ui-chat/tests/apply-inject.client.spec.tsx",
       "upstream": "ui-chat/tests/apply-inject.client.spec.tsx",
       "upstreamSha256": "3c20e515fe67105a21cb7388948bebeda946789ec069f2bff22e9c2569ee2b2e",
-      "status": "ported",
-      "candidateSha256": "3c20e515fe67105a21cb7388948bebeda946789ec069f2bff22e9c2569ee2b2e"
+      "status": "adapted-qs-desktop-default",
+      "candidateSha256": "ba2592a1c65a3f64c8fd0252f2447d9bc8b2e2118673e91b69fb35b14f147a19",
+      "review": "QS Web default follows desktop standard grouping; explicit saved detailed mode is still tested and retained."
     },
     {
       "file": "packages/client-ui-chat/tests/approval-command.client.spec.tsx",
@@ -27,8 +28,9 @@
       "file": "packages/client-ui-chat/tests/chat-apply.client.spec.tsx",
       "upstream": "ui-chat/tests/chat-apply.client.spec.tsx",
       "upstreamSha256": "9825961165675aa968aa0507127563a423b2e0148cdca6d5ea3ec11d6195eca0",
-      "status": "ported",
-      "candidateSha256": "9825961165675aa968aa0507127563a423b2e0148cdca6d5ea3ec11d6195eca0"
+      "status": "adapted-qs-desktop-default",
+      "candidateSha256": "11095b0884e022d40841093d528e6ce0fe63bf59c89dec7e05783eaf77229397",
+      "review": "QS Web default follows desktop standard grouping; explicit saved detailed mode is still tested and retained."
     },
     {
       "file": "packages/client-ui-chat/tests/chat-branch-tails.client.spec.tsx",
@@ -307,8 +309,9 @@
       "file": "packages/client-ui-chat/tests/transcript-view-policy.client.spec.ts",
       "upstream": "ui-chat/tests/transcript-view-policy.client.spec.ts",
       "upstreamSha256": "5327d90eba3b2089a952274953924d69a716adfbc10eeb55d50a530d49cd9a3f",
-      "status": "ported",
-      "candidateSha256": "5327d90eba3b2089a952274953924d69a716adfbc10eeb55d50a530d49cd9a3f"
+      "status": "adapted-qs-desktop-default",
+      "candidateSha256": "a79d062a5f772df4f3458406031db21d56b75dcccfa31452fec8481144aa5e05",
+      "review": "QS Web default follows desktop standard grouping; explicit saved detailed mode is still tested and retained."
     },
     {
       "file": "packages/client-ui-chat/tests/transcript-view-row.client.spec.tsx",
@@ -419,8 +422,9 @@
       "file": "packages/client-ui-conversation/tests/assembly-surfaces.client.spec.tsx",
       "upstream": "ui-conversation/tests/assembly-surfaces.client.spec.tsx",
       "upstreamSha256": "23a9d88060f396a8b2dbf398a68220749533d7bec6237e00ddb132947d248ee2",
-      "status": "ported",
-      "candidateSha256": "1cf5ca15182e41fbd2cf3d179affd5918c437bf9f14dbe3dcea863d9d66e1855"
+      "status": "ported-native-header-restored",
+      "candidateSha256": "082fb181752afb3731ccc5126baa177845c45815a6283e6c9f1a287292bed245",
+      "review": "Restored upstream native title and lineage assertions; QS no longer portals subagents into the composer."
     },
     {
       "file": "packages/client-ui-conversation/tests/async-insertion.client.spec.ts",

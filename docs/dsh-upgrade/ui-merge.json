@@ -4,8 +4,11 @@
   "files": [
     {
       "file": "packages/client-ui-chat/src/chat-settings.ts",
-      "outcome": "upstream",
-      "custom": false
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS Web defaults to the target desktop standard transcript grouping; explicit saved display choices remain authoritative.",
+      "sourceSha256": "e0b959731dc6a1d698c53960a394f8c03d8737e225c2d73007428653401afa22",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
     },
     {
       "file": "packages/client-ui-chat/src/client/apply.ts",
@@ -129,11 +132,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/ReasoningRow.module.css",
-      "outcome": "custom-reviewed-and-tested",
-      "custom": true,
-      "review": "Removed obsolete rule hiding native summary; kept QS typography.",
-      "sourceSha256": "c89a8c4e879899f58c6e61108b4330cb52ba4c0c288f873b77255e2b46004f03",
-      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+      "outcome": "upstream",
+      "custom": false,
+      "review": "Restored fixed target upstream implementation on 2026-10-21 after native-interaction review; QS geometry overrides removed. Equal to target source after line-ending normalization.",
+      "sourceSha256": "192be42957f2eccbf0195bb51c9ca13dd4c87bbdaf5559fb11f0c1f8b75fb744",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/ReasoningRow.tsx",
@@ -170,8 +173,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/TurnProcessNodeView.module.css",
-      "outcome": "custom-merged",
-      "custom": true
+      "outcome": "upstream",
+      "custom": false,
+      "review": "Restored fixed target upstream implementation on 2026-10-21 after native-interaction review; QS geometry overrides removed. Equal to target source after line-ending normalization.",
+      "sourceSha256": "2fb00c2a24da7f9946dac118eaa076bd55133ca972d159c8b72d7ffee1ba2292",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/TurnProcessNodeView.tsx",
@@ -258,9 +264,9 @@
       "file": "packages/client-ui-chat/src/client/contract/slots.ts",
       "outcome": "custom-reviewed-and-tested",
       "custom": true,
-      "review": "QS slots extend target contracts; dispatch and ownership exercised by assembly suites.",
-      "sourceSha256": "6300804eaf47a29cd067d61ec0c7b61766404da03a0cb02d10cd03feeac8793a",
-      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+      "review": "QS extension slots retained. Optional defaultContent preserves the complete native status outside QS without breaking label-only consumers.",
+      "sourceSha256": "2b872d2dc56f62a3ed335cd8de22ea548aa894f90965a27b1cc31efde999c760",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
     },
     {
       "file": "packages/client-ui-chat/src/client/contract/snapshot.ts",
@@ -497,8 +503,11 @@
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/RunningStatus.tsx",
-      "outcome": "upstream",
-      "custom": false
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Native clock and complete fallback retained for the full workbench; the QS slot owns its original animated identity and rotating research copy. Native turn/step disclosures are unchanged.",
+      "sourceSha256": "764c9917287664b956be9b23bbe22937d75773de194afb01c51aabdef669a35d",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
     },
     {
       "file": "packages/client-ui-chat/src/client/chat/RunningWhaleTail.tsx",
@@ -946,9 +955,9 @@
       "file": "packages/client-ui-conversation/src/client/skeleton/ConversationRoot.module.css",
       "outcome": "custom-reviewed-and-tested",
       "custom": true,
-      "review": "QS desktop/mobile layout retained; resident composer and scrollport behavior covered.",
-      "sourceSha256": "b097c555f3cb08b42233167479f001b2e2045f7803ce8a940ebed6ca5be9910d",
-      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+      "review": "Keep target DSH session controls and QS actions; Conversation/Trace share the title row. Original tab roles, callbacks and macOS no-drag controls retained.",
+      "sourceSha256": "cf530088a1d5eedea08dac7a09dfa2a4a537ddd67cfea588527c7308a4623f85",
+      "verification": "2026-10-21 header/sidebar follow-up: 100 focused assertions and Windows live browser; see feature-acceptance.md."
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/ConversationRoot.tsx",
@@ -962,9 +971,9 @@
       "file": "packages/client-ui-conversation/src/client/skeleton/ConversationSession.tsx",
       "outcome": "custom-reviewed-and-tested",
       "custom": true,
-      "review": "Scoped composer portal by session; fallback parent navigation; no repeated observer publication; retains QS title-free ordinary layout.",
-      "sourceSha256": "01f67f277664e80555bd439ec0acacbbe5418b1d8ae69c2e17e83d36a2871a00",
-      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+      "review": "Keep target DSH session controls and QS actions; Conversation/Trace share the title row. Original tab roles, callbacks and macOS no-drag controls retained.",
+      "sourceSha256": "f22ef343df2def2c4d12bc3219bb5041c06a711f9f387701d0000cff0dccadd7",
+      "verification": "2026-10-21 header/sidebar follow-up: 100 focused assertions and Windows live browser; see feature-acceptance.md."
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/EmptyHero.tsx",
@@ -983,17 +992,17 @@
       "file": "packages/client-ui-conversation/src/client/skeleton/InputBar.module.css",
       "outcome": "custom-reviewed-and-tested",
       "custom": true,
-      "review": "QS tool row and attachment layout retained with target editable surface.",
-      "sourceSha256": "9640a8b50928bbdcfaeb74088ada77abd74390739793c97ec334ebd13c74a75d",
-      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+      "review": "2026-10-21 follow-up: user requested the QS composer. Restored QS toolbar spacing and add-button chrome; native draft, attachment, model compaction and send behavior remain. Global QS composer styles are scoped separately from native transcript disclosures.",
+      "sourceSha256": "b6d40539605b1eafa7aa7fb513c185a2f7a5f708869cda1d8bd96cf6e0d1e9aa",
+      "verification": "InputBar and input-scenarios 139/139; QS attachments and theme suites 26/26; client build and Windows browser geometry inspection."
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/InputBar.tsx",
       "outcome": "custom-reviewed-and-tested",
       "custom": true,
-      "review": "Target command, attachment, pending, IME and steer semantics; restored session-scoped subagent seat.",
-      "sourceSha256": "e20f5514d50c6fab0da6486e03f1c9f62ee97623d3a9fc1bb6a266ccaede2d9c",
-      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+      "review": "Native composer and QS extension slots retained; removed the obsolete subagent portal seat because lineage now lives in the native header.",
+      "sourceSha256": "90601b0ef6a9cb2641233e0aab23f22a66aeeb7fcb25fac8b3d387f30c3d98b7",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
     },
     {
       "file": "packages/client-ui-conversation/src/client/skeleton/PermissionSelect.module.css",
@@ -1314,9 +1323,9 @@
       "file": "packages/client-ui-layout/src/client/AppFrame.tsx",
       "outcome": "custom-reviewed-and-tested",
       "custom": true,
-      "review": "Use upstream rightbar clamping without active QS claims; retain reservation behavior when claimed.",
-      "sourceSha256": "9655678747a4a4f38e50eed19d84c28ab2a23814d5cc0f6fd9f46a06bedb4467",
-      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+      "review": "Use upstream rightbar clamping without active QS claims; retain reservation behavior when claimed. QS overlay receives optional resolved right-panel geometry for the preserved edge toggle; official panel state remains authoritative.",
+      "sourceSha256": "8c27de20f20e7b5efffedf75082ea441f1d46a323de4a205e1f62fd922b4cf4d",
+      "verification": "2026-10-21: 45 layout and 13 QS tests pass; Windows live collapse/reopen retains the selected file tab."
     },
     {
       "file": "packages/client-ui-layout/src/client/DocumentTitle.tsx",
@@ -1335,9 +1344,9 @@
       "file": "packages/client-ui-layout/src/client/index.ts",
       "outcome": "custom-reviewed-and-tested",
       "custom": true,
-      "review": "Target exports retained with QS extensions.",
-      "sourceSha256": "8c320a31c2536dff13f7f69eb596c01ad91a00a7a041f00ccbc7e881d5ddf1dd",
-      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+      "review": "Target exports retained with QS extensions. QS overlay receives optional resolved right-panel geometry for the preserved edge toggle; official panel state remains authoritative.",
+      "sourceSha256": "4a64b9b464fa4c2b9d4a8035e4673115bf9bcb2265bd68775aa0246366b1b92a",
+      "verification": "2026-10-21: 45 layout and 13 QS tests pass; Windows live collapse/reopen retains the selected file tab."
     },
     {
       "file": "packages/client-ui-layout/src/client/service.ts",
@@ -1397,6 +1406,92 @@
     "targetUiTestFiles": 114,
     "targetUiTestsPassed": 1909,
     "excludedUpstreamTests": 0,
-    "browser": "see test-report.md, separate from source tests"
+    "browser": "see test-report.md, separate from source tests",
+    "nativeConversationReview": {
+      "date": "2026-10-21",
+      "baseCommit": "b6e917fd616f209d3cb9be0cc82c9c88cacbc641",
+      "candidate": "local working tree; not merged",
+      "artifact": "269a12e4c1f35e623b92293024f47ce499440f942530a9733c3dc6091a78212a",
+      "upstreamCases": 1909,
+      "qsCases": 39,
+      "testExecution": "114 suites initially: 1905 passed / 4 expected-default or header assertions failed. Updated assertions to requested native behavior; affected 3 suites then passed 34/34. Final running-status suite passed 3/3; final QS selection passed 39/39.",
+      "browser": "Windows Codex Chromium, isolated Host and local synthetic SSE model; streaming/grouping, completion collapse, tool details, long reasoning, reload and light/dark appearance.",
+      "evidence": "screenshots/native-chat-20261021.png"
+    },
+    "qsComposerFollowup": {
+      "date": "2026-10-21",
+      "artifact": "d465e95ee11a79c68a287511bfa193ed274908a880583803cbbfd1709320e806",
+      "inputCases": 139,
+      "attachmentAndThemeCases": 26,
+      "status": "Local working tree; not merged",
+      "scope": "QS composer appearance only; native transcript interactions retained."
+    },
+    "qsBrandFollowup": {
+      "date": "2026-10-21",
+      "artifact": "2c8feaae164d0dc1db96fbf1fc778333439dacf2f393773605b8d06b0947808c",
+      "casesPassed": 24,
+      "scope": "Original QS animated activity mark and rotating copy; QS response typography excludes native reasoning disclosure bodies.",
+      "browser": "Windows live instance: light animation loaded at 22px, QS gray copy rotates, response paragraphs use original 1.85 line-height and weight 450; active user task continues.",
+      "files": [
+        {
+          "file": "packages/ui-quantskills/src/client/QuantSkillsBrand.tsx",
+          "sha256": "0670e20607f9784c1f4bd3c8ee26fa94bca8644a240c936055e5bda564b29b9c"
+        },
+        {
+          "file": "packages/ui-quantskills/src/client/QuantSkillsApp.module.css",
+          "sha256": "2604cb66c3bab7202c9ff50945bf655c4944aed97dc5349b8727bfa962ff08e5"
+        }
+      ]
+    },
+    "qsNativeSidebarFollowup": {
+      "date": "2026-10-21",
+      "artifact": "765c0758afea76410bbcff9f64c5d4e3159a6fd13973f7517a3722c35e511eed",
+      "casesPassed": 100,
+      "scope": "Official sidebar owns tabs, file navigation, code/image previews and collapse. QS contributes result summary, audio/video and isolated HTML. Header view tabs moved inline.",
+      "browser": "Windows: result summary includes 20 unique prepared files; native files/code/image, isolated HTML, 8s 1920x1080 video, trace switch and collapse/reopen verified. Header scrollWidth equals clientWidth at 400px and 584px.",
+      "transport": "GET/HEAD registered as buffered with the official Connection type. Real rc.2 HTTP bridge test covers GET Range and HEAD; local preview now returns 206 instead of 400.",
+      "status": "Local working tree on upgrade branch; not committed, pushed or merged."
+    },
+    "qsSidebarArrowFollowup": {
+      "date": "2026-10-21",
+      "casesPassed": 58,
+      "scope": "Preserve QS edge arrows; official right-sidebar toggle retains tabs; optional overlay geometry follows panel width.",
+      "browser": "Windows 3298: collapse/reopen, delivery.html selection and left-arrow visibility verified; active task continues.",
+      "status": "Local working tree; not committed, pushed or merged."
+    },
+    "qsOpaqueMenusFollowup": {
+      "date": "2026-10-21",
+      "casesPassed": 43,
+      "file": "packages/ui-quantskills/src/client/QuantSkillsApp.module.css",
+      "sourceSha256": "79ae23dff94779d5528611a2ab4b1d3a237ddb440b134183a5efabae454394b0",
+      "scope": "Bridge rc.2 MenuSurface fill/filter tokens to opaque QS theme surfaces; retain composer glass styling.",
+      "browser": "Windows 3298 plus menu: rgb(255, 255, 255), opacity 1, backdrop-filter none; stylesheet hot update, active task preserved.",
+      "status": "Local working tree; not committed, pushed or merged."
+    },
+    "qsNativeSubagentFollowup": {
+      "date": "2026-10-21",
+      "casesPassed": 40,
+      "scope": "Remove obsolete openSession interception, manual subagent modal DOM and CSS; official subagent navigation and parent breadcrumb own the view.",
+      "build": "QS TypeScript and client build passed; obsolete wrapper and popup markers absent from shipped client bundle.",
+      "browser": "Windows 3298 after frontend reload: open child from native catalog and return via parent breadcrumb; zero obsolete backdrop/title/body markers in both views. Four existing child tasks remain running; Host not restarted.",
+      "evidence": "Local runtime-logs/qs-native-subagent-view-20261021.png; user content excluded from repository.",
+      "status": "Local working tree; not committed, pushed or merged."
+    },
+    "qsAgentAdoptionFollowup": {
+      "date": "2026-10-21",
+      "casesPassed": 29,
+      "scope": "Explicit rc.2 session retention and readiness before exact composition checks; bounded acquisition and scoped release. Agent/team archive refresh no longer blocks opening.",
+      "browser": "Windows 3298: click saved stock expert in composer capability picker; blank session opens and picker closes in 484ms on this run. Model, capability and saved permission visible; no prompt submitted. Returned to original task with four running child agents.",
+      "data": "One empty verification session retained; no Host restart, historical deletion or configuration change.",
+      "status": "Local working tree; not committed, pushed or merged."
+    },
+    "qsPr22SyncFollowup": {
+      "date": "2026-10-21",
+      "codeCommit": "41bab60797195e7f41eafe7630908591375cd475",
+      "scope": "Native chat and sidebar with QS branding/composer; menu/subagent/adoption fixes; remove result continuation; package the public deliverables parser.",
+      "validation": "Full source/type check, full build, 1455 QS + 1909 customized UI + 2830 fixed feature tests; plugin and application archive probes passed.",
+      "evidence": "followup-validation-20261021.json",
+      "status": "Code committed on upgrade branch; PR remains Draft and no main merge is authorized."
+    }
   }
 }
