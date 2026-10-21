@@ -9,7 +9,6 @@ import type { QuantSkillsLibrarySourceRecord } from './types.ts';
 import type { Context } from '@deepseek-ai/cordis';
 import s from '@deepseek-ai/schemastery';
 import { SessionId, type SessionEvent } from '@deepseek-ai/dsh-session';
-import { type SkillContextMode } from './skill-context.ts';
 import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
 import { type JsonValue } from '@deepseek-ai/dsh-util-values';
 import { z } from 'zod';
@@ -59,8 +58,6 @@ declare module '@deepseek-ai/dsh-session/types' {
 }
 /** Loader configuration for durable user Agent definitions. */
 export interface Config {
-    /** Experimental lossless on-demand Skill context. Full remains the compatibility default. */
-    readonly skillContextMode?: SkillContextMode;
     /** Harness home override. */
     readonly dshHome?: string;
     /** Optional deployment override for the managed Documents workspace root. */
@@ -234,7 +231,6 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private readonly liveTradingToolNames;
     private readonly teamFreshProvider;
     private readonly teamForkProvider;
-    private readonly skillContextMode;
     private readonly workspaceResolver;
     private readonly legacyTeamRecoveryDirectory;
     private readonly contest;
@@ -604,7 +600,6 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private reportInvalidTeamModelChoice;
     private validateTeamModelChoice;
     private installResidentRuntime;
-    private refreshResidentReader;
     private registerResidentSkill;
     private requireResidentRuntime;
     private registerAttachmentTool;

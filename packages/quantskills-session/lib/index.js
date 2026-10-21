@@ -18,8 +18,8 @@ import { homedir } from "node:os";
 import s from "@deepseek-ai/schemastery";
 import { AttachmentId } from "@deepseek-ai/dsh-attachment";
 import { installModelSelection } from "@deepseek-ai/dsh-agent";
-import { PERSONA_PREFIX_SECTION } from "@deepseek-ai/dsh-system-prompt";
 import { renderSkillContent } from "@deepseek-ai/dsh-skill";
+import { PERSONA_PREFIX_SECTION } from "@deepseek-ai/dsh-system-prompt";
 import { Remote, TypertRemoteService } from "@deepseek-ai/dsh-typert-protocol";
 import { snapshotJsonValue } from "@deepseek-ai/dsh-util-values";
 import Mustache from "mustache";
@@ -6815,94 +6815,6 @@ function renderArtifactTheme(settings) {
 	].join("\n");
 }
 //#endregion
-//#region packages/quantskills-session/lib/types/skill-context.js
-const ATTACHED_SKILL_READER = "read_attached_skills";
-/** Conservative character-based gate, not a token/cost prediction. A deferred read
-* adds a round trip: single Skills and fixed all-Skill workflows stay inline. */
-function selectSkillContextMode(configured, skills, fixedWorkflow = false) {
-	if (configured === "full" || fixedWorkflow || skills.length < 2) return "full";
-	const sizes = skills.map((skill) => ({
-		full: renderResidentSkillContext(skill, "full").length,
-		catalog: renderResidentSkillContext(skill, "progressive").length
-	}));
-	if (sizes.filter((size) => size.catalog < size.full).length < 2) return "full";
-	return sizes.reduce((sum, size) => sum + size.full, 0) >= 3 * (sizes.reduce((sum, size) => sum + size.catalog, 0) + PROGRESSIVE_SKILL_GUIDANCE.length + 800) ? "progressive" : "full";
-}
-/** Shared guidance is emitted once per Agent, never once per attached Skill. */
-const PROGRESSIVE_SKILL_GUIDANCE = [
-	"Attached QuantSkills capabilities remain available at their exact saved versions.",
-	`Before acting on a task, use ${ATTACHED_SKILL_READER} with all applicable asset_ids in one call to read their complete instructions. Match by the user request, role and descriptions; a catalog entry is not the instructions.`,
-	"For a fixed Skill workflow, load every attached Skill before performing the workflow and follow the explicit attached workflow order. Do not omit prerequisites, validation or output requirements.",
-	"Do not reload instructions already visible in full at the same version. After context compaction, reload any required instructions whose full details are no longer visible. Full inline Skill sections need no separate load.",
-	"Skill descriptions are routing metadata. Never infer missing instructions or silently substitute another Skill/version."
-].join("\n");
-function renderSkillLoadingGuidance(skills, mode, fixedWorkflow) {
-	const assetIds = skills.map((skill) => skill.version.assetId);
-	const order = `Attached Skill workflow order (asset_ids): ${JSON.stringify(assetIds)}`;
-	if (fixedWorkflow) return `Follow every attached Skill in the explicit workflow order. Preserve all prerequisites, validation and output requirements.\n${order}\nSkill names by asset_id: ${JSON.stringify(skills.map((skill) => ({
-		asset_id: skill.version.assetId,
-		name: skill.definition.name
-	})))}`;
-	return mode === "progressive" ? `${PROGRESSIVE_SKILL_GUIDANCE}\n${order}` : "";
-}
-/** Communication policy changes neither saved team membership nor fresh/fork settings. */
-const EFFICIENT_TEAM_GUIDANCE = [
-	"Activate only members needed for this task and reuse an existing member for follow-up work.",
-	"Give each member a self-contained task with relevant inputs, constraints, expected output and acceptance checks. Avoid copying unrelated history or assigning the same investigation twice.",
-	"Report conclusions, evidence/file paths, validation and blockers. Preserve facts needed by the recipient; do not paste entire transcripts or files that the recipient can read.",
-	"send_message starts or resumes an inactive recipient. Do not send acknowledgement-only replies or progress polling that would create unnecessary turns. Wait for required work and validate the combined result before final delivery."
-].join("\n");
-/** Use full instructions for short or invocation-restricted Skills; never truncate a body. */
-function renderResidentSkillContext(skill, mode) {
-	const full = ["The following QuantSkills Skill is resident in this Session. Apply it whenever relevant without asking the user to load or restate it.", renderSkillContent(skill.definition)].join("\n\n");
-	if (mode === "full" || skill.definition.invocation?.modelInvocable === false) return full;
-	const catalog = "Attached Skill (instructions available on demand): " + JSON.stringify({
-		asset_id: skill.version.assetId,
-		version: skill.version.versionId,
-		name: skill.definition.name,
-		description: skill.definition.description
-	});
-	return catalog.length < full.length ? catalog : full;
-}
-/** Resolve only current Agent attachments, preserving complete contents and resource bases. */
-function attachedSkillReader(resolve, ownerId) {
-	return defineTool({
-		name: ATTACHED_SKILL_READER,
-		description: "Read complete instructions for exact attached QuantSkills Skills. Batch all applicable asset_ids in one call before using them. No need to reload a version still visible in full.",
-		parameters: { asset_ids: {
-			type: "array",
-			required: true,
-			items: { type: "string" },
-			description: "Exact asset_id values from this Agent's attached Skill catalog, in workflow order."
-		} },
-		output: {
-			schema: { type: "string" },
-			render: (_args, value) => [{
-				type: "text",
-				text: value
-			}]
-		},
-		async execute(args, exec) {
-			exec.signal.throwIfAborted();
-			if (ownerId !== void 0 && exec.agent?.id !== ownerId) throw new Error("Read Skills from the current Agent only; inherited attachment readers cannot access another Agent's Skills.");
-			if (args.asset_ids.length === 0) throw new Error("Choose at least one attached Skill asset_id.");
-			return [...new Set(args.asset_ids)].map((id) => {
-				const skill = resolve(id);
-				if (!skill) throw new Error(`Skill ${JSON.stringify(id)} is not attached to this Agent. Read its current catalog; do not substitute another version.`);
-				if (skill.definition.invocation?.modelInvocable === false) throw new Error(`Skill ${JSON.stringify(id)} is available only through its explicit inline instructions.`);
-				return skill;
-			}).map((skill) => `Exact attached version: ${skill.version.versionId}\n${renderSkillContent(skill.definition)}`).join("\n\n");
-		},
-		isConcurrencySafe: () => true,
-		presentCall: (args) => ({
-			card: "generic",
-			title: "Read attached Skill instructions",
-			kind: "read",
-			rawInput: args.asset_ids.join(", ")
-		})
-	});
-}
-//#endregion
 //#region packages/quantskills-session/lib/types/file-store.js
 /** QuantSkills-owned immutable generic-file storage for stock DSH hosts. */
 /** Default maximum bytes accepted for one QuantSkills generic file. */
@@ -10108,7 +10020,6 @@ let QuantSkillsSessionService = (() => {
 			"workspaceRegistry"
 		];
 		static Config = s.object({
-			skillContextMode: s.union(["full", "progressive"]).default("full"),
 			dshHome: s.string(),
 			documentsDirectory: s.string(),
 			maxTextAttachmentBytes: s.number().step(1).min(1).default(DEFAULT_MAX_TEXT_ATTACHMENT_BYTES),
@@ -10155,7 +10066,6 @@ let QuantSkillsSessionService = (() => {
 		liveTradingToolNames;
 		teamFreshProvider;
 		teamForkProvider;
-		skillContextMode;
 		workspaceResolver;
 		legacyTeamRecoveryDirectory;
 		contest;
@@ -10169,7 +10079,6 @@ let QuantSkillsSessionService = (() => {
 		*/
 		constructor(ctx, config) {
 			super(ctx, "quantSkillsSessions", { namespace: "quantSkillsSessions" });
-			this.skillContextMode = config.skillContextMode ?? "full";
 			this.sessionLifecycle = new SessionLifecycle(ctx, resolveDshHome(config.dshHome));
 			this.contest = new ContestService(new OfficialContestCli(() => {
 				const processes = ctx.get("subprocess");
@@ -10868,10 +10777,9 @@ let QuantSkillsSessionService = (() => {
 					if (!sameBinding(occupied, binding)) throw new Error(`QuantSkills Skill "${binding.assetId}" is already resident at another version.`);
 					return Object.freeze({ skills: current });
 				}
-				const registered = this.registerResidentSkill(agent.ctx, agent, resolved);
+				const registered = this.registerResidentSkill(agent.ctx, resolved);
 				runtime.entries.set(binding.assetId, registered);
 				try {
-					this.refreshResidentReader(agent.ctx, agent, runtime);
 					agent.session.append(RESIDENT_SKILL_EVENT, Object.freeze({
 						operation: "attach",
 						binding,
@@ -10880,7 +10788,6 @@ let QuantSkillsSessionService = (() => {
 				} catch (error) {
 					runtime.entries.delete(binding.assetId);
 					registered.dispose();
-					this.refreshResidentReader(agent.ctx, agent, runtime);
 					throw error;
 				}
 				return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.snapshotEvents()) });
@@ -10907,7 +10814,6 @@ let QuantSkillsSessionService = (() => {
 				const registered = runtime.entries.get(request.assetId);
 				runtime.entries.delete(request.assetId);
 				registered?.dispose();
-				this.refreshResidentReader(agent.ctx, agent, runtime);
 				return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.snapshotEvents()) });
 			});
 		}
@@ -12566,43 +12472,14 @@ let QuantSkillsSessionService = (() => {
 			}
 		}
 		installResidentRuntime(agentCtx, agent, resolved) {
-			const events = agent.session.snapshotEvents();
-			const composition = foldQuantSkillsAgentSession(events) ?? this.agentReservations.get(agent.id)?.agent ?? (foldQuantSkillsAgentTeamSession(events) ?? this.teamReservations.get(agent.id)?.binding)?.lead ?? (foldQuantSkillsAgentTeamMemberSession(events) ?? this.teamMemberReservations.get(agent.id)?.binding)?.agent;
-			const runtime = {
-				entries: /* @__PURE__ */ new Map(),
-				disposers: [],
-				fixedWorkflow: composition?.mode === "fixed"
-			};
-			try {
-				if (this.skillContextMode === "progressive" || runtime.fixedWorkflow) {
-					const tools = agentCtx.get("tools");
-					const prompt = agentCtx.get("systemPrompt");
-					if (tools === void 0 || prompt === void 0) throw new Error("QuantSkills progressive Skills require scoped tools and system prompt services.");
-					const inherited = tools.get(ATTACHED_SKILL_READER, agent);
-					if (inherited !== void 0 && [...this.residentSkillRuntimes.values()].some((parent) => parent.reader === inherited)) runtime.disposers.push(tools.restrict({ deny: [ATTACHED_SKILL_READER] }));
-					runtime.disposers.push(registerLiteralPromptSection(prompt, {
-						name: "quantskills:skill-loading",
-						order: 29,
-						text: () => {
-							const mode = runtime.reader !== void 0 && tools.get("read_attached_skills", agent) === runtime.reader ? "progressive" : "full";
-							return renderSkillLoadingGuidance([...runtime.entries.values()].map((entry) => entry.resolved), mode, runtime.fixedWorkflow);
-						}
-					}));
-					if (this.skillContextMode === "progressive" && (foldQuantSkillsAgentTeamSession(agent.session.snapshotEvents()) !== null || foldQuantSkillsAgentTeamMemberSession(agent.session.snapshotEvents()) !== null || this.teamReservations.has(agent.id) || this.teamMemberReservations.has(agent.id))) runtime.disposers.push(registerLiteralPromptSection(prompt, {
-						name: "quantskills:team-efficiency",
-						order: 61,
-						text: EFFICIENT_TEAM_GUIDANCE
-					}));
+			const runtime = { entries: /* @__PURE__ */ new Map() };
+			for (const item of resolved) {
+				const binding = bindingFrom(item.version);
+				if (runtime.entries.has(binding.assetId)) {
+					disposeResidentRuntime(runtime);
+					throw new Error(`QuantSkills Session contains duplicate resident Skill "${binding.assetId}".`);
 				}
-				for (const item of resolved) {
-					const binding = bindingFrom(item.version);
-					if (runtime.entries.has(binding.assetId)) throw new Error(`QuantSkills Session contains duplicate resident Skill "${binding.assetId}".`);
-					runtime.entries.set(binding.assetId, this.registerResidentSkill(agentCtx, agent, item));
-				}
-				this.refreshResidentReader(agentCtx, agent, runtime);
-			} catch (error) {
-				disposeResidentRuntime(runtime);
-				throw error;
+				runtime.entries.set(binding.assetId, this.registerResidentSkill(agentCtx, item));
 			}
 			if (this.residentSkillRuntimes.get(agent.session.id) !== void 0) {
 				disposeResidentRuntime(runtime);
@@ -12647,21 +12524,7 @@ let QuantSkillsSessionService = (() => {
 			agentCtx.effect(() => dispose, "quantskills-session.resident-skills");
 			return dispose;
 		}
-		refreshResidentReader(agentCtx, agent, runtime) {
-			if (selectSkillContextMode(this.skillContextMode, [...runtime.entries.values()].map((entry) => entry.resolved), runtime.fixedWorkflow) === "full") {
-				runtime.disposeReader?.();
-				delete runtime.disposeReader;
-				delete runtime.reader;
-				return;
-			}
-			if (runtime.reader !== void 0) return;
-			const tools = agentCtx.get("tools");
-			if (tools === void 0 || tools.get("read_attached_skills", agent) !== void 0) return;
-			const reader = attachedSkillReader((id) => runtime.entries.get(id)?.resolved, agent.id);
-			runtime.disposeReader = tools.register(reader);
-			runtime.reader = reader;
-		}
-		registerResidentSkill(agentCtx, agent, resolved) {
+		registerResidentSkill(agentCtx, resolved) {
 			const skills = agentCtx.get("skills");
 			const systemPrompt = agentCtx.get("systemPrompt");
 			if (skills === void 0) throw new Error("quantskills-session: scoped Skill registry is unavailable");
@@ -12672,10 +12535,7 @@ let QuantSkillsSessionService = (() => {
 				disposePrompt = registerLiteralPromptSection(systemPrompt, {
 					name: `quantskills:resident:${resolved.version.versionId}`,
 					order: 30,
-					text: () => {
-						const reader = this.residentSkillRuntimes.get(agent.id)?.reader;
-						return renderResidentSkillContext(resolved, reader !== void 0 && agentCtx.get("tools")?.get("read_attached_skills", agent) === reader ? this.skillContextMode : "full");
-					}
+					text: ["The following QuantSkills Skill is resident in this Session. Apply it whenever relevant without asking the user to load or restate it.", renderSkillContent(resolved.definition)].join("\n\n")
 				});
 			} catch (error) {
 				disposeProvider();
@@ -13224,12 +13084,8 @@ function sameBindingList(left, right) {
 	});
 }
 function disposeResidentRuntime(runtime) {
-	runtime.disposeReader?.();
-	delete runtime.disposeReader;
-	delete runtime.reader;
 	for (const entry of runtime.entries.values()) entry.dispose();
 	runtime.entries.clear();
-	for (const dispose of runtime.disposers.splice(0).reverse()) dispose();
 }
 function sameAgent(left, right) {
 	return left.agentId === right.agentId && left.revision === right.revision && left.name === right.name && left.role === right.role && left.mode === right.mode && left.permission === right.permission && left.sourceVersionId === right.sourceVersionId && left.model?.provider === right.model?.provider && left.model?.model === right.model?.model && left.model?.reasoningEffort === right.model?.reasoningEffort && left.createdAt === right.createdAt && left.updatedAt === right.updatedAt && left.skills.length === right.skills.length && left.skills.every((binding, index) => {
@@ -13678,12 +13534,12 @@ function startsWithBytes(data, prefix) {
 	return data.byteLength >= prefix.length && prefix.every((byte, index) => data[index] === byte);
 }
 function renderAgentPrompt(agent) {
-	const orchestration = agent.mode === "fixed" ? "Use all currently resident QuantSkills Skills in the explicit attached workflow order when the task requires the complete workflow." : "Choose and combine the currently resident QuantSkills Skill sections dynamically according to the user request.";
+	const orchestration = agent.mode === "fixed" ? "Use the currently resident QuantSkills Skill sections in their displayed order when the task requires the complete workflow." : "Choose and combine the currently resident QuantSkills Skill sections dynamically according to the user request.";
 	return [
 		`You are the user-defined QuantSkills Agent "${agent.name}".`,
 		`Role:\n${agent.role}`,
 		`Skill orchestration: ${agent.mode}. ${orchestration}`,
-		"Attached Skill sections provide either complete instructions or an exact-version catalog. Load cataloged instructions before using that Skill.",
+		"Exact resident Skill contents are supplied in separate Session system-prompt sections.",
 		"If no resident Skill section is present, follow the saved role using the Session base capabilities."
 	].join("\n\n");
 }
@@ -13693,11 +13549,10 @@ function renderTeamLeadPrompt(team) {
 		`You are the Lead Agent "${team.lead.name}" of the saved QuantSkills Agent Team "${team.name}".`,
 		`Team objective:\n${team.description}`,
 		`Lead role:\n${team.lead.role}`,
-		`Skill orchestration: ${team.lead.mode}.`,
 		`Declared members:\n${roster}`,
 		`Start only declared members through ${TEAM_ACTIVATION_TOOL}. Never call an unrestricted teammate creation tool. A member name is single-use for this Team Session; continue an existing member through send_message.`,
 		"Use the shared Team task and message tools to coordinate parallel work. Wait for required members before giving the user a final answer.",
-		"Lead Skill sections provide complete instructions or an exact-version catalog; read cataloged instructions before using them."
+		"Exact Lead Skill contents are supplied in separate Session system-prompt sections."
 	].join("\n\n");
 }
 function renderTeamMemberPrompt(team, member) {
@@ -13705,10 +13560,9 @@ function renderTeamMemberPrompt(team, member) {
 		`You are Team member "${member.name}" in the saved QuantSkills Agent Team "${team.name}".`,
 		`Assigned Agent: "${member.agent.name}" revision ${String(member.agent.revision)}.`,
 		`Role:\n${member.agent.role}`,
-		`Skill orchestration: ${member.agent.mode}.`,
 		`Team objective:\n${team.description}`,
 		"Work only on the task delegated by the Team Lead. Coordinate through the Team task and message tools, and report useful results to lead.",
-		"Member Skill sections provide complete instructions or an exact-version catalog; read cataloged instructions before using them."
+		"Exact member Skill contents are supplied in separate Session system-prompt sections."
 	].join("\n\n");
 }
 function pinnedProvider(resolved) {

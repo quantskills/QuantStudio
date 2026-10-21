@@ -55,12 +55,11 @@ import type {} from '@deepseek-ai/dsh-session-persistence'
 import type { ProjectionSnapshot } from '@deepseek-ai/dsh-session-projection'
 import type {} from '@deepseek-ai/dsh-session-projection-cache'
 import {
-  type SkillCandidate, type SkillDefinition, type SkillLookupOptions, type SkillProvider,
+  renderSkillContent, type SkillCandidate, type SkillDefinition, type SkillLookupOptions, type SkillProvider,
 } from '@deepseek-ai/dsh-skill'
 import type { SystemPrompt } from '@deepseek-ai/dsh-system-prompt'
 import { installQuantSkillsIdentity } from './product-identity.ts'
 import { renderArtifactTheme } from './artifact-theme.ts'
-import { ATTACHED_SKILL_READER, EFFICIENT_TEAM_GUIDANCE, attachedSkillReader, renderResidentSkillContext, renderSkillLoadingGuidance, selectSkillContextMode, type SkillContextMode } from './skill-context.ts'
 import type {} from '@deepseek-ai/dsh-subagent'
 import { defineTool, type ToolCallView } from '@deepseek-ai/dsh-tools'
 import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
@@ -515,8 +514,6 @@ declare module '@deepseek-ai/dsh-session/types' {
 
 /** Loader configuration for durable user Agent definitions. */
 export interface Config {
-  /** Experimental lossless on-demand Skill context. Full remains the compatibility default. */
-  readonly skillContextMode?: SkillContextMode
   /** Harness home override. */
   readonly dshHome?: string
   /** Optional deployment override for the managed Documents workspace root. */
@@ -865,10 +862,6 @@ interface ResidentSkillRuntimeEntry {
 
 interface ResidentSkillRuntime {
   readonly entries: Map<QuantSkillsAssetId, ResidentSkillRuntimeEntry>
-  readonly disposers: Array<() => void>
-  reader?: ReturnType<typeof attachedSkillReader>
-  disposeReader?: () => void
-  readonly fixedWorkflow: boolean
 }
 
 interface ResultSource {
@@ -911,7 +904,6 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   ]
 
   static Config: s<Config> = s.object({
-    skillContextMode: s.union(['full', 'progressive']).default('full'),
     dshHome: s.string(),
     documentsDirectory: s.string(),
     maxTextAttachmentBytes: s.number().step(1).min(1).default(DEFAULT_MAX_TEXT_ATTACHMENT_BYTES),
@@ -961,7 +953,6 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   private readonly liveTradingToolNames: ReadonlySet<string>
   private readonly teamFreshProvider: string
   private readonly teamForkProvider: string
-  private readonly skillContextMode: SkillContextMode
   private readonly workspaceResolver: QuantSkillsWorkspaceResolver
   private readonly legacyTeamRecoveryDirectory: string
   private readonly contest: ContestService
@@ -976,7 +967,6 @@ export class QuantSkillsSessionService extends TypertRemoteService {
    */
   constructor(ctx: Context, config: Config) {
     super(ctx, 'quantSkillsSessions', { namespace: 'quantSkillsSessions' })
-    this.skillContextMode = config.skillContextMode ?? 'full'
     this.sessionLifecycle = new SessionLifecycle(ctx, resolveDshHome(config.dshHome))
     this.contest = new ContestService(new OfficialContestCli(() => {
       const processes = ctx.get('subprocess')
@@ -1759,10 +1749,9 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         }
         return Object.freeze({ skills: current })
       }
-      const registered = this.registerResidentSkill(agent.ctx, agent, resolved)
+      const registered = this.registerResidentSkill(agent.ctx, resolved)
       runtime.entries.set(binding.assetId, registered)
       try {
-        this.refreshResidentReader(agent.ctx, agent, runtime)
         agent.session.append(RESIDENT_SKILL_EVENT, Object.freeze({
           operation: 'attach',
           binding,
@@ -1771,7 +1760,6 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       } catch (error) {
         runtime.entries.delete(binding.assetId)
         registered.dispose()
-        this.refreshResidentReader(agent.ctx, agent, runtime)
         throw error
       }
       return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.snapshotEvents()) })
@@ -1800,7 +1788,6 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       const registered = runtime.entries.get(request.assetId)
       runtime.entries.delete(request.assetId)
       registered?.dispose()
-      this.refreshResidentReader(agent.ctx, agent, runtime)
       return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.snapshotEvents()) })
     })
   }
@@ -3738,44 +3725,14 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     agent: Agent,
     resolved: readonly QuantSkillsResolvedInstalledSkill[],
   ): () => void {
-    const events = agent.session.snapshotEvents()
-    const composition = foldQuantSkillsAgentSession(events) ?? this.agentReservations.get(agent.id)?.agent
-      ?? (foldQuantSkillsAgentTeamSession(events) ?? this.teamReservations.get(agent.id)?.binding)?.lead
-      ?? (foldQuantSkillsAgentTeamMemberSession(events) ?? this.teamMemberReservations.get(agent.id)?.binding)?.agent
-    const runtime: ResidentSkillRuntime = { entries: new Map(), disposers: [], fixedWorkflow: composition?.mode === 'fixed' }
-    try {
-      if (this.skillContextMode === 'progressive' || runtime.fixedWorkflow) {
-        const tools = agentCtx.get('tools')
-        const prompt = agentCtx.get('systemPrompt')
-        if (tools === undefined || prompt === undefined) throw new Error('QuantSkills progressive Skills require scoped tools and system prompt services.')
-        const inherited = tools.get(ATTACHED_SKILL_READER, agent)
-        if (inherited !== undefined && [...this.residentSkillRuntimes.values()].some(parent => parent.reader === inherited)) {
-          runtime.disposers.push(tools.restrict({ deny: [ATTACHED_SKILL_READER] }))
-        }
-        runtime.disposers.push(registerLiteralPromptSection(prompt, {
-          name: 'quantskills:skill-loading', order: 29,
-          text: () => {
-            const mode = runtime.reader !== undefined && tools.get(ATTACHED_SKILL_READER, agent) === runtime.reader ? 'progressive' : 'full'
-            return renderSkillLoadingGuidance([...runtime.entries.values()].map(entry => entry.resolved), mode, runtime.fixedWorkflow)
-          },
-        }))
-        if (this.skillContextMode === 'progressive' && (foldQuantSkillsAgentTeamSession(agent.session.snapshotEvents()) !== null
-          || foldQuantSkillsAgentTeamMemberSession(agent.session.snapshotEvents()) !== null
-          || this.teamReservations.has(agent.id) || this.teamMemberReservations.has(agent.id))) {
-          runtime.disposers.push(registerLiteralPromptSection(prompt, {
-            name: 'quantskills:team-efficiency', order: 61, text: EFFICIENT_TEAM_GUIDANCE,
-          }))
-        }
+    const runtime: ResidentSkillRuntime = { entries: new Map() }
+    for (const item of resolved) {
+      const binding = bindingFrom(item.version)
+      if (runtime.entries.has(binding.assetId)) {
+        disposeResidentRuntime(runtime)
+        throw new Error(`QuantSkills Session contains duplicate resident Skill "${binding.assetId}".`)
       }
-      for (const item of resolved) {
-        const binding = bindingFrom(item.version)
-        if (runtime.entries.has(binding.assetId)) throw new Error(`QuantSkills Session contains duplicate resident Skill "${binding.assetId}".`)
-        runtime.entries.set(binding.assetId, this.registerResidentSkill(agentCtx, agent, item))
-      }
-      this.refreshResidentReader(agentCtx, agent, runtime)
-    } catch (error) {
-      disposeResidentRuntime(runtime)
-      throw error
+      runtime.entries.set(binding.assetId, this.registerResidentSkill(agentCtx, item))
     }
     const previous = this.residentSkillRuntimes.get(agent.session.id)
     if (previous !== undefined) {
@@ -3824,27 +3781,8 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     return dispose
   }
 
-  private refreshResidentReader(agentCtx: Context, agent: Agent, runtime: ResidentSkillRuntime): void {
-    const mode = selectSkillContextMode(this.skillContextMode,
-      [...runtime.entries.values()].map(entry => entry.resolved), runtime.fixedWorkflow)
-    if (mode === 'full') {
-      runtime.disposeReader?.()
-      delete runtime.disposeReader
-      delete runtime.reader
-      return
-    }
-    if (runtime.reader !== undefined) return
-    const tools = agentCtx.get('tools')
-    // Never replace another plugin's tool. Inline instructions remain usable.
-    if (tools === undefined || tools.get(ATTACHED_SKILL_READER, agent) !== undefined) return
-    const reader = attachedSkillReader(id => runtime.entries.get(id as QuantSkillsAssetId)?.resolved, agent.id)
-    runtime.disposeReader = tools.register(reader)
-    runtime.reader = reader
-  }
-
   private registerResidentSkill(
     agentCtx: Context,
-    agent: Agent,
     resolved: QuantSkillsResolvedInstalledSkill,
   ): ResidentSkillRuntimeEntry {
     const skills = agentCtx.get('skills')
@@ -3857,10 +3795,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       disposePrompt = registerLiteralPromptSection(systemPrompt, {
         name: `quantskills:resident:${resolved.version.versionId}`,
         order: 30,
-        text: () => {
-          const reader = this.residentSkillRuntimes.get(agent.id)?.reader
-          return renderResidentSkillContext(resolved, reader !== undefined && agentCtx.get('tools')?.get(ATTACHED_SKILL_READER, agent) === reader ? this.skillContextMode : 'full')
-        },
+        text: [
+          'The following QuantSkills Skill is resident in this Session. Apply it whenever relevant without asking the user to load or restate it.',
+          renderSkillContent(resolved.definition),
+        ].join('\n\n'),
       })
     } catch (error) {
       disposeProvider()
@@ -4555,12 +4493,8 @@ function sameBindingList(
 }
 
 function disposeResidentRuntime(runtime: ResidentSkillRuntime): void {
-  runtime.disposeReader?.()
-  delete runtime.disposeReader
-  delete runtime.reader
   for (const entry of runtime.entries.values()) entry.dispose()
   runtime.entries.clear()
-  for (const dispose of runtime.disposers.splice(0).reverse()) dispose()
 }
 
 function sameAgent(left: QuantSkillsAgentSessionBinding, right: QuantSkillsAgentSessionBinding): boolean {
@@ -5084,13 +5018,13 @@ function startsWithBytes(data: Uint8Array, prefix: readonly number[]): boolean {
 
 function renderAgentPrompt(agent: QuantSkillsAgentSessionBinding): string {
   const orchestration = agent.mode === 'fixed'
-    ? 'Use all currently resident QuantSkills Skills in the explicit attached workflow order when the task requires the complete workflow.'
+    ? 'Use the currently resident QuantSkills Skill sections in their displayed order when the task requires the complete workflow.'
     : 'Choose and combine the currently resident QuantSkills Skill sections dynamically according to the user request.'
   return [
     `You are the user-defined QuantSkills Agent "${agent.name}".`,
     `Role:\n${agent.role}`,
     `Skill orchestration: ${agent.mode}. ${orchestration}`,
-    'Attached Skill sections provide either complete instructions or an exact-version catalog. Load cataloged instructions before using that Skill.',
+    'Exact resident Skill contents are supplied in separate Session system-prompt sections.',
     'If no resident Skill section is present, follow the saved role using the Session base capabilities.',
   ].join('\n\n')
 }
@@ -5103,11 +5037,10 @@ function renderTeamLeadPrompt(team: QuantSkillsAgentTeamSessionBinding): string 
     `You are the Lead Agent "${team.lead.name}" of the saved QuantSkills Agent Team "${team.name}".`,
     `Team objective:\n${team.description}`,
     `Lead role:\n${team.lead.role}`,
-    `Skill orchestration: ${team.lead.mode}.`,
     `Declared members:\n${roster}`,
     `Start only declared members through ${TEAM_ACTIVATION_TOOL}. Never call an unrestricted teammate creation tool. A member name is single-use for this Team Session; continue an existing member through send_message.`,
     'Use the shared Team task and message tools to coordinate parallel work. Wait for required members before giving the user a final answer.',
-    'Lead Skill sections provide complete instructions or an exact-version catalog; read cataloged instructions before using them.',
+    'Exact Lead Skill contents are supplied in separate Session system-prompt sections.',
   ].join('\n\n')
 }
 
@@ -5119,10 +5052,9 @@ function renderTeamMemberPrompt(
     `You are Team member "${member.name}" in the saved QuantSkills Agent Team "${team.name}".`,
     `Assigned Agent: "${member.agent.name}" revision ${String(member.agent.revision)}.`,
     `Role:\n${member.agent.role}`,
-    `Skill orchestration: ${member.agent.mode}.`,
     `Team objective:\n${team.description}`,
     'Work only on the task delegated by the Team Lead. Coordinate through the Team task and message tools, and report useful results to lead.',
-    'Member Skill sections provide complete instructions or an exact-version catalog; read cataloged instructions before using them.',
+    'Exact member Skill contents are supplied in separate Session system-prompt sections.',
   ].join('\n\n')
 }
 
