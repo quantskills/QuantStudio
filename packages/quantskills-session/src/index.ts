@@ -2519,33 +2519,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     if (request.paths.length > MAX_RESULT_PREPARE_PATHS) {
       throw new TypeError(`QuantSkills result preparation accepts at most ${String(MAX_RESULT_PREPARE_PATHS)} paths.`)
     }
-    const active = this.operationSignal(signal)
-    return this.withSessionLock(this.resultPrepareTails, request.sessionId, async () => {
-      active.throwIfAborted()
-      const existing = await this.requireQuantSkillsSession(request.sessionId, active)
-      const cwd = existing.header.cwd
-      if (cwd === undefined) throw new Error('QuantSkills Session has no workspace path.')
-      const workspaceRoot = await this.ctx.fs.resolve('.', { cwd, signal: active })
-      const sources = await this.resolveResultSources(existing.events, active)
-      const mutationPaths = new Set(
-        this.resultCandidates(request.sessionId, existing.events)
-          .filter(candidate => candidate.source === 'mutation')
-          .map(candidate => candidate.path),
-      )
-      const results: QuantSkillsPreparedResult[] = []
-      for (const inputPath of request.paths) {
-        active.throwIfAborted()
-        results.push(await this.prepareResultPath(
-          inputPath,
-          cwd,
-          workspaceRoot,
-          sources,
-          mutationPaths.has(inputPath),
-          active,
-        ))
-      }
-      return Object.freeze({ results: Object.freeze(results) })
-    })
+    return this.prepareSessionResults(request.sessionId, this.operationSignal(signal), request.paths)
   }
 
   /**
@@ -2561,10 +2535,38 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     request: { readonly sessionId: SessionId },
     signal?: AbortSignal,
   ): Promise<QuantSkillsResultPrepareResult> {
-    const active = this.operationSignal(signal)
-    const existing = await this.requireQuantSkillsSession(request.sessionId, active)
-    const paths = this.resultCandidates(request.sessionId, existing.events).map(candidate => candidate.path)
-    return this.resultPrepare({ sessionId: request.sessionId, paths }, active)
+    return this.prepareSessionResults(request.sessionId, this.operationSignal(signal))
+  }
+
+  /** A missing path list restores the full log, without the per-RPC candidate limit. */
+  private prepareSessionResults(
+    sessionId: SessionId,
+    active: AbortSignal,
+    paths?: readonly string[],
+  ): Promise<QuantSkillsResultPrepareResult> {
+    return this.withSessionLock(this.resultPrepareTails, sessionId, async () => {
+      active.throwIfAborted()
+      const existing = await this.requireQuantSkillsSession(sessionId, active)
+      const cwd = existing.header.cwd
+      if (cwd === undefined) throw new Error('QuantSkills Session has no workspace path.')
+      const workspaceRoot = await this.ctx.fs.resolve('.', { cwd, signal: active })
+      const sources = await this.resolveResultSources(existing.events, active)
+      const candidates = this.resultCandidates(sessionId, existing.events)
+      const mutationPaths = new Set(candidates.filter(candidate => candidate.source === 'mutation').map(candidate => candidate.path))
+      const results: QuantSkillsPreparedResult[] = []
+      for (const inputPath of paths ?? candidates.map(candidate => candidate.path)) {
+        active.throwIfAborted()
+        results.push(await this.prepareResultPath(
+          inputPath,
+          cwd,
+          workspaceRoot,
+          sources,
+          mutationPaths.has(inputPath),
+          active,
+        ))
+      }
+      return Object.freeze({ results: Object.freeze(results) })
+    })
   }
 
   /**
@@ -3951,7 +3953,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     return Object.freeze({ file: stored.ref, ...bounded })
   }
 
-  /** Complete-log result candidates, newest reference first and bounded for one prepare request. */
+  /** Complete-log result candidates, newest reference first, without total-count truncation. */
   private resultCandidates(
     sessionId: SessionId,
     events: readonly SessionEvent[],
@@ -3976,7 +3978,6 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         }
         return
       }
-      if (candidates.length >= MAX_RESULT_PREPARE_PATHS) return
       candidateIndexes.set(candidate, candidates.length)
       candidates.push(Object.freeze({ path: candidate, source }))
     }

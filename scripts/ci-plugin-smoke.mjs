@@ -131,7 +131,8 @@ try {
       const { verifyBrowser } = await import('./browser-acceptance.mjs')
       // The process-generated link is an isolated test credential; never log it.
       const token = output.match(/https?:\/\/(?:127\.0\.0\.1|localhost):\d+\/\?token=([A-Za-z0-9_-]+)/)?.[1]
-      await verifyBrowser({ url: `http://127.0.0.1:${port}/${token ? '?token=' + token : ''}`, fixtureRoot, proof })
+      await verifyBrowser({ url: `http://127.0.0.1:${port}/${token ? '?token=' + token : ''}`, fixtureRoot,
+        workspaceRoot: path.join(wholeHome ? fixtureRoot : home, 'documents', 'QuantSkills'), proof })
     }
     // Explicit local browser verification only. CI never keeps the instance running.
     if (process.argv.includes('--browser')) {

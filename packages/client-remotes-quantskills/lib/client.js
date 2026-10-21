@@ -20966,7 +20966,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2560,
+						"line": 2534,
 						"column": 9
 					}
 				},
@@ -21298,7 +21298,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/quantskills-session/src/index.ts",
-						"line": 2579,
+						"line": 2581,
 						"column": 9
 					}
 				},

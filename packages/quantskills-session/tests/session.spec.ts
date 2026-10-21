@@ -1692,6 +1692,35 @@ describe('QuantSkills result previews', () => {
     await fixture.ctx.fiber.dispose()
   })
 
+  it('restores all results beyond the per-request limit from cold history without truncation', async () => {
+    const fixture = await harness()
+    const sessionId = await createBound(fixture, 'session-result-list-many-files')
+    const paths = Array.from({ length: 205 }, (_, index) => `output/report-${index}.html`)
+    await mkdir(join(fixture.root, 'output'), { recursive: true })
+    await Promise.all(paths.map(path => writeFile(join(fixture.root, path), `<h1>${path}</h1>`)))
+    const session = fixture.ctx.agents.get(sessionId)!.session
+    session.append('turn/start', { turn: 1 })
+    session.append('step/start', { turn: 1, step: 1 })
+    session.append('assistant/message', {
+      turn: 1, step: 1,
+      message: createMessage({
+        role: 'assistant',
+        content: [{ type: 'text', text: paths.map(path => `\`${path}\``).join('\n') }],
+        source: { kind: 'model', provider: 'test', model: 'test' },
+      }),
+    }, { surfaceOp: 'append' })
+    session.append('step/end', { turn: 1, step: 1 })
+    session.append('turn/end', { turn: 1, reason: { kind: 'completed' } })
+    await fixture.handles.get(sessionId)!.dispose()
+
+    const listed = await fixture.ctx.quantSkillsSessions.resultList({ sessionId })
+    expect(listed.results).toHaveLength(paths.length)
+    expect(listed.results.map(result => result.path)).toEqual(paths)
+    expect(listed.results.every(result => result.status === 'ready')).toBe(true)
+    expect(await fixture.ctx.quantSkillsSessions.resultList({ sessionId })).toEqual(listed)
+    await fixture.ctx.fiber.dispose()
+  })
+
   it('allows exact Agent, Team, and Team-member sources and diagnoses ambiguous relative legacy paths', async () => {
     const fixture = await harness()
     const installedRoot = await mkdtemp(join(tmpdir(), 'dsh-quantskills-installed-composition-'))
@@ -2965,6 +2994,24 @@ describe('streamed artifacts', () => {
       await fixture.ctx.fiber.dispose()
     }
   })
+  it('streams complete HTML reports above the inline preview threshold', async () => {
+    const fixture = await harness()
+    const sessionId = await createBound(fixture, 'session-large-html-result')
+    const cwd = fixture.ctx.sessions.get(sessionId)!.header.cwd!
+    const source = `<h1>报告</h1><!--${'x'.repeat(3 * 1024 * 1024)}--><p>完整结尾</p>`
+    await writeFile(join(cwd, 'large.html'), source)
+    const service = fixture.ctx.quantSkillsSessions
+    const preview = await service.resultPreview({ sessionId, path: 'large.html' })
+    expect(preview).toMatchObject({ kind: 'resource', presentation: 'text', mediaType: 'text/html', bytes: Buffer.byteLength(source) })
+    if (preview.kind !== 'resource') throw Error('Expected resource preview')
+    const response = await (Reflect.get(service, 'resultFileResponse') as (request: Request) => Promise<Response>).call(service,
+      new Request(new URL(preview.url, 'http://localhost')))
+    expect(response.status).toBe(200)
+    expect(response.headers.get('content-length')).toBe(String(Buffer.byteLength(source)))
+    expect(await response.text()).toBe(source)
+    await fixture.ctx.fiber.dispose()
+  })
+
   it('serves exact ranges and original downloads, rejects escaping paths and invalid ranges', async () => {
     const fixture = await harness()
     const sessionId = await createBound(fixture, 'session-streamed-results')

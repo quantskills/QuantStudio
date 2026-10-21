@@ -1904,7 +1904,7 @@ export function mountQuantSkillsApplication(ctx, options) {
             }), 'ui-quantskills: media and isolated HTML in the official dock');
             native.slots.inject('sidebar.right.pane.tab', () => native.slots.register({
                 name: 'sidebar.right.pane.tab', key: 'quantskills-media',
-                inject: () => ({ previewFile: (sessionId, path) => unwrapRemote(native.remote.quantSkillsSessions.resultPreview({ sessionId: sessionId, path })) }),
+                inject: () => ({ previewFile: (sessionId, path, signal) => unwrapRemote(native.remote.quantSkillsSessions.resultPreview({ sessionId: sessionId, path }, signal)) }),
             }, NativeResultMedia));
         });
     ctx.slots.inject('tool.call.toolview', () => ctx.slots.register({

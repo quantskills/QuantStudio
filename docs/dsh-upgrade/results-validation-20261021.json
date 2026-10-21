@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-21",
+  "testedWorkingTreeBase": "bed09eb35eae71fc4660d4219db8c181e7c0ecae",
+  "testIdentity": "Working tree changes above base, identified by source hashes and built artifact; not the unmodified base commit",
+  "runtime": "0.2.1-rc.2",
+  "node": "22.23.2",
+  "pnpm": "11.7.0",
+  "platform": "Windows x64",
+  "sourceSha256": {
+    "packages/ui-quantskills/src/client/NativeResults.tsx": "be7e716c04dcb26b24f9f91f6b129b27e70e8608248a0f8ddedfc6998882afdb",
+    "packages/ui-quantskills/src/client/index.ts": "be935fe95ce1aa1b96bf389e01b5402b477d94e5f297a1e7fdd84bd632c74557",
+    "packages/quantskills-session/src/index.ts": "0f60a5aafa47f662a8085cc7fc0ba0ef53a2c377ef1c90a9b9ebdb7d5bfaff1a",
+    "packages/ui-quantskills/tests/native-results.client.spec.tsx": "ab61da457429343ee3c2655576094cb7d06a914c35dc8f22669b9eef21bcf3d3",
+    "packages/quantskills-session/tests/session.spec.ts": "ca0ba344c957d4ed5b531b43bd44cdbd08378d6c4d16173e2971e9c9ef3e2307",
+    "scripts/browser-acceptance.mjs": "add4822b6855770f81c55290d80e56e5ac541581403766dd2abb03b07f628d8a",
+    "scripts/ci-plugin-smoke.mjs": "00d066bf9481e4ffe4e4536ff69be4077284537014a998e06341f2a0debae50f"
+  },
+  "artifactSha256": "3338f99bb2924238740b5295c81a6f0496961a02d4f84f771baf9292d3d7fd99",
+  "check": "passed",
+  "fullBuild": "passed",
+  "targetedTests": {
+    "passed": 67,
+    "failed": 0
+  },
+  "fullSuite": {
+    "filesPassed": 141,
+    "passed": 1466,
+    "skipped": 1,
+    "failed": 0,
+    "filesSkipped": 1,
+    "skipReason": "POSIX-only process group test"
+  },
+  "browser": {
+    "sandbox": "allow-scripts, no same-origin grant",
+    "baselineAssistantReplies": 3,
+    "command": "pnpm run ci:smoke -- --whole-home --legacy-market --all-optional --browser-e2e",
+    "boundaryAssistantReplies": 1,
+    "credentials": "generated fixture only; model served locally",
+    "largeHtmlScriptExecuted": true,
+    "status": "passed",
+    "wholeHomeActivation": "passed",
+    "modelCalls": 9,
+    "legacyMarketMigration": "passed",
+    "optionalComposition": "passed",
+    "largeHtmlTailRendered": true,
+    "resultFiles": 201,
+    "htmlBytes": 3145885,
+    "firstAttempt": "New test fixture lacked a paragraph separator for an exact-text assertion; corrected fixture and reran the complete workflow successfully"
+  },
+  "newRegressionCases": 11,
+  "limits": [
+    "No total result-count cap or HTML-size cap introduced; preparation requests are transparently batched",
+    "Original user data, configuration and running instances untouched",
+    "Keep PR Draft and do not merge; current PR CI must validate this new revision"
+  ]
+}

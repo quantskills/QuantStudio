@@ -7,6 +7,8 @@ import { projectQuantSkillsResults } from "./result-data.js";
 import { artifactResourceUrl } from "./artifact-resource.js";
 import { InteractiveHtml } from "./InteractiveHtml.js";
 import css from './NativeResults.module.css';
+// Host limits each preparation request, not the total number of session results.
+const RESULT_PREPARE_BATCH_SIZE = 100;
 export function NativeResults({ sessionId, useSession, useSessions, useChat, listFiles, prepareFiles, openFile, openWorkspace, downloadFile }) {
     const running = useSession(state => state.running);
     const title = useSessions(state => state.byId[sessionId]?.displayTitle ?? '本次对话');
@@ -20,19 +22,38 @@ export function NativeResults({ sessionId, useSession, useSessions, useChat, lis
         setStatus('loading');
         setFiles([]);
         const paths = JSON.parse(candidatePaths);
-        void Promise.all([listFiles(controller.signal), paths.length === 0 ? [] : prepareFiles(paths, controller.signal)]).then(([complete, current]) => {
-            const value = [...current, ...complete];
-            if (!controller.signal.aborted) {
-                setFiles(value);
-                setStatus('ready');
+        const results = new Map();
+        let failed = false;
+        const read = async (load) => {
+            try {
+                const value = await load();
+                if (controller.signal.aborted)
+                    return;
+                for (const file of value) {
+                    // A failed duplicate must not hide a file another read successfully verified.
+                    if (file.status !== 'unavailable' || !results.has(file.path) || results.get(file.path)?.status === 'unavailable')
+                        results.set(file.path, file);
+                }
+                setFiles([...results.values()]);
             }
-        }, () => { if (!controller.signal.aborted)
-            setStatus('error'); });
+            catch {
+                failed = true;
+            }
+        };
+        const prepare = async () => {
+            for (let offset = 0; offset < paths.length && !controller.signal.aborted; offset += RESULT_PREPARE_BATCH_SIZE) {
+                await read(() => prepareFiles(paths.slice(offset, offset + RESULT_PREPARE_BATCH_SIZE), controller.signal));
+            }
+        };
+        void Promise.all([read(() => listFiles(controller.signal)), prepare()]).then(() => {
+            if (!controller.signal.aborted)
+                setStatus(failed ? 'error' : 'ready');
+        });
         return () => controller.abort();
     }, [sessionId, listFiles, prepareFiles, candidatePaths, running, revision]);
     const uniqueFiles = [...new Map(files.map(file => [file.path, file])).values()];
     const available = uniqueFiles.filter(file => file.status !== 'unavailable');
-    return _jsxs("section", { className: css.results, "aria-label": "\u672C\u5BF9\u8BDD\u7ED3\u679C", children: [_jsxs("header", { className: css.header, children: [_jsxs("div", { children: [_jsx("strong", { children: title }), _jsx("span", { children: running ? '进行中 · 完成后更新文件' : '本对话的交付文件' })] }), _jsx("button", { type: "button", title: "\u5237\u65B0\u7ED3\u679C", "aria-label": "\u5237\u65B0\u7ED3\u679C", onClick: () => setRevision(n => n + 1), children: _jsx(ArrowClockwise, { size: 16 }) }), _jsx("button", { type: "button", title: "\u6D4F\u89C8\u5DE5\u4F5C\u533A", "aria-label": "\u6D4F\u89C8\u5DE5\u4F5C\u533A", onClick: openWorkspace, children: _jsx(FolderOpen, { size: 16 }) })] }), _jsxs("div", { className: css.list, children: [status === 'loading' && _jsx("p", { role: "status", children: "\u6B63\u5728\u8BFB\u53D6\u6587\u4EF6\u2026" }), status === 'error' && _jsx("p", { role: "alert", children: "\u6682\u65F6\u65E0\u6CD5\u8BFB\u53D6\u7ED3\u679C\uFF0C\u8BF7\u5237\u65B0\u91CD\u8BD5\u3002" }), status === 'ready' && files.length === 0 && _jsx("p", { children: "\u751F\u6210\u62A5\u544A\u3001\u56FE\u8868\u6216\u6587\u4EF6\u540E\uFF0C\u4F1A\u663E\u793A\u5728\u8FD9\u91CC\u3002" }), uniqueFiles.map(file => _jsxs("div", { className: css.file, children: [_jsxs("button", { type: "button", title: file.path, disabled: file.status === 'unavailable', onClick: () => {
+    return _jsxs("section", { className: css.results, "aria-label": "\u672C\u5BF9\u8BDD\u7ED3\u679C", children: [_jsxs("header", { className: css.header, children: [_jsxs("div", { children: [_jsx("strong", { children: title }), _jsx("span", { children: running ? '进行中 · 完成后更新文件' : '本对话的交付文件' })] }), _jsx("button", { type: "button", title: "\u5237\u65B0\u7ED3\u679C", "aria-label": "\u5237\u65B0\u7ED3\u679C", onClick: () => setRevision(n => n + 1), children: _jsx(ArrowClockwise, { size: 16 }) }), _jsx("button", { type: "button", title: "\u6D4F\u89C8\u5DE5\u4F5C\u533A", "aria-label": "\u6D4F\u89C8\u5DE5\u4F5C\u533A", onClick: openWorkspace, children: _jsx(FolderOpen, { size: 16 }) })] }), _jsxs("div", { className: css.list, children: [status === 'loading' && _jsx("p", { role: "status", children: "\u6B63\u5728\u8BFB\u53D6\u6587\u4EF6\u2026" }), status === 'error' && _jsx("p", { role: "alert", children: files.length > 0 ? '部分结果未能读取，已保留成功结果，请刷新重试。' : '暂时无法读取结果，请刷新重试。' }), status === 'ready' && files.length === 0 && _jsx("p", { children: "\u751F\u6210\u62A5\u544A\u3001\u56FE\u8868\u6216\u6587\u4EF6\u540E\uFF0C\u4F1A\u663E\u793A\u5728\u8FD9\u91CC\u3002" }), uniqueFiles.map(file => _jsxs("div", { className: css.file, children: [_jsxs("button", { type: "button", title: file.path, disabled: file.status === 'unavailable', onClick: () => {
                                     setOpenFailed(false);
                                     try {
                                         openFile(file.path);
@@ -52,26 +73,35 @@ export function NativeResultMedia({ useTabInfo, previewFile }) {
     const [media, setMedia] = useState();
     const [failed, setFailed] = useState(false);
     useEffect(() => {
-        let current = true;
+        const controller = new AbortController();
         setMedia(undefined);
         setFailed(false);
         if (sessionId === undefined || path === undefined) {
             setFailed(true);
             return;
         }
-        void previewFile(sessionId, path).then(value => {
-            if (!current)
+        void previewFile(sessionId, path, controller.signal).then(async (value) => {
+            if (controller.signal.aborted)
                 return;
             if (value.kind === 'text' && value.mediaType === 'text/html') {
                 setMedia({ kind: 'html', source: value.text });
                 return;
             }
+            if (value.kind === 'resource' && value.presentation === 'text' && value.mediaType === 'text/html') {
+                const response = await fetch(artifactResourceUrl(value.url), { signal: controller.signal, credentials: 'same-origin', redirect: 'error' });
+                if (!response.ok)
+                    throw new Error('Failed to read HTML report');
+                const source = await response.text();
+                if (!controller.signal.aborted)
+                    setMedia({ kind: 'html', source });
+                return;
+            }
             if (value.kind !== 'resource' || (value.presentation !== 'video' && value.presentation !== 'audio'))
                 throw new Error('Unsupported media');
             setMedia({ kind: value.presentation, url: artifactResourceUrl(value.url) });
-        }).catch(() => { if (current)
+        }).catch(() => { if (!controller.signal.aborted)
             setFailed(true); });
-        return () => { current = false; };
+        return () => controller.abort();
     }, [sessionId, path, tab.navigation.revision, previewFile, attempt]);
     return _jsxs("section", { className: css.media, "aria-label": "\u6587\u4EF6\u9884\u89C8", children: [_jsxs("header", { className: css.header, children: [_jsx("span", { title: path, children: path }), _jsx("button", { type: "button", "aria-label": "\u5237\u65B0\u9884\u89C8", onClick: () => setAttempt(n => n + 1), children: _jsx(ArrowClockwise, { size: 16 }) })] }), failed ? _jsx("p", { role: "alert", children: "\u6682\u65F6\u65E0\u6CD5\u9884\u89C8\uFF0C\u8BF7\u91CD\u65B0\u52A0\u8F7D\u3002" }) : !media ? _jsx("p", { role: "status", children: "\u6B63\u5728\u8BFB\u53D6\u6587\u4EF6\u2026" })
                 : media.kind === 'html' ? _jsx(InteractiveHtml, { source: media.source, title: path ?? 'HTML 报告', className: css.html })

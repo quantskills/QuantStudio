@@ -572,6 +572,8 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     resultList(request: {
         readonly sessionId: SessionId;
     }, signal?: AbortSignal): Promise<QuantSkillsResultPrepareResult>;
+    /** A missing path list restores the full log, without the per-RPC candidate limit. */
+    private prepareSessionResults;
     /**
      * Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.
      * Supported text is returned as UTF-8, Office documents as bounded extracted text,
@@ -604,7 +606,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private registerLiveTradingApproval;
     private classifyFile;
     private readTextAttachment;
-    /** Complete-log result candidates, newest reference first and bounded for one prepare request. */
+    /** Complete-log result candidates, newest reference first, without total-count truncation. */
     private resultCandidates;
     /** Adopt only the conversation explicitly targeted by a Skill attachment, preserving its workspace and history. */
     private ensureSkillSession;

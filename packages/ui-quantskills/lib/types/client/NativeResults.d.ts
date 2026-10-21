@@ -10,7 +10,7 @@ export interface NativeResultsInjected {
 }
 export declare function NativeResults({ sessionId, useSession, useSessions, useChat, listFiles, prepareFiles, openFile, openWorkspace, downloadFile }: PropsRuntime<'sidebar.right.pane.tab'> & InjectFace<NativeResultsInjected>): import("react").JSX.Element;
 export interface NativeMediaInjected {
-    previewFile: (sessionId: string, path: string) => Promise<QuantSkillsResultPreview>;
+    previewFile: (sessionId: string, path: string, signal?: AbortSignal) => Promise<QuantSkillsResultPreview>;
 }
 /** Preserve QS media and isolated HTML within the official tab lifecycle. */
 export declare function NativeResultMedia({ useTabInfo, previewFile }: PropsRuntime<'sidebar.right.pane.tab'> & InjectFace<NativeMediaInjected>): import("react").JSX.Element;

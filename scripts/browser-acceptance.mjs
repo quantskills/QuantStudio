@@ -1,11 +1,11 @@
 /** Real Chromium against the freshly activated, credential-free fixture only. */
 import { chromium } from 'playwright'
-import { writeFile, mkdir } from 'node:fs/promises'
-import { join } from 'node:path'
+import { writeFile, mkdir, realpath } from 'node:fs/promises'
+import { join, relative, isAbsolute } from 'node:path'
 import { createServer } from 'node:http'
 import assert from 'node:assert/strict'
 
-export async function verifyBrowser({ url, fixtureRoot, proof }) {
+export async function verifyBrowser({ url, fixtureRoot, workspaceRoot, proof }) {
   const parsed = new URL(url)
   if (parsed.hostname !== '127.0.0.1' || !parsed.port || parsed.port === '3198' || parsed.port === '3097') throw new Error('Browser acceptance requires an isolated random port')
   const browser = await chromium.launch({ headless: true })
@@ -14,6 +14,7 @@ export async function verifyBrowser({ url, fixtureRoot, proof }) {
   const output = process.env.QS_BROWSER_EVIDENCE ?? join(fixtureRoot, 'browser-evidence')
   await mkdir(output, { recursive: true })
   let modelCalls = 0
+  const resultPaths = [...Array.from({ length: 200 }, (_, n) => `output/boundary-${n}.md`), 'output/large-boundary.html']
   const model = createServer(async (request, response) => {
     let raw = ''; for await (const chunk of request) raw += chunk
     response.setHeader('content-type', 'application/json')
@@ -23,7 +24,8 @@ export async function verifyBrowser({ url, fixtureRoot, proof }) {
     if (request.url.endsWith('/chat/completions')) {
       modelCalls++
       const input = JSON.parse(raw || '{}'), base = { id: 'fixture-' + modelCalls, created: 1, model: 'qs-fixture' }
-      const content = 'QS 本机隔离验收响应'
+      const boundaryRequest = input.messages?.some(message => message.role === 'user' && JSON.stringify(message.content).includes('QS_RESULT_BOUNDARY_CHECK'))
+      const content = boundaryRequest ? `QS 文件边界验收\n\n${resultPaths.map(path => `\`${path}\``).join('\n\n')}` : 'QS 本机隔离验收响应'
       if (input.stream) {
         response.setHeader('content-type', 'text/event-stream')
         for (const [delta, finish_reason] of [[{ role: 'assistant', content }, null], [{}, 'stop']]) {
@@ -98,6 +100,29 @@ export async function verifyBrowser({ url, fixtureRoot, proof }) {
     await writeFile(join(output, 'conversation.txt'), await page.locator('body').innerText())
     await page.screenshot({ path: join(output, 'workspace.png') })
     await page.setViewportSize({ width: 1440, height: 1000 })
+    // Only construct files in the managed workspace of this isolated Host.
+    const isolatedWorkspace = await realpath(workspaceRoot)
+    const workspaceRelative = relative(await realpath(fixtureRoot), isolatedWorkspace)
+    assert.ok(workspaceRelative && workspaceRelative !== '..' && !workspaceRelative.startsWith('..') && !isAbsolute(workspaceRelative))
+    await mkdir(join(isolatedWorkspace, 'output'), { recursive: true })
+    const largeHtml = `<h1>QS large report</h1><!--${'x'.repeat(3 * 1024 * 1024)}--><p id="tail">Report tail</p><script>document.getElementById('tail').textContent='QS large report rendered completely'</script>`
+    await Promise.all(resultPaths.map(path => writeFile(join(isolatedWorkspace, path), path.endsWith('.html') ? largeHtml : `# ${path}`)))
+    await composer.getByRole('textbox').fill('QS_RESULT_BOUNDARY_CHECK')
+    await page.getByRole('button', { name: '发送消息', exact: true }).click()
+    await page.locator('[data-chat-flow-kind="assistant-step"]').getByText('QS 文件边界验收', { exact: true }).waitFor({ timeout: 30000 })
+    await page.locator('[data-chat-running]').waitFor({ state: 'hidden', timeout: 30000 })
+    await page.getByRole('button', { name: /^查看 .* 本对话结果$/ }).click()
+    const results = page.getByRole('region', { name: '本对话结果', exact: true })
+    await results.getByText('201 个文件', { exact: true }).waitFor({ timeout: 30000 })
+    assert.equal(await results.getByRole('alert').count(), 0)
+    assert.equal(await results.getByRole('button', { name: /^下载 / }).count(), 201)
+    await page.screenshot({ path: join(output, 'many-results.png') })
+    await results.getByTitle('output/large-boundary.html', { exact: true }).click()
+    const preview = page.getByRole('region', { name: '文件预览', exact: true })
+    const frame = preview.frameLocator('iframe').frameLocator('iframe')
+    await frame.getByText('QS large report rendered completely', { exact: true }).waitFor({ timeout: 30000 })
+    assert.equal(await preview.locator('iframe').getAttribute('sandbox'), 'allow-scripts')
+    await page.screenshot({ path: join(output, 'large-html-result.png') })
     await page.getByRole('button', { name: '设置', exact: true }).click()
     await page.getByRole('button', { name: '更多能力', exact: true }).click()
     await page.getByRole('button', { name: '管理自动化任务', exact: true }).click()
@@ -112,8 +137,9 @@ export async function verifyBrowser({ url, fixtureRoot, proof }) {
     await writeFile(join(output, 'advanced-settings.txt'), await page.locator('body').innerText())
     await page.screenshot({ path: join(output, 'advanced-settings.png') })
     if (errors.length) throw new Error('Browser page errors: ' + errors.join('; '))
-    console.log(JSON.stringify({ browser: 'passed', scope: 'model-settings-streaming-attachment-draft-reload-resize-automation-search-settings',
-      modelCalls, assistantReplies, nonMessageCopies, commit: proof.commit, artifact: proof.artifact }))
+    console.log(JSON.stringify({ browser: 'passed', scope: 'model-settings-streaming-attachment-draft-reload-resize-results-large-html-automation-search-settings',
+      modelCalls, assistantReplies, nonMessageCopies, resultFiles: resultPaths.length, htmlBytes: Buffer.byteLength(largeHtml),
+      largeHtmlInteractive: true, commit: proof.commit, artifact: proof.artifact }))
   } catch (error) {
     await writeFile(join(output, 'failure.txt'), await page.locator('body').innerText())
     await page.screenshot({ path: join(output, 'failure.png') })

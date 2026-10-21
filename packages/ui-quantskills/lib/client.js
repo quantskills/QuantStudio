@@ -27541,6 +27541,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 		//#endregion
 		//#region lib/types/client/NativeResults.js
 		/** QS result facts live inside the official dock; file navigation belongs to DSH. */
+		const RESULT_PREPARE_BATCH_SIZE = 100;
 		function NativeResults({ sessionId, useSession, useSessions, useChat, listFiles, prepareFiles, openFile, openWorkspace, downloadFile }) {
 			const running = useSession((state) => state.running);
 			const title = useSessions((state) => state.byId[sessionId]?.displayTitle ?? "本次对话");
@@ -27554,14 +27555,23 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 				setStatus("loading");
 				setFiles([]);
 				const paths = JSON.parse(candidatePaths);
-				Promise.all([listFiles(controller.signal), paths.length === 0 ? [] : prepareFiles(paths, controller.signal)]).then(([complete, current]) => {
-					const value = [...current, ...complete];
-					if (!controller.signal.aborted) {
-						setFiles(value);
-						setStatus("ready");
+				const results = /* @__PURE__ */ new Map();
+				let failed = false;
+				const read = async (load) => {
+					try {
+						const value = await load();
+						if (controller.signal.aborted) return;
+						for (const file of value) if (file.status !== "unavailable" || !results.has(file.path) || results.get(file.path)?.status === "unavailable") results.set(file.path, file);
+						setFiles([...results.values()]);
+					} catch {
+						failed = true;
 					}
-				}, () => {
-					if (!controller.signal.aborted) setStatus("error");
+				};
+				const prepare = async () => {
+					for (let offset = 0; offset < paths.length && !controller.signal.aborted; offset += RESULT_PREPARE_BATCH_SIZE) await read(() => prepareFiles(paths.slice(offset, offset + RESULT_PREPARE_BATCH_SIZE), controller.signal));
+				};
+				Promise.all([read(() => listFiles(controller.signal)), prepare()]).then(() => {
+					if (!controller.signal.aborted) setStatus(failed ? "error" : "ready");
 				});
 				return () => controller.abort();
 			}, [
@@ -27607,7 +27617,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 							}),
 							status === "error" && (0, react_jsx_runtime.jsx)("p", {
 								role: "alert",
-								children: "暂时无法读取结果，请刷新重试。"
+								children: files.length > 0 ? "部分结果未能读取，已保留成功结果，请刷新重试。" : "暂时无法读取结果，请刷新重试。"
 							}),
 							status === "ready" && files.length === 0 && (0, react_jsx_runtime.jsx)("p", { children: "生成报告、图表或文件后，会显示在这里。" }),
 							uniqueFiles.map((file) => (0, react_jsx_runtime.jsxs)("div", {
@@ -27656,19 +27666,33 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 			const [media, setMedia] = (0, react.useState)();
 			const [failed, setFailed] = (0, react.useState)(false);
 			(0, react.useEffect)(() => {
-				let current = true;
+				const controller = new AbortController();
 				setMedia(void 0);
 				setFailed(false);
 				if (sessionId === void 0 || path === void 0) {
 					setFailed(true);
 					return;
 				}
-				previewFile(sessionId, path).then((value) => {
-					if (!current) return;
+				previewFile(sessionId, path, controller.signal).then(async (value) => {
+					if (controller.signal.aborted) return;
 					if (value.kind === "text" && value.mediaType === "text/html") {
 						setMedia({
 							kind: "html",
 							source: value.text
+						});
+						return;
+					}
+					if (value.kind === "resource" && value.presentation === "text" && value.mediaType === "text/html") {
+						const response = await fetch(artifactResourceUrl(value.url), {
+							signal: controller.signal,
+							credentials: "same-origin",
+							redirect: "error"
+						});
+						if (!response.ok) throw new Error("Failed to read HTML report");
+						const source = await response.text();
+						if (!controller.signal.aborted) setMedia({
+							kind: "html",
+							source
 						});
 						return;
 					}
@@ -27678,11 +27702,9 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
 						url: artifactResourceUrl(value.url)
 					});
 				}).catch(() => {
-					if (current) setFailed(true);
+					if (!controller.signal.aborted) setFailed(true);
 				});
-				return () => {
-					current = false;
-				};
+				return () => controller.abort();
 			}, [
 				sessionId,
 				path,
@@ -135280,10 +135302,10 @@ void main() {
 				native.slots.inject("sidebar.right.pane.tab", () => native.slots.register({
 					name: "sidebar.right.pane.tab",
 					key: "quantskills-media",
-					inject: () => ({ previewFile: (sessionId, path) => unwrapRemote(native.remote.quantSkillsSessions.resultPreview({
+					inject: () => ({ previewFile: (sessionId, path, signal) => unwrapRemote(native.remote.quantSkillsSessions.resultPreview({
 						sessionId,
 						path
-					})) })
+					}, signal)) })
 				}, NativeResultMedia));
 			});
 			ctx.slots.inject("tool.call.toolview", () => ctx.slots.register({

@@ -2012,8 +2012,8 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
     }), 'ui-quantskills: media and isolated HTML in the official dock')
     native.slots.inject('sidebar.right.pane.tab', () => native.slots.register({
       name: 'sidebar.right.pane.tab', key: 'quantskills-media',
-      inject: () => ({ previewFile: (sessionId: string, path: string) => unwrapRemote<QuantSkillsResultPreview>(
-        native.remote.quantSkillsSessions.resultPreview({ sessionId: sessionId as SessionId, path }),
+      inject: () => ({ previewFile: (sessionId: string, path: string, signal?: AbortSignal) => unwrapRemote<QuantSkillsResultPreview>(
+        native.remote.quantSkillsSessions.resultPreview({ sessionId: sessionId as SessionId, path }, signal),
       ) }),
     }, NativeResultMedia))
   })
