@@ -1,1 +1,1 @@
-{"version":3,"file":"InputBar.d.ts","sourceRoot":"","sources":["../../../../src/client/skeleton/InputBar.tsx"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;GAaG;AAiBH,OAAO,KAAK,EAAE,gBAAgB,EAAE,MAAM,sBAAsB,CAAA;AAa5D,MAAM,MAAM,aAAa,GAAG,gBAAgB,CAAA;AAE5C,eAAO,MAAM,QAAQ,wDAuenB,CAAA"}
+{"version":3,"file":"InputBar.d.ts","sourceRoot":"","sources":["../../../../src/client/skeleton/InputBar.tsx"],"names":[],"mappings":"AAAA;;;;;;;;;;;;;GAaG;AAiBH,OAAO,KAAK,EAAE,gBAAgB,EAAE,MAAM,sBAAsB,CAAA;AAa5D,MAAM,MAAM,aAAa,GAAG,gBAAgB,CAAA;AAE5C,eAAO,MAAM,QAAQ,wDAsenB,CAAA"}

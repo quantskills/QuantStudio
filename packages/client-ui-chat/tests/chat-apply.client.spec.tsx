@@ -192,7 +192,7 @@ describe('Chat apply wiring', () => {
   })
 
   it.each([
-    { desktop: false, initial: 'detailed', choice: 'standard' },
+    { desktop: false, initial: 'standard', choice: 'detailed' },
     { desktop: true, initial: 'standard', choice: 'detailed' },
   ] as const)('mirrors the Host transcript preference into its Settings row (desktop: $desktop)', async ({ desktop, initial, choice }) => {
     if (desktop) {

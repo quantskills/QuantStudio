@@ -1,4 +1,8 @@
 import { createHash } from 'node:crypto'
+import { createServer } from 'node:http'
+import { apply as applyConnection, type HostConnectionHandle } from '@deepseek-ai/dsh-client-connection'
+import type { WebRoute } from '@deepseek-ai/dsh-host-webserver'
+import type { CredentialRecord } from '@deepseek-ai/dsh-credentials'
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { basename, dirname, join } from 'node:path'
@@ -2916,6 +2920,51 @@ describe('QuantSkills Agent Teams', () => {
 })
 
 describe('streamed artifacts', () => {
+  it('serves browser GET and HEAD through the rc.2 HTTP bridge without a request body', async () => {
+    const fixture = await harness()
+    let credential: CredentialRecord | undefined
+    const routes: WebRoute[] = []
+    fixture.ctx.provide('credentials', {
+      readRecord: async () => credential,
+      modifyRecord: async (_key: unknown, mutate: (value: CredentialRecord | undefined) => Promise<CredentialRecord | undefined>) => { credential = await mutate(credential); return credential },
+    } as never)
+    fixture.ctx.provide('webServer', {
+      host: '127.0.0.1', protocol: 'http:', port: 0,
+      register: (route: WebRoute) => { routes.push(route); return () => {} },
+    } as never)
+    await fixture.ctx.plugin({ apply: applyConnection })
+    const connection = fixture.ctx.get('connection') as HostConnectionHandle
+    const sessionId = await createBound(fixture, 'session-http-results')
+    const cwd = fixture.ctx.sessions.get(sessionId)!.header.cwd!
+    await mkdir(join(cwd, 'output'), { recursive: true })
+    await writeFile(join(cwd, 'output/movie.mp4'), '0123456789')
+    const server = createServer((req, res) => {
+      const route = routes.find(route => route.path === '/api')!
+      void Promise.resolve(route.handler(req, res)).catch(() => { res.writeHead(500); res.end() })
+    })
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve))
+    try {
+      const port = (server.address() as { port: number }).port
+      const authority = `127.0.0.1:${port}`
+      const launch = new URL(connection.authenticatedUrl(`http://${authority}`))
+      let cookie = ''
+      connection.authorizeIndex({ method: 'GET', headers: { host: authority }, url: launch.pathname + launch.search }, {
+        writeHead: (_status, headers) => { cookie = String(headers?.['set-cookie']).split(';')[0]! }, end: () => {},
+      })
+      const url = `http://127.0.0.1:${port}/api/quantskills.result.file?${new URLSearchParams({ sessionId, path: 'output/movie.mp4' })}`
+      const get = await fetch(url, { headers: { cookie, range: 'bytes=2-5' } })
+      expect(get.status).toBe(206)
+      expect(get.headers.get('content-range')).toBe('bytes 2-5/10')
+      expect(await get.text()).toBe('2345')
+      const head = await fetch(url, { method: 'HEAD', headers: { cookie } })
+      expect(head.status).toBe(200)
+      expect(head.headers.get('content-length')).toBe('10')
+      expect(await head.text()).toBe('')
+    } finally {
+      await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()))
+      await fixture.ctx.fiber.dispose()
+    }
+  })
   it('serves exact ranges and original downloads, rejects escaping paths and invalid ranges', async () => {
     const fixture = await harness()
     const sessionId = await createBound(fixture, 'session-streamed-results')

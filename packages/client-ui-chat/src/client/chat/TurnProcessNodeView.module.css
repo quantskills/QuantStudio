@@ -20,9 +20,6 @@
 .root:disabled {
   cursor: default;
 }
-body[data-qs-plugin-theme] .root { width:max-content; max-width:100%; height:auto; min-height:36px; padding:7px 12px; border:1px solid var(--qs-line); border-radius:11px; background:var(--qs-chrome); color:var(--qs-secondary); margin:10px 0 14px; }
-body[data-qs-plugin-theme] .root:hover { color:var(--qs-accent); border-color:var(--qs-accent); }
-body[data-qs-plugin-theme] .label { font-size:12px; }
 
 .root:hover:not(:disabled) {
   color: var(--dsw-alias-label-secondary);

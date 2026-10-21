@@ -30,7 +30,7 @@ describe('TranscriptViewPolicy', () => {
       policy.setCollapseTiming('completion')
       expect(policy.collapseTiming.getSnapshot()).toBe('completion')
       expect(timingChanged).toHaveBeenCalledTimes(2)
-      expect(policy.mode.getSnapshot()).toBe('detailed')
+      expect(policy.mode.getSnapshot()).toBe('standard')
       expect(modeChanged).not.toHaveBeenCalled()
       expect(host.set).toHaveBeenCalledTimes(2)
       expect(host.set).toHaveBeenNthCalledWith(1, 'collapseTiming', 'next-input')
@@ -88,7 +88,7 @@ describe('TranscriptViewPolicy', () => {
     }
   })
 
-  it('defaults to Detailed and publishes explicit choices before persistence settles', () => {
+  it('defaults to Standard and publishes explicit choices before persistence settles', () => {
     const host = stubConfigForm<ChatSettings>()
     const observed: string[] = []
     let current = (): string => 'unconstructed'
@@ -102,11 +102,11 @@ describe('TranscriptViewPolicy', () => {
     const policy = new TranscriptViewPolicy(scope)
     current = () => policy.mode.getSnapshot()
 
-    expect(policy.mode.getSnapshot()).toBe('detailed')
-    policy.setMode('standard')
     expect(policy.mode.getSnapshot()).toBe('standard')
-    expect(observed).toEqual(['transcriptView=standard:standard'])
-    expect(host.set).toHaveBeenCalledWith('transcriptView', 'standard')
+    policy.setMode('detailed')
+    expect(policy.mode.getSnapshot()).toBe('detailed')
+    expect(observed).toEqual(['transcriptView=detailed:detailed'])
+    expect(host.set).toHaveBeenCalledWith('transcriptView', 'detailed')
     policy.dispose()
   })
 

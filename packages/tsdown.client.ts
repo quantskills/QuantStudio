@@ -134,6 +134,8 @@ function clientConfig(id: string, entry: string): UserConfig {
         if (!source.startsWith('@deepseek-ai/')) return null
         if (isRequested(source) || VENDORED_LIBRARY.test(source)) return null
         if (INLINE_SAFE.test(source) || GENERATED_REMOTE.test(source) || source === '@deepseek-ai/dsh-quantskills-session/display'
+          // Shared delivery parser is pure: no plugin service, browser state or Host access.
+          || source === '@deepseek-ai/dsh-client-ui-chat/deliverables'
           || source === '@deepseek-ai/dsh-quantskills-session/contracts') return null
         throw new Error(`client bundle purity: unsupported cross-plugin value import ${JSON.stringify(source)}`)
       },

@@ -23,7 +23,7 @@ export type TranscriptViewMode = typeof TRANSCRIPT_VIEW_MODES[number];
 export declare const LEGACY_TRANSCRIPT_VIEW_MODE = "normal";
 /** Saved `expanded` values read as `detailed`, without being offered or written back. */
 export declare const LEGACY_EXPANDED_TRANSCRIPT_VIEW_MODE = "expanded";
-/** Default work details for non-Desktop Web clients. */
+/** QS Web follows the native desktop grouping; explicit saved choices still win. */
 export declare const DEFAULT_TRANSCRIPT_VIEW_MODE: TranscriptViewMode;
 /** Performance and usage detail levels accepted by user settings. */
 export declare const PERFORMANCE_USAGE_MODES: readonly ["compact", "detailed"];

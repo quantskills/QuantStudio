@@ -29,13 +29,15 @@ export const RunningStatus = memo(function RunningStatus({ startTime, renderSlot
   const label = startTime === undefined ? t('chat.deepDiving') : t('chat.deepDivingFor', {
     duration: formatRunDuration(Math.max(1000, now - startTime), t).map(part => part.text).join(''),
   })
+  const defaultContent = <><RunningWhaleTail /><TextShimmer active className={css.runningText}>{label}</TextShimmer></>
   return (
     <div className={css.running} data-chat-running>
       <span className={a11yCss.visuallyHidden} role="status" aria-live="polite" aria-atomic="true">{t('chat.deepDiving')}</span>
       <span className={css.runningDivider} aria-hidden="true" />
       <span className={css.runningContent}>
-        <RunningWhaleTail />
-        <TextShimmer active className={css.runningText}>{renderSlot ? renderSlot('conversation.chat.turnStatus', { defaultLabel: label }, { fallback: label }) : label}</TextShimmer>
+        {renderSlot ? renderSlot('conversation.chat.turnStatus', { defaultLabel: label, defaultContent }, {
+          fallback: defaultContent,
+        }) : defaultContent}
       </span>
     </div>
   )

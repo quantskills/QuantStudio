@@ -270,6 +270,8 @@
      here can never match a query in another module's sheet. */
   container-type: inline-size;
 }
+
+/* QS keeps its composer chrome while the native editor owns draft and layout state. */
 body[data-qs-plugin-theme] .row { gap:8px; padding:6px 12px 12px; }
 body[data-qs-plugin-theme] .tools { gap:8px; }
 body[data-qs-plugin-theme] .modes { gap:6px; }

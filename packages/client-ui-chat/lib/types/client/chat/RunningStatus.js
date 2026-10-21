@@ -1,4 +1,4 @@
-import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
 /** Running Turn clock isolated from the transcript's render cycle. */
 import { memo, useEffect, useState } from 'react';
 import { TextShimmer } from '@deepseek-ai/dsh-client-ui-primitives';
@@ -23,6 +23,9 @@ export const RunningStatus = memo(function RunningStatus({ startTime, renderSlot
     const label = startTime === undefined ? t('chat.deepDiving') : t('chat.deepDivingFor', {
         duration: formatRunDuration(Math.max(1000, now - startTime), t).map(part => part.text).join(''),
     });
-    return (_jsxs("div", { className: css.running, "data-chat-running": true, children: [_jsx("span", { className: a11yCss.visuallyHidden, role: "status", "aria-live": "polite", "aria-atomic": "true", children: t('chat.deepDiving') }), _jsx("span", { className: css.runningDivider, "aria-hidden": "true" }), _jsxs("span", { className: css.runningContent, children: [_jsx(RunningWhaleTail, {}), _jsx(TextShimmer, { active: true, className: css.runningText, children: renderSlot ? renderSlot('conversation.chat.turnStatus', { defaultLabel: label }, { fallback: label }) : label })] })] }));
+    const defaultContent = _jsxs(_Fragment, { children: [_jsx(RunningWhaleTail, {}), _jsx(TextShimmer, { active: true, className: css.runningText, children: label })] });
+    return (_jsxs("div", { className: css.running, "data-chat-running": true, children: [_jsx("span", { className: a11yCss.visuallyHidden, role: "status", "aria-live": "polite", "aria-atomic": "true", children: t('chat.deepDiving') }), _jsx("span", { className: css.runningDivider, "aria-hidden": "true" }), _jsx("span", { className: css.runningContent, children: renderSlot ? renderSlot('conversation.chat.turnStatus', { defaultLabel: label, defaultContent }, {
+                    fallback: defaultContent,
+                }) : defaultContent })] }));
 });
 //# sourceMappingURL=RunningStatus.js.map

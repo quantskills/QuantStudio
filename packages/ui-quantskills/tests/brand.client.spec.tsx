@@ -59,18 +59,19 @@ describe('QuantSkills brand ownership', () => {
     expect(document.head.querySelector('link[href="/manifest.webmanifest"]')).toBeTruthy()
   })
 
-  it('restores the animated brand and rotates quiet status copy without leaking timers', () => {
+  it('restores the animated QS identity and rotating copy without leaking timers', () => {
     vi.useFakeTimers()
     const view = createQuantSkillsViewStore().create()
     const subject = render(<QuantSkillsConversationStatus
       mode="standalone"
       useView={bindSnapshotSelector(view.store)}
-      defaultLabel="Deep diving…"
+      defaultLabel="深度求索中，用时 12秒"
     />)
 
-    expect(screen.getByRole('status', { name: 'QuantSkills 正在分析，请稍候' })).toBeTruthy()
     try {
+      expect(screen.getByRole('status', { name: 'QuantSkills 正在分析，请稍候' })).toBeTruthy()
       expect(screen.getByText('正在深入研究…')).toBeTruthy()
+      expect(screen.queryByText('深度求索中，用时 12秒')).toBeNull()
       expect([...subject.container.querySelectorAll('img')].map(img => img.src)).toEqual(expect.arrayContaining([
         expect.stringMatching(/research-mark-light\.webp$/u),
         expect.stringMatching(/research-mark-dark\.webp$/u),
@@ -83,6 +84,18 @@ describe('QuantSkills brand ownership', () => {
     } finally {
       vi.useRealTimers()
     }
+  })
+
+  it('keeps the complete native indicator outside the QS conversation', () => {
+    const view = createQuantSkillsViewStore().create()
+    const subject = render(<QuantSkillsConversationStatus
+      mode="native-plugin"
+      useView={bindSnapshotSelector(view.store)}
+      defaultLabel="运行中 · 12 秒"
+      defaultContent={<span data-native-indicator>运行中 · 12 秒</span>}
+    />)
+    expect(subject.container.querySelector('[data-native-indicator]')).toBeTruthy()
+    expect(subject.container.querySelector('img')).toBeNull()
   })
 
   it('preserves the session title while replacing host branding after navigation', async () => {

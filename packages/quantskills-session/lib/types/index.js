@@ -992,6 +992,7 @@ let QuantSkillsSessionService = (() => {
                 connectionOf(connectionCtx).fetch.register({
                     path: QUANTSKILLS_RESULT_FILE_PATH,
                     methods: ['GET', 'HEAD'],
+                    requestBody: 'buffered',
                     fetch: request => this.resultFileResponse(request),
                 });
             });

@@ -24,7 +24,11 @@
     },
     "./src/*": "./src/*",
     "./package.json": "./package.json",
-    "./locale/*.json": "./locale/*.json"
+    "./locale/*.json": "./locale/*.json",
+    "./deliverables": {
+      "types": "./lib/types/client/chat/final-deliverables.d.ts",
+      "default": "./lib/types/client/chat/final-deliverables.js"
+    }
   },
   "dsh": {
     "client": {
@@ -103,6 +107,7 @@
   "files": [
     "lib/index.js",
     "lib/client.js",
+    "lib/types/client/chat/final-deliverables.js",
     "lib/types/**/*.d.ts"
   ],
   "engines": {

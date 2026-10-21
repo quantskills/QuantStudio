@@ -1,6 +1,7 @@
 /** Read-only result facts derived from one loaded Conversation window. */
 
 import type { ChatSnapshot, ToolCallBlock, ToolResultNode } from '@deepseek-ai/dsh-client-ui-chat/client'
+import { projectFinalDeliverables } from '@deepseek-ai/dsh-client-ui-chat/deliverables'
 // QS consumes the public turn-data projection, not an unexported upstream helper.
 function producedForClosing(data: DeliverablesTurnData | undefined): readonly string[] {
   return [...new Set((data?.produced ?? []).map(item => item.path))]
@@ -150,6 +151,11 @@ function assistantArtifactFiles(
   const paths = new Set<string>()
   for (const node of [...snapshot.legacy.nodes].reverse()) {
     if (node.kind !== 'assistant') continue
+    for (const item of projectFinalDeliverables(node.blocks, false, { allowUnmarked: true }).items) {
+      if (paths.has(item.path)) continue
+      paths.add(item.path)
+      files.push({ path: item.path, name: item.path.slice(item.path.lastIndexOf('/') + 1) })
+    }
     for (const block of node.blocks) {
       if (block.kind !== 'text') continue
       for (const match of block.text.matchAll(/`([^`\r\n]+)`/g)) {
@@ -166,6 +172,7 @@ function assistantArtifactFiles(
 function artifactPath(value: string): string | undefined {
   const path = value.trim().replaceAll('\\', '/')
   if (path.length === 0 || path.startsWith('/') || /^[A-Za-z]:\//.test(path)
+    || (!path.includes('/') && !/\.[a-z0-9]{1,12}$/i.test(path))
     || path.includes('://') || path.split('/').includes('..')
     || /^(?:py(?:thon)?(?:\d+(?:\.\d+)*)?|node|pnpm|npm|npx|yarn|bun|bash|sh|pwsh|powershell|cmd|git)\s/i.test(path)) {
     return undefined

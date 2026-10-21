@@ -102,7 +102,7 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
      * This is the additive seat for a frame-wide surface of your own: a fresh
      * `id` is added beside the shipped entries instead of replacing them.
      */
-    'shell.overlay': { kind: 'list'; scope: 'root' }
+    'shell.overlay': { kind: 'list'; scope: 'root'; owner: ShellOverlayOwnerProps }
     /**
      * Window-chrome seat at the frame's top-left, over every main panel.
      * Mounted only while the sidebar column is fully hidden (macOS desktop
@@ -144,6 +144,16 @@ export interface RightbarOwnerProps {
    * Before a narrow opening, includes the space from collapsing the left sidebar.
    */
   canShow: boolean
+}
+
+/** Optional resolved geometry for overlay controls beside the official right panel. */
+export interface ShellOverlayOwnerProps {
+  rightbar?: {
+    width: number
+    shown: boolean
+    fullscreen: boolean
+    exclusive: boolean
+  }
 }
 
 /** Required services (cordis fiber inject — the loader passes all module exports as an object plugin). */

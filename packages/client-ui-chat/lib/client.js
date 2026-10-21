@@ -5610,6 +5610,11 @@ window.__ModuleLoader__.load({
 				};
 			}, [startTime]);
 			const label = startTime === void 0 ? t("chat.deepDiving") : t("chat.deepDivingFor", { duration: formatRunDuration(Math.max(1e3, now - startTime), t).map((part) => part.text).join("") });
+			const defaultContent = (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [(0, react_jsx_runtime.jsx)(RunningWhaleTail, {}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.TextShimmer, {
+				active: true,
+				className: ChatView_module_css_default.runningText,
+				children: label
+			})] });
 			return (0, react_jsx_runtime.jsxs)("div", {
 				className: ChatView_module_css_default.running,
 				"data-chat-running": true,
@@ -5625,13 +5630,12 @@ window.__ModuleLoader__.load({
 						className: ChatView_module_css_default.runningDivider,
 						"aria-hidden": "true"
 					}),
-					(0, react_jsx_runtime.jsxs)("span", {
+					(0, react_jsx_runtime.jsx)("span", {
 						className: ChatView_module_css_default.runningContent,
-						children: [(0, react_jsx_runtime.jsx)(RunningWhaleTail, {}), (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.TextShimmer, {
-							active: true,
-							className: ChatView_module_css_default.runningText,
-							children: renderSlot ? renderSlot("conversation.chat.turnStatus", { defaultLabel: label }, { fallback: label }) : label
-						})]
+						children: renderSlot ? renderSlot("conversation.chat.turnStatus", {
+							defaultLabel: label,
+							defaultContent
+						}, { fallback: defaultContent }) : defaultContent
 					})
 				]
 			});
@@ -6106,7 +6110,7 @@ window.__ModuleLoader__.load({
 		};
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/ReasoningRow.module.css.mjs
-		const css$9 = "._Itt_G_root{flex-direction:column;display:flex}body[data-qs-plugin-theme] ._Itt_G_root{background:var(--qs-chrome);border:1px solid var(--qs-line);border-radius:12px;margin:6px 0}body[data-qs-plugin-theme] ._Itt_G_row{padding:8px 12px}body[data-qs-plugin-theme] ._Itt_G_root[data-state=running] ._Itt_G_row:after{display:none}body[data-qs-plugin-theme] ._Itt_G_thinkBody{border-top:1px solid var(--qs-line);max-height:300px;color:var(--qs-secondary);padding:12px 16px;line-height:1.75;overflow:auto}._Itt_G_root:not([data-expanded]){contain:size layout;height:calc(24px + var(--dsh-content-font-delta,0px))}._Itt_G_row{overflow:hidden}._Itt_G_root[data-expanded] [data-open] [data-disclosure-header]{z-index:1;background:var(--dsw-alias-bg-base);position:sticky;top:0}._Itt_G_leading{flex-shrink:0}._Itt_G_title{font-weight:400}._Itt_G_separator{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}._Itt_G_summary{min-width:0;font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));white-space:nowrap;flex:auto;overflow:hidden}._Itt_G_summaryText{text-overflow:ellipsis;display:block;overflow:hidden}._Itt_G_summary[data-streaming]{mask-image:linear-gradient(90deg,#000 calc(100% - 48px),#0000)}._Itt_G_summary[data-streaming] ._Itt_G_summaryText{text-overflow:clip;overflow:visible}._Itt_G_root:not([data-preview]) ._Itt_G_separator,._Itt_G_root:not([data-preview]) ._Itt_G_summary{display:none}._Itt_G_thinkBody{padding:4px 0 4px calc(22px + var(--dsh-content-font-delta,0px));min-width:0}";
+		const css$9 = "._Itt_G_root{flex-direction:column;display:flex}._Itt_G_root:not([data-expanded]){contain:size layout;height:calc(24px + var(--dsh-content-font-delta,0px))}._Itt_G_row{overflow:hidden}._Itt_G_root[data-expanded] [data-open] [data-disclosure-header]{z-index:1;background:var(--dsw-alias-bg-base);position:sticky;top:0}._Itt_G_leading{flex-shrink:0}._Itt_G_title{font-weight:400}._Itt_G_separator{background:var(--dsw-alias-label-caption);border-radius:1px;flex:none;width:2px;height:2px;margin:0 8px}._Itt_G_summary{min-width:0;font-size:var(--dsh-content-font-size-secondary,13px);line-height:calc(20px + var(--dsh-content-font-delta-secondary,0px));white-space:nowrap;flex:auto;overflow:hidden}._Itt_G_summaryText{text-overflow:ellipsis;display:block;overflow:hidden}._Itt_G_summary[data-streaming]{mask-image:linear-gradient(90deg,#000 calc(100% - 48px),#0000)}._Itt_G_summary[data-streaming] ._Itt_G_summaryText{text-overflow:clip;overflow:visible}._Itt_G_root:not([data-preview]) ._Itt_G_separator,._Itt_G_root:not([data-preview]) ._Itt_G_summary{display:none}._Itt_G_thinkBody{padding:4px 0 4px calc(22px + var(--dsh-content-font-delta,0px));min-width:0}";
 		const tagId$9 = "@deepseek-ai/dsh-client-ui-chat/ReasoningRow.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$9) + "]") === null) {
 			const tag = document.createElement("style");
@@ -6691,7 +6695,7 @@ window.__ModuleLoader__.load({
 		});
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-chat/src/client/chat/TurnProcessNodeView.module.css.mjs
-		const css$6 = ".FWDEAG_root{box-sizing:border-box;width:100%;min-width:0;height:calc(33px + var(--dsh-content-font-delta,0px));border:none;border-bottom:.5px solid var(--dsw-alias-border-l2);color:var(--dsw-alias-label-tertiary);font:inherit;font-size:var(--dsh-content-font-size,14px);cursor:pointer;text-align:left;background:0 0;align-items:center;padding:0 0 8px;transition:color .1s;display:flex}.FWDEAG_root:disabled{cursor:default}body[data-qs-plugin-theme] .FWDEAG_root{border:1px solid var(--qs-line);background:var(--qs-chrome);width:max-content;max-width:100%;height:auto;min-height:36px;color:var(--qs-secondary);border-radius:11px;margin:10px 0 14px;padding:7px 12px}body[data-qs-plugin-theme] .FWDEAG_root:hover{color:var(--qs-accent);border-color:var(--qs-accent)}body[data-qs-plugin-theme] .FWDEAG_label{font-size:12px}.FWDEAG_root:hover:not(:disabled){color:var(--dsw-alias-label-secondary)}.FWDEAG_chevron{width:14px;height:14px;color:inherit;flex:none;margin-left:4px;transition:transform .1s}.FWDEAG_root[data-open] .FWDEAG_chevron{transform:rotate(180deg)}.FWDEAG_label{min-width:0;font-size:inherit;line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.FWDEAG_durationNumber{font-family:var(--ds-font-family-code);font-variant-numeric:tabular-nums}@media (prefers-reduced-motion:reduce){.FWDEAG_root,.FWDEAG_chevron{transition:none}}";
+		const css$6 = ".FWDEAG_root{box-sizing:border-box;width:100%;min-width:0;height:calc(33px + var(--dsh-content-font-delta,0px));border:none;border-bottom:.5px solid var(--dsw-alias-border-l2);color:var(--dsw-alias-label-tertiary);font:inherit;font-size:var(--dsh-content-font-size,14px);cursor:pointer;text-align:left;background:0 0;align-items:center;padding:0 0 8px;transition:color .1s;display:flex}.FWDEAG_root:disabled{cursor:default}.FWDEAG_root:hover:not(:disabled){color:var(--dsw-alias-label-secondary)}.FWDEAG_chevron{width:14px;height:14px;color:inherit;flex:none;margin-left:4px;transition:transform .1s}.FWDEAG_root[data-open] .FWDEAG_chevron{transform:rotate(180deg)}.FWDEAG_label{min-width:0;font-size:inherit;line-height:calc(24px + var(--dsh-content-font-delta,0px));text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.FWDEAG_durationNumber{font-family:var(--ds-font-family-code);font-variant-numeric:tabular-nums}@media (prefers-reduced-motion:reduce){.FWDEAG_root,.FWDEAG_chevron{transition:none}}";
 		const tagId$6 = "@deepseek-ai/dsh-client-ui-chat/TurnProcessNodeView.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$6) + "]") === null) {
 			const tag = document.createElement("style");
@@ -12740,8 +12744,8 @@ window.__ModuleLoader__.load({
 			LEGACY_TRANSCRIPT_VIEW_MODE,
 			LEGACY_EXPANDED_TRANSCRIPT_VIEW_MODE
 		];
-		/** Default work details for non-Desktop Web clients. */
-		const DEFAULT_TRANSCRIPT_VIEW_MODE = "detailed";
+		/** QS Web follows the native desktop grouping; explicit saved choices still win. */
+		const DEFAULT_TRANSCRIPT_VIEW_MODE = "standard";
 		/** Performance and usage detail levels accepted by user settings. */
 		const PERFORMANCE_USAGE_MODES = ["compact", "detailed"];
 		/** Preserve detailed accounting for users without an explicit preference. */

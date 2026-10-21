@@ -878,15 +878,7 @@ interface ResultCandidate {
 /** Host service for product-owned QuantSkills Sessions, exact asset composition, and durable archives. */
 const QUANTSKILLS_RESULT_FILE_PATH = '/api/quantskills.result.file'
 
-interface ResultPreviewConnection {
-  readonly fetch: {
-    register(route: {
-      readonly path: string
-      readonly methods: readonly ('GET' | 'HEAD')[]
-      readonly fetch: (request: Request) => Promise<Response>
-    }): () => Promise<void>
-  }
-}
+type ResultPreviewConnection = Pick<import('@deepseek-ai/dsh-client-connection').HostConnectionHandle, 'fetch'>
 
 function connectionOf(ctx: Context): ResultPreviewConnection {
   return Reflect.get(ctx, 'connection') as ResultPreviewConnection
@@ -997,6 +989,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       connectionOf(connectionCtx).fetch.register({
         path: QUANTSKILLS_RESULT_FILE_PATH,
         methods: ['GET', 'HEAD'],
+        requestBody: 'buffered',
         fetch: request => this.resultFileResponse(request),
       })
     })

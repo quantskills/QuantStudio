@@ -89,6 +89,27 @@ function host(overrides: Partial<QuantSkillsAgentsPort> = {}): QuantSkillsAgents
 }
 
 describe('QuantSkillsAgentsController', () => {
+  it('returns created agent and team sessions while unrelated archive reads are still pending', async () => {
+    const history = Promise.withResolvers<readonly QuantSkillsAgentSessionArchiveItem[]>()
+    const teamHistory = Promise.withResolvers<readonly QuantSkillsAgentTeamSessionArchiveItem[]>()
+    const port = host({ sessions: () => history.promise, teamSessions: () => teamHistory.promise })
+    const controller = new QuantSkillsAgentsController(port)
+    const agentStarted = vi.fn(), teamStarted = vi.fn()
+    const startingAgent = controller.start({ sessionId: archive.sessionId, agentId: definition.agentId, expectedRevision: 1 }).then(agentStarted)
+    const startingTeam = controller.startTeam({ sessionId: teamArchive.sessionId, teamId: team.teamId, expectedRevision: 1 }).then(teamStarted)
+    try {
+      await vi.waitFor(() => {
+        expect(agentStarted).toHaveBeenCalledWith({ sessionId: archive.sessionId, agent: definition })
+        expect(teamStarted).toHaveBeenCalledWith({ sessionId: teamArchive.sessionId, team })
+      })
+    } finally {
+      history.resolve([archive]); teamHistory.resolve([teamArchive])
+      await Promise.all([startingAgent, startingTeam])
+    }
+    await vi.waitFor(() => expect(controller.source.getSnapshot().archives).toEqual([archive]))
+    expect(controller.source.getSnapshot().teamArchives).toEqual([teamArchive])
+  })
+
   it('projects only Host definitions and independent 专家 Session archives', async () => {
     const controller = new QuantSkillsAgentsController(host())
 

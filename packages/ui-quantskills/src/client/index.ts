@@ -1,19 +1,22 @@
 import type {} from '@deepseek-ai/dsh-client-ui-workspace/client'
 import type { MainPanelId, PanelInfo } from '@deepseek-ai/dsh-client-ui-layout/client'
 import { selectedSession } from './selected-session.ts'
+import { adoptQuantSkillsSession } from './session-adoption.ts'
 import type { SessionHistoryAccess, SessionFileDeletionAccess } from './ArchivedSessions.tsx'
 import { createElement } from 'react'
 import { PluginSettings } from './PluginSettings.tsx'
 import { artifactDownload } from './artifact-resource.ts'
-import { bindComposerSubagentMenu } from './composer-subagents.ts'
 import { retryHostRead } from './remote-read.ts'
 import { FinalDeliverables } from './FinalDeliverables.tsx'
+import { NativeResults, NativeResultMedia, type NativeResultsInjected } from './NativeResults.tsx'
+import { openNativeResult, QS_RESULTS_KIND } from './native-result-navigation.ts'
+import type {} from '@deepseek-ai/dsh-client-ui-sidebar-right/client'
 /** QuantSkills browser application assembled over the existing DSH layout, sessions, and conversation services. */
 import type { Context as ClientContext } from '@deepseek-ai/cordis'
 import type { SessionSummary } from '@deepseek-ai/dsh-api-session-controller/client'
 import { QuantSkillsPreferences, type PreferencesSnapshot } from './preferences.ts'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
-import { resolveWorkspacePath } from '@deepseek-ai/dsh-util-workspace-path'
+import { parseFileAddress, resolveWorkspacePath } from '@deepseek-ai/dsh-util-workspace-path'
 import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-quantskills-host/remote'
 import type {} from '@deepseek-ai/dsh-quantskills-session/remote'
@@ -645,6 +648,22 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
   }, 'ui-quantskills: share semantic artifact palette with generation')
   const layout = new QuantSkillsLayoutController()
   if (nativeLayout !== undefined) layout.attach(nativeLayout.actions)
+  const openNativeResults = (sessionId: SessionId, path?: string): boolean => {
+    if (options.mode !== 'native-plugin') return false
+    if (selectedSession(ctx.sessions.list.getSnapshot()) !== sessionId) return false
+    const opened = openNativeResult(ctx.get('sidebarRight'), sessionId, ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd, path)
+    if (opened) {
+      layout.closeResults()
+      notifications.actions.acknowledge(sessionId)
+    }
+    return opened
+  }
+  const openCurrentResults = (): void => {
+    if (options.mode !== 'native-plugin' || ctx.get('sidebarRight') === undefined) { layout.openResults(); return }
+    const sessionId = selectedSession(ctx.sessions.list.getSnapshot())
+    if (sessionId !== undefined && openNativeResults(sessionId)) return
+    layout.openResults()
+  }
   let sessionOpenGeneration = 0
   let suppressedPluginSessionId: SessionId | undefined
   const viewActions: typeof view.actions = {
@@ -737,51 +756,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
     id: SessionId,
     signal: AbortSignal,
     accept: (summary: SessionSummary) => boolean = () => true,
-  ): Promise<{
-    readonly sessionId: SessionId
-    readonly summary: SessionSummary
-    readonly session: NonNullable<ReturnType<typeof ctx.sessions.binding>>['session']
-  }> => new Promise((resolve, reject) => {
-    let dispose = (): void => {}
-    const finish = (
-      result:
-        | {
-            readonly ok: true
-            readonly value: {
-              readonly sessionId: SessionId
-              readonly summary: SessionSummary
-              readonly session: NonNullable<ReturnType<typeof ctx.sessions.binding>>['session']
-            }
-          }
-        | { readonly ok: false; readonly error: Error },
-    ): void => {
-      signal.removeEventListener('abort', abort)
-      dispose()
-      if (result.ok) resolve(result.value)
-      else reject(result.error)
-    }
-    const abort = (): void => {
-      finish({
-        ok: false,
-        error: signal.reason instanceof Error
-          ? signal.reason
-          : new Error(`QuantSkills Session "${id}" adoption was cancelled.`),
-      })
-    }
-    const inspect = (): void => {
-      const summary = ctx.sessions.list.getSnapshot().byId[id]
-      if (summary === undefined || !accept(summary)) return
-      const binding = ctx.sessions.binding(id)
-      if (binding === undefined) return
-      finish({
-        ok: true,
-        value: { sessionId: id, summary, session: binding.session },
-      })
-    }
-    dispose = ctx.sessions.list.subscribe(inspect)
-    signal.addEventListener('abort', abort, { once: true })
-    inspect()
-  })
+  ) => adoptQuantSkillsSession(ctx.sessions, id, signal, accept)
 
   const waitForAssistantText = (
     sessionId: SessionId,
@@ -871,7 +846,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
         ))
       }
       if (generation !== sessionOpenGeneration || lifetime.signal.aborted) return
-      const adopted = await adoptSession(id, lifetime.signal)
+      using adopted = await adoptSession(id, lifetime.signal)
       if (generation !== sessionOpenGeneration || lifetime.signal.aborted) return
       ctx.uiWorkspace.openSession(adopted.sessionId)
     })().catch((cause: unknown) => {
@@ -968,7 +943,14 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
           claimSidebar: claimOptions => stockLayout.claimSidebar(claimOptions),
           claimDetails: claimOptions => stockLayout.claimDetails(claimOptions),
           claimConversationTextScale: scale => stockLayout.claimConversationTextScale(scale),
-          openResults: () => { layout.openResults() },
+          openResults: openCurrentResults,
+          nativeResults: options.mode === 'native-plugin',
+          toggleNativeResults: () => {
+            const sidebar = ctx.get('sidebarRight')
+            const sessionId = selectedSession(ctx.sessions.list.getSnapshot())
+            if (sidebar === undefined || sessionId === undefined || sidebar.mounted.getSnapshot() !== sessionId) return
+            sidebar.toggleExpanded()
+          },
           closeResults: () => { layout.closeResults() },
           close: () => {
             layout.closeResults()
@@ -1045,6 +1027,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       openWorkbench: (path: string) => {
         // Bind to the rendered answer's session, never whichever session a stale callback finds.
         if (selectedSession(ctx.sessions.list.getSnapshot()) !== sessionId) return
+        if (openNativeResults(sessionId, path)) return
         resultTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
         view.actions.requestResultPreview(sessionId, path)
         if (options.mode === 'native-plugin') view.actions.openPluginConversation()
@@ -1188,7 +1171,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
         ...workspace, sessionId: `session-${crypto.randomUUID()}` as SessionId, ...(topic ? { topic: true } : {}),
       }, signal))
       signal.throwIfAborted()
-      const adopted = await adoptSession(created.sessionId, signal,
+      using adopted = await adoptSession(created.sessionId, signal,
         summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'contest')
       signal.throwIfAborted()
       if (created.created) {
@@ -1231,7 +1214,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       const created = await unwrapRemote(ctx.remote.quantSkillsSessions.factorSessionOpen({ ...workspace, sessionId: `session-${crypto.randomUUID()}` as SessionId,
         ...(topic ? { topic: true } : {}) }, signal))
       signal.throwIfAborted()
-      const adopted = await adoptSession(created.sessionId, signal, summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'factor-contest')
+      using adopted = await adoptSession(created.sessionId, signal, summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'factor-contest')
       signal.throwIfAborted()
       if (created.created) {
         const renamed = await adopted.session.rename(topic ? '因子赛 · 专题研究' : '因子赛 · 账户主对话')
@@ -1331,7 +1314,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       versionId,
       ...workspace,
     }, lifetime.signal)
-    const adopted = await adoptSession(
+    using adopted = await adoptSession(
       created.sessionId,
       lifetime.signal,
       summary => hasExactQuantSkillsBinding(summary, created.binding),
@@ -1375,7 +1358,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       : await unwrapRemote<QuantSkillsAgentSessionCreateResult>(
         ctx.remote.quantSkillsSessions.authoringSessionCreate({ ...request, kind: authoringKind }),
       )
-    const adopted = await adoptSession(
+    using adopted = await adoptSession(
       created.sessionId,
       lifetime.signal,
       summary => hasExactQuantSkillsAgent(summary, created.agent),
@@ -1430,7 +1413,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       expectedRevision: definition.revision,
       ...workspace,
     })
-    const adopted = await adoptSession(
+    using adopted = await adoptSession(
       created.sessionId,
       lifetime.signal,
       summary => hasExactQuantSkillsAgentTeam(summary, created.team),
@@ -1581,11 +1564,13 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       if (!response.ok) throw new Error(`AI 角色说明生成失败：${response.error.message}`)
       return await waitForAssistantText(sessionId, session, 'AI 角色说明生成', signal)
     } finally {
-      if (adopted?.session.getSnapshot().running) await adopted.session.cancel()
-      await ctx.uiWorkspace.archiveSession(sessionId).catch((error: unknown) => {
-        console.warn('QuantSkills AI role helper could not archive its temporary Session.', error)
-      })
-      if (current !== undefined && ctx.sessions.list.getSnapshot().byId[current] !== undefined) ctx.uiWorkspace.openSession(current)
+      try {
+        if (adopted?.session.getSnapshot().running) await adopted.session.cancel()
+        await ctx.uiWorkspace.archiveSession(sessionId).catch((error: unknown) => {
+          console.warn('QuantSkills AI role helper could not archive its temporary Session.', error)
+        })
+        if (current !== undefined && ctx.sessions.list.getSnapshot().byId[current] !== undefined) ctx.uiWorkspace.openSession(current)
+      } finally { adopted?.release() }
     }
   }
   const matchSkillForTask = async (
@@ -1615,11 +1600,13 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       const answer = await waitForAssistantText(sessionId, adopted.session, 'AI 技能 匹配', signal)
       return parseSkillGuideDecision(answer, skills)
     } finally {
-      if (adopted?.session.getSnapshot().running) await adopted.session.cancel()
-      await ctx.uiWorkspace.archiveSession(sessionId).catch((error: unknown) => {
-        console.warn('QuantSkills AI catalog matcher could not archive its temporary Session.', error)
-      })
-      if (current !== undefined && ctx.sessions.list.getSnapshot().byId[current] !== undefined) ctx.uiWorkspace.openSession(current)
+      try {
+        if (adopted?.session.getSnapshot().running) await adopted.session.cancel()
+        await ctx.uiWorkspace.archiveSession(sessionId).catch((error: unknown) => {
+          console.warn('QuantSkills AI catalog matcher could not archive its temporary Session.', error)
+        })
+        if (current !== undefined && ctx.sessions.list.getSnapshot().byId[current] !== undefined) ctx.uiWorkspace.openSession(current)
+      } finally { adopted?.release() }
     }
   }
   const importAgent = async (
@@ -1915,6 +1902,7 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
       || agentSnapshot.archives.some(archive => archive.sessionId === sessionId)
       || agentSnapshot.teamArchives.some(archive => archive.sessionId === sessionId)
     if (!owned) return false
+    if (openNativeResults(sessionId, path)) return true
     resultTrigger.current = trigger
     view.actions.requestResultPreview(sessionId, path)
     if (options.mode === 'native-plugin') view.actions.openPluginConversation()
@@ -1932,87 +1920,103 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
         open: (trigger) => {
           resultTrigger.current = trigger
           if (options.mode === 'native-plugin') view.actions.openPluginConversation()
-          layout.openResults()
+          openCurrentResults()
         },
         complete: (sessionId) => {
           resultTrigger.current = null
           if (options.mode === 'native-plugin') view.actions.openPluginConversation()
-          layout.openResults()
+          openCurrentResults()
           notifications.actions.acknowledge(sessionId)
         },
       }),
     }, QuantSkillsResultAction),
   )
 
+  const resultFace = (sessionId: SessionId): QuantSkillsResultInjected => ({
+    hooks: { resultRequest: view.store },
+    close: () => { layout.closeResults() },
+    triggerRef: resultTrigger,
+    docked: options.mode === 'native-plugin',
+    acknowledgePreviewFocus: (sequence) => {
+      view.actions.acknowledgeResultPreviewFocus(sessionId, sequence)
+    },
+    listFiles: async (signal): Promise<readonly QuantSkillsPreparedResultArtifact[]> => preparedResultArtifacts(
+      await unwrapRemote<QuantSkillsResultPrepareResult>(
+        ctx.remote.quantSkillsSessions.resultList({ sessionId }, signal),
+      ),
+    ),
+    prepareFiles: async (paths, signal): Promise<readonly QuantSkillsPreparedResultArtifact[]> => {
+      const prepared = await unwrapRemote<QuantSkillsResultPrepareResult>(
+        ctx.remote.quantSkillsSessions.resultPrepare({ sessionId, paths }, signal),
+      )
+      return preparedResultArtifacts(prepared)
+    },
+    openFile: async (path) => {
+      const cwd = ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd
+      await unwrapRemote(ctx.remote.session.openWorkspacePath({ path: resolveWorkspacePath(cwd, path) }))
+    },
+    saveFileAs: async (path: string) => { artifactDownload(sessionId, path) },
+    previewFile: path => unwrapRemote<QuantSkillsResultPreview>(
+      ctx.remote.quantSkillsSessions.resultPreview({ sessionId, path }),
+    ).catch((error: unknown) => {
+      console.warn('QuantSkills result preview:', error instanceof Error ? error.message.slice(0, 700) : String(error))
+      throw error
+    }),
+    openOutputDirectory: async (path) => {
+      const normalized = path?.replaceAll('\\', '/')
+      const slash = normalized?.lastIndexOf('/') ?? -1
+      const directory = slash > 0 ? normalized?.slice(0, slash) : '.'
+      view.actions.requestResultPreview(sessionId, directory ?? '.')
+      layout.openResults()
+    },
+  })
+
   ctx.slots.inject(
     'quantskills.results',
     () => ctx.slots.register({
       name: 'quantskills.results',
-      inject: (sessionId: SessionId): QuantSkillsResultInjected => ({
-        hooks: { resultRequest: view.store },
-        close: () => { layout.closeResults() },
-        triggerRef: resultTrigger,
-        docked: options.mode === 'native-plugin',
-        acknowledgePreviewFocus: (sequence) => {
-          view.actions.acknowledgeResultPreviewFocus(sessionId, sequence)
-        },
-        listFiles: async (signal): Promise<readonly QuantSkillsPreparedResultArtifact[]> => preparedResultArtifacts(
-          await unwrapRemote<QuantSkillsResultPrepareResult>(
-            ctx.remote.quantSkillsSessions.resultList({ sessionId }, signal),
-          ),
-        ),
-        prepareFiles: async (paths, signal): Promise<readonly QuantSkillsPreparedResultArtifact[]> => {
-          const prepared = await unwrapRemote<QuantSkillsResultPrepareResult>(
-            ctx.remote.quantSkillsSessions.resultPrepare({ sessionId, paths }, signal),
-          )
-          return preparedResultArtifacts(prepared)
-        },
-        openFile: async (path) => {
-          const cwd = ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd
-          await unwrapRemote(ctx.remote.session.openWorkspacePath({ path: resolveWorkspacePath(cwd, path) }))
-        },
-        saveFileAs: async (path: string) => { artifactDownload(sessionId, path) },
-        previewFile: path => unwrapRemote<QuantSkillsResultPreview>(
-          ctx.remote.quantSkillsSessions.resultPreview({ sessionId, path }),
-        ).catch((error: unknown) => {
-          console.warn('QuantSkills result preview:', error instanceof Error ? error.message.slice(0, 700) : String(error))
-          throw error
-        }),
-        openOutputDirectory: async (path) => {
-          const normalized = path?.replaceAll('\\', '/')
-          const slash = normalized?.lastIndexOf('/') ?? -1
-          const directory = slash > 0 ? normalized?.slice(0, slash) : '.'
-          view.actions.requestResultPreview(sessionId, directory ?? '.')
-          layout.openResults()
-        },
-        continueWithResults: async (paths) => {
-          const skill = boundSessions.source.getSnapshot().archives.find(item => item.sessionId === sessionId)
-          const archivedAgent = agents.source.getSnapshot().archives.find(item => item.sessionId === sessionId)
-          const archivedTeam = agents.source.getSnapshot().teamArchives.find(item => item.sessionId === sessionId)
-          let nextId: SessionId
-          if (skill !== undefined) {
-            nextId = await createBoundSession(skill.binding.versionId)
-          } else if (archivedAgent !== undefined) {
-            const definition = agents.source.getSnapshot().definitions
-              .find(item => item.agentId === archivedAgent.agent.agentId)
-            if (definition === undefined) throw new Error('QuantSkills：当前 专家 定义不可用于创建后续会话。')
-            nextId = await startAgentSession(definition)
-          } else if (archivedTeam !== undefined) {
-            const definition = agents.source.getSnapshot().teams
-              .find(item => item.teamId === archivedTeam.team.teamId)
-            if (definition === undefined) throw new Error('QuantSkills：当前 专家团 定义不可用于创建后续会话。')
-            nextId = await startAgentTeamSession(definition)
-          } else {
-            throw new Error('QuantSkills：结果所属会话不可用。')
-          }
-          const next = ctx.sessions.binding(nextId)
-          if (next === undefined || conversation === undefined) throw new Error('QuantSkills：后续会话尚未就绪。')
-          const input = conversation.input.for(next.ctx)
-          input.setDraft(`${input.state.getSnapshot().draft}\n\n来源会话：${sessionId}\n请继续处理以下同一工作区内的产物：\n${paths.map(path => `- ${path}`).join('\n')}`)
-        },
-      }),
+      inject: resultFace,
     }, QuantSkillsResultPanel),
   )
+
+  if (options.mode === 'native-plugin') ctx.inject(['sidebarRight', 'sidebarRightTabs'], native => {
+    native.effect(() => native.sidebarRightTabs.register({
+      id: QS_RESULTS_KIND, kind: QS_RESULTS_KIND, title: () => '对话结果',
+      guide: [{ id: 'results', order: 40, title: () => '对话结果', description: () => '本对话的报告、图表与文件' }],
+    }), 'ui-quantskills: result summary in the official dock')
+    native.slots.inject('sidebar.right.pane.tab', () => native.slots.register({
+      name: 'sidebar.right.pane.tab', key: QS_RESULTS_KIND,
+      inject: (sessionId: SessionId): NativeResultsInjected => {
+        const face = resultFace(sessionId)
+        return {
+          listFiles: signal => face.listFiles(signal),
+          prepareFiles: (paths, signal) => face.prepareFiles(paths, signal),
+          openFile: path => { if (!openNativeResults(sessionId, path)) throw new Error('Result session is no longer active.') },
+          openWorkspace: () => { if (native.sidebarRight.mounted.getSnapshot() === sessionId) native.sidebarRight.openTab('files') },
+          downloadFile: path => artifactDownload(sessionId, path),
+        }
+      },
+    }, NativeResults))
+    native.effect(() => native.sidebarRightTabs.register({
+      id: 'quantskills-media', kind: 'quantskills-media',
+      patterns: ['*.mp4', '*.webm', '*.mp3', '*.wav', '*.ogg', '*.m4a', '*.html', '*.htm'],
+      canOpen: address => {
+        const file = parseFileAddress(address)
+        if (file?.scope !== 'session') return false
+        const id = file.sessionId
+        const sessions = boundSessions.source.getSnapshot(), library = agents.source.getSnapshot()
+        return sessions.plainArchives.some(item => item.sessionId === id) || sessions.archives.some(item => item.sessionId === id)
+          || library.archives.some(item => item.sessionId === id) || library.teamArchives.some(item => item.sessionId === id)
+      },
+      title: address => parseFileAddress(address)?.path.replaceAll('\\', '/').split('/').at(-1) ?? '媒体',
+    }), 'ui-quantskills: media and isolated HTML in the official dock')
+    native.slots.inject('sidebar.right.pane.tab', () => native.slots.register({
+      name: 'sidebar.right.pane.tab', key: 'quantskills-media',
+      inject: () => ({ previewFile: (sessionId: string, path: string) => unwrapRemote<QuantSkillsResultPreview>(
+        native.remote.quantSkillsSessions.resultPreview({ sessionId: sessionId as SessionId, path }),
+      ) }),
+    }, NativeResultMedia))
+  })
 
   ctx.slots.inject(
     'tool.call.toolview',
@@ -2229,8 +2233,6 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
     window.addEventListener('focus', refresh)
     return () => { window.removeEventListener('focus', refresh) }
   }, 'ui-quantskills: refresh Agents when the browser regains focus')
-
-  ctx.effect(() => bindComposerSubagentMenu(document, ctx.sessions, ctx.uiWorkspace), 'ui-quantskills: open a subagent chat in a dialog and return to the main session')
 
 }
 

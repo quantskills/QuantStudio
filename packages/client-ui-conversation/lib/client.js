@@ -17324,7 +17324,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-conversation/src/client/skeleton/ConversationRoot.module.css.mjs
-		const css$4 = ".rpM0nW_root{background:var(--dsw-alias-bg-base);flex-direction:column;min-width:0;height:100%;display:flex;position:relative}.rpM0nW_header{box-sizing:border-box;border-bottom:.5px solid var(--dsw-alias-border-l3);flex:none;grid-template-columns:auto minmax(0,1fr);min-height:76px;padding:10px 28px 0 20px;display:grid}.rpM0nW_header:where(:not(:has(.rpM0nW_tabs))){min-height:0;padding-bottom:10px}.rpM0nW_headerBlank{border-bottom:none;min-height:0;padding-bottom:0}.rpM0nW_headerBlank .rpM0nW_headerCorner{margin-left:auto}html:not([data-platform=darwin]) .rpM0nW_headerSessionless{padding-top:0}html:not([data-platform=darwin]) .rpM0nW_headerSessionless .rpM0nW_titleRow{min-height:0}[data-platform=darwin] .rpM0nW_headerLeading,[data-platform=darwin] .rpM0nW_headerActions,[data-platform=darwin] .rpM0nW_headerUtilities,[data-platform=darwin] .rpM0nW_headerCorner{-webkit-app-region:no-drag}.rpM0nW_sessionControls{border-bottom:1px solid var(--dsw-alias-border-l2);flex-wrap:wrap;flex:none;align-items:center;gap:8px 16px;min-width:0;padding:6px 16px;display:flex}.rpM0nW_sessionViews{flex-wrap:wrap;align-items:center;gap:4px;display:flex}.rpM0nW_sessionViewTab{color:var(--dsw-alias-label-secondary);cursor:pointer;background:0 0;border:none;border-radius:8px;padding:6px 10px;font-size:12px;line-height:18px}.rpM0nW_sessionViewTab:hover,.rpM0nW_sessionViewTab[aria-selected=true]{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-state-business-primary)}.rpM0nW_sessionViewTab:focus-visible{outline:2px solid var(--dsw-alias-state-business-primary);outline-offset:2px}.rpM0nW_sessionActions{flex-wrap:wrap;align-items:center;gap:8px;margin-left:auto;display:flex}.rpM0nW_sessionActions:empty{display:none}.rpM0nW_titleRow{min-height:30px;grid-column:2;align-items:center;gap:0;padding-inline-start:max(0px, calc(var(--dsh-frame-leading-clearance,0px) - 20px));display:flex;container-type:inline-size}.rpM0nW_titleCluster{flex:1;align-items:center;gap:10px;min-width:0;display:flex}.rpM0nW_headerLeading{flex:none;grid-area:1/1;align-items:center;gap:8px;display:flex}.rpM0nW_crumbs{white-space:nowrap;align-items:center;gap:4px;min-width:0;display:flex;overflow:hidden}.rpM0nW_crumbSeg{align-items:center;gap:4px;min-width:0;display:inline-flex}.rpM0nW_crumbSep{color:var(--dsw-alias-label-caption);font-size:14px;line-height:20px}.rpM0nW_crumb{border-radius:var(--dsw-radius-md);max-width:220px;color:var(--dsw-alias-label-tertiary);text-overflow:ellipsis;white-space:nowrap;cursor:pointer;background:0 0;border:none;padding:4px 8px;font-size:14px;line-height:20px;display:inline-block;overflow:hidden}.rpM0nW_crumbSubagent{font-size:12px;line-height:18px}button.rpM0nW_crumb:hover{background:var(--dsw-alias-interactive-bg-hover)}.rpM0nW_crumbCurrent{color:var(--dsw-alias-label-primary);cursor:default;font-weight:500}.rpM0nW_headerActions{flex:none;align-items:center;gap:8px;display:flex}.rpM0nW_headerUtilities{flex:none;align-items:center;gap:8px;margin-left:20px;display:flex}.rpM0nW_headerUtilities:empty{display:none}.rpM0nW_headerCorner{flex:none;align-items:center;margin-left:8px;margin-right:-16px;display:flex}.rpM0nW_headerCorner:empty{display:none}.rpM0nW_tabs{z-index:1;grid-column:1/-1;gap:36px;margin-top:10px;padding-left:8px;display:flex;position:relative}.rpM0nW_tab{color:var(--dsw-alias-label-tertiary);cursor:pointer;background:0 0;border:none;padding:0 0 9px;font-size:13px;font-weight:500;line-height:16px;position:relative}.rpM0nW_tab:after{content:\"\";background:0 0;border-radius:2px;height:2px;position:absolute;bottom:-1px;left:0;right:0}.rpM0nW_tabActive{color:var(--dsw-alias-state-business-primary)}.rpM0nW_tabActive:after{background:var(--dsw-alias-state-business-primary)}.rpM0nW_viewArea{flex-direction:column;flex:1;min-height:0;display:flex}.rpM0nW_widthHandle{z-index:0;width:min(10px, calc((100% - var(--dsh-chat-content-width)) / 2 - 24px - 24px));cursor:col-resize;position:absolute;top:0;bottom:0}.rpM0nW_widthHandle[data-side=left]{right:calc(50% + var(--dsh-chat-content-width) / 2 + 24px)}.rpM0nW_widthHandle[data-side=right]{left:calc(50% + var(--dsh-chat-content-width) / 2 + 24px)}.rpM0nW_widthHandle:after{content:\"\";background:linear-gradient(to bottom, transparent calc(var(--dsh-width-handle-pointer-y,50%) - 36px), var(--dsw-alias-scrollbar-bg-l1) calc(var(--dsh-width-handle-pointer-y,50%) - 8px), var(--dsw-alias-scrollbar-bg-l1) calc(var(--dsh-width-handle-pointer-y,50%) + 8px), transparent calc(var(--dsh-width-handle-pointer-y,50%) + 36px));opacity:0;pointer-events:none;border-radius:2px;width:2px;position:absolute;top:0;bottom:0}.rpM0nW_widthHandle[data-side=left]:after{right:4px}.rpM0nW_widthHandle[data-side=right]:after{left:4px}.rpM0nW_widthHandle:hover:after,.rpM0nW_widthHandle[data-dragging]:after{opacity:1}.rpM0nW_widthHandle[data-dragging]{z-index:8}.rpM0nW_root:has([data-conversation-composer-overlay]) .rpM0nW_widthHandle{display:none}.rpM0nW_composerStack{--dsh-composer-stack-gap:6px;gap:var(--dsh-composer-stack-gap);flex-direction:column;display:flex}.rpM0nW_composerSeat{--dsh-composer-text-max-height:336px;flex-direction:column;flex:none;display:flex}.rpM0nW_root[data-phase=active]{overflow:hidden}.rpM0nW_root[data-phase=active] .rpM0nW_header{flex:none}.rpM0nW_body{--dsh-chat-content-width:var(--dsh-chat-user-width,clamp(680px, calc(var(--dsh-conversation-column-width,0px) * .64), 920px));--dsh-composer-card-max-width:calc(var(--dsh-chat-content-width) + 32px);--dsh-composer-side-clearance:16px;--dsh-composer-dock-inset:8px;flex-direction:column;flex:1;min-height:0;display:flex;position:relative}.rpM0nW_embeddedBody{--dsh-chat-content-width:min(calc(100% - 32px), 920px);--dsh-composer-card-max-width:min(calc(100% - 16px), 952px);--dsh-composer-side-clearance:8px;--dsh-composer-dock-inset:8px;overflow:hidden}.rpM0nW_scrollBody{scrollbar-gutter:stable;flex-direction:column;flex:1;min-height:0;margin-right:2px;display:flex;overflow-y:auto}.rpM0nW_scrollBody::-webkit-scrollbar-track{margin:2px}.rpM0nW_root[data-phase=active] .rpM0nW_viewArea,.rpM0nW_embeddedBody[data-content-phase=active] .rpM0nW_viewArea{flex:1 0 auto;min-height:auto}.rpM0nW_root[data-phase=active] .rpM0nW_composerSeat,.rpM0nW_embeddedBody[data-content-phase=active] .rpM0nW_composerSeat{z-index:7;background:linear-gradient(180deg, color-mix(in srgb, var(--dsw-alias-bg-base) 0%, transparent) 0px, var(--dsw-alias-bg-base) 36px);position:sticky;bottom:0}.rpM0nW_root[data-phase=active] .rpM0nW_composerSeat:has([data-trigger-menu]){z-index:9}.rpM0nW_scrollBody:has([data-conversation-composer-overlay]){scrollbar-gutter:auto;position:relative;overflow:hidden auto}.rpM0nW_scrollBody:has([data-conversation-composer-overlay])>[data-slot=conversation\\.session]>.rpM0nW_viewArea{flex:1 1 0;min-height:0;overflow:hidden}.rpM0nW_scrollBody:has([data-conversation-composer-overlay])>.rpM0nW_composerSeat{right:var(--dsh-scrollbar-width);position:absolute;bottom:0;left:0}.rpM0nW_composerHero{width:min(calc(var(--dsh-composer-card-max-width) + 2 * var(--dsh-composer-side-clearance)), 100%);z-index:1;align-self:center;gap:8px;padding-bottom:32px}.rpM0nW_heroWorkspaceRow{align-items:center;gap:2px;min-width:0;margin-top:4px;padding:0 16px 0 20px;display:flex}.rpM0nW_heroOptions{flex:none;align-items:center;gap:2px;min-width:0;margin-left:auto;display:flex}.rpM0nW_heroOptions:empty{display:none}.rpM0nW_root[data-phase=hero] .rpM0nW_scrollBody,.rpM0nW_embeddedBody[data-content-phase=hero] .rpM0nW_scrollBody{justify-content:center;overflow-y:auto}.rpM0nW_root[data-phase=settling] .rpM0nW_composerSeat,.rpM0nW_embeddedBody[data-content-phase=settling] .rpM0nW_composerSeat{visibility:hidden}@media (width<=840px){body[data-qs-mobile] .rpM0nW_root{--dsh-composer-side-clearance:8px;--dsh-chat-content-width:100%;--dsh-composer-text-max-height:min(160px,28dvh);min-height:0}body[data-qs-mobile] .rpM0nW_header{border-radius:16px;margin:6px 8px 0;padding:10px 12px 0}body[data-qs-mobile] .rpM0nW_titleRow{flex-wrap:wrap;gap:4px}body[data-qs-mobile] .rpM0nW_titleCluster{flex-wrap:wrap;gap:6px}body[data-qs-mobile] .rpM0nW_crumbs{flex:100%}body[data-qs-mobile] .rpM0nW_crumb{max-width:min(260px,65vw);padding:4px 0}body[data-qs-mobile] .rpM0nW_headerUtilities{gap:6px;margin-left:auto}body[data-qs-mobile] .rpM0nW_tabs{gap:24px;margin-top:6px;padding:0;overflow-x:auto}body[data-qs-mobile] .rpM0nW_tab{white-space:nowrap;flex-shrink:0;min-height:38px}body[data-qs-mobile] .rpM0nW_widthHandle{display:none}body[data-qs-mobile] .rpM0nW_scrollBody{overscroll-behavior-y:contain}body[data-qs-mobile] .rpM0nW_composerSeat{padding-bottom:env(safe-area-inset-bottom,0px);--dsh-composer-text-max-height:min(160px,28dvh)}}@media (width<=840px) and (height<=540px){body[data-qs-mobile] .rpM0nW_header{padding-top:4px}body[data-qs-mobile] .rpM0nW_headerActions{display:none}body[data-qs-mobile] .rpM0nW_crumbs{flex:1}body[data-qs-mobile] .rpM0nW_titleCluster{flex-wrap:nowrap}body[data-qs-mobile] .rpM0nW_tabs{margin-top:0}}";
+		const css$4 = ".rpM0nW_root{background:var(--dsw-alias-bg-base);flex-direction:column;min-width:0;height:100%;display:flex;position:relative}.rpM0nW_header{box-sizing:border-box;border-bottom:.5px solid var(--dsw-alias-border-l3);flex:none;grid-template-columns:auto minmax(0,1fr);min-height:52px;padding:8px 28px 8px 20px;display:grid}.rpM0nW_header:where(:not(:has(.rpM0nW_tabs))){min-height:0;padding-bottom:10px}.rpM0nW_headerBlank{border-bottom:none;min-height:0;padding-bottom:0}.rpM0nW_headerBlank .rpM0nW_headerCorner{margin-left:auto}html:not([data-platform=darwin]) .rpM0nW_headerSessionless{padding-top:0}html:not([data-platform=darwin]) .rpM0nW_headerSessionless .rpM0nW_titleRow{min-height:0}[data-platform=darwin] .rpM0nW_headerLeading,[data-platform=darwin] .rpM0nW_headerActions,[data-platform=darwin] .rpM0nW_headerUtilities,[data-platform=darwin] .rpM0nW_tabs,[data-platform=darwin] .rpM0nW_headerCorner{-webkit-app-region:no-drag}.rpM0nW_titleRow{min-height:30px;grid-column:2;align-items:center;gap:0;padding-inline-start:max(0px, calc(var(--dsh-frame-leading-clearance,0px) - 20px));display:flex;container-type:inline-size}.rpM0nW_titleCluster{flex:1;align-items:center;gap:10px;min-width:0;display:flex}.rpM0nW_headerLeading{flex:none;grid-area:1/1;align-items:center;gap:8px;display:flex}.rpM0nW_crumbs{white-space:nowrap;align-items:center;gap:4px;min-width:0;display:flex;overflow:hidden}.rpM0nW_crumbSeg{align-items:center;gap:4px;min-width:0;display:inline-flex}.rpM0nW_crumbSep{color:var(--dsw-alias-label-caption);font-size:14px;line-height:20px}.rpM0nW_crumb{border-radius:var(--dsw-radius-md);max-width:220px;color:var(--dsw-alias-label-tertiary);text-overflow:ellipsis;white-space:nowrap;cursor:pointer;background:0 0;border:none;padding:4px 8px;font-size:14px;line-height:20px;display:inline-block;overflow:hidden}.rpM0nW_crumbSubagent{font-size:12px;line-height:18px}button.rpM0nW_crumb:hover{background:var(--dsw-alias-interactive-bg-hover)}.rpM0nW_crumbCurrent{color:var(--dsw-alias-label-primary);cursor:default;font-weight:500}.rpM0nW_headerActions{flex:none;align-items:center;gap:8px;display:flex}.rpM0nW_headerUtilities{flex:none;align-items:center;gap:8px;margin-left:20px;display:flex}.rpM0nW_headerUtilities:empty{display:none}.rpM0nW_headerCorner{flex:none;align-items:center;margin-left:8px;margin-right:-16px;display:flex}.rpM0nW_headerCorner:empty{display:none}.rpM0nW_tabs{z-index:1;background:var(--dsw-alias-interactive-bg-hover);border-radius:8px;flex:none;align-items:center;gap:2px;margin-left:12px;padding:3px;display:flex;position:relative}.rpM0nW_tab{color:var(--dsw-alias-label-tertiary);cursor:pointer;white-space:nowrap;background:0 0;border:none;border-radius:6px;padding:6px 10px;font-size:13px;font-weight:500;line-height:16px;position:relative}.rpM0nW_tabActive{color:var(--dsw-alias-state-business-primary);background:var(--dsw-alias-bg-base);box-shadow:0 1px 3px #00000014}.rpM0nW_viewArea{flex-direction:column;flex:1;min-height:0;display:flex}.rpM0nW_widthHandle{z-index:0;width:min(10px, calc((100% - var(--dsh-chat-content-width)) / 2 - 24px - 24px));cursor:col-resize;position:absolute;top:0;bottom:0}.rpM0nW_widthHandle[data-side=left]{right:calc(50% + var(--dsh-chat-content-width) / 2 + 24px)}.rpM0nW_widthHandle[data-side=right]{left:calc(50% + var(--dsh-chat-content-width) / 2 + 24px)}.rpM0nW_widthHandle:after{content:\"\";background:linear-gradient(to bottom, transparent calc(var(--dsh-width-handle-pointer-y,50%) - 36px), var(--dsw-alias-scrollbar-bg-l1) calc(var(--dsh-width-handle-pointer-y,50%) - 8px), var(--dsw-alias-scrollbar-bg-l1) calc(var(--dsh-width-handle-pointer-y,50%) + 8px), transparent calc(var(--dsh-width-handle-pointer-y,50%) + 36px));opacity:0;pointer-events:none;border-radius:2px;width:2px;position:absolute;top:0;bottom:0}.rpM0nW_widthHandle[data-side=left]:after{right:4px}.rpM0nW_widthHandle[data-side=right]:after{left:4px}.rpM0nW_widthHandle:hover:after,.rpM0nW_widthHandle[data-dragging]:after{opacity:1}.rpM0nW_widthHandle[data-dragging]{z-index:8}.rpM0nW_root:has([data-conversation-composer-overlay]) .rpM0nW_widthHandle{display:none}.rpM0nW_composerStack{--dsh-composer-stack-gap:6px;gap:var(--dsh-composer-stack-gap);flex-direction:column;display:flex}.rpM0nW_composerSeat{--dsh-composer-text-max-height:336px;flex-direction:column;flex:none;display:flex}.rpM0nW_root[data-phase=active]{overflow:hidden}.rpM0nW_root[data-phase=active] .rpM0nW_header{flex:none}.rpM0nW_body{--dsh-chat-content-width:var(--dsh-chat-user-width,clamp(680px, calc(var(--dsh-conversation-column-width,0px) * .64), 920px));--dsh-composer-card-max-width:calc(var(--dsh-chat-content-width) + 32px);--dsh-composer-side-clearance:16px;--dsh-composer-dock-inset:8px;flex-direction:column;flex:1;min-height:0;display:flex;position:relative}.rpM0nW_embeddedBody{--dsh-chat-content-width:min(calc(100% - 32px), 920px);--dsh-composer-card-max-width:min(calc(100% - 16px), 952px);--dsh-composer-side-clearance:8px;--dsh-composer-dock-inset:8px;overflow:hidden}.rpM0nW_scrollBody{scrollbar-gutter:stable;flex-direction:column;flex:1;min-height:0;margin-right:2px;display:flex;overflow-y:auto}.rpM0nW_scrollBody::-webkit-scrollbar-track{margin:2px}.rpM0nW_root[data-phase=active] .rpM0nW_viewArea,.rpM0nW_embeddedBody[data-content-phase=active] .rpM0nW_viewArea{flex:1 0 auto;min-height:auto}.rpM0nW_root[data-phase=active] .rpM0nW_composerSeat,.rpM0nW_embeddedBody[data-content-phase=active] .rpM0nW_composerSeat{z-index:7;background:linear-gradient(180deg, color-mix(in srgb, var(--dsw-alias-bg-base) 0%, transparent) 0px, var(--dsw-alias-bg-base) 36px);position:sticky;bottom:0}.rpM0nW_root[data-phase=active] .rpM0nW_composerSeat:has([data-trigger-menu]){z-index:9}.rpM0nW_scrollBody:has([data-conversation-composer-overlay]){scrollbar-gutter:auto;position:relative;overflow:hidden auto}.rpM0nW_scrollBody:has([data-conversation-composer-overlay])>[data-slot=conversation\\.session]>.rpM0nW_viewArea{flex:1 1 0;min-height:0;overflow:hidden}.rpM0nW_scrollBody:has([data-conversation-composer-overlay])>.rpM0nW_composerSeat{right:var(--dsh-scrollbar-width);position:absolute;bottom:0;left:0}.rpM0nW_composerHero{width:min(calc(var(--dsh-composer-card-max-width) + 2 * var(--dsh-composer-side-clearance)), 100%);z-index:1;align-self:center;gap:8px;padding-bottom:32px}.rpM0nW_heroWorkspaceRow{align-items:center;gap:2px;min-width:0;margin-top:4px;padding:0 16px 0 20px;display:flex}.rpM0nW_heroOptions{flex:none;align-items:center;gap:2px;min-width:0;margin-left:auto;display:flex}.rpM0nW_heroOptions:empty{display:none}.rpM0nW_root[data-phase=hero] .rpM0nW_scrollBody,.rpM0nW_embeddedBody[data-content-phase=hero] .rpM0nW_scrollBody{justify-content:center;overflow-y:auto}.rpM0nW_root[data-phase=settling] .rpM0nW_composerSeat,.rpM0nW_embeddedBody[data-content-phase=settling] .rpM0nW_composerSeat{visibility:hidden}";
 		const tagId$4 = "@deepseek-ai/dsh-client-ui-conversation/ConversationRoot.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$4) + "]") === null) {
 			const tag = document.createElement("style");
@@ -17356,10 +17356,6 @@ window.__ModuleLoader__.load({
 			"heroWorkspaceRow": "rpM0nW_heroWorkspaceRow",
 			"root": "rpM0nW_root",
 			"scrollBody": "rpM0nW_scrollBody",
-			"sessionActions": "rpM0nW_sessionActions",
-			"sessionControls": "rpM0nW_sessionControls",
-			"sessionViews": "rpM0nW_sessionViews",
-			"sessionViewTab": "rpM0nW_sessionViewTab",
 			"tab": "rpM0nW_tab",
 			"tabActive": "rpM0nW_tabActive",
 			"tabs": "rpM0nW_tabs",
@@ -17999,120 +17995,92 @@ window.__ModuleLoader__.load({
 			});
 		}
 		/**
-		* Keeps session actions and view navigation reachable without the title bar.
+		* Renders Session header chrome above the resident conversation scrollport.
 		* @param props - Strict Session store, view ledger, navigation, render, and locale shares.
 		* @returns Session navigation controls, with title and tabs after conversation starts.
 		*/
-		function ConversationSessionHeader({ sessionId, hideChrome, useSessions, useConversationViews, useStore, selectView, renderSlot, open, t }) {
+		function ConversationSessionHeader({ sessionId, hideChrome, useSessions, useConversationViews, useStore, renderSlot, open, selectView, t }) {
 			const tabs = useConversationViews((value) => value);
 			const active = resolveActiveView(tabs, useStore((s) => s.view));
 			const ancestry = useSessions((s) => deriveAncestry(s, sessionId), equalBreadcrumbs);
-			const [seat, setSeat] = (0, react.useState)(null);
-			const seatRef = (0, react.useRef)(null);
-			const header = (0, react.useRef)(null);
-			(0, react.useLayoutEffect)(() => {
-				const scope = header.current?.closest("[data-conversation-surface]");
-				if (scope === void 0 || scope === null) {
-					seatRef.current = null;
-					setSeat(null);
-					return;
-				}
-				const sync = () => {
-					const next = [...scope.querySelectorAll("[data-composer-subagents]")].find((element) => element.dataset.composerSubagents === sessionId) ?? null;
-					if (seatRef.current !== next) {
-						seatRef.current = next;
-						setSeat(next);
-					}
-				};
-				sync();
-				const observer = new MutationObserver(sync);
-				observer.observe(scope, {
-					childList: true,
-					subtree: true,
-					attributes: true,
-					attributeFilter: ["data-composer-subagents"]
-				});
-				return () => {
-					observer.disconnect();
-				};
-			}, [sessionId]);
-			const current = ancestry.at(-1);
-			const lineage = hideChrome || current === void 0 ? null : current.subagent ? (0, react_jsx_runtime.jsx)("nav", {
-				className: ConversationRoot_module_css_default.crumbs,
-				"aria-label": t("session.hierarchy"),
-				children: ancestry.map((summary, index) => {
-					const last = index === ancestry.length - 1;
-					const title = last ? (0, react_jsx_runtime.jsx)("span", {
-						className: clsx(ConversationRoot_module_css_default.crumb, ConversationRoot_module_css_default.crumbSubagent, ConversationRoot_module_css_default.crumbCurrent),
-						children: summary.displayTitle
-					}) : (0, react_jsx_runtime.jsx)("button", {
-						type: "button",
-						className: clsx(ConversationRoot_module_css_default.crumb, summary.subagent && ConversationRoot_module_css_default.crumbSubagent),
-						onClick: () => {
-							open(summary.id);
-						},
-						children: summary.displayTitle
-					});
-					return (0, react_jsx_runtime.jsxs)("span", {
-						className: ConversationRoot_module_css_default.crumbSeg,
-						children: [index > 0 && (0, react_jsx_runtime.jsx)("span", {
-							className: ConversationRoot_module_css_default.crumbSep,
-							children: "/"
-						}), summary.subagent ? renderSlot("conversation.session.header.lineage", {
-							lineageSessionId: summary.id,
-							displayTitle: summary.displayTitle,
-							...last ? {} : { openTitle: () => {
-								open(summary.id);
-							} }
-						}, { fallback: title }) : title]
-					}, summary.id);
-				})
-			}) : renderSlot("conversation.session.header.lineage", {
-				lineageSessionId: current.id,
-				displayTitle: current.displayTitle
-			}, { fallback: null });
-			return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
-				(0, react_jsx_runtime.jsx)("header", {
-					ref: header,
-					"data-conversation-header": true,
-					hidden: true
-				}),
-				!hideChrome && (0, react_jsx_runtime.jsxs)("div", {
-					"data-conversation-controls": true,
-					className: ConversationRoot_module_css_default.sessionControls,
-					children: [tabs.length > 1 && (0, react_jsx_runtime.jsx)("div", {
-						className: ConversationRoot_module_css_default.sessionViews,
+			const showTabs = !hideChrome && tabs.length > 1;
+			return (0, react_jsx_runtime.jsx)(react_jsx_runtime.Fragment, { children: (0, react_jsx_runtime.jsxs)("div", {
+				className: ConversationRoot_module_css_default.titleRow,
+				children: [!hideChrome && (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [
+					(0, react_jsx_runtime.jsxs)("div", {
+						className: ConversationRoot_module_css_default.titleCluster,
+						children: [(0, react_jsx_runtime.jsxs)("nav", {
+							className: ConversationRoot_module_css_default.crumbs,
+							"aria-label": t("session.hierarchy"),
+							children: [ancestry.map((summary, index) => {
+								const last = index === ancestry.length - 1;
+								const title = last ? (0, react_jsx_runtime.jsx)("span", {
+									className: clsx(ConversationRoot_module_css_default.crumb, summary.subagent && ConversationRoot_module_css_default.crumbSubagent, ConversationRoot_module_css_default.crumbCurrent),
+									children: summary.displayTitle
+								}) : (0, react_jsx_runtime.jsx)("button", {
+									type: "button",
+									className: clsx(ConversationRoot_module_css_default.crumb, summary.subagent && ConversationRoot_module_css_default.crumbSubagent),
+									onClick: () => {
+										open(summary.id);
+									},
+									children: summary.displayTitle
+								});
+								const lineage = last || summary.subagent;
+								const lineageOwner = {
+									lineageSessionId: summary.id,
+									displayTitle: summary.displayTitle,
+									...last ? {} : { openTitle: () => {
+										open(summary.id);
+									} }
+								};
+								return (0, react_jsx_runtime.jsxs)("span", {
+									className: ConversationRoot_module_css_default.crumbSeg,
+									children: [index > 0 && (0, react_jsx_runtime.jsx)("span", {
+										className: ConversationRoot_module_css_default.crumbSep,
+										children: "/"
+									}), lineage ? summary.subagent ? renderSlot("conversation.session.header.lineage", lineageOwner, { fallback: title }) : (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [title, renderSlot("conversation.session.header.lineage", lineageOwner, { fallback: null })] }) : title]
+								}, summary.id);
+							}), ancestry.length === 0 && (0, react_jsx_runtime.jsx)("span", {
+								className: ConversationRoot_module_css_default.crumbCurrent,
+								children: sessionId
+							})]
+						}), (0, react_jsx_runtime.jsx)("div", {
+							className: ConversationRoot_module_css_default.headerActions,
+							children: renderSlot("conversation.session.header.actions", {})
+						})]
+					}),
+					showTabs && (0, react_jsx_runtime.jsx)("div", {
+						className: ConversationRoot_module_css_default.tabs,
 						role: "tablist",
 						"data-conversation-tabs": "",
-						"aria-label": t("session.views"),
 						children: tabs.map((viewTab) => (0, react_jsx_runtime.jsx)("button", {
 							type: "button",
 							role: "tab",
 							"aria-selected": viewTab.id === active?.id,
-							className: ConversationRoot_module_css_default.sessionViewTab,
+							className: clsx(ConversationRoot_module_css_default.tab, viewTab.id === active?.id && ConversationRoot_module_css_default.tabActive),
 							onClick: () => {
 								selectView(viewTab.id);
 							},
 							children: viewTab.label
 						}, viewTab.id))
-					}), (0, react_jsx_runtime.jsxs)("div", {
-						className: ConversationRoot_module_css_default.sessionActions,
-						children: [
-							renderSlot("conversation.session.header.actions", {}),
-							renderSlot("conversation.session.header.utilities", {}),
-							renderSlot("conversation.session.header.corner", {}),
-							seat === null ? lineage : null
-						]
-					})]
-				}),
-				hideChrome && (0, react_jsx_runtime.jsx)("div", {
-					className: ConversationRoot_module_css_default.sessionActions,
+					}),
+					(0, react_jsx_runtime.jsx)("div", {
+						className: ConversationRoot_module_css_default.headerUtilities,
+						children: renderSlot("conversation.session.header.utilities", {})
+					})
+				] }), (0, react_jsx_runtime.jsx)("div", {
+					className: ConversationRoot_module_css_default.headerCorner,
 					"data-conversation-header-corner": "",
 					children: renderSlot("conversation.session.header.corner", {})
-				}),
-				seat !== null && lineage !== null ? (0, react_dom.createPortal)(lineage, seat) : null
-			] });
+				})]
+			}) });
 		}
+		/**
+		* Renders the active Session view inside the resident scrollport and keeps
+		* the input draft mirrored while blank Hero chrome is visible.
+		* @param props - Strict Session input/store, view ledger, and render shares.
+		* @returns the active view area, or null while the Session remains blank.
+		*/
 		function ConversationSession(props) {
 			return (0, react_jsx_runtime.jsx)(DefaultConversationViews, { ...props });
 		}
@@ -19130,11 +19098,7 @@ window.__ModuleLoader__.load({
 										(0, react_jsx_runtime.jsxs)("div", {
 											className: InputBar_module_css_default.standardControls,
 											hidden: activity,
-											children: [
-												sessionId === void 0 ? null : (0, react_jsx_runtime.jsx)("div", { "data-composer-subagents": sessionId }),
-												input === void 0 || sessionId === void 0 ? null : renderSlot("conversation.input.right", {}),
-												sessionId === void 0 ? null : renderSlot("conversation.input.model", { locked: modelSeatLocked })
-											]
+											children: [input === void 0 || sessionId === void 0 ? null : renderSlot("conversation.input.right", {}), sessionId === void 0 ? null : renderSlot("conversation.input.model", { locked: modelSeatLocked })]
 										}),
 										input === void 0 || sessionId === void 0 ? null : (0, react_jsx_runtime.jsx)("div", {
 											className: activity ? InputBar_module_css_default.activityExpanded : InputBar_module_css_default.activity,

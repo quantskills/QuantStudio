@@ -348,6 +348,9 @@ export interface QuantSkillsPluginFrameInjected {
   claimDetails: (options: DetailsColumnClaimOptions) => DetailsColumnClaim
   claimConversationTextScale: (scale: number) => ConversationTextScaleClaim
   openResults: () => void
+  /** The official DSH dock owns file navigation in the native composition. */
+  nativeResults?: boolean
+  toggleNativeResults?: () => void
   closeResults: () => void
   close: () => void
 }
@@ -374,7 +377,6 @@ export interface QuantSkillsResultInjected {
   openFile: (path: string) => Promise<void>
   previewFile: (path: string) => Promise<QuantSkillsResultPreview>
   openOutputDirectory: (path?: string) => Promise<void>
-  continueWithResults: (paths: readonly string[]) => Promise<void>
   acknowledgePreviewFocus: (sequence: number) => void
   triggerRef: RefObject<HTMLElement | null>
   docked: boolean
@@ -1451,7 +1453,7 @@ export function QuantSkillsPluginFrame({
   useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications,
   renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles,
   startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails,
-  claimConversationTextScale, openResults, closeResults, close, modelAccess,
+  claimConversationTextScale, openResults, closeResults, close, modelAccess, nativeResults = false, toggleNativeResults, rightbar,
 }: QuantSkillsPluginFrameProps) {
   const open = useView(state => state.pluginOpen)
   const page = useView(state => state.page)
@@ -1802,7 +1804,17 @@ export function QuantSkillsPluginFrame({
       title="显示会话侧栏"
       onClick={() => { setSessionDrawerOpen(true) }}
     ><CaretRight size={15}/></button>}
-    {!mobile && resultSurfaceVisible && !resultWorkbenchOpen && <button
+    {nativeResults && toggleNativeResults !== undefined && rightbar !== undefined && !rightbar.exclusive && !rightbar.fullscreen
+      && !mobile && resultSurfaceVisible && <button
+      type="button"
+      className={`${css.sidebarToggle} ${css.resultDrawerRestore}`}
+      style={{ right: rightbar.shown ? rightbar.width + 4 : 4 }}
+      aria-label={rightbar.shown ? '隐藏结果侧栏' : '显示结果侧栏'}
+      title={rightbar.shown ? '隐藏结果侧栏' : '显示结果侧栏'}
+      aria-expanded={rightbar.shown}
+      onClick={toggleNativeResults}
+    >{rightbar.shown ? <CaretRight size={15}/> : <CaretLeft size={15}/>}</button>}
+    {!nativeResults && !mobile && resultSurfaceVisible && !resultWorkbenchOpen && <button
       type="button"
       className={`${css.sidebarToggle} ${css.resultDrawerRestore}`}
       aria-label="显示结果侧栏"
@@ -5437,7 +5449,7 @@ function ResultPreview({
 
 /** Current QuantSkills Session's real, read-only result workbench. */
 export function QuantSkillsResultPanel({
-  close, listFiles, prepareFiles, openFile, previewFile, revealFile, saveFileAs, continueWithResults,
+  close, listFiles, prepareFiles, openFile, previewFile, revealFile, saveFileAs,
   acknowledgePreviewFocus, triggerRef, docked, mode: panelMode, maximized, expand, toggleMaximized,
   useProjection, useSession, useChat, useSessions, useResultRequest, sessionId,
 }: QuantSkillsResultProps) {
@@ -5459,12 +5471,10 @@ export function QuantSkillsResultPanel({
   })
   const [tab, setTab] = useState<ResultTab>('files')
   const [fileNavigatorOpen, setFileNavigatorOpen] = useState(false)
-  const [continueError, setContinueError] = useState(false)
   useEffect(() => { setFileNavigatorOpen(false) }, [sessionId, panelMode])
   const [railProgressOpen, setRailProgressOpen] = useState(true)
   const [railFilesOpen, setRailFilesOpen] = useState(true)
   const [openError, setOpenError] = useState(false)
-  const [continueBusy, setContinueBusy] = useState(false)
   const [preview, setPreview] = useState<ResultPreviewState>({ status: 'idle' })
   const [selectedPath, setSelectedPath] = useState<string>()
   const [openPaths, setOpenPaths] = useState<readonly string[]>([])
@@ -5748,14 +5758,6 @@ export function QuantSkillsResultPanel({
             const slash = normalized.lastIndexOf('/')
             loadPreview(slash > 0 ? normalized.slice(0, slash) : '.', 'files')
           }}>打开产物目录</button>
-        <button type="button" aria-label="携带产物到新会话" title="携带当前会话已确认的产物到新会话"
-          disabled={previewableFiles.length === 0 || continueBusy} onClick={() => {
-            setContinueBusy(true)
-            setContinueError(false)
-            void continueWithResults(previewableFiles.map(file => file.path))
-              .catch(() => { setContinueError(true) }).finally(() => { setContinueBusy(false) })
-          }}>携带产物到新会话</button>
-
             {revealFile !== undefined && <button type="button" disabled={selectedPath === undefined}
               onClick={() => { if (selectedPath) void revealFile(selectedPath).catch(() => { setOpenError(true) }) }}>在文件夹中显示</button>}
             {saveFileAs !== undefined && <button type="button" disabled={selectedPath === undefined}
@@ -5851,7 +5853,6 @@ export function QuantSkillsResultPanel({
                       </div>}
         {result.hasOlderHistory && tab === 'overview' && <p className={css.resultHint}>加载更早消息后，概览会继续更新。</p>}
         {openError && <p className={css.resultWarning} role="alert">无法使用宿主应用打开该路径，请确认文件仍然存在。</p>}
-        {continueError && <p className={css.resultWarning} role="alert">创建新会话失败，产物仍保留在当前会话，请重试。</p>}
       </div>
     </div>
   </aside>

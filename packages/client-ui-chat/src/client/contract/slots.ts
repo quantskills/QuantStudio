@@ -1,5 +1,5 @@
 /** Chat-owned Slot declarations and composed component props. */
-import type { RefObject } from 'react'
+import type { ReactNode, RefObject } from 'react'
 import type { MessageId } from '@deepseek-ai/dsh-llm/brand'
 import type { SessionId, SessionSeq } from '@deepseek-ai/dsh-session/types'
 import type { PendingSubmission } from '@deepseek-ai/dsh-api-session-controller/client'
@@ -145,6 +145,8 @@ export interface ChatFileMentions {
 export interface ConversationLabelOwnerProps {
   /** Native label used when an occupant does not change the surrounding experience. */
   defaultLabel: string
+  /** Complete native indicator for surfaces outside the occupant's application. */
+  defaultContent?: ReactNode
 }
 
 declare module '@deepseek-ai/cordis' {

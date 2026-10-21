@@ -63,6 +63,9 @@ jobs:
       - name: Build publishable output
         run: pnpm run build
 
+      - name: Verify public deliverables export from packed plugin and application archives
+        run: pnpm run verify:packed-deliverables
+
       - name: Test the complete candidate including migration, Team recovery and Trade
         run: pnpm exec vitest run
 

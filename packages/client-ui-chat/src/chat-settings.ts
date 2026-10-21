@@ -40,8 +40,8 @@ const TRANSCRIPT_VIEW_SETTING_VALUES = [
   ...TRANSCRIPT_VIEW_MODES, LEGACY_TRANSCRIPT_VIEW_MODE, LEGACY_EXPANDED_TRANSCRIPT_VIEW_MODE,
 ] as const
 
-/** Default work details for non-Desktop Web clients. */
-export const DEFAULT_TRANSCRIPT_VIEW_MODE: TranscriptViewMode = 'detailed'
+/** QS Web follows the native desktop grouping; explicit saved choices still win. */
+export const DEFAULT_TRANSCRIPT_VIEW_MODE: TranscriptViewMode = 'standard'
 
 /** Performance and usage detail levels accepted by user settings. */
 export const PERFORMANCE_USAGE_MODES = ['compact', 'detailed'] as const

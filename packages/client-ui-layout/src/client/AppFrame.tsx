@@ -256,7 +256,12 @@ export function AppFrame({
   const main = useMemo(() => (
     <MainPanel usePanelInfo={usePanelInfo} renderSlot={renderSlot} />
   ), [usePanelInfo, renderSlot])
-  const overlays = useMemo(() => renderSlot('shell.overlay', {}), [renderSlot])
+  const overlays = useMemo(() => renderSlot('shell.overlay', { rightbar: {
+    width: normal.rightbar,
+    shown: layoutInfo.rightbarShown,
+    fullscreen: layoutInfo.rightbarFullscreen,
+    exclusive: layoutInfo.detailsExclusive,
+  } }), [renderSlot, normal.rightbar, layoutInfo.rightbarShown, layoutInfo.rightbarFullscreen, layoutInfo.detailsExclusive])
   // Window-chrome seat over the main panels' top-left corner: only a fully
   // hidden sidebar column on macOS desktop leaves window chrome without a
   // home — the Windows zero-width collapse keeps its controls in the caption

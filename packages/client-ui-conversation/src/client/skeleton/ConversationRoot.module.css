@@ -7,18 +7,14 @@
   background: var(--dsw-alias-bg-base);
 }
 
-/* 76px with its rule: the height of the Sidebar's tab strip and header row
-   (ui-dockkit `.tabStrip` 38px + the pane header's 38px), so the two rules
-   meet at the column edge. The rows add up to it — 10px top inset, the 30px
-   title row, the tab strip's 10px margin, a 16px tab line, and its 9px bottom
-   inset — so no row below may grow past its figure. */
+/* Title, session actions and view switch share one compact header row. */
 .header {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   flex: none;
   box-sizing: border-box;
-  min-height: 76px;
-  padding: 10px 28px 0 20px;
+  min-height: 52px;
+  padding: 8px 28px 8px 20px;
   border-bottom: 0.5px solid var(--dsw-alias-border-l3);
 }
 
@@ -57,60 +53,10 @@
 :global([data-platform='darwin']) .headerLeading,
 :global([data-platform='darwin']) .headerActions,
 :global([data-platform='darwin']) .headerUtilities,
+:global([data-platform='darwin']) .tabs,
 :global([data-platform='darwin']) .headerCorner {
   -webkit-app-region: no-drag;
 }
-
-/* Functional controls remain available when the title bar is hidden. */
-.sessionControls {
-  display: flex;
-  flex: none;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 16px;
-  min-width: 0;
-  padding: 6px 16px;
-  border-bottom: 1px solid var(--dsw-alias-border-l2);
-}
-
-.sessionViews {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
-}
-
-.sessionViewTab {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: var(--dsw-alias-label-secondary);
-  font-size: 12px;
-  line-height: 18px;
-  cursor: pointer;
-}
-
-.sessionViewTab:hover,
-.sessionViewTab[aria-selected='true'] {
-  background: var(--dsw-alias-interactive-bg-hover);
-  color: var(--dsw-alias-state-business-primary);
-}
-
-.sessionViewTab:focus-visible {
-  outline: 2px solid var(--dsw-alias-state-business-primary);
-  outline-offset: 2px;
-}
-
-.sessionActions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-}
-
-.sessionActions:empty { display: none; }
 
 .titleRow {
   grid-column: 2;
@@ -239,42 +185,32 @@ button.crumb:hover {
   display: none;
 }
 
-/* figma Tab_Group 34:11441: 35px strip, gap 36, pad-left 8, tabs bottom-aligned.
-   Positioned above the header's own paint, so the active bar covers the rule. */
+/* Keep the view switch together while the session title yields space. */
 .tabs {
-  grid-column: 1 / -1;
   position: relative;
   z-index: 1;
   display: flex;
-  gap: 36px;
-  margin-top: 10px;
-  padding-left: 8px;
+  flex: none;
+  align-items: center;
+  gap: 2px;
+  margin-left: 12px;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--dsw-alias-interactive-bg-hover);
 }
 
-/* figma .Tab 34:11442: 13/16 text (figma wt510, rendered 500). The 2px bar
-   reaches 1px past the tab's box to end flush with the header's bottom edge,
-   sitting over the rule. */
 .tab {
   position: relative;
-  padding: 0 0 9px;
+  padding: 6px 10px;
   border: none;
+  border-radius: 6px;
   background: transparent;
   font-size: 13px;
   line-height: 16px;
   font-weight: 500;
   color: var(--dsw-alias-label-tertiary);
   cursor: pointer;
-}
-
-.tab::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: -1px;
-  left: 0;
-  height: 2px;
-  border-radius: 2px;
-  background: transparent;
+  white-space: nowrap;
 }
 
 /* Selected tab is blue, not ink: brand-primary resolves to neutral black in
@@ -282,10 +218,8 @@ button.crumb:hover {
    nearest semantic token that stays blue in both themes. */
 .tabActive {
   color: var(--dsw-alias-state-business-primary);
-}
-
-.tabActive::after {
-  background: var(--dsw-alias-state-business-primary);
+  background: var(--dsw-alias-bg-base);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
 }
 
 .viewArea {
@@ -607,36 +541,4 @@ button.crumb:hover {
 .root[data-phase='settling'] .composerSeat,
 .embeddedBody[data-content-phase='settling'] .composerSeat {
   visibility: hidden;
-}
-
-/* Compact QuantSkills chrome keeps the transcript readable on phones/tablets. */
-@media (max-width:840px) {
-  body[data-qs-mobile] .root {
-    --dsh-composer-side-clearance:8px;
-    --dsh-chat-content-width:100%;
-    --dsh-composer-text-max-height:min(160px,28dvh);
-    min-height:0;
-  }
-  body[data-qs-mobile] .header { padding:10px 12px 0;margin:6px 8px 0;border-radius:16px; }
-  body[data-qs-mobile] .titleRow { flex-wrap:wrap;gap:4px; }
-  body[data-qs-mobile] .titleCluster { flex-wrap:wrap;gap:6px; }
-  body[data-qs-mobile] .crumbs { flex:1 1 100%; }
-  body[data-qs-mobile] .crumb { max-width:min(260px,65vw);padding:4px 0; }
-  body[data-qs-mobile] .headerUtilities { margin-left:auto;gap:6px; }
-  body[data-qs-mobile] .tabs { gap:24px;overflow-x:auto;padding:0;margin-top:6px; }
-  body[data-qs-mobile] .tab { flex-shrink:0;min-height:38px;white-space:nowrap; }
-  body[data-qs-mobile] .widthHandle { display:none; }
-  body[data-qs-mobile] .scrollBody { overscroll-behavior-y:contain; }
-  body[data-qs-mobile] .composerSeat { padding-bottom:env(safe-area-inset-bottom,0px); }
-}
-
-@media(max-width:840px) {
-  body[data-qs-mobile] .composerSeat { --dsh-composer-text-max-height:min(160px,28dvh); }
-}
-@media(max-width:840px) and (max-height:540px) {
-  body[data-qs-mobile] .header { padding-top:4px; }
-  body[data-qs-mobile] .headerActions { display:none; }
-  body[data-qs-mobile] .crumbs { flex:1; }
-  body[data-qs-mobile] .titleCluster { flex-wrap:nowrap; }
-  body[data-qs-mobile] .tabs { margin-top:0; }
 }

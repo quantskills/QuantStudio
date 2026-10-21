@@ -325,7 +325,18 @@ window.__ModuleLoader__.load({
 				usePanelInfo,
 				renderSlot
 			}), [usePanelInfo, renderSlot]);
-			const overlays = (0, react.useMemo)(() => renderSlot("shell.overlay", {}), [renderSlot]);
+			const overlays = (0, react.useMemo)(() => renderSlot("shell.overlay", { rightbar: {
+				width: normal.rightbar,
+				shown: layoutInfo.rightbarShown,
+				fullscreen: layoutInfo.rightbarFullscreen,
+				exclusive: layoutInfo.detailsExclusive
+			} }), [
+				renderSlot,
+				normal.rightbar,
+				layoutInfo.rightbarShown,
+				layoutInfo.rightbarFullscreen,
+				layoutInfo.detailsExclusive
+			]);
 			const leading = (0, react.useMemo)(() => renderSlot("shell.leading", {}), [renderSlot]);
 			const leadingMounted = darwin && sidebarCollapsed;
 			return (0, react_jsx_runtime.jsxs)("div", {

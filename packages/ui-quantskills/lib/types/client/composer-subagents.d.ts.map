@@ -1,1 +1,0 @@
-{"version":3,"file":"composer-subagents.d.ts","sourceRoot":"","sources":["../../../src/client/composer-subagents.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,SAAS,EAAiB,MAAM,gDAAgD,CAAA;AAC9F,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,6CAA6C,CAAA;AA6I9E,kFAAkF;AAClF,wBAAgB,wBAAwB,CAAC,YAAY,EAAE,QAAQ,EAAE,UAAU,EAAE,SAAS,EAAE,UAAU,EAAE,WAAW,GAAG,MAAM,IAAI,CAsC3H"}

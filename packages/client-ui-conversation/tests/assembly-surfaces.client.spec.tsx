@@ -242,11 +242,10 @@ describe('prompt rejection through the assembled composer', () => {
 })
 
 describe('title projection across assembled surfaces', () => {
-  it('one summary update re-labels the QS composer lineage seat', async () => {
+  it('one summary update re-labels the current-session crumb', async () => {
     const runtime = await bench()
-    runtime.slots.register({ name: 'conversation.session.header.lineage' }, ({ displayTitle }: { displayTitle: string }) => <span data-testid="lineage-title">{displayTitle}</span>)
     const view = runtime.renderRoot()
-    const hierarchy = view.container.querySelector('[data-composer-subagents]') as HTMLElement
+    const hierarchy = view.getByRole('navigation', { name: '会话层级' })
     expect(within(hierarchy).getByText('S').tagName).toBe('SPAN')
 
     await runtime.sessions.updateSummary(SID, { displayTitle: '修订标题', title: '修订标题' })

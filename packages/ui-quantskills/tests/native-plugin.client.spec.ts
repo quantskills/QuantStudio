@@ -98,6 +98,9 @@ it.each([
     settingsScope: { bind: () => ({ getSnapshot: () => ({ status: 'loading', writable: false }), subscribe: () => () => {} }) },
     uiWorkspace: { openSession: opened },
     sessions: {
+      refresh: () => new Promise<void>(resolve => { if (ready) resolve(); else listeners.add(resolve) }),
+      refreshProjections: async () => {},
+      retain: () => ({ ready: Promise.resolve({ session: { rename } }), release: vi.fn() }),
       binding: () => ready ? { session: { rename } } : undefined,
       list: {
         getSnapshot: () => ({ byId: ready ? { 'contest-new': { sessionId: 'contest-new', retainedBy: { mainView: false }, projectionValues: { quantSkillsPlainSession: { purpose } } } } : {} }),
@@ -311,6 +314,9 @@ describe('QuantSkills native application composition', () => {
       },
       uiWorkspace: { openSession },
       sessions: {
+        refresh: async () => {},
+        refreshProjections: async () => {},
+        retain: () => ({ ready: Promise.resolve({ session: { prompt } }), release: vi.fn() }),
         binding: () => ({ session: { prompt } }),
         list: {
           getSnapshot: () => ({ byId: { 'session-1': sessionSummary } }),
