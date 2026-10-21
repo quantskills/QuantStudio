@@ -1,0 +1,459 @@
+{
+  "date": "2026-10-21",
+  "baselineCommit": "78a93e7d6cd2463673109aada29bf0451bc81351",
+  "priorCoreCommit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+  "comparison": "Same DSH 0.2.1-rc.2 / PandaAI kimi-k3 model / high reasoning: full Skill context versus opt-in progressive context. Not an old-core versus new-core model benchmark.",
+  "accounting": "All prompt + completion tokens for every tool continuation, member and lead; cached input is still counted. Costs use public upper estimates, not an account invoice.",
+  "metrics": {
+    "quality": "Exact expected JSON, fields, arithmetic, missing-data rules and instruction-only verification markers; both member results must survive the lead merge.",
+    "effectiveness": "At least 30% fewer total tokens in multi-skill, dynamic-agent and controlled team samples; no failed expected outputs.",
+    "fallback": "Single Skill and fixed all-Skill workflows use identical prompts and request counts in both modes; completion length may vary.",
+    "limitations": [
+      "Two repetitions per mode/case, reversed run order; not statistical proof of non-inferiority.",
+      "Three synthetic audit Skills plus six actual bundled Skill bodies. No live market or trading operations.",
+      "Team members and lead use real model calls, but the evaluation harness fixes the delegation schedule. Autonomous team planning and communication efficiency are not measured.",
+      "No hours-long task, compaction endurance, restart, subjective research quality, other model or pricing-tier generalization.",
+      "Fixed-workflow name mapping was tightened after the full suite; fixed-agent was rerun on the final source. Other scenarios have unchanged rendered prompts and retain the earlier exact source hashes."
+    ]
+  },
+  "results": [
+    {
+      "id": "single-skill",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 1508,
+        "outputTokens": 300,
+        "totalTokens": 1808,
+        "requests": 2,
+        "costUpperEstimateCny": 0.013198399999999999,
+        "meanElapsedMs": 6167,
+        "cachedPromptTokens": 512
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 1508,
+        "outputTokens": 235,
+        "totalTokens": 1743,
+        "requests": 2,
+        "costUpperEstimateCny": 0.0127239,
+        "meanElapsedMs": 7581.5,
+        "cachedPromptTokens": 1024
+      },
+      "totalTokenReductionPercent": 3.5951327433628277,
+      "promptIdenticalPerRepetition": true,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "6aa8cbd173902bdf593bb2e46834be74ffb1dd166bd4a88b56015051314e196f",
+        "packages/quantskills-session/src/index.ts": "320f9c638b761a576b97f003da7d7429ac2828f50342704f15f950857780bd4f",
+        "scripts/evaluate-skill-context.mjs": "06ed82ade7f1b6d271052a57001a8d4a4861a97813ce3f2da1541b63dff33ab1"
+      }
+    },
+    {
+      "id": "multi-skill",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 25158,
+        "outputTokens": 622,
+        "totalTokens": 25780,
+        "requests": 2,
+        "costUpperEstimateCny": 0.188194,
+        "meanElapsedMs": 12689,
+        "cachedPromptTokens": 13056
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 6576,
+        "outputTokens": 377,
+        "totalTokens": 6953,
+        "requests": 4,
+        "costUpperEstimateCny": 0.050756899999999994,
+        "meanElapsedMs": 8344,
+        "cachedPromptTokens": 3840
+      },
+      "totalTokenReductionPercent": 73.02948021722266,
+      "promptIdenticalPerRepetition": false,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "6aa8cbd173902bdf593bb2e46834be74ffb1dd166bd4a88b56015051314e196f",
+        "packages/quantskills-session/src/index.ts": "320f9c638b761a576b97f003da7d7429ac2828f50342704f15f950857780bd4f",
+        "scripts/evaluate-skill-context.mjs": "06ed82ade7f1b6d271052a57001a8d4a4861a97813ce3f2da1541b63dff33ab1"
+      }
+    },
+    {
+      "id": "multi-skill-missing-fee",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 25158,
+        "outputTokens": 655,
+        "totalTokens": 25813,
+        "requests": 2,
+        "costUpperEstimateCny": 0.18843490000000002,
+        "meanElapsedMs": 11567,
+        "cachedPromptTokens": 24832
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 6624,
+        "outputTokens": 546,
+        "totalTokens": 7170,
+        "requests": 4,
+        "costUpperEstimateCny": 0.052341,
+        "meanElapsedMs": 13401,
+        "cachedPromptTokens": 5120
+      },
+      "totalTokenReductionPercent": 72.22329833804673,
+      "promptIdenticalPerRepetition": false,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "6aa8cbd173902bdf593bb2e46834be74ffb1dd166bd4a88b56015051314e196f",
+        "packages/quantskills-session/src/index.ts": "320f9c638b761a576b97f003da7d7429ac2828f50342704f15f950857780bd4f",
+        "scripts/evaluate-skill-context.mjs": "06ed82ade7f1b6d271052a57001a8d4a4861a97813ce3f2da1541b63dff33ab1"
+      }
+    },
+    {
+      "id": "dynamic-agent",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 25876,
+        "outputTokens": 917,
+        "totalTokens": 26793,
+        "requests": 2,
+        "costUpperEstimateCny": 0.1955889,
+        "meanElapsedMs": 16856.5,
+        "cachedPromptTokens": 12800
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 7027,
+        "outputTokens": 516,
+        "totalTokens": 7543,
+        "requests": 4,
+        "costUpperEstimateCny": 0.05506389999999999,
+        "meanElapsedMs": 16581,
+        "cachedPromptTokens": 3840
+      },
+      "totalTokenReductionPercent": 71.84712424887097,
+      "promptIdenticalPerRepetition": false,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "6aa8cbd173902bdf593bb2e46834be74ffb1dd166bd4a88b56015051314e196f",
+        "packages/quantskills-session/src/index.ts": "320f9c638b761a576b97f003da7d7429ac2828f50342704f15f950857780bd4f",
+        "scripts/evaluate-skill-context.mjs": "06ed82ade7f1b6d271052a57001a8d4a4861a97813ce3f2da1541b63dff33ab1"
+      }
+    },
+    {
+      "id": "fixed-agent",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 2378,
+        "outputTokens": 737,
+        "totalTokens": 3115,
+        "requests": 2,
+        "costUpperEstimateCny": 0.022739500000000003,
+        "meanElapsedMs": 11544.5,
+        "cachedPromptTokens": 1024
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 2378,
+        "outputTokens": 1034,
+        "totalTokens": 3412,
+        "requests": 2,
+        "costUpperEstimateCny": 0.024907600000000002,
+        "meanElapsedMs": 18179,
+        "cachedPromptTokens": 2048
+      },
+      "totalTokenReductionPercent": -9.534510433386846,
+      "promptIdenticalPerRepetition": true,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "11fbdac1c04531905bdbd0e8441d2c8addc60ac8f52eec00634065d91ba414e9",
+        "packages/quantskills-session/src/index.ts": "1b87b4619a1d91617c1b6f507a9ea98e68cf6b5df059cb3359ed72a159be6779",
+        "scripts/evaluate-skill-context.mjs": "d031b79230ddfa15433bf553454a4ed98c00a566401398548b2849b98e98914f"
+      }
+    },
+    {
+      "id": "agent-team",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 34168,
+        "outputTokens": 1091,
+        "totalTokens": 35259,
+        "requests": 6,
+        "costUpperEstimateCny": 0.2573907,
+        "meanElapsedMs": 26313.5,
+        "cachedPromptTokens": 16896
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 15591,
+        "outputTokens": 1070,
+        "totalTokens": 16661,
+        "requests": 12,
+        "costUpperEstimateCny": 0.12162529999999999,
+        "meanElapsedMs": 31764.5,
+        "cachedPromptTokens": 8448
+      },
+      "totalTokenReductionPercent": 52.74681641566692,
+      "promptIdenticalPerRepetition": false,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "6aa8cbd173902bdf593bb2e46834be74ffb1dd166bd4a88b56015051314e196f",
+        "packages/quantskills-session/src/index.ts": "320f9c638b761a576b97f003da7d7429ac2828f50342704f15f950857780bd4f",
+        "scripts/evaluate-skill-context.mjs": "06ed82ade7f1b6d271052a57001a8d4a4861a97813ce3f2da1541b63dff33ab1"
+      }
+    }
+  ],
+  "prototype": [
+    {
+      "id": "single-skill",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 1508,
+        "outputTokens": 221,
+        "totalTokens": 1729,
+        "requests": 2,
+        "costUpperEstimateCny": 0.0126217,
+        "meanElapsedMs": 6409,
+        "cachedPromptTokens": 512
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 3740,
+        "outputTokens": 352,
+        "totalTokens": 4092,
+        "requests": 4,
+        "costUpperEstimateCny": 0.029871599999999998,
+        "meanElapsedMs": 9403.5,
+        "cachedPromptTokens": 1536
+      },
+      "totalTokenReductionPercent": -136.66859456333142,
+      "promptIdenticalPerRepetition": false,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "b54bc0f23e7e83b64b20056af2cc8dae3b04ab22d8766d89c99bb27c216f4fd2",
+        "packages/quantskills-session/src/index.ts": "0a97795ae832d51d0cdafa68940273fd969ebcde59dbd7e61e2903e37c47e66c",
+        "scripts/evaluate-skill-context.mjs": "cc145644e505ef12c34ba913ec0be017a801be702cc37af8df66297d8fbac00e"
+      }
+    },
+    {
+      "id": "multi-skill",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 25158,
+        "outputTokens": 821,
+        "totalTokens": 25979,
+        "requests": 2,
+        "costUpperEstimateCny": 0.1896467,
+        "meanElapsedMs": 13585.5,
+        "cachedPromptTokens": 13056
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 6585,
+        "outputTokens": 432,
+        "totalTokens": 7017,
+        "requests": 4,
+        "costUpperEstimateCny": 0.051224099999999995,
+        "meanElapsedMs": 11368.5,
+        "cachedPromptTokens": 4096
+      },
+      "totalTokenReductionPercent": 72.98972246814735,
+      "promptIdenticalPerRepetition": false,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "b54bc0f23e7e83b64b20056af2cc8dae3b04ab22d8766d89c99bb27c216f4fd2",
+        "packages/quantskills-session/src/index.ts": "0a97795ae832d51d0cdafa68940273fd969ebcde59dbd7e61e2903e37c47e66c",
+        "scripts/evaluate-skill-context.mjs": "cc145644e505ef12c34ba913ec0be017a801be702cc37af8df66297d8fbac00e"
+      }
+    },
+    {
+      "id": "multi-skill-missing-fee",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 25158,
+        "outputTokens": 1249,
+        "totalTokens": 26407,
+        "requests": 2,
+        "costUpperEstimateCny": 0.19277109999999997,
+        "meanElapsedMs": 15650,
+        "cachedPromptTokens": 24832
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 6594,
+        "outputTokens": 426,
+        "totalTokens": 7020,
+        "requests": 4,
+        "costUpperEstimateCny": 0.051246,
+        "meanElapsedMs": 10566.5,
+        "cachedPromptTokens": 5120
+      },
+      "totalTokenReductionPercent": 73.41613965993865,
+      "promptIdenticalPerRepetition": false,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "b54bc0f23e7e83b64b20056af2cc8dae3b04ab22d8766d89c99bb27c216f4fd2",
+        "packages/quantskills-session/src/index.ts": "0a97795ae832d51d0cdafa68940273fd969ebcde59dbd7e61e2903e37c47e66c",
+        "scripts/evaluate-skill-context.mjs": "cc145644e505ef12c34ba913ec0be017a801be702cc37af8df66297d8fbac00e"
+      }
+    },
+    {
+      "id": "dynamic-agent",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 25876,
+        "outputTokens": 843,
+        "totalTokens": 26719,
+        "requests": 2,
+        "costUpperEstimateCny": 0.1950487,
+        "meanElapsedMs": 17424.5,
+        "cachedPromptTokens": 12800
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 6990,
+        "outputTokens": 438,
+        "totalTokens": 7428,
+        "requests": 4,
+        "costUpperEstimateCny": 0.05422439999999999,
+        "meanElapsedMs": 10683,
+        "cachedPromptTokens": 3840
+      },
+      "totalTokenReductionPercent": 72.19955836670535,
+      "promptIdenticalPerRepetition": false,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "b54bc0f23e7e83b64b20056af2cc8dae3b04ab22d8766d89c99bb27c216f4fd2",
+        "packages/quantskills-session/src/index.ts": "0a97795ae832d51d0cdafa68940273fd969ebcde59dbd7e61e2903e37c47e66c",
+        "scripts/evaluate-skill-context.mjs": "cc145644e505ef12c34ba913ec0be017a801be702cc37af8df66297d8fbac00e"
+      }
+    },
+    {
+      "id": "fixed-agent",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 2220,
+        "outputTokens": 922,
+        "totalTokens": 3142,
+        "requests": 2,
+        "costUpperEstimateCny": 0.022936599999999998,
+        "meanElapsedMs": 12834,
+        "cachedPromptTokens": 1024
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 4828,
+        "outputTokens": 482,
+        "totalTokens": 5310,
+        "requests": 4,
+        "costUpperEstimateCny": 0.03876299999999999,
+        "meanElapsedMs": 8710,
+        "cachedPromptTokens": 1536
+      },
+      "totalTokenReductionPercent": -69.00063653723743,
+      "promptIdenticalPerRepetition": false,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "b54bc0f23e7e83b64b20056af2cc8dae3b04ab22d8766d89c99bb27c216f4fd2",
+        "packages/quantskills-session/src/index.ts": "0a97795ae832d51d0cdafa68940273fd969ebcde59dbd7e61e2903e37c47e66c",
+        "scripts/evaluate-skill-context.mjs": "cc145644e505ef12c34ba913ec0be017a801be702cc37af8df66297d8fbac00e"
+      }
+    },
+    {
+      "id": "agent-team",
+      "full": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 34168,
+        "outputTokens": 1858,
+        "totalTokens": 36026,
+        "requests": 6,
+        "costUpperEstimateCny": 0.26298979999999994,
+        "meanElapsedMs": 29455,
+        "cachedPromptTokens": 16896
+      },
+      "progressive": {
+        "runs": 2,
+        "passed": 2,
+        "promptTokens": 15647,
+        "outputTokens": 1187,
+        "totalTokens": 16834,
+        "requests": 12,
+        "costUpperEstimateCny": 0.12288819999999999,
+        "meanElapsedMs": 31711.5,
+        "cachedPromptTokens": 8448
+      },
+      "totalTokenReductionPercent": 53.272636429245544,
+      "promptIdenticalPerRepetition": false,
+      "measuredSourceHashes": {
+        "packages/quantskills-session/src/skill-context.ts": "b54bc0f23e7e83b64b20056af2cc8dae3b04ab22d8766d89c99bb27c216f4fd2",
+        "packages/quantskills-session/src/index.ts": "0a97795ae832d51d0cdafa68940273fd969ebcde59dbd7e61e2903e37c47e66c",
+        "scripts/evaluate-skill-context.mjs": "cc145644e505ef12c34ba913ec0be017a801be702cc37af8df66297d8fbac00e"
+      }
+    }
+  ],
+  "budget": {
+    "authorizedCny": 10,
+    "stopBeforeReservationCny": 9,
+    "spentUpperEstimateCny": 2.4527854000000002,
+    "unresolvedReservationCny": 0,
+    "requests": 96,
+    "totalEvaluationOutputs": 52,
+    "pricing": {
+      "source": "https://llmx.pandaaiquant.com/api/pricing",
+      "statusSource": "https://llmx.pandaaiquant.com/api/status",
+      "version": "a42d372ccf0b5dd13ecf71203521f9d2",
+      "modelRatio": 0.5,
+      "completionRatio": 1,
+      "maximumPublishedGroupRatio": 1,
+      "quotaPerUnit": 500000,
+      "exchange": 7.3,
+      "perMillionInputCny": 7.3,
+      "perMillionOutputCny": 7.3,
+      "costMeaning": "Upper estimate at public rates, counts all prompt tokens as uncached; not an account invoice."
+    }
+  },
+  "tests": {
+    "check": "passed",
+    "fullSuite": {
+      "passed": 1477,
+      "skipped": 1,
+      "reason": "POSIX-specific test on Windows"
+    },
+    "targetedSessionAndTeam": {
+      "passed": 93
+    },
+    "fullBuild": "passed",
+    "environment": "Windows / Node 22.23.2 / pnpm 11.7.0"
+  },
+  "rollout": {
+    "default": "full",
+    "candidate": "progressive (experimental, selective fallback)",
+    "userProfileChanged": false,
+    "userHostRestarted": false,
+    "mainMerged": false,
+    "liveTrading": false
+  },
+  "finalSourceHashes": {
+    "packages/quantskills-session/src/index.ts": "1b87b4619a1d91617c1b6f507a9ea98e68cf6b5df059cb3359ed72a159be6779",
+    "packages/quantskills-session/src/skill-context.ts": "11fbdac1c04531905bdbd0e8441d2c8addc60ac8f52eec00634065d91ba414e9",
+    "packages/quantskills-session/tests/session.spec.ts": "03f1066adca522eaa8e2c01cdbfdd378813a7a8ad28ce838e673366c3ba305ec",
+    "scripts/evaluate-skill-context.mjs": "d031b79230ddfa15433bf553454a4ed98c00a566401398548b2849b98e98914f"
+  },
+  "buildHashes": {
+    "packages/quantskills-session/lib/index.js": "1794e3da453b1ebd70819e9ebf5de153160a1821e411a5219df00ba7eda62dfc",
+    "packages/quantskills-session/lib/types/skill-context.js": "57a35482520f80d521f1f5c38f1b92d75d35a71eb079aa198e2e10c7b3914ec4"
+  }
+}

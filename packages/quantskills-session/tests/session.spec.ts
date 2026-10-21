@@ -52,6 +52,7 @@ import QuantSkillsSessionService, {
   foldQuantSkillsAuthoringStarted,
   foldQuantSkillsResidentSkills,
 } from '../src/index.ts'
+import { ATTACHED_SKILL_READER, type SkillContextMode } from '../src/skill-context.ts'
 import type { ContestService } from '../src/contest-service.ts'
 import {
   QUANTSKILLS_SESSION_EVENT_TYPES,
@@ -254,6 +255,7 @@ interface Harness {
 }
 
 async function harness(options: {
+  readonly skillContextMode?: SkillContextMode
   readonly liveTrading?: boolean
   readonly maxSessionFileBytes?: number
   readonly maxResultArchiveBytes?: number
@@ -620,6 +622,7 @@ async function harness(options: {
     },
   } as never)
   await ctx.plugin(QuantSkillsSessionService, {
+    skillContextMode: options.skillContextMode,
     dshHome: root,
     liveTradingToolNames: options.liveTrading === true ? ['submit_live_order'] : [],
     ...(options.maxSessionFileBytes === undefined ? {} : {
@@ -2030,6 +2033,219 @@ describe('QuantSkills result previews', () => {
   })
 })
 
+describe('QuantSkills progressive attached Skills', () => {
+  const alpha = `${assetId}@${commitV1}` as QuantSkillsInstalledVersionId
+  const beta = `${secondAssetId}@${commitV1}` as QuantSkillsInstalledVersionId
+  const body = 'Required rule: preserve {{literal}} syntax and validate every row.\n'.repeat(80) + 'LAST_REQUIRED_CHECK'
+
+  async function progressiveFixture() {
+    const fixture = await harness({ skillContextMode: 'progressive' })
+    for (const [id, asset] of [[alpha, assetId], [beta, secondAssetId]] as const) {
+      const item = resolved(commitV1, digestV1, body + asset, asset, 'same-skill-name')
+      fixture.versions.set(id, { ...item, definition: { ...item.definition, description: `Task instructions for ${asset}` } })
+    }
+    return fixture
+  }
+
+  it('keeps the compatibility default inline and does not register the extra loader', async () => {
+    const fixture = await harness()
+    const sessionId = await createBound(fixture, 'full-compatibility')
+    const agent = fixture.ctx.agents.get(sessionId)!
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain('version one')
+    expect(fixture.ctx.tools.get(ATTACHED_SKILL_READER, agent)).toBeUndefined()
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('batches exact versions, disambiguates equal names, and preserves the complete literal body', async () => {
+    const fixture = await progressiveFixture()
+    const sessionId = await createBound(fixture, 'progressive-batch')
+    const single = fixture.ctx.agents.get(sessionId)!
+    expect(fixture.ctx.tools.get(ATTACHED_SKILL_READER, single)).toBeUndefined()
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: single }))).toContain(body)
+    await fixture.ctx.quantSkillsSessions.residentSkillAttach({ sessionId, versionId: beta })
+    const agent = fixture.ctx.agents.get(sessionId)!
+    const prompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
+    expect(prompt).toContain(alpha)
+    expect(prompt).toContain(beta)
+    expect(prompt).not.toContain('LAST_REQUIRED_CHECK')
+    const result = await fixture.ctx.tools.execute({ callId: ToolCallId('batch-read'), name: ATTACHED_SKILL_READER,
+      arguments: { asset_ids: [assetId, secondAssetId, assetId] }, agent, signal: new AbortController().signal })
+    expect(result.isError).toBe(false)
+    const text = result.content.filter(item => item.type === 'text').map(item => item.text).join('\n')
+    expect(text).toContain(body + assetId)
+    expect(text).toContain(body + secondAssetId)
+    expect(text.split('Exact attached version:')).toHaveLength(3)
+    expect(text).toContain('/versions/' + commitV1)
+    for (const ids of [['foreign-skill'], [assetId, 'foreign-skill'], []]) {
+      const rejected = await fixture.ctx.tools.execute({ callId: ToolCallId('reject-batch-' + ids.join('-')), name: ATTACHED_SKILL_READER,
+        arguments: { asset_ids: ids }, agent, signal: new AbortController().signal })
+      expect(rejected.isError).toBe(true)
+      expect(JSON.stringify(rejected.content)).not.toContain('LAST_REQUIRED_CHECK')
+    }
+    expect(prompt).toContain('After context compaction, reload')
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('rejects detached and foreign attachments, then restores the saved bindings on resume', async () => {
+    const fixture = await progressiveFixture()
+    const sessionId = await createBound(fixture, 'progressive-resume')
+    await fixture.ctx.quantSkillsSessions.residentSkillAttach({ sessionId, versionId: beta })
+    await fixture.ctx.quantSkillsSessions.residentSkillDetach({ sessionId, assetId })
+    await fixture.handles.get(sessionId)!.dispose()
+    await fixture.ctx.quantSkillsSessions.create({ sessionId, versionId: alpha })
+    const agent = fixture.ctx.agents.get(sessionId)!
+    expect(foldQuantSkillsResidentSkills(agent.session.snapshotEvents()).map(item => item.versionId)).toEqual([beta])
+    for (const ids of [[assetId], ['foreign-skill'], [secondAssetId, assetId], []]) {
+      const result = await fixture.ctx.tools.execute({ callId: ToolCallId('reject-' + ids.join('-')), name: ATTACHED_SKILL_READER,
+        arguments: { asset_ids: ids }, agent, signal: new AbortController().signal })
+      expect(result.isError).toBe(true)
+      expect(JSON.stringify(result.content)).not.toContain('LAST_REQUIRED_CHECK')
+    }
+    const prompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
+    expect(prompt).toContain(body + secondAssetId)
+    expect(prompt).not.toContain(body + assetId)
+    expect(fixture.ctx.tools.get(ATTACHED_SKILL_READER, agent)).toBeUndefined()
+    // Adding a second Skill again must restore the scoped loader, not a stale disposed one.
+    await fixture.ctx.quantSkillsSessions.residentSkillAttach({ sessionId, versionId: alpha })
+    expect(fixture.ctx.tools.get(ATTACHED_SKILL_READER, agent)).toBeDefined()
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).not.toContain('LAST_REQUIRED_CHECK')
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('preserves explicit-only instructions inline and refuses indirect model invocation', async () => {
+    const fixture = await progressiveFixture()
+    const item = fixture.versions.get(alpha)!
+    fixture.versions.set(alpha, { ...item, definition: { ...item.definition, invocation: { modelInvocable: false, userInvocable: true } } })
+    const sessionId = await createBound(fixture, 'progressive-explicit-only')
+    const agent = fixture.ctx.agents.get(sessionId)!
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain(body)
+    const result = await fixture.ctx.tools.execute({ callId: ToolCallId('explicit-only'), name: ATTACHED_SKILL_READER,
+      arguments: { asset_ids: [assetId] }, agent, signal: new AbortController().signal })
+    expect(result.isError).toBe(true)
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('keeps small multi-Skill compositions inline without a loader round trip', async () => {
+    const fixture = await harness({ skillContextMode: 'progressive' })
+    const sessionId = await createBound(fixture, 'small-multi-inline')
+    await fixture.ctx.quantSkillsSessions.residentSkillAttach({ sessionId, versionId: beta })
+    const agent = fixture.ctx.agents.get(sessionId)!
+    const prompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
+    expect(prompt).toContain('version one')
+    expect(prompt).toContain('beta version')
+    expect(fixture.ctx.tools.get(ATTACHED_SKILL_READER, agent)).toBeUndefined()
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('retains full instructions when another plugin owns the loader name', async () => {
+    const fixture = await progressiveFixture()
+    const other = defineTool({ name: ATTACHED_SKILL_READER, description: 'Unrelated tool', parameters: {},
+      output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] }, execute: () => 'unrelated' })
+    fixture.ctx.tools.register(other)
+    const sessionId = await createBound(fixture, 'loader-collision')
+    await fixture.ctx.quantSkillsSessions.residentSkillAttach({ sessionId, versionId: beta })
+    const agent = fixture.ctx.agents.get(sessionId)!
+    const prompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
+    expect(prompt).toContain(body + assetId)
+    expect(prompt).toContain(body + secondAssetId)
+    expect(prompt).not.toContain('instructions available on demand')
+    expect(fixture.ctx.tools.get(ATTACHED_SKILL_READER, agent)).toBe(other)
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('denies inherited readers even when a generic child knows a parent attachment id', async () => {
+    const fixture = await progressiveFixture()
+    const sessionId = await createBound(fixture, 'parent-skill-owner')
+    await fixture.ctx.quantSkillsSessions.residentSkillAttach({ sessionId, versionId: beta })
+    const parent = fixture.ctx.agents.get(sessionId)!
+    const child = { id: SessionId('generic-child'), status: 'idle' } as Agent
+    const scope = createScope(parent.ctx, child)
+    Object.assign(child, { ctx: scope.ctx.extend({ agent: child }) })
+    const result = await fixture.ctx.tools.execute({ callId: ToolCallId('inherited-reader'), name: ATTACHED_SKILL_READER,
+      arguments: { asset_ids: [assetId] }, agent: child, signal: new AbortController().signal })
+    expect(result.isError).toBe(true)
+    expect(JSON.stringify(result.content)).not.toContain('LAST_REQUIRED_CHECK')
+    await scope.dispose()
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('restores inline instructions and removes the loader when attachment persistence fails', async () => {
+    const fixture = await progressiveFixture()
+    const sessionId = await createBound(fixture, 'attach-rollback')
+    const agent = fixture.ctx.agents.get(sessionId)!
+    const append = vi.spyOn(agent.session, 'append').mockImplementationOnce(() => { throw new Error('disk unavailable') })
+    await expect(fixture.ctx.quantSkillsSessions.residentSkillAttach({ sessionId, versionId: beta })).rejects.toThrow('disk unavailable')
+    append.mockRestore()
+    expect(foldQuantSkillsResidentSkills(agent.session.snapshotEvents()).map(item => item.versionId)).toEqual([alpha])
+    expect(fixture.ctx.tools.get(ATTACHED_SKILL_READER, agent)).toBeUndefined()
+    expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))).toContain(body + assetId)
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('retains fixed workflow order and all prerequisite requirements without changing saved Agent settings', async () => {
+    const fixture = await progressiveFixture()
+    const second = fixture.versions.get(beta)!
+    fixture.versions.set(beta, { ...second, definition: { ...second.definition, name: secondAssetId } })
+    const service = fixture.ctx.quantSkillsSessions
+    const definition = await service.agentCreate({ name: 'Fixed evaluator', role: 'Validate before reporting.',
+      mode: 'fixed', versionIds: [beta, alpha], permission: 'read-only' })
+    const sessionId = SessionId('progressive-fixed')
+    await service.agentSessionCreate({ sessionId, agentId: definition.agentId, expectedRevision: definition.revision })
+    const agent = fixture.ctx.agents.get(sessionId)!
+    const prompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
+    expect(fixture.ctx.tools.get(ATTACHED_SKILL_READER, agent)).toBeUndefined()
+    expect(prompt).toContain(body + assetId)
+    expect(prompt).toContain(body + secondAssetId)
+    expect(prompt).toContain('Preserve all prerequisites, validation and output requirements.')
+    expect(prompt).toContain(`Attached Skill workflow order (asset_ids): ${JSON.stringify([secondAssetId, assetId])}`)
+    expect(prompt).toContain(`Skill names by asset_id: ${JSON.stringify([{ asset_id: secondAssetId, name: secondAssetId }, { asset_id: assetId, name: 'same-skill-name' }])}`)
+    expect(foldQuantSkillsAgentSession(agent.session.snapshotEvents())).toEqual(definition)
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it('loads only each saved Team role\'s own large Skill set through its scoped reader', async () => {
+    const fixture = await progressiveFixture()
+    const ids = [assetId, secondAssetId, 'skill-member-c', 'skill-member-d'] as QuantSkillsAssetId[]
+    for (const id of ids) {
+      const item = resolved(commitV1, digestV1, body + id, id, id)
+      fixture.versions.set(`${id}@${commitV1}` as QuantSkillsInstalledVersionId,
+        { ...item, definition: { ...item.definition, description: `Validate inputs for ${id}` } })
+    }
+    const service = fixture.ctx.quantSkillsSessions
+    const make = (name: string, assets: QuantSkillsAssetId[]) => service.agentCreate({ name, role: name,
+      mode: 'dynamic', permission: 'read-only', versionIds: assets.map(id => `${id}@${commitV1}` as QuantSkillsInstalledVersionId) })
+    const lead = await make('Lead', ids.slice(0, 2)), member = await make('Member', ids.slice(2))
+    const team = await service.agentTeamCreate({ name: 'Scoped reader team', description: 'Validate exact member inputs',
+      leadAgentId: lead.agentId, leadAgentRevision: lead.revision, leadModel: { kind: 'default' },
+      members: [{ name: 'validator', agentId: member.agentId, agentRevision: member.revision, context: 'fresh', model: { kind: 'default' } }] })
+    const sessionId = SessionId('large-skill-team')
+    await service.agentTeamSessionCreate({ sessionId, teamId: team.teamId, expectedRevision: team.revision })
+    const root = fixture.ctx.agents.get(sessionId)!
+    const activation = await fixture.ctx.tools.execute({ callId: ToolCallId('activate-large-member'), name: 'activate_team_member',
+      arguments: { member: 'validator', task: 'Check the provided evidence.' }, agent: root, signal: new AbortController().signal })
+    expect(activation.isError).toBe(false)
+    const text = activation.content.find(item => item.type === 'text')
+    if (text?.type !== 'text') throw new Error('Missing member activation result')
+    const child = fixture.ctx.agents.get(SessionId(JSON.parse(text.text).sessionId))!
+    for (const [agent, own, foreign] of [[root, ids[0]!, ids[2]!], [child, ids[2]!, ids[0]!]] as const) {
+      const prompt = renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: agent }))
+      expect(prompt).toContain('instructions available on demand')
+      expect(prompt).not.toContain('LAST_REQUIRED_CHECK')
+      const loaded = await fixture.ctx.tools.execute({ callId: ToolCallId('load-' + own), name: ATTACHED_SKILL_READER,
+        arguments: { asset_ids: [own] }, agent, signal: new AbortController().signal })
+      expect(loaded.isError).toBe(false)
+      expect(loaded.content.filter(item => item.type === 'text').map(item => item.text).join('')).toContain(body + own)
+      const rejected = await fixture.ctx.tools.execute({ callId: ToolCallId('foreign-' + foreign), name: ATTACHED_SKILL_READER,
+        arguments: { asset_ids: [foreign] }, agent, signal: new AbortController().signal })
+      expect(rejected.isError).toBe(true)
+      expect(JSON.stringify(rejected.content)).not.toContain('LAST_REQUIRED_CHECK')
+    }
+    expect(foldQuantSkillsAgentTeamSession(root.session.snapshotEvents())).toEqual(team)
+    expect(foldQuantSkillsAgentTeamMemberSession(child.session.snapshotEvents())?.agent).toEqual(member)
+    await fixture.ctx.fiber.dispose()
+  })
+})
+
 describe('QuantSkills live-trading approval', () => {
   it('asks again for every configured live-order call and executes only one freshly granted call', async () => {
     const fixture = await harness({ liveTrading: true })
@@ -2812,8 +3028,8 @@ describe('QuantSkills Agent Teams', () => {
     await fixture.ctx.fiber.dispose()
   })
 
-  it('runs a Team Lead, hot-starts only declared members, and restores exact member composition', async () => {
-    const fixture = await harness()
+  it.each(['full', 'progressive'] as const)('runs a Team Lead, hot-starts only declared members, and restores exact member composition (%s)', async (skillContextMode) => {
+    const fixture = await harness({ skillContextMode })
     const leadRole = '拆分 {{task}} 并保留 {{lead_note}}，等待关键成员完成后汇总。'
     const memberRole = '独立验证 {{#signal}}信号{{/signal}} 并向 Lead 报告。'
     const teamDescription = 'Lead 协调 {{team_goal}} 与一个独立验证成员完成并行研究。'
@@ -2914,6 +3130,12 @@ describe('QuantSkills Agent Teams', () => {
     expect(childPrompt).toContain('Team member "signal-validator"')
     expect(childPrompt).toContain(memberRole)
     expect(childPrompt).toContain('Write every generated artifact under `output/` in the current Session workspace.')
+    if (skillContextMode === 'progressive') {
+      expect(rootPrompt).toContain('Do not send acknowledgement-only replies')
+      const foreign = await fixture.ctx.tools.execute({ callId: ToolCallId('member-foreign-skill'), name: ATTACHED_SKILL_READER,
+        arguments: { asset_ids: [assetId] }, agent: child, signal: new AbortController().signal })
+      expect(foreign.isError).toBe(true)
+    }
     await expect(agentEvents(fixture.ctx, child).waterfall(
       'agent/request',
       { turn: 1, step: 0, signal: new AbortController().signal },
@@ -2929,7 +3151,8 @@ describe('QuantSkills Agent Teams', () => {
     })
     expect(duplicate.isError).toBe(true)
     const duplicateText = duplicate.content.find(block => block.type === 'text')
-    expect(duplicateText?.type === 'text' ? duplicateText.text : '').toContain('followup_task')
+    expect(duplicateText?.type === 'text' ? duplicateText.text : '').toContain('send_message')
+    expect(rootPrompt).not.toContain('followup_task')
     await expect(fixture.ctx.quantSkillsSessions.agentTeamSessionList({})).resolves.toEqual([
       expect.objectContaining({ sessionId, team, running: false }),
     ])
