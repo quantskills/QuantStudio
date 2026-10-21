@@ -53,6 +53,8 @@ export async function verifyBrowser({ url, fixtureRoot, proof }) {
     await page.getByRole('button', { name: '推理测试', exact: true }).click()
     await page.getByRole('button', { name: '开始真实推理测试', exact: true }).click()
     await page.getByRole('button', { name: '开始真实推理测试', exact: true }).waitFor({ state: 'hidden' })
+    await page.getByRole('status').filter({ hasText: '所选模型的真实推理测试通过。' }).waitFor()
+    assert.ok(modelCalls >= 1, 'Model settings must complete a real fixture inference before starting the conversation')
     await writeFile(join(output, 'settings.txt'), await page.locator('body').innerText())
     await page.getByRole('button', { name: '会话', exact: true }).click()
     await page.locator('main[data-page]').getByRole('button', { name: '新建会话', exact: true }).first().click()
@@ -62,8 +64,12 @@ export async function verifyBrowser({ url, fixtureRoot, proof }) {
     await composer.getByRole('dialog').getByRole('button', { name: 'qs-fixture', exact: true }).click()
     await page.getByRole('textbox').fill('请回复本机验收结果')
     await page.getByRole('button', { name: '发送消息', exact: true }).click()
-    const replies = page.getByText('QS 本机隔离验收响应', { exact: true }).filter({ visible: true })
+    // The title generator uses this same fixture model, so navigation and the
+    // session header can repeat its answer. Only count assistant message nodes.
+    const replies = page.locator('[data-chat-flow-kind="assistant-step"]')
+      .getByText('QS 本机隔离验收响应', { exact: true }).filter({ visible: true })
     await replies.first().waitFor({ timeout: 30000 })
+    await page.locator('[data-chat-running]').waitFor({ state: 'hidden', timeout: 30000 })
     await page.locator('input[type=file]').first().setInputFiles({
       name: 'acceptance.txt', mimeType: 'text/plain', buffer: Buffer.from('Isolated attachment for rc.2 acceptance.'),
     })
@@ -71,6 +77,7 @@ export async function verifyBrowser({ url, fixtureRoot, proof }) {
     await composer.getByRole('textbox').fill('请读取此构造附件')
     await page.getByRole('button', { name: '发送消息', exact: true }).click()
     await replies.nth(1).waitFor({ timeout: 30000 })
+    await page.locator('[data-chat-running]').waitFor({ state: 'hidden', timeout: 30000 })
     await composer.getByRole('textbox').fill('重载后保留的验收草稿')
     await page.reload()
     await page.getByRole('button', { name: '会话', exact: true }).click()
@@ -83,7 +90,11 @@ export async function verifyBrowser({ url, fixtureRoot, proof }) {
     await composer.getByRole('textbox').fill('缩窄视口后继续会话')
     await page.getByRole('button', { name: '发送消息', exact: true }).click()
     await replies.nth(2).waitFor({ timeout: 30000 })
-    assert.ok(modelCalls >= 4, 'Native host did not perform all expected local inference calls')
+    await page.locator('[data-chat-running]').waitFor({ state: 'hidden', timeout: 30000 })
+    const assistantReplies = await replies.count()
+    const nonMessageCopies = await page.getByText('QS 本机隔离验收响应', { exact: true }).filter({ visible: true }).count() - assistantReplies
+    assert.equal(assistantReplies, 3, 'Expected three persisted assistant replies, excluding navigation titles')
+    assert.ok(modelCalls >= 4, `Native host did not perform all expected local inference calls: ${modelCalls}`)
     await writeFile(join(output, 'conversation.txt'), await page.locator('body').innerText())
     await page.screenshot({ path: join(output, 'workspace.png') })
     await page.setViewportSize({ width: 1440, height: 1000 })
@@ -102,7 +113,7 @@ export async function verifyBrowser({ url, fixtureRoot, proof }) {
     await page.screenshot({ path: join(output, 'advanced-settings.png') })
     if (errors.length) throw new Error('Browser page errors: ' + errors.join('; '))
     console.log(JSON.stringify({ browser: 'passed', scope: 'model-settings-streaming-attachment-draft-reload-resize-automation-search-settings',
-      modelCalls, commit: proof.commit, artifact: proof.artifact }))
+      modelCalls, assistantReplies, nonMessageCopies, commit: proof.commit, artifact: proof.artifact }))
   } catch (error) {
     await writeFile(join(output, 'failure.txt'), await page.locator('body').innerText())
     await page.screenshot({ path: join(output, 'failure.png') })

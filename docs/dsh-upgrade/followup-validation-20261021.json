@@ -58,6 +58,21 @@
       "Linux Node 24.0.0"
     ]
   },
+  "browserAcceptanceFollowup": {
+    "previousHead": "2e2f15c0bcd6e11b2096eb419eedd3b6bbc04226",
+    "previousRun": "https://github.com/quantskills/QuantStudio/actions/runs/39550900111",
+    "previousResult": "Packed export passed on all four jobs; macOS and both Linux jobs passed; Windows browser inference count assertion failed and later recovery steps were skipped",
+    "cause": "Page-wide reply locator also matched two generated navigation titles and could advance before the next assistant turn completed",
+    "fix": "Scope to assistant-step nodes, wait for each turn to finish, require model-settings success, preserve the minimum inference call assertion",
+    "scriptSha256": "ced1dd88d2258c814635ffa013e0a48e9f76a59941a6f384b6dcf6d59e4a4edd",
+    "artifactSha256": "c7166d9ab91d2a9c88a36164111034215164c570642c23c8aff330cc82500c4d",
+    "localResult": "passed",
+    "modelCalls": 7,
+    "assistantReplies": 3,
+    "excludedTitleCopies": 2,
+    "productBuildChanged": false,
+    "currentCi": "See PR #22 current Checks; previous run is not proof of the follow-up commit"
+  },
   "limits": [
     "Real service/account/SSH/voice acceptance remains subject to the feature matrix",
     "No merge, release, daily-instance switch or production data migration"
