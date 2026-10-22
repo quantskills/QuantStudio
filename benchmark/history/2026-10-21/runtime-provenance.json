@@ -1,0 +1,64 @@
+{
+  "recordedAt": "2026-10-21T13:00:24.646Z",
+  "node": "v22.23.2",
+  "platform": "win32",
+  "architecture": "x64",
+  "arms": [
+    {
+      "arm": "qs-old",
+      "dsh": "0.1.2-alpha.2",
+      "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+      "files": {
+        "package.json": "441d8a996bfb5e95e4fbfabfabc2f3127f15472eda871ad747b1f984a5fa2176",
+        "pnpm-lock.yaml": "d23d667179cf7a755e453c56c7ea45421be0e27c3fce28776a119e935a17fbc4",
+        "installed-dsh/package.json": "28722e33ea16b35ac6d8ee26d297a4ed4fa40bdd82ffb99063b2b48fe3a83993",
+        "installed-dsh/lib/bin.js": "dc23f6c5dd7df8834e3e38bdb9609d77b459834681ae9b7133b417b0c35f3166",
+        "lib/index.js": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
+        "cordis.patch.yml": "b3fb931eba0f4f1165405fdf7ceb6abd005ebbf46a1134dc77a36a995738035d",
+        "packages/quantskills-session/lib/index.js": "31538c9c78ee81556736bfab22f584c032b2e8ee6b279edd5b47f98c18ecfe69",
+        "packages/quantskills-session/src/index.ts": "f5a8573a7add4ab253e24b810eb74d2f702e230697015a8c0715469fbcc2bbaa"
+      }
+    },
+    {
+      "arm": "qs-public",
+      "dsh": "0.2.1-rc.2",
+      "commit": "48cb7c3d77d61ade0a836b7065b4f6568e6d0917",
+      "files": {
+        "package.json": "6ed68489bc8f3d8180aa5472698f52d7486f1fc718596d32464f111a0aca930a",
+        "pnpm-lock.yaml": "fb5dafb3f6a4dc611a1751e1748910bd8b45117280b2a28b3d761ec87fa11810",
+        "installed-dsh/package.json": "bea4288aa88eb54efe829686553100a75fdf09d11c5e3bf6b329badb9a0368dd",
+        "installed-dsh/lib/bin.js": "e813c915e236ded55b1d39e9b7045f4fa2918b13d7dfd2e98121a0fc2236f08f",
+        "lib/index.js": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
+        "cordis.patch.yml": "361827950698671d7ff3a4d415e8c6a66b9ae5593e4c8ac1d3cb8d9b81314f4a",
+        "packages/quantskills-session/lib/index.js": "7c761e76a72015d1a3c35dd71563caab18f9a71f6dc7bef2f3048935f81309c8",
+        "packages/quantskills-session/src/index.ts": "e73c8b532520479fd97f9492e0679b313593e62f5a1da84d177147cab97cd3f4"
+      }
+    },
+    {
+      "arm": "dsh-official",
+      "dsh": "0.2.1-rc.2",
+      "integrity": "sha512-tvY+yhfKRifthbqPe/OK0AYxM5ZkvqfYq/jMYgJcEUxiRRL1Vwra3Ti5TB6AXgSWQdiPHYh/Vp6SJa9yHwMNuw==",
+      "files": {
+        "package.json": "f12104dc6589b9adf2bcaa53f5f60c8c5a46b1f5814e3810c819b675e84dcba1",
+        "pnpm-lock.yaml": "daaac8f8f55aa00819b6fde65aba6eaaa74d986760ee59e92706c3bbe908148e",
+        "installed-dsh/package.json": "bea4288aa88eb54efe829686553100a75fdf09d11c5e3bf6b329badb9a0368dd",
+        "installed-dsh/lib/bin.js": "80112efe368efb1a39720c7ada0af00442e5131fb2744edaaff8a3e8bb499e6f"
+      }
+    },
+    {
+      "arm": "qs-commercial",
+      "dsh": "0.2.1-rc.2",
+      "commit": "62b2d8c8580b7077fdcdc3215fe0c529c839c262",
+      "files": {
+        "package.json": "6ed68489bc8f3d8180aa5472698f52d7486f1fc718596d32464f111a0aca930a",
+        "pnpm-lock.yaml": "fb5dafb3f6a4dc611a1751e1748910bd8b45117280b2a28b3d761ec87fa11810",
+        "installed-dsh/package.json": "bea4288aa88eb54efe829686553100a75fdf09d11c5e3bf6b329badb9a0368dd",
+        "installed-dsh/lib/bin.js": "e813c915e236ded55b1d39e9b7045f4fa2918b13d7dfd2e98121a0fc2236f08f",
+        "lib/index.js": "f761c91419d0a89422a0004ef1a92929dd4d2d5e5c16758654d8b0467d1998c6",
+        "cordis.patch.yml": "361827950698671d7ff3a4d415e8c6a66b9ae5593e4c8ac1d3cb8d9b81314f4a",
+        "packages/quantskills-session/lib/index.js": "41350d144b4820292c19c29022b55193490ac304ca5054192aeaa6b9844e7fa0",
+        "packages/quantskills-session/src/index.ts": "1b87b4619a1d91617c1b6f507a9ea98e68cf6b5df059cb3359ed72a159be6779"
+      }
+    }
+  ]
+}

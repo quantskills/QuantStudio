@@ -1,0 +1,3300 @@
+{
+  "createdAt": "2026-10-21T14:18:18.780Z",
+  "inputs": [
+    "native-suite-r0.json",
+    "native-suite-r1.json",
+    "native-suite-r2.json"
+  ],
+  "corpusHash": "38b57fc2c730035bb9b72ecefc8352e0b565a94c48eab443f6a25002f9581299",
+  "protocolHash": "8bb2df894c9f143a7131bebbb69ed8a5dac164bdb4254d8abc9df3150227dc0f",
+  "candidateCommit": "62b2d8c8580b7077fdcdc3215fe0c529c839c262",
+  "accounting": {
+    "source": "Final durable gateway ledger; raw task snapshots are retained unchanged.",
+    "incomplete": [],
+    "adjustedSnapshots": [
+      {
+        "tag": "native-suite-r1/team-member-follow-up/1/qs-public",
+        "original": {
+          "inputTokens": 604436,
+          "outputTokens": 9404,
+          "costCny": 5.397452099999999,
+          "calls": 32
+        },
+        "reconciled": {
+          "inputTokens": 630758,
+          "outputTokens": 9515,
+          "costCny": 4.673992899999999,
+          "calls": 32
+        }
+      }
+    ]
+  },
+  "pricingConsistent": true,
+  "completedReports": 3,
+  "plannedTaskRuns": 144,
+  "observedTaskRuns": 144,
+  "aggregate": {
+    "qs-old": {
+      "attempted": 36,
+      "accepted": 30,
+      "strictPassRate": 0.8333333333333334,
+      "normalizedCodeFencePhases": 4,
+      "inputTokens": 1895457,
+      "outputTokens": 25090,
+      "totalTokens": 1920547,
+      "cachedInputTokens": 1257216,
+      "cachedUsageCoverage": 113,
+      "reasoningTokensIncludedInOutput": 8417,
+      "reasoningUsageCoverage": 113,
+      "requestFirstVisibleCoverage": 96,
+      "requestFirstVisibleP50Ms": 5912.729799999972,
+      "calls": 113,
+      "settledCalls": 113,
+      "completedPhaseToolCalls": 50,
+      "costUpperCny": 14.019993099999999,
+      "tokensPerAcceptedIncludingFailures": 64018.23333333333,
+      "costPerAcceptedIncludingFailures": 0.4673331033333333,
+      "acceptedTaskLatencyP50Ms": 12138,
+      "acceptedTaskLatencyP95Ms": 57634.84999999999,
+      "processWallTimeMs": 1321639,
+      "runtimeFailures": [],
+      "qualityFailures": [
+        {
+          "id": "cross-file-evidence/0",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 717.35,
+                "fees": 80.35,
+                "net": 637,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "Audit complete and saved to `output/audit.json`.\n\n{\"gross\":717.35,\"fees\":80.35,\"net\":637.00,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n\nNotes:\n- All 5 rows counted, including the duplicate `t1`; no fees were missing or invalid.\n- floatingPnl (3895) was excluded from gross/net per the ledger rules.\n- Reconciliation holds: 717.35 − 80.35 = 637.00.\n- Source was `\"untrusted-input\"`, so provenance is marked `unverified`."
+            }
+          ]
+        },
+        {
+          "id": "team-member-follow-up/0",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "ledger": {
+                  "gross": 717.35,
+                  "fees": 80.35,
+                  "net": 637,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "Both specialists have completed and their final results match what was already assembled. The coordinator output stands unchanged:\n\n{\"ledger\":{\"gross\":717.35,\"fees\":80.35,\"net\":637.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"perRow\":[{\"id\":\"t1\",\"rowIndex\":0,\"grossPnl\":430,\"totalFees\":30,\"netPnl\":400.0},{\"id\":\"t2\",\"rowIndex\":1,\"grossPnl\":-360,\"totalFees\":15,\"netPnl\":-375.0},{\"id\":\"t3\",\"rowIndex\":2,\"grossPnl\":200,\"totalFees\":5,\"netPnl\":195.0},{\"id\":\"t4\",\"rowIndex\":3,\"grossPnl\":17.35,\"totalFees\":0.35,\"netPnl\":17.0},{\"id\":\"t1\",\"rowIndex\":4,\"grossPnl\":430,\"totalFees\":30,\"netPnl\":400.0}],\"notes\":[\"floatingPnl=3895 is floating/unrealized profit, excluded from all closed-trade totals\",\"no missing/null/negative/nonnumeric fee fields; zero fees on t3.openFee and t4.openFee are valid\",\"reconciliation holds: 717.35 - 80.35 = 637.00\",\"duplicate id t1 retained and counted twice as supplied; grossPnl not multiplied by quantity\"]},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+            },
+            {
+              "stage": 1,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "ledger": {
+                  "gross": 717.35,
+                  "fees": 92.35,
+                  "net": 625,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "The ledger member's final result matches the updated report already delivered. The corrected coordinator JSON stands:\n\n{\"ledger\":{\"gross\":717.35,\"fees\":92.35,\"net\":625.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"perRow\":[{\"id\":\"t1\",\"rowIndex\":0,\"grossPnl\":430,\"totalFees\":30,\"netPnl\":400.0},{\"id\":\"t2\",\"rowIndex\":1,\"grossPnl\":-360,\"totalFees\":27,\"netPnl\":-387.0,\"correction\":\"closeFee corrected from 9 to 21 per lead instruction\"},{\"id\":\"t3\",\"rowIndex\":2,\"grossPnl\":200,\"totalFees\":5,\"netPnl\":195.0},{\"id\":\"t4\",\"rowIndex\":3,\"grossPnl\":17.35,\"totalFees\":0.35,\"netPnl\":17.0},{\"id\":\"t1\",\"rowIndex\":4,\"grossPnl\":430,\"totalFees\":30,\"netPnl\":400.0}],\"notes\":[\"correction applied: t2 closeFee 9 -> 21; correction replaces the field value, no extra trade added\",\"floatingPnl=3895 is floating/unrealized profit, excluded from all closed-trade totals\",\"no missing/null/negative/nonnumeric fee fields; zero fees on t3.openFee and t4.openFee are valid\",\"reconciliation holds: 717.35 - 92.35 = 625.00\",\"duplicate id t1 retained and counted twice as supplied; grossPnl not multiplied by quantity\"]},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+            }
+          ]
+        },
+        {
+          "id": "missing-data/1",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "unexpected-fields"
+              ],
+              "differences": {
+                "extra": [
+                  "evidenceStatus",
+                  "duplicateIds"
+                ],
+                "missing": [],
+                "incorrect": []
+              },
+              "expected": {
+                "gross": 312.35,
+                "fees": null,
+                "net": null,
+                "closedCount": 4,
+                "floatingExcluded": true,
+                "missingFees": [
+                  "t2"
+                ]
+              },
+              "actual": {
+                "gross": 312.35,
+                "fees": null,
+                "net": null,
+                "closedCount": 4,
+                "floatingExcluded": true,
+                "missingFees": [
+                  "t2"
+                ],
+                "evidenceStatus": "verified",
+                "duplicateIds": []
+              },
+              "finalOutput": "{\"gross\":312.35,\"fees\":null,\"net\":null,\"closedCount\":4,\"floatingExcluded\":true,\"missingFees\":[\"t2\"],\"evidenceStatus\":\"verified\",\"duplicateIds\":[]}"
+            }
+          ]
+        },
+        {
+          "id": "cross-file-evidence/1",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 773.35,
+                "fees": 80.35,
+                "net": 693,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "{\"gross\":773.35,\"fees\":80.35,\"net\":693,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"审计结果\",\"presentation\":\"card\"}]}\n```"
+            }
+          ]
+        },
+        {
+          "id": "cross-file-evidence/2",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 829.35,
+                "fees": 80.35,
+                "net": 749,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "```json\n{\"gross\":829.35,\"fees\":80.35,\"net\":749.00,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\nSaved to `output/audit.json`.\n\nSummary: 5 closed rows (duplicate `t1` kept); gross 829.35, fees 80.35, net 749.00; floatingPnl 4095 excluded; all fees valid so `missingFees` is empty; source is `untrusted-input` → `evidenceStatus: unverified`.\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"审计结果\",\"presentation\":\"card\"}]}\n```"
+            }
+          ]
+        },
+        {
+          "id": "team-member-follow-up/2",
+          "phases": [
+            {
+              "stage": 1,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "ledger": {
+                  "gross": 829.35,
+                  "fees": 92.35,
+                  "net": 737,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "The ledger member's closing message confirms the corrected result. Final coordinator output:\n\n```json\n{\"ledger\":{\"gross\":829.35,\"fees\":92.35,\"net\":737.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[]},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}\n```"
+            }
+          ]
+        }
+      ]
+    },
+    "qs-public": {
+      "attempted": 36,
+      "accepted": 28,
+      "strictPassRate": 0.7777777777777778,
+      "normalizedCodeFencePhases": 3,
+      "inputTokens": 2391244,
+      "outputTokens": 35276,
+      "totalTokens": 2426520,
+      "cachedInputTokens": 1740288,
+      "cachedUsageCoverage": 130,
+      "reasoningTokensIncludedInOutput": 10462,
+      "reasoningUsageCoverage": 130,
+      "requestFirstVisibleCoverage": 84,
+      "requestFirstVisibleP50Ms": 6290.644849999982,
+      "calls": 130,
+      "settledCalls": 130,
+      "completedPhaseToolCalls": 63,
+      "costUpperCny": 17.713596,
+      "tokensPerAcceptedIncludingFailures": 86661.42857142857,
+      "costPerAcceptedIncludingFailures": 0.6326284285714285,
+      "acceptedTaskLatencyP50Ms": 11137.5,
+      "acceptedTaskLatencyP95Ms": 37081.34999999996,
+      "processWallTimeMs": 1678187,
+      "runtimeFailures": [
+        {
+          "id": "team-member-follow-up/1",
+          "failure": "Error: [{\"session\":\"4f4af0b8-0885-4a63-8127-9006f64abbc3\",\"message\":\"LlmError: 400: {\\\"message\\\":\\\"Per-task call cap reached\\\",\\\"type\\\":\\\"benchmark_error\\\"}\"}]\n    at handle (fil[local-path:e8df53e479df]"
+        }
+      ],
+      "qualityFailures": [
+        {
+          "id": "cross-file-evidence/0",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 717.35,
+                "fees": 80.35,
+                "net": 637,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "Audit complete. Result saved to <output/audit.json>:\n\n```json\n{\"gross\":717.35,\"fees\":80.35,\"net\":637,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\nDetails:\n- **gross = 717.35** (430 − 360 + 200 + 17.35 + 430); `grossPnl` used as-is per row, not multiplied by quantity\n- **fees = 80.35** (sum of all openFee + closeFee); all fees present, so `missingFees` is empty and net reconciles: 717.35 − 80.35 = 637.00\n- **closedCount = 5** — the duplicate `t1` row is counted in the ledger but flagged once in `duplicateIds`\n- **floatingExcluded = true** — floatingPnl of 3895 was excluded from gross and net\n- **evidenceStatus = \"unverified\"** — the source field is `\"untrusted-input\"`, not `\"fixture-input\"`\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"审计结果\",\"presentation\":\"card\"}]}\n```"
+            }
+          ]
+        },
+        {
+          "id": "team-delegation/0",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "ledger": {
+                  "gross": 717.35,
+                  "fees": 80.35,
+                  "net": 637,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "Both members have completed and their closing reports match the assembled result. The coordinator JSON returned above is final:\n\n- **ledger**: gross 717.35, fees 80.35, net 637.00 across 5 closed rows, floating PnL (3895) excluded, no missing fees.\n- **evidence**: source \"untrusted-input\" → unverified; duplicate ID `t1` (positions 1 and 5, field-identical) kept intact; 5 rows, 4 unique IDs."
+            }
+          ]
+        },
+        {
+          "id": "team-member-follow-up/0",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "ledger": {
+                  "gross": 717.35,
+                  "fees": 80.35,
+                  "net": 637,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "Both members' closing reports match the results already assembled — the coordinator JSON returned above stands as final, with no changes needed."
+            },
+            {
+              "stage": 1,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "ledger": {
+                  "gross": 717.35,
+                  "fees": 92.35,
+                  "net": 625,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "The ledger member's closing report confirms the updated result already assembled — the corrected coordinator JSON above (t2 closeFee 21, totalFees 92.35, totalNetPnl 625) is final."
+            }
+          ]
+        },
+        {
+          "id": "missing-data/1",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "unexpected-fields"
+              ],
+              "differences": {
+                "extra": [
+                  "evidenceStatus",
+                  "duplicateIds"
+                ],
+                "missing": [],
+                "incorrect": []
+              },
+              "expected": {
+                "gross": 312.35,
+                "fees": null,
+                "net": null,
+                "closedCount": 4,
+                "floatingExcluded": true,
+                "missingFees": [
+                  "t2"
+                ]
+              },
+              "actual": {
+                "gross": 312.35,
+                "fees": null,
+                "net": null,
+                "closedCount": 4,
+                "floatingExcluded": true,
+                "missingFees": [
+                  "t2"
+                ],
+                "evidenceStatus": "verified",
+                "duplicateIds": []
+              },
+              "finalOutput": "{\"gross\":312.35,\"fees\":null,\"net\":null,\"closedCount\":4,\"floatingExcluded\":true,\"missingFees\":[\"t2\"],\"evidenceStatus\":\"verified\",\"duplicateIds\":[]}"
+            }
+          ]
+        },
+        {
+          "id": "cross-file-evidence/1",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 773.35,
+                "fees": 80.35,
+                "net": 693,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "Audit complete. Result written to <output/audit.json>:\n\n```json\n{\"gross\":773.35,\"fees\":80.35,\"net\":693,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\n**Notes**\n- Reconciliation holds: gross − fees = net (773.35 − 80.35 = 693.00).\n- The duplicate row `t1` was counted in the totals (per the ledger skill) and reported once in `duplicateIds`.\n- All five rows have valid numeric fees (zero fees on t3/t4 are valid), so `missingFees` is empty and `net` is not null.\n- `floatingPnl` of 3995 was excluded from all totals (`floatingExcluded: true`).\n- Source was \"untrusted-input\", so provenance is `unverified`; this reflects fixture provenance only, not real-market claims.\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"账本审计结果\",\"presentation\":\"card\"}]}\n```"
+            }
+          ]
+        },
+        {
+          "id": "cross-file-evidence/2",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 829.35,
+                "fees": 80.35,
+                "net": 749,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "Audit complete. Result saved to [audit.json](output/audit.json):\n\n```json\n{\"gross\":829.35,\"fees\":80.35,\"net\":749.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\n**Ledger check:** gross = 492 − 394 + 222 + 17.35 + 492 = 829.35; fees = 30 + 15 + 5 + 0.35 + 30 = 80.35; net = 829.35 − 80.35 = 749.00 (reconciles). All 5 rows counted, including the repeated `t1`; floatingPnl (4095) excluded. All fees are present and valid (zero fees on t3/t4 are legitimate), so `missingFees` is empty.\n\n**Provenance check:** `source` is `\"untrusted-input\"` (not `\"fixture-input\"`), so `evidenceStatus` is `\"unverified\"`. Row id `t1` repeats once, listed once in `duplicateIds`; the duplicate row was kept in the calculation per the audit rules."
+            }
+          ]
+        },
+        {
+          "id": "team-member-follow-up/2",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "unexpected-fields"
+              ],
+              "differences": {
+                "extra": [
+                  "ledger.floatingPnl",
+                  "ledger.rows",
+                  "ledger.notes"
+                ],
+                "missing": [],
+                "incorrect": []
+              },
+              "expected": {
+                "ledger": {
+                  "gross": 829.35,
+                  "fees": 80.35,
+                  "net": 749,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "actual": {
+                "ledger": {
+                  "gross": 829.35,
+                  "fees": 80.35,
+                  "net": 749,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "floatingPnl": 4095,
+                  "missingFees": [],
+                  "rows": [
+                    {
+                      "id": "t1",
+                      "grossPnl": 492,
+                      "fees": 30,
+                      "net": 462
+                    },
+                    {
+                      "id": "t2",
+                      "grossPnl": -394,
+                      "fees": 15,
+                      "net": -409
+                    },
+                    {
+                      "id": "t3",
+                      "grossPnl": 222,
+                      "fees": 5,
+                      "net": 217
+                    },
+                    {
+                      "id": "t4",
+                      "grossPnl": 17.35,
+                      "fees": 0.35,
+                      "net": 17
+                    },
+                    {
+                      "id": "t1",
+                      "grossPnl": 492,
+                      "fees": 30,
+                      "net": 462
+                    }
+                  ],
+                  "notes": "All 5 rows counted including the duplicate id t1 (kept intact, not deduplicated). All fees known and valid (zero fee on t3 openFee is valid). gross - fees = net reconciles: 829.35 - 80.35 = 749.00. floatingPnl 4095 reported separately and excluded from gross/net. No missing, null, negative or nonnumeric fees."
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "{\"ledger\":{\"gross\":829.35,\"fees\":80.35,\"net\":749.00,\"closedCount\":5,\"floatingExcluded\":true,\"floatingPnl\":4095,\"missingFees\":[],\"rows\":[{\"id\":\"t1\",\"grossPnl\":492,\"fees\":30,\"net\":462},{\"id\":\"t2\",\"grossPnl\":-394,\"fees\":15,\"net\":-409},{\"id\":\"t3\",\"grossPnl\":222,\"fees\":5,\"net\":217},{\"id\":\"t4\",\"grossPnl\":17.35,\"fees\":0.35,\"net\":17.00},{\"id\":\"t1\",\"grossPnl\":492,\"fees\":30,\"net\":462}],\"notes\":\"All 5 rows counted including the duplicate id t1 (kept intact, not deduplicated). All fees known and valid (zero fee on t3 openFee is valid). gross - fees = net reconciles: 829.35 - 80.35 = 749.00. floatingPnl 4095 reported separately and excluded from gross/net. No missing, null, negative or nonnumeric fees.\"},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+            },
+            {
+              "stage": 1,
+              "reasons": [
+                "unexpected-fields"
+              ],
+              "differences": {
+                "extra": [
+                  "ledger.floatingPnl",
+                  "ledger.rows",
+                  "ledger.notes"
+                ],
+                "missing": [],
+                "incorrect": []
+              },
+              "expected": {
+                "ledger": {
+                  "gross": 829.35,
+                  "fees": 92.35,
+                  "net": 737,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "actual": {
+                "ledger": {
+                  "gross": 829.35,
+                  "fees": 92.35,
+                  "net": 737,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "floatingPnl": 4095,
+                  "missingFees": [],
+                  "rows": [
+                    {
+                      "id": "t1",
+                      "grossPnl": 492,
+                      "fees": 30,
+                      "net": 462
+                    },
+                    {
+                      "id": "t2",
+                      "grossPnl": -394,
+                      "fees": 27,
+                      "net": -421
+                    },
+                    {
+                      "id": "t3",
+                      "grossPnl": 222,
+                      "fees": 5,
+                      "net": 217
+                    },
+                    {
+                      "id": "t4",
+                      "grossPnl": 17.35,
+                      "fees": 0.35,
+                      "net": 17
+                    },
+                    {
+                      "id": "t1",
+                      "grossPnl": 492,
+                      "fees": 30,
+                      "net": 462
+                    }
+                  ],
+                  "notes": "Correction applied: t2 closeFee replaced from 9 to 21 (t2 fees 27, net -421). All 5 rows counted including duplicate id t1 (kept intact, not deduplicated). All fees known and valid (zero fee on t3 openFee is valid). gross - fees = net reconciles: 829.35 - 92.35 = 737.00. floatingPnl 4095 reported separately and excluded from gross/net. No missing, null, negative or nonnumeric fees."
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "{\"ledger\":{\"gross\":829.35,\"fees\":92.35,\"net\":737.00,\"closedCount\":5,\"floatingExcluded\":true,\"floatingPnl\":4095,\"missingFees\":[],\"rows\":[{\"id\":\"t1\",\"grossPnl\":492,\"fees\":30,\"net\":462},{\"id\":\"t2\",\"grossPnl\":-394,\"fees\":27,\"net\":-421},{\"id\":\"t3\",\"grossPnl\":222,\"fees\":5,\"net\":217},{\"id\":\"t4\",\"grossPnl\":17.35,\"fees\":0.35,\"net\":17.00},{\"id\":\"t1\",\"grossPnl\":492,\"fees\":30,\"net\":462}],\"notes\":\"Correction applied: t2 closeFee replaced from 9 to 21 (t2 fees 27, net -421). All 5 rows counted including duplicate id t1 (kept intact, not deduplicated). All fees known and valid (zero fee on t3 openFee is valid). gross - fees = net reconciles: 829.35 - 92.35 = 737.00. floatingPnl 4095 reported separately and excluded from gross/net. No missing, null, negative or nonnumeric fees.\"},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+            }
+          ]
+        }
+      ]
+    },
+    "dsh-official": {
+      "attempted": 36,
+      "accepted": 33,
+      "strictPassRate": 0.9166666666666666,
+      "normalizedCodeFencePhases": 2,
+      "inputTokens": 1385247,
+      "outputTokens": 20852,
+      "totalTokens": 1406099,
+      "cachedInputTokens": 1215488,
+      "cachedUsageCoverage": 136,
+      "reasoningTokensIncludedInOutput": 8180,
+      "reasoningUsageCoverage": 136,
+      "requestFirstVisibleCoverage": 69,
+      "requestFirstVisibleP50Ms": 6313.147100000002,
+      "calls": 136,
+      "settledCalls": 136,
+      "completedPhaseToolCalls": 88,
+      "costUpperCny": 10.2645227,
+      "tokensPerAcceptedIncludingFailures": 42609.06060606061,
+      "costPerAcceptedIncludingFailures": 0.31104614242424244,
+      "acceptedTaskLatencyP50Ms": 13463,
+      "acceptedTaskLatencyP95Ms": 86693.19999999998,
+      "processWallTimeMs": 1045468,
+      "runtimeFailures": [],
+      "qualityFailures": [
+        {
+          "id": "cross-file-evidence/0",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 717.35,
+                "fees": 80.35,
+                "net": 637,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "Result written to [output/audit.json](output/audit.json). Returned JSON:\n\n{\"gross\":717.35,\"fees\":80.35,\"net\":637,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}"
+            }
+          ]
+        },
+        {
+          "id": "cross-file-evidence/1",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 773.35,
+                "fees": 80.35,
+                "net": 693,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "Audit complete. Details:\n\n- **Ledger**: 5 rows counted (duplicate `t1` kept). Gross = 461 − 377 + 211 + 17.35 + 461 = **773.35**; fees = 30 + 15 + 5 + 0.35 + 30 = **80.35**; net = 773.35 − 80.35 = **693.00**. All fees present and valid, floating PnL (3995) excluded.\n- **Evidence**: `source` is `\"untrusted-input\"` → `\"unverified\"`; id `t1` first repeats at row 5 → listed once in `duplicateIds`.\n\nResult written to output/audit.json:\n\n```json\n{\"gross\":773.35,\"fees\":80.35,\"net\":693.00,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```"
+            }
+          ]
+        },
+        {
+          "id": "cross-file-evidence/2",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 829.35,
+                "fees": 80.35,
+                "net": 749,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "Audit complete. Result written to <output/audit.json>:\n\n```json\n{\"gross\":829.35,\"fees\":80.35,\"net\":749.00,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\n**Breakdown:**\n- **gross** = 492 − 394 + 222 + 17.35 + 492 = 829.35 (grossPnl used as-is per row, not multiplied by quantity)\n- **fees** = 30 + 15 + 5 + 0.35 + 30 = 80.35 (all fees present; zero fees on t3/t4 are valid)\n- **net** = 829.35 − 80.35 = 749.00\n- **closedCount** = 5 (duplicate row t1 kept in the calculation)\n- **floatingExcluded** = true (floatingPnl 4095 excluded from totals)\n- **missingFees** = [] (no missing/null/negative/nonnumeric fees)\n- **evidenceStatus** = \"unverified\" (source is \"untrusted-input\", not \"fixture-input\")\n- **duplicateIds** = [\"t1\"] (id t1 first repeats at row 5)"
+            }
+          ]
+        }
+      ]
+    },
+    "qs-commercial": {
+      "attempted": 36,
+      "accepted": 29,
+      "strictPassRate": 0.8055555555555556,
+      "normalizedCodeFencePhases": 0,
+      "inputTokens": 1995700,
+      "outputTokens": 27131,
+      "totalTokens": 2022831,
+      "cachedInputTokens": 1620736,
+      "cachedUsageCoverage": 150,
+      "reasoningTokensIncludedInOutput": 8760,
+      "reasoningUsageCoverage": 150,
+      "requestFirstVisibleCoverage": 77,
+      "requestFirstVisibleP50Ms": 6466.785099999997,
+      "calls": 150,
+      "settledCalls": 150,
+      "completedPhaseToolCalls": 91,
+      "costUpperCny": 14.7666663,
+      "tokensPerAcceptedIncludingFailures": 69752.79310344828,
+      "costPerAcceptedIncludingFailures": 0.5091953896551724,
+      "acceptedTaskLatencyP50Ms": 16247,
+      "acceptedTaskLatencyP95Ms": 96883.59999999995,
+      "processWallTimeMs": 1599636,
+      "runtimeFailures": [],
+      "qualityFailures": [
+        {
+          "id": "cross-file-evidence/0",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 717.35,
+                "fees": 80.35,
+                "net": 637,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "Audit complete. All five rows were counted (including the repeated `t1`, which is kept in the calculation and listed once in `duplicateIds`). All fees are numeric and non-negative, so `missingFees` is empty and the reconciliation holds: 717.35 − 80.35 = 637.00. The floating PnL of 3895 was excluded, and since `source` is `\"untrusted-input\"` (not `\"fixture-input\"`), provenance is `unverified`.\n\nResult saved to [output/audit.json](output/audit.json):\n\n```json\n{\"gross\":717.35,\"fees\":80.35,\"net\":637.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"Ledger audit result\",\"presentation\":\"card\"}]}\n```"
+            }
+          ]
+        },
+        {
+          "id": "team-delegation/0",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "ledger": {
+                  "gross": 717.35,
+                  "fees": 80.35,
+                  "net": 637,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "The ledger member's closing message confirms the result already incorporated. The audit is complete — both required member results were received and the final coordinator JSON was delivered in my previous reply:\n\n```json\n{\n  \"ledger\": {\n    \"rows\": [\n      {\"id\": \"t1\", \"quantity\": 2, \"grossPnl\": 430, \"openFee\": 12, \"closeFee\": 18, \"fee\": 30, \"netPnl\": 400, \"flags\": [\"duplicateId:t1\"]},\n      {\"id\": \"t2\", \"quantity\": 3, \"grossPnl\": -360, \"openFee\": 6, \"closeFee\": 9, \"fee\": 15, \"netPnl\": -375, \"flags\": []},\n      {\"id\": \"t3\", \"quantity\": 1, \"grossPnl\": 200, \"openFee\": 0, \"closeFee\": 5, \"fee\": 5, \"netPnl\": 195, \"flags\": []},\n      {\"id\": \"t4\", \"quantity\": 4, \"grossPnl\": 17.35, \"openFee\": 0.15, \"closeFee\": 0.2, \"fee\": 0.35, \"netPnl\": 17, \"flags\": []},\n      {\"id\": \"t1\", \"quantity\": 2, \"grossPnl\": 430, \"openFee\": 12, \"closeFee\": 18, \"fee\": 30, \"netPnl\": 400, \"flags\": [\"duplicateId:t1\"]}\n    ],\n    \"gross\": 717.35,\n    \"fees\": 80.35,\n    \"net\": 637,\n    \"closedCount\": 5,\n    \"floatingExcluded\": true,\n    \"missingFees\": [],\n    \"notes\": {\n      \"floatingPnlHandling\": \"floatingPnl 3895 (untrusted source) is unrealized and excluded from gross, fees and net; it is NOT added to realized totals.\",\n      \"duplicateHandling\": \"id t1 appears twice and both rows were kept and counted (closedCount=5); no silent dedupe.\",\n      \"missingValues\": \"No missing, null, negative or nonnumeric grossPnl/openFee/closeFee values found; all fees known, so fees and net are numeric and reconcile: gross - fees = 717.35 - 80.35 = 637.00.\",\n      \"anomalies\": [\"duplicateId:t1 counted twice by design\"]\n    }\n  },\n  \"evidence\": {\n    \"evidenceStatus\": \"unverified\",\n    \"duplicateIds\": [\"t1\"]\n  }\n}\n```"
+            }
+          ]
+        },
+        {
+          "id": "fixed-agent/1",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "value-mismatch"
+              ],
+              "differences": {
+                "extra": [],
+                "missing": [],
+                "incorrect": [
+                  "fees",
+                  "net"
+                ]
+              },
+              "expected": {
+                "gross": 312.35,
+                "fees": 50.35,
+                "net": 262,
+                "closedCount": 4,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "verified",
+                "duplicateIds": []
+              },
+              "actual": {
+                "gross": 312.35,
+                "fees": 45.35,
+                "net": 267,
+                "closedCount": 4,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "verified",
+                "duplicateIds": []
+              },
+              "finalOutput": "{\"gross\":312.35,\"fees\":45.35,\"net\":267.00,\"closedCount\":4,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"verified\",\"duplicateIds\":[]}"
+            }
+          ]
+        },
+        {
+          "id": "cross-file-evidence/1",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 773.35,
+                "fees": 80.35,
+                "net": 693,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "{\"gross\":773.35,\"fees\":80.35,\"net\":693.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"Audit Result\",\"presentation\":\"card\"}]}\n```"
+            }
+          ]
+        },
+        {
+          "id": "team-delegation/1",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "ledger": {
+                  "gross": 773.35,
+                  "fees": 80.35,
+                  "net": 693,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "Both members have finished and their closing messages match the results already collected. Final coordinator result:\n\n{\"ledger\":{\"gross\":773.35,\"fees\":50.35,\"net\":723.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[]},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+            }
+          ]
+        },
+        {
+          "id": "cross-file-evidence/2",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "gross": 829.35,
+                "fees": 80.35,
+                "net": 749,
+                "closedCount": 5,
+                "floatingExcluded": true,
+                "missingFees": [],
+                "evidenceStatus": "unverified",
+                "duplicateIds": [
+                  "t1"
+                ]
+              },
+              "artifactPassed": true,
+              "finalOutput": "Completed both checks and wrote [audit.json](output/audit.json).\n\n**Calculation notes:**\n- gross = 492 − 394 + 222 + 17.35 + 492 = 829.35 (duplicate row t1 kept in the calculation, as required)\n- fees = 30 + 15 + 5 + 0.35 + 30 = 80.35 (all fees present; zero fees are valid)\n- net = 829.35 − 80.35 = 749.00 (reconciles)\n- floatingPnl 4095 excluded; closedCount = 5; missingFees = []\n- source \"untrusted-input\" → evidenceStatus \"unverified\"; id \"t1\" repeats → duplicateIds [\"t1\"]\n\n{\"gross\":829.35,\"fees\":80.35,\"net\":749.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"审计结果\",\"presentation\":\"card\"}]}\n```"
+            }
+          ]
+        },
+        {
+          "id": "team-delegation/2",
+          "phases": [
+            {
+              "stage": 0,
+              "reasons": [
+                "invalid-final-JSON"
+              ],
+              "differences": null,
+              "expected": {
+                "ledger": {
+                  "gross": 829.35,
+                  "fees": 80.35,
+                  "net": 749,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": []
+                },
+                "evidence": {
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                }
+              },
+              "childCount": 2,
+              "finalOutput": "Both member results were already received and validated; the evidence member's closing message matches its earlier report. Final coordinator result:\n\n{\"ledger\":{\"gross\":829.35,\"fees\":80.35,\"net\":749.00,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[]},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "families": {
+    "single-skill-control": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 30777,
+        "outputTokens": 429,
+        "totalTokens": 31206,
+        "cachedInputTokens": 3072,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 281,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 5846.5314,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.22780379999999997,
+        "tokensPerAcceptedIncludingFailures": 10402,
+        "costPerAcceptedIncludingFailures": 0.07593459999999999,
+        "acceptedTaskLatencyP50Ms": 6459,
+        "acceptedTaskLatencyP95Ms": 8030.4,
+        "processWallTimeMs": 37374,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 34020,
+        "outputTokens": 359,
+        "totalTokens": 34379,
+        "cachedInputTokens": 10496,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 211,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6404.993799999999,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.2509667,
+        "tokensPerAcceptedIncludingFailures": 11459.666666666666,
+        "costPerAcceptedIncludingFailures": 0.08365556666666667,
+        "acceptedTaskLatencyP50Ms": 7389,
+        "acceptedTaskLatencyP95Ms": 7497.9,
+        "processWallTimeMs": 41006,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 25962,
+        "outputTokens": 598,
+        "totalTokens": 26560,
+        "cachedInputTokens": 3072,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 450,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 7195.084499999999,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.193888,
+        "tokensPerAcceptedIncludingFailures": 8853.333333333334,
+        "costPerAcceptedIncludingFailures": 0.06462933333333333,
+        "acceptedTaskLatencyP50Ms": 8182,
+        "acceptedTaskLatencyP95Ms": 10832.5,
+        "processWallTimeMs": 38265,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 34005,
+        "outputTokens": 449,
+        "totalTokens": 34454,
+        "cachedInputTokens": 18176,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 301,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 7047.547600000002,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.2515142,
+        "tokensPerAcceptedIncludingFailures": 11484.666666666666,
+        "costPerAcceptedIncludingFailures": 0.08383806666666667,
+        "acceptedTaskLatencyP50Ms": 7885,
+        "acceptedTaskLatencyP95Ms": 8218.9,
+        "processWallTimeMs": 41798,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      }
+    },
+    "multiple-skills-selection": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 93644,
+        "outputTokens": 841,
+        "totalTokens": 94485,
+        "cachedInputTokens": 43776,
+        "cachedUsageCoverage": 4,
+        "reasoningTokensIncludedInOutput": 637,
+        "reasoningUsageCoverage": 4,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 8334.988099999988,
+        "calls": 4,
+        "settledCalls": 4,
+        "completedPhaseToolCalls": 1,
+        "costUpperCny": 0.6897405,
+        "tokensPerAcceptedIncludingFailures": 31495,
+        "costPerAcceptedIncludingFailures": 0.2299135,
+        "acceptedTaskLatencyP50Ms": 11458,
+        "acceptedTaskLatencyP95Ms": 16742.8,
+        "processWallTimeMs": 78570,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 1,
+        "inputTokens": 72888,
+        "outputTokens": 764,
+        "totalTokens": 73652,
+        "cachedInputTokens": 23040,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 609,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 10201.651800000007,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.5376596,
+        "tokensPerAcceptedIncludingFailures": 24550.666666666668,
+        "costPerAcceptedIncludingFailures": 0.17921986666666667,
+        "acceptedTaskLatencyP50Ms": 11232,
+        "acceptedTaskLatencyP95Ms": 12741.3,
+        "processWallTimeMs": 95951,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 53379,
+        "outputTokens": 697,
+        "totalTokens": 54076,
+        "cachedInputTokens": 47616,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 385,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6564.332999999999,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 3,
+        "costUpperCny": 0.3947548,
+        "tokensPerAcceptedIncludingFailures": 18025.333333333332,
+        "costPerAcceptedIncludingFailures": 0.13158493333333335,
+        "acceptedTaskLatencyP50Ms": 12188,
+        "acceptedTaskLatencyP95Ms": 13755.8,
+        "processWallTimeMs": 48410,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 76986,
+        "outputTokens": 814,
+        "totalTokens": 77800,
+        "cachedInputTokens": 46080,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 462,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 7063.48020000002,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 4,
+        "costUpperCny": 0.5679399999999999,
+        "tokensPerAcceptedIncludingFailures": 25933.333333333332,
+        "costPerAcceptedIncludingFailures": 0.1893133333333333,
+        "acceptedTaskLatencyP50Ms": 17179,
+        "acceptedTaskLatencyP95Ms": 17729.8,
+        "processWallTimeMs": 107391,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      }
+    },
+    "all-skills-required-control": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 32848,
+        "outputTokens": 536,
+        "totalTokens": 33384,
+        "cachedInputTokens": 20736,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 350,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6941.513500000001,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.2437032,
+        "tokensPerAcceptedIncludingFailures": 11128,
+        "costPerAcceptedIncludingFailures": 0.0812344,
+        "acceptedTaskLatencyP50Ms": 7862,
+        "acceptedTaskLatencyP95Ms": 8548.7,
+        "processWallTimeMs": 49281,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 36093,
+        "outputTokens": 507,
+        "totalTokens": 36600,
+        "cachedInputTokens": 23040,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 321,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6928.474999999977,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.26718,
+        "tokensPerAcceptedIncludingFailures": 12200,
+        "costPerAcceptedIncludingFailures": 0.08905999999999999,
+        "acceptedTaskLatencyP50Ms": 7939,
+        "acceptedTaskLatencyP95Ms": 8776,
+        "processWallTimeMs": 56205,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 27801,
+        "outputTokens": 505,
+        "totalTokens": 28306,
+        "cachedInputTokens": 22272,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 321,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6491.14810000002,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.2066338,
+        "tokensPerAcceptedIncludingFailures": 9435.333333333334,
+        "costPerAcceptedIncludingFailures": 0.06887793333333334,
+        "acceptedTaskLatencyP50Ms": 7492,
+        "acceptedTaskLatencyP95Ms": 9295.6,
+        "processWallTimeMs": 34858,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 36412,
+        "outputTokens": 459,
+        "totalTokens": 36871,
+        "cachedInputTokens": 23040,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 277,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 7284.07309999998,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.26915829999999996,
+        "tokensPerAcceptedIncludingFailures": 12290.333333333334,
+        "costPerAcceptedIncludingFailures": 0.08971943333333332,
+        "acceptedTaskLatencyP50Ms": 8187,
+        "acceptedTaskLatencyP95Ms": 12810.3,
+        "processWallTimeMs": 62732,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      }
+    },
+    "dynamic-agent": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 70011,
+        "outputTokens": 797,
+        "totalTokens": 70808,
+        "cachedInputTokens": 20736,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 647,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 11354.924100000004,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.5168984,
+        "tokensPerAcceptedIncludingFailures": 23602.666666666668,
+        "costPerAcceptedIncludingFailures": 0.17229946666666665,
+        "acceptedTaskLatencyP50Ms": 12210,
+        "acceptedTaskLatencyP95Ms": 12334.2,
+        "processWallTimeMs": 87128,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 73251,
+        "outputTokens": 633,
+        "totalTokens": 73884,
+        "cachedInputTokens": 23040,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 483,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 8831.6348,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.5393532,
+        "tokensPerAcceptedIncludingFailures": 24628,
+        "costPerAcceptedIncludingFailures": 0.17978439999999998,
+        "acceptedTaskLatencyP50Ms": 9759,
+        "acceptedTaskLatencyP95Ms": 11181,
+        "processWallTimeMs": 87526,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 54023,
+        "outputTokens": 607,
+        "totalTokens": 54630,
+        "cachedInputTokens": 49152,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 297,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6205.001400000008,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 3,
+        "costUpperCny": 0.39879899999999996,
+        "tokensPerAcceptedIncludingFailures": 18210,
+        "costPerAcceptedIncludingFailures": 0.132933,
+        "acceptedTaskLatencyP50Ms": 13095,
+        "acceptedTaskLatencyP95Ms": 13701.6,
+        "processWallTimeMs": 50181,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 77146,
+        "outputTokens": 749,
+        "totalTokens": 77895,
+        "cachedInputTokens": 60672,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 430,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6858.1103,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 3,
+        "costUpperCny": 0.5686335,
+        "tokensPerAcceptedIncludingFailures": 25965,
+        "costPerAcceptedIncludingFailures": 0.1895445,
+        "acceptedTaskLatencyP50Ms": 15739,
+        "acceptedTaskLatencyP95Ms": 16196.2,
+        "processWallTimeMs": 101052,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      }
+    },
+    "fixed-agent": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 32018,
+        "outputTokens": 694,
+        "totalTokens": 32712,
+        "cachedInputTokens": 20736,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 521,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 8117.669699999969,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.2387976,
+        "tokensPerAcceptedIncludingFailures": 10904,
+        "costPerAcceptedIncludingFailures": 0.0795992,
+        "acceptedTaskLatencyP50Ms": 9073,
+        "acceptedTaskLatencyP95Ms": 13584.7,
+        "processWallTimeMs": 49792,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 1,
+        "inputTokens": 35254,
+        "outputTokens": 537,
+        "totalTokens": 35791,
+        "cachedInputTokens": 23040,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 355,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 8449.797099999967,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.26127429999999996,
+        "tokensPerAcceptedIncludingFailures": 11930.333333333334,
+        "costPerAcceptedIncludingFailures": 0.08709143333333332,
+        "acceptedTaskLatencyP50Ms": 9798,
+        "acceptedTaskLatencyP95Ms": 12831,
+        "processWallTimeMs": 62820,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 27075,
+        "outputTokens": 581,
+        "totalTokens": 27656,
+        "cachedInputTokens": 22272,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 404,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 9875.915299999993,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.20188879999999998,
+        "tokensPerAcceptedIncludingFailures": 9218.666666666666,
+        "costPerAcceptedIncludingFailures": 0.06729626666666666,
+        "acceptedTaskLatencyP50Ms": 10928,
+        "acceptedTaskLatencyP95Ms": 11890.1,
+        "processWallTimeMs": 42665,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 2,
+        "strictPassRate": 0.6666666666666666,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 35510,
+        "outputTokens": 468,
+        "totalTokens": 35978,
+        "cachedInputTokens": 23040,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 295,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6785.603299999959,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.26263939999999997,
+        "tokensPerAcceptedIncludingFailures": 17989,
+        "costPerAcceptedIncludingFailures": 0.13131969999999998,
+        "acceptedTaskLatencyP50Ms": 7839,
+        "acceptedTaskLatencyP95Ms": 8525.7,
+        "processWallTimeMs": 48035,
+        "runtimeFailures": [],
+        "qualityFailures": [
+          {
+            "id": "fixed-agent/1",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "value-mismatch"
+                ],
+                "differences": {
+                  "extra": [],
+                  "missing": [],
+                  "incorrect": [
+                    "fees",
+                    "net"
+                  ]
+                },
+                "expected": {
+                  "gross": 312.35,
+                  "fees": 50.35,
+                  "net": 262,
+                  "closedCount": 4,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "verified",
+                  "duplicateIds": []
+                },
+                "actual": {
+                  "gross": 312.35,
+                  "fees": 45.35,
+                  "net": 267,
+                  "closedCount": 4,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "verified",
+                  "duplicateIds": []
+                },
+                "finalOutput": "{\"gross\":312.35,\"fees\":45.35,\"net\":267.00,\"closedCount\":4,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"verified\",\"duplicateIds\":[]}"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "agent-role-constraints": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 69933,
+        "outputTokens": 710,
+        "totalTokens": 70643,
+        "cachedInputTokens": 20736,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 551,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 9199.01800000004,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.5156939,
+        "tokensPerAcceptedIncludingFailures": 23547.666666666668,
+        "costPerAcceptedIncludingFailures": 0.17189796666666668,
+        "acceptedTaskLatencyP50Ms": 9864,
+        "acceptedTaskLatencyP95Ms": 11845.8,
+        "processWallTimeMs": 69851,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 1,
+        "inputTokens": 73183,
+        "outputTokens": 590,
+        "totalTokens": 73773,
+        "cachedInputTokens": 23040,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 427,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 10574.86499999999,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.5385428999999999,
+        "tokensPerAcceptedIncludingFailures": 24591,
+        "costPerAcceptedIncludingFailures": 0.1795143,
+        "acceptedTaskLatencyP50Ms": 11627,
+        "acceptedTaskLatencyP95Ms": 13259.6,
+        "processWallTimeMs": 90776,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 54984,
+        "outputTokens": 1122,
+        "totalTokens": 56106,
+        "cachedInputTokens": 49152,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 705,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6964.809899999993,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 6,
+        "costUpperCny": 0.4095738,
+        "tokensPerAcceptedIncludingFailures": 18702,
+        "costPerAcceptedIncludingFailures": 0.1365246,
+        "acceptedTaskLatencyP50Ms": 14817,
+        "acceptedTaskLatencyP95Ms": 23123.1,
+        "processWallTimeMs": 63239,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 92075,
+        "outputTokens": 1128,
+        "totalTokens": 93203,
+        "cachedInputTokens": 73984,
+        "cachedUsageCoverage": 7,
+        "reasoningTokensIncludedInOutput": 613,
+        "reasoningUsageCoverage": 7,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6136.371600000013,
+        "calls": 7,
+        "settledCalls": 7,
+        "completedPhaseToolCalls": 4,
+        "costUpperCny": 0.6803819,
+        "tokensPerAcceptedIncludingFailures": 31067.666666666668,
+        "costPerAcceptedIncludingFailures": 0.22679396666666665,
+        "acceptedTaskLatencyP50Ms": 16854,
+        "acceptedTaskLatencyP95Ms": 22086.6,
+        "processWallTimeMs": 113859,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      }
+    },
+    "missing-data": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 2,
+        "strictPassRate": 0.6666666666666666,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 69710,
+        "outputTokens": 640,
+        "totalTokens": 70350,
+        "cachedInputTokens": 20736,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 484,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 9562.899300000048,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.513555,
+        "tokensPerAcceptedIncludingFailures": 35175,
+        "costPerAcceptedIncludingFailures": 0.2567775,
+        "acceptedTaskLatencyP50Ms": 9808.5,
+        "acceptedTaskLatencyP95Ms": 11998.65,
+        "processWallTimeMs": 76251,
+        "runtimeFailures": [],
+        "qualityFailures": [
+          {
+            "id": "missing-data/1",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "unexpected-fields"
+                ],
+                "differences": {
+                  "extra": [
+                    "evidenceStatus",
+                    "duplicateIds"
+                  ],
+                  "missing": [],
+                  "incorrect": []
+                },
+                "expected": {
+                  "gross": 312.35,
+                  "fees": null,
+                  "net": null,
+                  "closedCount": 4,
+                  "floatingExcluded": true,
+                  "missingFees": [
+                    "t2"
+                  ]
+                },
+                "actual": {
+                  "gross": 312.35,
+                  "fees": null,
+                  "net": null,
+                  "closedCount": 4,
+                  "floatingExcluded": true,
+                  "missingFees": [
+                    "t2"
+                  ],
+                  "evidenceStatus": "verified",
+                  "duplicateIds": []
+                },
+                "finalOutput": "{\"gross\":312.35,\"fees\":null,\"net\":null,\"closedCount\":4,\"floatingExcluded\":true,\"missingFees\":[\"t2\"],\"evidenceStatus\":\"verified\",\"duplicateIds\":[]}"
+              }
+            ]
+          }
+        ]
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 2,
+        "strictPassRate": 0.6666666666666666,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 72940,
+        "outputTokens": 509,
+        "totalTokens": 73449,
+        "cachedInputTokens": 23040,
+        "cachedUsageCoverage": 3,
+        "reasoningTokensIncludedInOutput": 353,
+        "reasoningUsageCoverage": 3,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 7538.967900000047,
+        "calls": 3,
+        "settledCalls": 3,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 0.5361777,
+        "tokensPerAcceptedIncludingFailures": 36724.5,
+        "costPerAcceptedIncludingFailures": 0.26808885,
+        "acceptedTaskLatencyP50Ms": 7792,
+        "acceptedTaskLatencyP95Ms": 8300.5,
+        "processWallTimeMs": 86717,
+        "runtimeFailures": [],
+        "qualityFailures": [
+          {
+            "id": "missing-data/1",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "unexpected-fields"
+                ],
+                "differences": {
+                  "extra": [
+                    "evidenceStatus",
+                    "duplicateIds"
+                  ],
+                  "missing": [],
+                  "incorrect": []
+                },
+                "expected": {
+                  "gross": 312.35,
+                  "fees": null,
+                  "net": null,
+                  "closedCount": 4,
+                  "floatingExcluded": true,
+                  "missingFees": [
+                    "t2"
+                  ]
+                },
+                "actual": {
+                  "gross": 312.35,
+                  "fees": null,
+                  "net": null,
+                  "closedCount": 4,
+                  "floatingExcluded": true,
+                  "missingFees": [
+                    "t2"
+                  ],
+                  "evidenceStatus": "verified",
+                  "duplicateIds": []
+                },
+                "finalOutput": "{\"gross\":312.35,\"fees\":null,\"net\":null,\"closedCount\":4,\"floatingExcluded\":true,\"missingFees\":[\"t2\"],\"evidenceStatus\":\"verified\",\"duplicateIds\":[]}"
+              }
+            ]
+          }
+        ]
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 53446,
+        "outputTokens": 633,
+        "totalTokens": 54079,
+        "cachedInputTokens": 47616,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 324,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 6362.2934999999125,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 3,
+        "costUpperCny": 0.3947766999999999,
+        "tokensPerAcceptedIncludingFailures": 18026.333333333332,
+        "costPerAcceptedIncludingFailures": 0.1315922333333333,
+        "acceptedTaskLatencyP50Ms": 12529,
+        "acceptedTaskLatencyP95Ms": 13198.6,
+        "processWallTimeMs": 48386,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 76569,
+        "outputTokens": 633,
+        "totalTokens": 77202,
+        "cachedInputTokens": 59904,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 303,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 3,
+        "requestFirstVisibleP50Ms": 7755.221499999985,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 3,
+        "costUpperCny": 0.5635745999999999,
+        "tokensPerAcceptedIncludingFailures": 25734,
+        "costPerAcceptedIncludingFailures": 0.18785819999999998,
+        "acceptedTaskLatencyP50Ms": 15183,
+        "acceptedTaskLatencyP95Ms": 15401.7,
+        "processWallTimeMs": 101248,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      }
+    },
+    "cross-file-evidence": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 0,
+        "strictPassRate": 0,
+        "normalizedCodeFencePhases": 1,
+        "inputTokens": 98171,
+        "outputTokens": 1590,
+        "totalTokens": 99761,
+        "cachedInputTokens": 84480,
+        "cachedUsageCoverage": 9,
+        "reasoningTokensIncludedInOutput": 513,
+        "reasoningUsageCoverage": 9,
+        "requestFirstVisibleCoverage": 6,
+        "requestFirstVisibleP50Ms": 6227.561450000037,
+        "calls": 9,
+        "settledCalls": 9,
+        "completedPhaseToolCalls": 6,
+        "costUpperCny": 0.7282552999999999,
+        "tokensPerAcceptedIncludingFailures": null,
+        "costPerAcceptedIncludingFailures": null,
+        "acceptedTaskLatencyP50Ms": null,
+        "acceptedTaskLatencyP95Ms": null,
+        "processWallTimeMs": 91262,
+        "runtimeFailures": [],
+        "qualityFailures": [
+          {
+            "id": "cross-file-evidence/0",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 717.35,
+                  "fees": 80.35,
+                  "net": 637,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "Audit complete and saved to `output/audit.json`.\n\n{\"gross\":717.35,\"fees\":80.35,\"net\":637.00,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n\nNotes:\n- All 5 rows counted, including the duplicate `t1`; no fees were missing or invalid.\n- floatingPnl (3895) was excluded from gross/net per the ledger rules.\n- Reconciliation holds: 717.35 − 80.35 = 637.00.\n- Source was `\"untrusted-input\"`, so provenance is marked `unverified`."
+              }
+            ]
+          },
+          {
+            "id": "cross-file-evidence/1",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 773.35,
+                  "fees": 80.35,
+                  "net": 693,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "{\"gross\":773.35,\"fees\":80.35,\"net\":693,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"审计结果\",\"presentation\":\"card\"}]}\n```"
+              }
+            ]
+          },
+          {
+            "id": "cross-file-evidence/2",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 829.35,
+                  "fees": 80.35,
+                  "net": 749,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "```json\n{\"gross\":829.35,\"fees\":80.35,\"net\":749.00,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\nSaved to `output/audit.json`.\n\nSummary: 5 closed rows (duplicate `t1` kept); gross 829.35, fees 80.35, net 749.00; floatingPnl 4095 excluded; all fees valid so `missingFees` is empty; source is `untrusted-input` → `evidenceStatus: unverified`.\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"审计结果\",\"presentation\":\"card\"}]}\n```"
+              }
+            ]
+          }
+        ]
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 0,
+        "strictPassRate": 0,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 108330,
+        "outputTokens": 2313,
+        "totalTokens": 110643,
+        "cachedInputTokens": 92928,
+        "cachedUsageCoverage": 9,
+        "reasoningTokensIncludedInOutput": 739,
+        "reasoningUsageCoverage": 9,
+        "requestFirstVisibleCoverage": 5,
+        "requestFirstVisibleP50Ms": 4905.767999999924,
+        "calls": 9,
+        "settledCalls": 9,
+        "completedPhaseToolCalls": 6,
+        "costUpperCny": 0.8076939,
+        "tokensPerAcceptedIncludingFailures": null,
+        "costPerAcceptedIncludingFailures": null,
+        "acceptedTaskLatencyP50Ms": null,
+        "acceptedTaskLatencyP95Ms": null,
+        "processWallTimeMs": 118394,
+        "runtimeFailures": [],
+        "qualityFailures": [
+          {
+            "id": "cross-file-evidence/0",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 717.35,
+                  "fees": 80.35,
+                  "net": 637,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "Audit complete. Result saved to <output/audit.json>:\n\n```json\n{\"gross\":717.35,\"fees\":80.35,\"net\":637,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\nDetails:\n- **gross = 717.35** (430 − 360 + 200 + 17.35 + 430); `grossPnl` used as-is per row, not multiplied by quantity\n- **fees = 80.35** (sum of all openFee + closeFee); all fees present, so `missingFees` is empty and net reconciles: 717.35 − 80.35 = 637.00\n- **closedCount = 5** — the duplicate `t1` row is counted in the ledger but flagged once in `duplicateIds`\n- **floatingExcluded = true** — floatingPnl of 3895 was excluded from gross and net\n- **evidenceStatus = \"unverified\"** — the source field is `\"untrusted-input\"`, not `\"fixture-input\"`\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"审计结果\",\"presentation\":\"card\"}]}\n```"
+              }
+            ]
+          },
+          {
+            "id": "cross-file-evidence/1",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 773.35,
+                  "fees": 80.35,
+                  "net": 693,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "Audit complete. Result written to <output/audit.json>:\n\n```json\n{\"gross\":773.35,\"fees\":80.35,\"net\":693,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\n**Notes**\n- Reconciliation holds: gross − fees = net (773.35 − 80.35 = 693.00).\n- The duplicate row `t1` was counted in the totals (per the ledger skill) and reported once in `duplicateIds`.\n- All five rows have valid numeric fees (zero fees on t3/t4 are valid), so `missingFees` is empty and `net` is not null.\n- `floatingPnl` of 3995 was excluded from all totals (`floatingExcluded: true`).\n- Source was \"untrusted-input\", so provenance is `unverified`; this reflects fixture provenance only, not real-market claims.\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"账本审计结果\",\"presentation\":\"card\"}]}\n```"
+              }
+            ]
+          },
+          {
+            "id": "cross-file-evidence/2",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 829.35,
+                  "fees": 80.35,
+                  "net": 749,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "Audit complete. Result saved to [audit.json](output/audit.json):\n\n```json\n{\"gross\":829.35,\"fees\":80.35,\"net\":749.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\n**Ledger check:** gross = 492 − 394 + 222 + 17.35 + 492 = 829.35; fees = 30 + 15 + 5 + 0.35 + 30 = 80.35; net = 829.35 − 80.35 = 749.00 (reconciles). All 5 rows counted, including the repeated `t1`; floatingPnl (4095) excluded. All fees are present and valid (zero fees on t3/t4 are legitimate), so `missingFees` is empty.\n\n**Provenance check:** `source` is `\"untrusted-input\"` (not `\"fixture-input\"`), so `evidenceStatus` is `\"unverified\"`. Row id `t1` repeats once, listed once in `duplicateIds`; the duplicate row was kept in the calculation per the audit rules."
+              }
+            ]
+          }
+        ]
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 0,
+        "strictPassRate": 0,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 83736,
+        "outputTokens": 2166,
+        "totalTokens": 85902,
+        "cachedInputTokens": 76032,
+        "cachedUsageCoverage": 9,
+        "reasoningTokensIncludedInOutput": 847,
+        "reasoningUsageCoverage": 9,
+        "requestFirstVisibleCoverage": 5,
+        "requestFirstVisibleP50Ms": 6364.02079999994,
+        "calls": 9,
+        "settledCalls": 9,
+        "completedPhaseToolCalls": 6,
+        "costUpperCny": 0.6270845999999999,
+        "tokensPerAcceptedIncludingFailures": null,
+        "costPerAcceptedIncludingFailures": null,
+        "acceptedTaskLatencyP50Ms": null,
+        "acceptedTaskLatencyP95Ms": null,
+        "processWallTimeMs": 97502,
+        "runtimeFailures": [],
+        "qualityFailures": [
+          {
+            "id": "cross-file-evidence/0",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 717.35,
+                  "fees": 80.35,
+                  "net": 637,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "Result written to [output/audit.json](output/audit.json). Returned JSON:\n\n{\"gross\":717.35,\"fees\":80.35,\"net\":637,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}"
+              }
+            ]
+          },
+          {
+            "id": "cross-file-evidence/1",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 773.35,
+                  "fees": 80.35,
+                  "net": 693,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "Audit complete. Details:\n\n- **Ledger**: 5 rows counted (duplicate `t1` kept). Gross = 461 − 377 + 211 + 17.35 + 461 = **773.35**; fees = 30 + 15 + 5 + 0.35 + 30 = **80.35**; net = 773.35 − 80.35 = **693.00**. All fees present and valid, floating PnL (3995) excluded.\n- **Evidence**: `source` is `\"untrusted-input\"` → `\"unverified\"`; id `t1` first repeats at row 5 → listed once in `duplicateIds`.\n\nResult written to output/audit.json:\n\n```json\n{\"gross\":773.35,\"fees\":80.35,\"net\":693.00,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```"
+              }
+            ]
+          },
+          {
+            "id": "cross-file-evidence/2",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 829.35,
+                  "fees": 80.35,
+                  "net": 749,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "Audit complete. Result written to <output/audit.json>:\n\n```json\n{\"gross\":829.35,\"fees\":80.35,\"net\":749.00,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\n**Breakdown:**\n- **gross** = 492 − 394 + 222 + 17.35 + 492 = 829.35 (grossPnl used as-is per row, not multiplied by quantity)\n- **fees** = 30 + 15 + 5 + 0.35 + 30 = 80.35 (all fees present; zero fees on t3/t4 are valid)\n- **net** = 829.35 − 80.35 = 749.00\n- **closedCount** = 5 (duplicate row t1 kept in the calculation)\n- **floatingExcluded** = true (floatingPnl 4095 excluded from totals)\n- **missingFees** = [] (no missing/null/negative/nonnumeric fees)\n- **evidenceStatus** = \"unverified\" (source is \"untrusted-input\", not \"fixture-input\")\n- **duplicateIds** = [\"t1\"] (id t1 first repeats at row 5)"
+              }
+            ]
+          }
+        ]
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 0,
+        "strictPassRate": 0,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 108674,
+        "outputTokens": 2043,
+        "totalTokens": 110717,
+        "cachedInputTokens": 93696,
+        "cachedUsageCoverage": 9,
+        "reasoningTokensIncludedInOutput": 889,
+        "reasoningUsageCoverage": 9,
+        "requestFirstVisibleCoverage": 5,
+        "requestFirstVisibleP50Ms": 8218.767699999968,
+        "calls": 9,
+        "settledCalls": 9,
+        "completedPhaseToolCalls": 6,
+        "costUpperCny": 0.8082341,
+        "tokensPerAcceptedIncludingFailures": null,
+        "costPerAcceptedIncludingFailures": null,
+        "acceptedTaskLatencyP50Ms": null,
+        "acceptedTaskLatencyP95Ms": null,
+        "processWallTimeMs": 112995,
+        "runtimeFailures": [],
+        "qualityFailures": [
+          {
+            "id": "cross-file-evidence/0",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 717.35,
+                  "fees": 80.35,
+                  "net": 637,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "Audit complete. All five rows were counted (including the repeated `t1`, which is kept in the calculation and listed once in `duplicateIds`). All fees are numeric and non-negative, so `missingFees` is empty and the reconciliation holds: 717.35 − 80.35 = 637.00. The floating PnL of 3895 was excluded, and since `source` is `\"untrusted-input\"` (not `\"fixture-input\"`), provenance is `unverified`.\n\nResult saved to [output/audit.json](output/audit.json):\n\n```json\n{\"gross\":717.35,\"fees\":80.35,\"net\":637.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n```\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"Ledger audit result\",\"presentation\":\"card\"}]}\n```"
+              }
+            ]
+          },
+          {
+            "id": "cross-file-evidence/1",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 773.35,
+                  "fees": 80.35,
+                  "net": 693,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "{\"gross\":773.35,\"fees\":80.35,\"net\":693.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"Audit Result\",\"presentation\":\"card\"}]}\n```"
+              }
+            ]
+          },
+          {
+            "id": "cross-file-evidence/2",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "gross": 829.35,
+                  "fees": 80.35,
+                  "net": 749,
+                  "closedCount": 5,
+                  "floatingExcluded": true,
+                  "missingFees": [],
+                  "evidenceStatus": "unverified",
+                  "duplicateIds": [
+                    "t1"
+                  ]
+                },
+                "artifactPassed": true,
+                "finalOutput": "Completed both checks and wrote [audit.json](output/audit.json).\n\n**Calculation notes:**\n- gross = 492 − 394 + 222 + 17.35 + 492 = 829.35 (duplicate row t1 kept in the calculation, as required)\n- fees = 30 + 15 + 5 + 0.35 + 30 = 80.35 (all fees present; zero fees are valid)\n- net = 829.35 − 80.35 = 749.00 (reconciles)\n- floatingPnl 4095 excluded; closedCount = 5; missingFees = []\n- source \"untrusted-input\" → evidenceStatus \"unverified\"; id \"t1\" repeats → duplicateIds [\"t1\"]\n\n{\"gross\":829.35,\"fees\":80.35,\"net\":749.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}\n\n```quantskills-deliverables\n{\"version\":1,\"items\":[{\"path\":\"output/audit.json\",\"title\":\"审计结果\",\"presentation\":\"card\"}]}\n```"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "multi-turn-requirement-change": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 138738,
+        "outputTokens": 822,
+        "totalTokens": 139560,
+        "cachedInputTokens": 89088,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 522,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 6,
+        "requestFirstVisibleP50Ms": 6546.712700000033,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 1.0187879999999998,
+        "tokensPerAcceptedIncludingFailures": 46520,
+        "costPerAcceptedIncludingFailures": 0.33959599999999995,
+        "acceptedTaskLatencyP50Ms": 13957,
+        "acceptedTaskLatencyP95Ms": 16171.9,
+        "processWallTimeMs": 83443,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 145116,
+        "outputTokens": 722,
+        "totalTokens": 145838,
+        "cachedInputTokens": 95232,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 422,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 6,
+        "requestFirstVisibleP50Ms": 6498.4835500000045,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 1.0646174,
+        "tokensPerAcceptedIncludingFailures": 48612.666666666664,
+        "costPerAcceptedIncludingFailures": 0.35487246666666666,
+        "acceptedTaskLatencyP50Ms": 15683,
+        "acceptedTaskLatencyP95Ms": 19322.6,
+        "processWallTimeMs": 104640,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 82140,
+        "outputTokens": 994,
+        "totalTokens": 83134,
+        "cachedInputTokens": 76032,
+        "cachedUsageCoverage": 9,
+        "reasoningTokensIncludedInOutput": 536,
+        "reasoningUsageCoverage": 9,
+        "requestFirstVisibleCoverage": 6,
+        "requestFirstVisibleP50Ms": 5792.082350000041,
+        "calls": 9,
+        "settledCalls": 9,
+        "completedPhaseToolCalls": 3,
+        "costUpperCny": 0.6068781999999999,
+        "tokensPerAcceptedIncludingFailures": 27711.333333333332,
+        "costPerAcceptedIncludingFailures": 0.2022927333333333,
+        "acceptedTaskLatencyP50Ms": 18501,
+        "acceptedTaskLatencyP95Ms": 19390.2,
+        "processWallTimeMs": 68507,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 116403,
+        "outputTokens": 1078,
+        "totalTokens": 117481,
+        "cachedInputTokens": 98560,
+        "cachedUsageCoverage": 9,
+        "reasoningTokensIncludedInOutput": 593,
+        "reasoningUsageCoverage": 9,
+        "requestFirstVisibleCoverage": 7,
+        "requestFirstVisibleP50Ms": 7436.705100000021,
+        "calls": 9,
+        "settledCalls": 9,
+        "completedPhaseToolCalls": 3,
+        "costUpperCny": 0.8576113,
+        "tokensPerAcceptedIncludingFailures": 39160.333333333336,
+        "costPerAcceptedIncludingFailures": 0.28587043333333334,
+        "acceptedTaskLatencyP50Ms": 22881,
+        "acceptedTaskLatencyP95Ms": 24123,
+        "processWallTimeMs": 122571,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      }
+    },
+    "restart-and-context-retention": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 138638,
+        "outputTokens": 681,
+        "totalTokens": 139319,
+        "cachedInputTokens": 89088,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 381,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 6,
+        "requestFirstVisibleP50Ms": 6286.974099999992,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 1.0170287,
+        "tokensPerAcceptedIncludingFailures": 46439.666666666664,
+        "costPerAcceptedIncludingFailures": 0.33900956666666665,
+        "acceptedTaskLatencyP50Ms": 13330,
+        "acceptedTaskLatencyP95Ms": 17214.4,
+        "processWallTimeMs": 91639,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 145899,
+        "outputTokens": 719,
+        "totalTokens": 146618,
+        "cachedInputTokens": 95232,
+        "cachedUsageCoverage": 6,
+        "reasoningTokensIncludedInOutput": 423,
+        "reasoningUsageCoverage": 6,
+        "requestFirstVisibleCoverage": 6,
+        "requestFirstVisibleP50Ms": 7876.957949999953,
+        "calls": 6,
+        "settledCalls": 6,
+        "completedPhaseToolCalls": 0,
+        "costUpperCny": 1.0703114,
+        "tokensPerAcceptedIncludingFailures": 48872.666666666664,
+        "costPerAcceptedIncludingFailures": 0.3567704666666667,
+        "acceptedTaskLatencyP50Ms": 18303,
+        "acceptedTaskLatencyP95Ms": 19554,
+        "processWallTimeMs": 116295,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 82760,
+        "outputTokens": 889,
+        "totalTokens": 83649,
+        "cachedInputTokens": 76800,
+        "cachedUsageCoverage": 9,
+        "reasoningTokensIncludedInOutput": 431,
+        "reasoningUsageCoverage": 9,
+        "requestFirstVisibleCoverage": 6,
+        "requestFirstVisibleP50Ms": 5556.397050000029,
+        "calls": 9,
+        "settledCalls": 9,
+        "completedPhaseToolCalls": 3,
+        "costUpperCny": 0.6106377,
+        "tokensPerAcceptedIncludingFailures": 27883,
+        "costPerAcceptedIncludingFailures": 0.20354589999999997,
+        "acceptedTaskLatencyP50Ms": 19312,
+        "acceptedTaskLatencyP95Ms": 19418.2,
+        "processWallTimeMs": 77912,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 116978,
+        "outputTokens": 955,
+        "totalTokens": 117933,
+        "cachedInputTokens": 98560,
+        "cachedUsageCoverage": 9,
+        "reasoningTokensIncludedInOutput": 479,
+        "reasoningUsageCoverage": 9,
+        "requestFirstVisibleCoverage": 6,
+        "requestFirstVisibleP50Ms": 5958.489000000001,
+        "calls": 9,
+        "settledCalls": 9,
+        "completedPhaseToolCalls": 3,
+        "costUpperCny": 0.8609108999999999,
+        "tokensPerAcceptedIncludingFailures": 39311,
+        "costPerAcceptedIncludingFailures": 0.28697029999999996,
+        "acceptedTaskLatencyP50Ms": 21031,
+        "acceptedTaskLatencyP95Ms": 21278.5,
+        "processWallTimeMs": 122739,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      }
+    },
+    "team-delegation": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 2,
+        "inputTokens": 387274,
+        "outputTokens": 5673,
+        "totalTokens": 392947,
+        "cachedInputTokens": 261120,
+        "cachedUsageCoverage": 25,
+        "reasoningTokensIncludedInOutput": 1223,
+        "reasoningUsageCoverage": 25,
+        "requestFirstVisibleCoverage": 22,
+        "requestFirstVisibleP50Ms": 5704.212449999992,
+        "calls": 25,
+        "settledCalls": 25,
+        "completedPhaseToolCalls": 16,
+        "costUpperCny": 2.8685130999999995,
+        "tokensPerAcceptedIncludingFailures": 130982.33333333333,
+        "costPerAcceptedIncludingFailures": 0.9561710333333332,
+        "acceptedTaskLatencyP50Ms": 55761,
+        "acceptedTaskLatencyP95Ms": 58827.3,
+        "processWallTimeMs": 213373,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 2,
+        "strictPassRate": 0.6666666666666666,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 431319,
+        "outputTokens": 6698,
+        "totalTokens": 438017,
+        "cachedInputTokens": 297472,
+        "cachedUsageCoverage": 26,
+        "reasoningTokensIncludedInOutput": 1535,
+        "reasoningUsageCoverage": 26,
+        "requestFirstVisibleCoverage": 21,
+        "requestFirstVisibleP50Ms": 5238.387800000142,
+        "calls": 26,
+        "settledCalls": 26,
+        "completedPhaseToolCalls": 19,
+        "costUpperCny": 3.1975240999999994,
+        "tokensPerAcceptedIncludingFailures": 219008.5,
+        "costPerAcceptedIncludingFailures": 1.5987620499999997,
+        "acceptedTaskLatencyP50Ms": 48454,
+        "acceptedTaskLatencyP95Ms": 50279.2,
+        "processWallTimeMs": 244468,
+        "runtimeFailures": [],
+        "qualityFailures": [
+          {
+            "id": "team-delegation/0",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "ledger": {
+                    "gross": 717.35,
+                    "fees": 80.35,
+                    "net": 637,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "Both members have completed and their closing reports match the assembled result. The coordinator JSON returned above is final:\n\n- **ledger**: gross 717.35, fees 80.35, net 637.00 across 5 closed rows, floating PnL (3895) excluded, no missing fees.\n- **evidence**: source \"untrusted-input\" → unverified; duplicate ID `t1` (positions 1 and 5, field-identical) kept intact; 5 rows, 4 unique IDs."
+              }
+            ]
+          }
+        ]
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 323254,
+        "outputTokens": 5071,
+        "totalTokens": 328325,
+        "cachedInputTokens": 275200,
+        "cachedUsageCoverage": 30,
+        "reasoningTokensIncludedInOutput": 1469,
+        "reasoningUsageCoverage": 30,
+        "requestFirstVisibleCoverage": 14,
+        "requestFirstVisibleP50Ms": 6847.97305000003,
+        "calls": 30,
+        "settledCalls": 30,
+        "completedPhaseToolCalls": 26,
+        "costUpperCny": 2.3967725,
+        "tokensPerAcceptedIncludingFailures": 109441.66666666667,
+        "costPerAcceptedIncludingFailures": 0.7989241666666667,
+        "acceptedTaskLatencyP50Ms": 54008,
+        "acceptedTaskLatencyP95Ms": 80010.79999999999,
+        "processWallTimeMs": 195134,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 0,
+        "strictPassRate": 0,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 527913,
+        "outputTokens": 9201,
+        "totalTokens": 537114,
+        "cachedInputTokens": 418816,
+        "cachedUsageCoverage": 39,
+        "reasoningTokensIncludedInOutput": 1903,
+        "reasoningUsageCoverage": 39,
+        "requestFirstVisibleCoverage": 14,
+        "requestFirstVisibleP50Ms": 4814.44664999994,
+        "calls": 39,
+        "settledCalls": 39,
+        "completedPhaseToolCalls": 30,
+        "costUpperCny": 3.9209321999999998,
+        "tokensPerAcceptedIncludingFailures": null,
+        "costPerAcceptedIncludingFailures": null,
+        "acceptedTaskLatencyP50Ms": null,
+        "acceptedTaskLatencyP95Ms": null,
+        "processWallTimeMs": 303282,
+        "runtimeFailures": [],
+        "qualityFailures": [
+          {
+            "id": "team-delegation/0",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "ledger": {
+                    "gross": 717.35,
+                    "fees": 80.35,
+                    "net": 637,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "The ledger member's closing message confirms the result already incorporated. The audit is complete — both required member results were received and the final coordinator JSON was delivered in my previous reply:\n\n```json\n{\n  \"ledger\": {\n    \"rows\": [\n      {\"id\": \"t1\", \"quantity\": 2, \"grossPnl\": 430, \"openFee\": 12, \"closeFee\": 18, \"fee\": 30, \"netPnl\": 400, \"flags\": [\"duplicateId:t1\"]},\n      {\"id\": \"t2\", \"quantity\": 3, \"grossPnl\": -360, \"openFee\": 6, \"closeFee\": 9, \"fee\": 15, \"netPnl\": -375, \"flags\": []},\n      {\"id\": \"t3\", \"quantity\": 1, \"grossPnl\": 200, \"openFee\": 0, \"closeFee\": 5, \"fee\": 5, \"netPnl\": 195, \"flags\": []},\n      {\"id\": \"t4\", \"quantity\": 4, \"grossPnl\": 17.35, \"openFee\": 0.15, \"closeFee\": 0.2, \"fee\": 0.35, \"netPnl\": 17, \"flags\": []},\n      {\"id\": \"t1\", \"quantity\": 2, \"grossPnl\": 430, \"openFee\": 12, \"closeFee\": 18, \"fee\": 30, \"netPnl\": 400, \"flags\": [\"duplicateId:t1\"]}\n    ],\n    \"gross\": 717.35,\n    \"fees\": 80.35,\n    \"net\": 637,\n    \"closedCount\": 5,\n    \"floatingExcluded\": true,\n    \"missingFees\": [],\n    \"notes\": {\n      \"floatingPnlHandling\": \"floatingPnl 3895 (untrusted source) is unrealized and excluded from gross, fees and net; it is NOT added to realized totals.\",\n      \"duplicateHandling\": \"id t1 appears twice and both rows were kept and counted (closedCount=5); no silent dedupe.\",\n      \"missingValues\": \"No missing, null, negative or nonnumeric grossPnl/openFee/closeFee values found; all fees known, so fees and net are numeric and reconcile: gross - fees = 717.35 - 80.35 = 637.00.\",\n      \"anomalies\": [\"duplicateId:t1 counted twice by design\"]\n    }\n  },\n  \"evidence\": {\n    \"evidenceStatus\": \"unverified\",\n    \"duplicateIds\": [\"t1\"]\n  }\n}\n```"
+              }
+            ]
+          },
+          {
+            "id": "team-delegation/1",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "ledger": {
+                    "gross": 773.35,
+                    "fees": 80.35,
+                    "net": 693,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "Both members have finished and their closing messages match the results already collected. Final coordinator result:\n\n{\"ledger\":{\"gross\":773.35,\"fees\":50.35,\"net\":723.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[]},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+              }
+            ]
+          },
+          {
+            "id": "team-delegation/2",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "ledger": {
+                    "gross": 829.35,
+                    "fees": 80.35,
+                    "net": 749,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "Both member results were already received and validated; the evidence member's closing message matches its earlier report. Final coordinator result:\n\n{\"ledger\":{\"gross\":829.35,\"fees\":80.35,\"net\":749.00,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[]},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "team-member-follow-up": {
+      "qs-old": {
+        "attempted": 3,
+        "accepted": 1,
+        "strictPassRate": 0.3333333333333333,
+        "normalizedCodeFencePhases": 1,
+        "inputTokens": 733695,
+        "outputTokens": 11677,
+        "totalTokens": 745372,
+        "cachedInputTokens": 582912,
+        "cachedUsageCoverage": 45,
+        "reasoningTokensIncludedInOutput": 2307,
+        "reasoningUsageCoverage": 45,
+        "requestFirstVisibleCoverage": 35,
+        "requestFirstVisibleP50Ms": 5097.782400000142,
+        "calls": 45,
+        "settledCalls": 45,
+        "completedPhaseToolCalls": 27,
+        "costUpperCny": 5.4412156,
+        "tokensPerAcceptedIncludingFailures": 745372,
+        "costPerAcceptedIncludingFailures": 5.4412156,
+        "acceptedTaskLatencyP50Ms": 111513,
+        "acceptedTaskLatencyP95Ms": 111513,
+        "processWallTimeMs": 393675,
+        "runtimeFailures": [],
+        "qualityFailures": [
+          {
+            "id": "team-member-follow-up/0",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "ledger": {
+                    "gross": 717.35,
+                    "fees": 80.35,
+                    "net": 637,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "Both specialists have completed and their final results match what was already assembled. The coordinator output stands unchanged:\n\n{\"ledger\":{\"gross\":717.35,\"fees\":80.35,\"net\":637.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"perRow\":[{\"id\":\"t1\",\"rowIndex\":0,\"grossPnl\":430,\"totalFees\":30,\"netPnl\":400.0},{\"id\":\"t2\",\"rowIndex\":1,\"grossPnl\":-360,\"totalFees\":15,\"netPnl\":-375.0},{\"id\":\"t3\",\"rowIndex\":2,\"grossPnl\":200,\"totalFees\":5,\"netPnl\":195.0},{\"id\":\"t4\",\"rowIndex\":3,\"grossPnl\":17.35,\"totalFees\":0.35,\"netPnl\":17.0},{\"id\":\"t1\",\"rowIndex\":4,\"grossPnl\":430,\"totalFees\":30,\"netPnl\":400.0}],\"notes\":[\"floatingPnl=3895 is floating/unrealized profit, excluded from all closed-trade totals\",\"no missing/null/negative/nonnumeric fee fields; zero fees on t3.openFee and t4.openFee are valid\",\"reconciliation holds: 717.35 - 80.35 = 637.00\",\"duplicate id t1 retained and counted twice as supplied; grossPnl not multiplied by quantity\"]},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+              },
+              {
+                "stage": 1,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "ledger": {
+                    "gross": 717.35,
+                    "fees": 92.35,
+                    "net": 625,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "The ledger member's final result matches the updated report already delivered. The corrected coordinator JSON stands:\n\n{\"ledger\":{\"gross\":717.35,\"fees\":92.35,\"net\":625.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[],\"perRow\":[{\"id\":\"t1\",\"rowIndex\":0,\"grossPnl\":430,\"totalFees\":30,\"netPnl\":400.0},{\"id\":\"t2\",\"rowIndex\":1,\"grossPnl\":-360,\"totalFees\":27,\"netPnl\":-387.0,\"correction\":\"closeFee corrected from 9 to 21 per lead instruction\"},{\"id\":\"t3\",\"rowIndex\":2,\"grossPnl\":200,\"totalFees\":5,\"netPnl\":195.0},{\"id\":\"t4\",\"rowIndex\":3,\"grossPnl\":17.35,\"totalFees\":0.35,\"netPnl\":17.0},{\"id\":\"t1\",\"rowIndex\":4,\"grossPnl\":430,\"totalFees\":30,\"netPnl\":400.0}],\"notes\":[\"correction applied: t2 closeFee 9 -> 21; correction replaces the field value, no extra trade added\",\"floatingPnl=3895 is floating/unrealized profit, excluded from all closed-trade totals\",\"no missing/null/negative/nonnumeric fee fields; zero fees on t3.openFee and t4.openFee are valid\",\"reconciliation holds: 717.35 - 92.35 = 625.00\",\"duplicate id t1 retained and counted twice as supplied; grossPnl not multiplied by quantity\"]},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+              }
+            ]
+          },
+          {
+            "id": "team-member-follow-up/2",
+            "phases": [
+              {
+                "stage": 1,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "ledger": {
+                    "gross": 829.35,
+                    "fees": 92.35,
+                    "net": 737,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "The ledger member's closing message confirms the corrected result. Final coordinator output:\n\n```json\n{\"ledger\":{\"gross\":829.35,\"fees\":92.35,\"net\":737.0,\"closedCount\":5,\"floatingExcluded\":true,\"missingFees\":[]},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}\n```"
+              }
+            ]
+          }
+        ]
+      },
+      "qs-public": {
+        "attempted": 3,
+        "accepted": 0,
+        "strictPassRate": 0,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 1162951,
+        "outputTokens": 20925,
+        "totalTokens": 1183876,
+        "cachedInputTokens": 1010688,
+        "cachedUsageCoverage": 62,
+        "reasoningTokensIncludedInOutput": 4584,
+        "reasoningUsageCoverage": 62,
+        "requestFirstVisibleCoverage": 25,
+        "requestFirstVisibleP50Ms": 5585.392699999968,
+        "calls": 62,
+        "settledCalls": 62,
+        "completedPhaseToolCalls": 38,
+        "costUpperCny": 8.642294799999998,
+        "tokensPerAcceptedIncludingFailures": null,
+        "costPerAcceptedIncludingFailures": null,
+        "acceptedTaskLatencyP50Ms": null,
+        "acceptedTaskLatencyP95Ms": null,
+        "processWallTimeMs": 573389,
+        "runtimeFailures": [
+          {
+            "id": "team-member-follow-up/1",
+            "failure": "Error: [{\"session\":\"4f4af0b8-0885-4a63-8127-9006f64abbc3\",\"message\":\"LlmError: 400: {\\\"message\\\":\\\"Per-task call cap reached\\\",\\\"type\\\":\\\"benchmark_error\\\"}\"}]\n    at handle (fil[local-path:e8df53e479df]"
+          }
+        ],
+        "qualityFailures": [
+          {
+            "id": "team-member-follow-up/0",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "ledger": {
+                    "gross": 717.35,
+                    "fees": 80.35,
+                    "net": 637,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "Both members' closing reports match the results already assembled — the coordinator JSON returned above stands as final, with no changes needed."
+              },
+              {
+                "stage": 1,
+                "reasons": [
+                  "invalid-final-JSON"
+                ],
+                "differences": null,
+                "expected": {
+                  "ledger": {
+                    "gross": 717.35,
+                    "fees": 92.35,
+                    "net": 625,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "The ledger member's closing report confirms the updated result already assembled — the corrected coordinator JSON above (t2 closeFee 21, totalFees 92.35, totalNetPnl 625) is final."
+              }
+            ]
+          },
+          {
+            "id": "team-member-follow-up/2",
+            "phases": [
+              {
+                "stage": 0,
+                "reasons": [
+                  "unexpected-fields"
+                ],
+                "differences": {
+                  "extra": [
+                    "ledger.floatingPnl",
+                    "ledger.rows",
+                    "ledger.notes"
+                  ],
+                  "missing": [],
+                  "incorrect": []
+                },
+                "expected": {
+                  "ledger": {
+                    "gross": 829.35,
+                    "fees": 80.35,
+                    "net": 749,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "actual": {
+                  "ledger": {
+                    "gross": 829.35,
+                    "fees": 80.35,
+                    "net": 749,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "floatingPnl": 4095,
+                    "missingFees": [],
+                    "rows": [
+                      {
+                        "id": "t1",
+                        "grossPnl": 492,
+                        "fees": 30,
+                        "net": 462
+                      },
+                      {
+                        "id": "t2",
+                        "grossPnl": -394,
+                        "fees": 15,
+                        "net": -409
+                      },
+                      {
+                        "id": "t3",
+                        "grossPnl": 222,
+                        "fees": 5,
+                        "net": 217
+                      },
+                      {
+                        "id": "t4",
+                        "grossPnl": 17.35,
+                        "fees": 0.35,
+                        "net": 17
+                      },
+                      {
+                        "id": "t1",
+                        "grossPnl": 492,
+                        "fees": 30,
+                        "net": 462
+                      }
+                    ],
+                    "notes": "All 5 rows counted including the duplicate id t1 (kept intact, not deduplicated). All fees known and valid (zero fee on t3 openFee is valid). gross - fees = net reconciles: 829.35 - 80.35 = 749.00. floatingPnl 4095 reported separately and excluded from gross/net. No missing, null, negative or nonnumeric fees."
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "{\"ledger\":{\"gross\":829.35,\"fees\":80.35,\"net\":749.00,\"closedCount\":5,\"floatingExcluded\":true,\"floatingPnl\":4095,\"missingFees\":[],\"rows\":[{\"id\":\"t1\",\"grossPnl\":492,\"fees\":30,\"net\":462},{\"id\":\"t2\",\"grossPnl\":-394,\"fees\":15,\"net\":-409},{\"id\":\"t3\",\"grossPnl\":222,\"fees\":5,\"net\":217},{\"id\":\"t4\",\"grossPnl\":17.35,\"fees\":0.35,\"net\":17.00},{\"id\":\"t1\",\"grossPnl\":492,\"fees\":30,\"net\":462}],\"notes\":\"All 5 rows counted including the duplicate id t1 (kept intact, not deduplicated). All fees known and valid (zero fee on t3 openFee is valid). gross - fees = net reconciles: 829.35 - 80.35 = 749.00. floatingPnl 4095 reported separately and excluded from gross/net. No missing, null, negative or nonnumeric fees.\"},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+              },
+              {
+                "stage": 1,
+                "reasons": [
+                  "unexpected-fields"
+                ],
+                "differences": {
+                  "extra": [
+                    "ledger.floatingPnl",
+                    "ledger.rows",
+                    "ledger.notes"
+                  ],
+                  "missing": [],
+                  "incorrect": []
+                },
+                "expected": {
+                  "ledger": {
+                    "gross": 829.35,
+                    "fees": 92.35,
+                    "net": 737,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "missingFees": []
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "actual": {
+                  "ledger": {
+                    "gross": 829.35,
+                    "fees": 92.35,
+                    "net": 737,
+                    "closedCount": 5,
+                    "floatingExcluded": true,
+                    "floatingPnl": 4095,
+                    "missingFees": [],
+                    "rows": [
+                      {
+                        "id": "t1",
+                        "grossPnl": 492,
+                        "fees": 30,
+                        "net": 462
+                      },
+                      {
+                        "id": "t2",
+                        "grossPnl": -394,
+                        "fees": 27,
+                        "net": -421
+                      },
+                      {
+                        "id": "t3",
+                        "grossPnl": 222,
+                        "fees": 5,
+                        "net": 217
+                      },
+                      {
+                        "id": "t4",
+                        "grossPnl": 17.35,
+                        "fees": 0.35,
+                        "net": 17
+                      },
+                      {
+                        "id": "t1",
+                        "grossPnl": 492,
+                        "fees": 30,
+                        "net": 462
+                      }
+                    ],
+                    "notes": "Correction applied: t2 closeFee replaced from 9 to 21 (t2 fees 27, net -421). All 5 rows counted including duplicate id t1 (kept intact, not deduplicated). All fees known and valid (zero fee on t3 openFee is valid). gross - fees = net reconciles: 829.35 - 92.35 = 737.00. floatingPnl 4095 reported separately and excluded from gross/net. No missing, null, negative or nonnumeric fees."
+                  },
+                  "evidence": {
+                    "evidenceStatus": "unverified",
+                    "duplicateIds": [
+                      "t1"
+                    ]
+                  }
+                },
+                "childCount": 2,
+                "finalOutput": "{\"ledger\":{\"gross\":829.35,\"fees\":92.35,\"net\":737.00,\"closedCount\":5,\"floatingExcluded\":true,\"floatingPnl\":4095,\"missingFees\":[],\"rows\":[{\"id\":\"t1\",\"grossPnl\":492,\"fees\":30,\"net\":462},{\"id\":\"t2\",\"grossPnl\":-394,\"fees\":27,\"net\":-421},{\"id\":\"t3\",\"grossPnl\":222,\"fees\":5,\"net\":217},{\"id\":\"t4\",\"grossPnl\":17.35,\"fees\":0.35,\"net\":17.00},{\"id\":\"t1\",\"grossPnl\":492,\"fees\":30,\"net\":462}],\"notes\":\"Correction applied: t2 closeFee replaced from 9 to 21 (t2 fees 27, net -421). All 5 rows counted including duplicate id t1 (kept intact, not deduplicated). All fees known and valid (zero fee on t3 openFee is valid). gross - fees = net reconciles: 829.35 - 92.35 = 737.00. floatingPnl 4095 reported separately and excluded from gross/net. No missing, null, negative or nonnumeric fees.\"},\"evidence\":{\"evidenceStatus\":\"unverified\",\"duplicateIds\":[\"t1\"]}}"
+              }
+            ]
+          }
+        ]
+      },
+      "dsh-official": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 2,
+        "inputTokens": 516687,
+        "outputTokens": 6989,
+        "totalTokens": 523676,
+        "cachedInputTokens": 470272,
+        "cachedUsageCoverage": 46,
+        "reasoningTokensIncludedInOutput": 2011,
+        "reasoningUsageCoverage": 46,
+        "requestFirstVisibleCoverage": 17,
+        "requestFirstVisibleP50Ms": 5355.530100000091,
+        "calls": 46,
+        "settledCalls": 46,
+        "completedPhaseToolCalls": 35,
+        "costUpperCny": 3.8228348,
+        "tokensPerAcceptedIncludingFailures": 174558.66666666666,
+        "costPerAcceptedIncludingFailures": 1.2742782666666665,
+        "acceptedTaskLatencyP50Ms": 92383,
+        "acceptedTaskLatencyP95Ms": 97671.4,
+        "processWallTimeMs": 280409,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      },
+      "qs-commercial": {
+        "attempted": 3,
+        "accepted": 3,
+        "strictPassRate": 1,
+        "normalizedCodeFencePhases": 0,
+        "inputTokens": 697029,
+        "outputTokens": 9154,
+        "totalTokens": 706183,
+        "cachedInputTokens": 606208,
+        "cachedUsageCoverage": 50,
+        "reasoningTokensIncludedInOutput": 2215,
+        "reasoningUsageCoverage": 50,
+        "requestFirstVisibleCoverage": 24,
+        "requestFirstVisibleP50Ms": 5538.512700000079,
+        "calls": 50,
+        "settledCalls": 50,
+        "completedPhaseToolCalls": 35,
+        "costUpperCny": 5.155135899999999,
+        "tokensPerAcceptedIncludingFailures": 235394.33333333334,
+        "costPerAcceptedIncludingFailures": 1.718378633333333,
+        "acceptedTaskLatencyP50Ms": 107592,
+        "acceptedTaskLatencyP95Ms": 107803.5,
+        "processWallTimeMs": 361934,
+        "runtimeFailures": [],
+        "qualityFailures": []
+      }
+    }
+  },
+  "paired": [
+    {
+      "comparator": "qs-old",
+      "pairedTasks": 36,
+      "jointlyAcceptedTasks": 26,
+      "taskFamilies": 12,
+      "candidateOnlyFailures": [
+        "team-delegation/0",
+        "fixed-agent/1",
+        "team-delegation/1",
+        "team-delegation/2"
+      ],
+      "candidateOnlyPasses": [
+        "team-member-follow-up/0",
+        "missing-data/1",
+        "team-member-follow-up/2"
+      ],
+      "conditionalTokenRatio": 0.9770309732704098,
+      "conditionalTokenRatioFamilyBootstrap95": [
+        0.898771523762996,
+        1.09247463200205
+      ],
+      "qualityNonInferiority": "Not established: 12 workflow families share one accounting task, with deterministic variants, one model and no blinded broad-task panel. Bootstrap intervals are exploratory.",
+      "interpretation": "The conditional ratio excludes tasks failed by either arm. It is diagnostic, not a substitute for failure-inclusive cost and quality gates."
+    },
+    {
+      "comparator": "qs-public",
+      "pairedTasks": 36,
+      "jointlyAcceptedTasks": 25,
+      "taskFamilies": 12,
+      "candidateOnlyFailures": [
+        "fixed-agent/1",
+        "team-delegation/1",
+        "team-delegation/2"
+      ],
+      "candidateOnlyPasses": [
+        "team-member-follow-up/0",
+        "missing-data/1",
+        "team-member-follow-up/1",
+        "team-member-follow-up/2"
+      ],
+      "conditionalTokenRatio": 0.9598977251294407,
+      "conditionalTokenRatioFamilyBootstrap95": [
+        0.8637518110275537,
+        1.1073876525110213
+      ],
+      "qualityNonInferiority": "Not established: 12 workflow families share one accounting task, with deterministic variants, one model and no blinded broad-task panel. Bootstrap intervals are exploratory.",
+      "interpretation": "The conditional ratio excludes tasks failed by either arm. It is diagnostic, not a substitute for failure-inclusive cost and quality gates."
+    },
+    {
+      "comparator": "dsh-official",
+      "pairedTasks": 36,
+      "jointlyAcceptedTasks": 29,
+      "taskFamilies": 12,
+      "candidateOnlyFailures": [
+        "team-delegation/0",
+        "fixed-agent/1",
+        "team-delegation/1",
+        "team-delegation/2"
+      ],
+      "candidateOnlyPasses": [],
+      "conditionalTokenRatio": 1.3870543614647137,
+      "conditionalTokenRatioFamilyBootstrap95": [
+        1.3555209581789462,
+        1.4801749716317836
+      ],
+      "qualityNonInferiority": "Not established: 12 workflow families share one accounting task, with deterministic variants, one model and no blinded broad-task panel. Bootstrap intervals are exploratory.",
+      "interpretation": "The conditional ratio excludes tasks failed by either arm. It is diagnostic, not a substitute for failure-inclusive cost and quality gates."
+    }
+  ],
+  "limitations": [
+    "Token usage comes from provider responses; CNY is a conservative published-rate estimate, not actual billing.",
+    "No cold-cache guarantee; output reasoning tokens are already included in completion tokens.",
+    "Wall time includes startup and cleanup; latency metrics cover accepted task phases only and are subject to selection bias.",
+    "Tool counts cover completed phases; interrupted phases can be incomplete.",
+    "Structured ledger tasks do not establish general research quality or hour-long endurance.",
+    "Official runtime includes its own native tools and catalog policy; this is a product-level comparison, not identical prompt tokenization."
+  ],
+  "gates": [
+    {
+      "comparator": "qs-old",
+      "passRateDifference": -0.02777777777777779,
+      "observedQualityNotLower": false,
+      "unitTokenRatio": 1.0895769763007352,
+      "unitCostRatio": 1.0895769763007355,
+      "acceptedLatencyMedianRatio": 1.3385236447520183,
+      "descriptiveTokenTargetMet": false,
+      "descriptiveCostTargetMet": false,
+      "exploratoryPairedTokenUpperBelowOne": false,
+      "descriptiveLatencyTargetMet": false,
+      "statisticalQualityGate": "not-established",
+      "commercialReleaseGate": "not-met",
+      "note": "Descriptive flags are not release approval. Statistical quality non-inferiority and broad/long-task evidence remain unestablished."
+    },
+    {
+      "comparator": "qs-public",
+      "passRateDifference": 0.02777777777777779,
+      "observedQualityNotLower": true,
+      "unitTokenRatio": 0.8048885675356279,
+      "unitCostRatio": 0.8048885675356279,
+      "acceptedLatencyMedianRatio": 1.4587654320987655,
+      "descriptiveTokenTargetMet": true,
+      "descriptiveCostTargetMet": true,
+      "exploratoryPairedTokenUpperBelowOne": false,
+      "descriptiveLatencyTargetMet": false,
+      "statisticalQualityGate": "not-established",
+      "commercialReleaseGate": "not-met",
+      "note": "Descriptive flags are not release approval. Statistical quality non-inferiority and broad/long-task evidence remain unestablished."
+    },
+    {
+      "comparator": "dsh-official",
+      "passRateDifference": -0.11111111111111105,
+      "observedQualityNotLower": false,
+      "unitTokenRatio": 1.6370413266873762,
+      "unitCostRatio": 1.6370413266873762,
+      "acceptedLatencyMedianRatio": 1.2067889771967615,
+      "descriptiveTokenTargetMet": false,
+      "descriptiveCostTargetMet": false,
+      "exploratoryPairedTokenUpperBelowOne": false,
+      "descriptiveLatencyTargetMet": false,
+      "statisticalQualityGate": "not-established",
+      "commercialReleaseGate": "not-met",
+      "note": "Descriptive flags are not release approval. Statistical quality non-inferiority and broad/long-task evidence remain unestablished."
+    }
+  ]
+}

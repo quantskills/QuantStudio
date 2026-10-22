@@ -1,0 +1,43 @@
+{
+  "verifiedAt": "2026-10-21T14:20:36.104Z",
+  "status": "passed",
+  "observations": 144,
+  "arms": 4,
+  "inputVariants": 3,
+  "frozenCandidate": "62b2d8c8580b7077fdcdc3215fe0c529c839c262",
+  "sourceHashesVerified": true,
+  "settledCalls": 539,
+  "cumulativeCostUpperCny": 59.929846399999974,
+  "maximumCallsPerTask": 32,
+  "modelVersions": [
+    "kimi-k3-260716"
+  ],
+  "normalNativeLogsReconciled": 143,
+  "interruptedTasks": [
+    {
+      "id": "team-member-follow-up/1",
+      "arm": "qs-public",
+      "persisted": 31,
+      "settled": 32
+    }
+  ],
+  "accountingAdjustments": [
+    {
+      "tag": "native-suite-r1/team-member-follow-up/1/qs-public",
+      "original": {
+        "inputTokens": 604436,
+        "outputTokens": 9404,
+        "costCny": 5.397452099999999,
+        "calls": 32
+      },
+      "reconciled": {
+        "inputTokens": 630758,
+        "outputTokens": 9515,
+        "costCny": 4.673992899999999,
+        "calls": 32
+      }
+    }
+  ],
+  "credentialScan": "exact active provider credential absent from all benchmark/evidence files",
+  "scope": "Verification of measurement integrity; not a pass of commercial quality/cost targets."
+}

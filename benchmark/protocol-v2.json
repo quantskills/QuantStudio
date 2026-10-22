@@ -1,0 +1,12 @@
+{
+  "schema":2,
+  "purpose":"Validate optional Skill loading and runtime compatibility; improvements are measured, never assumed.",
+  "defaultMode":"full",
+  "model":{"provider":"pandaaiquant","requested":"kimi-k3","reasoning":"high","temperature":0,"maxOutputTokens":4096},
+  "comparison":{"suite":"v2","families":6,"inputsPerFamily":2,"arms":4,"plannedRuns":48,"callCap":32,"taskTimeoutMs":600000,"note":"Two warehouse datasets are reused across six workflows. These are not twelve independent problem domains."},
+  "teamAcceptance":{"suite":"team","flows":3,"repetitions":2,"plannedRuns":6,"callCap":64,"taskTimeoutMs":600000,"quietMs":10000,"mode":"full"},
+  "budget":{"cumulativeLimitCny":100,"safetyFraction":0.9,"additionalStageLimitCny":25,"priority":"Team acceptance before efficiency comparisons","unknownUsage":"stop and retain reservation"},
+  "activation":{"criticalChecks":"all pass","completionRate":"not below any comparator","tokensPerAcceptedTaskIncludingFailures":"at least 15 percent lower against each comparator; paired 95 percent interval supports reduction","latency":"no material regression","insufficientEvidence":"keep full as default; never infer quality parity from a small sample"},
+  "isolation":{"freshHome":true,"userHomeHost":false,"liveTrading":false,"automaticPaidExecution":false},
+  "historicalEvidence":"history/2026-10-21; frozen measurements describe the old candidate, not this revision"
+}

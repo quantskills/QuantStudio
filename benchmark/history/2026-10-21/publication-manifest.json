@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "sourceCandidate": "62b2d8c8580b7077fdcdc3215fe0c529c839c262",
+  "observations": 144,
+  "settledCalls": 539,
+  "policy": "Whitelisted synthetic results; local paths replaced by deterministic hashes. No native reasoning or user sessions exported.",
+  "pathMapping": {
+    "[local-path:48320fed94a9]": "48320fed94a9aa6a58b78871c986fc07c41187766445c96720fe1d660d572913",
+    "[local-path:5042e43f19c5]": "5042e43f19c5879521728082e41be0d7cb8b9ed7da38626916c09d346bf1a597",
+    "[local-path:e8df53e479df]": "e8df53e479dfb9f84748d833a725e421a07c0f2b0fa179a11bfc947c12e03324"
+  },
+  "files": [
+    {
+      "source": "evidence/budget.json",
+      "published": "budget.json",
+      "originalSha256": "c64a825fe97e1b835e43a495076b3b0dcd08c00fe37fffb4e2af5a98ae73a240",
+      "publishedSha256": "aed0d2170b1e23892993fd0459f41427ffa2f3339dc87f84891f19843a8e325d"
+    },
+    {
+      "source": "evidence/native-suite-r0.json",
+      "published": "native-suite-r0.json",
+      "originalSha256": "ec587b1f13cdf74debafdcf90623875f44f3eafc9a57a588c527cc8c1445b398",
+      "publishedSha256": "7cacdddbeba792b335cbfe05403de8f9d687b295e2149e949aaf625397293c74"
+    },
+    {
+      "source": "evidence/native-suite-r1.json",
+      "published": "native-suite-r1.json",
+      "originalSha256": "ea2091ef2ce8219abdcb39469ff21231acefe5dccc0bb21cb37f1add25dee682",
+      "publishedSha256": "ba8c8c0fad2af6b7cb8242c8d2956aec76777a4ad1d7330a829765fda66c7a4e"
+    },
+    {
+      "source": "evidence/native-suite-r2.json",
+      "published": "native-suite-r2.json",
+      "originalSha256": "a95c7ab83c2c64e677ca6a4814b6bb7e38341378110d254314f8a8dfd36a842a",
+      "publishedSha256": "fa9fe69dd27793387c5a44e03d22913ca234ff0a2926130a69b8f1f7c001ce07"
+    },
+    {
+      "source": "evidence/summary.json",
+      "published": "summary.json",
+      "originalSha256": "ddf627e7ceac9a8c7899fa085cf712aab8d739161c16634fc23a73b3ad1dbc71",
+      "publishedSha256": "c6387237e8ea5f57bf52e524e563e7279a83b41b176ecefea322fa323f324b9c"
+    },
+    {
+      "source": "evidence/runtime-provenance.json",
+      "published": "runtime-provenance.json",
+      "originalSha256": "8401e125bd7ea55ca149babda0414b01e61cbee9330042c99b9fd1141e35975a",
+      "publishedSha256": "8401e125bd7ea55ca149babda0414b01e61cbee9330042c99b9fd1141e35975a"
+    },
+    {
+      "source": "evidence/verification.json",
+      "published": "verification.json",
+      "originalSha256": "bd8c98763bd93acd2b9518d4a962361da04bf48a084db83f250b39dd211ea898",
+      "publishedSha256": "bd8c98763bd93acd2b9518d4a962361da04bf48a084db83f250b39dd211ea898"
+    },
+    {
+      "source": "evidence/native-log-audit.json",
+      "published": "native-log-audit.json",
+      "originalSha256": "9bf88479a3254ba6e8130bc2bd6d7ce2028eda4e570ac23cc9489166097c4644",
+      "publishedSha256": "f7187c7b7abe1b033a73871889e7fc7800445a39b2740f4ba13acd2b7035834b"
+    },
+    {
+      "source": "docs/dsh-upgrade/context-model-fixed-evidence.json",
+      "published": "context-model-fixed-evidence.json",
+      "originalSha256": "1d5866fe659693e9730264813d4c48a9e5e0face6ac2652d9498c5ad9e19c916",
+      "publishedSha256": "7010819bbc589d66ce8f533718d342b5a5a13c24bad9f7a2c7e12e97d94e2265"
+    },
+    {
+      "source": "docs/dsh-upgrade/context-model-hybrid-evidence.json",
+      "published": "context-model-hybrid-evidence.json",
+      "originalSha256": "eede896da23ce39d7a94ee43216235626cc9f50e11518ebcdb491a537bc02e90",
+      "publishedSha256": "127526cfac04134f346e7c4faf971c9541dbb03dffca327de8ba15a096ceaafb"
+    },
+    {
+      "source": "docs/dsh-upgrade/context-optimization-20261021.json",
+      "published": "context-optimization-20261021.json",
+      "originalSha256": "cbac1811d34ebe33e97d005a51ab89cfbe2fcd6f5807ee1f1e3a5f727175ebbd",
+      "publishedSha256": "1ffd3c2c98343ecde9e042d52723dd8348f6a00260d97cbb532fe2f2229a3205"
+    }
+  ]
+}

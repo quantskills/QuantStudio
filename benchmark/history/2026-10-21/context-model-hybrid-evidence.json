@@ -1,0 +1,2505 @@
+{
+  "version": 2,
+  "createdAt": "2026-10-21T08:44:08.434Z",
+  "scope": "Controlled model/context A/B, not full Host endurance or restart E2E",
+  "model": "kimi-k3",
+  "repetitions": 2,
+  "budgetCny": 10,
+  "spentUpperEstimateCny": 2.4051383,
+  "unresolvedReservationCny": 0,
+  "sourceHashes": {
+    "packages/quantskills-session/src/skill-context.ts": "6aa8cbd173902bdf593bb2e46834be74ffb1dd166bd4a88b56015051314e196f",
+    "packages/quantskills-session/src/index.ts": "320f9c638b761a576b97f003da7d7429ac2828f50342704f15f950857780bd4f",
+    "scripts/evaluate-skill-context.mjs": "06ed82ade7f1b6d271052a57001a8d4a4861a97813ce3f2da1541b63dff33ab1"
+  },
+  "fixtures": [
+    {
+      "id": "single-skill",
+      "assetIds": [
+        "skill-ledger-audit"
+      ]
+    },
+    {
+      "id": "multi-skill",
+      "assetIds": [
+        "skill-ledger-audit",
+        "skill-macro-monitor",
+        "skill-backtest",
+        "skill-daily-report",
+        "skill-fin-news",
+        "skill-dalio-all-weather",
+        "skill-factor-decay"
+      ]
+    },
+    {
+      "id": "multi-skill-missing-fee",
+      "assetIds": [
+        "skill-ledger-audit",
+        "skill-macro-monitor",
+        "skill-backtest",
+        "skill-daily-report",
+        "skill-fin-news",
+        "skill-dalio-all-weather",
+        "skill-factor-decay"
+      ]
+    },
+    {
+      "id": "dynamic-agent",
+      "assetIds": [
+        "skill-ledger-audit",
+        "skill-evidence-check",
+        "skill-macro-monitor",
+        "skill-backtest",
+        "skill-daily-report",
+        "skill-fin-news",
+        "skill-dalio-all-weather",
+        "skill-factor-decay"
+      ]
+    },
+    {
+      "id": "fixed-agent",
+      "assetIds": [
+        "skill-ledger-audit",
+        "skill-evidence-check"
+      ]
+    }
+  ],
+  "results": [
+    {
+      "id": "single-skill",
+      "repetition": 0,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "single-skill/0/full",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "ff460c7f141a3a10e483a790ff11f37659d8e1d08ef87460a81338e8f86fba75",
+          "promptBytes": 2674,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 0,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 1
+        }
+      ],
+      "promptTokens": 754,
+      "outputTokens": 115,
+      "costUpperEstimateCny": 0.0063437,
+      "elapsedMs": 5038
+    },
+    {
+      "id": "single-skill",
+      "repetition": 0,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "single-skill/0/progressive",
+          "mode": "progressive",
+          "effectiveMode": "full",
+          "promptHash": "ff460c7f141a3a10e483a790ff11f37659d8e1d08ef87460a81338e8f86fba75",
+          "promptBytes": 2674,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 1,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 2
+        }
+      ],
+      "promptTokens": 754,
+      "outputTokens": 99,
+      "costUpperEstimateCny": 0.0062269,
+      "elapsedMs": 6541
+    },
+    {
+      "id": "multi-skill",
+      "repetition": 0,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "multi-skill/0/full",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "84f5f052002778fdfae2a445b70bd3a1a60651e8d7d0e195032c003a6dadee78",
+          "promptBytes": 48742,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 2,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 3
+        }
+      ],
+      "promptTokens": 12579,
+      "outputTokens": 273,
+      "costUpperEstimateCny": 0.0938196,
+      "elapsedMs": 11155
+    },
+    {
+      "id": "multi-skill",
+      "repetition": 0,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "multi-skill/0/progressive",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "45d89402b5ffb0bf65ef2bd19784cdd169e8e9494cc5e15b7d1e54a9d7d846f4",
+          "promptBytes": 4324,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-ledger-audit\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "d51b22c15f5bc6d306a9610aafdf44a8968551f5acee085f162f039612da8571",
+              "bytes": 2407
+            },
+            {
+              "content": "{\"gross\":270,\"fees\":50,\"net\":220,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 3,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 5
+        }
+      ],
+      "promptTokens": 3294,
+      "outputTokens": 205,
+      "costUpperEstimateCny": 0.025542699999999998,
+      "elapsedMs": 8526
+    },
+    {
+      "id": "multi-skill-missing-fee",
+      "repetition": 0,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": null,
+        "net": null,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [
+          "t2"
+        ],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": null,
+        "net": null,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [
+          "t2"
+        ],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "multi-skill-missing-fee/0/full",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "84f5f052002778fdfae2a445b70bd3a1a60651e8d7d0e195032c003a6dadee78",
+          "promptBytes": 48742,
+          "turns": [
+            {
+              "content": "{\n  \"gross\": 270.0,\n  \"fees\": null,\n  \"net\": null,\n  \"closedCount\": 3,\n  \"floatingExcluded\": true,\n  \"missingFees\": [\"t2\"],\n  \"qualityToken\": \"ledger-v1:checked\"\n}"
+            }
+          ],
+          "callsStart": 5,
+          "value": {
+            "gross": 270,
+            "fees": null,
+            "net": null,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [
+              "t2"
+            ],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 6
+        }
+      ],
+      "promptTokens": 12579,
+      "outputTokens": 548,
+      "costUpperEstimateCny": 0.0958271,
+      "elapsedMs": 15421
+    },
+    {
+      "id": "multi-skill-missing-fee",
+      "repetition": 0,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": null,
+        "net": null,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [
+          "t2"
+        ],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": null,
+        "net": null,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [
+          "t2"
+        ],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "multi-skill-missing-fee/0/progressive",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "45d89402b5ffb0bf65ef2bd19784cdd169e8e9494cc5e15b7d1e54a9d7d846f4",
+          "promptBytes": 4324,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-ledger-audit\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "d51b22c15f5bc6d306a9610aafdf44a8968551f5acee085f162f039612da8571",
+              "bytes": 2407
+            },
+            {
+              "content": "{\"gross\":270.00,\"fees\":null,\"net\":null,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[\"t2\"],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 6,
+          "value": {
+            "gross": 270,
+            "fees": null,
+            "net": null,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [
+              "t2"
+            ],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 8
+        }
+      ],
+      "promptTokens": 3289,
+      "outputTokens": 201,
+      "costUpperEstimateCny": 0.025477,
+      "elapsedMs": 10365
+    },
+    {
+      "id": "dynamic-agent",
+      "repetition": 0,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "dynamic-agent/0/full",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "6aa42846cf6c4904f61a1dd6eda3e4edec15bf4a5f1e9b851d6371c76b6c710b",
+          "promptBytes": 50605,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 8,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 9
+        }
+      ],
+      "promptTokens": 12938,
+      "outputTokens": 423,
+      "costUpperEstimateCny": 0.0975353,
+      "elapsedMs": 15965
+    },
+    {
+      "id": "dynamic-agent",
+      "repetition": 0,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "dynamic-agent/0/progressive",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "781e20ff258308d7b57d68fe1a632c73d76e85bd1608ae2e0e30aa40bc0c219b",
+          "promptBytes": 4717,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-ledger-audit\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "d51b22c15f5bc6d306a9610aafdf44a8968551f5acee085f162f039612da8571",
+              "bytes": 2407
+            },
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 9,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 11
+        }
+      ],
+      "promptTokens": 3481,
+      "outputTokens": 206,
+      "costUpperEstimateCny": 0.026915099999999997,
+      "elapsedMs": 14814
+    },
+    {
+      "id": "fixed-agent",
+      "repetition": 0,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked",
+        "evidenceStatus": "verified",
+        "duplicateIds": [],
+        "proofToken": "evidence-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked",
+        "evidenceStatus": "verified",
+        "duplicateIds": [],
+        "proofToken": "evidence-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "fixed-agent/0/full",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "6abb900eb006012ffc3e05ceac6113bb90240f10e0593a11e8bb20f53c642bf9",
+          "promptBytes": 4750,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\",\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"}"
+            }
+          ],
+          "callsStart": 11,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked",
+            "evidenceStatus": "verified",
+            "duplicateIds": [],
+            "proofToken": "evidence-v1:checked"
+          },
+          "callsEnd": 12
+        }
+      ],
+      "promptTokens": 1149,
+      "outputTokens": 394,
+      "costUpperEstimateCny": 0.0112639,
+      "elapsedMs": 14811
+    },
+    {
+      "id": "fixed-agent",
+      "repetition": 0,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked",
+        "evidenceStatus": "verified",
+        "duplicateIds": [],
+        "proofToken": "evidence-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked",
+        "evidenceStatus": "verified",
+        "duplicateIds": [],
+        "proofToken": "evidence-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "fixed-agent/0/progressive",
+          "mode": "progressive",
+          "effectiveMode": "full",
+          "promptHash": "6abb900eb006012ffc3e05ceac6113bb90240f10e0593a11e8bb20f53c642bf9",
+          "promptBytes": 4750,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\",\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"}"
+            }
+          ],
+          "callsStart": 12,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked",
+            "evidenceStatus": "verified",
+            "duplicateIds": [],
+            "proofToken": "evidence-v1:checked"
+          },
+          "callsEnd": 13
+        }
+      ],
+      "promptTokens": 1149,
+      "outputTokens": 519,
+      "costUpperEstimateCny": 0.0121764,
+      "elapsedMs": 16006
+    },
+    {
+      "id": "agent-team",
+      "repetition": 0,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "title": "QS离线验收",
+        "ledger": {
+          "gross": 270,
+          "fees": 50,
+          "net": 220,
+          "closedCount": 3,
+          "floatingExcluded": true,
+          "missingFees": [],
+          "qualityToken": "ledger-v1:checked"
+        },
+        "evidence": {
+          "evidenceStatus": "verified",
+          "duplicateIds": [],
+          "proofToken": "evidence-v1:checked"
+        },
+        "reportToken": "report-v1:checked"
+      },
+      "actual": {
+        "title": "QS离线验收",
+        "ledger": {
+          "gross": 270,
+          "fees": 50,
+          "net": 220,
+          "closedCount": 3,
+          "floatingExcluded": true,
+          "missingFees": [],
+          "qualityToken": "ledger-v1:checked"
+        },
+        "evidence": {
+          "evidenceStatus": "verified",
+          "duplicateIds": [],
+          "proofToken": "evidence-v1:checked"
+        },
+        "reportToken": "report-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "agent-team/0/full/ledger",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "e7c8f3d8df01cea4a9b6a9de2d33c6c984eeee02084fe4231b95236752d1ea55",
+          "promptBytes": 29308,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 13,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 14
+        },
+        {
+          "tag": "agent-team/0/full/evidence",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "ccd619da7fa86e187025becbcd71836e4801d5a3fb57cdfb1a2578d1dfaa978b",
+          "promptBytes": 21491,
+          "turns": [
+            {
+              "content": "{\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"}"
+            }
+          ],
+          "callsStart": 14,
+          "value": {
+            "evidenceStatus": "verified",
+            "duplicateIds": [],
+            "proofToken": "evidence-v1:checked"
+          },
+          "callsEnd": 15
+        },
+        {
+          "tag": "agent-team/0/full/lead",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "c5e51204e76dcddb8fa7a1e7c632b2ecea09ab5bb125de9282088ae6f620218c",
+          "promptBytes": 15312,
+          "turns": [
+            {
+              "content": "{\"title\":\"QS离线验收\",\"ledger\":{\"gross\":270,\"fees\":50,\"net\":220,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"},\"evidence\":{\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"},\"reportToken\":\"report-v1:checked\"}"
+            }
+          ],
+          "callsStart": 15,
+          "value": {
+            "title": "QS离线验收",
+            "ledger": {
+              "gross": 270,
+              "fees": 50,
+              "net": 220,
+              "closedCount": 3,
+              "floatingExcluded": true,
+              "missingFees": [],
+              "qualityToken": "ledger-v1:checked"
+            },
+            "evidence": {
+              "evidenceStatus": "verified",
+              "duplicateIds": [],
+              "proofToken": "evidence-v1:checked"
+            },
+            "reportToken": "report-v1:checked"
+          },
+          "callsEnd": 16
+        }
+      ],
+      "promptTokens": 17084,
+      "outputTokens": 680,
+      "costUpperEstimateCny": 0.1296772,
+      "elapsedMs": 30547
+    },
+    {
+      "id": "agent-team",
+      "repetition": 0,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "title": "QS离线验收",
+        "ledger": {
+          "gross": 270,
+          "fees": 50,
+          "net": 220,
+          "closedCount": 3,
+          "floatingExcluded": true,
+          "missingFees": [],
+          "qualityToken": "ledger-v1:checked"
+        },
+        "evidence": {
+          "evidenceStatus": "verified",
+          "duplicateIds": [],
+          "proofToken": "evidence-v1:checked"
+        },
+        "reportToken": "report-v1:checked"
+      },
+      "actual": {
+        "title": "QS离线验收",
+        "ledger": {
+          "gross": 270,
+          "fees": 50,
+          "net": 220,
+          "closedCount": 3,
+          "floatingExcluded": true,
+          "missingFees": [],
+          "qualityToken": "ledger-v1:checked"
+        },
+        "evidence": {
+          "evidenceStatus": "verified",
+          "duplicateIds": [],
+          "proofToken": "evidence-v1:checked"
+        },
+        "reportToken": "report-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "agent-team/0/progressive/ledger",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "3859c89e453154c8b3d1f487da4a3f14a16632c502ebbe81836e1d6b8730c5ae",
+          "promptBytes": 3619,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-ledger-audit\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "d51b22c15f5bc6d306a9610aafdf44a8968551f5acee085f162f039612da8571",
+              "bytes": 2407
+            },
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 16,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 18
+        },
+        {
+          "tag": "agent-team/0/progressive/evidence",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "5c2ee53ad6825a4c634ac6c56df8734aec86dfc324bfc61892d5c476bdb85a32",
+          "promptBytes": 3553,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-evidence-check\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "ebccf8ff87c0767e5ebb3831a8dbe1cac2dea3290fbdc67a5f394894f5f57016",
+              "bytes": 1767
+            },
+            {
+              "content": "{\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"}"
+            }
+          ],
+          "callsStart": 18,
+          "value": {
+            "evidenceStatus": "verified",
+            "duplicateIds": [],
+            "proofToken": "evidence-v1:checked"
+          },
+          "callsEnd": 20
+        },
+        {
+          "tag": "agent-team/0/progressive/lead",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "d4ee8988bd00efead0b3f9edd0e4ed0a5c23f490e552e8334357d406bbf0a2b7",
+          "promptBytes": 3308,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-audit-report\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "c96c635380828ad1ca3d639b29bfcf84226c2cbb11eac822399ed420c93cc07c",
+              "bytes": 1277
+            },
+            {
+              "content": "{\"title\":\"QS离线验收\",\"ledger\":{\"gross\":270,\"fees\":50,\"net\":220,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"},\"evidence\":{\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"},\"reportToken\":\"report-v1:checked\"}"
+            }
+          ],
+          "callsStart": 20,
+          "value": {
+            "title": "QS离线验收",
+            "ledger": {
+              "gross": 270,
+              "fees": 50,
+              "net": 220,
+              "closedCount": 3,
+              "floatingExcluded": true,
+              "missingFees": [],
+              "qualityToken": "ledger-v1:checked"
+            },
+            "evidence": {
+              "evidenceStatus": "verified",
+              "duplicateIds": [],
+              "proofToken": "evidence-v1:checked"
+            },
+            "reportToken": "report-v1:checked"
+          },
+          "callsEnd": 22
+        }
+      ],
+      "promptTokens": 7783,
+      "outputTokens": 521,
+      "costUpperEstimateCny": 0.0606192,
+      "elapsedMs": 28269
+    },
+    {
+      "id": "single-skill",
+      "repetition": 1,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "single-skill/1/progressive",
+          "mode": "progressive",
+          "effectiveMode": "full",
+          "promptHash": "ff460c7f141a3a10e483a790ff11f37659d8e1d08ef87460a81338e8f86fba75",
+          "promptBytes": 2674,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 22,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 23
+        }
+      ],
+      "promptTokens": 754,
+      "outputTokens": 136,
+      "costUpperEstimateCny": 0.006496999999999999,
+      "elapsedMs": 8622
+    },
+    {
+      "id": "single-skill",
+      "repetition": 1,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "single-skill/1/full",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "ff460c7f141a3a10e483a790ff11f37659d8e1d08ef87460a81338e8f86fba75",
+          "promptBytes": 2674,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 23,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 24
+        }
+      ],
+      "promptTokens": 754,
+      "outputTokens": 185,
+      "costUpperEstimateCny": 0.0068547,
+      "elapsedMs": 7296
+    },
+    {
+      "id": "multi-skill",
+      "repetition": 1,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "multi-skill/1/progressive",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "45d89402b5ffb0bf65ef2bd19784cdd169e8e9494cc5e15b7d1e54a9d7d846f4",
+          "promptBytes": 4324,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-ledger-audit\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "d51b22c15f5bc6d306a9610aafdf44a8968551f5acee085f162f039612da8571",
+              "bytes": 2407
+            },
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 24,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 26
+        }
+      ],
+      "promptTokens": 3282,
+      "outputTokens": 172,
+      "costUpperEstimateCny": 0.0252142,
+      "elapsedMs": 8162
+    },
+    {
+      "id": "multi-skill",
+      "repetition": 1,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "multi-skill/1/full",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "84f5f052002778fdfae2a445b70bd3a1a60651e8d7d0e195032c003a6dadee78",
+          "promptBytes": 48742,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 26,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 27
+        }
+      ],
+      "promptTokens": 12579,
+      "outputTokens": 349,
+      "costUpperEstimateCny": 0.0943744,
+      "elapsedMs": 14223
+    },
+    {
+      "id": "multi-skill-missing-fee",
+      "repetition": 1,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": null,
+        "net": null,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [
+          "t2"
+        ],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": null,
+        "net": null,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [
+          "t2"
+        ],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "multi-skill-missing-fee/1/progressive",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "45d89402b5ffb0bf65ef2bd19784cdd169e8e9494cc5e15b7d1e54a9d7d846f4",
+          "promptBytes": 4324,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-ledger-audit\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "d51b22c15f5bc6d306a9610aafdf44a8968551f5acee085f162f039612da8571",
+              "bytes": 2407
+            },
+            {
+              "content": "{\"gross\":270,\"fees\":null,\"net\":null,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[\"t2\"],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 27,
+          "value": {
+            "gross": 270,
+            "fees": null,
+            "net": null,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [
+              "t2"
+            ],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 29
+        }
+      ],
+      "promptTokens": 3335,
+      "outputTokens": 345,
+      "costUpperEstimateCny": 0.026864,
+      "elapsedMs": 16437
+    },
+    {
+      "id": "multi-skill-missing-fee",
+      "repetition": 1,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": null,
+        "net": null,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [
+          "t2"
+        ],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": null,
+        "net": null,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [
+          "t2"
+        ],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "multi-skill-missing-fee/1/full",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "84f5f052002778fdfae2a445b70bd3a1a60651e8d7d0e195032c003a6dadee78",
+          "promptBytes": 48742,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":null,\"net\":null,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[\"t2\"],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 29,
+          "value": {
+            "gross": 270,
+            "fees": null,
+            "net": null,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [
+              "t2"
+            ],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 30
+        }
+      ],
+      "promptTokens": 12579,
+      "outputTokens": 107,
+      "costUpperEstimateCny": 0.0926078,
+      "elapsedMs": 7713
+    },
+    {
+      "id": "dynamic-agent",
+      "repetition": 1,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "dynamic-agent/1/progressive",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "781e20ff258308d7b57d68fe1a632c73d76e85bd1608ae2e0e30aa40bc0c219b",
+          "promptBytes": 4717,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-ledger-audit\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "d51b22c15f5bc6d306a9610aafdf44a8968551f5acee085f162f039612da8571",
+              "bytes": 2407
+            },
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 30,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 32
+        }
+      ],
+      "promptTokens": 3546,
+      "outputTokens": 310,
+      "costUpperEstimateCny": 0.028148799999999995,
+      "elapsedMs": 18348
+    },
+    {
+      "id": "dynamic-agent",
+      "repetition": 1,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "dynamic-agent/1/full",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "6aa42846cf6c4904f61a1dd6eda3e4edec15bf4a5f1e9b851d6371c76b6c710b",
+          "promptBytes": 50605,
+          "turns": [
+            {
+              "content": "{\"gross\":270.0,\"fees\":50.0,\"net\":220.0,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 32,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 33
+        }
+      ],
+      "promptTokens": 12938,
+      "outputTokens": 494,
+      "costUpperEstimateCny": 0.0980536,
+      "elapsedMs": 17748
+    },
+    {
+      "id": "fixed-agent",
+      "repetition": 1,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked",
+        "evidenceStatus": "verified",
+        "duplicateIds": [],
+        "proofToken": "evidence-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked",
+        "evidenceStatus": "verified",
+        "duplicateIds": [],
+        "proofToken": "evidence-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "fixed-agent/1/progressive",
+          "mode": "progressive",
+          "effectiveMode": "full",
+          "promptHash": "6abb900eb006012ffc3e05ceac6113bb90240f10e0593a11e8bb20f53c642bf9",
+          "promptBytes": 4750,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\",\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"}"
+            }
+          ],
+          "callsStart": 33,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked",
+            "evidenceStatus": "verified",
+            "duplicateIds": [],
+            "proofToken": "evidence-v1:checked"
+          },
+          "callsEnd": 34
+        }
+      ],
+      "promptTokens": 1149,
+      "outputTokens": 144,
+      "costUpperEstimateCny": 0.0094389,
+      "elapsedMs": 6035
+    },
+    {
+      "id": "fixed-agent",
+      "repetition": 1,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked",
+        "evidenceStatus": "verified",
+        "duplicateIds": [],
+        "proofToken": "evidence-v1:checked"
+      },
+      "actual": {
+        "gross": 270,
+        "fees": 50,
+        "net": 220,
+        "closedCount": 3,
+        "floatingExcluded": true,
+        "missingFees": [],
+        "qualityToken": "ledger-v1:checked",
+        "evidenceStatus": "verified",
+        "duplicateIds": [],
+        "proofToken": "evidence-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "fixed-agent/1/full",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "6abb900eb006012ffc3e05ceac6113bb90240f10e0593a11e8bb20f53c642bf9",
+          "promptBytes": 4750,
+          "turns": [
+            {
+              "content": "{\"gross\":270,\"fees\":50,\"net\":220,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\",\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"}"
+            }
+          ],
+          "callsStart": 34,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked",
+            "evidenceStatus": "verified",
+            "duplicateIds": [],
+            "proofToken": "evidence-v1:checked"
+          },
+          "callsEnd": 35
+        }
+      ],
+      "promptTokens": 1149,
+      "outputTokens": 592,
+      "costUpperEstimateCny": 0.0127093,
+      "elapsedMs": 18271
+    },
+    {
+      "id": "agent-team",
+      "repetition": 1,
+      "mode": "progressive",
+      "passed": true,
+      "expected": {
+        "title": "QS离线验收",
+        "ledger": {
+          "gross": 270,
+          "fees": 50,
+          "net": 220,
+          "closedCount": 3,
+          "floatingExcluded": true,
+          "missingFees": [],
+          "qualityToken": "ledger-v1:checked"
+        },
+        "evidence": {
+          "evidenceStatus": "verified",
+          "duplicateIds": [],
+          "proofToken": "evidence-v1:checked"
+        },
+        "reportToken": "report-v1:checked"
+      },
+      "actual": {
+        "title": "QS离线验收",
+        "ledger": {
+          "gross": 270,
+          "fees": 50,
+          "net": 220,
+          "closedCount": 3,
+          "floatingExcluded": true,
+          "missingFees": [],
+          "qualityToken": "ledger-v1:checked"
+        },
+        "evidence": {
+          "evidenceStatus": "verified",
+          "duplicateIds": [],
+          "proofToken": "evidence-v1:checked"
+        },
+        "reportToken": "report-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "agent-team/1/progressive/ledger",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "3859c89e453154c8b3d1f487da4a3f14a16632c502ebbe81836e1d6b8730c5ae",
+          "promptBytes": 3619,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-ledger-audit\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "d51b22c15f5bc6d306a9610aafdf44a8968551f5acee085f162f039612da8571",
+              "bytes": 2407
+            },
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 35,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 37
+        },
+        {
+          "tag": "agent-team/1/progressive/evidence",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "5c2ee53ad6825a4c634ac6c56df8734aec86dfc324bfc61892d5c476bdb85a32",
+          "promptBytes": 3553,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-evidence-check\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "ebccf8ff87c0767e5ebb3831a8dbe1cac2dea3290fbdc67a5f394894f5f57016",
+              "bytes": 1767
+            },
+            {
+              "content": "{\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"}"
+            }
+          ],
+          "callsStart": 37,
+          "value": {
+            "evidenceStatus": "verified",
+            "duplicateIds": [],
+            "proofToken": "evidence-v1:checked"
+          },
+          "callsEnd": 39
+        },
+        {
+          "tag": "agent-team/1/progressive/lead",
+          "mode": "progressive",
+          "effectiveMode": "progressive",
+          "promptHash": "d4ee8988bd00efead0b3f9edd0e4ed0a5c23f490e552e8334357d406bbf0a2b7",
+          "promptBytes": 3308,
+          "turns": [
+            {
+              "content": "",
+              "tools": [
+                {
+                  "name": "read_attached_skills",
+                  "arguments": "{\"asset_ids\":[\"skill-audit-report\"]}"
+                }
+              ]
+            },
+            {
+              "tool": "read_attached_skills",
+              "isError": false,
+              "resultHash": "c96c635380828ad1ca3d639b29bfcf84226c2cbb11eac822399ed420c93cc07c",
+              "bytes": 1277
+            },
+            {
+              "content": "{\"title\":\"QS离线验收\",\"ledger\":{\"gross\":270,\"fees\":50,\"net\":220,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"},\"evidence\":{\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"},\"reportToken\":\"report-v1:checked\"}"
+            }
+          ],
+          "callsStart": 39,
+          "value": {
+            "title": "QS离线验收",
+            "ledger": {
+              "gross": 270,
+              "fees": 50,
+              "net": 220,
+              "closedCount": 3,
+              "floatingExcluded": true,
+              "missingFees": [],
+              "qualityToken": "ledger-v1:checked"
+            },
+            "evidence": {
+              "evidenceStatus": "verified",
+              "duplicateIds": [],
+              "proofToken": "evidence-v1:checked"
+            },
+            "reportToken": "report-v1:checked"
+          },
+          "callsEnd": 41
+        }
+      ],
+      "promptTokens": 7808,
+      "outputTokens": 549,
+      "costUpperEstimateCny": 0.0610061,
+      "elapsedMs": 35260
+    },
+    {
+      "id": "agent-team",
+      "repetition": 1,
+      "mode": "full",
+      "passed": true,
+      "expected": {
+        "title": "QS离线验收",
+        "ledger": {
+          "gross": 270,
+          "fees": 50,
+          "net": 220,
+          "closedCount": 3,
+          "floatingExcluded": true,
+          "missingFees": [],
+          "qualityToken": "ledger-v1:checked"
+        },
+        "evidence": {
+          "evidenceStatus": "verified",
+          "duplicateIds": [],
+          "proofToken": "evidence-v1:checked"
+        },
+        "reportToken": "report-v1:checked"
+      },
+      "actual": {
+        "title": "QS离线验收",
+        "ledger": {
+          "gross": 270,
+          "fees": 50,
+          "net": 220,
+          "closedCount": 3,
+          "floatingExcluded": true,
+          "missingFees": [],
+          "qualityToken": "ledger-v1:checked"
+        },
+        "evidence": {
+          "evidenceStatus": "verified",
+          "duplicateIds": [],
+          "proofToken": "evidence-v1:checked"
+        },
+        "reportToken": "report-v1:checked"
+      },
+      "runs": [
+        {
+          "tag": "agent-team/1/full/ledger",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "e7c8f3d8df01cea4a9b6a9de2d33c6c984eeee02084fe4231b95236752d1ea55",
+          "promptBytes": 29308,
+          "turns": [
+            {
+              "content": "{\"gross\":270.00,\"fees\":50.00,\"net\":220.00,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"}"
+            }
+          ],
+          "callsStart": 41,
+          "value": {
+            "gross": 270,
+            "fees": 50,
+            "net": 220,
+            "closedCount": 3,
+            "floatingExcluded": true,
+            "missingFees": [],
+            "qualityToken": "ledger-v1:checked"
+          },
+          "callsEnd": 42
+        },
+        {
+          "tag": "agent-team/1/full/evidence",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "ccd619da7fa86e187025becbcd71836e4801d5a3fb57cdfb1a2578d1dfaa978b",
+          "promptBytes": 21491,
+          "turns": [
+            {
+              "content": "{\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"}"
+            }
+          ],
+          "callsStart": 42,
+          "value": {
+            "evidenceStatus": "verified",
+            "duplicateIds": [],
+            "proofToken": "evidence-v1:checked"
+          },
+          "callsEnd": 43
+        },
+        {
+          "tag": "agent-team/1/full/lead",
+          "mode": "full",
+          "effectiveMode": "full",
+          "promptHash": "c5e51204e76dcddb8fa7a1e7c632b2ecea09ab5bb125de9282088ae6f620218c",
+          "promptBytes": 15312,
+          "turns": [
+            {
+              "content": "{\"title\":\"QS离线验收\",\"ledger\":{\"gross\":270,\"fees\":50,\"net\":220,\"closedCount\":3,\"floatingExcluded\":true,\"missingFees\":[],\"qualityToken\":\"ledger-v1:checked\"},\"evidence\":{\"evidenceStatus\":\"verified\",\"duplicateIds\":[],\"proofToken\":\"evidence-v1:checked\"},\"reportToken\":\"report-v1:checked\"}"
+            }
+          ],
+          "callsStart": 43,
+          "value": {
+            "title": "QS离线验收",
+            "ledger": {
+              "gross": 270,
+              "fees": 50,
+              "net": 220,
+              "closedCount": 3,
+              "floatingExcluded": true,
+              "missingFees": [],
+              "qualityToken": "ledger-v1:checked"
+            },
+            "evidence": {
+              "evidenceStatus": "verified",
+              "duplicateIds": [],
+              "proofToken": "evidence-v1:checked"
+            },
+            "reportToken": "report-v1:checked"
+          },
+          "callsEnd": 44
+        }
+      ],
+      "promptTokens": 17084,
+      "outputTokens": 411,
+      "costUpperEstimateCny": 0.12771349999999998,
+      "elapsedMs": 22080
+    }
+  ],
+  "calls": [
+    {
+      "tag": "single-skill/0/full:0",
+      "reservationCny": 0.0688463,
+      "inputByteBound": 7383,
+      "startedAt": "2026-10-21T08:44:08.623Z",
+      "status": 200,
+      "promptTokens": 754,
+      "outputTokens": 115,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 58,
+      "costUpperEstimateCny": 0.0063437,
+      "finishReason": "stop",
+      "elapsedMs": 5022
+    },
+    {
+      "tag": "single-skill/0/progressive:0",
+      "reservationCny": 0.0688463,
+      "inputByteBound": 7383,
+      "startedAt": "2026-10-21T08:44:13.659Z",
+      "status": 200,
+      "promptTokens": 754,
+      "outputTokens": 99,
+      "cacheReadTokens": 512,
+      "reasoningTokens": 42,
+      "costUpperEstimateCny": 0.0062269,
+      "finishReason": "stop",
+      "elapsedMs": 6538
+    },
+    {
+      "tag": "multi-skill/0/full:0",
+      "reservationCny": 0.41749429999999993,
+      "inputByteBound": 55143,
+      "startedAt": "2026-10-21T08:44:20.201Z",
+      "status": 200,
+      "promptTokens": 12579,
+      "outputTokens": 273,
+      "cacheReadTokens": 512,
+      "reasoningTokens": 216,
+      "costUpperEstimateCny": 0.0938196,
+      "finishReason": "stop",
+      "elapsedMs": 11151
+    },
+    {
+      "tag": "multi-skill/0/progressive:0",
+      "reservationCny": 0.0855122,
+      "inputByteBound": 9666,
+      "startedAt": "2026-10-21T08:44:31.358Z",
+      "status": 200,
+      "promptTokens": 1338,
+      "outputTokens": 80,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 19,
+      "costUpperEstimateCny": 0.010351399999999998,
+      "finishReason": "tool_calls",
+      "elapsedMs": 3443
+    },
+    {
+      "tag": "multi-skill/0/progressive:1",
+      "reservationCny": 0.1060398,
+      "inputByteBound": 12478,
+      "startedAt": "2026-10-21T08:44:34.805Z",
+      "status": 200,
+      "promptTokens": 1956,
+      "outputTokens": 125,
+      "cacheReadTokens": 1280,
+      "reasoningTokens": 74,
+      "costUpperEstimateCny": 0.0151913,
+      "finishReason": "stop",
+      "elapsedMs": 5074
+    },
+    {
+      "tag": "multi-skill-missing-fee/0/full:0",
+      "reservationCny": 0.41751619999999995,
+      "inputByteBound": 55146,
+      "startedAt": "2026-10-21T08:44:39.882Z",
+      "status": 200,
+      "promptTokens": 12579,
+      "outputTokens": 548,
+      "cacheReadTokens": 12288,
+      "reasoningTokens": 473,
+      "costUpperEstimateCny": 0.0958271,
+      "finishReason": "stop",
+      "elapsedMs": 15418
+    },
+    {
+      "tag": "multi-skill-missing-fee/0/progressive:0",
+      "reservationCny": 0.0855341,
+      "inputByteBound": 9669,
+      "startedAt": "2026-10-21T08:44:55.304Z",
+      "status": 200,
+      "promptTokens": 1338,
+      "outputTokens": 75,
+      "cacheReadTokens": 1280,
+      "reasoningTokens": 14,
+      "costUpperEstimateCny": 0.010314899999999998,
+      "finishReason": "tool_calls",
+      "elapsedMs": 3921
+    },
+    {
+      "tag": "multi-skill-missing-fee/0/progressive:1",
+      "reservationCny": 0.105923,
+      "inputByteBound": 12462,
+      "startedAt": "2026-10-21T08:44:59.227Z",
+      "status": 200,
+      "promptTokens": 1951,
+      "outputTokens": 126,
+      "cacheReadTokens": 1280,
+      "reasoningTokens": 70,
+      "costUpperEstimateCny": 0.0151621,
+      "finishReason": "stop",
+      "elapsedMs": 6438
+    },
+    {
+      "tag": "dynamic-agent/0/full:0",
+      "reservationCny": 0.43131319999999995,
+      "inputByteBound": 57036,
+      "startedAt": "2026-10-21T08:45:05.669Z",
+      "status": 200,
+      "promptTokens": 12938,
+      "outputTokens": 423,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 366,
+      "costUpperEstimateCny": 0.0975353,
+      "finishReason": "stop",
+      "elapsedMs": 15953
+    },
+    {
+      "tag": "dynamic-agent/0/progressive:0",
+      "reservationCny": 0.0885271,
+      "inputByteBound": 10079,
+      "startedAt": "2026-10-21T08:45:21.634Z",
+      "status": 200,
+      "promptTokens": 1429,
+      "outputTokens": 85,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 24,
+      "costUpperEstimateCny": 0.011052199999999998,
+      "finishReason": "tool_calls",
+      "elapsedMs": 7475
+    },
+    {
+      "tag": "dynamic-agent/0/progressive:1",
+      "reservationCny": 0.1091934,
+      "inputByteBound": 12910,
+      "startedAt": "2026-10-21T08:45:29.111Z",
+      "status": 200,
+      "promptTokens": 2052,
+      "outputTokens": 121,
+      "cacheReadTokens": 1280,
+      "reasoningTokens": 64,
+      "costUpperEstimateCny": 0.0158629,
+      "finishReason": "stop",
+      "elapsedMs": 7333
+    },
+    {
+      "tag": "fixed-agent/0/full:0",
+      "reservationCny": 0.084169,
+      "inputByteBound": 9482,
+      "startedAt": "2026-10-21T08:45:36.447Z",
+      "status": 200,
+      "promptTokens": 1149,
+      "outputTokens": 394,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 319,
+      "costUpperEstimateCny": 0.0112639,
+      "finishReason": "stop",
+      "elapsedMs": 14808
+    },
+    {
+      "tag": "fixed-agent/0/progressive:0",
+      "reservationCny": 0.084169,
+      "inputByteBound": 9482,
+      "startedAt": "2026-10-21T08:45:51.258Z",
+      "status": 200,
+      "promptTokens": 1149,
+      "outputTokens": 519,
+      "cacheReadTokens": 1024,
+      "reasoningTokens": 444,
+      "costUpperEstimateCny": 0.0121764,
+      "finishReason": "stop",
+      "elapsedMs": 16004
+    },
+    {
+      "tag": "agent-team/0/full/ledger:0",
+      "reservationCny": 0.2701803,
+      "inputByteBound": 34963,
+      "startedAt": "2026-10-21T08:46:07.265Z",
+      "status": 200,
+      "promptTokens": 7532,
+      "outputTokens": 363,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 306,
+      "costUpperEstimateCny": 0.05763349999999999,
+      "finishReason": "stop",
+      "elapsedMs": 16111
+    },
+    {
+      "tag": "agent-team/0/full/evidence:0",
+      "reservationCny": 0.21144449999999998,
+      "inputByteBound": 26917,
+      "startedAt": "2026-10-21T08:46:23.381Z",
+      "status": 200,
+      "promptTokens": 5651,
+      "outputTokens": 82,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 48,
+      "costUpperEstimateCny": 0.041850899999999996,
+      "finishReason": "stop",
+      "elapsedMs": 4289
+    },
+    {
+      "tag": "agent-team/0/full/lead:0",
+      "reservationCny": 0.16466609999999998,
+      "inputByteBound": 20509,
+      "startedAt": "2026-10-21T08:46:27.673Z",
+      "status": 200,
+      "promptTokens": 3901,
+      "outputTokens": 235,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 147,
+      "costUpperEstimateCny": 0.030192799999999995,
+      "finishReason": "stop",
+      "elapsedMs": 10138
+    },
+    {
+      "tag": "agent-team/0/progressive/ledger:0",
+      "reservationCny": 0.0798255,
+      "inputByteBound": 8887,
+      "startedAt": "2026-10-21T08:46:37.816Z",
+      "status": 200,
+      "promptTokens": 1119,
+      "outputTokens": 68,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 7,
+      "costUpperEstimateCny": 0.008665099999999998,
+      "finishReason": "tool_calls",
+      "elapsedMs": 3487
+    },
+    {
+      "tag": "agent-team/0/progressive/ledger:1",
+      "reservationCny": 0.0999808,
+      "inputByteBound": 11648,
+      "startedAt": "2026-10-21T08:46:41.304Z",
+      "status": 200,
+      "promptTokens": 1725,
+      "outputTokens": 106,
+      "cacheReadTokens": 1024,
+      "reasoningTokens": 49,
+      "costUpperEstimateCny": 0.0133663,
+      "finishReason": "stop",
+      "elapsedMs": 6773
+    },
+    {
+      "tag": "agent-team/0/progressive/evidence:0",
+      "reservationCny": 0.0793802,
+      "inputByteBound": 8826,
+      "startedAt": "2026-10-21T08:46:48.080Z",
+      "status": 200,
+      "promptTokens": 1073,
+      "outputTokens": 69,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 9,
+      "costUpperEstimateCny": 0.0083366,
+      "finishReason": "tool_calls",
+      "elapsedMs": 3406
+    },
+    {
+      "tag": "agent-team/0/progressive/evidence:1",
+      "reservationCny": 0.0950606,
+      "inputByteBound": 10974,
+      "startedAt": "2026-10-21T08:46:51.488Z",
+      "status": 200,
+      "promptTokens": 1529,
+      "outputTokens": 62,
+      "cacheReadTokens": 1024,
+      "reasoningTokens": 28,
+      "costUpperEstimateCny": 0.0116143,
+      "finishReason": "stop",
+      "elapsedMs": 4624
+    },
+    {
+      "tag": "agent-team/0/progressive/lead:0",
+      "reservationCny": 0.0769493,
+      "inputByteBound": 8493,
+      "startedAt": "2026-10-21T08:46:56.114Z",
+      "status": 200,
+      "promptTokens": 985,
+      "outputTokens": 78,
+      "cacheReadTokens": 0,
+      "reasoningTokens": 18,
+      "costUpperEstimateCny": 0.0077599,
+      "finishReason": "tool_calls",
+      "elapsedMs": 3730
+    },
+    {
+      "tag": "agent-team/0/progressive/lead:1",
+      "reservationCny": 0.0893301,
+      "inputByteBound": 10189,
+      "startedAt": "2026-10-21T08:46:59.846Z",
+      "status": 200,
+      "promptTokens": 1352,
+      "outputTokens": 138,
+      "cacheReadTokens": 768,
+      "reasoningTokens": 50,
+      "costUpperEstimateCny": 0.010877,
+      "finishReason": "stop",
+      "elapsedMs": 6235
+    },
+    {
+      "tag": "single-skill/1/progressive:0",
+      "reservationCny": 0.0688463,
+      "inputByteBound": 7383,
+      "startedAt": "2026-10-21T08:47:06.084Z",
+      "status": 200,
+      "promptTokens": 754,
+      "outputTokens": 136,
+      "cacheReadTokens": 512,
+      "reasoningTokens": 79,
+      "costUpperEstimateCny": 0.006496999999999999,
+      "finishReason": "stop",
+      "elapsedMs": 8619
+    },
+    {
+      "tag": "single-skill/1/full:0",
+      "reservationCny": 0.0688463,
+      "inputByteBound": 7383,
+      "startedAt": "2026-10-21T08:47:14.707Z",
+      "status": 200,
+      "promptTokens": 754,
+      "outputTokens": 185,
+      "cacheReadTokens": 512,
+      "reasoningTokens": 128,
+      "costUpperEstimateCny": 0.0068547,
+      "finishReason": "stop",
+      "elapsedMs": 7293
+    },
+    {
+      "tag": "multi-skill/1/progressive:0",
+      "reservationCny": 0.0855122,
+      "inputByteBound": 9666,
+      "startedAt": "2026-10-21T08:47:22.003Z",
+      "status": 200,
+      "promptTokens": 1338,
+      "outputTokens": 68,
+      "cacheReadTokens": 1280,
+      "reasoningTokens": 7,
+      "costUpperEstimateCny": 0.010263799999999998,
+      "finishReason": "tool_calls",
+      "elapsedMs": 3606
+    },
+    {
+      "tag": "multi-skill/1/progressive:1",
+      "reservationCny": 0.1056675,
+      "inputByteBound": 12427,
+      "startedAt": "2026-10-21T08:47:25.611Z",
+      "status": 200,
+      "promptTokens": 1944,
+      "outputTokens": 104,
+      "cacheReadTokens": 1280,
+      "reasoningTokens": 47,
+      "costUpperEstimateCny": 0.014950399999999999,
+      "finishReason": "stop",
+      "elapsedMs": 4551
+    },
+    {
+      "tag": "multi-skill/1/full:0",
+      "reservationCny": 0.41749429999999993,
+      "inputByteBound": 55143,
+      "startedAt": "2026-10-21T08:47:30.166Z",
+      "status": 200,
+      "promptTokens": 12579,
+      "outputTokens": 349,
+      "cacheReadTokens": 12544,
+      "reasoningTokens": 292,
+      "costUpperEstimateCny": 0.0943744,
+      "finishReason": "stop",
+      "elapsedMs": 14220
+    },
+    {
+      "tag": "multi-skill-missing-fee/1/progressive:0",
+      "reservationCny": 0.0855341,
+      "inputByteBound": 9669,
+      "startedAt": "2026-10-21T08:47:44.390Z",
+      "status": 200,
+      "promptTokens": 1338,
+      "outputTokens": 121,
+      "cacheReadTokens": 1280,
+      "reasoningTokens": 60,
+      "costUpperEstimateCny": 0.010650699999999999,
+      "finishReason": "tool_calls",
+      "elapsedMs": 6139
+    },
+    {
+      "tag": "multi-skill-missing-fee/1/progressive:1",
+      "reservationCny": 0.1075655,
+      "inputByteBound": 12687,
+      "startedAt": "2026-10-21T08:47:50.532Z",
+      "status": 200,
+      "promptTokens": 1997,
+      "outputTokens": 224,
+      "cacheReadTokens": 1280,
+      "reasoningTokens": 170,
+      "costUpperEstimateCny": 0.0162133,
+      "finishReason": "stop",
+      "elapsedMs": 10292
+    },
+    {
+      "tag": "multi-skill-missing-fee/1/full:0",
+      "reservationCny": 0.41751619999999995,
+      "inputByteBound": 55146,
+      "startedAt": "2026-10-21T08:48:00.827Z",
+      "status": 200,
+      "promptTokens": 12579,
+      "outputTokens": 107,
+      "cacheReadTokens": 12544,
+      "reasoningTokens": 51,
+      "costUpperEstimateCny": 0.0926078,
+      "finishReason": "stop",
+      "elapsedMs": 7709
+    },
+    {
+      "tag": "dynamic-agent/1/progressive:0",
+      "reservationCny": 0.0885271,
+      "inputByteBound": 10079,
+      "startedAt": "2026-10-21T08:48:08.541Z",
+      "status": 200,
+      "promptTokens": 1429,
+      "outputTokens": 150,
+      "cacheReadTokens": 1280,
+      "reasoningTokens": 89,
+      "costUpperEstimateCny": 0.011526699999999999,
+      "finishReason": "tool_calls",
+      "elapsedMs": 9733
+    },
+    {
+      "tag": "dynamic-agent/1/progressive:1",
+      "reservationCny": 0.1115075,
+      "inputByteBound": 13227,
+      "startedAt": "2026-10-21T08:48:18.276Z",
+      "status": 200,
+      "promptTokens": 2117,
+      "outputTokens": 160,
+      "cacheReadTokens": 1280,
+      "reasoningTokens": 103,
+      "costUpperEstimateCny": 0.016622099999999997,
+      "finishReason": "stop",
+      "elapsedMs": 8609
+    },
+    {
+      "tag": "dynamic-agent/1/full:0",
+      "reservationCny": 0.43131319999999995,
+      "inputByteBound": 57036,
+      "startedAt": "2026-10-21T08:48:26.889Z",
+      "status": 200,
+      "promptTokens": 12938,
+      "outputTokens": 494,
+      "cacheReadTokens": 12800,
+      "reasoningTokens": 437,
+      "costUpperEstimateCny": 0.0980536,
+      "finishReason": "stop",
+      "elapsedMs": 17745
+    },
+    {
+      "tag": "fixed-agent/1/progressive:0",
+      "reservationCny": 0.084169,
+      "inputByteBound": 9482,
+      "startedAt": "2026-10-21T08:48:44.637Z",
+      "status": 200,
+      "promptTokens": 1149,
+      "outputTokens": 144,
+      "cacheReadTokens": 1024,
+      "reasoningTokens": 69,
+      "costUpperEstimateCny": 0.0094389,
+      "finishReason": "stop",
+      "elapsedMs": 6032
+    },
+    {
+      "tag": "fixed-agent/1/full:0",
+      "reservationCny": 0.084169,
+      "inputByteBound": 9482,
+      "startedAt": "2026-10-21T08:48:50.672Z",
+      "status": 200,
+      "promptTokens": 1149,
+      "outputTokens": 592,
+      "cacheReadTokens": 1024,
+      "reasoningTokens": 523,
+      "costUpperEstimateCny": 0.0127093,
+      "finishReason": "stop",
+      "elapsedMs": 18269
+    },
+    {
+      "tag": "agent-team/1/progressive/ledger:0",
+      "reservationCny": 0.0798255,
+      "inputByteBound": 8887,
+      "startedAt": "2026-10-21T08:49:08.945Z",
+      "status": 200,
+      "promptTokens": 1119,
+      "outputTokens": 74,
+      "cacheReadTokens": 1024,
+      "reasoningTokens": 13,
+      "costUpperEstimateCny": 0.008708899999999999,
+      "finishReason": "tool_calls",
+      "elapsedMs": 6566
+    },
+    {
+      "tag": "agent-team/1/progressive/ledger:1",
+      "reservationCny": 0.10025819999999999,
+      "inputByteBound": 11686,
+      "startedAt": "2026-10-21T08:49:15.514Z",
+      "status": 200,
+      "promptTokens": 1731,
+      "outputTokens": 115,
+      "cacheReadTokens": 1024,
+      "reasoningTokens": 58,
+      "costUpperEstimateCny": 0.0134758,
+      "finishReason": "stop",
+      "elapsedMs": 6718
+    },
+    {
+      "tag": "agent-team/1/progressive/evidence:0",
+      "reservationCny": 0.0793802,
+      "inputByteBound": 8826,
+      "startedAt": "2026-10-21T08:49:22.234Z",
+      "status": 200,
+      "promptTokens": 1073,
+      "outputTokens": 71,
+      "cacheReadTokens": 1024,
+      "reasoningTokens": 11,
+      "costUpperEstimateCny": 0.0083512,
+      "finishReason": "tool_calls",
+      "elapsedMs": 5309
+    },
+    {
+      "tag": "agent-team/1/progressive/evidence:1",
+      "reservationCny": 0.0950606,
+      "inputByteBound": 10974,
+      "startedAt": "2026-10-21T08:49:27.545Z",
+      "status": 200,
+      "promptTokens": 1531,
+      "outputTokens": 63,
+      "cacheReadTokens": 1024,
+      "reasoningTokens": 29,
+      "costUpperEstimateCny": 0.0116362,
+      "finishReason": "stop",
+      "elapsedMs": 4944
+    },
+    {
+      "tag": "agent-team/1/progressive/lead:0",
+      "reservationCny": 0.0769493,
+      "inputByteBound": 8493,
+      "startedAt": "2026-10-21T08:49:32.493Z",
+      "status": 200,
+      "promptTokens": 985,
+      "outputTokens": 95,
+      "cacheReadTokens": 768,
+      "reasoningTokens": 35,
+      "costUpperEstimateCny": 0.007884,
+      "finishReason": "tool_calls",
+      "elapsedMs": 5715
+    },
+    {
+      "tag": "agent-team/1/progressive/lead:1",
+      "reservationCny": 0.0900966,
+      "inputByteBound": 10294,
+      "startedAt": "2026-10-21T08:49:38.210Z",
+      "status": 200,
+      "promptTokens": 1369,
+      "outputTokens": 131,
+      "cacheReadTokens": 768,
+      "reasoningTokens": 43,
+      "costUpperEstimateCny": 0.01095,
+      "finishReason": "stop",
+      "elapsedMs": 5992
+    },
+    {
+      "tag": "agent-team/1/full/ledger:0",
+      "reservationCny": 0.2701803,
+      "inputByteBound": 34963,
+      "startedAt": "2026-10-21T08:49:44.205Z",
+      "status": 200,
+      "promptTokens": 7532,
+      "outputTokens": 118,
+      "cacheReadTokens": 7424,
+      "reasoningTokens": 61,
+      "costUpperEstimateCny": 0.05584499999999999,
+      "finishReason": "stop",
+      "elapsedMs": 5836
+    },
+    {
+      "tag": "agent-team/1/full/evidence:0",
+      "reservationCny": 0.21144449999999998,
+      "inputByteBound": 26917,
+      "startedAt": "2026-10-21T08:49:50.044Z",
+      "status": 200,
+      "promptTokens": 5651,
+      "outputTokens": 74,
+      "cacheReadTokens": 5632,
+      "reasoningTokens": 40,
+      "costUpperEstimateCny": 0.041792499999999996,
+      "finishReason": "stop",
+      "elapsedMs": 4789
+    },
+    {
+      "tag": "agent-team/1/full/lead:0",
+      "reservationCny": 0.16466609999999998,
+      "inputByteBound": 20509,
+      "startedAt": "2026-10-21T08:49:54.837Z",
+      "status": 200,
+      "promptTokens": 3901,
+      "outputTokens": 219,
+      "cacheReadTokens": 3840,
+      "reasoningTokens": 131,
+      "costUpperEstimateCny": 0.030076,
+      "finishReason": "stop",
+      "elapsedMs": 11446
+    }
+  ],
+  "priorCost": {
+    "reportHash": "2fad4e14e1530b5f0a29c1f7ad9e2f2816cbaf7ba9e469617a5318ca90a97b00",
+    "spentUpperEstimateCny": 1.2242319000000002,
+    "unresolvedReservationCny": 0
+  },
+  "skillHashes": {
+    "skill-ledger-audit": "59a28fbf99d4b8779af63cf5b4ec18acf077c33cff906ade766768b9514d9661",
+    "skill-evidence-check": "2145e56e73977d5ee376f6feadf135a904a9f6496b740fabd8e951e9f98eb566",
+    "skill-audit-report": "10dbcb3cf4f0b47e018ab114a82fdb1071d54390a14c422e3c5f631009715046",
+    "skill-macro-monitor": "4862c0ed7f9c7fe5b76e3033e5c6bceb1b541d841a399e852a3883c298040723",
+    "skill-backtest": "73c52631c75648cc2a29e8ca49cd7abfb54ddba49e0882e5cf181c98a985bcc8",
+    "skill-daily-report": "5e7c62b6886066e26805192043f160ec5b65cc26403d4cdfce7df1eb004de100",
+    "skill-fin-news": "87ad3ff739e9384b7a2daa9cdf5d674a1d3800586ef772095d2484bdecc5ef04",
+    "skill-dalio-all-weather": "3e4dfeba9dc10e318950927394554057e15eb088bc506efa988a4e470a8e4d7a",
+    "skill-factor-decay": "5fea19526905c019eb4247ab52f92857d42388ef96647ad998695f380439b0cb"
+  },
+  "pricing": {
+    "source": "http[local-path:48320fed94a9]",
+    "statusSource": "http[local-path:5042e43f19c5]",
+    "version": "a42d372ccf0b5dd13ecf71203521f9d2",
+    "modelRatio": 0.5,
+    "completionRatio": 1,
+    "maximumPublishedGroupRatio": 1,
+    "quotaPerUnit": 500000,
+    "exchange": 7.3,
+    "perMillionInputCny": 7.3,
+    "perMillionOutputCny": 7.3,
+    "costMeaning": "Upper estimate at public rates, counts all prompt tokens as uncached; not an account invoice."
+  },
+  "completed": true
+}

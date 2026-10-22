@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "status": "preregistered-before-new-paid-runs",
+  "createdAt": "2026-10-21",
+  "purpose": "Evaluate whether the private candidate improves cost and performance without degrading task outcomes. Superiority is not assumed.",
+  "boundaryCommit": "78a93e7d6cd2463673109aada29bf0451bc81351",
+  "arms": [
+    {"id":"qs-old","commit":"8312624953d62a9aec5cde2c0c2f1175342482fe","dsh":"0.1.2-alpha.2","path":"../../baselines/qs-old"},
+    {"id":"qs-public","commit":"48cb7c3d77d61ade0a836b7065b4f6568e6d0917","dsh":"0.2.1-rc.2","path":"../../baselines/qs-public"},
+    {"id":"dsh-official","dsh":"0.2.1-rc.2","path":"../../official-runtime","integrity":"sha512-tvY+yhfKRifthbqPe/OK0AYxM5ZkvqfYq/jMYgJcEUxiRRL1Vwra3Ti5TB6AXgSWQdiPHYh/Vp6SJa9yHwMNuw=="},
+    {"id":"qs-commercial","seed":"adb40b5f96f9e606c954498af024adbcfca1b5cb","dsh":"0.2.1-rc.2","path":"..","skillContextMode":"progressive"}
+  ],
+  "inference": {"provider":"pandaaiquant","endpoint":"https://llmx.pandaaiquant.com/v1","model":"kimi-k3","reasoningEffort":"high","temperature":0,"maxOutputTokensPerCall":4096,"wallClockLimitMsPerTask":600000,"maxCallsPerTask":32},
+  "budget": {"currency":"CNY","totalAuthorized":100,"priorEstimatedSpend":2.4527854000000002,"safetyFraction":0.9,"unknownUsage":"retain reservation and stop","ledger":"../evidence/budget.json"},
+  "design": {
+    "primary":"native Web profile Hosts and their actual session, skill and delegation services",
+    "diagnostic":"direct-model/context experiments must be reported separately and cannot establish runtime superiority",
+    "repetitions":3,
+    "plannedCases":12,
+    "plannedTaskRuns":144,
+    "pilot":"one small case in all four arms; never counted as held-out evidence",
+    "ordering":"rotate arm order within each paired task/repetition; serial tasks, natural concurrent children",
+    "content":"identical normalized Skill definitions, role responsibilities, inputs, requested outputs and rubric; native loading policy remains unchanged in each baseline. Public distraction Skills are copied into the same reserved test namespace in every arm; their resource scripts are not execution targets.",
+    "explicitSelection":"For single-Skill and fixed workflows, official DSH receives its native /skill gesture; QS receives its native persisted attachments. Dynamic cases retain each product's native selection. Official Team uses its experimental agent-team profile; QS uses its saved Team definition.",
+    "skillParity":"Preflight verifies each installed root-visible Skill body against the normalized fixture; team members have the same role responsibilities and assigned Skill subsets. Official project catalog scope differs from QS per-member scoping and is a product difference, not an equal-prompt microbenchmark.",
+    "measurementLimits":"No timing claim excludes native tool rounds. Startup/cleanup wall time and model task latency are separate. Natural provider caching is observed, not controlled. Model usage is authoritative; CNY is an upper published-rate estimate, not an invoice.",
+    "cache":"record provider cache usage; do not claim a cold cache without provider evidence; distinguish logical tokens, actual cached usage and conservative cost",
+    "restarts":"fresh isolated home per task; continuation/restart uses only that task's home",
+    "unavailableFeature":"record blocked/not-applicable; do not inject new candidate behavior into a baseline",
+    "heldOut":"freeze corpus hash and seed list before running; any tuning invalidates that candidate's held-out claim and requires a new reserved set"
+  },
+  "metrics": ["strictTaskPassRate","criticalConstraintFailures","rubricScore","totalInputTokensIncludingAllChildren","totalOutputAndReasoningTokens","cachedInputTokens","allModelCalls","allToolCalls","failedAndRetriedCalls","costPerAcceptedTaskIncludingFailures","timeToFirstVisibleOutputMs","endToEndTaskMs","restartRecoveryPass","duplicateMessageOrSideEffectCount"],
+  "acceptance": {
+    "minimumQuality": "all critical checks pass; commercial strict pass rate is not lower than each comparator in this pilot-sized sample",
+    "qualityStatisticalClaim": "one-sided 95% paired non-inferiority bound above -5 percentage points; insufficient power is inconclusive, not passed",
+    "tokenTarget": "at least 15% fewer aggregate tokens per accepted task against EACH comparator, with paired bootstrap 95% interval below 1",
+    "costTarget": "at least 15% lower conservative cost per accepted task including failed attempts against EACH comparator",
+    "latencyTarget": "at least 10% lower median end-to-end latency with no quality loss; show p50/p95 and paired intervals",
+    "scope": "report per Skill/Agent/Team/long-task family; no blanket better/faster/cheaper statement from one favorable subset",
+    "releaseGate": "144 runs alone may not establish quality non-inferiority; explicitly retain inconclusive outcomes"
+  },
+  "taskFamilies": ["single-skill-control","multiple-skills-selection","all-skills-required-control","dynamic-agent","fixed-agent","agent-role-constraints","team-delegation","team-member-follow-up","missing-data","cross-file-evidence","multi-turn-requirement-change","restart-and-context-retention"],
+  "dataPolicy": {"localOnly":true,"userHomeWrites":false,"trading":false,"credentialExport":false,"retainRawReasoningInReport":false,"retainFailures":true,"publicPush":false}
+}
