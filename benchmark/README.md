@@ -32,6 +32,8 @@ node benchmark/verify-history.mjs
 node benchmark/verify-results.mjs
 ```
 
+构建后还可执行 `node scripts/ci-team-verification.mjs`。它在独立原生 Host 中检查 Team 的准确成员指令读取、确定性计算、非法值处理和重启恢复；只使用本地模拟网关，并断言模型请求数为零。它验证工具接入，不证明真实模型会正确选择输入、遵守输出约束或减少 Token。
+
 将 `config.example.json` 复制到仓库外，填写已安装的基线位置及全新空工作目录，通过 `QS_BENCH_CONFIG` 指向它。已有非空目录必须包含基准生成的所有权标记；不能使用用户原有 Home。旧 QS 固定到 `8312624`，官方 DSH 使用未应用 QS 补丁的 `0.2.1-rc.2`；两个新 QS 对照使用同一源码和构建，仅配置开关不同。
 
 ```sh

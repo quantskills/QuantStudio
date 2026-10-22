@@ -453,5 +453,93 @@
     "native reasoning logs",
     "personal paths",
     "live trading"
-  ]
+  ],
+  "teamVerificationRepair": {
+    "commit": "5a4204ba0c93e5ed87dca098ca501ee3514b153d",
+    "sourceHashes": {
+      "packages/quantskills-session/src/index.ts": "3a7aed703a74ad1668ce8b6358f1bbb060b9e57d357a2ca541d78fe8c125b6de",
+      "packages/quantskills-session/src/team-verification.ts": "076a62f3541883a32be4ec35974cd399b7c8fd299ea35d02e123115ab8125746",
+      "packages/quantskills-session/lib/index.js": "5d6cd58f23aae071ca1a35edd153f00ee2e86bd50b002c8619b7947c4b8c469e",
+      "scripts/ci-team-verification.mjs": "43204de5a6f4d790024996341eaaf390d08f7ecdd327497daf33bc019ab54038"
+    },
+    "sourceAndTypes": "passed",
+    "fullBuild": "passed",
+    "tests": {
+      "passed": 1496,
+      "skipped": 1
+    },
+    "offlineBenchmarkTests": 21,
+    "nativeHost": {
+      "kind": "offline-team-tool-integration",
+      "modelRequests": 0,
+      "bundleSha256": "5d6cd58f23aae071ca1a35edd153f00ee2e86bd50b002c8619b7947c4b8c469e",
+      "results": [
+        {
+          "mode": "full",
+          "instructions": "passed",
+          "exactArithmetic": "passed",
+          "invalidInputs": "rejected",
+          "restart": "passed"
+        },
+        {
+          "mode": "progressive",
+          "instructions": "passed",
+          "exactArithmetic": "passed",
+          "invalidInputs": "rejected",
+          "restart": "passed"
+        }
+      ]
+    },
+    "packedExports": {
+      "plugin": "a884a3db4c842f6df6619809ea523e474bea2a7828f9af91c8607c1081d2e08a",
+      "application": "12b70355319207fe1d65277c2686bd5f5bf2856312c6744019e44a9d9177f610"
+    },
+    "localLogHashes": {
+      "check": {
+        "sha256": "8bb8d76bed1e21ab7e172822508af1ace87bd8952214ddc3b748b4bc0e66a5ec",
+        "bytes": 1236
+      },
+      "build": {
+        "sha256": "b447d415def32b8be25ab079859a7e74c4750d717e3c0a0d29fb12c2fea8d999",
+        "bytes": 13226
+      },
+      "full-tests": {
+        "sha256": "e0695f9e06f57db3cb7c22c8e863785235ce6bf9a9231a8ca389d21024241039",
+        "bytes": 8668
+      },
+      "runtime-tests": {
+        "sha256": "4dad74239c59237c94f8b6d73999b78ec05cb5b7e3b126df64b7f5c6020ab802",
+        "bytes": 264
+      },
+      "benchmark-offline": {
+        "sha256": "b1809feda55a714af8dc5c4bb18202b773a323beafa81da36361ca44d4123cdf",
+        "bytes": 4794
+      },
+      "native-host": {
+        "sha256": "740c5bdb9b9faca4bb07160e7696e045af39f22cd119bd74da737ef0d696fbf9",
+        "bytes": 387
+      },
+      "pack": {
+        "sha256": "163e4e5c9ac5789ab8413f13445db7ea53a6b5bc35800dcbc20151442e287a0d",
+        "bytes": 428
+      },
+      "browser": {
+        "sha256": "7885f042645fcce3ee2a7b1a5d4e7fb9fbe922d32725bab5dea29acb5a047689",
+        "bytes": 2060
+      }
+    },
+    "realModelAcceptance": "not-run-budget-stopped",
+    "historicalResultsModified": false,
+    "defaultSkillContextMode": "full",
+    "mergeStatus": "draft",
+    "browser": {
+      "status": "passed",
+      "artifact": "6aa99e26b7076d032756f7943d7a401d9dc35db0cef308ce7ddea413e49bca95",
+      "mockModelCalls": 9,
+      "assistantReplies": 3,
+      "resultFiles": 201,
+      "htmlBytes": 3145885,
+      "largeHtmlInteractive": true
+    }
+  }
 }
