@@ -596,6 +596,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private ensureAgentSetup;
     private setupAgent;
     private setupTeamMember;
+    private registerTeamVerificationTools;
     private registerTeamActivationTool;
     private registerAssetDraftTool;
     private registerAgentTeamDraftTool;

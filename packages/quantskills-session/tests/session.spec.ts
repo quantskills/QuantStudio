@@ -53,6 +53,7 @@ import QuantSkillsSessionService, {
   foldQuantSkillsResidentSkills,
 } from '../src/index.ts'
 import { ATTACHED_SKILL_READER, type SkillContextMode } from '../src/skill-context.ts'
+import { TEAM_CALCULATE, TEAM_MEMBER_INSTRUCTIONS } from '../src/team-verification.ts'
 import type { ContestService } from '../src/contest-service.ts'
 import {
   QUANTSKILLS_SESSION_EVENT_TYPES,
@@ -3107,6 +3108,35 @@ describe('QuantSkills Agent Teams', () => {
     expect(rootPrompt).toContain(teamDescription)
     expect(rootPrompt).toContain('Write every generated artifact under `output/` in the current Session workspace.')
     expect(fixture.ctx.tools.get('activate_team_member', root)).toBeDefined()
+    const readInstructions = async (caller: Agent) => fixture.ctx.tools.execute({
+      callId: ToolCallId('inspect-member'), name: TEAM_MEMBER_INSTRUCTIONS,
+      arguments: { members: ['signal-validator'] }, agent: caller, signal: new AbortController().signal,
+    })
+    const instructions = await readInstructions(root)
+    expect(instructions.isError).toBe(false)
+    const instructionText = instructions.content.filter(block => block.type === 'text').map(block => block.text).join('\n')
+    expect(instructionText).toContain(memberRole)
+    expect(instructionText).toContain(`${secondAssetId}@${commitV1}`)
+    expect(instructionText).toContain('beta version')
+    expect(instructionText).not.toContain('version one')
+    expect(fixture.teamSpawnRequests).toHaveLength(0)
+    // Inspecting a member must not attach its capabilities to the lead.
+    await expect(fixture.ctx.skills.get(secondAssetId, { scope: root })).resolves.toBeUndefined()
+    expect((await fixture.ctx.tools.execute({
+      callId: ToolCallId('inspect-undeclared'), name: TEAM_MEMBER_INSTRUCTIONS,
+      arguments: { members: ['undeclared'] }, agent: root, signal: new AbortController().signal,
+    })).isError).toBe(true)
+    const verify = async (caller: Agent) => fixture.ctx.tools.execute({
+      callId: ToolCallId('verify-repeated-operands'), name: TEAM_CALCULATE,
+      arguments: { calculations: [{ label: 'total', operation: 'sum', values: ['12', '18', '12', '18'], expected: '30' }] },
+      agent: caller, signal: new AbortController().signal,
+    })
+    const verification = await verify(root)
+    expect(verification.isError).toBe(false)
+    expect(verification.content).toContainEqual({ type: 'text', text: JSON.stringify({ calculations: [{
+      label: 'total', operation: 'sum', operandCount: 4, value: '60', rounded: false,
+      exact: { numerator: '60', denominator: '1' }, matchesExpected: false,
+    }], sourceCompleteness: 'not-verified' }) })
     await expect(agentEvents(fixture.ctx, root).waterfall(
       'agent/request',
       { turn: 1, step: 0, signal: new AbortController().signal },
@@ -3147,6 +3177,8 @@ describe('QuantSkills Agent Teams', () => {
     const childPrompt = renderPrompt(await fixture.ctx.systemPrompt.assemble(assembleContextFor(child)))
     expect(childPrompt).toContain('Team member "signal-validator"')
     expect(childPrompt).toContain(memberRole)
+    expect((await readInstructions(child)).isError).toBe(true)
+    expect(await verify(child)).toEqual(verification)
     expect(childPrompt).toContain('Write every generated artifact under `output/` in the current Session workspace.')
     if (skillContextMode === 'progressive') {
       expect(rootPrompt).toContain('Do not send acknowledgement-only replies')
@@ -3171,6 +3203,11 @@ describe('QuantSkills Agent Teams', () => {
     const duplicateText = duplicate.content.find(block => block.type === 'text')
     expect(duplicateText?.type === 'text' ? duplicateText.text : '').toContain('send_message')
     expect(rootPrompt).not.toContain('followup_task')
+    await fixture.ctx.quantSkillsSessions.agentUpdate({
+      agentId: member.agentId, expectedRevision: member.revision, name: member.name,
+      role: 'Changed after the team snapshot; must not replace frozen instructions.',
+      mode: 'dynamic', permission: 'workspace-write', versionIds: [],
+    })
     await expect(fixture.ctx.quantSkillsSessions.agentTeamSessionList({})).resolves.toEqual([
       expect.objectContaining({ sessionId, team, running: false }),
     ])
@@ -3185,6 +3222,31 @@ describe('QuantSkills Agent Teams', () => {
     expect(foldQuantSkillsAgentTeamSession(resumed.session.snapshotEvents())).toEqual(team)
     await expect(fixture.ctx.skills.get(assetId, { scope: resumed })).resolves.toMatchObject({ content: 'version one' })
     expect(renderPrompt(await fixture.ctx.systemPrompt.assemble({ scope: resumed }))).toContain(teamDescription)
+    expect(await readInstructions(resumed)).toEqual(instructions)
+    expect(await verify(resumed)).toEqual(verification)
+    const ordinaryId = await createBound(fixture, 'ordinary-no-team-verification')
+    const ordinary = fixture.ctx.agents.get(ordinaryId)!
+    expect(fixture.ctx.tools.get(TEAM_CALCULATE, ordinary)).toBeUndefined()
+    expect(fixture.ctx.tools.get(TEAM_MEMBER_INSTRUCTIONS, ordinary)).toBeUndefined()
+    await fixture.ctx.fiber.dispose()
+  })
+
+  it.each([TEAM_CALCULATE, TEAM_MEMBER_INSTRUCTIONS])('rejects a conflicting %s tool without replacing its implementation', async name => {
+    const fixture = await harness()
+    const existing = defineTool({ name, description: 'Another plugin owns this name.', parameters: {},
+      output: { schema: { type: 'string' }, render: (_args, value) => [{ type: 'text', text: value }] },
+      execute: async () => 'existing implementation',
+    })
+    fixture.ctx.tools.register(existing)
+    const lead = await fixture.ctx.quantSkillsSessions.agentCreate({ name: 'lead', role: 'Coordinate.', mode: 'dynamic', permission: 'workspace-write', versionIds: [] })
+    const member = await fixture.ctx.quantSkillsSessions.agentCreate({ name: 'worker', role: 'Check.', mode: 'dynamic', permission: 'workspace-write', versionIds: [] })
+    const team = await fixture.ctx.quantSkillsSessions.agentTeamCreate({ name: 'Conflicting tools', description: 'Keep other plugins intact.',
+      leadAgentId: lead.agentId, leadAgentRevision: lead.revision, leadModel: { kind: 'default' },
+      members: [{ name: 'worker', agentId: member.agentId, agentRevision: member.revision, context: 'fresh', model: { kind: 'default' } }],
+    })
+    await expect(fixture.ctx.quantSkillsSessions.agentTeamSessionCreate({ sessionId: SessionId('team-tool-conflict'), teamId: team.teamId, expectedRevision: team.revision })).rejects.toThrow('conflicts with an existing tool')
+    expect(fixture.ctx.tools.get(name)).toBe(existing)
+    expect(fixture.teamSpawnRequests).toHaveLength(0)
     await fixture.ctx.fiber.dispose()
   })
 })

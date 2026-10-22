@@ -79,6 +79,14 @@ export function apply(ctx) {
       const result=await compaction.compactNow(agent,new AbortController().signal)
       return {compacted:result!==null}
     }
+    // Non-model integration probe. Only the two read-only verification tools
+    // are callable; this is not a general-purpose tool execution RPC.
+    if (method === 'verify-team-tools') {
+      const agent = ctx.agents.get(params.sessionId)
+      if (!agent) throw new Error('Task session missing')
+      if (!['quantskills_calculate', 'read_team_member_instructions'].includes(params.name)) throw new Error('Not a verification tool')
+      return ctx.tools.execute({callId:randomUUID(),name:params.name,arguments:params.arguments,agent,signal:new AbortController().signal})
+    }
     if (method === 'run') {
       const { sessionId, prompt } = params, agent = ctx.agents.get(sessionId)
       if (!agent) throw new Error('Task session missing')

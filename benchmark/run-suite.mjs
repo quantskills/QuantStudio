@@ -25,7 +25,7 @@ await mkdir(evidence,{recursive:true})
 const reportFile=join(evidence,out+'.json'), claim=await open(reportFile,'wx');await claim.close()
 const hash=b=>createHash('sha256').update(b).digest('hex')
 const sourceFiles=['benchmark/bridge.mjs','benchmark/corpus.mjs','benchmark/corpus-v2.mjs','benchmark/lib/config.mjs','benchmark/run-suite.mjs','benchmark/lib/native-host.mjs','benchmark/lib/gateway.mjs','benchmark/lib/budget.mjs',
- 'packages/quantskills-session/lib/index.js','packages/quantskills-session/src/index.ts','packages/quantskills-session/src/skill-context.ts','pnpm-lock.yaml']
+ 'packages/quantskills-session/lib/index.js','packages/quantskills-session/src/index.ts','packages/quantskills-session/src/skill-context.ts','packages/quantskills-session/src/team-verification.ts','pnpm-lock.yaml']
 const sourceHashes=Object.fromEntries(await Promise.all(sourceFiles.map(async p=>[p,hash(await readFile(join(project,p)))])))
 const selected=corpus.filter(c=>(!arg('--families')||arg('--families').split(',').includes(c.family))&&(!arg('--repetition')||c.repetition===Number(arg('--repetition'))))
 if(!selected.length)throw new Error('No selected fixtures')
