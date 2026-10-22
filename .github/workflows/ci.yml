@@ -74,6 +74,7 @@ jobs:
           node --test benchmark/tests/*.test.mjs
           node benchmark/run-suite.mjs
           node benchmark/verify-history.mjs
+          node benchmark/verify-results.mjs
 
       - name: Check out fixed upstream UI test support
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

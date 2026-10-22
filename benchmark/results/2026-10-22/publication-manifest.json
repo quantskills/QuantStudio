@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "policy": "Whitelisted synthetic results, original scoring and usage retained; no credentials, user sessions or native reasoning logs.",
+  "files": [
+    {
+      "name": "budget.json",
+      "originalSha256": "4bd9b2a2f882d0a8a3707561c23366a0f14ed484151dbc722b965a85696aeb3d",
+      "publishedSha256": "670cc08cfa3ce5931d70396dbaa27d9a2f011871ce965a86668df2c7bfd67834"
+    },
+    {
+      "name": "unified-team-v1.json",
+      "originalSha256": "e748707d4cbff5d41c0a5bd8881166a496d46d73d8b932108d71293f986f3aa1",
+      "publishedSha256": "aa1a08b1d679f17a3accf18f083a981b7d3906198013d7c1e5761fc3c8346947"
+    },
+    {
+      "name": "unified-team-v2.json",
+      "originalSha256": "f2d358ed1de3e1a2ed17d2311bba106f137e0ab731afd16bbc96d0b2eadfbb9c",
+      "publishedSha256": "56b8588326205048601155d5eb4f8972f69270c320fef240b63e702dbd718b90"
+    },
+    {
+      "name": "unified-comparison-v2.json",
+      "originalSha256": "73e67e2ecc168d3bb9812f101f63ad6d6cbc3865428c399bf506639dd70600da",
+      "publishedSha256": "69146373875ae76919c9fec5a2222c19b34eebc0533f395bfab6f30607f3690b"
+    }
+  ],
+  "pathMapping": {
+    "[local-path:48320fed94a9]": "48320fed94a9aa6a58b78871c986fc07c41187766445c96720fe1d660d572913",
+    "[local-path:5042e43f19c5]": "5042e43f19c5879521728082e41be0d7cb8b9ed7da38626916c09d346bf1a597",
+    "[local-path:d8077a1d4de7]": "d8077a1d4de78002cad8d2a5a4f9b6900642765250693cf0315de8fbb776d502"
+  },
+  "summary": [
+    {
+      "name": "unified-team-v1.json",
+      "commit": "5e41ea60ab204d92a5f8b917d1658d18b3149418",
+      "suite": "team",
+      "attempted": 6,
+      "passed": 1,
+      "calls": 80,
+      "costUpperCny": 7.632719399999999
+    },
+    {
+      "name": "unified-team-v2.json",
+      "commit": "3f3431324927c14ca9d2ad5714b429bf89da89bb",
+      "suite": "team",
+      "attempted": 6,
+      "passed": 4,
+      "calls": 80,
+      "costUpperCny": 7.5635081
+    },
+    {
+      "name": "unified-comparison-v2.json",
+      "commit": "43bab355bb700eccb026b31aae3254281b09199b",
+      "suite": "v2",
+      "attempted": 32,
+      "passed": 20,
+      "calls": 97,
+      "costUpperCny": 9.2986962
+    }
+  ],
+  "cumulativeCostUpperCny": 84.42477009999999
+}

@@ -1,0 +1,164 @@
+{
+  "schema": 1,
+  "candidateCommit": "43bab355bb700eccb026b31aae3254281b09199b",
+  "corpusHash": "40420ad3a83054ed3684dd1df926df2d665245f856089022447556f2d200b334",
+  "plannedRuns": 48,
+  "attempted": 32,
+  "notExecuted": [
+    {
+      "id": "dynamic-agent/1",
+      "arm": "qs-public"
+    },
+    {
+      "id": "dynamic-agent/1",
+      "arm": "dsh-official"
+    },
+    {
+      "id": "dynamic-agent/1",
+      "arm": "qs-candidate"
+    },
+    {
+      "id": "dynamic-agent/1",
+      "arm": "qs-old"
+    },
+    {
+      "id": "fixed-agent/1",
+      "arm": "qs-public"
+    },
+    {
+      "id": "fixed-agent/1",
+      "arm": "dsh-official"
+    },
+    {
+      "id": "fixed-agent/1",
+      "arm": "qs-candidate"
+    },
+    {
+      "id": "fixed-agent/1",
+      "arm": "qs-old"
+    },
+    {
+      "id": "restart-continuation/1",
+      "arm": "qs-public"
+    },
+    {
+      "id": "restart-continuation/1",
+      "arm": "dsh-official"
+    },
+    {
+      "id": "restart-continuation/1",
+      "arm": "qs-candidate"
+    },
+    {
+      "id": "restart-continuation/1",
+      "arm": "qs-old"
+    },
+    {
+      "id": "team-cooperation/1",
+      "arm": "qs-public"
+    },
+    {
+      "id": "team-cooperation/1",
+      "arm": "dsh-official"
+    },
+    {
+      "id": "team-cooperation/1",
+      "arm": "qs-candidate"
+    },
+    {
+      "id": "team-cooperation/1",
+      "arm": "qs-old"
+    }
+  ],
+  "stopReason": "budget-safety-ceiling",
+  "arms": {
+    "qs-old": {
+      "attempted": 8,
+      "blockedBeforeFirstRequest": 1,
+      "passed": 5,
+      "calls": 17,
+      "usageComplete": true,
+      "knownTokens": 287006,
+      "tokens": 287006,
+      "tokensPerAccepted": 57401.2,
+      "costUpperCny": 2.0951438,
+      "medianWallMs": 21002
+    },
+    "qs-public": {
+      "attempted": 8,
+      "blockedBeforeFirstRequest": 0,
+      "passed": 6,
+      "calls": 17,
+      "usageComplete": true,
+      "knownTokens": 311927,
+      "tokens": 311927,
+      "tokensPerAccepted": 51987.833333333336,
+      "costUpperCny": 2.2770670999999996,
+      "medianWallMs": 50838.5
+    },
+    "dsh-official": {
+      "attempted": 8,
+      "blockedBeforeFirstRequest": 0,
+      "passed": 4,
+      "calls": 38,
+      "usageComplete": true,
+      "knownTokens": 352340,
+      "tokens": 352340,
+      "tokensPerAccepted": 88085,
+      "costUpperCny": 2.572082,
+      "medianWallMs": 72733.5
+    },
+    "qs-candidate": {
+      "attempted": 8,
+      "blockedBeforeFirstRequest": 0,
+      "passed": 5,
+      "calls": 25,
+      "usageComplete": true,
+      "knownTokens": 322521,
+      "tokens": 322521,
+      "tokensPerAccepted": 64504.2,
+      "costUpperCny": 2.3544032999999995,
+      "medianWallMs": 56861
+    }
+  },
+  "comparisons": [
+    {
+      "baseline": "qs-old",
+      "matchedTasks": 8,
+      "independentInputClusters": 2,
+      "candidateAccepted": 5,
+      "baselineAccepted": 5,
+      "protocolComplete": false,
+      "tokenRatioPerAccepted": null,
+      "pairedCluster95Range": null,
+      "caveat": "No comparative ratio when the protocol is budget-truncated. Two reused input clusters cannot establish broad quality parity."
+    },
+    {
+      "baseline": "qs-public",
+      "matchedTasks": 8,
+      "independentInputClusters": 2,
+      "candidateAccepted": 5,
+      "baselineAccepted": 6,
+      "protocolComplete": false,
+      "tokenRatioPerAccepted": null,
+      "pairedCluster95Range": null,
+      "caveat": "No comparative ratio when the protocol is budget-truncated. Two reused input clusters cannot establish broad quality parity."
+    },
+    {
+      "baseline": "dsh-official",
+      "matchedTasks": 8,
+      "independentInputClusters": 2,
+      "candidateAccepted": 5,
+      "baselineAccepted": 4,
+      "protocolComplete": false,
+      "tokenRatioPerAccepted": null,
+      "pairedCluster95Range": null,
+      "caveat": "No comparative ratio when the protocol is budget-truncated. Two reused input clusters cannot establish broad quality parity."
+    }
+  ],
+  "activation": {
+    "default": "full",
+    "eligible": false,
+    "reason": "This small synthetic corpus cannot prove quality non-inferiority. Missing, failed or unmatched runs never authorize default activation."
+  }
+}
