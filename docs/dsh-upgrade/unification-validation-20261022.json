@@ -528,7 +528,7 @@
         "bytes": 2060
       }
     },
-    "realModelAcceptance": "not-run-budget-stopped",
+    "realModelAcceptance": "See teamVerificationRetest: exact product source tested by 7af323b, 6/6 groups and 10/10 phases passed.",
     "historicalResultsModified": false,
     "defaultSkillContextMode": "full",
     "mergeStatus": "draft",
@@ -541,5 +541,337 @@
       "htmlBytes": 3145885,
       "largeHtmlInteractive": true
     }
+  },
+  "teamVerificationRetest": {
+    "candidateCommit": "7af323b8fcdb5651dda99bd4b4b9e16a63b33e9f",
+    "productCodeCommit": "5a4204ba0c93e5ed87dca098ca501ee3514b153d",
+    "sourceHashes": {
+      "benchmark/bridge.mjs": "269b002e9b4400c04d177421e2c2f122bef01b9c61fd221f9d42dea24173b6ca",
+      "benchmark/corpus.mjs": "0f06f9e2c82ff9c61f4eabd50c44978cacc0f673d1b7b2c1a900c8bc4861b139",
+      "benchmark/corpus-v2.mjs": "f61d09afeb12bf0aee63343b9688800b49db90bb88615e585b4d71c672a86bfb",
+      "benchmark/lib/config.mjs": "06c5b36a1f8b60e4982e0c87ff00fbfdc1520b92d8c4287510b1c22e2b3f13c4",
+      "benchmark/run-suite.mjs": "02de064d2ed3abed25e04b8fe6278ec1e00137d89278bea12b0d9d6d7c467ba7",
+      "benchmark/lib/native-host.mjs": "cfc775bcb781ba6bddd302554c09124f8f6f78dd7e568095cc283c47a25927b0",
+      "benchmark/lib/gateway.mjs": "1c86499e378bec859b55339be4f51175b13bbf54c4105e0705ba716f78e72a21",
+      "benchmark/lib/budget.mjs": "50bfb39fbcad470a88965200173be09cb234b0e020d2107080b762c39cad8397",
+      "packages/quantskills-session/lib/index.js": "5d6cd58f23aae071ca1a35edd153f00ee2e86bd50b002c8619b7947c4b8c469e",
+      "packages/quantskills-session/src/index.ts": "3a7aed703a74ad1668ce8b6358f1bbb060b9e57d357a2ca541d78fe8c125b6de",
+      "packages/quantskills-session/src/skill-context.ts": "11fbdac1c04531905bdbd0e8441d2c8addc60ac8f52eec00634065d91ba414e9",
+      "packages/quantskills-session/src/team-verification.ts": "076a62f3541883a32be4ec35974cd399b7c8fd299ea35d02e123115ab8125746",
+      "pnpm-lock.yaml": "125f65e14a11719d563c7e877ab9665f940b1d43cf58dede3efb91672828d5dc"
+    },
+    "report": "benchmark/results/2026-10-22-team-verification/unified-team-v3.json",
+    "publicationManifest": "benchmark/results/2026-10-22-team-verification/publication-manifest.json",
+    "model": "PandaAI kimi-k3",
+    "strictPassed": 6,
+    "totalGroups": 6,
+    "strictPhases": 10,
+    "offlineBenchmarkTests": 24,
+    "totalCalls": 81,
+    "inputTokens": 1126160,
+    "outputTokens": 12979,
+    "newCostUpperCny": 8.3157147,
+    "cumulativeCostUpperCny": 92.74048479999999,
+    "totalWallMs": 878108,
+    "allRequestsSettled": true,
+    "remainingCases": [],
+    "amendments": [
+      {
+        "id": "team-verification-15cny-20261022",
+        "authorizedAt": "2026-10-22T04:05:56.702Z",
+        "beforeSha256": "4bd9b2a2f882d0a8a3707561c23366a0f14ed484151dbc722b965a85696aeb3d",
+        "cumulativeBeforeCny": 84.42477009999999,
+        "settledCallsBefore": 257,
+        "additionalCny": 15,
+        "before": {
+          "limitCny": 100,
+          "priorCny": 59.9298464,
+          "stageLimitCny": 25
+        },
+        "after": {
+          "limitCny": 120,
+          "priorCny": 59.9298464,
+          "stageLimitCny": 39.49492369999999
+        }
+      }
+    ],
+    "traceAudit": {
+      "schema": 1,
+      "candidateCommit": "7af323b8fcdb5651dda99bd4b4b9e16a63b33e9f",
+      "sourceReportSha256": "47219ade456d79597be2ee72276de1630f2a3a89d4ba426c882316dc702379fd",
+      "policy": "Event counts and hashes only. No native reasoning, user data, credentials or local paths are included.",
+      "paidRequests": 0,
+      "cases": [
+        {
+          "id": "team-delegation/0",
+          "passed": true,
+          "sessions": [
+            {
+              "role": "evidence",
+              "sessionSha256": "323624a5da045cb7b2da92576e39db3b532b37e0b299ad05cfad42f8e50f0425",
+              "toolCalls": {},
+              "repeatedReceivedMessageIds": 0
+            },
+            {
+              "role": "lead",
+              "sessionSha256": "3bef44987b949e7bee68357806799014059edd5e7bf7525b1b83d9f296a22678",
+              "toolCalls": {
+                "read_team_member_instructions": 1,
+                "activate_team_member": 2,
+                "quantskills_calculate": 2,
+                "wait_agent": 1
+              },
+              "repeatedReceivedMessageIds": 0,
+              "readInstructionsBeforeFirstActivation": true
+            },
+            {
+              "role": "ledger",
+              "sessionSha256": "e526af90aef683efe584903c4f1a956b41b6e37de76ad1a2bba893eb8e39232e",
+              "toolCalls": {
+                "quantskills_calculate": 1
+              },
+              "repeatedReceivedMessageIds": 0
+            }
+          ]
+        },
+        {
+          "id": "team-follow-up/0",
+          "passed": true,
+          "sessions": [
+            {
+              "role": "evidence",
+              "sessionSha256": "d4561adba13be531523c4d78cd7e574dc7ac7fce53bf84187feffdd728d40fc5",
+              "toolCalls": {},
+              "repeatedReceivedMessageIds": 0
+            },
+            {
+              "role": "lead",
+              "sessionSha256": "8993746e54fcdec5d92038e3379f8a4a57d0284609c05ec69bf1c3b6398660e7",
+              "toolCalls": {
+                "read_team_member_instructions": 1,
+                "activate_team_member": 2,
+                "quantskills_calculate": 3,
+                "wait_agent": 2,
+                "list_agents": 2,
+                "send_message": 1
+              },
+              "repeatedReceivedMessageIds": 0,
+              "readInstructionsBeforeFirstActivation": true
+            },
+            {
+              "role": "ledger",
+              "sessionSha256": "ac6ca78e42b6840240dc01282ebb642de9b0eff939b1ede26da17ec824827426",
+              "toolCalls": {
+                "quantskills_calculate": 2
+              },
+              "repeatedReceivedMessageIds": 0
+            }
+          ]
+        },
+        {
+          "id": "team-restart/0",
+          "passed": true,
+          "sessions": [
+            {
+              "role": "evidence",
+              "sessionSha256": "278def9f0c517f74c66da48fb32c92b985194dea431193e4107ee903fcc039f9",
+              "toolCalls": {},
+              "repeatedReceivedMessageIds": 0
+            },
+            {
+              "role": "lead",
+              "sessionSha256": "8c7df8c8664529d9de7439cf97d2a20171f9d0bb7d6a8f561b5ac1784f38d5b9",
+              "toolCalls": {
+                "read_team_member_instructions": 1,
+                "activate_team_member": 2,
+                "wait_agent": 3,
+                "list_agents": 2,
+                "quantskills_calculate": 2,
+                "send_message": 1
+              },
+              "repeatedReceivedMessageIds": 0,
+              "readInstructionsBeforeFirstActivation": true
+            },
+            {
+              "role": "ledger",
+              "sessionSha256": "9a69d96d66d3560f217ef70aeb20cc07cb2c201f496b6a59a8faef1140f7d7be",
+              "toolCalls": {
+                "quantskills_calculate": 2
+              },
+              "repeatedReceivedMessageIds": 0
+            }
+          ]
+        },
+        {
+          "id": "team-delegation/1",
+          "passed": true,
+          "sessions": [
+            {
+              "role": "evidence",
+              "sessionSha256": "547bc328ad7a5e5a419538220ae2269a2010399807fa001627d68cfcc89c3637",
+              "toolCalls": {},
+              "repeatedReceivedMessageIds": 0
+            },
+            {
+              "role": "lead",
+              "sessionSha256": "38a7f7bd50df5e6e55e94d83d5400a44fb160a49b6cf766222d2e3954de78c66",
+              "toolCalls": {
+                "read_team_member_instructions": 1,
+                "activate_team_member": 2,
+                "quantskills_calculate": 1,
+                "wait_agent": 1
+              },
+              "repeatedReceivedMessageIds": 0,
+              "readInstructionsBeforeFirstActivation": true
+            },
+            {
+              "role": "ledger",
+              "sessionSha256": "4ee141fc0f47245c9a2baec9691511f766ab59b4d639c2a8231c668aa00485d1",
+              "toolCalls": {
+                "quantskills_calculate": 1
+              },
+              "repeatedReceivedMessageIds": 0
+            }
+          ]
+        },
+        {
+          "id": "team-follow-up/1",
+          "passed": true,
+          "sessions": [
+            {
+              "role": "evidence",
+              "sessionSha256": "9786862c5416b13eba84ef779573174e8e6232e90b9055aab72a918c85d25ed6",
+              "toolCalls": {},
+              "repeatedReceivedMessageIds": 0
+            },
+            {
+              "role": "lead",
+              "sessionSha256": "e5c87d9d7132583e987333143719e4b498f2339379fdd4beecd90ef9e9692f56",
+              "toolCalls": {
+                "read_team_member_instructions": 1,
+                "activate_team_member": 2,
+                "quantskills_calculate": 2,
+                "wait_agent": 2,
+                "send_message": 1,
+                "list_agents": 1
+              },
+              "repeatedReceivedMessageIds": 0,
+              "readInstructionsBeforeFirstActivation": true
+            },
+            {
+              "role": "ledger",
+              "sessionSha256": "d7ecfd7ad2fb1723460cbb6ed374dc539c86684d9d6482bd66ee734421ad7c75",
+              "toolCalls": {
+                "quantskills_calculate": 2
+              },
+              "repeatedReceivedMessageIds": 0
+            }
+          ]
+        },
+        {
+          "id": "team-restart/1",
+          "passed": true,
+          "sessions": [
+            {
+              "role": "evidence",
+              "sessionSha256": "382b25bb9dfaa6c2a81341530dc8059d714364642bcd32d5eef13d1422b61210",
+              "toolCalls": {},
+              "repeatedReceivedMessageIds": 0
+            },
+            {
+              "role": "lead",
+              "sessionSha256": "b155c233b03fd6a432bd5cb4b2666ba8024bc4ad96f8b1ba9df08f5b14e2bf1f",
+              "toolCalls": {
+                "read_team_member_instructions": 1,
+                "activate_team_member": 2,
+                "wait_agent": 3,
+                "list_agents": 2,
+                "quantskills_calculate": 2,
+                "send_message": 1
+              },
+              "repeatedReceivedMessageIds": 0,
+              "readInstructionsBeforeFirstActivation": true
+            },
+            {
+              "role": "ledger",
+              "sessionSha256": "0a84dc7ffb11b2596c5410cab9b772ac16cee2b3babb250f4678a201bf5df08c",
+              "toolCalls": {
+                "quantskills_calculate": 2
+              },
+              "repeatedReceivedMessageIds": 0
+            }
+          ]
+        }
+      ]
+    },
+    "defaultSkillContextMode": "full",
+    "mergeGate": "Final published HEAD must pass all four CI jobs before the authorized expected-head squash merge.",
+    "limitations": [
+      "Six synthetic cases do not establish general quality or statistical non-inferiority.",
+      "Total tokens increased about 9.95% from the preceding six-case run; no token-saving claim.",
+      "The four-arm comparison remains incomplete."
+    ],
+    "groups": [
+      {
+        "id": "team-delegation/0",
+        "passed": true,
+        "phases": 1,
+        "calls": 9,
+        "inputTokens": 120288,
+        "outputTokens": 1565,
+        "costUpperCny": 0.8895269,
+        "totalWallMs": 99823
+      },
+      {
+        "id": "team-follow-up/0",
+        "passed": true,
+        "phases": 2,
+        "calls": 16,
+        "inputTokens": 223845,
+        "outputTokens": 2520,
+        "costUpperCny": 1.6524645,
+        "totalWallMs": 167380
+      },
+      {
+        "id": "team-restart/0",
+        "passed": true,
+        "phases": 2,
+        "calls": 17,
+        "inputTokens": 240976,
+        "outputTokens": 2443,
+        "costUpperCny": 1.7769586999999996,
+        "totalWallMs": 182295
+      },
+      {
+        "id": "team-delegation/1",
+        "passed": true,
+        "phases": 1,
+        "calls": 8,
+        "inputTokens": 105045,
+        "outputTokens": 1429,
+        "costUpperCny": 0.7772602,
+        "totalWallMs": 88970
+      },
+      {
+        "id": "team-follow-up/1",
+        "passed": true,
+        "phases": 2,
+        "calls": 14,
+        "inputTokens": 193357,
+        "outputTokens": 2285,
+        "costUpperCny": 1.4281865999999999,
+        "totalWallMs": 159433
+      },
+      {
+        "id": "team-restart/1",
+        "passed": true,
+        "phases": 2,
+        "calls": 17,
+        "inputTokens": 242649,
+        "outputTokens": 2737,
+        "costUpperCny": 1.7913178,
+        "totalWallMs": 180207
+      }
+    ]
   }
 }

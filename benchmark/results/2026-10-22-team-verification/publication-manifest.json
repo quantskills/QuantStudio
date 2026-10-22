@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "policy": "Whitelisted synthetic results, original scoring and usage retained; no credentials, user sessions or native reasoning logs.",
+  "files": [
+    {
+      "name": "budget.json",
+      "originalSha256": "01d7f189e5eb704bf1e3b2081b458c97ea15f1cab309fea7bdef92979f2505d8",
+      "publishedSha256": "57dbc36d28ae81d0834da8ec678832171674516f8c087ec17dc519e84b099b92"
+    },
+    {
+      "name": "unified-team-v3.json",
+      "originalSha256": "47219ade456d79597be2ee72276de1630f2a3a89d4ba426c882316dc702379fd",
+      "publishedSha256": "1af5a14cd1fd57939c98632682a43e7e36d0bbce1cf534e581926f7bad56bb93"
+    }
+  ],
+  "pathMapping": {
+    "[local-path:48320fed94a9]": "48320fed94a9aa6a58b78871c986fc07c41187766445c96720fe1d660d572913",
+    "[local-path:5042e43f19c5]": "5042e43f19c5879521728082e41be0d7cb8b9ed7da38626916c09d346bf1a597"
+  },
+  "summary": [
+    {
+      "name": "unified-team-v3.json",
+      "commit": "7af323b8fcdb5651dda99bd4b4b9e16a63b33e9f",
+      "suite": "team",
+      "attempted": 6,
+      "passed": 6,
+      "calls": 81,
+      "costUpperCny": 8.3157147
+    }
+  ],
+  "cumulativeCostUpperCny": 92.74048479999999
+}
