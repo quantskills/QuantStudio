@@ -65,10 +65,11 @@ export async function launchHost(armId, fixture, gatewayURL = 'http://127.0.0.1:
     { id: 'llm-pi-ai', config: { providers: { benchmark: { displayName: 'Isolated PandaAI benchmark', api: 'openai-completions', baseURL: gatewayURL,
       apiKeyEnv: 'QS_BENCH_GATEWAY_TOKEN', compat: { thinkingFormat: 'openai' }, retryPolicy: { mode: 'normal', maxRetries: 0 },
       models: [{ id: 'kimi-k3', name: 'kimi-k3', contextWindow: 262144, maxTokens: 4096, reasoningEfforts: { high: 'high' } }] } } } },
-    { id: 'skill-filesystem', config: { includeDefaultRoots: false, customSkillDirs: official ? [join(workspace, '.skills')] : [], watch: false } },
+    { id: 'skill-filesystem', ...(official ? { disabled: false } : {}), config: { includeDefaultRoots: false, customSkillDirs: official ? [join(workspace, '.dsh', 'skills')] : [], watch: false } },
     { id: 'workspace-controller', config: { documentsDirectory: join(run, 'documents') } },
     { insert: [{ id: 'benchmark-bridge', name: pathToFileURL(join(project, 'benchmark/bridge.mjs')).href }] }
   ]
+  if (official) patches.push({ id: 'tool-skill', disabled: false })
   if (!official) patches.push({ id: 'quantskills-session', config: { dshHome: home, documentsDirectory: join(run, 'documents'),
     skillContextMode: arm.skillContextMode ?? 'full' } })
   await writeFile(join(profile, 'cordis.patch.yml'), YAML.stringify(patches))

@@ -49,3 +49,16 @@ test('a new stage carries historical spend forward and cannot reset its addition
   await b.close()
   await assert.rejects(Budget.open(file,{...initialStage,stageLimitCny:26}),/identity mismatch/)
 })
+
+test('ceiling stops later smaller requests and survives reopening without losing settled usage', async () => {
+  const file=await fixture(), limits={limitCny:100,priorCny:59.93,stageLimitCny:3}
+  const b=await Budget.open(file,limits), id=await b.reserve(request)
+  await b.settle(id,{prompt_tokens:1000,completion_tokens:500})
+  await assert.rejects(b.reserve(request),/ceiling reached/)
+  assert.equal(b.value.calls.length,1)
+  await b.close()
+  const resumed=await Budget.open(file,limits)
+  await assert.rejects(resumed.reserve({...request,inputByteBound:1,maxOutput:1}),/previously reached/)
+  assert.equal(resumed.used(),61.93)
+  await resumed.close()
+})

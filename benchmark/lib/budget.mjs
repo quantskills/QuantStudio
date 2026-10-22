@@ -28,10 +28,14 @@ export class Budget {
   reserve({ tag, inputByteBound, maxOutput, inputRate, outputRate }) {
     return this.serial(async () => {
       if (this.value.halted || this.value.calls.some(c => c.state === 'unknown')) throw new Error('Budget halted by unresolved request')
+      if (this.value.exhausted) throw new Error('Budget safety ceiling previously reached; further paid runs disabled')
       if (![inputByteBound, maxOutput].every(v => Number.isSafeInteger(v) && v > 0)
         || ![inputRate, outputRate].every(v => Number.isFinite(v) && v > 0)) throw new Error('Invalid reservation inputs')
       const reserveCny = inputByteBound * inputRate + maxOutput * outputRate
-      if (this.used() + reserveCny > Math.min(this.value.limitCny * 0.9, this.value.stageLimitCny === undefined ? Infinity : this.value.priorCny + this.value.stageLimitCny)) throw new Error('Budget safety ceiling reached before request')
+      if (this.used() + reserveCny > Math.min(this.value.limitCny * 0.9, this.value.stageLimitCny === undefined ? Infinity : this.value.priorCny + this.value.stageLimitCny)) {
+        this.value.exhausted = true; await this.save()
+        throw new Error('Budget safety ceiling reached before request')
+      }
       const call = { id: randomUUID(), tag, inputByteBound, maxOutput, inputRate, outputRate, reserveCny, state: 'reserved', startedAt: new Date().toISOString() }
       this.value.calls.push(call); await this.save(); return call.id
     })

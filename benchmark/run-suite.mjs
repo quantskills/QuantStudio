@@ -36,12 +36,19 @@ const report={schema:1,kind:mock?'mock-transport-calibration':'native-benchmark'
  limitations:['Synthetic offline tasks; not an investment benchmark.','A small synthetic sample cannot establish broad quality non-inferiority.','Short multi-turn/restart tasks are not hour-long endurance or automatic-compaction proof.'],results:[]}
 await writeFile(reportFile,JSON.stringify(report,null,2))
 let budget,proxy
+const planned = selected.flatMap(spec => {
+ const arms=suite==='team'?['qs-public']:['qs-old','qs-public','dsh-official','qs-candidate']
+ arms.push(...arms.splice(0,spec.repetition%4))
+ return arms.filter(arm=>!arg('--arms')||arg('--arms').split(',').includes(arm)).map(arm=>({id:spec.id,arm}))
+})
+report.plannedRuns=planned.length
 try {
  if(live) {budget=await Budget.open(join(evidence,'budget.json'),config.budget);report.pricing=await publicPrice();proxy=await gateway({key:await providerCredentials(arg('--home')),budget,pricing:report.pricing,maxCalls:suite==='team'?64:32})}
  else proxy=await mockGateway('{}')
- for(const spec of selected) {
+ runs: for(const spec of selected) {
   const ordered=suite==='team'?['qs-public']:['qs-old','qs-public','dsh-official','qs-candidate'];ordered.push(...ordered.splice(0,spec.repetition%4))
   for(const arm of ordered.filter(a=>!arg('--arms')||arg('--arms').split(',').includes(a))) {
+   if(budget?.value.exhausted || budget?.value.halted) {report.stopReason=budget.value.halted?'unresolved-accounting':'budget-safety-ceiling';break runs}
    const tag=out+'/'+spec.id+'/'+arm,result={id:spec.id,family:spec.family,repetition:spec.repetition,arm,tag,phases:[],skillDefinitions:[]}
    report.results.push(result)
    const before=budget?.value.calls.length??0,started=Date.now(),deadline=started+600000,token=live?proxy.register(tag,{deadline}):'offline-probe'
@@ -88,12 +95,13 @@ try {
     report.cumulativeCostUpperCny=budget?.used()??0;await writeFile(reportFile,JSON.stringify(report,null,2)+'\n')
     console.log(JSON.stringify({task:spec.id,arm,passed:result.passed,failure:result.failure?.split('\n')[0],calls:result.calls.length,input:result.inputTokens,output:result.outputTokens,cost:result.costCny,cumulative:report.cumulativeCostUpperCny}))
    }
-   if(budget?.value.halted)throw new Error('Accounting halted; no further calls')
+   if(budget?.value.halted || budget?.value.exhausted) {report.stopReason=budget.value.halted?'unresolved-accounting':'budget-safety-ceiling';break runs}
   }
  }
  report.completedAt=new Date().toISOString()
 } finally {
  if(live)await proxy?.close();else await proxy?.stop()
  for(const result of report.results){if(budget){result.calls=budget.value.calls.filter(c=>c.tag===result.tag);result.inputTokens=result.calls.reduce((n,c)=>n+(c.inputTokens??0),0);result.outputTokens=result.calls.reduce((n,c)=>n+(c.outputTokens??0),0);result.costCny=result.calls.reduce((n,c)=>n+(c.costCny??c.reserveCny),0)}}
+ report.notExecuted=planned.filter(p=>!report.results.some(r=>r.id===p.id&&r.arm===p.arm))
  report.cumulativeCostUpperCny=budget?.used()??0;await writeFile(reportFile,JSON.stringify(report,null,2)+'\n');await budget?.close()
 }
