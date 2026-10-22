@@ -28,11 +28,17 @@
    corepack pnpm run check
    corepack pnpm run build
    corepack pnpm exec vitest run
+   corepack pnpm run verify:packed-deliverables
+   node --test benchmark/tests/*.test.mjs
+   node benchmark/run-suite.mjs
+   node benchmark/verify-history.mjs
    corepack pnpm run ci:plugins
    corepack pnpm run ci:smoke
    node scripts/ci-optional-bundles.mjs
    ci:plugins 使用本机模拟 registry/Git/压缩包/链接并调用真实官方管理器；不安装到日常 Profile。
    可选 bundle 的默认值必须仍为关闭，错误与重复操作不能破坏配置。
+   Skill 上下文默认 full，保留用户显式配置；progressive 仍为实验，不自动开启。
+   普通验收不得添加 --run 或读取模型凭据。真实基准需另有费用授权，并沿用持久预算，不重置额度。
 
 4. 单独取得固定上游测试支持（不是 latest）。在候选旁边的新目录克隆：
    git clone --filter=blob:none --no-checkout https://github.com/deepseek-ai/deepseek-harness.git ../upstream-dsh-source
@@ -106,11 +112,17 @@
    corepack pnpm run check
    corepack pnpm run build
    corepack pnpm exec vitest run
+   corepack pnpm run verify:packed-deliverables
+   node --test benchmark/tests/*.test.mjs
+   node benchmark/run-suite.mjs
+   node benchmark/verify-history.mjs
    corepack pnpm run ci:plugins
    corepack pnpm run ci:smoke
    node scripts/ci-optional-bundles.mjs
    ci:plugins 使用本机模拟 registry/Git/压缩包/链接并调用真实官方管理器；不安装到日常 Profile。
    可选 bundle 的默认值必须仍为关闭，错误与重复操作不能破坏配置。
+   Skill 上下文默认 full，保留用户显式配置；progressive 仍为实验，不自动开启。
+   普通验收不得添加 --run 或读取模型凭据。真实基准需另有费用授权，并沿用持久预算，不重置额度。
 
 4. 单独取得固定上游测试支持（不是 latest）。在候选旁边的新目录克隆：
    git clone --filter=blob:none --no-checkout https://github.com/deepseek-ai/deepseek-harness.git ../upstream-dsh-source

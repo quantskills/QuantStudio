@@ -1,0 +1,457 @@
+{
+  "schema": 1,
+  "candidateCommit": "43bab355bb700eccb026b31aae3254281b09199b",
+  "productCodeCommit": "3f3431324927c14ca9d2ad5714b429bf89da89bb",
+  "defaultSkillContextMode": "full",
+  "mergeStatus": "draft",
+  "platform": {
+    "os": "Windows x64",
+    "node": "22.23.2",
+    "pnpm": "11.7.0"
+  },
+  "tests": {
+    "sourceAndTypes": "passed",
+    "fullBuild": "passed",
+    "qs": {
+      "passed": 1479,
+      "skipped": 1,
+      "failed": 0
+    },
+    "customUi": {
+      "passed": 1909,
+      "codeCommit": "5e41ea6"
+    },
+    "upstreamWebUi": {
+      "passed": 2830,
+      "codeCommit": "5e41ea6"
+    },
+    "benchmarkOffline": {
+      "passed": 21,
+      "identity": "publication working tree identified by source hashes",
+      "sourceHashes": {
+        "benchmark/analyze-run.mjs": "6c0ae197d44a6cf239fa4887a7db120d07946597bab512585d63fff8ebd68ad0",
+        "benchmark/bridge.mjs": "8e6c3b9624b61caf04f7a29e521efa1008de2fcf3cb1669326db3762caf35f4c",
+        "benchmark/corpus-v2.mjs": "f61d09afeb12bf0aee63343b9688800b49db90bb88615e585b4d71c672a86bfb",
+        "benchmark/corpus.mjs": "0f06f9e2c82ff9c61f4eabd50c44978cacc0f673d1b7b2c1a900c8bc4861b139",
+        "benchmark/export-history.mjs": "575a8fea9d87c5b2620f4600890c99f82e29b0f0945a4872d92cd9c9455f1d8f",
+        "benchmark/export-run.mjs": "b295154f50bec2d04444c6471e3e061b3c52ab4f4d7b11bc73be8169eacc6e8b",
+        "benchmark/run-suite.mjs": "124e38e1f4dc24d298fd0b1bccdc2a8dbfb8252428aa990d5285be97ca5e41e1",
+        "benchmark/verify-history.mjs": "ae05b9a001e9370f712a845db2959e88168b28d7c5914badba69f466c4328edc",
+        "benchmark/verify-results.mjs": "52a397923258c86fcdffa22ae0881a80ba7ca9125c811d0289f645a69712a65b",
+        "benchmark/lib/analyze.mjs": "16891e512f852607766562d265f1e1257f78e4ac949c34dcf2fa85a77ea04f7a",
+        "benchmark/lib/budget.mjs": "77c7972fb51d1d22170fa33e78d971a0159629770b496ed32f44a970fb124225",
+        "benchmark/lib/config.mjs": "1c7ae45d299cdaee7b6fd87041bfcd3a94076fad48e30041f92a46bae8309e20",
+        "benchmark/lib/gateway.mjs": "1c86499e378bec859b55339be4f51175b13bbf54c4105e0705ba716f78e72a21",
+        "benchmark/lib/mock-gateway.mjs": "6564a3a43713a1df750c35c0a95cd8c1a8fd162e271d078b5cff35b60cd9cfe3",
+        "benchmark/lib/native-host.mjs": "cfc775bcb781ba6bddd302554c09124f8f6f78dd7e568095cc283c47a25927b0",
+        "benchmark/lib/reconcile-evidence.mjs": "a43da1b0a625b76aa3ebcefdaec0a935e972659b387f52e429cbfc4e4459de45",
+        "benchmark/tests/analysis.test.mjs": "5072997f68c3c4a3ca1081b9899b6725898a3436d5c0d91880e113dee5370741",
+        "benchmark/tests/budget.test.mjs": "4fd2080bf5a2eb69e56ec48fa04ba55e3cb7afb3f688123c49181d45b416dabe",
+        "benchmark/tests/corpus.test.mjs": "1420dc0ac5a1d38733379dde4712a5f5f9f3dadf1fc93dd6a51c439bbd3a2a87",
+        "benchmark/tests/gateway.test.mjs": "13c4ddbaf5ea52226ae55f6ec5762c3657a62f27aecff2faba83466a425986af",
+        "benchmark/tests/publication.test.mjs": "ed6932dcf60155017f271ced10d639a2eba8be08d09b50cfde3d9167c8103863",
+        "benchmark/tests/reconcile.test.mjs": "b07448ce5ce4b1f4c6bf19b58563dc9bf2599b9a49e0f39bb83213bcb0fde2ca",
+        "benchmark/tests/v2.test.mjs": "893bbf36e03773d6e716984a4a5f49df9aecf351cce4dc93ed9f139f188700d2"
+      }
+    }
+  },
+  "localLogHashes": {
+    "unified-final-check.log": {
+      "sha256": "8bb8d76bed1e21ab7e172822508af1ace87bd8952214ddc3b748b4bc0e66a5ec",
+      "bytes": 1236
+    },
+    "unified-final-vitest.log": {
+      "sha256": "5bd2cf4c6917264dd1e7fa7b469ddf532ac88b9f72354782412587b48e170e75",
+      "bytes": 8668
+    },
+    "unified-team-fix-build.log": {
+      "sha256": "68f5cb7b9332c6e8e168096a4846c4dcf08fb53881dda0b9ec998f88a951fe98",
+      "bytes": 2665
+    },
+    "unified-team-fix-client-build.log": {
+      "sha256": "2a863f1b86b3282e8f285722ae0cc35ee59acda0a0cc8d904bcf9851116256db",
+      "bytes": 10513
+    },
+    "unified-upstream-ui.log": {
+      "sha256": "c54487a4f3a340673da40b83ec864a25f2a14ee7007dbe4f4b7e9eb3aaa8d18c",
+      "bytes": 278
+    },
+    "unified-upstream-features.log": {
+      "sha256": "4894a695bc10468308e411a79c00a20be17a46fc90454a45850ef8957c39da7d",
+      "bytes": 282
+    },
+    "unified-current-pack.log": {
+      "sha256": "9c64c05778fa5feb839823b76043b1ddf910d9216b22aa1bb43529a1dc0541a7",
+      "bytes": 428
+    },
+    "unified-current-browser.log": {
+      "sha256": "a8a6674c7ba8a7033822c9e6fbc070deb6f986f9d99e2ddb17963e19d806e27a",
+      "bytes": 2061
+    },
+    "unified-current-restore.log": {
+      "sha256": "aca9cedd44af810c1ab2f4a5bc499ae36733433a8dcbef08b84574c0a3dfb0d2",
+      "bytes": 1114
+    },
+    "unified-offline-tests.log": {
+      "sha256": "50d19de8f8ee5091c3895e14bcd0e79833fa194fbe4c2e9b7f9c1016c9d242fe",
+      "bytes": 4657
+    }
+  },
+  "actualArtifacts": {
+    "unified-current-pack.log": [
+      {
+        "label": "plugin",
+        "archiveSha256": "a884a3db4c842f6df6619809ea523e474bea2a7828f9af91c8607c1081d2e08a",
+        "result": "Packed export resolved and parsed valid output; path traversal rejected."
+      },
+      {
+        "label": "application",
+        "archiveSha256": "ccafcc8b5066664819aeb715a5c00d19ce8dd0f29ceb17fbd7122cf568831b90",
+        "result": "Packed export resolved and parsed valid output; path traversal rejected."
+      }
+    ],
+    "unified-current-browser.log": [
+      {
+        "wholeHomeActivation": "passed",
+        "originalsPreserved": true,
+        "attachmentsAndTradePreserved": true
+      },
+      {
+        "legacyMarketMigration": "passed",
+        "oldSourcePreserved": true,
+        "officialDiscoverSelected": true
+      },
+      {
+        "activation": "passed",
+        "runtime": "0.2.1-rc.2",
+        "commit": "43bab355bb700eccb026b31aae3254281b09199b",
+        "generation": "0f6ed77569074fe16efe131d51116f24a1affbb1c5f52fd952a46e144efa47d6",
+        "artifact": "09af7787fbcc98d06fa2a0a62b1179f02188b49bded075d08021a9b3bf5a83f7",
+        "port": 51573
+      },
+      {
+        "optionalComposition": "passed",
+        "explicitlySelected": [
+          "@deepseek-ai/dsh-experimental-session-search",
+          "@deepseek-ai/dsh-experimental-ralph-bundle",
+          "@deepseek-ai/dsh-experimental-terminal-bundle",
+          "@deepseek-ai/dsh-experimental-badge-skill-bundle",
+          "@deepseek-ai/dsh-experimental-session-titles-bundle",
+          "@deepseek-ai/dsh-experimental-agent-team-profile",
+          "@deepseek-ai/dsh-experimental-voice-input-bundle",
+          "@deepseek-ai/dsh-experimental-cot-translation-bundle",
+          "@deepseek-ai/dsh-experimental-auto-review",
+          "@deepseek-ai/dsh-experimental-inspector-profile",
+          "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+          "@deepseek-ai/dsh-experimental-tool-worktree"
+        ],
+        "defaultSelectionChanged": false
+      },
+      {
+        "browser": "passed",
+        "scope": "model-settings-streaming-attachment-draft-reload-resize-results-large-html-automation-search-settings",
+        "modelCalls": 9,
+        "assistantReplies": 3,
+        "nonMessageCopies": 2,
+        "resultFiles": 201,
+        "htmlBytes": 3145885,
+        "largeHtmlInteractive": true,
+        "commit": "43bab355bb700eccb026b31aae3254281b09199b",
+        "artifact": "09af7787fbcc98d06fa2a0a62b1179f02188b49bded075d08021a9b3bf5a83f7"
+      },
+      {
+        "result": "passed",
+        "runtime": "0.2.1-rc.2",
+        "commit": "43bab355bb700eccb026b31aae3254281b09199b",
+        "generation": "0f6ed77569074fe16efe131d51116f24a1affbb1c5f52fd952a46e144efa47d6",
+        "artifact": "09af7787fbcc98d06fa2a0a62b1179f02188b49bded075d08021a9b3bf5a83f7"
+      }
+    ],
+    "unified-current-restore.log": [
+      {
+        "restoredOldReader": {
+          "runtime": "0.1.2-alpha.2",
+          "sessions": 1,
+          "events": 0,
+          "semanticDigest": "235d4dcfe4816140b3c46b934fd29783f520cdb13442555d4d2b32f37fb5278d",
+          "snapshotGeneration": "bb5f13c562cfb8b82068b710600fa1e5f319e167e0e9babafa304788ffe00409",
+          "snapshotUnchanged": true,
+          "hostStarted": false
+        }
+      },
+      {
+        "restoredOldHost": "passed",
+        "candidateIncrementsPreserved": true
+      },
+      {
+        "legacyLaunch": "passed",
+        "runtime": "0.1.2-alpha.2",
+        "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+        "generation": "restored-legacy-fixture",
+        "artifact": "51f480697f17a84396be8778315f99ef29d272827865bc26eb44176e3eac775d",
+        "port": 56980
+      },
+      {
+        "result": "passed",
+        "runtime": "0.1.2-alpha.2",
+        "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+        "generation": "restored-legacy-fixture",
+        "artifact": "51f480697f17a84396be8778315f99ef29d272827865bc26eb44176e3eac775d"
+      }
+    ]
+  },
+  "historicalTeamCapAudit": {
+    "case": "team-member-follow-up/1",
+    "arm": "qs-public",
+    "modelRequestCap": 32,
+    "historyModified": false,
+    "sessions": [
+      {
+        "role": "evidence",
+        "sourceSha256": "244de351d59bb44e2bab7edcd5e0189ee48f49e8612c1e604965ac1d164f7352",
+        "tools": {
+          "team_task_list": 1,
+          "team_task_update": 2,
+          "send_message": 1
+        },
+        "assistantMessagesByTurn": {
+          "1": 5
+        },
+        "userMessageSources": {
+          "user": 1,
+          "runtime-context": 1,
+          "skill-catalog": 1,
+          "time-context": 1
+        },
+        "repeatedMessageIds": 0,
+        "turnEnds": 1,
+        "sendCalls": [
+          {
+            "turn": 1,
+            "target": "lead"
+          }
+        ]
+      },
+      {
+        "role": "ledger",
+        "sourceSha256": "5993960520faa360112e2d31fd1793b8c41870092bc870ab8e4c0c64e5fff16e",
+        "tools": {
+          "team_task_get": 2,
+          "team_task_update": 4,
+          "pwsh": 2,
+          "send_message": 2
+        },
+        "assistantMessagesByTurn": {
+          "1": 6,
+          "2": 5
+        },
+        "userMessageSources": {
+          "user": 1,
+          "runtime-context": 1,
+          "skill-catalog": 1,
+          "time-context": 1,
+          "agent-message": 1
+        },
+        "repeatedMessageIds": 0,
+        "turnEnds": 2,
+        "sendCalls": [
+          {
+            "turn": 1,
+            "target": "lead"
+          },
+          {
+            "turn": 2,
+            "target": "lead"
+          }
+        ]
+      },
+      {
+        "role": "lead",
+        "sourceSha256": "a42bf6a15a7d02f827092f361e6a0c6adeaa5a11d16a42a444d0c5117f51f6ee",
+        "tools": {
+          "list_agents": 3,
+          "team_task_create": 3,
+          "activate_team_member": 2,
+          "wait_agent": 5,
+          "team_task_list": 3,
+          "send_message": 1
+        },
+        "assistantMessagesByTurn": {
+          "1": 10,
+          "2": 5
+        },
+        "userMessageSources": {
+          "user": 2,
+          "runtime-context": 1,
+          "skill-catalog": 1,
+          "time-context": 1,
+          "agent-message": 3,
+          "subagent-settled": 2
+        },
+        "repeatedMessageIds": 0,
+        "turnEnds": 1,
+        "sendCalls": [
+          {
+            "turn": 2,
+            "target": "ledger"
+          }
+        ]
+      }
+    ],
+    "conclusion": "Initial delegation plus an explicit correction used 32 admitted requests. Lead polled/waited and received both explicit reports and closing notices. No repeated received message ID; this trace alone does not establish an infinite loop. The ledger correction report arrived before the cap interrupted completion."
+  },
+  "contestReadOnly": {
+    "at": "2026-10-22T01:54:51.146Z",
+    "operations": "read-only official CLI; refresh token omitted",
+    "checks": [
+      {
+        "name": "identity",
+        "ok": true
+      },
+      {
+        "name": "account",
+        "ok": true
+      },
+      {
+        "name": "quote",
+        "symbol": "cu2611",
+        "ok": true,
+        "ready": true,
+        "quoteTime": "2026-10-22 95452"
+      },
+      {
+        "name": "quote",
+        "symbol": "a2611",
+        "ok": true,
+        "ready": true,
+        "quoteTime": "2026-10-22 95451"
+      },
+      {
+        "name": "quote",
+        "symbol": "ag2612",
+        "ok": true,
+        "ready": true,
+        "quoteTime": "2026-10-22 95452"
+      },
+      {
+        "name": "quote",
+        "symbol": "au2612",
+        "ok": true,
+        "ready": true,
+        "quoteTime": "2026-10-22 95452"
+      },
+      {
+        "name": "quote",
+        "symbol": "ao2701",
+        "ok": true,
+        "ready": true,
+        "quoteTime": "2026-10-22 95452"
+      },
+      {
+        "name": "quote",
+        "symbol": "bb2611",
+        "ok": true,
+        "ready": true,
+        "quoteTime": "2026-10-22 92223"
+      },
+      {
+        "name": "quote",
+        "symbol": "br2611",
+        "ok": true,
+        "ready": true,
+        "quoteTime": "2026-10-22 95453"
+      }
+    ],
+    "identityMatched": true,
+    "originalCredentialsUnchanged": true,
+    "originalStateUnchanged": true
+  },
+  "pandaHistoryReadOnly": {
+    "checkedAt": "2026-10-22T02:36:53.345Z",
+    "method": "get_future_min",
+    "date": "20261021",
+    "authorization": "fresh-access-token-only; no refresh; credential bytes unchanged",
+    "results": [
+      {
+        "symbol": "CU2611.SHF",
+        "ok": true,
+        "rows": 465,
+        "first": "2026-10-20 21:01:00",
+        "last": "2026-10-21 15:00:00",
+        "responseSha256": "2b8c4a3e35721a7f741f1c832cfcd91ffa0c80bfc82d90c579ac4f9591a725dc"
+      },
+      {
+        "symbol": "A2611.DCE",
+        "ok": true,
+        "rows": 345,
+        "first": "2026-10-20 21:01:00",
+        "last": "2026-10-21 15:00:00",
+        "responseSha256": "c122b07290a4e2e47b2bbebde164c6c9167f2ee6096d50349682e203add43a31"
+      },
+      {
+        "symbol": "AG2612.SHF",
+        "ok": true,
+        "rows": 555,
+        "first": "2026-10-20 21:01:00",
+        "last": "2026-10-21 15:00:00",
+        "responseSha256": "5ba1c13dff9fe94f0f9e101001ec64e01656283d97c4b84017bc92552e27ea8f"
+      },
+      {
+        "symbol": "AU2612.SHF",
+        "ok": true,
+        "rows": 555,
+        "first": "2026-10-20 21:01:00",
+        "last": "2026-10-21 15:00:00",
+        "responseSha256": "be58f010017c6c85f34e02c4062f7a58dab949d065b1895b26bfb3cd25268b5a"
+      },
+      {
+        "symbol": "AO2701.SHF",
+        "ok": true,
+        "rows": 465,
+        "first": "2026-10-20 21:01:00",
+        "last": "2026-10-21 15:00:00",
+        "responseSha256": "6030b650f7a238ed7e0ea24fc20d986ca647d7f0fd79dc7dd7703357920f3396"
+      },
+      {
+        "symbol": "BB2611.DCE",
+        "ok": true,
+        "rows": 225,
+        "first": "2026-10-21 09:01:00",
+        "last": "2026-10-21 15:00:00",
+        "responseSha256": "1aa46bd1f29f2e31fe3c1deef2db23ad7cc85ce360f12fcb00b49c806f120e02"
+      },
+      {
+        "symbol": "BR2611.SHF",
+        "ok": true,
+        "rows": 345,
+        "first": "2026-10-20 21:01:00",
+        "last": "2026-10-21 15:00:00",
+        "responseSha256": "957618715a0ac00e449193be85a84d41e342b7fa3ad41d7241588bc648d1fe16"
+      }
+    ],
+    "passed": true
+  },
+  "ci": {
+    "commit": "3f3431324927c14ca9d2ad5714b429bf89da89bb",
+    "run": "https://github.com/quantskills/QuantStudio/actions/runs/39710372333",
+    "conclusion": "success",
+    "jobs": [
+      "Windows Node 22.19.0",
+      "macOS Node 22.19.0",
+      "Linux Node 22.19.0",
+      "Linux Node 24.0.0"
+    ],
+    "scope": "Does not substitute for the final documentation/benchmark commit CI"
+  },
+  "blockers": [
+    "Team strict result acceptance: 4 of 6; arithmetic and extra-field failures remain",
+    "Final HEAD CI must pass before merge"
+  ],
+  "excluded": [
+    "credentials",
+    "user sessions",
+    "native reasoning logs",
+    "personal paths",
+    "live trading"
+  ]
+}

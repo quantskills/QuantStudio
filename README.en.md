@@ -14,6 +14,8 @@ From QuantSkills, an open-source community under PandaAI
 
 </div>
 
+Skill, Agent and Team experiments and benchmark tools are included in this repository. `skillContextMode` defaults to `full`; `progressive` requires explicit opt-in. Existing evidence does **not** establish lower total Token use or broad superiority. See [reproduction and configuration](benchmark/README.md) and the [current validation report](docs/dsh-upgrade/unification-20261022.md).
+
 <a id="agent-install"></a>
 
 ## Install with an agent
