@@ -1,0 +1,1591 @@
+{
+  "schema": 1,
+  "createdAt": "2026-10-21T14:18:18.843Z",
+  "rows": [
+    {
+      "id": "single-skill-control/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 8,
+      "gatewaySettledCalls": 8,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 11,
+      "gatewaySettledCalls": 11,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 12,
+      "gatewaySettledCalls": 12,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 14,
+      "gatewaySettledCalls": 14,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/0",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 14,
+      "gatewaySettledCalls": 14,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/0",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 15,
+      "gatewaySettledCalls": 15,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/0",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 14,
+      "gatewaySettledCalls": 14,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/0",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 17,
+      "gatewaySettledCalls": 17,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/1",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 7,
+      "gatewaySettledCalls": 7,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 9,
+      "gatewaySettledCalls": 9,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 12,
+      "gatewaySettledCalls": 12,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 8,
+      "gatewaySettledCalls": 8,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/1",
+      "arm": "qs-public",
+      "runFailure": "Error: [{\"session\":\"4f4af0b8-0885-4a63-8127-9006f64abbc3\",\"message\":\"LlmError: 400: {\\\"message\\\":\\\"Per-task call cap reached\\\",\\\"type\\\":\\\"benchmark_error\\\"}\"}]\n    at handle (fil[local-path:e8df53e479df]",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 31,
+      "gatewaySettledCalls": 32,
+      "responseCountReconciled": false,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/1",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 14,
+      "gatewaySettledCalls": 14,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/1",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 19,
+      "gatewaySettledCalls": 19,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/1",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 17,
+      "gatewaySettledCalls": 17,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "single-skill-control/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multiple-skills-selection/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "all-skills-required-control/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "dynamic-agent/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "fixed-agent/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "agent-role-constraints/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "missing-data/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 1,
+      "gatewaySettledCalls": 1,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "cross-file-evidence/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "multi-turn-requirement-change/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 3,
+      "gatewaySettledCalls": 3,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "restart-and-context-retention/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 2,
+      "gatewaySettledCalls": 2,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 9,
+      "gatewaySettledCalls": 9,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 13,
+      "gatewaySettledCalls": 13,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 9,
+      "gatewaySettledCalls": 9,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-delegation/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 8,
+      "gatewaySettledCalls": 8,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/2",
+      "arm": "dsh-official",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 18,
+      "gatewaySettledCalls": 18,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/2",
+      "arm": "qs-commercial",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 14,
+      "gatewaySettledCalls": 14,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/2",
+      "arm": "qs-old",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 14,
+      "gatewaySettledCalls": 14,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    },
+    {
+      "id": "team-member-follow-up/2",
+      "arm": "qs-public",
+      "models": [
+        "kimi-k3-260716"
+      ],
+      "persistedModelResponses": 15,
+      "gatewaySettledCalls": 15,
+      "responseCountReconciled": true,
+      "lastOutputMatchesNative": true
+    }
+  ]
+}

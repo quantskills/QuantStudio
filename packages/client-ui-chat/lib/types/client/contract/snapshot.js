@@ -1,10 +1,30 @@
 const EMPTY_LIST = [];
 const EMPTY_TIMELINE = { turnOrder: EMPTY_LIST, turns: new Map() };
+const EMPTY_NODE_SOURCE = {
+    getSnapshot: () => undefined,
+    subscribe: () => () => { },
+};
+const EMPTY_BOTTOM_SOURCE = {
+    getSnapshot: () => false,
+    subscribe: () => () => { },
+};
+const EMPTY_NODE_PROCESS_SOURCE = {
+    getSnapshot: () => undefined,
+    subscribe: () => () => { },
+};
+const EMPTY_TURN_NODE_SOURCE = {
+    getSnapshot: () => EMPTY_LIST,
+    subscribe: () => () => { },
+};
 /** Empty Chat target used before a view builder is registered. */
 export const EMPTY_CHAT_SNAPSHOT = {
     order: EMPTY_LIST,
     nodes: {
         get: () => undefined,
+        source: () => EMPTY_NODE_SOURCE,
+        bottomSource: () => EMPTY_BOTTOM_SOURCE,
+        turnDataSource: () => EMPTY_TURN_NODE_SOURCE,
+        processSource: () => EMPTY_NODE_PROCESS_SOURCE,
         values: () => EMPTY_LIST,
     },
     locations: {

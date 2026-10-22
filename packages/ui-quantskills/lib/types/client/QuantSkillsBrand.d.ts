@@ -38,7 +38,7 @@ export declare function QuantSkillsConversationHeroIdentity({ mode, useView, def
  * @param props - Native fallback label plus QuantSkills view state.
  * @returns The native or QuantSkills activity label.
  */
-export declare function QuantSkillsConversationStatus({ mode, useView, defaultLabel, }: QuantSkillsConversationStatusProps): import("react").JSX.Element;
+export declare function QuantSkillsConversationStatus({ mode, useView, defaultLabel, defaultContent, }: QuantSkillsConversationStatusProps): import("react").JSX.Element;
 /**
  * Render the endorsed QuantSkills lockup where width permits.
  * @returns The QuantSkills lockup with its PandaAI endorsement.

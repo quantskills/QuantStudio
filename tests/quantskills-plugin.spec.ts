@@ -167,7 +167,7 @@ describe('dsh-quantskills-plugin bundle', () => {
       preweb: 'node ./scripts/install-application-bootstrap.mjs',
       web: 'node ./scripts/launch-quantskills.mjs',
     })
-    expect(manifest.devDependencies?.['@deepseek-ai/dsh']).toBe('0.1.2-alpha.2')
+    expect(manifest.devDependencies?.['@deepseek-ai/dsh']).toBe('0.2.1-rc.2')
     expect(workspace.allowBuilds).toMatchObject({
       '@deepseek-ai/dsh-subprocess-local': true,
       '@google/genai': false,
@@ -243,9 +243,10 @@ describe('dsh-quantskills-plugin bundle', () => {
       id: 'ui-settings-models',
       disabled: true,
     })
-    expect(entries.find(row => row.id === 'system-prompt')).toMatchObject({ config: { includeHarnessIdentity: false, persona: expect.stringContaining('You are QuantSkills') } })
+    expect(entries.find(row => row.id === 'system-prompt')).toMatchObject({ config: { includeHarnessIdentity: false, personaPrefix: expect.stringContaining('You are QuantSkills') } })
     expect(entries.find(row => row.id === 'web-runtime')).toMatchObject({ config: { surfaceContext: false } })
     expect(entries.find(row => row.id === 'skill-badge')).toMatchObject({ disabled: true })
+    expect(entries.find(row => row.id === 'dsh-market')).toBeUndefined()
     expect(entries.filter(row => row.id === 'ui-quantskills')).toEqual([{
       id: 'ui-quantskills',
       name: '@deepseek-ai/dsh-client-ui-quantskills',

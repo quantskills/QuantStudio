@@ -1,6 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis';
-import type { ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
-import type { ToolCallBlock } from '../contract/snapshot.ts';
+import type { ConversationNodeDefinition, ToolCallBlock } from '@deepseek-ai/dsh-client-ui-conversation/client';
 declare module '../contract/chat-nodes.ts' {
     interface ChatNodeDataMap {
         /** Root Tool lifecycle with recursively nested subcalls. */
@@ -8,11 +7,12 @@ declare module '../contract/chat-nodes.ts' {
     }
 }
 interface ToolState {
-    readonly root: ToolCallBlock;
+    /** Absent until a named delta or `tool/call` identifies the call. */
+    readonly root: ToolCallBlock | undefined;
     readonly children: ReadonlyMap<string, readonly ToolCallBlock[]>;
     readonly parents: ReadonlyMap<string, string>;
 }
-/** Root Tool lifecycle and nested Code Dispatch Definition. */
+/** Root Tool preparation, dispatch, result, and nested PTC calls. */
 export declare const toolDefinition: ConversationNodeDefinition<ToolState>;
 /**
  * Register the root Tool lifecycle and nested-subcall contribution.

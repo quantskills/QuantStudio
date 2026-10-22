@@ -12,6 +12,10 @@
 
 </div>
 
+> **升级候选分支提示：** 本分支固定使用 DSH `0.2.1-rc.2`，统一合入以当前提交验收为准；关键项未通过时 PR 保持 Draft。不发布、不切换日常实例。迁移、恢复、三平台与浏览器的确定提交证据见 [升级报告](docs/dsh-upgrade/README.md)，外部账号和设备条件见 [功能验收矩阵](docs/dsh-upgrade/feature-acceptance.md)。请复制 [macOS / Windows 完整隔离验收提示词](docs/dsh-upgrade/agent-install.md) 测试候选；下方 `main` 提示词仍用于正式版。
+
+Skill / Agent / Team 实验与基准工具统一公开；`skillContextMode` 默认 `full`，`progressive` 需显式启用。现有结果**尚未证明更省 Token 或全面领先**。见 [复现与配置](benchmark/README.md) 和 [本轮验收与阻塞](docs/dsh-upgrade/unification-20261022.md)。
+
 <a id="agent-install"></a>
 
 ## 用 Agent 安装

@@ -1,3 +1,4 @@
+import { listSessionHeaders } from "./session-storage.js";
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
@@ -32,10 +33,13 @@ export class SessionLifecycle {
                 throw new Error('会话正在运行，请停止后再操作。');
             if (action === 'archive')
                 return this.ctx.workspaceRegistry.archiveSession(id);
-            if (action === 'restore')
-                return this.ctx.workspaceRegistry.restoreSession(id);
+            if (action === 'restore') {
+                if (!this.ctx.sessions.get(id) && !await this.ctx.sessionPersistence.stat(id))
+                    throw new Error('会话不存在或已删除。');
+                return this.ctx.workspaceRegistry.unarchiveSession(id);
+            }
             const headers = new Map();
-            for (const header of await this.ctx.sessionPersistence.list())
+            for (const header of await listSessionHeaders(this.ctx.sessionPersistence))
                 headers.set(header.id, header);
             for (const session of this.ctx.sessions.list())
                 headers.set(session.id, session.header);
@@ -90,7 +94,7 @@ export class SessionLifecycle {
             await this.finishPending();
             await assertOwned();
             const headers = new Map();
-            for (const header of await this.ctx.sessionPersistence.list())
+            for (const header of await listSessionHeaders(this.ctx.sessionPersistence))
                 headers.set(header.id, header);
             for (const session of this.ctx.sessions.list())
                 headers.set(session.id, session.header);

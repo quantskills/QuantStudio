@@ -20,10 +20,14 @@ export declare class SubmitMachine {
      * @returns effects for the SessionInput shell, in execution order.
      */
     dispatch(ev: InputEvent): readonly InputEffect[];
-    /** Claimed integrity watch: a draft that breaks the token prefix releases the claim. */
-    private onDraftChanged;
-    /** The editor applied a claim-token replacement; busy phases refuse another claim. */
-    private onClaim;
+    /**
+     * Outside a transaction the claim follows the document's leading command
+     * chip: deleting or displacing the chip releases it, and a history restore
+     * of the chip re-enters claimed. The claim event applies the same rule to a
+     * chip the editor just inserted, before its update commits; busy phases
+     * refuse both.
+     */
+    private followCommand;
     /** Mint an attempt and controller without assigning its lifecycle owner. */
     private mintAttempt;
     /** Mint the frozen command/adjudication attempt. */
@@ -35,11 +39,11 @@ export declare class SubmitMachine {
     private onEnter;
     private onAdjudicated;
     private onAdjudicationFailed;
-    /** Claimed command settlement retains the frozen transaction semantics. */
+    /** Claimed command settlement; after a failure the claim follows the leading command chip again. */
     private onSubmitSettled;
     /** Settle one ordinary send independently of current phase and other detached sends. */
     private onSinkSettled;
-    /** Clear after an accepted image-only send; it has no text suffix to retain. */
+    /** Clear after an accepted attachment-only send; it has no text suffix to retain. */
     private onSendCommitted;
     private onRelease;
 }

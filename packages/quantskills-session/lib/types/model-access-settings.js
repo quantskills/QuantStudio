@@ -5,7 +5,7 @@ export function modelAllowedForAuto(ctx, provider, model) {
     // person chooses a default. They are not legacy provider routes.
     if (provider.trim().length === 0 || (model !== undefined && model.trim().length === 0))
         return false;
-    const policy = ctx.get('settings')?.get(MODEL_ACCESS_NS)?.connections?.[provider];
+    const policy = ctx.get('settings')?.describe().find(entry => entry.ns === MODEL_ACCESS_NS)?.value?.connections?.[provider];
     return policy !== undefined && policy.auto && policy.state === 'verified'
         && (model === undefined || policy.verifiedModels.includes(model));
 }

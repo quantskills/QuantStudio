@@ -1,3 +1,4 @@
+import { selectedSession } from './selected-session.ts'
 import { ArchivedSessions, ArchiveSessionConfirmation, DeleteSessionConfirmation, SessionHistoryMenu, type SessionHistoryAccess, type SessionFileDeletionAccess } from './ArchivedSessions.tsx'
 import { SessionActionsMenu } from './SessionActionsMenu.tsx'
 import { ArchiveBoxIcon } from '@phosphor-icons/react'
@@ -201,6 +202,8 @@ export interface QuantSkillsAppInjected {
   readSkillDeclaration: (versionId: string, signal: AbortSignal) => Promise<string>
 
   renderPluginMarket?: () => ReactNode
+  /** Open the upstream-owned workbench or durable-task panel without replacing its state. */
+  openAdvancedWorkbench?: (panel: 'conversation' | 'schedules') => void
   databaseAccess?: DatabaseAccess
   contestAccess?: ContestAccess
   flyAccess?: FlyAccess
@@ -345,6 +348,9 @@ export interface QuantSkillsPluginFrameInjected {
   claimDetails: (options: DetailsColumnClaimOptions) => DetailsColumnClaim
   claimConversationTextScale: (scale: number) => ConversationTextScaleClaim
   openResults: () => void
+  /** The official DSH dock owns file navigation in the native composition. */
+  nativeResults?: boolean
+  toggleNativeResults?: () => void
   closeResults: () => void
   close: () => void
 }
@@ -371,7 +377,6 @@ export interface QuantSkillsResultInjected {
   openFile: (path: string) => Promise<void>
   previewFile: (path: string) => Promise<QuantSkillsResultPreview>
   openOutputDirectory: (path?: string) => Promise<void>
-  continueWithResults: (paths: readonly string[]) => Promise<void>
   acknowledgePreviewFocus: (sequence: number) => void
   triggerRef: RefObject<HTMLElement | null>
   docked: boolean
@@ -416,7 +421,7 @@ export interface QuantSkillsFrameInjected {
 }
 export type QuantSkillsFrameProps = PropsRuntime<'root'>
   & PropsRenderSlots<
-    'sidebar' | 'quantskills.page' | 'quantskills.results' | 'conversation' | 'details' | 'shell.overlay'
+    'sidebar' | 'quantskills.page' | 'quantskills.results' | 'main' | 'rightbar' | 'shell.overlay'
   >
   & PropsStore<LayoutStore>
   & InjectFace<QuantSkillsFrameInjected>
@@ -442,13 +447,14 @@ type PageProps = QuantSkillsAppProps & {
 
 /** DSH-compatible root frame that keeps the stock conversation services while replacing the stock visual shell. */
 export function QuantSkillsFrame({
-  useStore, actions, useSessions, useView, useCatalog, useBoundSessions, useAgents, useNotifications,
+  useStore, actions, useSessions, usePanelInfo, useView, useCatalog, useBoundSessions, useAgents, useNotifications,
   renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession,
   startAuthoringSession, openAgentTeamBuilder,
 }: QuantSkillsFrameProps) {
+  const activeMainPanel = usePanelInfo(state => state.activePanelId)
   const sidebarOpen = useStore(state => state.sidebarOpen)
   const detailsOpen = useStore(state => state.detailsOpen)
-  const currentSessionId = useSessions(state => state.current)
+  const currentSessionId = useSessions(state => selectedSession(state))
   const plainArchives = useBoundSessions(state => state.plainArchives)
   const archives = useBoundSessions(state => state.archives)
   const boundSessionsReady = useBoundSessions(state => state.phase === 'ready')
@@ -595,11 +601,11 @@ export function QuantSkillsFrame({
           startAuthoringSession={startAuthoringSession}
           openAgentTeamBuilder={openAgentTeamBuilder}
         >
-          {renderSlot('conversation', {})}
+          {renderSlot('main', {}, { entryKey: activeMainPanel ?? 'conversation' })}
         </ConversationFrame>
         : renderSlot('quantskills.page', {})}
     </div>
-    <div className={css.rootDetails}>{renderSlot('details', {})}</div>
+    <div className={css.rootDetails}>{renderSlot('rightbar', { width: detailsReservation || 400, viewportWidth: window.innerWidth, canShow: detailsOpen })}</div>
     <div
       className={css.rootResults}
       data-open={resultsVisible || undefined}
@@ -1447,7 +1453,7 @@ export function QuantSkillsPluginFrame({
   useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications,
   renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles,
   startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails,
-  claimConversationTextScale, openResults, closeResults, close, modelAccess,
+  claimConversationTextScale, openResults, closeResults, close, modelAccess, nativeResults = false, toggleNativeResults, rightbar,
 }: QuantSkillsPluginFrameProps) {
   const open = useView(state => state.pluginOpen)
   const page = useView(state => state.page)
@@ -1465,7 +1471,7 @@ export function QuantSkillsPluginFrame({
   )
   const displayNameOverrides = useView(state => state.assetDisplayNameOverrides)
   const resultsOpen = useLayout(state => state.resultsOpen)
-  const currentSessionId = useSessions(state => state.current)
+  const currentSessionId = useSessions(state => selectedSession(state))
   const catalogSnapshot = useCatalog(snapshot => snapshot)
   const catalog = useMemo(
     () => applyAssetDisplayNameOverrides(catalogSnapshot, displayNameOverrides),
@@ -1798,7 +1804,17 @@ export function QuantSkillsPluginFrame({
       title="显示会话侧栏"
       onClick={() => { setSessionDrawerOpen(true) }}
     ><CaretRight size={15}/></button>}
-    {!mobile && resultSurfaceVisible && !resultWorkbenchOpen && <button
+    {nativeResults && toggleNativeResults !== undefined && rightbar !== undefined && !rightbar.exclusive && !rightbar.fullscreen
+      && !mobile && resultSurfaceVisible && <button
+      type="button"
+      className={`${css.sidebarToggle} ${css.resultDrawerRestore}`}
+      style={{ right: rightbar.shown ? rightbar.width + 4 : 4 }}
+      aria-label={rightbar.shown ? '隐藏结果侧栏' : '显示结果侧栏'}
+      title={rightbar.shown ? '隐藏结果侧栏' : '显示结果侧栏'}
+      aria-expanded={rightbar.shown}
+      onClick={toggleNativeResults}
+    >{rightbar.shown ? <CaretRight size={15}/> : <CaretLeft size={15}/>}</button>}
+    {!nativeResults && !mobile && resultSurfaceVisible && !resultWorkbenchOpen && <button
       type="button"
       className={`${css.sidebarToggle} ${css.resultDrawerRestore}`}
       aria-label="显示结果侧栏"
@@ -2062,7 +2078,7 @@ function HomePage(props: PageProps) {
   const [applicationUpdateError, setApplicationUpdateError] = useState<string>()
   const [featuredActionError, setFeaturedActionError] = useState<string>()
   const [featuredCategory, setFeaturedCategory] = useState('all')
-  const currentSessionId = props.useSessions(state => state.current)
+  const currentSessionId = props.useSessions(state => selectedSession(state))
   const currentBound = props.boundSessions.archives.find(archive => archive.sessionId === currentSessionId)
   const currentAgent = props.agents.archives.find(archive => archive.sessionId === currentSessionId)
   const activeSkills = props.boundSessions.archives.filter(archive => archive.running && !archive.archived)
@@ -3143,25 +3159,24 @@ function ConversationArchiveGroup({ title, rows, props, open }: {
 function ParallelPage(props: PageProps) {
   const [filter, setFilter] = useState<'all' | 'running' | 'waiting' | 'failed' | 'cancelled' | 'completed'>('all')
   const [replyDrawerOpen, setReplyDrawerOpen] = useState(false)
-  const currentSessionId = props.useSessions(state => state.current)
-  const sessionById = props.useSessions(state => state.byId)
-  const pendingInteractions = props.useSessionPendingInteraction(state => state)
+  const currentSessionId = props.useSessions(state => selectedSession(state))
+  const pendingInteractions = props.useSessionStatus(state => state)
   const rows = [
     ...props.boundSessions.archives.filter(archive => !archive.archived).map(archive => ({
       kind: 'skill' as const,
       archive,
-      state: pendingInteractions.has(archive.sessionId)
+      state: pendingInteractions.get(archive.sessionId)?.pendingInteraction !== undefined
         ? 'waiting' as const
-        : sessionById[archive.sessionId]?.completed === true
+        : pendingInteractions.get(archive.sessionId)?.completionUnread === true
           ? 'completed' as const
           : archive.runState,
     })),
     ...props.agents.archives.filter(archive => !archive.archived).map(archive => ({
       kind: 'agent' as const,
       archive,
-      state: pendingInteractions.has(archive.sessionId)
+      state: pendingInteractions.get(archive.sessionId)?.pendingInteraction !== undefined
         ? 'waiting' as const
-        : sessionById[archive.sessionId]?.completed === true
+        : pendingInteractions.get(archive.sessionId)?.completionUnread === true
           ? 'completed' as const
           : archive.runState,
     })),
@@ -3259,7 +3274,7 @@ function ParallelPage(props: PageProps) {
       <header><div><h2>等待你的回复</h2><p>这些会话相互独立，可逐个处理。</p></div><button type="button" aria-label="关闭等待回复" onClick={() => { setReplyDrawerOpen(false) }}><X/></button></header>
       {waiting.map(row => <button type="button" key={row.archive.sessionId} onClick={() => { setReplyDrawerOpen(false); open(row.archive.sessionId) }}>
         {row.kind === 'skill' ? <SkillMark small/> : <CapabilityIcon kind="agent"/>}
-        <span><b>{row.archive.title ?? (row.kind === 'skill' ? row.archive.binding.assetId : row.archive.agent.name)}</b><small>{pendingInteractions.get(row.archive.sessionId)?.kind ?? '需要你的输入'}</small></span><CaretRight/>
+        <span><b>{row.archive.title ?? (row.kind === 'skill' ? row.archive.binding.assetId : row.archive.agent.name)}</b><small>{pendingInteractions.get(row.archive.sessionId)?.pendingInteraction?.kind ?? '需要你的输入'}</small></span><CaretRight/>
       </button>)}
     </aside>}
   </div>
@@ -4494,6 +4509,11 @@ function PluginSettings(props: PageProps) {
 
 function SettingsPage(props: PageProps) {
   const section = props.useStore(state => state.settingsSection)
+  const [advancedError, setAdvancedError] = useState<string>()
+  const openAdvanced = (panel: 'conversation' | 'schedules'): void => {
+    try { props.openAdvancedWorkbench?.(panel); setAdvancedError(undefined) }
+    catch (cause) { setAdvancedError(cause instanceof Error ? cause.message : '工作台入口暂不可用，请刷新页面后重试。') }
+  }
   const interfaceScale = props.useStore(state => state.interfaceScale)
   const conversationScale = props.useStore(state => state.conversationScale)
   const conversationBrightness = props.useStore(state => state.conversationBrightness)
@@ -4526,7 +4546,8 @@ function SettingsPage(props: PageProps) {
     ['updates', <Clock/>, '自动更新'],
     ['permissions', <Shield/>, '模型与权限'],
     ['models', <Wrench/>, '模型服务'],
-    ['plugins', <GridFour/>, '插件市场'],
+    ['plugins', <GridFour/>, '插件与市场'],
+    ['advanced', <Wrench/>, '更多能力'],
     ['appearance', <Palette/>, '外观'],
     ['panda-data', <Database/>, 'PandaData'],
     ['brand-support', <Globe/>, '品牌与支持'],
@@ -4550,7 +4571,19 @@ function SettingsPage(props: PageProps) {
           <p>界面 {Math.round(interfaceScale * 100)}% · 对话文字 {Math.round(conversationScale * 100)}%</p>
         </aside>
         <section className={css.settingsContent}>
-          {section === 'archives' ? <ArchivedSessions access={props.sessionHistory}/> : section === 'plugins' ? <PluginSettings {...props}/> : section === 'models' ? <QuantSkillsModelServices access={props.modelAccess} jevAccess={props.contestAccess?.watch}/> : section === 'workspace' ? <WorkspaceSettings props={props}/> : section === 'appearance' ? <>
+          {section === 'advanced' ? <section className={css.settingsPanel}>
+            <h2>更多能力</h2>
+            <p>完整工作台中，插件页提供搜索与网页读取、语音及其他扩展配置；设置中提供账号、快捷键和开发者工具。</p>
+            <div className={css.settingsActions}>
+              <button type="button" className={css.primaryButton} disabled={!props.openAdvancedWorkbench}
+                onClick={() => { openAdvanced('conversation') }}>打开完整工作台</button>
+              <button type="button" className={css.outlineButton} disabled={!props.openAdvancedWorkbench}
+                onClick={() => { openAdvanced('schedules') }}>管理自动化任务</button>
+            </div>
+            {advancedError && <p role="alert">{advancedError}</p>}
+            <p>进入后，点击左下角账号或设置按钮查看配置。自动化任务可以查看详情、暂停、继续或删除；新任务从会话中创建。</p>
+            <p>实验扩展默认关闭，可在插件管理中按需启用。点击侧栏的 QuantSkills 可返回本工作台。</p>
+          </section> : section === 'archives' ? <ArchivedSessions access={props.sessionHistory}/> : section === 'plugins' ? <PluginSettings {...props}/> : section === 'models' ? <QuantSkillsModelServices access={props.modelAccess} jevAccess={props.contestAccess?.watch}/> : section === 'workspace' ? <WorkspaceSettings props={props}/> : section === 'appearance' ? <>
             <h2>外观</h2>
             <p>QuantSkills 的配色、界面比例和会话文字均可独立调整，并即时预览。</p>
             <QuantSkillsThemePicker
@@ -4774,7 +4807,7 @@ function WorkspaceSettings({ props }: { props: PageProps }) {
   const [workspaceError, setWorkspaceError] = useState<string>()
   const defaultWorkspaceId = props.useStore(state => state.defaultWorkspaceId)
   const settingsWritable = props.useStore(state => state.settingsWritable)
-  const currentSessionId = sessions.current
+  const currentSessionId = selectedSession(sessions)
   const current = currentSessionId === undefined ? undefined : sessions.byId[currentSessionId]
   const workspace = currentSessionId === undefined
     ? workspaces.items.at(0)
@@ -5416,7 +5449,7 @@ function ResultPreview({
 
 /** Current QuantSkills Session's real, read-only result workbench. */
 export function QuantSkillsResultPanel({
-  close, listFiles, prepareFiles, openFile, previewFile, revealFile, saveFileAs, continueWithResults,
+  close, listFiles, prepareFiles, openFile, previewFile, revealFile, saveFileAs,
   acknowledgePreviewFocus, triggerRef, docked, mode: panelMode, maximized, expand, toggleMaximized,
   useProjection, useSession, useChat, useSessions, useResultRequest, sessionId,
 }: QuantSkillsResultProps) {
@@ -5438,12 +5471,10 @@ export function QuantSkillsResultPanel({
   })
   const [tab, setTab] = useState<ResultTab>('files')
   const [fileNavigatorOpen, setFileNavigatorOpen] = useState(false)
-  const [continueError, setContinueError] = useState(false)
   useEffect(() => { setFileNavigatorOpen(false) }, [sessionId, panelMode])
   const [railProgressOpen, setRailProgressOpen] = useState(true)
   const [railFilesOpen, setRailFilesOpen] = useState(true)
   const [openError, setOpenError] = useState(false)
-  const [continueBusy, setContinueBusy] = useState(false)
   const [preview, setPreview] = useState<ResultPreviewState>({ status: 'idle' })
   const [selectedPath, setSelectedPath] = useState<string>()
   const [openPaths, setOpenPaths] = useState<readonly string[]>([])
@@ -5727,14 +5758,6 @@ export function QuantSkillsResultPanel({
             const slash = normalized.lastIndexOf('/')
             loadPreview(slash > 0 ? normalized.slice(0, slash) : '.', 'files')
           }}>打开产物目录</button>
-        <button type="button" aria-label="携带产物到新会话" title="携带当前会话已确认的产物到新会话"
-          disabled={previewableFiles.length === 0 || continueBusy} onClick={() => {
-            setContinueBusy(true)
-            setContinueError(false)
-            void continueWithResults(previewableFiles.map(file => file.path))
-              .catch(() => { setContinueError(true) }).finally(() => { setContinueBusy(false) })
-          }}>携带产物到新会话</button>
-
             {revealFile !== undefined && <button type="button" disabled={selectedPath === undefined}
               onClick={() => { if (selectedPath) void revealFile(selectedPath).catch(() => { setOpenError(true) }) }}>在文件夹中显示</button>}
             {saveFileAs !== undefined && <button type="button" disabled={selectedPath === undefined}
@@ -5830,7 +5853,6 @@ export function QuantSkillsResultPanel({
                       </div>}
         {result.hasOlderHistory && tab === 'overview' && <p className={css.resultHint}>加载更早消息后，概览会继续更新。</p>}
         {openError && <p className={css.resultWarning} role="alert">无法使用宿主应用打开该路径，请确认文件仍然存在。</p>}
-        {continueError && <p className={css.resultWarning} role="alert">创建新会话失败，产物仍保留在当前会话，请重试。</p>}
       </div>
     </div>
   </aside>

@@ -87,9 +87,9 @@ export function QuantSkillsConversationHeroIdentity({ mode, useView, defaultMark
  * @param props - Native fallback label plus QuantSkills view state.
  * @returns The native or QuantSkills activity label.
  */
-export function QuantSkillsConversationStatus({ mode, useView, defaultLabel, }) {
+export function QuantSkillsConversationStatus({ mode, useView, defaultLabel, defaultContent, }) {
     if (!useQuantSkillsConversation(mode, useView))
-        return _jsx(_Fragment, { children: defaultLabel });
+        return _jsx(_Fragment, { children: defaultContent ?? defaultLabel });
     return _jsx(QuantSkillsResearchStatus, {});
 }
 const RESEARCH_PHRASES = [

@@ -1,0 +1,367 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-20",
+  "workflow": "https://github.com/quantskills/QuantStudio/actions/runs/39377258783",
+  "headCommit": "a96c8cfff38e4de5b85dbe6dbbd0a0aa1e909dc4",
+  "testedMergeCommit": "cb3cb43b11d4490b1383bff2f32a01df319e9770",
+  "productionHomeUsed": false,
+  "completePlanAcceptance": false,
+  "jobs": [
+    {
+      "name": "ubuntu-latest / Node 24.0.0",
+      "id": 118478080138,
+      "result": "success",
+      "suite": {
+        "files": 138,
+        "passed": 1425,
+        "skipped": 4,
+        "failed": 0
+      },
+      "pluginSourceMatrix": {
+        "result": "passed",
+        "manager": "0.2.1-rc.2",
+        "sources": [
+          "npm",
+          "release-archive",
+          "local-link",
+          "git-commit",
+          "git-subdirectory"
+        ],
+        "updatesForAllFiveSources": "passed",
+        "npmAliasIntegrity": "passed",
+        "failedInstallPreservedManifestAndLock": "passed",
+        "concurrentInstallsAndProfileMutations": "passed",
+        "removal": "passed",
+        "publicNetwork": false,
+        "productionHomeUsed": false
+      },
+      "newCore": {
+        "result": "passed",
+        "runtime": "0.2.1-rc.2",
+        "commit": "cb3cb43b11d4490b1383bff2f32a01df319e9770",
+        "generation": "empty-ci-fixture",
+        "artifact": "874086673828290a0651b094fa201af35ebdb009755c4b043d7d5c534199561d"
+      },
+      "oldCore": {
+        "result": "passed",
+        "runtime": "0.1.2-alpha.2",
+        "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+        "generation": "fresh-legacy-fixture",
+        "artifact": "8c313c9aa369572a0b189648bde49134da1643c353e6902522bcfaa57db97d41"
+      },
+      "steps": [
+        {
+          "name": "Install dependencies",
+          "result": "success"
+        },
+        {
+          "name": "Test installation entry point",
+          "result": "success"
+        },
+        {
+          "name": "Verify native subprocess containment",
+          "result": "success"
+        },
+        {
+          "name": "Verify actual plugin sources and serialized operations in an isolated profile",
+          "result": "success"
+        },
+        {
+          "name": "Check source and types",
+          "result": "success"
+        },
+        {
+          "name": "Build publishable output",
+          "result": "success"
+        },
+        {
+          "name": "Test the complete candidate including migration, Team recovery and Trade",
+          "result": "success"
+        },
+        {
+          "name": "Smoke-test clean DSH installation",
+          "result": "success"
+        },
+        {
+          "name": "Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Install the old core without changing its versions",
+          "result": "success"
+        },
+        {
+          "name": "Verify the new launcher can still run the old core",
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "name": "macos-latest / Node 22.19.0",
+      "id": 118478080301,
+      "result": "success",
+      "suite": {
+        "files": 138,
+        "passed": 1425,
+        "skipped": 4,
+        "failed": 0
+      },
+      "pluginSourceMatrix": {
+        "result": "passed",
+        "manager": "0.2.1-rc.2",
+        "sources": [
+          "npm",
+          "release-archive",
+          "local-link",
+          "git-commit",
+          "git-subdirectory"
+        ],
+        "updatesForAllFiveSources": "passed",
+        "npmAliasIntegrity": "passed",
+        "failedInstallPreservedManifestAndLock": "passed",
+        "concurrentInstallsAndProfileMutations": "passed",
+        "removal": "passed",
+        "publicNetwork": false,
+        "productionHomeUsed": false
+      },
+      "newCore": {
+        "result": "passed",
+        "runtime": "0.2.1-rc.2",
+        "commit": "cb3cb43b11d4490b1383bff2f32a01df319e9770",
+        "generation": "empty-ci-fixture",
+        "artifact": "38a782ffe462f8158325c863cc2f6c04d462ac58c867294d6e9e5faa0dbdbd82"
+      },
+      "oldCore": {
+        "result": "passed",
+        "runtime": "0.1.2-alpha.2",
+        "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+        "generation": "fresh-legacy-fixture",
+        "artifact": "8c313c9aa369572a0b189648bde49134da1643c353e6902522bcfaa57db97d41"
+      },
+      "steps": [
+        {
+          "name": "Install dependencies",
+          "result": "success"
+        },
+        {
+          "name": "Test installation entry point",
+          "result": "success"
+        },
+        {
+          "name": "Verify native subprocess containment",
+          "result": "success"
+        },
+        {
+          "name": "Verify actual plugin sources and serialized operations in an isolated profile",
+          "result": "success"
+        },
+        {
+          "name": "Check source and types",
+          "result": "success"
+        },
+        {
+          "name": "Build publishable output",
+          "result": "success"
+        },
+        {
+          "name": "Test the complete candidate including migration, Team recovery and Trade",
+          "result": "success"
+        },
+        {
+          "name": "Smoke-test clean DSH installation",
+          "result": "success"
+        },
+        {
+          "name": "Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Install the old core without changing its versions",
+          "result": "success"
+        },
+        {
+          "name": "Verify the new launcher can still run the old core",
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "name": "windows-latest / Node 22.19.0",
+      "id": 118478080388,
+      "result": "success",
+      "suite": {
+        "files": 138,
+        "passed": 1428,
+        "skipped": 1,
+        "failed": 0
+      },
+      "pluginSourceMatrix": {
+        "result": "passed",
+        "manager": "0.2.1-rc.2",
+        "sources": [
+          "npm",
+          "release-archive",
+          "local-link",
+          "git-commit",
+          "git-subdirectory"
+        ],
+        "updatesForAllFiveSources": "passed",
+        "npmAliasIntegrity": "passed",
+        "failedInstallPreservedManifestAndLock": "passed",
+        "concurrentInstallsAndProfileMutations": "passed",
+        "removal": "passed",
+        "publicNetwork": false,
+        "productionHomeUsed": false
+      },
+      "newCore": {
+        "result": "passed",
+        "runtime": "0.2.1-rc.2",
+        "commit": "cb3cb43b11d4490b1383bff2f32a01df319e9770",
+        "generation": "empty-ci-fixture",
+        "artifact": "50cfcbd3c3377e53a685579a2e990a9378f23ba5da92c0b5e3b11e24f2b1e4e5"
+      },
+      "oldCore": {
+        "result": "passed",
+        "runtime": "0.1.2-alpha.2",
+        "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+        "generation": "fresh-legacy-fixture",
+        "artifact": "51f480697f17a84396be8778315f99ef29d272827865bc26eb44176e3eac775d"
+      },
+      "steps": [
+        {
+          "name": "Install dependencies",
+          "result": "success"
+        },
+        {
+          "name": "Test installation entry point",
+          "result": "success"
+        },
+        {
+          "name": "Verify native subprocess containment",
+          "result": "success"
+        },
+        {
+          "name": "Verify actual plugin sources and serialized operations in an isolated profile",
+          "result": "success"
+        },
+        {
+          "name": "Check source and types",
+          "result": "success"
+        },
+        {
+          "name": "Build publishable output",
+          "result": "success"
+        },
+        {
+          "name": "Test the complete candidate including migration, Team recovery and Trade",
+          "result": "success"
+        },
+        {
+          "name": "Smoke-test clean DSH installation",
+          "result": "success"
+        },
+        {
+          "name": "Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Install the old core without changing its versions",
+          "result": "success"
+        },
+        {
+          "name": "Verify the new launcher can still run the old core",
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "name": "ubuntu-latest / Node 22.19.0",
+      "id": 118478080409,
+      "result": "success",
+      "suite": {
+        "files": 138,
+        "passed": 1425,
+        "skipped": 4,
+        "failed": 0
+      },
+      "pluginSourceMatrix": {
+        "result": "passed",
+        "manager": "0.2.1-rc.2",
+        "sources": [
+          "npm",
+          "release-archive",
+          "local-link",
+          "git-commit",
+          "git-subdirectory"
+        ],
+        "updatesForAllFiveSources": "passed",
+        "npmAliasIntegrity": "passed",
+        "failedInstallPreservedManifestAndLock": "passed",
+        "concurrentInstallsAndProfileMutations": "passed",
+        "removal": "passed",
+        "publicNetwork": false,
+        "productionHomeUsed": false
+      },
+      "newCore": {
+        "result": "passed",
+        "runtime": "0.2.1-rc.2",
+        "commit": "cb3cb43b11d4490b1383bff2f32a01df319e9770",
+        "generation": "empty-ci-fixture",
+        "artifact": "874086673828290a0651b094fa201af35ebdb009755c4b043d7d5c534199561d"
+      },
+      "oldCore": {
+        "result": "passed",
+        "runtime": "0.1.2-alpha.2",
+        "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+        "generation": "fresh-legacy-fixture",
+        "artifact": "8c313c9aa369572a0b189648bde49134da1643c353e6902522bcfaa57db97d41"
+      },
+      "steps": [
+        {
+          "name": "Install dependencies",
+          "result": "success"
+        },
+        {
+          "name": "Test installation entry point",
+          "result": "success"
+        },
+        {
+          "name": "Verify native subprocess containment",
+          "result": "success"
+        },
+        {
+          "name": "Verify actual plugin sources and serialized operations in an isolated profile",
+          "result": "success"
+        },
+        {
+          "name": "Check source and types",
+          "result": "success"
+        },
+        {
+          "name": "Build publishable output",
+          "result": "success"
+        },
+        {
+          "name": "Test the complete candidate including migration, Team recovery and Trade",
+          "result": "success"
+        },
+        {
+          "name": "Smoke-test clean DSH installation",
+          "result": "success"
+        },
+        {
+          "name": "Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Install the old core without changing its versions",
+          "result": "success"
+        },
+        {
+          "name": "Verify the new launcher can still run the old core",
+          "result": "success"
+        }
+      ]
+    }
+  ]
+}

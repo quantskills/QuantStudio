@@ -10,7 +10,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
 import { unzipSync } from "fflate";
 import { extract } from "tar";
-//#region lib/types/account.js
+//#region packages/panda-connector/lib/types/account.js
 /** PandaData account validation and normalization. */
 const VISUAL_PHONE_SEPARATOR = /[\s()-]/g;
 const COUNTRY_CALLING_CODE = /^\+?[1-9]\d{0,2}$/;
@@ -67,7 +67,7 @@ function normalizePandaAccount(account) {
 	}
 }
 //#endregion
-//#region lib/types/credential-vault.js
+//#region packages/panda-connector/lib/types/credential-vault.js
 /** OS-backed PandaData credential persistence kept private to the connector. */
 const KEYRING_SERVICE = "DeepSeek Harness QuantSkills PandaData";
 const KEYRING_ACCOUNT = "default";
@@ -169,7 +169,7 @@ function createPandaCredentialVault() {
 	return new PandaOsCredentialVault();
 }
 //#endregion
-//#region lib/types/compatibility.js
+//#region packages/panda-connector/lib/types/compatibility.js
 /** Audited PandaData SDK releases accepted by the QuantSkills plugin. */
 const REQUIRED_CALLABLES = Object.freeze([
 	"get_index_indicator",
@@ -215,7 +215,7 @@ function pandaSdkCompatibility(version) {
 	return PANDA_SDK_COMPATIBILITY.find((entry) => entry.version === version);
 }
 //#endregion
-//#region lib/types/managed-uv.js
+//#region packages/panda-connector/lib/types/managed-uv.js
 /** Pinned, checksum-verified uv binary provisioning for managed PandaData Python. */
 const UV_VERSION = "0.12.5";
 const UV_RELEASE_ROOT = `https://releases.astral.sh/github/uv/releases/download/${UV_VERSION}`;
@@ -383,7 +383,7 @@ async function resolveManagedUv(managerRoot, signal) {
 	}
 }
 //#endregion
-//#region lib/types/worker.js
+//#region packages/panda-connector/lib/types/worker.js
 /** Private PandaData worker process client. */
 /** Legacy SDK release eligible for first-run environment adoption. */
 const PANDA_DATA_VERSION = "0.0.12";
@@ -622,7 +622,7 @@ var PandaWorkerClient = class {
 	*/
 	async executeAt(runtimeRoot, sdkVersion, request, argvWrapper, signal) {
 		const active = this.operationSignal(signal, this.config.bootstrapTimeoutMs);
-		const wrapped = argvWrapper(this.executionArgv(runtimeRoot));
+		const wrapped = await argvWrapper(this.executionArgv(runtimeRoot));
 		let handle;
 		try {
 			handle = this.subprocess.spawn({
@@ -820,7 +820,7 @@ var PandaWorkerClient = class {
 	}
 };
 //#endregion
-//#region lib/types/runtime.js
+//#region packages/panda-connector/lib/types/runtime.js
 /** Immutable PandaData environments, release discovery, activation, and rollback. */
 const ACTIVATION_SCHEMA_VERSION = 2;
 const RELEASE_BODY_LIMIT = 2 * 1024 * 1024;
@@ -1285,7 +1285,7 @@ var PandaRuntimeManager = class {
 	}
 };
 //#endregion
-//#region lib/types/index.js
+//#region packages/panda-connector/lib/types/index.js
 /** Host-only PandaData authentication and managed-runtime connector. */
 var __runInitializers = function(thisArg, initializers, value) {
 	var useValue = arguments.length > 2;
@@ -1651,7 +1651,7 @@ let PandaConnector = (() => {
 						workdir: request.workdir,
 						account: credential.account,
 						password: credential.password
-					}, (argv) => this.confineExecution(argv, request.workspaceRoot, request.sessionId).wrapped, this.operationSignal(signal));
+					}, async (argv) => (await this.confineExecution(argv, request.workspaceRoot, request.sessionId)).wrapped, this.operationSignal(signal));
 				} catch (error) {
 					if (error instanceof PandaWorkerError) throw error;
 					throw new PandaWorkerError("execution-unavailable");
@@ -1873,8 +1873,8 @@ let PandaConnector = (() => {
 				return code;
 			}
 		}
-		confineExecution(argv, workspaceRoot, sessionId) {
-			const confined = this.ctx.sandbox.confine(argv, {
+		async confineExecution(argv, workspaceRoot, sessionId) {
+			const confined = await this.ctx.sandbox.confine(argv, {
 				mode: "workspace-write",
 				workspaceRoot,
 				...sessionId === void 0 ? {} : { sessionId }
@@ -1900,7 +1900,7 @@ let PandaConnector = (() => {
 				probeRoot = createdProbeRoot;
 				const scriptPath = join(createdProbeRoot, "panda_execution_probe.py");
 				await copyFile(EXECUTION_PROBE_SOURCE, scriptPath);
-				const preparedConfinement = this.confineExecution(this.worker.executionArgv(environment.root), createdProbeRoot, void 0);
+				const preparedConfinement = await this.confineExecution(this.worker.executionArgv(environment.root), createdProbeRoot, void 0);
 				confinement = preparedConfinement;
 				const cached = this.findExecutionEvidence(environment, preparedConfinement.backend);
 				if (cached !== void 0) {

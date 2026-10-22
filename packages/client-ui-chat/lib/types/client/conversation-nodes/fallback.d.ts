@@ -1,6 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis';
-import type { ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
-import type { UnknownSurfaceNode } from '../contract/snapshot.ts';
+import type { ConversationNodeDefinition, UnknownSurfaceNode } from '@deepseek-ai/dsh-client-ui-conversation/client';
 declare module '../contract/chat-nodes.ts' {
     interface ChatNodeDataMap {
         /** Generic presentation of an unclaimed append-surface event. */

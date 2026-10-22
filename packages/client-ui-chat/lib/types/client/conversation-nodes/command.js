@@ -1,6 +1,6 @@
 import { isReplacementSurfaceEvent } from '@deepseek-ai/dsh-session/surface';
 import { chatNode } from "./common.js";
-const COMPACT_PLUGIN = 'compact';
+const COMPACT_KIND = 'compact-checkpoint';
 function commandFromRun(match) {
     if (match.event.type !== 'command/run')
         throw new Error('command start requires command/run');
@@ -47,7 +47,7 @@ function compactSource(event) {
     if (event.type !== 'user/message' || !isReplacementSurfaceEvent(event))
         return undefined;
     const source = event.data.source;
-    if (source.kind !== 'plugin' || source.plugin !== COMPACT_PLUGIN || typeof source.compactionId !== 'string')
+    if (source.kind !== COMPACT_KIND || typeof source.compactionId !== 'string')
         return undefined;
     return {
         compactionId: source.compactionId,

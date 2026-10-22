@@ -1,15 +1,20 @@
 /**
  * Layout plugin, browser half: one register() call contributes AppFrame into
  * the runtime's built-in 'root' slot and, in the same breath, declares the
- * four child slots (declaration = exclusive render authority), seats the
+ * child slots (declaration = exclusive render authority), seats the
  * layout store (panel geometry), and wires the panel-action service face.
- * ctx.layout is the cross-plugin panel-action contract; navigation state lives
- * with the runtime sessions service. A second effect seats the theme
+ * ctx.layout selects the main panel and controls column geometry; Session
+ * selection belongs to the Session Controller. A second effect seats the theme
  * presenter, which projects ctx.theme snapshots onto document.body.
  */
 import type { Context as ClientContext } from '@deepseek-ai/cordis';
+import type { SnapshotSelectorHook } from '@deepseek-ai/dsh-client-ui-slots';
+import type { PanelInfo } from './service.ts';
+import { zh } from './shortcut-locales.ts';
 export { LayoutController } from './service.ts';
-export type { ConversationTextScaleClaim, DetailsColumnClaim, DetailsColumnClaimOptions, ILayout, SidebarColumnClaim, SidebarColumnClaimOptions, } from './service.ts';
+export type { ILayout, MainPanelId, PanelInfo } from './service.ts';
+/** Selector hook over root-scoped panel selection. */
+export type UsePanelInfo = SnapshotSelectorHook<PanelInfo>;
 declare module '@deepseek-ai/cordis' {
     interface Context {
         /** The outward face only; the concrete service stays inside this plugin. */
@@ -17,6 +22,14 @@ declare module '@deepseek-ai/cordis' {
     }
 }
 declare module '@deepseek-ai/dsh-client-ui-slots' {
+    interface LocaleNamespaceMap {
+        /** Layout keyboard command labels. */
+        'shortcuts.layout': keyof typeof zh;
+    }
+    interface GlobalStandardProps {
+        /** Subscribe to the selected main panel independently of parent renders. */
+        usePanelInfo: UsePanelInfo;
+    }
     interface SlotMap {
         /**
          * The whole left column. OCCUPIED by ui-sidebar's SidebarRoot, which
@@ -34,35 +47,40 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
             owner: SidebarOwnerProps;
         };
         /**
-         * The whole center column, across both the no-session hero and a live
-         * conversation. OCCUPIED by ui-conversation's ConversationRoot, which
-         * declares the session body, composer, and input seats inside it —
-         * registering here replaces the entire conversation surface (and removes
-         * every seat it declares) rather than adding to it.
-         *
-         * Current-session-optional: the occupant owns both states without
-         * changing its React identity, so it keeps its own state across a session
-         * switch. It receives no owner props; session facts arrive through the
-         * framework hooks of the `session-maybe` scope.
+         * Central panel selected by sidebar entry id. The reserved `conversation`
+         * key hosts the Conversation; other keys receive no Session binding.
          */
-        'conversation': {
-            kind: 'single';
-            scope: 'session-maybe';
-            owner: ConvOwnerProps;
+        'main': {
+            kind: 'keyed';
+            scope: 'root';
         };
         /**
-         * The right details column, shown when the layout opens it. OCCUPIED by
-         * ui-conversation's DetailsPanel, which declares the tool-details seat
-         * inside it — registering here replaces the column and takes that seat
-         * with it. Absent an occupant the column renders nothing.
+         * The right column: a track the centre makes room for, or nothing. OCCUPIED
+         * by the right Sidebar, which uses the resolved column width in normal
+         * mode and covers the viewport in fullscreen, retaining the wide-screen
+         * column reservation underneath.
          *
-         * No owner props: the framework injects the session id and hooks for the
-         * `session` scope, and `ctx.layout` owns whether the column is open.
+         * Whether the panel is shown, and whether it takes a track, is the
+         * occupant's own recorded business — it reports the composition of its
+         * expanded and presentation state through `ctx.layout`, and the frame sizes
+         * the track and places the resize handle from that. The expand control is
+         * not this column's: it is a button in the conversation header. The root
+         * occupant decides when to render its Session-bound content.
          */
-        'details': {
+        'rightbar': {
             kind: 'single';
-            scope: 'session';
-            owner: DetailsOwnerProps;
+            scope: 'root';
+            owner: RightbarOwnerProps;
+        };
+        /**
+         * Full-width bottom content below all three columns. Its rendered height
+         * reduces the columns' available height; empty content reserves no space.
+         * The occupant owns its height, visibility, and controls. It receives no
+         * Session binding and remains mounted across main-panel navigation.
+         */
+        'shell.bottom': {
+            kind: 'single';
+            scope: 'root';
         };
         /**
          * Frame-wide floating layer, above every column and outside their scroll
@@ -77,6 +95,24 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
         'shell.overlay': {
             kind: 'list';
             scope: 'root';
+            owner: ShellOverlayOwnerProps;
+        };
+        /**
+         * Window-chrome seat at the frame's top-left, over every main panel.
+         * Mounted only while the sidebar column is fully hidden (macOS desktop
+         * collapse; other platforms keep the rail), so the occupant can assume the
+         * frame edge is the window edge and the macOS traffic lights sit before it.
+         * OCCUPIED by ui-sidebar's reopen/New Session controls.
+         *
+         * While the seat is mounted the frame publishes
+         * `--dsh-frame-leading-clearance` (the inline inset the seat's band
+         * occupies, measured from the frame's left edge); a main panel whose
+         * content reaches the top-left corner pads by it so nothing lands under
+         * the lights or the controls.
+         */
+        'shell.leading': {
+            kind: 'single';
+            scope: 'root';
         };
     }
 }
@@ -87,18 +123,33 @@ export interface SidebarOwnerProps {
     /** Rendered column width in px (SIDEBAR_COLLAPSED when collapsed). */
     width: number;
 }
-/** Conversation owner share: business state and actions belong to the registrant. */
-export interface ConvOwnerProps {
+/** Right column owner share: resolved normal geometry and opening eligibility. */
+export interface RightbarOwnerProps {
+    /** Resolved normal panel width in px, not the saved preference; zero if it cannot fit. */
+    width: number;
+    /** Current frame width in px. */
+    viewportWidth: number;
+    /**
+     * Whether a normal right panel can retain 300px beside a 400px center.
+     * Before a narrow opening, includes the space from collapsing the left sidebar.
+     */
+    canShow: boolean;
 }
-/** Details owner share: empty — sessionId arrives as a framework-standard prop. */
-export interface DetailsOwnerProps {
+/** Optional resolved geometry for overlay controls beside the official right panel. */
+export interface ShellOverlayOwnerProps {
+    rightbar?: {
+        width: number;
+        shown: boolean;
+        fullscreen: boolean;
+        exclusive: boolean;
+    };
 }
 /** Required services (cordis fiber inject — the loader passes all module exports as an object plugin). */
 export declare const inject: string[];
 /**
  * Client plugin body: provide ctx.layout, then one register() call — AppFrame
- * into 'root' with the four child-slot declarations, the layout store seat,
- * and the inject hook that hands the store's bound actions to the service.
+ * into 'root' with its child-slot declarations, the layout store seat,
+ * and the shared root instance supplying commands and the panel-info source.
  * @param ctx - client root context.
  */
 export declare function apply(ctx: ClientContext): void;

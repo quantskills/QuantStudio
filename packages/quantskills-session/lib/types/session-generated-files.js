@@ -1,3 +1,4 @@
+import { inspectSession } from "./session-storage.js";
 import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { lstat, realpath, unlink } from 'node:fs/promises';
@@ -15,8 +16,12 @@ async function regularFile(root, path) {
     const parts = relative(root, path).split(sep);
     if (parts.some(part => part.startsWith('.') || /[:\u0000-\u001f]/u.test(part)))
         throw new Error('保留工作区配置或特殊路径');
-    if (key(await realpath(root)) !== key(root))
+    const rootStat = await lstat(root);
+    if (!rootStat.isDirectory() || rootStat.isSymbolicLink())
         throw new Error('工作区路径含链接');
+    // macOS /var is an ancestor alias. Resolve the workspace boundary once;
+    // links inside that boundary remain forbidden.
+    const canonicalRoot = await realpath(root);
     let current = root;
     for (const part of parts) {
         current = resolve(current, part);
@@ -27,7 +32,7 @@ async function regularFile(root, path) {
     const stat = await lstat(path);
     if (!stat.isFile())
         throw new Error('仅清理明确列出的文件，保留目录');
-    if (key(await realpath(path)) !== key(path))
+    if (key(await realpath(path)) !== key(resolve(canonicalRoot, ...parts)))
         throw new Error('文件路径含链接');
     return stat;
 }
@@ -76,7 +81,7 @@ function pathsIn(text) {
     }
     return paths;
 }
-function evidence(header, events) {
+function evidence(header, events, inheritedEventCount) {
     const found = new Map();
     const root = header.cwd;
     if (!root || !isAbsolute(root))
@@ -90,7 +95,7 @@ function evidence(header, events) {
         found.set(key(path), entry);
     };
     const calls = new Map();
-    for (const event of events.slice(header.seedLength ?? 0)) {
+    for (const event of events.slice(inheritedEventCount)) {
         if (event.type === 'tool/call')
             calls.set(String(event.data.callId), event);
         if (event.type === 'assistant/message') {
@@ -105,7 +110,7 @@ function evidence(header, events) {
                 add(value, 'protected');
         if (event.type !== 'tool/result')
             continue;
-        const result = event.data.message.content[0];
+        const result = event.data.message;
         if (result.isError)
             continue;
         const call = calls.get(String(result.toolCallId));
@@ -122,15 +127,20 @@ function evidence(header, events) {
 }
 export async function collectGeneratedFiles(ctx, headers, ids) {
     const logs = new Map();
+    const inherited = new Map();
     // If a log cannot be inspected, fail closed instead of assuming it has no shared references.
-    for (const header of headers.values())
-        logs.set(header.id, ctx.sessions.get(header.id)?.events ?? (await ctx.sessionPersistence.inspect(header.id)).events);
+    for (const header of headers.values()) {
+        const live = ctx.sessions.get(header.id);
+        const inspected = live ? undefined : await inspectSession(ctx.sessionPersistence, header.id);
+        logs.set(header.id, live?.snapshotEvents() ?? inspected.events);
+        inherited.set(header.id, live?.inheritedEventCount ?? inspected.inheritedEventCount);
+    }
     const found = new Map();
     for (const id of ids) {
         const header = headers.get(id);
         if (!header)
             continue;
-        for (const [path, item] of evidence(header, logs.get(id) ?? [])) {
+        for (const [path, item] of evidence(header, logs.get(id) ?? [], inherited.get(id) ?? 0)) {
             const previous = found.get(path);
             if (previous) {
                 previous.item.created ||= item.created;

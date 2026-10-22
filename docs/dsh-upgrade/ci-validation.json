@@ -1,0 +1,1318 @@
+{
+  "schemaVersion": 2,
+  "date": "2026-10-20",
+  "workflow": "https://github.com/quantskills/QuantStudio/actions/runs/39433412012",
+  "headCommit": "8686a8f4493ef326075be6d2190d5e6a6768c600",
+  "testedMergeCommit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+  "result": "success",
+  "productionHomeUsed": false,
+  "completePlanAcceptance": false,
+  "remainingConditions": "See feature-acceptance.md: real external accounts, models/services, SSH and voice hardware remain blocked without separate test conditions.",
+  "previousEvidence": "ci-validation-history-20261020.json",
+  "jobs": [
+    {
+      "id": 118664059536,
+      "name": "windows-latest / Node 22.19.0",
+      "result": "success",
+      "suites": [
+        {
+          "files": 140,
+          "passed": 1441,
+          "failed": 0,
+          "skipped": 1
+        },
+        {
+          "files": 114,
+          "passed": 1909,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "files": 106,
+          "passed": 2830,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "pluginSources": {
+        "result": "passed",
+        "manager": "0.2.1-rc.2",
+        "sources": [
+          "npm",
+          "release-archive",
+          "local-link",
+          "git-commit",
+          "git-subdirectory"
+        ],
+        "updatesForAllFiveSources": "passed",
+        "npmAliasIntegrity": "passed",
+        "failedInstallPreservedManifestAndLock": "passed",
+        "concurrentInstallsAndProfileMutations": "passed",
+        "removal": "passed",
+        "coreIdentityBeforeMutation": "passed",
+        "gitToNpmReplacementRefused": "passed",
+        "unknownSourceReplacementRefused": "passed",
+        "interruptedPublicationRecovery": "passed",
+        "runningHostRecoveryRefused": "passed",
+        "unknownJournalAndChangedProfileRefused": "passed",
+        "publicNetwork": false,
+        "productionHomeUsed": false
+      },
+      "activation": [
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "empty-ci-fixture",
+          "artifact": "8cb1ec29c51d97e95a16ce3ff8cd4c639f752aae968b0581f0a156754156ec7c"
+        },
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "96601e9d6aa00ceb53e5c86a3cf4af45855c2eb1113a5cac78601b2c9f7a62fa",
+          "artifact": "8cb1ec29c51d97e95a16ce3ff8cd4c639f752aae968b0581f0a156754156ec7c"
+        },
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "8cc9006a0cd7db71421032edadfcef559eeee9e1c498651f31f34e2005321e83",
+          "artifact": "8cb1ec29c51d97e95a16ce3ff8cd4c639f752aae968b0581f0a156754156ec7c"
+        }
+      ],
+      "browser": {
+        "browser": "passed",
+        "scope": "model-settings-streaming-attachment-draft-reload-resize-automation-search-settings",
+        "modelCalls": 7,
+        "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+        "artifact": "8cb1ec29c51d97e95a16ce3ff8cd4c639f752aae968b0581f0a156754156ec7c"
+      },
+      "optionalSettings": {
+        "result": "passed",
+        "runtime": "0.2.1-rc.2",
+        "scope": "official-manager-on-disk-settings",
+        "invalidSelectionPreservesProfile": true,
+        "externalCapabilitiesExecuted": false,
+        "onDemand": [
+          {
+            "name": "@deepseek-ai/dsh-subagent-claude-code",
+            "spec": "@deepseek-ai/dsh-subagent-claude-code@0.2.1-rc.2",
+            "defaultNotInstalled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-subagent-codex",
+            "spec": "@deepseek-ai/dsh-subagent-codex@0.2.1-rc.2",
+            "defaultNotInstalled": true
+          }
+        ],
+        "results": [
+          {
+            "name": "@deepseek-ai/dsh-experimental-session-search",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-ralph-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-terminal-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-badge-skill-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-session-titles-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-agent-team-profile",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-cot-translation-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-auto-review",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-inspector-profile",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-tool-worktree",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          }
+        ]
+      },
+      "legacyLaunch": [
+        {
+          "legacyLaunch": "passed",
+          "runtime": "0.1.2-alpha.2",
+          "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+          "generation": "fresh-legacy-fixture",
+          "artifact": "51f480697f17a84396be8778315f99ef29d272827865bc26eb44176e3eac775d"
+        },
+        {
+          "legacyLaunch": "passed",
+          "runtime": "0.1.2-alpha.2",
+          "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+          "generation": "restored-legacy-fixture",
+          "artifact": "51f480697f17a84396be8778315f99ef29d272827865bc26eb44176e3eac775d"
+        }
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "result": "success"
+        },
+        {
+          "name": "Check out source",
+          "result": "success"
+        },
+        {
+          "name": "Install Node.js",
+          "result": "success"
+        },
+        {
+          "name": "Activate pinned pnpm",
+          "result": "success"
+        },
+        {
+          "name": "Install dependencies",
+          "result": "success"
+        },
+        {
+          "name": "Test installation entry point",
+          "result": "success"
+        },
+        {
+          "name": "Verify native subprocess containment",
+          "result": "success"
+        },
+        {
+          "name": "Verify actual plugin sources and serialized operations in an isolated profile",
+          "result": "success"
+        },
+        {
+          "name": "Check source and types",
+          "result": "success"
+        },
+        {
+          "name": "Build publishable output",
+          "result": "success"
+        },
+        {
+          "name": "Test the complete candidate including migration, Team recovery and Trade",
+          "result": "success"
+        },
+        {
+          "name": "Check out fixed upstream UI test support",
+          "result": "success"
+        },
+        {
+          "name": "Test the customized UI against the target upstream behavior",
+          "result": "success"
+        },
+        {
+          "name": "Test fixed upstream Web settings, models, plugins, schedules and collaboration",
+          "result": "success"
+        },
+        {
+          "name": "Smoke-test clean DSH installation",
+          "result": "success"
+        },
+        {
+          "name": "Activate a migrated whole home without credentials or external execution paths",
+          "result": "success"
+        },
+        {
+          "name": "Verify optional bundle settings through the official manager and service restart",
+          "result": "success"
+        },
+        {
+          "name": "Install the pinned Chromium test runtime",
+          "result": "success"
+        },
+        {
+          "name": "Exercise the candidate in a real browser with isolated model and attachment fixtures",
+          "result": "success"
+        },
+        {
+          "name": "Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Install the old core without changing its versions",
+          "result": "success"
+        },
+        {
+          "name": "Verify the new launcher can still run the old core",
+          "result": "success"
+        },
+        {
+          "name": "Read and start a recovered old generation after preserving candidate increments",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out fixed upstream UI test support",
+          "result": "success"
+        },
+        {
+          "name": "Post Install Node.js",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out source",
+          "result": "success"
+        },
+        {
+          "name": "Complete job",
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "id": 118664059830,
+      "name": "macos-latest / Node 22.19.0",
+      "result": "success",
+      "suites": [
+        {
+          "files": 140,
+          "passed": 1438,
+          "failed": 0,
+          "skipped": 4
+        },
+        {
+          "files": 114,
+          "passed": 1909,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "files": 106,
+          "passed": 2830,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "pluginSources": {
+        "result": "passed",
+        "manager": "0.2.1-rc.2",
+        "sources": [
+          "npm",
+          "release-archive",
+          "local-link",
+          "git-commit",
+          "git-subdirectory"
+        ],
+        "updatesForAllFiveSources": "passed",
+        "npmAliasIntegrity": "passed",
+        "failedInstallPreservedManifestAndLock": "passed",
+        "concurrentInstallsAndProfileMutations": "passed",
+        "removal": "passed",
+        "coreIdentityBeforeMutation": "passed",
+        "gitToNpmReplacementRefused": "passed",
+        "unknownSourceReplacementRefused": "passed",
+        "interruptedPublicationRecovery": "passed",
+        "runningHostRecoveryRefused": "passed",
+        "unknownJournalAndChangedProfileRefused": "passed",
+        "publicNetwork": false,
+        "productionHomeUsed": false
+      },
+      "activation": [
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "empty-ci-fixture",
+          "artifact": "059266ddf1815534f33ad9a4603968d45a8d91f27ef38b3c820c43d3d15d619a"
+        },
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "485126f0953ce699f7e28cfe9a2ab5c93757e33e58ad7d2651eadce5d4c6ed90",
+          "artifact": "059266ddf1815534f33ad9a4603968d45a8d91f27ef38b3c820c43d3d15d619a"
+        },
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "612633bb8987d5ecfc8a1ac2bb55935a1dbb8beeec9d9326eaaf01cd52cf5721",
+          "artifact": "059266ddf1815534f33ad9a4603968d45a8d91f27ef38b3c820c43d3d15d619a"
+        }
+      ],
+      "browser": {
+        "browser": "passed",
+        "scope": "model-settings-streaming-attachment-draft-reload-resize-automation-search-settings",
+        "modelCalls": 7,
+        "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+        "artifact": "059266ddf1815534f33ad9a4603968d45a8d91f27ef38b3c820c43d3d15d619a"
+      },
+      "optionalSettings": {
+        "result": "passed",
+        "runtime": "0.2.1-rc.2",
+        "scope": "official-manager-on-disk-settings",
+        "invalidSelectionPreservesProfile": true,
+        "externalCapabilitiesExecuted": false,
+        "onDemand": [
+          {
+            "name": "@deepseek-ai/dsh-subagent-claude-code",
+            "spec": "@deepseek-ai/dsh-subagent-claude-code@0.2.1-rc.2",
+            "defaultNotInstalled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-subagent-codex",
+            "spec": "@deepseek-ai/dsh-subagent-codex@0.2.1-rc.2",
+            "defaultNotInstalled": true
+          }
+        ],
+        "results": [
+          {
+            "name": "@deepseek-ai/dsh-experimental-session-search",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-ralph-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-terminal-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-badge-skill-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-session-titles-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-agent-team-profile",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-cot-translation-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-auto-review",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-inspector-profile",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-tool-worktree",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          }
+        ]
+      },
+      "legacyLaunch": [
+        {
+          "legacyLaunch": "passed",
+          "runtime": "0.1.2-alpha.2",
+          "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+          "generation": "fresh-legacy-fixture",
+          "artifact": "8c313c9aa369572a0b189648bde49134da1643c353e6902522bcfaa57db97d41"
+        },
+        {
+          "legacyLaunch": "passed",
+          "runtime": "0.1.2-alpha.2",
+          "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+          "generation": "restored-legacy-fixture",
+          "artifact": "8c313c9aa369572a0b189648bde49134da1643c353e6902522bcfaa57db97d41"
+        }
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "result": "success"
+        },
+        {
+          "name": "Check out source",
+          "result": "success"
+        },
+        {
+          "name": "Install Node.js",
+          "result": "success"
+        },
+        {
+          "name": "Activate pinned pnpm",
+          "result": "success"
+        },
+        {
+          "name": "Install dependencies",
+          "result": "success"
+        },
+        {
+          "name": "Test installation entry point",
+          "result": "success"
+        },
+        {
+          "name": "Verify native subprocess containment",
+          "result": "success"
+        },
+        {
+          "name": "Verify actual plugin sources and serialized operations in an isolated profile",
+          "result": "success"
+        },
+        {
+          "name": "Check source and types",
+          "result": "success"
+        },
+        {
+          "name": "Build publishable output",
+          "result": "success"
+        },
+        {
+          "name": "Test the complete candidate including migration, Team recovery and Trade",
+          "result": "success"
+        },
+        {
+          "name": "Check out fixed upstream UI test support",
+          "result": "success"
+        },
+        {
+          "name": "Test the customized UI against the target upstream behavior",
+          "result": "success"
+        },
+        {
+          "name": "Test fixed upstream Web settings, models, plugins, schedules and collaboration",
+          "result": "success"
+        },
+        {
+          "name": "Smoke-test clean DSH installation",
+          "result": "success"
+        },
+        {
+          "name": "Activate a migrated whole home without credentials or external execution paths",
+          "result": "success"
+        },
+        {
+          "name": "Verify optional bundle settings through the official manager and service restart",
+          "result": "success"
+        },
+        {
+          "name": "Install the pinned Chromium test runtime",
+          "result": "success"
+        },
+        {
+          "name": "Exercise the candidate in a real browser with isolated model and attachment fixtures",
+          "result": "success"
+        },
+        {
+          "name": "Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Install the old core without changing its versions",
+          "result": "success"
+        },
+        {
+          "name": "Verify the new launcher can still run the old core",
+          "result": "success"
+        },
+        {
+          "name": "Read and start a recovered old generation after preserving candidate increments",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out fixed upstream UI test support",
+          "result": "success"
+        },
+        {
+          "name": "Post Install Node.js",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out source",
+          "result": "success"
+        },
+        {
+          "name": "Complete job",
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "id": 118664059868,
+      "name": "ubuntu-latest / Node 24.0.0",
+      "result": "success",
+      "suites": [
+        {
+          "files": 140,
+          "passed": 1438,
+          "failed": 0,
+          "skipped": 4
+        },
+        {
+          "files": 114,
+          "passed": 1909,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "files": 106,
+          "passed": 2830,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "pluginSources": {
+        "result": "passed",
+        "manager": "0.2.1-rc.2",
+        "sources": [
+          "npm",
+          "release-archive",
+          "local-link",
+          "git-commit",
+          "git-subdirectory"
+        ],
+        "updatesForAllFiveSources": "passed",
+        "npmAliasIntegrity": "passed",
+        "failedInstallPreservedManifestAndLock": "passed",
+        "concurrentInstallsAndProfileMutations": "passed",
+        "removal": "passed",
+        "coreIdentityBeforeMutation": "passed",
+        "gitToNpmReplacementRefused": "passed",
+        "unknownSourceReplacementRefused": "passed",
+        "interruptedPublicationRecovery": "passed",
+        "runningHostRecoveryRefused": "passed",
+        "unknownJournalAndChangedProfileRefused": "passed",
+        "publicNetwork": false,
+        "productionHomeUsed": false
+      },
+      "activation": [
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "empty-ci-fixture",
+          "artifact": "23367f4d54b6d14050a20dae781bb1fe75e71a21a2d439a0557a91db65b1f416"
+        },
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "9812cbe616e615b4b116e080d221a225bac1ea2d7a89e15d73cce4b68426c536",
+          "artifact": "23367f4d54b6d14050a20dae781bb1fe75e71a21a2d439a0557a91db65b1f416"
+        },
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "204633557173d8c985bc3d43a134b52539d99393fbe6ff5414c5ce9094fb3cdd",
+          "artifact": "23367f4d54b6d14050a20dae781bb1fe75e71a21a2d439a0557a91db65b1f416"
+        }
+      ],
+      "browser": {
+        "browser": "passed",
+        "scope": "model-settings-streaming-attachment-draft-reload-resize-automation-search-settings",
+        "modelCalls": 7,
+        "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+        "artifact": "23367f4d54b6d14050a20dae781bb1fe75e71a21a2d439a0557a91db65b1f416"
+      },
+      "optionalSettings": {
+        "result": "passed",
+        "runtime": "0.2.1-rc.2",
+        "scope": "official-manager-on-disk-settings",
+        "invalidSelectionPreservesProfile": true,
+        "externalCapabilitiesExecuted": false,
+        "onDemand": [
+          {
+            "name": "@deepseek-ai/dsh-subagent-claude-code",
+            "spec": "@deepseek-ai/dsh-subagent-claude-code@0.2.1-rc.2",
+            "defaultNotInstalled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-subagent-codex",
+            "spec": "@deepseek-ai/dsh-subagent-codex@0.2.1-rc.2",
+            "defaultNotInstalled": true
+          }
+        ],
+        "results": [
+          {
+            "name": "@deepseek-ai/dsh-experimental-session-search",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-ralph-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-terminal-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-badge-skill-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-session-titles-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-agent-team-profile",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-cot-translation-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-auto-review",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-inspector-profile",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-tool-worktree",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          }
+        ]
+      },
+      "legacyLaunch": [
+        {
+          "legacyLaunch": "passed",
+          "runtime": "0.1.2-alpha.2",
+          "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+          "generation": "fresh-legacy-fixture",
+          "artifact": "8c313c9aa369572a0b189648bde49134da1643c353e6902522bcfaa57db97d41"
+        },
+        {
+          "legacyLaunch": "passed",
+          "runtime": "0.1.2-alpha.2",
+          "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+          "generation": "restored-legacy-fixture",
+          "artifact": "8c313c9aa369572a0b189648bde49134da1643c353e6902522bcfaa57db97d41"
+        }
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "result": "success"
+        },
+        {
+          "name": "Check out source",
+          "result": "success"
+        },
+        {
+          "name": "Install Node.js",
+          "result": "success"
+        },
+        {
+          "name": "Activate pinned pnpm",
+          "result": "success"
+        },
+        {
+          "name": "Install dependencies",
+          "result": "success"
+        },
+        {
+          "name": "Test installation entry point",
+          "result": "success"
+        },
+        {
+          "name": "Verify native subprocess containment",
+          "result": "success"
+        },
+        {
+          "name": "Verify actual plugin sources and serialized operations in an isolated profile",
+          "result": "success"
+        },
+        {
+          "name": "Check source and types",
+          "result": "success"
+        },
+        {
+          "name": "Build publishable output",
+          "result": "success"
+        },
+        {
+          "name": "Test the complete candidate including migration, Team recovery and Trade",
+          "result": "success"
+        },
+        {
+          "name": "Check out fixed upstream UI test support",
+          "result": "success"
+        },
+        {
+          "name": "Test the customized UI against the target upstream behavior",
+          "result": "success"
+        },
+        {
+          "name": "Test fixed upstream Web settings, models, plugins, schedules and collaboration",
+          "result": "success"
+        },
+        {
+          "name": "Smoke-test clean DSH installation",
+          "result": "success"
+        },
+        {
+          "name": "Activate a migrated whole home without credentials or external execution paths",
+          "result": "success"
+        },
+        {
+          "name": "Verify optional bundle settings through the official manager and service restart",
+          "result": "success"
+        },
+        {
+          "name": "Install the pinned Chromium test runtime",
+          "result": "success"
+        },
+        {
+          "name": "Exercise the candidate in a real browser with isolated model and attachment fixtures",
+          "result": "success"
+        },
+        {
+          "name": "Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Install the old core without changing its versions",
+          "result": "success"
+        },
+        {
+          "name": "Verify the new launcher can still run the old core",
+          "result": "success"
+        },
+        {
+          "name": "Read and start a recovered old generation after preserving candidate increments",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out fixed upstream UI test support",
+          "result": "success"
+        },
+        {
+          "name": "Post Install Node.js",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out source",
+          "result": "success"
+        },
+        {
+          "name": "Complete job",
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "id": 118664059939,
+      "name": "ubuntu-latest / Node 22.19.0",
+      "result": "success",
+      "suites": [
+        {
+          "files": 140,
+          "passed": 1438,
+          "failed": 0,
+          "skipped": 4
+        },
+        {
+          "files": 114,
+          "passed": 1909,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "files": 106,
+          "passed": 2830,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "pluginSources": {
+        "result": "passed",
+        "manager": "0.2.1-rc.2",
+        "sources": [
+          "npm",
+          "release-archive",
+          "local-link",
+          "git-commit",
+          "git-subdirectory"
+        ],
+        "updatesForAllFiveSources": "passed",
+        "npmAliasIntegrity": "passed",
+        "failedInstallPreservedManifestAndLock": "passed",
+        "concurrentInstallsAndProfileMutations": "passed",
+        "removal": "passed",
+        "coreIdentityBeforeMutation": "passed",
+        "gitToNpmReplacementRefused": "passed",
+        "unknownSourceReplacementRefused": "passed",
+        "interruptedPublicationRecovery": "passed",
+        "runningHostRecoveryRefused": "passed",
+        "unknownJournalAndChangedProfileRefused": "passed",
+        "publicNetwork": false,
+        "productionHomeUsed": false
+      },
+      "activation": [
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "empty-ci-fixture",
+          "artifact": "23367f4d54b6d14050a20dae781bb1fe75e71a21a2d439a0557a91db65b1f416"
+        },
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "cf01ae46204a8cf05612f70588c3f329d6c7c14df0367ece751287d7fa4ebdca",
+          "artifact": "23367f4d54b6d14050a20dae781bb1fe75e71a21a2d439a0557a91db65b1f416"
+        },
+        {
+          "activation": "passed",
+          "runtime": "0.2.1-rc.2",
+          "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+          "generation": "0e7e80555fe0f544ab427b581b4ce06ea950d6748558cd52b54139cf65dd16b3",
+          "artifact": "23367f4d54b6d14050a20dae781bb1fe75e71a21a2d439a0557a91db65b1f416"
+        }
+      ],
+      "browser": {
+        "browser": "passed",
+        "scope": "model-settings-streaming-attachment-draft-reload-resize-automation-search-settings",
+        "modelCalls": 7,
+        "commit": "366d9fdab21fc5acabae76f717ebed1ba58d58b8",
+        "artifact": "23367f4d54b6d14050a20dae781bb1fe75e71a21a2d439a0557a91db65b1f416"
+      },
+      "optionalSettings": {
+        "result": "passed",
+        "runtime": "0.2.1-rc.2",
+        "scope": "official-manager-on-disk-settings",
+        "invalidSelectionPreservesProfile": true,
+        "externalCapabilitiesExecuted": false,
+        "onDemand": [
+          {
+            "name": "@deepseek-ai/dsh-subagent-claude-code",
+            "spec": "@deepseek-ai/dsh-subagent-claude-code@0.2.1-rc.2",
+            "defaultNotInstalled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-subagent-codex",
+            "spec": "@deepseek-ai/dsh-subagent-codex@0.2.1-rc.2",
+            "defaultNotInstalled": true
+          }
+        ],
+        "results": [
+          {
+            "name": "@deepseek-ai/dsh-experimental-session-search",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-ralph-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-terminal-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-badge-skill-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-session-titles-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-agent-team-profile",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-cot-translation-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-auto-review",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-inspector-profile",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          },
+          {
+            "name": "@deepseek-ai/dsh-experimental-tool-worktree",
+            "defaultDisabled": true,
+            "enabled": true,
+            "repeatIsIdempotent": true,
+            "persistedAcrossServiceRestart": true,
+            "disabled": true
+          }
+        ]
+      },
+      "legacyLaunch": [
+        {
+          "legacyLaunch": "passed",
+          "runtime": "0.1.2-alpha.2",
+          "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+          "generation": "fresh-legacy-fixture",
+          "artifact": "8c313c9aa369572a0b189648bde49134da1643c353e6902522bcfaa57db97d41"
+        },
+        {
+          "legacyLaunch": "passed",
+          "runtime": "0.1.2-alpha.2",
+          "commit": "8312624953d62a9aec5cde2c0c2f1175342482fe",
+          "generation": "restored-legacy-fixture",
+          "artifact": "8c313c9aa369572a0b189648bde49134da1643c353e6902522bcfaa57db97d41"
+        }
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "result": "success"
+        },
+        {
+          "name": "Check out source",
+          "result": "success"
+        },
+        {
+          "name": "Install Node.js",
+          "result": "success"
+        },
+        {
+          "name": "Activate pinned pnpm",
+          "result": "success"
+        },
+        {
+          "name": "Install dependencies",
+          "result": "success"
+        },
+        {
+          "name": "Test installation entry point",
+          "result": "success"
+        },
+        {
+          "name": "Verify native subprocess containment",
+          "result": "success"
+        },
+        {
+          "name": "Verify actual plugin sources and serialized operations in an isolated profile",
+          "result": "success"
+        },
+        {
+          "name": "Check source and types",
+          "result": "success"
+        },
+        {
+          "name": "Build publishable output",
+          "result": "success"
+        },
+        {
+          "name": "Test the complete candidate including migration, Team recovery and Trade",
+          "result": "success"
+        },
+        {
+          "name": "Check out fixed upstream UI test support",
+          "result": "success"
+        },
+        {
+          "name": "Test the customized UI against the target upstream behavior",
+          "result": "success"
+        },
+        {
+          "name": "Test fixed upstream Web settings, models, plugins, schedules and collaboration",
+          "result": "success"
+        },
+        {
+          "name": "Smoke-test clean DSH installation",
+          "result": "success"
+        },
+        {
+          "name": "Activate a migrated whole home without credentials or external execution paths",
+          "result": "success"
+        },
+        {
+          "name": "Verify optional bundle settings through the official manager and service restart",
+          "result": "success"
+        },
+        {
+          "name": "Install the pinned Chromium test runtime",
+          "result": "success"
+        },
+        {
+          "name": "Exercise the candidate in a real browser with isolated model and attachment fixtures",
+          "result": "success"
+        },
+        {
+          "name": "Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Install the old core without changing its versions",
+          "result": "success"
+        },
+        {
+          "name": "Verify the new launcher can still run the old core",
+          "result": "success"
+        },
+        {
+          "name": "Read and start a recovered old generation after preserving candidate increments",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out the fixed pre-upgrade baseline",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out fixed upstream UI test support",
+          "result": "success"
+        },
+        {
+          "name": "Post Install Node.js",
+          "result": "success"
+        },
+        {
+          "name": "Post Check out source",
+          "result": "success"
+        },
+        {
+          "name": "Complete job",
+          "result": "success"
+        }
+      ]
+    }
+  ]
+}

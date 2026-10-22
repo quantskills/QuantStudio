@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-21",
+  "codeCommit": "41bab60797195e7f41eafe7630908591375cd475",
+  "runtime": "0.2.1-rc.2",
+  "node": "22.23.2",
+  "pnpm": "11.7.0",
+  "platform": "Windows x64",
+  "check": "passed",
+  "fullBuild": "passed",
+  "artifactSha256": "2436679e42dd93a1290dd75225e708f38df88a082ae8afe577c5ba0485cfdf69",
+  "clientBundles": {
+    "chat": "9616132b7eb725c60d8694791e7fd85c836ef47908270fffa7a089cd75fb9686",
+    "conversation": "08658f1d0355172a12b9636e7c4d7d87be562493d9cc31294692e28dfe1d6dba",
+    "layout": "57345051e10779c22eed26c426244af506272f7c936a4c53c9abb096b764f9b9",
+    "qs": "475c6af8e5d0038f6b5b26d74a88234745ff0c1ded534d592ca01ce31995a084"
+  },
+  "suite": {
+    "filesPassed": 141,
+    "filesSkipped": 1,
+    "passed": 1455,
+    "skipped": 1,
+    "failed": 0,
+    "skipReason": "POSIX-only process group test"
+  },
+  "customizedUI": {
+    "files": 114,
+    "passed": 1909,
+    "failed": 0
+  },
+  "upstreamFeatureUI": {
+    "files": 106,
+    "passed": 2830,
+    "failed": 0,
+    "scope": "fixed upstream source and mocked Remote services"
+  },
+  "packedDeliverables": {
+    "command": "pnpm run verify:packed-deliverables",
+    "cases": [
+      {
+        "label": "plugin",
+        "archiveSha256": "fb64ec196861eba5e13d16e02c31229f507961a3626cd0208d1b09574752c098",
+        "result": "Packed export resolved and parsed valid output; path traversal rejected."
+      },
+      {
+        "label": "application",
+        "archiveSha256": "35d3f036661c405643d727608177740eb50ae5627fb2ac395a4d9102278db0cc",
+        "result": "Packed export resolved and parsed valid output; path traversal rejected."
+      }
+    ]
+  },
+  "ci": {
+    "status": "See current PR #22 Checks; prior commits do not verify this revision",
+    "matrix": [
+      "Windows Node 22.19.0",
+      "macOS Node 22.19.0",
+      "Linux Node 22.19.0",
+      "Linux Node 24.0.0"
+    ]
+  },
+  "browserAcceptanceFollowup": {
+    "previousHead": "2e2f15c0bcd6e11b2096eb419eedd3b6bbc04226",
+    "previousRun": "https://github.com/quantskills/QuantStudio/actions/runs/39550900111",
+    "previousResult": "Packed export passed on all four jobs; macOS and both Linux jobs passed; Windows browser inference count assertion failed and later recovery steps were skipped",
+    "cause": "Page-wide reply locator also matched two generated navigation titles and could advance before the next assistant turn completed",
+    "fix": "Scope to assistant-step nodes, wait for each turn to finish, require model-settings success, preserve the minimum inference call assertion",
+    "scriptSha256": "ced1dd88d2258c814635ffa013e0a48e9f76a59941a6f384b6dcf6d59e4a4edd",
+    "artifactSha256": "c7166d9ab91d2a9c88a36164111034215164c570642c23c8aff330cc82500c4d",
+    "localResult": "passed",
+    "modelCalls": 7,
+    "assistantReplies": 3,
+    "excludedTitleCopies": 2,
+    "productBuildChanged": false,
+    "currentCi": "See PR #22 current Checks; previous run is not proof of the follow-up commit"
+  },
+  "limits": [
+    "Real service/account/SSH/voice acceptance remains subject to the feature matrix",
+    "No merge, release, daily-instance switch or production data migration"
+  ]
+}

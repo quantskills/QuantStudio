@@ -1,6 +1,5 @@
 import { randomUUID, createHash } from 'node:crypto';
 import { credentialRef } from '@deepseek-ai/dsh-credentials';
-import s from '@deepseek-ai/schemastery';
 import { z } from 'zod';
 import { MODEL_SERVICES, suggestedModelProfile, suggestedRouteReasoning } from "./model-service-catalog.js";
 import { MODEL_ACCESS_NS } from "./model-access-settings.js";
@@ -43,15 +42,10 @@ export class QuantSkillsModelAccess {
         this.request = request;
         ctx.inject(['settings', 'credentials'], scope => {
             this.services = scope;
-            scope.settings.register(MODEL_ACCESS_NS, s.object({
-                connections: s.dict(s.object({
-                    service: s.string(), auto: s.boolean(), state: s.string(), message: s.string(), verifiedModels: s.array(s.string()),
-                })).default({}),
-            }));
         });
     }
     profiles() {
-        return this.connected.settings.get(NS)?.providers ?? {};
+        return this.connected.settings.describe().find(entry => entry.ns === NS)?.value?.providers ?? {};
     }
     get connected() {
         if (!this.services)
@@ -59,7 +53,7 @@ export class QuantSkillsModelAccess {
         return this.services;
     }
     policies() {
-        return this.connected.settings.get(MODEL_ACCESS_NS)?.connections ?? {};
+        return this.connected.settings.describe().find(entry => entry.ns === MODEL_ACCESS_NS)?.value?.connections ?? {};
     }
     fingerprint(draft) {
         const prior = draft.route ? this.profiles()[draft.route] : undefined;

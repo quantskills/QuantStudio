@@ -225,7 +225,7 @@ export class PandaWorkerClient {
      */
     async executeAt(runtimeRoot, sdkVersion, request, argvWrapper, signal) {
         const active = this.operationSignal(signal, this.config.bootstrapTimeoutMs);
-        const wrapped = argvWrapper(this.executionArgv(runtimeRoot));
+        const wrapped = await argvWrapper(this.executionArgv(runtimeRoot));
         let handle;
         try {
             handle = this.subprocess.spawn({

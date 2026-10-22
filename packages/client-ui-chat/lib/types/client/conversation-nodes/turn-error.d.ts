@@ -1,6 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis';
-import type { ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
-import type { TurnErrorNode } from '../contract/snapshot.ts';
+import type { ConversationNodeDefinition, TurnErrorNode } from '@deepseek-ai/dsh-client-ui-conversation/client';
 declare module '../contract/chat-nodes.ts' {
     interface ChatNodeDataMap {
         /** Terminal turn failure recorded on the turn's end reason. */

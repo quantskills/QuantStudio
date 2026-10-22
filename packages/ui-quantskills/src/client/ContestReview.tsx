@@ -1,3 +1,4 @@
+import { selectedSession } from './selected-session.ts'
 import { useEffect, useRef, useState } from 'react'
 import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
 import type { SessionListState } from '@deepseek-ai/dsh-api-session-controller/client'
@@ -15,7 +16,7 @@ export interface ContestReviewInjected { hooks: { sessions: ObservableSnapshot<S
 
 /** Normal sessions never mount a contest poller or load account context. */
 export function ContestReview({ useSessions, access, openContest }: InjectFace<ContestReviewInjected>) {
-  const session = useSessions(state => state.current ? state.byId[state.current] : undefined)
+  const session = useSessions(state => { const id = selectedSession(state); return id ? state.byId[id] : undefined })
   const binding = session?.projectionValues?.quantSkillsPlainSession
   if (!session || binding?.purpose !== 'contest') return null
   return <SessionContestReview key={session.id} sessionId={session.id} binding={binding} running={session.running} access={access} openContest={openContest}/>

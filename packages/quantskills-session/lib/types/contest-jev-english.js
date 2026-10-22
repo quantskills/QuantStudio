@@ -16,7 +16,7 @@ export function englishJevBody(value) {
     return body;
 }
 export function translationModels(ctx) {
-    const policies = ctx.get('settings')?.get?.(MODEL_ACCESS_NS)?.connections ?? {};
+    const policies = ctx.get('settings')?.describe().find(entry => entry.ns === MODEL_ACCESS_NS)?.value?.connections ?? {};
     return Object.entries(policies).flatMap(([provider, policy]) => policy.state === 'verified'
         ? policy.verifiedModels.map(model => ({ provider, model })) : []);
 }

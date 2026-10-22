@@ -1,6 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis';
-import type { ConversationMatch, ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
-import type { CompactionSummaryNode } from '../contract/snapshot.ts';
+import type { CompactionSummaryNode, ConversationMatch, ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
 declare module '../contract/chat-nodes.ts' {
     interface ChatNodeDataMap {
         /** Automatic compaction checkpoint marker. */

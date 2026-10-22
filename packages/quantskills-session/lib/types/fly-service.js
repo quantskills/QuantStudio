@@ -28,11 +28,13 @@ const amount = (value) => typeof value === 'number' && Number.isFinite(value) ? 
 function readFailure(error, source) {
     const { diagnostic } = historyFailure(error, source);
     const raw = error;
-    const auth = diagnostic.code === 'AUTH_REQUIRED' || (diagnostic.code !== 'RATE_LIMIT' && /账户.*变化|账户.*切换|请先.*连接|授权|验证账户/.test(raw?.message ?? ''));
+    const auth = diagnostic.code === 'AUTH_REQUIRED' || (!['RATE_LIMIT', 'SERVICE_UNAVAILABLE'].includes(diagnostic.code) && /账户.*变化|账户.*切换|请先.*连接|授权|验证账户/.test(raw?.message ?? ''));
     const code = auth ? 'AUTH_REQUIRED' : diagnostic.code, label = source === 'competition' ? '比赛接口' : 'PandaData';
     const retry = Number(raw?.retryAfterSeconds ?? raw?.retry_after);
     const message = error instanceof ContestQuotaError ? error.message : auth ? `${label}需要重新连接或授权，请检查对应设置。`
-        : code === 'RATE_LIMIT' ? `${label}限流，冷却后自动重试。` : `${label}读取失败（${code}），稍后重试。`;
+        : code === 'RATE_LIMIT' ? `${label}限流，冷却后自动重试。`
+            : code === 'SERVICE_UNAVAILABLE' ? `${label}服务暂时不可用，等待服务恢复后重试。`
+                : `${label}读取失败（${code}），稍后重试。`;
     return Object.assign(new Error(message), { source, code, retryable: !auth && diagnostic.retryable,
         ...(Number.isFinite(retry) && retry > 0 ? { retryAfterSeconds: Math.min(86400, retry) } : {}) });
 }

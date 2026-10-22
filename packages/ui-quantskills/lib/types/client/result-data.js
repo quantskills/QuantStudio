@@ -1,5 +1,9 @@
 /** Read-only result facts derived from one loaded Conversation window. */
-import { producedForClosing } from '@deepseek-ai/dsh-client-ui-deliverables/client';
+import { projectFinalDeliverables } from '@deepseek-ai/dsh-client-ui-chat/deliverables';
+// QS consumes the public turn-data projection, not an unexported upstream helper.
+function producedForClosing(data) {
+    return [...new Set((data?.produced ?? []).map(item => item.path))];
+}
 const RESULT_CODE_EXTENSIONS = new Set([
     'bat', 'c', 'cc', 'cjs', 'conf', 'cpp', 'cs', 'css', 'cts', 'dart', 'fish', 'go', 'h', 'hpp',
     'ini', 'java', 'js', 'jsx', 'kt', 'kts', 'lua', 'm', 'mjs', 'mm', 'mts', 'php', 'pl', 'ps1',
@@ -90,6 +94,12 @@ function assistantArtifactFiles(snapshot) {
     for (const node of [...snapshot.legacy.nodes].reverse()) {
         if (node.kind !== 'assistant')
             continue;
+        for (const item of projectFinalDeliverables(node.blocks, false, { allowUnmarked: true }).items) {
+            if (paths.has(item.path))
+                continue;
+            paths.add(item.path);
+            files.push({ path: item.path, name: item.path.slice(item.path.lastIndexOf('/') + 1) });
+        }
         for (const block of node.blocks) {
             if (block.kind !== 'text')
                 continue;
@@ -107,6 +117,7 @@ function assistantArtifactFiles(snapshot) {
 function artifactPath(value) {
     const path = value.trim().replaceAll('\\', '/');
     if (path.length === 0 || path.startsWith('/') || /^[A-Za-z]:\//.test(path)
+        || (!path.includes('/') && !/\.[a-z0-9]{1,12}$/i.test(path))
         || path.includes('://') || path.split('/').includes('..')
         || /^(?:py(?:thon)?(?:\d+(?:\.\d+)*)?|node|pnpm|npm|npx|yarn|bun|bash|sh|pwsh|powershell|cmd|git)\s/i.test(path)) {
         return undefined;

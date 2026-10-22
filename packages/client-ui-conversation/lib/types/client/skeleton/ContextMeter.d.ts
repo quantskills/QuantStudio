@@ -1,4 +1,4 @@
-/** Composer context-occupancy meter: a ring beside the send button fed by the
+/** Composer context-occupancy meter: a ring and percentage below the card fed by the
  * `contextPressure` projection, with a click-open panel of the heuristic
  * `contextBreakdown` composition (system prompt, tools, conversation).
  * Renders nothing until a provider reports both pressure and a route

@@ -1,58 +1,19 @@
-const TURN_PROCESS_INDEPENDENT_KIND_LIST = [
-    'system-prompt',
-    'user',
-    'steering',
-    'turn-process',
-    'turn-error',
-    'turn-max-tokens',
-    'turn-tail',
-];
-/** Chat Node kinds that remain independent of a Turn's process disclosure. */
-export const TURN_PROCESS_INDEPENDENT_KINDS = new Set(TURN_PROCESS_INDEPENDENT_KIND_LIST);
 /**
- * Identify one finalized answer generation without using its ordering anchor.
- * @param spec - current Turn process specification.
- * @returns stable identity until the finalized answer Step is withdrawn or replaced.
+ * Compare immutable Turn-process specifications by their published fields.
+ * @param left - previous specification.
+ * @param right - next specification.
+ * @returns whether both values describe the same process presentation.
  */
-export function turnProcessGeneration(spec) {
-    return `${String(spec.turn)}|${spec.answerStep === null ? '' : String(spec.answerStep)}`;
-}
-/**
- * Encode one process specification as a primitive Location-data value.
- * @param spec - current Turn process specification.
- * @returns reference-stable scalar for equal specifications.
- */
-export function encodeTurnProcess(spec) {
-    return [
-        spec.turn,
-        spec.controlAnchorSeq,
-        spec.processStartSeq,
-        spec.answerAnchorSeq ?? '',
-        spec.answerStep ?? '',
-        spec.inlineReasoning ? 1 : 0,
-        spec.messageCount,
-        spec.toolCallCount,
-        spec.subagentCount,
-    ].join('|');
-}
-/**
- * Decode a same-process signature produced by {@link encodeTurnProcess}.
- * @param signature - encoded Turn process value.
- * @returns decoded process specification.
- */
-export function decodeTurnProcess(signature) {
-    const [turn, controlAnchorSeq, processStartSeq, answerAnchorSeq, answerStep, inlineReasoning, messageCount, toolCallCount, subagentCount,] = signature.split('|');
-    return {
-        turn: Number(turn),
-        controlAnchorSeq: Number(controlAnchorSeq),
-        processStartSeq: Number(processStartSeq),
-        answerAnchorSeq: answerAnchorSeq === '' ? null : Number(answerAnchorSeq),
-        answerStep: answerStep === '' ? null : Number(answerStep),
-        inlineReasoning: inlineReasoning === '1',
-        messageCount: Number(messageCount),
-        toolCallCount: Number(toolCallCount),
-        subagentCount: Number(subagentCount),
-    };
+export function sameTurnProcessSpec(left, right) {
+    return left.turn === right.turn
+        && left.controlAnchorSeq === right.controlAnchorSeq
+        && left.processStartSeq === right.processStartSeq
+        && left.answerAnchorSeq === right.answerAnchorSeq
+        && left.answerStep === right.answerStep
+        && left.inlineReasoning === right.inlineReasoning
+        && left.messageCount === right.messageCount
+        && left.toolCallCount === right.toolCallCount
+        && left.subagentCount === right.subagentCount;
 }
 /**
  * Recognize the shipped subagent delegation name and its configured variants.
@@ -62,5 +23,17 @@ export function decodeTurnProcess(signature) {
  */
 export function isSubagentDelegationTool(name) {
     return name === 'subagent' || name.startsWith('subagent_');
+}
+/**
+ * Keep live, stopped, and failed Turns open.
+ * @param node - Node carrying the owning Turn.
+ * @returns whether whole-Turn collapse is unavailable.
+ */
+export function turnProcessAlwaysOpen(node) {
+    const location = node?.location;
+    if (location?.kind !== 'turn' && location?.kind !== 'step')
+        return false;
+    const reason = location.turn.end?.data.reason.kind;
+    return location.turn.status === 'open' || reason === 'aborted' || reason === 'interrupted' || reason === 'error';
 }
 //# sourceMappingURL=turn-process.js.map

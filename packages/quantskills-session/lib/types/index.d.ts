@@ -1,4 +1,4 @@
-/** Exact-version QuantSkills session composition and log-backed archive remotes. */
+import { type LegacyTeamRecoveryRequest, type LegacyTeamRecoveryResult } from './legacy-team-recovery.ts';
 import type { SessionLifecycleRequest, SessionDeletionPreview, ArchivedConversation } from './types.ts';
 import type { FlyRequest, FlyRuntimeStatus } from './fly-runtime.ts';
 import type { ContestJevSettings, ContestJevUsage, ContestWatchConfig, ContestWatchDataset, ContestWatchTemplate, ContestWatchStatus } from './contest-watch-types.ts';
@@ -9,6 +9,7 @@ import type { QuantSkillsLibrarySourceRecord } from './types.ts';
 import type { Context } from '@deepseek-ai/cordis';
 import s from '@deepseek-ai/schemastery';
 import { SessionId, type SessionEvent } from '@deepseek-ai/dsh-session';
+import { type SkillContextMode } from './skill-context.ts';
 import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
 import { type JsonValue } from '@deepseek-ai/dsh-util-values';
 import { z } from 'zod';
@@ -58,8 +59,12 @@ declare module '@deepseek-ai/dsh-session/types' {
 }
 /** Loader configuration for durable user Agent definitions. */
 export interface Config {
+    /** Experimental lossless on-demand Skill context. Full remains the compatibility default. */
+    readonly skillContextMode?: SkillContextMode;
     /** Harness home override. */
     readonly dshHome?: string;
+    /** Optional deployment override for the managed Documents workspace root. */
+    readonly documentsDirectory?: string;
     /** Maximum UTF-8 bytes exposed by the built-in attachment reader. */
     readonly maxTextAttachmentBytes?: number;
     /** Maximum PDF or Office source bytes admitted to the built-in parser. */
@@ -200,6 +205,8 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     static inject: string[];
     static Config: s<Config>;
     private readonly libraryStore;
+    /** Local startup barrier; not exposed through the client remote API. */
+    whenLifecycleReady(): Promise<void>;
     private readonly sessionLifecycle;
     private readonly modelAccess;
     /** Manage model providers through the Host settings and credential services. */
@@ -227,7 +234,9 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private readonly liveTradingToolNames;
     private readonly teamFreshProvider;
     private readonly teamForkProvider;
+    private readonly skillContextMode;
     private readonly workspaceResolver;
+    private readonly legacyTeamRecoveryDirectory;
     private readonly contest;
     private readonly fly;
     private readonly contestWatcher;
@@ -244,6 +253,8 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
      * @returns current Workspace targets and preference health.
      */
     workspaceStatus(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceStatusResult>;
+    /** Audit or explicitly continue historical messages; opening a Session never replays them. */
+    legacyTeamRecovery(request: LegacyTeamRecoveryRequest, signal: AbortSignal): Promise<LegacyTeamRecoveryResult>;
     /**
      * Select the preferred Workspace or create and register the managed fallback.
      * @param request - optional user-selected Workspace.
@@ -565,6 +576,8 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     resultList(request: {
         readonly sessionId: SessionId;
     }, signal?: AbortSignal): Promise<QuantSkillsResultPrepareResult>;
+    /** A missing path list restores the full log, without the per-RPC candidate limit. */
+    private prepareSessionResults;
     /**
      * Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.
      * Supported text is returned as UTF-8, Office documents as bounded extracted text,
@@ -583,6 +596,7 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private ensureAgentSetup;
     private setupAgent;
     private setupTeamMember;
+    private registerTeamVerificationTools;
     private registerTeamActivationTool;
     private registerAssetDraftTool;
     private registerAgentTeamDraftTool;
@@ -591,13 +605,14 @@ export declare class QuantSkillsSessionService extends TypertRemoteService {
     private reportInvalidTeamModelChoice;
     private validateTeamModelChoice;
     private installResidentRuntime;
+    private refreshResidentReader;
     private registerResidentSkill;
     private requireResidentRuntime;
     private registerAttachmentTool;
     private registerLiveTradingApproval;
     private classifyFile;
     private readTextAttachment;
-    /** Complete-log result candidates, newest reference first and bounded for one prepare request. */
+    /** Complete-log result candidates, newest reference first, without total-count truncation. */
     private resultCandidates;
     /** Adopt only the conversation explicitly targeted by a Skill attachment, preserving its workspace and history. */
     private ensureSkillSession;

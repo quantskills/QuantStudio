@@ -92,6 +92,16 @@ describe('fly contest bridge', () => {
     await expect(f.call('history', { identity: f.input.identity, instrument: f.input.instrument, minutes: 1 })).rejects.toMatchObject({ source: 'pandadata', code: 'RATE_LIMIT', retryAfterSeconds: 120 })
   })
 
+  it('reports a competition outage without misclassifying it as an authorization failure or submitting trades', async () => {
+    const f = await fixture()
+    f.mock.observe.mockRejectedValue(Object.assign(new Error('upstream authorization gateway private details'), { code: 'http_503' }))
+    await expect(f.call('market', { identity: f.input.identity, instruments: [f.input.instrument] }))
+      .rejects.toMatchObject({ source: 'competition', code: 'SERVICE_UNAVAILABLE', retryable: true,
+        message: '比赛接口服务暂时不可用，等待服务恢复后重试。' })
+    expect(f.prepare).not.toHaveBeenCalled()
+    expect(f.execute).not.toHaveBeenCalled()
+  })
+
   it('refreshes a still-cached bar window after publication lag without fetching twice', async () => {
     const f = await fixture(), now = Date.now(), latest = Math.floor(now / 60000) * 60000
     const result = (close: number, fetchedAt: number) => ({ status: 'hit', total: 1,
@@ -127,10 +137,10 @@ describe('fly contest bridge', () => {
     const f = await fixture(), route = { provider: 'my-provider', model: 'my-model' }
     const stream = vi.fn(async function* () { yield { type: 'text-delta', text: 'ready' } })
     Object.assign(f.ctx, { llm: { stream } })
-    f.ctx.get.mockImplementation(key => key === 'settings' ? { get: () => ({ connections: {
+    f.ctx.get.mockImplementation(key => key === 'settings' ? { describe: () => [{ ns: 'quantskills-model-services', value: { connections: {
       'my-provider': { state: 'verified', verifiedModels: ['my-model'] },
       'pending-provider': { state: 'saved', verifiedModels: ['pending-model'] },
-    } }) } : key === 'credentials' ? { describe: async () => ({ configured: true }) } : undefined)
+    } } }] } : key === 'credentials' ? { describe: async () => ({ configured: true }) } : undefined)
     expect(await f.call('models', {})).toMatchObject({ profiles: [{ provider_id: JSON.stringify(route), label: 'my-provider / my-model' }], jev_configured: true })
     expect(await f.call('language', { route: JSON.stringify(route), system: 'Test', payload: {} })).toEqual({ text: 'ready' })
     expect(stream).toHaveBeenCalledWith(expect.objectContaining(route))
@@ -153,7 +163,7 @@ describe('fly contest bridge', () => {
 
   it('preserves a terminal model failure instead of turning every error into configuration failure', async () => {
     const f = await fixture(), route = { provider: 'verified', model: 'model' }
-    f.ctx.get.mockReturnValue({ get: () => ({ connections: { verified: { state: 'verified', verifiedModels: ['model'] } } }) })
+    f.ctx.get.mockReturnValue({ describe: () => [{ ns: 'quantskills-model-services', value: { connections: { verified: { state: 'verified', verifiedModels: ['model'] } } } }] })
     Object.assign(f.ctx, { llm: { stream: async function* () {
       yield { type: 'finish', reason: { kind: 'error', failure: { code: 'timeout', message: 'private endpoint secret' } } }
     } } })

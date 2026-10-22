@@ -1,10 +1,66 @@
+var __addDisposableResource = (this && this.__addDisposableResource) || function (env, value, async) {
+    if (value !== null && value !== void 0) {
+        if (typeof value !== "object" && typeof value !== "function") throw new TypeError("Object expected.");
+        var dispose, inner;
+        if (async) {
+            if (!Symbol.asyncDispose) throw new TypeError("Symbol.asyncDispose is not defined.");
+            dispose = value[Symbol.asyncDispose];
+        }
+        if (dispose === void 0) {
+            if (!Symbol.dispose) throw new TypeError("Symbol.dispose is not defined.");
+            dispose = value[Symbol.dispose];
+            if (async) inner = dispose;
+        }
+        if (typeof dispose !== "function") throw new TypeError("Object not disposable.");
+        if (inner) dispose = function() { try { inner.call(this); } catch (e) { return Promise.reject(e); } };
+        env.stack.push({ value: value, dispose: dispose, async: async });
+    }
+    else if (async) {
+        env.stack.push({ async: true });
+    }
+    return value;
+};
+var __disposeResources = (this && this.__disposeResources) || (function (SuppressedError) {
+    return function (env) {
+        function fail(e) {
+            env.error = env.hasError ? new SuppressedError(e, env.error, "An error was suppressed during disposal.") : e;
+            env.hasError = true;
+        }
+        var r, s = 0;
+        function next() {
+            while (r = env.stack.pop()) {
+                try {
+                    if (!r.async && s === 1) return s = 0, env.stack.push(r), Promise.resolve().then(next);
+                    if (r.dispose) {
+                        var result = r.dispose.call(r.value);
+                        if (r.async) return s |= 2, Promise.resolve(result).then(next, function(e) { fail(e); return next(); });
+                    }
+                    else s |= 1;
+                }
+                catch (e) {
+                    fail(e);
+                }
+            }
+            if (s === 1) return env.hasError ? Promise.reject(env.error) : Promise.resolve();
+            if (env.hasError) throw env.error;
+        }
+        return next();
+    };
+})(typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+});
+import { selectedSession } from "./selected-session.js";
+import { adoptQuantSkillsSession } from "./session-adoption.js";
 import { createElement } from 'react';
+import { PluginSettings } from "./PluginSettings.js";
 import { artifactDownload } from "./artifact-resource.js";
-import { bindComposerSubagentMenu } from "./composer-subagents.js";
 import { retryHostRead } from "./remote-read.js";
 import { FinalDeliverables } from "./FinalDeliverables.js";
+import { NativeResults, NativeResultMedia } from "./NativeResults.js";
+import { openNativeResult, QS_RESULTS_KIND } from "./native-result-navigation.js";
 import { QuantSkillsPreferences } from "./preferences.js";
-import { resolveWorkspacePath } from '@deepseek-ai/dsh-util-workspace-path';
+import { parseFileAddress, resolveWorkspacePath } from '@deepseek-ai/dsh-util-workspace-path';
 import { QuantSkillsCatalogAutoChecker, QuantSkillsCatalogController } from "./catalog.js";
 import { QuantSkillsSessionsController } from "./sessions.js";
 import { QuantSkillsAgentsController } from "./agents.js";
@@ -24,6 +80,7 @@ import { connectFlyTransport } from "./fly/transport.js";
 import { FactorContestReview } from "./FactorContestReview.js";
 import { AuthoringReview } from "./AuthoringReview.js";
 import { SessionFavorite } from "./SessionFavorite.js";
+import { LegacyTeamRecovery } from "./LegacyTeamRecovery.js";
 import { QuantSkillsTeamDraftCard, } from "./QuantSkillsTeamDraftCard.js";
 import { QuantSkillsGravityLaneModelSelect } from "./QuantSkillsGravityLaneModelSelect.js";
 import { QuantSkillsAssetDraftCard, } from "./QuantSkillsAssetDraftCard.js";
@@ -32,7 +89,7 @@ import { QUANTSKILLS_APPEARANCE_SETTINGS_NAMESPACE, QUANTSKILLS_ASSET_DISPLAY_NA
 export { createQuantSkillsLayoutStore, createQuantSkillsNotificationStore, createQuantSkillsViewStore, } from "./store.js";
 /** Services required by the QuantSkills application. */
 export const inject = [
-    'slots', 'sessions', 'workspaces', 'connection',
+    'slots', 'sessions', 'workspaces', 'uiWorkspace', 'connection',
     'inputTriggers', 'modelDirectories',
     'settingsSchema', 'remote.settings',
     'remote', 'remote.commands', 'remote.session',
@@ -111,6 +168,15 @@ function hasSameAgentSnapshot(actual, expected) {
         });
 }
 class QuantSkillsLayoutController {
+    panel = { activePanelId: null };
+    panelListeners = new Set();
+    navigation = new AbortController();
+    panelInfo = { getSnapshot: () => this.panel, subscribe: (listener) => { this.panelListeners.add(listener); return () => { this.panelListeners.delete(listener); }; } };
+    selectPanel(id) { this.navigation.abort(); this.panel = { activePanelId: id }; for (const listener of this.panelListeners)
+        listener(); }
+    beginNavigation() { this.navigation.abort(); this.navigation = new AbortController(); return this.navigation.signal; }
+    openRightbar(_track, _fullscreen) { this.openDetails(); }
+    closeRightbar() { this.closeDetails(); }
     actions;
     sidebarReservations = new Map();
     sidebarClaim;
@@ -458,13 +524,35 @@ export function mountQuantSkillsApplication(ctx, options) {
     const layout = new QuantSkillsLayoutController();
     if (nativeLayout !== undefined)
         layout.attach(nativeLayout.actions);
+    const openNativeResults = (sessionId, path) => {
+        if (options.mode !== 'native-plugin')
+            return false;
+        if (selectedSession(ctx.sessions.list.getSnapshot()) !== sessionId)
+            return false;
+        const opened = openNativeResult(ctx.get('sidebarRight'), sessionId, ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd, path);
+        if (opened) {
+            layout.closeResults();
+            notifications.actions.acknowledge(sessionId);
+        }
+        return opened;
+    };
+    const openCurrentResults = () => {
+        if (options.mode !== 'native-plugin' || ctx.get('sidebarRight') === undefined) {
+            layout.openResults();
+            return;
+        }
+        const sessionId = selectedSession(ctx.sessions.list.getSnapshot());
+        if (sessionId !== undefined && openNativeResults(sessionId))
+            return;
+        layout.openResults();
+    };
     let sessionOpenGeneration = 0;
     let suppressedPluginSessionId;
     const viewActions = {
         ...view.actions,
         closePlugin: () => {
             sessionOpenGeneration += 1;
-            suppressedPluginSessionId = ctx.sessions.list.getSnapshot().current;
+            suppressedPluginSessionId = selectedSession(ctx.sessions.list.getSnapshot());
             view.actions.closePlugin();
         },
         showPluginConversationIndex: () => {
@@ -546,40 +634,7 @@ export function mountQuantSkillsApplication(ctx, options) {
             view.actions.setDefaultWorkspaceId(workspaceId);
         },
     };
-    const adoptSession = (id, signal, accept = () => true) => new Promise((resolve, reject) => {
-        let dispose = () => { };
-        const finish = (result) => {
-            signal.removeEventListener('abort', abort);
-            dispose();
-            if (result.ok)
-                resolve(result.value);
-            else
-                reject(result.error);
-        };
-        const abort = () => {
-            finish({
-                ok: false,
-                error: signal.reason instanceof Error
-                    ? signal.reason
-                    : new Error(`QuantSkills Session "${id}" adoption was cancelled.`),
-            });
-        };
-        const inspect = () => {
-            const summary = ctx.sessions.list.getSnapshot().byId[id];
-            if (summary === undefined || !accept(summary))
-                return;
-            const binding = ctx.sessions.binding(id);
-            if (binding === undefined)
-                return;
-            finish({
-                ok: true,
-                value: { sessionId: id, summary, session: binding.session },
-            });
-        };
-        dispose = ctx.sessions.list.subscribe(inspect);
-        signal.addEventListener('abort', abort, { once: true });
-        inspect();
-    });
+    const adoptSession = (id, signal, accept = () => true) => adoptQuantSkillsSession(ctx.sessions, id, signal, accept);
     const waitForAssistantText = (sessionId, session, operation, signal) => new Promise((resolve, reject) => {
         const eventSource = ctx.sessions.binding(sessionId)?.eventSource;
         if (eventSource === undefined) {
@@ -645,7 +700,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         const sessions = ctx.sessions.list.getSnapshot();
         const summary = sessions.byId[id];
         if (summary !== undefined) {
-            ctx.sessions.open(id);
+            ctx.uiWorkspace.openSession(id);
             if (ctx.sessions.binding(id) !== undefined) {
                 if (ensureMissing) {
                     void unwrapRemote(ctx.remote.quantSkillsSessions.sessionEnsure({ sessionId: id }, lifetime.signal)).catch((cause) => {
@@ -658,15 +713,25 @@ export function mountQuantSkillsApplication(ctx, options) {
             }
         }
         void (async () => {
-            if (ensureMissing) {
-                await unwrapRemote(ctx.remote.quantSkillsSessions.sessionEnsure({ sessionId: id }, lifetime.signal));
+            const env_1 = { stack: [], error: void 0, hasError: false };
+            try {
+                if (ensureMissing) {
+                    await unwrapRemote(ctx.remote.quantSkillsSessions.sessionEnsure({ sessionId: id }, lifetime.signal));
+                }
+                if (generation !== sessionOpenGeneration || lifetime.signal.aborted)
+                    return;
+                const adopted = __addDisposableResource(env_1, await adoptSession(id, lifetime.signal), false);
+                if (generation !== sessionOpenGeneration || lifetime.signal.aborted)
+                    return;
+                ctx.uiWorkspace.openSession(adopted.sessionId);
             }
-            if (generation !== sessionOpenGeneration || lifetime.signal.aborted)
-                return;
-            const adopted = await adoptSession(id, lifetime.signal);
-            if (generation !== sessionOpenGeneration || lifetime.signal.aborted)
-                return;
-            ctx.sessions.open(adopted.sessionId);
+            catch (e_1) {
+                env_1.error = e_1;
+                env_1.hasError = true;
+            }
+            finally {
+                __disposeResources(env_1);
+            }
         })().catch((cause) => {
             if (generation !== sessionOpenGeneration || lifetime.signal.aborted)
                 return;
@@ -683,6 +748,7 @@ export function mountQuantSkillsApplication(ctx, options) {
     connectFlyTransport(flyAccess);
     if (options.mode === 'standalone') {
         ctx.effect(() => {
+            const disposePanelInfo = ctx.slots.provideRoot({ hooks: { panelInfo: layout.panelInfo } });
             const disposeService = ctx.reflect.provide('layout', layout);
             const disposeRoot = ctx.slots.register({
                 name: 'root',
@@ -690,8 +756,8 @@ export function mountQuantSkillsApplication(ctx, options) {
                     'sidebar': { kind: 'single', scope: 'root' },
                     'quantskills.page': { kind: 'single', scope: 'root' },
                     'quantskills.results': { kind: 'single', scope: 'session' },
-                    'conversation': { kind: 'single', scope: 'session-maybe' },
-                    'details': { kind: 'single', scope: 'session' },
+                    'main': { kind: 'keyed', scope: 'root' },
+                    'rightbar': { kind: 'single', scope: 'root' },
                     'shell.overlay': { kind: 'list', scope: 'root' },
                 },
                 store: createQuantSkillsLayoutStore,
@@ -720,6 +786,7 @@ export function mountQuantSkillsApplication(ctx, options) {
             }, QuantSkillsFrame);
             return () => {
                 disposeRoot();
+                disposePanelInfo();
                 void disposeService();
             };
         }, 'ui-quantskills: standalone root frame and layout service');
@@ -763,7 +830,15 @@ export function mountQuantSkillsApplication(ctx, options) {
                     claimSidebar: claimOptions => stockLayout.claimSidebar(claimOptions),
                     claimDetails: claimOptions => stockLayout.claimDetails(claimOptions),
                     claimConversationTextScale: scale => stockLayout.claimConversationTextScale(scale),
-                    openResults: () => { layout.openResults(); },
+                    openResults: openCurrentResults,
+                    nativeResults: options.mode === 'native-plugin',
+                    toggleNativeResults: () => {
+                        const sidebar = ctx.get('sidebarRight');
+                        const sessionId = selectedSession(ctx.sessions.list.getSnapshot());
+                        if (sidebar === undefined || sessionId === undefined || sidebar.mounted.getSnapshot() !== sessionId)
+                            return;
+                        sidebar.toggleExpanded();
+                    },
                     closeResults: () => { layout.closeResults(); },
                     close: () => {
                         layout.closeResults();
@@ -785,9 +860,9 @@ export function mountQuantSkillsApplication(ctx, options) {
             }),
         }, QuantSkillsPluginLauncher));
         ctx.effect(() => {
-            let observedSessionId = ctx.sessions.list.getSnapshot().current;
+            let observedSessionId = selectedSession(ctx.sessions.list.getSnapshot());
             const sync = () => {
-                const current = ctx.sessions.list.getSnapshot().current;
+                const current = selectedSession(ctx.sessions.list.getSnapshot());
                 if (current !== observedSessionId) {
                     observedSessionId = current;
                     if (current !== suppressedPluginSessionId)
@@ -828,8 +903,8 @@ export function mountQuantSkillsApplication(ctx, options) {
         name: 'conversation.hero.identity',
         inject: conversationBrand,
     }, QuantSkillsConversationHeroIdentity));
-    ctx.slots.inject('conversation.hero.accessory', () => ctx.slots.register({
-        name: 'conversation.hero.accessory',
+    ctx.slots.inject('conversation.hero.options', () => ctx.slots.register({
+        name: 'conversation.hero.options',
         id: 'quantskills-panda-mcp',
         order: 10,
         inject: () => ({
@@ -843,7 +918,9 @@ export function mountQuantSkillsApplication(ctx, options) {
             downloadFile: (path) => artifactDownload(sessionId, path),
             openWorkbench: (path) => {
                 // Bind to the rendered answer's session, never whichever session a stale callback finds.
-                if (ctx.sessions.list.getSnapshot().current !== sessionId)
+                if (selectedSession(ctx.sessions.list.getSnapshot()) !== sessionId)
+                    return;
+                if (openNativeResults(sessionId, path))
                     return;
                 resultTrigger.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
                 view.actions.requestResultPreview(sessionId, path);
@@ -872,15 +949,15 @@ export function mountQuantSkillsApplication(ctx, options) {
                 load: () => { if (available)
                     void directory.load(); },
                 select: selection => available
-                    ? directory.select(selection).then(() => true, () => false)
-                    : Promise.resolve(false),
+                    ? directory.select(selection)
+                    : Promise.resolve(undefined),
             };
         },
     }, QuantSkillsGravityLaneModelSelect));
     const legacySessionWorkspace = () => {
         const sessions = ctx.sessions.list.getSnapshot();
         const workspaces = ctx.workspaces.list.getSnapshot();
-        const current = sessions.current;
+        const current = selectedSession(sessions);
         const currentWorkspaceId = current === undefined
             ? undefined
             : workspaces.items.find(item => item.sessionIds.includes(current))?.workspaceId;
@@ -968,7 +1045,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         inspect: (sessionId, signal) => unwrapRemote(ctx.remote.quantSkillsSessions.contestInspect({ sessionId: sessionId }, signal)),
         requestResearch: async (sessionId, text) => {
             const current = ctx.sessions.list.getSnapshot();
-            if (current.current !== sessionId || current.byId[sessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'contest') {
+            if (selectedSession(current) !== sessionId || current.byId[sessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'contest') {
                 throw new Error('请在对应比赛会话中发起研究。');
             }
             const session = ctx.sessions.binding(sessionId)?.session;
@@ -979,24 +1056,34 @@ export function mountQuantSkillsApplication(ctx, options) {
                 throw new Error(result.error.message);
         },
         startResearch: async (topic, callerSignal) => {
-            const signal = callerSignal ? AbortSignal.any([lifetime.signal, callerSignal]) : lifetime.signal;
-            signal.throwIfAborted();
-            const workspace = await resolveSessionWorkspace();
-            signal.throwIfAborted();
-            const created = await unwrapRemote(ctx.remote.quantSkillsSessions.contestSessionOpen({
-                ...workspace, sessionId: `session-${crypto.randomUUID()}`, ...(topic ? { topic: true } : {}),
-            }, signal));
-            signal.throwIfAborted();
-            const adopted = await adoptSession(created.sessionId, signal, summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'contest');
-            signal.throwIfAborted();
-            if (created.created) {
-                const renamed = await adopted.session.rename(topic ? '比赛 · 专题研究' : '比赛 · 账户主对话');
-                if (!renamed.ok)
-                    throw new Error(renamed.error.message);
+            const env_2 = { stack: [], error: void 0, hasError: false };
+            try {
+                const signal = callerSignal ? AbortSignal.any([lifetime.signal, callerSignal]) : lifetime.signal;
+                signal.throwIfAborted();
+                const workspace = await resolveSessionWorkspace();
+                signal.throwIfAborted();
+                const created = await unwrapRemote(ctx.remote.quantSkillsSessions.contestSessionOpen({
+                    ...workspace, sessionId: `session-${crypto.randomUUID()}`, ...(topic ? { topic: true } : {}),
+                }, signal));
+                signal.throwIfAborted();
+                const adopted = __addDisposableResource(env_2, await adoptSession(created.sessionId, signal, summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'contest'), false);
+                signal.throwIfAborted();
+                if (created.created) {
+                    const renamed = await adopted.session.rename(topic ? '比赛 · 专题研究' : '比赛 · 账户主对话');
+                    if (!renamed.ok)
+                        throw new Error(renamed.error.message);
+                }
+                signal.throwIfAborted();
+                openSession(created.sessionId, false);
+                void boundSessions.refresh(lifetime.signal).catch(() => { });
             }
-            signal.throwIfAborted();
-            openSession(created.sessionId, false);
-            void boundSessions.refresh(lifetime.signal).catch(() => { });
+            catch (e_2) {
+                env_2.error = e_2;
+                env_2.hasError = true;
+            }
+            finally {
+                __disposeResources(env_2);
+            }
         },
     };
     const factorContestAccess = {
@@ -1016,7 +1103,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         reconcilePlan: planId => unwrapRemote(ctx.remote.quantSkillsSessions.factorReconcilePlan({ planId })),
         requestResearch: async (sessionId, text) => {
             const current = ctx.sessions.list.getSnapshot();
-            if (current.current !== sessionId || current.byId[sessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'factor-contest')
+            if (selectedSession(current) !== sessionId || current.byId[sessionId]?.projectionValues?.quantSkillsPlainSession?.purpose !== 'factor-contest')
                 throw new Error('请在对应因子比赛会话中发起研究。');
             const session = ctx.sessions.binding(sessionId)?.session;
             if (!session)
@@ -1026,27 +1113,37 @@ export function mountQuantSkillsApplication(ctx, options) {
                 throw new Error(result.error.message);
         },
         startResearch: async (topic, callerSignal) => {
-            const signal = callerSignal ? AbortSignal.any([lifetime.signal, callerSignal]) : lifetime.signal;
-            signal.throwIfAborted();
-            const workspace = await resolveSessionWorkspace();
-            signal.throwIfAborted();
-            const created = await unwrapRemote(ctx.remote.quantSkillsSessions.factorSessionOpen({ ...workspace, sessionId: `session-${crypto.randomUUID()}`,
-                ...(topic ? { topic: true } : {}) }, signal));
-            signal.throwIfAborted();
-            const adopted = await adoptSession(created.sessionId, signal, summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'factor-contest');
-            signal.throwIfAborted();
-            if (created.created) {
-                const renamed = await adopted.session.rename(topic ? '因子赛 · 专题研究' : '因子赛 · 账户主对话');
-                if (!renamed.ok)
-                    throw new Error(renamed.error.message);
+            const env_3 = { stack: [], error: void 0, hasError: false };
+            try {
+                const signal = callerSignal ? AbortSignal.any([lifetime.signal, callerSignal]) : lifetime.signal;
+                signal.throwIfAborted();
+                const workspace = await resolveSessionWorkspace();
+                signal.throwIfAborted();
+                const created = await unwrapRemote(ctx.remote.quantSkillsSessions.factorSessionOpen({ ...workspace, sessionId: `session-${crypto.randomUUID()}`,
+                    ...(topic ? { topic: true } : {}) }, signal));
+                signal.throwIfAborted();
+                const adopted = __addDisposableResource(env_3, await adoptSession(created.sessionId, signal, summary => summary.projectionValues?.quantSkillsPlainSession?.purpose === 'factor-contest'), false);
+                signal.throwIfAborted();
+                if (created.created) {
+                    const renamed = await adopted.session.rename(topic ? '因子赛 · 专题研究' : '因子赛 · 账户主对话');
+                    if (!renamed.ok)
+                        throw new Error(renamed.error.message);
+                }
+                signal.throwIfAborted();
+                openSession(created.sessionId, false);
+                void boundSessions.refresh(lifetime.signal).catch(() => { });
             }
-            signal.throwIfAborted();
-            openSession(created.sessionId, false);
-            void boundSessions.refresh(lifetime.signal).catch(() => { });
+            catch (e_3) {
+                env_3.error = e_3;
+                env_3.hasError = true;
+            }
+            finally {
+                __disposeResources(env_3);
+            }
         },
     };
     const changeSessions = async (ids, action, fileTokens) => {
-        const current = ctx.sessions.list.getSnapshot().current;
+        const current = selectedSession(ctx.sessions.list.getSnapshot());
         const completed = new Set();
         try {
             for (const sessionId of new Set(ids)) {
@@ -1127,23 +1224,33 @@ export function mountQuantSkillsApplication(ctx, options) {
         }),
     }, QuantSkillsAttachmentControl));
     const createBoundSession = async (versionId, initialTask) => {
-        const workspace = await resolveSessionWorkspace();
-        const sessionId = `session-${crypto.randomUUID()}`;
-        const created = await boundSessions.create({
-            sessionId,
-            versionId,
-            ...workspace,
-        }, lifetime.signal);
-        const adopted = await adoptSession(created.sessionId, lifetime.signal, summary => hasExactQuantSkillsBinding(summary, created.binding));
-        lifetime.signal.throwIfAborted();
-        openSession(adopted.sessionId);
-        if (initialTask !== undefined) {
-            const response = await adopted.session.prompt([{ type: 'text', text: initialTask }], 'queue');
-            if (!response.ok)
-                throw new Error(`QuantSkills 任务启动失败：${response.error.message}`);
+        const env_4 = { stack: [], error: void 0, hasError: false };
+        try {
+            const workspace = await resolveSessionWorkspace();
+            const sessionId = `session-${crypto.randomUUID()}`;
+            const created = await boundSessions.create({
+                sessionId,
+                versionId,
+                ...workspace,
+            }, lifetime.signal);
+            const adopted = __addDisposableResource(env_4, await adoptSession(created.sessionId, lifetime.signal, summary => hasExactQuantSkillsBinding(summary, created.binding)), false);
+            lifetime.signal.throwIfAborted();
+            openSession(adopted.sessionId);
+            if (initialTask !== undefined) {
+                const response = await adopted.session.prompt([{ type: 'text', text: initialTask }], 'queue');
+                if (!response.ok)
+                    throw new Error(`QuantSkills 任务启动失败：${response.error.message}`);
+            }
+            viewActions.navigate('conversations');
+            return adopted.sessionId;
         }
-        viewActions.navigate('conversations');
-        return adopted.sessionId;
+        catch (e_4) {
+            env_4.error = e_4;
+            env_4.hasError = true;
+        }
+        finally {
+            __disposeResources(env_4);
+        }
     };
     const startSkillSession = async (_asset, version) => {
         await createBoundSession(version.versionId);
@@ -1152,89 +1259,109 @@ export function mountQuantSkillsApplication(ctx, options) {
         await createBoundSession(binding.versionId);
     };
     const startAgentSessionCore = async (definition, initialTask, authoringKind) => {
-        const workspace = await resolveSessionWorkspace();
-        const sessionId = `session-${crypto.randomUUID()}`;
-        const request = {
-            sessionId,
-            agentId: definition.agentId,
-            expectedRevision: definition.revision,
-            ...workspace,
-        };
-        const created = authoringKind === undefined
-            ? await agents.start(request)
-            : await unwrapRemote(ctx.remote.quantSkillsSessions.authoringSessionCreate({ ...request, kind: authoringKind }));
-        const adopted = await adoptSession(created.sessionId, lifetime.signal, summary => hasExactQuantSkillsAgent(summary, created.agent));
-        lifetime.signal.throwIfAborted();
-        if (created.agent.model !== undefined) {
-            const selected = await ctx.remote.session.selectModel({
-                sessionId: adopted.sessionId,
-                provider: created.agent.model.provider,
-                model: created.agent.model.model,
-                ...(created.agent.model.reasoningEffort === undefined
-                    ? {}
-                    : { reasoningEffort: created.agent.model.reasoningEffort }),
-            });
-            if (!selected.ok) {
-                throw new Error(`QuantSkills 专家 模型选择失败：${selected.error.message}`);
+        const env_5 = { stack: [], error: void 0, hasError: false };
+        try {
+            const workspace = await resolveSessionWorkspace();
+            const sessionId = `session-${crypto.randomUUID()}`;
+            const request = {
+                sessionId,
+                agentId: definition.agentId,
+                expectedRevision: definition.revision,
+                ...workspace,
+            };
+            const created = authoringKind === undefined
+                ? await agents.start(request)
+                : await unwrapRemote(ctx.remote.quantSkillsSessions.authoringSessionCreate({ ...request, kind: authoringKind }));
+            const adopted = __addDisposableResource(env_5, await adoptSession(created.sessionId, lifetime.signal, summary => hasExactQuantSkillsAgent(summary, created.agent)), false);
+            lifetime.signal.throwIfAborted();
+            if (created.agent.model !== undefined) {
+                const selected = await ctx.remote.session.selectModel({
+                    sessionId: adopted.sessionId,
+                    provider: created.agent.model.provider,
+                    model: created.agent.model.model,
+                    ...(created.agent.model.reasoningEffort === undefined
+                        ? {}
+                        : { reasoningEffort: created.agent.model.reasoningEffort }),
+                });
+                if (!selected.ok) {
+                    throw new Error(`QuantSkills 专家 模型选择失败：${selected.error.message}`);
+                }
             }
+            const permission = await ctx.remote.commands.execute(adopted.sessionId, `/permission ${created.agent.permission}`, []);
+            if (!permission.ok)
+                throw new Error(`QuantSkills 专家 权限设置失败：${permission.error.message}`);
+            if (permission.value === undefined)
+                throw new Error('QuantSkills 专家 权限命令不可用。');
+            openSession(adopted.sessionId);
+            if (initialTask !== undefined) {
+                const response = await adopted.session.prompt([{
+                        type: 'text',
+                        text: initialTask,
+                    }], 'queue');
+                if (!response.ok)
+                    throw new Error(`QuantSkills 专家 测试失败：${response.error.message}`);
+            }
+            viewActions.navigate('conversations');
+            return adopted.sessionId;
         }
-        const permission = await ctx.remote.commands.execute(adopted.sessionId, `/permission ${created.agent.permission}`, []);
-        if (!permission.ok)
-            throw new Error(`QuantSkills 专家 权限设置失败：${permission.error.message}`);
-        if (permission.value === undefined)
-            throw new Error('QuantSkills 专家 权限命令不可用。');
-        openSession(adopted.sessionId);
-        if (initialTask !== undefined) {
-            const response = await adopted.session.prompt([{
-                    type: 'text',
-                    text: initialTask,
-                }], 'queue');
-            if (!response.ok)
-                throw new Error(`QuantSkills 专家 测试失败：${response.error.message}`);
+        catch (e_5) {
+            env_5.error = e_5;
+            env_5.hasError = true;
         }
-        viewActions.navigate('conversations');
-        return adopted.sessionId;
+        finally {
+            __disposeResources(env_5);
+        }
     };
     const startAgentSession = (definition, initialTask) => {
         return startAgentSessionCore(definition, initialTask);
     };
     const startAgentTeamSessionCore = async (definition, initialTask) => {
-        const workspace = await resolveSessionWorkspace();
-        const sessionId = `session-${crypto.randomUUID()}`;
-        const created = await agents.startTeam({
-            sessionId,
-            teamId: definition.teamId,
-            expectedRevision: definition.revision,
-            ...workspace,
-        });
-        const adopted = await adoptSession(created.sessionId, lifetime.signal, summary => hasExactQuantSkillsAgentTeam(summary, created.team));
-        lifetime.signal.throwIfAborted();
-        const lead = created.team.lead;
-        if (created.team.leadModel.kind === 'fixed') {
-            const selection = created.team.leadModel.selection;
-            const selected = await ctx.remote.session.selectModel({
-                sessionId: adopted.sessionId,
-                provider: selection.provider,
-                model: selection.model,
-                ...(selection.reasoningEffort === undefined ? {} : { reasoningEffort: selection.reasoningEffort }),
+        const env_6 = { stack: [], error: void 0, hasError: false };
+        try {
+            const workspace = await resolveSessionWorkspace();
+            const sessionId = `session-${crypto.randomUUID()}`;
+            const created = await agents.startTeam({
+                sessionId,
+                teamId: definition.teamId,
+                expectedRevision: definition.revision,
+                ...workspace,
             });
-            if (!selected.ok) {
-                throw new Error(`QuantSkills 专家团 模型选择失败：${selected.error.message}`);
+            const adopted = __addDisposableResource(env_6, await adoptSession(created.sessionId, lifetime.signal, summary => hasExactQuantSkillsAgentTeam(summary, created.team)), false);
+            lifetime.signal.throwIfAborted();
+            const lead = created.team.lead;
+            if (created.team.leadModel.kind === 'fixed') {
+                const selection = created.team.leadModel.selection;
+                const selected = await ctx.remote.session.selectModel({
+                    sessionId: adopted.sessionId,
+                    provider: selection.provider,
+                    model: selection.model,
+                    ...(selection.reasoningEffort === undefined ? {} : { reasoningEffort: selection.reasoningEffort }),
+                });
+                if (!selected.ok) {
+                    throw new Error(`QuantSkills 专家团 模型选择失败：${selected.error.message}`);
+                }
             }
+            const permission = await ctx.remote.commands.execute(adopted.sessionId, `/permission ${lead.permission}`, []);
+            if (!permission.ok)
+                throw new Error(`QuantSkills 专家团 权限设置失败：${permission.error.message}`);
+            if (permission.value === undefined)
+                throw new Error('QuantSkills 专家团 权限命令不可用。');
+            openSession(adopted.sessionId);
+            if (initialTask !== undefined) {
+                const response = await adopted.session.prompt([{ type: 'text', text: initialTask }], 'queue');
+                if (!response.ok)
+                    throw new Error(`QuantSkills 专家团 启动失败：${response.error.message}`);
+            }
+            viewActions.navigate('conversations');
+            return adopted.sessionId;
         }
-        const permission = await ctx.remote.commands.execute(adopted.sessionId, `/permission ${lead.permission}`, []);
-        if (!permission.ok)
-            throw new Error(`QuantSkills 专家团 权限设置失败：${permission.error.message}`);
-        if (permission.value === undefined)
-            throw new Error('QuantSkills 专家团 权限命令不可用。');
-        openSession(adopted.sessionId);
-        if (initialTask !== undefined) {
-            const response = await adopted.session.prompt([{ type: 'text', text: initialTask }], 'queue');
-            if (!response.ok)
-                throw new Error(`QuantSkills 专家团 启动失败：${response.error.message}`);
+        catch (e_6) {
+            env_6.error = e_6;
+            env_6.hasError = true;
         }
-        viewActions.navigate('conversations');
-        return adopted.sessionId;
+        finally {
+            __disposeResources(env_6);
+        }
     };
     const startAgentTeamSession = (definition, initialTask) => {
         return startAgentTeamSessionCore(definition, initialTask);
@@ -1297,7 +1424,7 @@ export function mountQuantSkillsApplication(ctx, options) {
             ? lifetime.signal
             : AbortSignal.any([lifetime.signal, callerSignal]);
         signal.throwIfAborted();
-        const current = ctx.sessions.list.getSnapshot().current;
+        const current = selectedSession(ctx.sessions.list.getSnapshot());
         const workspace = await resolveSessionWorkspace();
         const requestedSessionId = `session-${crypto.randomUUID()}`;
         const created = await unwrapRemote(ctx.remote.quantSkillsSessions.plainSessionCreate({
@@ -1310,7 +1437,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         try {
             adopted = await adoptSession(sessionId, signal);
             const session = adopted.session;
-            ctx.sessions.open(sessionId);
+            ctx.uiWorkspace.openSession(sessionId);
             if (request.model !== undefined) {
                 const selected = await ctx.remote.session.selectModel({
                     sessionId,
@@ -1342,21 +1469,24 @@ export function mountQuantSkillsApplication(ctx, options) {
             return await waitForAssistantText(sessionId, session, 'AI 角色说明生成', signal);
         }
         finally {
-            if (adopted?.session.getSnapshot().running)
-                await adopted.session.cancel();
-            await ctx.workspaces.archiveSession(sessionId).catch((error) => {
-                console.warn('QuantSkills AI role helper could not archive its temporary Session.', error);
-            });
-            if (current === undefined)
-                ctx.sessions.clear();
-            else if (ctx.sessions.list.getSnapshot().byId[current] !== undefined)
-                ctx.sessions.open(current);
+            try {
+                if (adopted?.session.getSnapshot().running)
+                    await adopted.session.cancel();
+                await ctx.uiWorkspace.archiveSession(sessionId).catch((error) => {
+                    console.warn('QuantSkills AI role helper could not archive its temporary Session.', error);
+                });
+                if (current !== undefined && ctx.sessions.list.getSnapshot().byId[current] !== undefined)
+                    ctx.uiWorkspace.openSession(current);
+            }
+            finally {
+                adopted?.release();
+            }
         }
     };
     const matchSkillForTask = async (request, skills) => {
         const signal = lifetime.signal;
         signal.throwIfAborted();
-        const current = ctx.sessions.list.getSnapshot().current;
+        const current = selectedSession(ctx.sessions.list.getSnapshot());
         const workspace = await resolveSessionWorkspace();
         const requestedSessionId = `session-${crypto.randomUUID()}`;
         const created = await unwrapRemote(ctx.remote.quantSkillsSessions.plainSessionCreate({
@@ -1368,7 +1498,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         let adopted;
         try {
             adopted = await adoptSession(sessionId, signal);
-            ctx.sessions.open(sessionId);
+            ctx.uiWorkspace.openSession(sessionId);
             const prompt = buildSkillGuidePrompt(request, skills);
             const response = await adopted.session.prompt([{ type: 'text', text: prompt }], 'queue', signal);
             if (!response.ok)
@@ -1377,15 +1507,18 @@ export function mountQuantSkillsApplication(ctx, options) {
             return parseSkillGuideDecision(answer, skills);
         }
         finally {
-            if (adopted?.session.getSnapshot().running)
-                await adopted.session.cancel();
-            await ctx.workspaces.archiveSession(sessionId).catch((error) => {
-                console.warn('QuantSkills AI catalog matcher could not archive its temporary Session.', error);
-            });
-            if (current === undefined)
-                ctx.sessions.clear();
-            else if (ctx.sessions.list.getSnapshot().byId[current] !== undefined)
-                ctx.sessions.open(current);
+            try {
+                if (adopted?.session.getSnapshot().running)
+                    await adopted.session.cancel();
+                await ctx.uiWorkspace.archiveSession(sessionId).catch((error) => {
+                    console.warn('QuantSkills AI catalog matcher could not archive its temporary Session.', error);
+                });
+                if (current !== undefined && ctx.sessions.list.getSnapshot().byId[current] !== undefined)
+                    ctx.uiWorkspace.openSession(current);
+            }
+            finally {
+                adopted?.release();
+            }
         }
     };
     const importAgent = async (asset, version) => {
@@ -1517,7 +1650,7 @@ export function mountQuantSkillsApplication(ctx, options) {
         inject: () => ({ ...conversationBrand(), ...pandaMcp }),
     }, QuantSkillsPandaMcpControl));
     const send = async (text) => {
-        const sessionId = ctx.sessions.list.getSnapshot().current;
+        const sessionId = selectedSession(ctx.sessions.list.getSnapshot());
         const bound = sessionId === undefined
             ? undefined
             : boundSessions.source.getSnapshot().archives.find(archive => archive.sessionId === sessionId);
@@ -1606,6 +1739,13 @@ export function mountQuantSkillsApplication(ctx, options) {
         }),
     }, SessionFavorite));
     ctx.slots.inject('conversation.session.header.actions', () => ctx.slots.register({
+        name: 'conversation.session.header.actions', id: 'quantskills-legacy-team-recovery', order: 25,
+        inject: () => ({
+            hooks: { sessions: ctx.sessions.list },
+            recover: (sessionId, continuePending) => unwrapRemote(ctx.remote.quantSkillsSessions.legacyTeamRecovery({ sessionId, continuePending })),
+        }),
+    }, LegacyTeamRecovery));
+    ctx.slots.inject('conversation.session.header.actions', () => ctx.slots.register({
         name: 'conversation.session.header.actions', id: 'quantskills-authoring-review', order: 10,
         inject: () => ({
             hooks: { sessions: ctx.sessions.list },
@@ -1652,7 +1792,7 @@ export function mountQuantSkillsApplication(ctx, options) {
     ctx.effect(() => bindQuantSkillsResultMentionClicks(document, (path, trigger) => {
         if (resultPreviewRank(path) >= 4)
             return false;
-        const sessionId = ctx.sessions.list.getSnapshot().current;
+        const sessionId = selectedSession(ctx.sessions.list.getSnapshot());
         if (sessionId === undefined)
             return false;
         const sessionSnapshot = boundSessions.source.getSnapshot();
@@ -1663,6 +1803,8 @@ export function mountQuantSkillsApplication(ctx, options) {
             || agentSnapshot.teamArchives.some(archive => archive.sessionId === sessionId);
         if (!owned)
             return false;
+        if (openNativeResults(sessionId, path))
+            return true;
         resultTrigger.current = trigger;
         view.actions.requestResultPreview(sessionId, path);
         if (options.mode === 'native-plugin')
@@ -1680,81 +1822,91 @@ export function mountQuantSkillsApplication(ctx, options) {
                 resultTrigger.current = trigger;
                 if (options.mode === 'native-plugin')
                     view.actions.openPluginConversation();
-                layout.openResults();
+                openCurrentResults();
             },
             complete: (sessionId) => {
                 resultTrigger.current = null;
                 if (options.mode === 'native-plugin')
                     view.actions.openPluginConversation();
-                layout.openResults();
+                openCurrentResults();
                 notifications.actions.acknowledge(sessionId);
             },
         }),
     }, QuantSkillsResultAction));
+    const resultFace = (sessionId) => ({
+        hooks: { resultRequest: view.store },
+        close: () => { layout.closeResults(); },
+        triggerRef: resultTrigger,
+        docked: options.mode === 'native-plugin',
+        acknowledgePreviewFocus: (sequence) => {
+            view.actions.acknowledgeResultPreviewFocus(sessionId, sequence);
+        },
+        listFiles: async (signal) => preparedResultArtifacts(await unwrapRemote(ctx.remote.quantSkillsSessions.resultList({ sessionId }, signal))),
+        prepareFiles: async (paths, signal) => {
+            const prepared = await unwrapRemote(ctx.remote.quantSkillsSessions.resultPrepare({ sessionId, paths }, signal));
+            return preparedResultArtifacts(prepared);
+        },
+        openFile: async (path) => {
+            const cwd = ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd;
+            await unwrapRemote(ctx.remote.session.openWorkspacePath({ path: resolveWorkspacePath(cwd, path) }));
+        },
+        saveFileAs: async (path) => { artifactDownload(sessionId, path); },
+        previewFile: path => unwrapRemote(ctx.remote.quantSkillsSessions.resultPreview({ sessionId, path })).catch((error) => {
+            console.warn('QuantSkills result preview:', error instanceof Error ? error.message.slice(0, 700) : String(error));
+            throw error;
+        }),
+        openOutputDirectory: async (path) => {
+            const normalized = path?.replaceAll('\\', '/');
+            const slash = normalized?.lastIndexOf('/') ?? -1;
+            const directory = slash > 0 ? normalized?.slice(0, slash) : '.';
+            view.actions.requestResultPreview(sessionId, directory ?? '.');
+            layout.openResults();
+        },
+    });
     ctx.slots.inject('quantskills.results', () => ctx.slots.register({
         name: 'quantskills.results',
-        inject: (sessionId) => ({
-            hooks: { resultRequest: view.store },
-            close: () => { layout.closeResults(); },
-            triggerRef: resultTrigger,
-            docked: options.mode === 'native-plugin',
-            acknowledgePreviewFocus: (sequence) => {
-                view.actions.acknowledgeResultPreviewFocus(sessionId, sequence);
-            },
-            listFiles: async (signal) => preparedResultArtifacts(await unwrapRemote(ctx.remote.quantSkillsSessions.resultList({ sessionId }, signal))),
-            prepareFiles: async (paths, signal) => {
-                const prepared = await unwrapRemote(ctx.remote.quantSkillsSessions.resultPrepare({ sessionId, paths }, signal));
-                return preparedResultArtifacts(prepared);
-            },
-            openFile: async (path) => {
-                const cwd = ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd;
-                await unwrapRemote(ctx.remote.session.openWorkspacePath({ path: resolveWorkspacePath(cwd, path) }));
-            },
-            saveFileAs: async (path) => { artifactDownload(sessionId, path); },
-            previewFile: path => unwrapRemote(ctx.remote.quantSkillsSessions.resultPreview({ sessionId, path })).catch((error) => {
-                console.warn('QuantSkills result preview:', error instanceof Error ? error.message.slice(0, 700) : String(error));
-                throw error;
-            }),
-            openOutputDirectory: async (path) => {
-                const normalized = path?.replaceAll('\\', '/');
-                const slash = normalized?.lastIndexOf('/') ?? -1;
-                const directory = slash > 0 ? normalized?.slice(0, slash) : '.';
-                view.actions.requestResultPreview(sessionId, directory ?? '.');
-                layout.openResults();
-            },
-            continueWithResults: async (paths) => {
-                const skill = boundSessions.source.getSnapshot().archives.find(item => item.sessionId === sessionId);
-                const archivedAgent = agents.source.getSnapshot().archives.find(item => item.sessionId === sessionId);
-                const archivedTeam = agents.source.getSnapshot().teamArchives.find(item => item.sessionId === sessionId);
-                let nextId;
-                if (skill !== undefined) {
-                    nextId = await createBoundSession(skill.binding.versionId);
-                }
-                else if (archivedAgent !== undefined) {
-                    const definition = agents.source.getSnapshot().definitions
-                        .find(item => item.agentId === archivedAgent.agent.agentId);
-                    if (definition === undefined)
-                        throw new Error('QuantSkills：当前 专家 定义不可用于创建后续会话。');
-                    nextId = await startAgentSession(definition);
-                }
-                else if (archivedTeam !== undefined) {
-                    const definition = agents.source.getSnapshot().teams
-                        .find(item => item.teamId === archivedTeam.team.teamId);
-                    if (definition === undefined)
-                        throw new Error('QuantSkills：当前 专家团 定义不可用于创建后续会话。');
-                    nextId = await startAgentTeamSession(definition);
-                }
-                else {
-                    throw new Error('QuantSkills：结果所属会话不可用。');
-                }
-                const next = ctx.sessions.binding(nextId);
-                if (next === undefined || conversation === undefined)
-                    throw new Error('QuantSkills：后续会话尚未就绪。');
-                const input = conversation.input.for(next.ctx);
-                input.setDraft(`${input.state.getSnapshot().draft}\n\n来源会话：${sessionId}\n请继续处理以下同一工作区内的产物：\n${paths.map(path => `- ${path}`).join('\n')}`);
-            },
-        }),
+        inject: resultFace,
     }, QuantSkillsResultPanel));
+    if (options.mode === 'native-plugin')
+        ctx.inject(['sidebarRight', 'sidebarRightTabs'], native => {
+            native.effect(() => native.sidebarRightTabs.register({
+                id: QS_RESULTS_KIND, kind: QS_RESULTS_KIND, title: () => '对话结果',
+                guide: [{ id: 'results', order: 40, title: () => '对话结果', description: () => '本对话的报告、图表与文件' }],
+            }), 'ui-quantskills: result summary in the official dock');
+            native.slots.inject('sidebar.right.pane.tab', () => native.slots.register({
+                name: 'sidebar.right.pane.tab', key: QS_RESULTS_KIND,
+                inject: (sessionId) => {
+                    const face = resultFace(sessionId);
+                    return {
+                        listFiles: signal => face.listFiles(signal),
+                        prepareFiles: (paths, signal) => face.prepareFiles(paths, signal),
+                        openFile: path => { if (!openNativeResults(sessionId, path))
+                            throw new Error('Result session is no longer active.'); },
+                        openWorkspace: () => { if (native.sidebarRight.mounted.getSnapshot() === sessionId)
+                            native.sidebarRight.openTab('files'); },
+                        downloadFile: path => artifactDownload(sessionId, path),
+                    };
+                },
+            }, NativeResults));
+            native.effect(() => native.sidebarRightTabs.register({
+                id: 'quantskills-media', kind: 'quantskills-media',
+                patterns: ['*.mp4', '*.webm', '*.mp3', '*.wav', '*.ogg', '*.m4a', '*.html', '*.htm'],
+                canOpen: address => {
+                    const file = parseFileAddress(address);
+                    if (file?.scope !== 'session')
+                        return false;
+                    const id = file.sessionId;
+                    const sessions = boundSessions.source.getSnapshot(), library = agents.source.getSnapshot();
+                    return sessions.plainArchives.some(item => item.sessionId === id) || sessions.archives.some(item => item.sessionId === id)
+                        || library.archives.some(item => item.sessionId === id) || library.teamArchives.some(item => item.sessionId === id);
+                },
+                title: address => parseFileAddress(address)?.path.replaceAll('\\', '/').split('/').at(-1) ?? '媒体',
+            }), 'ui-quantskills: media and isolated HTML in the official dock');
+            native.slots.inject('sidebar.right.pane.tab', () => native.slots.register({
+                name: 'sidebar.right.pane.tab', key: 'quantskills-media',
+                inject: () => ({ previewFile: (sessionId, path, signal) => unwrapRemote(native.remote.quantSkillsSessions.resultPreview({ sessionId: sessionId, path }, signal)) }),
+            }, NativeResultMedia));
+        });
     ctx.slots.inject('tool.call.toolview', () => ctx.slots.register({
         name: 'tool.call.toolview',
         key: 'quantskills_team_draft',
@@ -1823,14 +1975,25 @@ export function mountQuantSkillsApplication(ctx, options) {
             applicationUpdateStatus: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStatus()),
             applicationUpdateCheck: (request) => unwrapRemote(ctx.remote.quantSkills.applicationUpdateCheck(request)),
             applicationUpdateStart: () => unwrapRemote(ctx.remote.quantSkills.applicationUpdateStart()),
-            // dshmarket 1.45.1 exposes a self-contained, closure-bound section.
-            // It owns its locale, request state and error boundary; no child slots or store
-            // are borrowed/redeclared here, preserving the stock settings owner.
+            openAdvancedWorkbench: (panel) => {
+                const stockLayout = ctx.get('layout');
+                if (!stockLayout || !ctx.slots.entriesOfSlot('main').some(item => item.options.key === panel)) {
+                    throw new Error('工作台入口暂不可用，请刷新页面后重试。');
+                }
+                stockLayout.selectPanel(panel);
+                viewActions.closePlugin();
+            },
+            // Open the native manager through its public panel navigation. Do not
+            // transplant its component: its store and nested slots belong to that panel.
             renderPluginMarket: () => {
-                const entry = ctx.slots.entriesOfSlot('settings.section').find(item => item.options.id === 'market');
-                if (!entry || entry.children || entry.store)
-                    return createElement('p', { role: 'status' }, '插件市场尚未就绪，请稍后重新打开设置。');
-                return createElement(entry.component, { close: () => view.actions.navigate('home') });
+                const manager = ctx.slots.entriesOfSlot('main').some(item => item.options.key === 'plugins');
+                const stockLayout = ctx.get('layout');
+                return createElement(PluginSettings, {
+                    openManager: manager && stockLayout ? () => {
+                        stockLayout.selectPanel('plugins');
+                        viewActions.closePlugin();
+                    } : undefined,
+                });
             },
             databaseAccess: {
                 list: () => unwrapRemote(ctx.remote.pandaMcp.databaseList()),
@@ -1943,7 +2106,6 @@ export function mountQuantSkillsApplication(ctx, options) {
         window.addEventListener('focus', refresh);
         return () => { window.removeEventListener('focus', refresh); };
     }, 'ui-quantskills: refresh Agents when the browser regains focus');
-    ctx.effect(() => bindComposerSubagentMenu(document, ctx.sessions), 'ui-quantskills: open a subagent chat in a dialog and return to the main session');
 }
 /**
  * Mount QuantSkills in the composition selected by the surrounding DSH shell.

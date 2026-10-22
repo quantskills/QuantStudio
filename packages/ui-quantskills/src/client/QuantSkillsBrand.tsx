@@ -132,9 +132,9 @@ export function QuantSkillsConversationHeroIdentity({
  * @returns The native or QuantSkills activity label.
  */
 export function QuantSkillsConversationStatus({
-  mode, useView, defaultLabel,
+  mode, useView, defaultLabel, defaultContent,
 }: QuantSkillsConversationStatusProps) {
-  if (!useQuantSkillsConversation(mode, useView)) return <>{defaultLabel}</>
+  if (!useQuantSkillsConversation(mode, useView)) return <>{defaultContent ?? defaultLabel}</>
   return <QuantSkillsResearchStatus/>
 }
 

@@ -96,11 +96,14 @@ it.each([
       },
     },
     settingsScope: { bind: () => ({ getSnapshot: () => ({ status: 'loading', writable: false }), subscribe: () => () => {} }) },
+    uiWorkspace: { openSession: opened },
     sessions: {
-      open: opened,
+      refresh: () => new Promise<void>(resolve => { if (ready) resolve(); else listeners.add(resolve) }),
+      refreshProjections: async () => {},
+      retain: () => ({ ready: Promise.resolve({ session: { rename } }), release: vi.fn() }),
       binding: () => ready ? { session: { rename } } : undefined,
       list: {
-        getSnapshot: () => ({ byId: ready ? { 'contest-new': { sessionId: 'contest-new', projectionValues: { quantSkillsPlainSession: { purpose } } } } : {} }),
+        getSnapshot: () => ({ byId: ready ? { 'contest-new': { sessionId: 'contest-new', retainedBy: { mainView: false }, projectionValues: { quantSkillsPlainSession: { purpose } } } } : {} }),
         subscribe: (listener: () => void) => { listeners.add(listener); return () => listeners.delete(listener) },
       },
     },
@@ -309,8 +312,11 @@ describe('QuantSkills native application composition', () => {
           unset: settingsUnset,
         }),
       },
+      uiWorkspace: { openSession },
       sessions: {
-        open: openSession,
+        refresh: async () => {},
+        refreshProjections: async () => {},
+        retain: () => ({ ready: Promise.resolve({ session: { prompt } }), release: vi.fn() }),
         binding: () => ({ session: { prompt } }),
         list: {
           getSnapshot: () => ({ byId: { 'session-1': sessionSummary } }),
@@ -343,7 +349,7 @@ describe('QuantSkills native application composition', () => {
       expect.objectContaining({ name: 'quantskills.results' }),
       expect.objectContaining({ name: 'quantskills.page' }),
       expect.objectContaining({ name: 'conversation.hero.identity' }),
-      expect.objectContaining({ name: 'conversation.hero.accessory', id: 'quantskills-panda-mcp', order: 10 }),
+      expect.objectContaining({ name: 'conversation.input.left', id: 'quantskills-panda-mcp', order: 50 }),
       expect.objectContaining({ name: 'conversation.chat.turnStatus' }),
     ]))
     expect(registrations.some(registration => registration.name === 'root')).toBe(false)
@@ -351,7 +357,7 @@ describe('QuantSkills native application composition', () => {
     expect(registrations.some(registration => registration.name === 'sidebar.brand.name')).toBe(false)
     expect(registrations.some(registration => registration.name === 'conversation.hero.brand.mark')).toBe(false)
     expect(injected).toContain('conversation.hero.identity')
-    expect(injected).toContain('conversation.hero.accessory')
+    expect(injected).toContain('conversation.input.left')
     expect(injected).toContain('conversation.chat.turnStatus')
     expect(injected).toContain('shell.overlay')
     expect(injected).toContain('sidebar.footer.action')

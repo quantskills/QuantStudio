@@ -1,5 +1,4 @@
-/** Browser Conversation assemble core, React adapter, shell, and input plugin. */
-export { apply, inject } from "./apply.js";
+export { apply, Config, inject } from "./apply.js";
 export { UiConversation } from "./conversation/assembly.js";
 export { ConversationController, UnsupportedImageMediaTypeError } from "./service.js";
 export { EMPTY_CONVERSATION_SNAPSHOT, conversationPhase } from "./contract/snapshot.js";

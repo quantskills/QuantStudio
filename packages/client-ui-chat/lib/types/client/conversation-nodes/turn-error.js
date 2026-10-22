@@ -6,10 +6,32 @@ function lastStep(context) {
         return 0;
     return location.turn.steps.at(-1)?.step ?? 0;
 }
+/**
+ * Failure shown for a turn ending: a recorded error, a sign-out cancellation,
+ * or a turn that restart recovery closed because the DSH process exited mid-turn.
+ */
+function endFailure(reason) {
+    switch (reason.kind) {
+        case 'error':
+            return reason.error;
+        case 'aborted':
+            // User and parent cancellations show only the stopped turn summary.
+            return reason.reason.kind === 'hook' && reason.reason.reason === 'deepseek-account/signed-out'
+                ? { message: 'Stopped because you signed out of DeepSeek.', code: 'ACCOUNT_SIGNED_OUT' }
+                : undefined;
+        case 'interrupted':
+            return { message: 'The DSH process exited before this turn finished.', code: 'INTERRUPTED' };
+        default:
+            // Completed, blocked, max-tokens, forked, and plugin-merged endings have no failure row.
+            return undefined;
+    }
+}
 function failureFrom(match) {
-    if (match.event.type !== 'turn/end' || match.event.data.reason.kind !== 'error')
+    if (match.event.type !== 'turn/end')
         return undefined;
-    const failure = match.event.data.reason.error;
+    const failure = endFailure(match.event.data.reason);
+    if (failure === undefined)
+        return undefined;
     const display = displayFailure(failure);
     return {
         seq: match.event.seq,
@@ -38,7 +60,7 @@ export const turnErrorDefinition = {
     match: (event) => {
         if (event.type === 'turn/start')
             return { id: String(event.data.turn), role: 'start' };
-        if (event.type === 'turn/end' && event.data.reason.kind === 'error') {
+        if (event.type === 'turn/end' && endFailure(event.data.reason) !== undefined) {
             return { id: String(event.data.turn), role: 'update' };
         }
         return null;
@@ -66,7 +88,7 @@ export const turnErrorDefinition = {
             message: failure.message,
             ...failure.code === undefined ? {} : { code: failure.code },
         };
-        return chatNode(context, 'turn-error', node.seq, node);
+        return chatNode(context, 'turn-error', node.seq, node, { groupTree: 'turn' });
     },
 };
 /**

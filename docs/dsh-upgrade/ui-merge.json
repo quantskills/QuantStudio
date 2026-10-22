@@ -1,0 +1,1497 @@
+{
+  "baseline": "0a53fb55bea101816fa226bb964ae2bed71c343b",
+  "target": "687f282e8625c6b8d11ff58211a90524be2e4317",
+  "files": [
+    {
+      "file": "packages/client-ui-chat/src/chat-settings.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS Web defaults to the target desktop standard transcript grouping; explicit saved display choices remain authoritative.",
+      "sourceSha256": "e0b959731dc6a1d698c53960a394f8c03d8737e225c2d73007428653401afa22",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/apply.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Preserved QS extension slots; verified target factories, inject contracts and renderer registration.",
+      "sourceSha256": "4b15a709e302b8ae5703f5ec833c97667987ebced443ffd5193abec9b71310a8",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ApprovalCommand.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/AssistantMarkdown.module.css",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/AssistantMarkdown.tsx",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/AssistantNodeView.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Preserved QS assistant presentation; upstream transcript and reasoning behaviors covered.",
+      "sourceSha256": "a64a07ad21d4391892dde2ffa3e7aa528a26f04cfb2f7f7d2dcf9fcd21693959",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatNodeSeat.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatView.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatView.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Retained shared scroll owner and QS layout; target node subscription, pending echoes and scrolling regressions covered.",
+      "sourceSha256": "5b9262bc2727dfa79bd801bdaae68f356cbbf4f17363554e75f32315bc694239",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/CommandNodeView.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/CompactionCommandCard.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/CompactionItem.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ContextBody.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ContextBody.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ContextInjectionRow.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ContextInjectionRow.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Retained QS context display; upstream context projection and grouping covered.",
+      "sourceSha256": "3bc4d2bc3e3fd0801f7591f46018adaf104837978df37b3fc0cc2bd7bf427d59",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/GenericCommandCard.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/GenericCommandCard.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/MessageIconActions.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/MessageIconActions.tsx",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/MessageItem.module.css",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/MessageItem.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Retained QS message rendering; upstream content, copy and reference tests covered.",
+      "sourceSha256": "d2719dd95253d419a560cc0fee7b43952ff7c70ecfcc146637ec1b4ace583676",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ReasoningRow.module.css",
+      "outcome": "upstream",
+      "custom": false,
+      "review": "Restored fixed target upstream implementation on 2026-10-21 after native-interaction review; QS geometry overrides removed. Equal to target source after line-ending normalization.",
+      "sourceSha256": "192be42957f2eccbf0195bb51c9ca13dd4c87bbdaf5559fb11f0c1f8b75fb744",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ReasoningRow.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target disclosure and reasoning content behavior preserved.",
+      "sourceSha256": "91b735d2c42fe0d861afb3c4592f9b6f1efba02839ece117a2900736f93decba",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/StatsLine.module.css",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/StatsLine.tsx",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/SystemPromptRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnNavigator.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnNavigator.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnProcessNodeView.module.css",
+      "outcome": "upstream",
+      "custom": false,
+      "review": "Restored fixed target upstream implementation on 2026-10-21 after native-interaction review; QS geometry overrides removed. Equal to target source after line-ending normalization.",
+      "sourceSha256": "2fb00c2a24da7f9946dac118eaa076bd55133ca972d159c8b72d7ffee1ba2292",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnProcessNodeView.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnTailNodeView.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnTailNodeView.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target turn metrics and completion tails preserved.",
+      "sourceSha256": "e50ea98ef94c46a7e56b5de4524b65c5daa29f118144dba36138758a145ab168",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnUsagePanel.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnUsagePanel.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/accessibility.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/message-chrome.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/register-node-renderers.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target renderers and QS slots registered once.",
+      "sourceSha256": "6c77d8b29d750d27514ad65d475950e8a714666a5c3b1d8d2580e442ca5a7010",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/searchable-hidden.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/token-format.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/turn-assistant.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-calendar-day.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-throttled-visual-update.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/assistant-content.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/chat-nodes.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/slots.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS extension slots retained. Optional defaultContent preserves the complete native status outside QS without breaking label-only consumers.",
+      "sourceSha256": "2b872d2dc56f62a3ed335cd8de22ea548aa894f90965a27b1cc31efde999c760",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/snapshot.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/store.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/turn-metrics.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/turn-process.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/assistant.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/chat-snapshot-builder.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/command.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/common.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/compaction.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/event-projection.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/fallback.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/inbox.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/message.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/partial.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/register.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/request-prompt.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/retry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/tool.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-error.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-max-tokens.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-navigation.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-process.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-tail.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/details/DetailsPanel.module.css",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/details/DetailsPanel.tsx",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/details/tool-node-reader.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/index.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target exports retained with QS extensions.",
+      "sourceSha256": "4159d4390622d8d44f6e0329db0d981196ce1579c5ffeda5d892bf212ed4dc41",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/locale.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/markdown-labels.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/model/conversation-context.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/model/steering-history.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/model/tool-call-tree.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/TranscriptViewRow.module.css",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/TranscriptViewRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/stores.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/transcript-view.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/css-modules.d.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/invariant.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/locale/en.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/locale/zh.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatFlow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatGroupSeat.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ChatGroupSeat.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/QuotaNoticeHost.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/ReasoningContent.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/RunningStatus.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Native clock and complete fallback retained for the full workbench; the QS slot owns its original animated identity and rotating research copy. Native turn/step disclosures are unchanged.",
+      "sourceSha256": "764c9917287664b956be9b23bbe22937d75773de194afb01c51aabdef669a35d",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/RunningWhaleTail.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/StatsPills.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/StatsPills.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnTriggerNodeView.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/TurnTriggerNodeView.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/UserContent.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/flow-motion.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/render-entry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/running-whale@2x.png",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/stat-dialog.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/stat-dialog.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/step-process.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/turn-rail-items.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/turn-trigger.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-chat-navigation.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-chat-reading.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-chat-scroll.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-chat-viewport.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-disclosure.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-process-scroll.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-scroll-follow.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/chat/use-turn-data.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/chat-visibility.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/group-tree.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/contract/process-groups.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/README.i18n.yaml",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/README.md",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/README.zh.md",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/group-tree-segments.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/process-activity.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/process-groups.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/conversation-nodes/turn-process-presentation.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/performance-usage.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/presentation-policy.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/LinkOpeningRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/PerformanceUsageRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/PreferenceRow.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-chat/src/client/settings/PreferenceRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/apply.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Preserved QS extension slots; verified target factories, inject contracts and renderer registration.",
+      "sourceSha256": "98a948703b19ed3749f214c90c78c502a2f41602d07d198f4140dd1aa7ae73a0",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/context-occupancy.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/composer-blocks.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/composer-submission.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/context-provenance.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/conversation.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/input.ts",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/queue.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/records.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/request-inspection.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/slots.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS slots extend target contracts; dispatch and ownership exercised by assembly suites.",
+      "sourceSha256": "e82399caea37d34c388ef028465b6999b0d02f3b34e8d7f0c38de975c661e517",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/snapshot.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/views.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/assembler.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/assembly.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/definition-registry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/event-registry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/historical-images.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/location-index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/view-registry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/image-labels.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/index.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target exports retained with QS extensions.",
+      "sourceSha256": "5e1a613393f137b876963330437b72460db0a72947fadee5b7679fdf7aad6baf",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/blocks.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/decorations.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/ComposerContentEditable.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/DecoratorPortals.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/ReferenceChip.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/ReferenceChip.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/chip-node.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/claim-decor.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/composer-editor.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/keymap.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/projection.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/span-map.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/text-ref.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/facade.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/hub.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/machine.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/queue-store.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/submission-policy.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/locales.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target locale entries retained; QS product identity remains slot-provided.",
+      "sourceSha256": "bff9bb16e29577e1610119e1db6553ee4883ec52ef1d2e0e2d650b9d1e0b01aa",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/queue/QueueDock.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/queue/QueueDock.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/service.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/settings/EnterBehaviorRow.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/settings/EnterBehaviorRow.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ContextMeter.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ContextMeter.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationRoot.module.css",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Keep target DSH session controls and QS actions; Conversation/Trace share the title row. Original tab roles, callbacks and macOS no-drag controls retained.",
+      "sourceSha256": "cf530088a1d5eedea08dac7a09dfa2a4a537ddd67cfea588527c7308a4623f85",
+      "verification": "2026-10-21 header/sidebar follow-up: 100 focused assertions and Windows live browser; see feature-acceptance.md."
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationRoot.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target resident composer lifecycle retained.",
+      "sourceSha256": "d1438a132ae4fa0a9f7cbd819ff6485aaa99cd4b087f7ac1f394d74703ee88d1",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationSession.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Keep target DSH session controls and QS actions; Conversation/Trace share the title row. Original tab roles, callbacks and macOS no-drag controls retained.",
+      "sourceSha256": "f22ef343df2def2c4d12bc3219bb5041c06a711f9f387701d0000cff0dccadd7",
+      "verification": "2026-10-21 header/sidebar follow-up: 100 focused assertions and Windows live browser; see feature-acceptance.md."
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/EmptyHero.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS identity extension retained with upstream brand fallback and workspace controls.",
+      "sourceSha256": "78c7a82c6b06e1d1c1101ddebb81af03f3252c2bab6d7aceaf1606c7b4f2cc3e",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/HeroShell.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/InputBar.module.css",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "2026-10-21 follow-up: user requested the QS composer. Restored QS toolbar spacing and add-button chrome; native draft, attachment, model compaction and send behavior remain. Global QS composer styles are scoped separately from native transcript disclosures.",
+      "sourceSha256": "b6d40539605b1eafa7aa7fb513c185a2f7a5f708869cda1d8bd96cf6e0d1e9aa",
+      "verification": "InputBar and input-scenarios 139/139; QS attachments and theme suites 26/26; client build and Windows browser geometry inspection."
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/InputBar.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Native composer and QS extension slots retained; removed the obsolete subagent portal seat because lineage now lives in the native header.",
+      "sourceSha256": "90601b0ef6a9cb2641233e0aab23f22a66aeeb7fcb25fac8b3d387f30c3d98b7",
+      "verification": "2026-10-21 native conversation review: see feature-acceptance.md; source tests and actual Windows browser build checked separately."
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/PermissionSelect.module.css",
+      "outcome": "removed-replaced-by-native-permission-component",
+      "custom": true,
+      "verification": "permissions.client.spec.tsx; actual bundle validation pending"
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/PermissionSelect.tsx",
+      "outcome": "removed-replaced-by-native-permission-component",
+      "custom": true,
+      "verification": "permissions.client.spec.tsx; actual bundle validation pending"
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/TodoPanel.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/TodoPanel.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/safari.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/stores.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/css-modules.d.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/invariant.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/submission-settings.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/locale/en.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/locale/zh.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/context-producer.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/draft-editor.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/groups.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/system-prompt.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/contract/user-text.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/group-registry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/group-store.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/user-text-document.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/conversation/user-text-registry.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/draft.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/CommandChip.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/DraftEditor.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/command-chip-node.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/command-chip-selection.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/reference-activation.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/runtime.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/editor/view-binding.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/input/submission-analytics.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationContent.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationHeader.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationMainPanel.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationPanel.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/ConversationWidthControls.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/DefaultConversationViews.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/skeleton/control-row-layout.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/stop-sequence.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/stop-shortcut.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/user-text/UserText.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/user-text/UserText.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/user-text/session-reference-rule.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/user-text/whitespace-rules.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-conversation/src/client/view-selection.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/MenuView.module.css",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/MenuView.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/contract.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/controller.ts",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/locales.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/service.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/client/slots.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/core/contract.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/core/detect.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/core/menu.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/css-modules.d.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/invariant.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/src/types.ts",
+      "outcome": "custom-merged",
+      "custom": true
+    },
+    {
+      "file": "packages/client-ui-input-trigger/locale/en.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-input-trigger/locale/zh.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/AppFrame.module.css",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS reservation and mobile layout preserved.",
+      "sourceSha256": "efd032707cb7387d03de4bf8f2fa155497bce041eecc95a6f78d867cc3a1fe5e",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/AppFrame.tsx",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Use upstream rightbar clamping without active QS claims; retain reservation behavior when claimed. QS overlay receives optional resolved right-panel geometry for the preserved edge toggle; official panel state remains authoritative.",
+      "sourceSha256": "8c27de20f20e7b5efffedf75082ea441f1d46a323de4a205e1f62fd922b4cf4d",
+      "verification": "2026-10-21: 45 layout and 13 QS tests pass; Windows live collapse/reopen retains the selected file tab."
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/DocumentTitle.tsx",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/columns.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Merged upstream column constraints with QS reservations.",
+      "sourceSha256": "9a4f88e37e3b4eb80490bec59befb5c560320fcc4103b53be4469805cbd1e98a",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/index.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Target exports retained with QS extensions. QS overlay receives optional resolved right-panel geometry for the preserved edge toggle; official panel state remains authoritative.",
+      "sourceSha256": "4a64b9b464fa4c2b9d4a8035e4673115bf9bcb2265bd68775aa0246366b1b92a",
+      "verification": "2026-10-21: 45 layout and 13 QS tests pass; Windows live collapse/reopen retains the selected file tab."
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/service.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "Controller delegates to current attachment after remount, including rightbar actions.",
+      "sourceSha256": "a81731ce0f5aec984278af74c96f1166f60a47892d341ae9099b99590c53da5f",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/stores.ts",
+      "outcome": "custom-reviewed-and-tested",
+      "custom": true,
+      "review": "QS claims extend upstream state and navigation without duplicate service.",
+      "sourceSha256": "e35612c3d2fdf5d248fae2fc6507d74098563c708440965c3031cc2f18e8712d",
+      "verification": "vitest.upstream-ui.config.ts plus QS regression suite; real-browser coverage tracked separately"
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/theme-presenter.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/css-modules.d.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/index.ts",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/invariant.ts",
+      "outcome": "upstream-removed",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/locale/en.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/locale/zh.json",
+      "outcome": "upstream",
+      "custom": false
+    },
+    {
+      "file": "packages/client-ui-layout/src/client/shortcut-locales.ts",
+      "outcome": "upstream",
+      "custom": false
+    }
+  ],
+  "acceptance": "partial: types/build/unit tests pass; 27 conflict files require full browser behavior review",
+  "reviewSummary": {
+    "conflictFilesReviewed": 27,
+    "targetUiTestFiles": 114,
+    "targetUiTestsPassed": 1909,
+    "excludedUpstreamTests": 0,
+    "browser": "see test-report.md, separate from source tests",
+    "nativeConversationReview": {
+      "date": "2026-10-21",
+      "baseCommit": "b6e917fd616f209d3cb9be0cc82c9c88cacbc641",
+      "candidate": "local working tree; not merged",
+      "artifact": "269a12e4c1f35e623b92293024f47ce499440f942530a9733c3dc6091a78212a",
+      "upstreamCases": 1909,
+      "qsCases": 39,
+      "testExecution": "114 suites initially: 1905 passed / 4 expected-default or header assertions failed. Updated assertions to requested native behavior; affected 3 suites then passed 34/34. Final running-status suite passed 3/3; final QS selection passed 39/39.",
+      "browser": "Windows Codex Chromium, isolated Host and local synthetic SSE model; streaming/grouping, completion collapse, tool details, long reasoning, reload and light/dark appearance.",
+      "evidence": "screenshots/native-chat-20261021.png"
+    },
+    "qsComposerFollowup": {
+      "date": "2026-10-21",
+      "artifact": "d465e95ee11a79c68a287511bfa193ed274908a880583803cbbfd1709320e806",
+      "inputCases": 139,
+      "attachmentAndThemeCases": 26,
+      "status": "Local working tree; not merged",
+      "scope": "QS composer appearance only; native transcript interactions retained."
+    },
+    "qsBrandFollowup": {
+      "date": "2026-10-21",
+      "artifact": "2c8feaae164d0dc1db96fbf1fc778333439dacf2f393773605b8d06b0947808c",
+      "casesPassed": 24,
+      "scope": "Original QS animated activity mark and rotating copy; QS response typography excludes native reasoning disclosure bodies.",
+      "browser": "Windows live instance: light animation loaded at 22px, QS gray copy rotates, response paragraphs use original 1.85 line-height and weight 450; active user task continues.",
+      "files": [
+        {
+          "file": "packages/ui-quantskills/src/client/QuantSkillsBrand.tsx",
+          "sha256": "0670e20607f9784c1f4bd3c8ee26fa94bca8644a240c936055e5bda564b29b9c"
+        },
+        {
+          "file": "packages/ui-quantskills/src/client/QuantSkillsApp.module.css",
+          "sha256": "2604cb66c3bab7202c9ff50945bf655c4944aed97dc5349b8727bfa962ff08e5"
+        }
+      ]
+    },
+    "qsNativeSidebarFollowup": {
+      "date": "2026-10-21",
+      "artifact": "765c0758afea76410bbcff9f64c5d4e3159a6fd13973f7517a3722c35e511eed",
+      "casesPassed": 100,
+      "scope": "Official sidebar owns tabs, file navigation, code/image previews and collapse. QS contributes result summary, audio/video and isolated HTML. Header view tabs moved inline.",
+      "browser": "Windows: result summary includes 20 unique prepared files; native files/code/image, isolated HTML, 8s 1920x1080 video, trace switch and collapse/reopen verified. Header scrollWidth equals clientWidth at 400px and 584px.",
+      "transport": "GET/HEAD registered as buffered with the official Connection type. Real rc.2 HTTP bridge test covers GET Range and HEAD; local preview now returns 206 instead of 400.",
+      "status": "Local working tree on upgrade branch; not committed, pushed or merged."
+    },
+    "qsSidebarArrowFollowup": {
+      "date": "2026-10-21",
+      "casesPassed": 58,
+      "scope": "Preserve QS edge arrows; official right-sidebar toggle retains tabs; optional overlay geometry follows panel width.",
+      "browser": "Windows 3298: collapse/reopen, delivery.html selection and left-arrow visibility verified; active task continues.",
+      "status": "Local working tree; not committed, pushed or merged."
+    },
+    "qsOpaqueMenusFollowup": {
+      "date": "2026-10-21",
+      "casesPassed": 43,
+      "file": "packages/ui-quantskills/src/client/QuantSkillsApp.module.css",
+      "sourceSha256": "79ae23dff94779d5528611a2ab4b1d3a237ddb440b134183a5efabae454394b0",
+      "scope": "Bridge rc.2 MenuSurface fill/filter tokens to opaque QS theme surfaces; retain composer glass styling.",
+      "browser": "Windows 3298 plus menu: rgb(255, 255, 255), opacity 1, backdrop-filter none; stylesheet hot update, active task preserved.",
+      "status": "Local working tree; not committed, pushed or merged."
+    },
+    "qsNativeSubagentFollowup": {
+      "date": "2026-10-21",
+      "casesPassed": 40,
+      "scope": "Remove obsolete openSession interception, manual subagent modal DOM and CSS; official subagent navigation and parent breadcrumb own the view.",
+      "build": "QS TypeScript and client build passed; obsolete wrapper and popup markers absent from shipped client bundle.",
+      "browser": "Windows 3298 after frontend reload: open child from native catalog and return via parent breadcrumb; zero obsolete backdrop/title/body markers in both views. Four existing child tasks remain running; Host not restarted.",
+      "evidence": "Local runtime-logs/qs-native-subagent-view-20261021.png; user content excluded from repository.",
+      "status": "Local working tree; not committed, pushed or merged."
+    },
+    "qsAgentAdoptionFollowup": {
+      "date": "2026-10-21",
+      "casesPassed": 29,
+      "scope": "Explicit rc.2 session retention and readiness before exact composition checks; bounded acquisition and scoped release. Agent/team archive refresh no longer blocks opening.",
+      "browser": "Windows 3298: click saved stock expert in composer capability picker; blank session opens and picker closes in 484ms on this run. Model, capability and saved permission visible; no prompt submitted. Returned to original task with four running child agents.",
+      "data": "One empty verification session retained; no Host restart, historical deletion or configuration change.",
+      "status": "Local working tree; not committed, pushed or merged."
+    },
+    "qsPr22SyncFollowup": {
+      "date": "2026-10-21",
+      "codeCommit": "41bab60797195e7f41eafe7630908591375cd475",
+      "scope": "Native chat and sidebar with QS branding/composer; menu/subagent/adoption fixes; remove result continuation; package the public deliverables parser.",
+      "validation": "Full source/type check, full build, 1455 QS + 1909 customized UI + 2830 fixed feature tests; plugin and application archive probes passed.",
+      "evidence": "followup-validation-20261021.json",
+      "status": "Code committed on upgrade branch; PR remains Draft and no main merge is authorized."
+    }
+  }
+}

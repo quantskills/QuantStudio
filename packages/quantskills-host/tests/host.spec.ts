@@ -5,9 +5,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
-import InvariantRegistry from '@deepseek-ai/dsh-invariants'
 import SkillRegistry from '@deepseek-ai/dsh-skill'
-import { SettingsProvider, type SettingsNamespace } from '@deepseek-ai/dsh-settings'
 import SubprocessRuntime from '@deepseek-ai/dsh-subprocess'
 import type {
   SubprocessHandle,
@@ -36,13 +34,6 @@ const declaration = [
 const homes: string[] = []
 const contexts: Context[] = []
 
-class MemorySettings extends SettingsProvider {
-  readonly writable = true
-  protected load(): Promise<Record<string, unknown>> { return Promise.resolve({}) }
-  protected persist(_ns: SettingsNamespace, _section: Record<string, unknown>): Promise<void> {
-    return Promise.resolve()
-  }
-}
 
 afterEach(async () => {
   vi.unstubAllGlobals()
@@ -300,7 +291,6 @@ async function harness(home?: string, overrides: Partial<Config> = {}): Promise<
   contexts.push(ctx)
   await ctx.plugin(SkillRegistry)
   await ctx.plugin(FakeGitSubprocess)
-  await ctx.plugin(MemorySettings)
   await ctx.plugin(QuantSkillsHostGateway, {
     dshHome,
     catalogUrl,
@@ -316,7 +306,6 @@ async function harness(home?: string, overrides: Partial<Config> = {}): Promise<
     maxPathBytes: 256,
     ...overrides,
   })
-  await ctx.plugin(InvariantRegistry, { enabled: true })
   return {
     ctx,
     gateway: ctx.get('quantSkillsHost') as QuantSkillsHostGateway,

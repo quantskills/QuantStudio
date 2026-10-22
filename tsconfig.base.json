@@ -4,16 +4,12 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "baseUrl": ".",
-    "paths": {
-      "@deepseek-ai/dsh-agent": ["node_modules/@deepseek-ai/dsh-agent/lib/types/index.d.ts"],
-      "@deepseek-ai/dsh-agent/*": ["node_modules/@deepseek-ai/dsh-agent/lib/types/*"],
-      "@deepseek-ai/dsh-brand": ["node_modules/@deepseek-ai/dsh-brand/lib/types/index.d.ts"],
-      "@deepseek-ai/dsh-brand/*": ["node_modules/@deepseek-ai/dsh-brand/lib/types/*"],
-      "@deepseek-ai/dsh-session": ["node_modules/@deepseek-ai/dsh-session/lib/types/index.d.ts"],
-      "@deepseek-ai/dsh-session/*": ["node_modules/@deepseek-ai/dsh-session/lib/types/*"]
-    },
     "jsx": "react-jsx",
-    "lib": ["es2024", "dom", "dom.iterable"],
+    "lib": [
+      "es2024",
+      "dom",
+      "dom.iterable"
+    ],
     "declaration": true,
     "sourceMap": true,
     "declarationMap": true,
@@ -29,6 +25,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   }
 }

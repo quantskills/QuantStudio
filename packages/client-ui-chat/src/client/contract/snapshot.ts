@@ -1,19 +1,55 @@
 import type {
   ConversationNode, ConversationTimelineSnapshot, PartialAssistant, RunningToolCall,
 } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { ChatConversationViewNode } from './chat-nodes.ts'
+import type { ChatConversationViewNode, ChatNodeDataMap, ChatNodeKind } from './chat-nodes.ts'
+import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
+import type { TurnProcessSpec } from './turn-process.ts'
 
 export type {
-  AssistantBlock, AssistantMessageNode, AssistantProvenanceView, AssistantRequestConfig,
+  AssistantBlock, AssistantMessageNode, AssistantProviderMetadataView, AssistantRequestConfig,
   AssistantTiming, CommandNode, CompactionSummaryNode, ContextMessageNode, ConversationNode,
-  ModelRetryNode, PartialAssistant, RunningToolCall, SteeringMessageNode, TodoItem,
-  ToolCallBlock, ToolResultNode, TurnErrorNode, TurnMaxTokensNode, UnknownSurfaceNode,
+  ModelRetryNode, PartialAssistant, PreparingToolCall, RunningToolCall, StartedToolCall, SteeringMessageNode, TodoItem,
+  ToolArgs, ToolCallBlock, ToolResultNode, TurnErrorNode, TurnMaxTokensNode, UnknownSurfaceNode,
   UserMessageNode,
 } from '@deepseek-ai/dsh-client-ui-conversation/client'
+
+/** Per-key observable used by one mounted Chat Node Seat. */
+export interface ChatNodeSource {
+  /** @returns the current Node for this source's stable key. */
+  readonly getSnapshot: () => ChatConversationViewNode | undefined
+  /** @param listener - callback for changes to this key. @returns the unsubscribe function. */
+  readonly subscribe: (listener: () => void) => () => void
+}
+
+/** Per-key observable for the Turn-process presentation surrounding one Chat Node. */
+export interface ChatNodeProcessSource {
+  /** @returns the current presentation, or absence outside a projected Turn process. */
+  readonly getSnapshot: () => ChatTurnProcessPresentation | undefined
+  /** @param listener - callback for presentation changes. @returns the unsubscribe function. */
+  readonly subscribe: (listener: () => void) => () => void
+}
+
 /** Stable live per-key reader for Chat nodes. */
 export interface ChatNodeStore {
   /** @param key - stable Conversation Context key. @returns current Node, when visible or hidden. */
   get(key: string): ChatConversationViewNode | undefined
+  /** @param key - stable Conversation Context key. @returns its identity-stable observable source. */
+  source(key: string): ChatNodeSource
+  /**
+   * @param key - Chat Node identity.
+   * @returns whether the visible Node belongs to the latest loaded exchange (see `ChatConversationViewNode.groupTree`).
+   */
+  bottomSource(key: string): ObservableSnapshot<boolean>
+  /**
+   * Observe one Turn's data for a single Node kind, including hidden Nodes, in anchor order.
+   * Other Turns and kinds do not notify this source.
+   * @param turn - resolved owning Turn.
+   * @param kind - business Node kind.
+   * @returns an identity-stable source whose array changes only with its members.
+   */
+  turnDataSource<Kind extends ChatNodeKind>(turn: number, kind: Kind): ObservableSnapshot<readonly ChatNodeDataMap[Kind][]>
+  /** @param key - stable Conversation Context key. @returns its Turn-process presentation source. */
+  processSource(key: string): ChatNodeProcessSource
   /** @returns all currently materialized Nodes without imposing render order. */
   values(): readonly ChatConversationViewNode[]
 }
@@ -48,7 +84,20 @@ export interface ChatLocationNodeIndex {
   getStep(turn: number, step: number): readonly string[]
 }
 
-/** Compatibility projection backing StatsLine and the legacy top-level snapshot fields. */
+/** Cross-Node presentation facts derived for one Turn process. */
+export interface ChatTurnProcessPresentation {
+  readonly turn: number
+  readonly spec: TurnProcessSpec
+  /** Whether the loaded window contains this Turn's `turn/start`; folding is decided per Turn on this fact. */
+  readonly turnStarted: boolean
+  readonly turnClosed: boolean
+  readonly hasExternalProcess: boolean
+  /** A visible input after process output prevents one disclosure from hiding its surrounding groups. */
+  readonly hasInterleavedInput: boolean
+  readonly compactAnswer: boolean
+}
+
+/** Compatibility projection backing the composer stats pills (StatsPills.tsx) and the legacy top-level snapshot fields. */
 export interface LegacyConversationSlice {
   readonly nodes: readonly ConversationNode[]
   readonly turnTimings: ReadonlyMap<number, { readonly startTime: number; readonly endTime?: number }>
@@ -75,12 +124,32 @@ declare module '@deepseek-ai/dsh-client-ui-conversation/client' {
 
 const EMPTY_LIST: readonly never[] = []
 const EMPTY_TIMELINE: ConversationTimelineSnapshot = { turnOrder: EMPTY_LIST, turns: new Map() }
+const EMPTY_NODE_SOURCE: ChatNodeSource = {
+  getSnapshot: () => undefined,
+  subscribe: () => () => {},
+}
+const EMPTY_BOTTOM_SOURCE: ObservableSnapshot<boolean> = {
+  getSnapshot: () => false,
+  subscribe: () => () => {},
+}
+const EMPTY_NODE_PROCESS_SOURCE: ChatNodeProcessSource = {
+  getSnapshot: () => undefined,
+  subscribe: () => () => {},
+}
+const EMPTY_TURN_NODE_SOURCE: ObservableSnapshot<readonly never[]> = {
+  getSnapshot: () => EMPTY_LIST,
+  subscribe: () => () => {},
+}
 
 /** Empty Chat target used before a view builder is registered. */
 export const EMPTY_CHAT_SNAPSHOT: ChatSnapshot = {
   order: EMPTY_LIST,
   nodes: {
     get: () => undefined,
+    source: () => EMPTY_NODE_SOURCE,
+    bottomSource: () => EMPTY_BOTTOM_SOURCE,
+    turnDataSource: () => EMPTY_TURN_NODE_SOURCE,
+    processSource: () => EMPTY_NODE_PROCESS_SOURCE,
     values: () => EMPTY_LIST,
   },
   locations: {

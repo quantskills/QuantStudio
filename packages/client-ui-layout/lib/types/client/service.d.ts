@@ -9,7 +9,12 @@
  * open/close from ui-conversation) — writes stay inside the store's declared
  * action set, delivered as the registration's bound actions.
  */
-import type { BoundActions } from '@deepseek-ai/dsh-client-ui-slots';
+import type { BoundActions, HostObservable } from '@deepseek-ai/dsh-client-ui-slots';
+import type { Branded } from '@deepseek-ai/dsh-brand';
+export type MainPanelId = Branded<'MainPanelId'>;
+export interface PanelInfo {
+    readonly activePanelId: MainPanelId | null;
+}
 import type { createLayoutStore } from './stores.ts';
 /** The layout store's bound action set (framework-baked, draft params peeled). */
 export type PanelActions = BoundActions<ReturnType<typeof createLayoutStore>>;
@@ -60,6 +65,11 @@ export interface ConversationTextScaleClaim {
  * only).
  */
 export interface ILayout {
+    readonly panelInfo: HostObservable<PanelInfo>;
+    selectPanel(panelId: MainPanelId | null): void;
+    beginNavigation(): AbortSignal;
+    openRightbar(track: boolean, fullscreen: boolean): void;
+    closeRightbar(): void;
     /** Toggle the sidebar panel (closed ⟷ contract default width). */
     toggleSidebar(): void;
     /**
@@ -100,6 +110,15 @@ export interface ILayout {
 /** Cross-plugin panel-action face (ctx.layout). */
 export declare class LayoutController implements ILayout {
     #private;
+    private readonly hasMainPanel;
+    readonly panelInfo: HostObservable<PanelInfo>;
+    private navigation;
+    selectPanel(panelId: MainPanelId | null): void;
+    beginNavigation(): AbortSignal;
+    dispose(): void;
+    constructor(panels: PanelActions, hasMainPanel: (id: MainPanelId) => boolean, panelInfo: HostObservable<PanelInfo>);
+    openRightbar(track: boolean, fullscreen: boolean): void;
+    closeRightbar(): void;
     /**
      * Adopt the root entry's bound store actions. Called from the root
      * registration's inject hook (a sanctioned assembly side effect), so the

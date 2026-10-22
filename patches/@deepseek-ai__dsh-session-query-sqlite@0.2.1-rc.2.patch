@@ -1,0 +1,30 @@
+diff --git a/lib/index.js b/lib/index.js
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -534,6 +534,15 @@
+ 	async [Service.init]() {
+ 		if (this.config.openAt === "startup") await this._ensureReady(void 0);
+ 	}
++
++	async deleteSession(id) {
++		if (this.config.openAt === "never") return;
++		await this._ensureReady();
++		return this._serialized(undefined, async () => {
++			this._deleteSession("persisted", id);
++			this._deleteSession("live", id);
++		});
++	}
+ 	async searchSessions(request, exec) {
+ 		this._assertSearchEnabled();
+ 		const normalized = normalizeSessionRequest(request, this.config);
+diff --git a/lib/types/index.d.ts b/lib/types/index.d.ts
+--- a/lib/types/index.d.ts
++++ b/lib/types/index.d.ts
+@@ -86,6 +86,7 @@
+     constructor(ctx: Context, config: Config);
+     /** Open eagerly only when activation owns the configured readiness boundary. */
+     protected [Service.init](): Promise<void>;
++    deleteSession(id: import("@deepseek-ai/dsh-session").SessionId): Promise<void>;
+     searchSessions(request: SessionSearchRequest, exec?: SessionSearchExecContext): Promise<SessionSearchPage<SessionSearchHit>>;
+     searchEvents(request: SessionEventSearchRequest, exec?: SessionSearchExecContext): Promise<SessionEventSearchPage>;
+     /** Close the database after every accepted operation reaches quiescence. */

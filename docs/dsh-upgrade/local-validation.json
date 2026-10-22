@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 2,
+  "commit": "8686a8f4493ef326075be6d2190d5e6a6768c600",
+  "runtime": "0.2.1-rc.2",
+  "node": "22.23.2",
+  "pnpm": "11.7.0",
+  "platform": "Windows x64",
+  "check": "passed",
+  "fullBuild": "passed",
+  "suite": {
+    "files": 140,
+    "passed": 1441,
+    "failed": 0,
+    "skipped": 1,
+    "skipReason": "POSIX-only isolated process group test"
+  },
+  "customizedUI": {
+    "files": 114,
+    "passed": 1909,
+    "failed": 0,
+    "skipped": 0
+  },
+  "upstreamFeatureUI": {
+    "files": 106,
+    "passed": 2830,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "fixed upstream source; mocked Remote services; see provenance manifest"
+  },
+  "nativeSmoke": {
+    "result": "passed",
+    "runtime": "0.2.1-rc.2",
+    "commit": "8686a8f4493ef326075be6d2190d5e6a6768c600",
+    "generation": "4c131e3293c2582f058c6dbe0737d424bf975a115839babd552c4475e597133a",
+    "artifact": "910be10278cf710a3b1f0069084cba3686281ef4ccd83af5ffb2f638e4882fdb"
+  },
+  "browser": {
+    "browser": "passed",
+    "scope": "model-settings-streaming-attachment-draft-reload-resize-automation-search-settings",
+    "modelCalls": 7,
+    "commit": "8686a8f4493ef326075be6d2190d5e6a6768c600",
+    "artifact": "910be10278cf710a3b1f0069084cba3686281ef4ccd83af5ffb2f638e4882fdb"
+  },
+  "wholeHomeActivation": {
+    "wholeHomeActivation": "passed",
+    "originalsPreserved": true,
+    "attachmentsAndTradePreserved": true
+  },
+  "legacyMarketMigration": {
+    "legacyMarketMigration": "passed",
+    "oldSourcePreserved": true,
+    "officialDiscoverSelected": true
+  },
+  "optionalComposition": {
+    "optionalComposition": "passed",
+    "explicitlySelected": [
+      "@deepseek-ai/dsh-experimental-session-search",
+      "@deepseek-ai/dsh-experimental-ralph-bundle",
+      "@deepseek-ai/dsh-experimental-terminal-bundle",
+      "@deepseek-ai/dsh-experimental-badge-skill-bundle",
+      "@deepseek-ai/dsh-experimental-session-titles-bundle",
+      "@deepseek-ai/dsh-experimental-agent-team-profile",
+      "@deepseek-ai/dsh-experimental-voice-input-bundle",
+      "@deepseek-ai/dsh-experimental-cot-translation-bundle",
+      "@deepseek-ai/dsh-experimental-auto-review",
+      "@deepseek-ai/dsh-experimental-inspector-profile",
+      "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+      "@deepseek-ai/dsh-experimental-tool-worktree"
+    ],
+    "defaultSelectionChanged": false
+  },
+  "optionalSettings": {
+    "result": "passed",
+    "runtime": "0.2.1-rc.2",
+    "scope": "official-manager-on-disk-settings",
+    "invalidSelectionPreservesProfile": true,
+    "externalCapabilitiesExecuted": false,
+    "onDemand": [
+      {
+        "name": "@deepseek-ai/dsh-subagent-claude-code",
+        "spec": "@deepseek-ai/dsh-subagent-claude-code@0.2.1-rc.2",
+        "defaultNotInstalled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-subagent-codex",
+        "spec": "@deepseek-ai/dsh-subagent-codex@0.2.1-rc.2",
+        "defaultNotInstalled": true
+      }
+    ],
+    "results": [
+      {
+        "name": "@deepseek-ai/dsh-experimental-session-search",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-ralph-bundle",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-terminal-bundle",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-badge-skill-bundle",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-session-titles-bundle",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-agent-team-profile",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-voice-input-bundle",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-cot-translation-bundle",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-auto-review",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-inspector-profile",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-plugin-market-bundle",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      },
+      {
+        "name": "@deepseek-ai/dsh-experimental-tool-worktree",
+        "defaultDisabled": true,
+        "enabled": true,
+        "repeatIsIdempotent": true,
+        "persistedAcrossServiceRestart": true,
+        "disabled": true
+      }
+    ]
+  },
+  "originalModifiedSourceFiles": {
+    "checked": 48,
+    "unchanged": 48,
+    "mismatches": 0
+  },
+  "wholeRealHomeProof": "whole-home-proof.json",
+  "productionActivation": false,
+  "productionHomeUsed": false,
+  "completePlanAcceptance": false,
+  "remainingConditions": [
+    "external test account and model/search/translation endpoints",
+    "dedicated SSH test target",
+    "microphone/browser permission and voice service",
+    "available futures simulation test service"
+  ],
+  "earlierEvidence": "local-validation-history-20261020.json"
+}

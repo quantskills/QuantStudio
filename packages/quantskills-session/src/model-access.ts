@@ -2,7 +2,6 @@ import { randomUUID, createHash } from 'node:crypto'
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from '@deepseek-ai/dsh-settings'
 import { credentialRef } from '@deepseek-ai/dsh-credentials'
-import s from '@deepseek-ai/schemastery'
 import { z } from 'zod'
 import { MODEL_SERVICES, suggestedModelProfile, suggestedRouteReasoning } from './model-service-catalog.ts'
 import { MODEL_ACCESS_NS, type ModelAccessSettings, type ConnectionPolicy } from './model-access-settings.ts'
@@ -46,22 +45,18 @@ export class QuantSkillsModelAccess {
   constructor(private readonly ctx: Context, _codexExecutable?: string, private readonly request: typeof fetch = fetch) {
     ctx.inject(['settings', 'credentials'], scope => {
       this.services = scope
-      scope.settings.register(MODEL_ACCESS_NS, s.object({
-        connections: s.dict(s.object({
-          service: s.string(), auto: s.boolean(), state: s.string(), message: s.string(), verifiedModels: s.array(s.string()),
-        })).default({}),
-      }))
+
     })
   }
   private profiles(): Record<string, Profile> {
-    return (this.connected.settings.get(NS) as { providers?: Record<string, Profile> } | undefined)?.providers ?? {}
+    return (this.connected.settings.describe().find(entry => entry.ns === NS)?.value as { providers?: Record<string, Profile> } | undefined)?.providers ?? {}
   }
   private get connected(): Context {
     if (!this.services) throw new Error('模型设置或凭据服务尚未就绪，请重新连接 Host。')
     return this.services
   }
   private policies(): Record<string, ConnectionPolicy> {
-    return (this.connected.settings.get(MODEL_ACCESS_NS) as ModelAccessSettings | undefined)?.connections ?? {}
+    return (this.connected.settings.describe().find(entry => entry.ns === MODEL_ACCESS_NS)?.value as ModelAccessSettings | undefined)?.connections ?? {}
   }
   private fingerprint(draft: ModelConnectionDraft): string {
     const prior = draft.route ? this.profiles()[draft.route] : undefined

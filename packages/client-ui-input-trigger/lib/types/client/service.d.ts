@@ -34,6 +34,7 @@ export declare class InputTriggerService extends Service implements InputTrigger
      * single prewarm moment.
      * @param actx - session-scope ctx.
      * @returns the resident controller.
+     * @throws when the Context no longer belongs to a retained Session generation.
      */
     sessionOf(actx: ClientContext): InputTriggerController;
     private sessions;

@@ -9,7 +9,10 @@
  * open/close from ui-conversation) — writes stay inside the store's declared
  * action set, delivered as the registration's bound actions.
  */
-import type { BoundActions } from '@deepseek-ai/dsh-client-ui-slots'
+import type { BoundActions, HostObservable } from '@deepseek-ai/dsh-client-ui-slots'
+import type { Branded } from '@deepseek-ai/dsh-brand'
+export type MainPanelId = Branded<'MainPanelId'>
+export interface PanelInfo { readonly activePanelId: MainPanelId | null }
 import type { createLayoutStore } from './stores.ts'
 
 /** The layout store's bound action set (framework-baked, draft params peeled). */
@@ -67,6 +70,11 @@ export interface ConversationTextScaleClaim {
  * only).
  */
 export interface ILayout {
+  readonly panelInfo: HostObservable<PanelInfo>
+  selectPanel(panelId: MainPanelId | null): void
+  beginNavigation(): AbortSignal
+  openRightbar(track: boolean, fullscreen: boolean): void
+  closeRightbar(): void
   /** Toggle the sidebar panel (closed ⟷ contract default width). */
   toggleSidebar(): void
   /**
@@ -107,6 +115,19 @@ export interface ILayout {
 
 /** Cross-plugin panel-action face (ctx.layout). */
 export class LayoutController implements ILayout {
+  private navigation = new AbortController()
+  selectPanel(panelId: MainPanelId | null): void {
+    if (panelId !== null && !this.hasMainPanel(panelId)) throw new Error(`Unknown main panel: ${panelId}`)
+    this.navigation.abort(); this.#require().selectPanel(panelId)
+  }
+  beginNavigation(): AbortSignal { this.navigation.abort(); this.navigation = new AbortController(); return this.navigation.signal }
+  dispose(): void { this.navigation.abort() }
+
+  constructor(panels: PanelActions, private readonly hasMainPanel: (id: MainPanelId) => boolean, readonly panelInfo: HostObservable<PanelInfo>) { this.attachPanels(panels) }
+
+  openRightbar(track: boolean, fullscreen: boolean): void { this.#require().openRightbar(track, fullscreen) }
+  closeRightbar(): void { this.#require().closeRightbar() }
+
   #panels: PanelActions | undefined
   readonly #sidebarReservations = new Map<symbol, number>()
   #sidebarClaim: {
@@ -282,12 +303,12 @@ export class LayoutController implements ILayout {
       this.#syncDetailsReservation()
       claim.onDisplaced()
     }
-    this.#require().openDetails()
+    this.openRightbar(true, false)
   }
 
   /** Close the details panel. */
   closeDetails(): void {
-    this.#require().closeDetails()
+    this.closeRightbar()
   }
 
   #syncSidebarReservation(): void {

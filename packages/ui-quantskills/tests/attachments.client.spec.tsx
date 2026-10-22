@@ -75,7 +75,7 @@ describe('QuantSkills generic-file composer control', () => {
       attachedAt: 2,
     }))
     const appendDraft = vi.fn()
-    const view = render(<QuantSkillsAttachmentControl {...props({ upload, appendDraft })}/>)
+    const view = render(<Composer control={props({ upload, appendDraft })} />)
     const input = view.container.querySelector('input[type="file"]') as HTMLInputElement
     const file = new File(['a,b\n1,2\n'], 'factor.csv', { type: 'text/csv' })
 
@@ -130,6 +130,7 @@ describe('QuantSkills generic-file composer control', () => {
     fireEvent.click(screen.getByRole('button', { name: '发送成功' }))
     expect(screen.queryByRole('button', { name: '移除文件 notes.txt' })).toBeNull()
     expect(view.container.querySelector('[data-composer-files]')).toBeNull()
+    expect(screen.queryByRole('status')).toBeNull()
   })
 
   it('restores chips from a saved draft and follows manual reference removal', () => {

@@ -18,16 +18,13 @@
       "types": "./lib/types/index.d.ts",
       "default": "./lib/index.js"
     },
-    "./invariant": {
-      "types": "./lib/types/invariant.d.ts",
-      "default": "./lib/invariant.js"
-    },
     "./client": {
       "types": "./lib/types/client/index.d.ts",
       "default": "./lib/client.js"
     },
     "./src/*": "./src/*",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
   },
   "dsh": {
     "client": {
@@ -50,29 +47,32 @@
     "clsx": "^2.0.0"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1"
+    "@deepseek-ai/cordis": "4.0.5"
   },
   "devDependencies": {
-    "@deepseek-ai/dsh-client-locale": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-client-locale": "0.2.1-rc.2",
     "@deepseek-ai/dsh-client-ui-conversation": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-renderer": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-client-test-runtime": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-client-ui-primitives": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-client-ui-slots": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-invariants": "0.1.2-alpha.2",
+    "@deepseek-ai/dsh-client-ui-renderer": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-client-test-runtime": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-primitives": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-slots": "0.2.1-rc.2",
     "@types/react": "~18.3.1",
-    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/cordis": "4.0.5",
     "react": "^18.2.0",
-    "@deepseek-ai/dsh-file-reference": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-api-session-controller": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-client-store": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-session": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-client-ui-session": "0.1.2-alpha.2"
+    "@deepseek-ai/dsh-file-reference": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-api-session-controller": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-client-store": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-session": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-session": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-util-values": "0.2.1-rc.2",
+    "clsx": "^2.0.0"
   },
   "files": [
     "lib/index.js",
-    "lib/invariant.js",
     "lib/client.js",
     "lib/types/**/*.d.ts"
-  ]
+  ],
+  "engines": {
+    "dsh": "0.2.1-rc.2"
+  }
 }

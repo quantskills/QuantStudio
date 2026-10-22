@@ -8,7 +8,7 @@ afterEach(cleanup)
 
 function headerProps(options: { selectedView?: string; kind?: 'skill' | 'agent' | 'team'; blank?: boolean } = {}): ConversationSessionHeaderProps {
   const session = {
-    id: 'parent', displayTitle: '创作', blank: options.blank ?? false, running: false,
+    retainedBy: { mainView: 1 }, id: 'parent', displayTitle: '创作', blank: options.blank ?? false, running: false,
     projectionValues: { quantSkillsAuthoringPending: {
       kind: options.kind ?? 'skill', toolCallId: 'prepared', treeDigest: 'sha256:123',
       name: '研究助手', description: '生成每日研究报告', members: [],
@@ -16,12 +16,12 @@ function headerProps(options: { selectedView?: string; kind?: 'skill' | 'agent' 
   }
   const list = { current: 'parent', ids: ['parent'], byId: { parent: session } }
   return {
-    sessionId: 'parent', useSession: (select: (state: typeof session) => unknown) => select(session),
+    hideChrome: options.blank ?? false, sessionId: 'parent', useSession: (select: (state: typeof session) => unknown) => select(session),
     useSessions: (select: (state: typeof list) => unknown) => select(list),
     useConversation: (select: (state: { activeTargets: Set<string> }) => unknown) => select({ activeTargets: new Set() }),
     useConversationViews: (select: (state: { id: string; label: string }[]) => unknown) => select([{ id: 'chat', label: '聊天' }, { id: 'trajectory', label: '轨迹' }]),
     useStore: (select: (state: { view: string }) => unknown) => select({ view: options.selectedView ?? 'chat' }),
-    actions: { setView: vi.fn() }, renderSlot: () => null, open: vi.fn(), t: (key: string) => key,
+    selectView: vi.fn(), renderSlot: () => null, open: vi.fn(), t: (key: string) => key,
   } as unknown as ConversationSessionHeaderProps
 }
 
@@ -43,7 +43,7 @@ it('lets a session viewing trajectory switch back to chat', () => {
   render(<ConversationSessionHeader {...props} />)
   expect(screen.getByRole('tab', { name: '轨迹' }).getAttribute('aria-selected')).toBe('true')
   fireEvent.click(screen.getByRole('tab', { name: '聊天' }))
-  expect(props.actions.setView).toHaveBeenCalledWith('chat')
+  expect(props.selectView).toHaveBeenCalledWith('chat')
 })
 
 it('falls back to chat when a persisted view no longer exists', () => {
@@ -51,23 +51,22 @@ it('falls back to chat when a persisted view no longer exists', () => {
   expect(screen.getByRole('tab', { name: '聊天' }).getAttribute('aria-selected')).toBe('true')
 })
 
-it('mounts action and utility controls while keeping subagents in the composer', () => {
-  const seat = document.createElement('div')
-  seat.setAttribute('data-composer-subagents', '')
-  document.body.append(seat)
-  try {
-    const props = headerProps()
-    props.renderSlot = ((name: string) => name.endsWith('.actions') ? <button>收藏会话</button>
-      : name.endsWith('.utilities') ? <button>会话菜单</button>
-        : name.endsWith('.lineage') ? <button>子智能体</button> : null) as never
-    const view = render(<ConversationSessionHeader {...props} />)
-    expect(view.container.querySelector('[data-conversation-controls]')?.contains(screen.getByRole('button', { name: '收藏会话' }))).toBe(true)
-    expect(screen.getByRole('button', { name: '会话菜单' })).toBeTruthy()
-    expect(seat.contains(screen.getByRole('button', { name: '子智能体' }))).toBe(true)
-  } finally { seat.remove() }
+it('keeps QS actions and subagent navigation accessible in the native session header', () => {
+  const props = headerProps()
+  const openSubagents = vi.fn()
+  props.renderSlot = ((name: string) => name.endsWith('.actions') ? <button>收藏会话</button>
+    : name.endsWith('.utilities') ? <button>会话菜单</button>
+      : name.endsWith('.lineage') ? <button onClick={openSubagents}>子智能体</button> : null) as never
+  render(<ConversationSessionHeader {...props} />)
+  expect(screen.getByText('创作')).toBeTruthy()
+  expect(screen.getByRole('button', { name: '收藏会话' })).toBeTruthy()
+  expect(screen.getByRole('button', { name: '会话菜单' })).toBeTruthy()
+  fireEvent.click(screen.getByRole('button', { name: '子智能体' }))
+  expect(openSubagents).toHaveBeenCalledOnce()
 })
 
 it('keeps blank conversations free of session controls', () => {
-  const view = render(<ConversationSessionHeader {...headerProps({ blank: true })} />)
-  expect(view.container.querySelector('[data-conversation-controls]')).toBeNull()
+  render(<ConversationSessionHeader {...headerProps({ blank: true })} />)
+  expect(screen.queryByRole('tablist')).toBeNull()
+  expect(screen.queryByRole('navigation')).toBeNull()
 })

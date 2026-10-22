@@ -1,51 +1,55 @@
 /**
- * Composer submission policy. It owns the live busy-Enter
- * preference and resolves keyboard gestures into queue/steer delivery modes;
- * Host and Agent keep the actual delivery-window authority.
+ * Composer submission policy. It owns the live busy-Enter preference and
+ * resolves submission gestures into queue/steer delivery modes; Host and
+ * Agent keep the actual delivery-window authority.
  */
 import { createSnapshotStore, } from '@deepseek-ai/dsh-client-store';
 import { BUSY_ENTER_FIELD, DEFAULT_BUSY_ENTER_BEHAVIOR } from "../../submission-settings.js";
 export { DEFAULT_BUSY_ENTER_BEHAVIOR } from "../../submission-settings.js";
 /**
- * Busy-Enter policy used by both the composer inject face and its Settings row.
- * Direct `steer` is intentionally best-effort: AgentLoop turns a closed-window
- * submission into the next waking Queue item.
+ * Resolve one submission gesture against the busy-Enter preference. Plain
+ * Enter and the primary Send button share the `enter` gesture, so the button
+ * delivers exactly what Enter would. Direct `steer` is intentionally
+ * best-effort: AgentLoop turns a closed-window submission into the next waking
+ * Queue item.
+ * @param preferred - the live busy-Enter preference.
+ * @param running - whether the addressed agent currently reports busy.
+ * @param gesture - plain Enter (or the Send button) or the Cmd/Ctrl-accelerated chord.
+ * @param steeringAvailable - whether this session transport supports steering.
+ * @returns Queue outside steer-capable busy state; otherwise the preferred mode or its opposite.
+ */
+export function resolveSubmitMode(preferred, running, gesture, steeringAvailable) {
+    if (!running || !steeringAvailable)
+        return 'queue';
+    if (gesture === 'enter')
+        return preferred;
+    return preferred === 'queue' ? 'steer' : 'queue';
+}
+/**
+ * Busy-Enter preference shared by the composer bar inject face and its
+ * Settings row: one live store the bar's submission gestures and Send label
+ * read, backed by the Host user-settings document when one is composed.
  */
 export class ComposerSubmissionPolicy {
-    /** Reactive preference source for the Settings row. */
+    /** Reactive preference source for the composer bar and the Settings row. */
     busyEnter = createSnapshotStore(DEFAULT_BUSY_ENTER_BEHAVIOR);
+    unsubscribe;
     host;
     /**
-     * @param host - durable preference scope owned by the providing plugin;
-     * absent compositions stay process-local. The adoption subscription shares
-     * the scope's plugin lifetime — a disposed scope never publishes again, so
-     * the policy needs no release hook.
+     * @param host Shared configuration form; omitted keeps the browser-local default.
      */
     constructor(host) {
         this.host = host;
         if (host !== undefined) {
-            host.subscribe(() => { this.adopt(host); });
+            this.unsubscribe = host.subscribe(() => { this.adopt(host); });
             this.adopt(host);
         }
     }
+    /** Release the preference subscription. */
+    dispose() { this.unsubscribe?.(); }
     /**
-     * Resolve one keyboard gesture without changing state.
-     * @param running - whether the addressed agent currently reports busy.
-     * @param gesture - plain Enter or the Cmd/Ctrl-accelerated chord.
-     * @param steeringAvailable - whether this session transport supports steering.
-     * @returns Queue outside steer-capable busy state; otherwise the preferred mode or its opposite.
-     */
-    resolve(running, gesture, steeringAvailable) {
-        if (!running || !steeringAvailable)
-            return 'queue';
-        const preferred = this.busyEnter.getSnapshot();
-        if (gesture === 'enter')
-            return preferred;
-        return preferred === 'queue' ? 'steer' : 'queue';
-    }
-    /**
-     * Change the plain-Enter behavior used during busy state; the live value
-     * publishes before the durable write starts.
+     * Change the busy-state submission behavior; the live value publishes
+     * before the durable write starts.
      * @param behavior - Queue or Steer.
      */
     setBusyEnter(behavior) {

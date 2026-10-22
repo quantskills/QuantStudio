@@ -1,5 +1,7 @@
 /** Stable QuantSkills launcher with pending activation and rollback. */
 
+import { createRequire } from 'node:module'
+import { assertMigrationReady, assertRollbackSafe, waitForReady, candidateArtifact, BOOTSTRAP_PROTOCOL, TARGET_DSH } from './runtime-protocol.mjs'
 import { spawn, spawnSync } from 'node:child_process'
 import { open, readFile, readdir, realpath, rename, rm, stat, unlink, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
@@ -103,7 +105,7 @@ export async function main(argv = process.argv.slice(2), environment = process.e
     ? resolve(dirname(modulePath), '../../..') : undefined
   const dshHome = resolveDshHome({ ...environment, DSH_HOME: environment.DSH_HOME || installedHome })
   const applicationRoot = join(dshHome, 'quantskills', 'application')
-  const bootstrapRoot = join(applicationRoot, 'bootstrap')
+  const bootstrapRoot = environment.QUANTSKILLS_BOOTSTRAP_VERSION_ROOT || join(applicationRoot, 'bootstrap')
   const versionsRoot = join(applicationRoot, 'versions')
   const statePath = join(applicationRoot, 'state.json')
   const config = await readBootstrapConfig(join(bootstrapRoot, 'config.json'))
@@ -114,14 +116,9 @@ export async function main(argv = process.argv.slice(2), environment = process.e
   const port = readPort(hostArgs, config.defaultPort)
   const lock = await acquireLaunchLock(join(applicationRoot, 'launch.lock'), port)
   try {
-    let state
-    try {
-      state = await readState(statePath)
-    } catch (_corruptApplicationState) {
-      state = await recoverApplicationState(versionsRoot)
-      await writeState(statePath, state)
-    }
-    const repaired = await repairApplicationState(state, versionsRoot)
+    // Never turn unreadable/unknown state into a guessed active version.
+    let state = await readState(statePath)
+    const repaired = await repairApplicationState(state, versionsRoot, dshHome)
     if (JSON.stringify(repaired) !== JSON.stringify(state)) {
       state = repaired
       await writeState(statePath, state)
@@ -137,6 +134,7 @@ export async function main(argv = process.argv.slice(2), environment = process.e
         return await waitForExit(candidate)
       } catch (error) {
         stopProcessTree(candidate)
+        await assertRollbackSafe(dshHome)
         state = rejectPendingState(state, 'APPLICATION_STARTUP_HEALTH_FAILED', Date.now())
         await writeState(statePath, state)
         selected = await selectVersion(state, versionsRoot, parsed.sourceRoot ?? config.fallbackSourceRoot)
@@ -195,14 +193,19 @@ export async function recoverApplicationState(versionsRoot) {
  * @param {string} versionsRoot - managed immutable versions directory.
  * @returns {Promise<ReturnType<typeof parseApplicationState>>} launchable state.
  */
-export async function repairApplicationState(state, versionsRoot) {
+export async function repairApplicationState(state, versionsRoot, dshHome) {
   let repaired = state
+  // A source checkout has no managed-version pointers. Its selected runtime is
+  // checked by startSelected; this is not a rollback to an older generation.
+  if (state.active === undefined && state.pending === undefined && state.previous === undefined) return state
   if (repaired.pending !== undefined
     && !await validApplicationRoot(managedVersionPath(versionsRoot, repaired.pending))) {
+    if (dshHome) await assertRollbackSafe(dshHome)
     repaired = rejectPendingState(repaired, 'APPLICATION_STARTUP_CANDIDATE_MISSING', Date.now())
   }
   if (repaired.active !== undefined
     && await validApplicationRoot(managedVersionPath(versionsRoot, repaired.active))) return repaired
+  if (dshHome) await assertRollbackSafe(dshHome)
   if (repaired.previous !== undefined
     && await validApplicationRoot(managedVersionPath(versionsRoot, repaired.previous))) {
     return parseApplicationState({
@@ -219,34 +222,57 @@ export async function repairApplicationState(state, versionsRoot) {
 }
 
 async function startSelected(root, config, hostArgs, dshHome) {
+  const require = createRequire(join(root, 'package.json'))
+  const coreManifest = JSON.parse(await readFile(require.resolve('@deepseek-ai/dsh/package.json'), 'utf8'))
+  const manifest = await readJson(join(root, 'package.json'))
+  const runtime = coreManifest.version
+  if (manifest.devDependencies?.['@deepseek-ai/dsh'] !== runtime) throw new Error('Installed core does not match candidate manifest.')
+  const migration = await assertMigrationReady(dshHome, runtime)
+  const isCandidate = runtime === TARGET_DSH
+  const commitResult = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8', windowsHide: true })
+  const commit = commitResult.stdout?.trim()
+  if (isCandidate && !SHA_PATTERN.test(commit ?? '')) throw new Error('Candidate commit is unknown.')
+  const expected = { nonce: randomUUID(), commit, runtime, generation: migration?.generation ?? 'legacy',
+    ...(isCandidate ? { artifact: await candidateArtifact(root) } : {}) }
+
   // Retain the old profile only when rolling back to a version predating isolation.
   const profile = existsSync(join(root, 'scripts', 'install-profile.mjs'))
     ? resolveProfile({ QUANTSKILLS_PROFILE: config.profile }) : 'web'
   const receipt = join(dshHome, 'quantskills', 'application', `.profile-${randomUUID()}.json`)
   const environment = { DSH_HOME: dshHome, QUANTSKILLS_PNPM_CLI: config.pnpmCli,
-    QUANTSKILLS_PROFILE: profile, QUANTSKILLS_PROFILE_RECEIPT: receipt }
-  let host
+    QUANTSKILLS_PROFILE: profile, QUANTSKILLS_PROFILE_RECEIPT: receipt,
+    QUANTSKILLS_BOOTSTRAP_PROTOCOL: String(BOOTSTRAP_PROTOCOL), QUANTSKILLS_READY_EXPECTED: JSON.stringify(expected) }
+  let host, receiptResolved = false
   try {
     await runPnpm(config, ['run', 'install:plugin'], root, dshHome, environment)
-    host = spawn(config.nodeExecutable, [config.pnpmCli, 'exec', 'dsh', '--profile', profile, ...hostArgs], {
+    host = spawn(config.nodeExecutable, isCandidate ? [join(root, 'scripts/run-profile.mjs'), ...hostArgs] : [config.pnpmCli, 'exec', 'dsh', '--profile', profile, ...hostArgs], {
       cwd: root,
       env: { ...process.env, ...environment },
-      stdio: 'inherit',
+      stdio: isCandidate ? ['inherit', 'inherit', 'inherit', 'ipc'] : 'inherit',
       windowsHide: true,
     })
+    if (isCandidate) await waitForReady(host, expected, config.healthTimeoutMs)
     await waitForHealthyHost(host, readPort(hostArgs, config.defaultPort), config.healthTimeoutMs)
+    if (isCandidate && await candidateArtifact(root) !== expected.artifact) throw new Error('Candidate build changed during activation.')
+    if (isCandidate && process.send) process.send({ type: 'quantskills:activated', protocol: BOOTSTRAP_PROTOCOL, ...expected })
+    receiptResolved = true
     return host
   } catch (error) {
     stopProcessTree(host)
     let transaction
     try { transaction = await readJson(receipt) } catch (missing) { if (!isCode(missing, 'ENOENT')) throw missing }
     if (transaction) {
+      try { await assertRollbackSafe(dshHome) }
+      catch (rollbackError) {
+        throw new AggregateError([error, rollbackError], 'Candidate startup failed; automatic rollback is unsafe. Profile receipt and backup retained.')
+      }
       if (transaction.home !== resolve(dshHome) || transaction.profile !== profile) throw new Error('Invalid profile startup receipt.', { cause: error })
       await restoreProfileTransaction(transaction)
+      receiptResolved = true
       console.error('[QuantStudio] Startup failed; the previous profile was restored.')
     }
     throw error
-  } finally { await unlink(receipt).catch(() => undefined) }
+  } finally { if (receiptResolved) await unlink(receipt).catch(() => undefined) }
 }
 
 async function runPnpm(config, args, cwd, dshHome, environment = {}) {
@@ -327,6 +353,8 @@ function processExists(pid) {
 }
 
 async function cleanUnusedVersions(versionsRoot, state) {
+  // A data migration may require any of these runtimes for offline recovery.
+  if (existsSync(join(dirname(versionsRoot), 'migration.json'))) return
   const retained = new Set([state.active, state.previous, state.pending].filter(Boolean))
   for (const entry of await readdir(versionsRoot, { withFileTypes: true })) {
     if (!entry.isDirectory() || entry.isSymbolicLink() || !SHA_PATTERN.test(entry.name) || retained.has(entry.name)) continue

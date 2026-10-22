@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { mkdtemp, rm, readFile, mkdir, writeFile, symlink } from 'node:fs/promises'
+import { mkdtemp, rm, readFile, mkdir, writeFile, symlink, readdir } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Context } from '@deepseek-ai/cordis'
@@ -7,7 +7,7 @@ import { SessionId, SessionStore, type Session, type SessionHeader } from '@deep
 import { AgentRegistry, type Agent } from '@deepseek-ai/dsh-agent'
 import { SessionProjectionRegistry } from '@deepseek-ai/dsh-session-projection'
 import { SessionProjectionCache } from '@deepseek-ai/dsh-session-projection-cache'
-import JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
+import * as JsonlSessionPersistence from '@deepseek-ai/dsh-session-persistence-jsonl'
 import SqliteSessionQueryEngine from '@deepseek-ai/dsh-session-query-sqlite'
 import { Storage } from '@deepseek-ai/dsh-storage'
 import * as StorageJson from '@deepseek-ai/dsh-storage-json'
@@ -16,6 +16,7 @@ import { WorkspaceRegistry } from '@deepseek-ai/dsh-workspace'
 import LocalFileSystem from '@deepseek-ai/dsh-fs-local'
 import { createMessage, createToolResultMessage, ToolCallId } from '@deepseek-ai/dsh-llm'
 import { SessionLifecycle } from '../src/session-lifecycle.ts'
+import { inspectSession } from '../src/session-storage.ts'
 
 const contexts: Context[] = [], roots: string[] = []
 afterEach(async () => {
@@ -41,21 +42,32 @@ async function harness(home?: string) {
   await ctx.plugin(SessionProjectionCache, { writeEveryEvents: 10, writeIntervalMs: 500 })
   await ctx.plugin(WorkspaceRegistry)
   await ctx.plugin(SqliteSessionQueryEngine, { path: join(root, 'search.sqlite') })
-  const publish = async (session: Session) => {
+  const publish = async (session: Session, storage: { close(): Promise<void> }) => {
     const agent = { id: session.id, session, status: 'idle' } as Agent
     const detachSession = ctx.sessions.enter(session), detachAgent = ctx.agents.enter(agent, undefined)
     ctx.sessions.announce(session); ctx.agents.announce(agent)
-    return { agent, dispose: async () => { await ctx.sessions.flush(session); detachAgent(); detachSession() } }
+    return { agent, dispose: async () => { await ctx.sessions.flush(session); await storage.close(); detachAgent(); detachSession() } }
   }
   ctx.agents.setFactory({
-    createAgent: async (_ctx, options) => publish(ctx.sessions.prepare(options.sessionId, { meta: options.meta })),
+    createAgent: async (_ctx, options) => {
+      const session = ctx.sessions.prepare(options.sessionId, { meta: options.meta })
+      const storage = await ctx.sessionPersistence.create(session.header)
+      try { return await publish(session, storage) } catch (error) { await storage.close(); throw error }
+    },
     resume: async (_ctx, options) => {
-      const preparation = await ctx.sessionPersistence.prepare(options.resumeSessionId)
-      try { return await publish(preparation.session) } finally { preparation[Symbol.dispose]() }
+      const storage = await ctx.sessionPersistence.open(options.resumeSessionId, 'write')
+      try {
+        const { events } = await storage.read(0)
+        const session = ctx.sessions.prepare(options.resumeSessionId, { seed: events, meta: storage.header,
+          inheritedEventCount: storage.inheritedEventCount, eventState: 'detached' })
+        return await publish(session, storage)
+      } catch (error) { await storage.close(); throw error }
     },
   })
   const create = async (id: string, meta: Partial<SessionHeader> = {}) => {
     const handle = await ctx.agents.create({ sessionId: SessionId(id), meta: { cwd: root, ...meta } })
+    handle.agent.session.append('turn/start', { turn: 1 })
+    handle.agent.session.append('step/start', { turn: 1, step: 1 })
     handle.agent.session.append('assistant/message', { turn: 1, step: 1, message: createMessage({
       role: 'assistant', content: [{ type: 'text', text: 'unique lifecycle research evidence' }],
       source: { kind: 'model', provider: 'test', model: 'test' },
@@ -68,18 +80,60 @@ async function harness(home?: string) {
 }
 const owned = async () => {}
 
+it('refuses a foreign physical header before creating a deletion fence or removing a generation', async () => {
+  const h = await harness(), handle = await h.create('header-owner'), id = handle.agent.id
+  await handle.dispose()
+  const paths: string[] = []
+  async function walk(dir: string) {
+    for (const entry of await readdir(dir, { withFileTypes: true })) {
+      const path = join(dir, entry.name)
+      if (entry.isDirectory()) await walk(path)
+      else if (entry.name.endsWith('.jsonl')) paths.push(path)
+    }
+  }
+  await walk(join(h.root, 'sessions'))
+  expect(paths).toHaveLength(1)
+  const file = paths[0]!, original = await readFile(file, 'utf8'), rows = original.trimEnd().split('\n')
+  rows[0] = JSON.stringify({ ...JSON.parse(rows[0]!), id: 'foreign-owner' })
+  const corrupted = rows.join('\n') + '\n'
+  await writeFile(file, corrupted)
+  const persistence = h.ctx.sessionPersistence as unknown as { deleteSession(id: SessionId): Promise<void> }
+  await expect(persistence.deleteSession(id)).rejects.toThrow(/does not match header/)
+  expect(await readFile(file, 'utf8')).toBe(corrupted)
+  expect((await readdir(join(h.root, 'sessions'))).some(name => name.startsWith('.qs-deleted-'))).toBe(false)
+})
+
 function declareFile(session: Session, path: string) {
   session.append('assistant/message', { turn: 1, step: 1, message: createMessage({ role: 'assistant',
     content: [{ type: 'text', text: `报告已生成：\`${path}\`` }], source: { kind: 'model', provider: 'test', model: 'test' },
   }) }, { surfaceOp: 'append' })
 }
 function writeEvidence(session: Session, path: string, operation = 'Created') {
-  const callId = ToolCallId(`write-${session.events.length}`)
+  const callId = ToolCallId(`write-${session.snapshotEvents().length}`)
   session.append('tool/call', { turn: 1, step: 1, callId, name: 'write', arguments: JSON.stringify({ file_path: path, content: 'test report' }) })
   session.append('tool/result', { turn: 1, step: 1, message: createToolResultMessage({ callId, isError: false, content: [{ type: 'text', text: `<path>${path}</path>\n<type>file</type>\n<content>\n${operation} file\n</content>` }] }) }, { surfaceOp: 'append' })
 }
 
 describe('durable conversation lifecycle with the real DSH storage backends', () => {
+  it('supports an aliased ancestor while still retaining links inside a workspace', async () => {
+    const outer = await mkdtemp(join(tmpdir(), 'qs-session-lifecycle-')); roots.push(outer)
+    await mkdir(join(outer, 'physical/work'), { recursive: true })
+    await symlink(join(outer, 'physical'), join(outer, 'alias'), 'junction')
+    const h = await harness(join(outer, 'alias/work'))
+    const main = await h.create('aliased-parent', { createdAt: Date.now() - 2000 })
+    await writeFile(join(h.root, 'created.txt'), 'test report'); writeEvidence(main.agent.session, 'created.txt')
+    await mkdir(join(outer, 'protected')); await writeFile(join(outer, 'protected/keep.txt'), 'keep')
+    await symlink(join(outer, 'protected'), join(h.root, 'link'), 'junction')
+    writeEvidence(main.agent.session, 'link/keep.txt')
+    const preview = await h.lifecycle.preview(main.agent.id, owned)
+    expect(preview.files.map(file => file.path)).toEqual([join(h.root, 'created.txt')])
+    expect(preview.retained.map(file => file.reason).join(' ')).toContain('链接')
+    await h.lifecycle.run({ sessionId: main.agent.id, action: 'delete', filesToken: preview.token }, owned)
+    await expect(readFile(join(h.root, 'created.txt'))).rejects.toMatchObject({ code: 'ENOENT' })
+    expect(await readFile(join(outer, 'protected/keep.txt'), 'utf8')).toBe('keep')
+    expect(await h.ctx.sessionPersistence.list()).toEqual([])
+  })
+
   it('previews and permanently removes only reviewed generated files, including child results', async () => {
     const h = await harness(), main = await h.create('files-main', { createdAt: Date.now() - 2000 }), id = main.agent.id
     const child = await h.create('files-child', { parentSession: id, origin: 'subagent', createdAt: Date.now() - 1500 })
@@ -153,7 +207,7 @@ describe('durable conversation lifecycle with the real DSH storage backends', ()
   })
   it('archives/restores the original identity and history across a restart', async () => {
     const h = await harness(), handle = await h.create('archive-real')
-    const id = handle.agent.id, events = handle.agent.session.events
+    const id = handle.agent.id, events = handle.agent.session.snapshotEvents()
     await h.lifecycle.run({ sessionId: id, action: 'archive' }, owned)
     expect(h.ctx.workspaceRegistry.archivedSessionIds).toContain(id)
     await handle.dispose(); await h.ctx.fiber.dispose(); contexts.splice(contexts.indexOf(h.ctx), 1)
@@ -161,7 +215,7 @@ describe('durable conversation lifecycle with the real DSH storage backends', ()
     expect(reopened.ctx.workspaceRegistry.archivedSessionIds).toContain(id)
     await reopened.lifecycle.run({ sessionId: id, action: 'restore' }, owned)
     expect(reopened.ctx.workspaceRegistry.archivedSessionIds).not.toContain(id)
-    expect((await reopened.ctx.sessionPersistence.inspect(id)).events).toEqual(events)
+    expect((await inspectSession(reopened.ctx.sessionPersistence, id)).events).toEqual(events)
   })
 
   it('deletes live logs, child logs, cached history and search hits, preserving independent forks and files', async () => {
@@ -179,13 +233,13 @@ describe('durable conversation lifecycle with the real DSH storage backends', ()
     expect(h.ctx.sessions.get(child.agent.id)).toBeUndefined()
     expect(h.ctx.sessions.get(fork.agent.id)).toBeDefined()
     await expect(readFile(path)).rejects.toMatchObject({ code: 'ENOENT' })
-    await expect(h.ctx.sessionPersistence.inspect(id)).rejects.toThrow()
+    await expect(inspectSession(h.ctx.sessionPersistence, id)).rejects.toThrow()
     expect(h.ctx.sessionProjectionCache.cachedSnapshot(main.agent.session.header)).toBeUndefined()
     expect((await h.ctx.sessionQuery.searchSessions({ query: 'lifecycle' })).items.map(item => item.header.id)).toEqual([fork.agent.id])
     expect(await readFile(join(h.root, 'report.txt'), 'utf8')).toBe('keep this work product')
     await h.ctx.fiber.dispose(); contexts.splice(contexts.indexOf(h.ctx), 1)
     const restarted = await harness(h.root)
-    expect((await restarted.ctx.sessionPersistence.list()).map(item => item.id)).toEqual([fork.agent.id])
+    expect((await restarted.ctx.sessionPersistence.list()).map(item => item.header.id)).toEqual([fork.agent.id])
     expect(restarted.ctx.workspaceRegistry.archivedSessionIds).not.toContain(id)
   })
 
@@ -204,8 +258,8 @@ describe('durable conversation lifecycle with the real DSH storage backends', ()
     await expect(h.create('same-id')).rejects.toThrow()
     await h.lifecycle.run({ sessionId: id, action: 'delete' }, owned)
     expect(h.ctx.sessions.get(id)).toBeUndefined()
-    await expect(h.ctx.sessionPersistence.inspect(id)).rejects.toThrow()
-    await expect(h.ctx.workspaceRegistry.restoreSession(id)).rejects.toThrow()
+    await expect(inspectSession(h.ctx.sessionPersistence, id)).rejects.toThrow()
+    await expect(h.lifecycle.run({ sessionId: id, action: 'restore' }, owned)).rejects.toThrow()
   })
 
   it('replays an interrupted deletion after restarting', async () => {

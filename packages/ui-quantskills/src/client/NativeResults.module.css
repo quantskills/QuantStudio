@@ -1,0 +1,22 @@
+.results, .media { display: flex; flex-direction: column; height: 100%; min-height: 0; color: var(--dsw-alias-label-primary); background: var(--dsw-alias-bg-base); }
+.header { display: flex; flex: none; align-items: center; gap: 8px; min-height: 44px; padding: 10px 16px; border-bottom: 1px solid var(--dsw-alias-border-l3); }
+.header > div, .header > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.header strong { display: block; overflow: hidden; text-overflow: ellipsis; font-size: 13px; font-weight: 600; }
+.header div > span { display: block; margin-top: 3px; font-size: 11px; color: var(--dsw-alias-label-tertiary); }
+.results button, .media button { border: 0; border-radius: 6px; padding: 7px; background: transparent; color: inherit; cursor: pointer; }
+.results button:hover, .media button:hover { background: var(--dsw-alias-interactive-bg-hover); }
+.results button:focus-visible, .media button:focus-visible { outline: 2px solid var(--dsw-alias-state-business-primary); outline-offset: -2px; }
+.results button:disabled { opacity: .5; cursor: default; }
+.list { flex: 1; min-height: 0; overflow: auto; padding: 8px; }
+.list p, .media p { padding: 8px 16px; color: var(--dsw-alias-label-tertiary); font-size: 13px; }
+.file { display: flex; align-items: center; gap: 4px; }
+.file > button:first-child { display: flex; flex: 1; gap: 10px; align-items: center; min-width: 0; padding: 10px 8px; text-align: left; }
+.file svg { flex: none; }
+.file span { min-width: 0; }
+.file b, .file small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file b { font-size: 13px; font-weight: 500; }
+.file small { margin-top: 4px; font-size: 11px; color: var(--dsw-alias-label-tertiary); }
+.footer { display: flex; flex: none; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--dsw-alias-border-l3); font-size: 12px; color: var(--dsw-alias-label-tertiary); }
+.media video { width: 100%; flex: 1; min-height: 0; object-fit: contain; background: #111; }
+.media audio { width: calc(100% - 32px); margin: auto 16px; }
+.html { flex: 1; width: 100%; min-height: 0; border: 0; }

@@ -75,7 +75,11 @@ export async function restoreProfileTransaction(transaction) {
     || !basename(backup).startsWith(`${profile}-`) || !existsSync(backup)))) {
     throw new Error('Refused invalid profile restore paths.')
   }
-  // target is an exact validated profile directory, never the home or workspace.
-  await rm(target, { recursive: true, force: true })
+  // Preserve configuration written by the failed candidate before restoring the prior Profile.
+  if (existsSync(target)) {
+    const preserved = join(profiles, '.qs-failed', `${profile}-${randomUUID()}`)
+    await mkdir(join(profiles, '.qs-failed'), { recursive: true })
+    await rename(target, preserved)
+  }
   if (backup) await rename(backup, target)
 }

@@ -1,17 +1,9 @@
-/**
- * InputHub: the SessionInputResolver implementation (`ctx.conversation.input`) — one
- * SessionInputShell per session, created inside the uiSession provide
- * materialization (the 'input' standard-kit entry IS the
- * creation trigger) and torn down by the scope disposer (instance-and-scope
- * share one lifecycle). The hub registers the scoped input-mutation
- * listeners on each Session context and owns the default-sink choreography: every session is a
- * real host entity, so the sink is one unconditional prompt path.
- */
 import type { Context } from '@deepseek-ai/cordis';
 import type { SessionBinding } from '@deepseek-ai/dsh-api-session-controller/client';
 import type { SessionId } from '@deepseek-ai/dsh-session/types';
 import type { TranslateNS } from '@deepseek-ai/dsh-client-locale/client';
-import type { ComposerKeyboard, InputTriggerController, SessionInputResolver, SessionInput } from '../contract/input.ts';
+import type { DraftInitializationOptions, DraftInitializationResult, InputTriggerController, SessionInputResolver, SessionInput } from '../contract/input.ts';
+import type { ComposerKeyboard } from '../contract/draft-editor.ts';
 import { SessionInputShell } from './facade.ts';
 /** Session-addressed input facade registry (SessionInputResolver face + composer-layer extras). */
 export declare class InputHub implements SessionInputResolver {
@@ -29,11 +21,11 @@ export declare class InputHub implements SessionInputResolver {
      * @returns the resident per-session facade.
      */
     for(actx: Context): SessionInput;
+    requestDraftInitialization(binding: SessionBinding, options: DraftInitializationOptions): DraftInitializationResult;
     /**
-     * Resident shell for one session binding — the provide-channel entry
-     * (called during scope materialization, BEFORE the scope record is
-     * queryable, hence binding-fed and hence the thunked slash/popup deps).
-     * Wires the scoped event listeners + teardown into the session scope.
+     * Resolve the resident shell for an already-retained, addressable Session binding.
+     * Draft import completes before return. The Session scope owns input listeners,
+     * the inject-managed catalog subscription, and shell teardown.
      * @param binding - session assembly handle.
      * @returns the shell.
      */
@@ -54,6 +46,17 @@ export declare class InputHub implements SessionInputResolver {
      */
     keyboard(id: SessionId): ComposerKeyboard;
     /**
+     * Query file intake without creating a Session input.
+     * @param id - target Session.
+     * @returns whether its mounted composer currently accepts files.
+     */
+    canPickFiles(id: SessionId): boolean;
+    /**
+     * Open the target composer's file dialog under its live intake policy.
+     * @param id - target Session.
+     */
+    pickFiles(id: SessionId): void;
+    /**
      * Resolve the optional slash controller for composer chrome that launches
      * the shared candidate menu without typing a trigger.
      * @param id - session id.
@@ -68,14 +71,14 @@ export declare class InputHub implements SessionInputResolver {
      */
     private sink;
     /**
-     * Steer every still-pending queued message into the running turn, in FIFO
-     * order — the same strict-steer operation as the queue dock's per-row
-     * button. A turn closing mid-way (`session/steer-unavailable`) or a row already
+     * Submit every still-pending queued message through QueueDock Steer, in FIFO
+     * request order — the same operation as the queue dock's per-row button.
+     * An Agent stopping before a command (`session/steer-unavailable`) or a row already
      * claimed by the agent (`session/queue-item-not-found`) converges silently, while a
      * genuine failure surfaces as one composer notice. Repeated triggers
      * (e.g. two rapid empty-draft chords) rely on that `session/queue-item-not-found`
      * convergence: the snapshot may still list a row the host already steered,
-     * and the duplicate strict steer is a silent no-op.
+     * and the duplicate Steer is a silent no-op.
      * @param session - the addressed host session.
      * @param shell - the resident shell (notice outlet).
      */

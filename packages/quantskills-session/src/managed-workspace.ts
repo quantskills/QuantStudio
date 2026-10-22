@@ -21,6 +21,8 @@ const WINDOWS_DOCUMENTS_COMMAND = [
 
 /** Replaceable host inputs used by managed-path tests. */
 export interface QuantSkillsDocumentsResolverOptions {
+  /** Explicit deployment root, including isolated compatibility environments. */
+  readonly documentsDirectory?: string
   readonly platform?: NodeJS.Platform
   readonly env?: Readonly<Record<string, string | undefined>>
   readonly home?: string
@@ -52,6 +54,13 @@ export async function resolveQuantSkillsManagedPath(
   const paths = pathRules(platform)
   const env = options.env ?? process.env
   const home = paths.resolve(options.home ?? homedir())
+  if (options.documentsDirectory !== undefined) {
+    const directory = options.documentsDirectory
+    if (!paths.isAbsolute(directory) || (platform === 'win32' && !/^(?:[a-z]:[\\/]|\\\\)/i.test(directory))) {
+      throw new Error('documentsDirectory must be fully qualified')
+    }
+    return paths.join(paths.normalize(directory), MANAGED_DIRECTORY_NAME)
+  }
   if (platform === 'win32') {
     const signal = options.signal ?? new AbortController().signal
     const windowsRoot = env.SystemRoot ?? env.WINDIR
@@ -61,7 +70,7 @@ export async function resolveQuantSkillsManagedPath(
     for (const command of commands) {
       let result
       try {
-        result = await (options.runCommand ?? runNativeCommand)(command, WINDOWS_DOCUMENTS_COMMAND, signal)
+        result = await (options.runCommand ?? runNativeCommand)(command, WINDOWS_DOCUMENTS_COMMAND, signal, 'hidden')
       } catch (error) {
         // Only a missing executable should trigger another shell; preserve cancellation and command errors.
         if ((error as NodeJS.ErrnoException).code === 'ENOENT') continue

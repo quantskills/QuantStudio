@@ -1,3 +1,4 @@
+import type { HostConnectionHandle } from '@deepseek-ai/dsh-client-connection';
 interface BrowserRequest {
     readonly headers: Headers | Readonly<Record<string, string | readonly string[] | undefined>>;
     readonly method?: string | undefined;
@@ -14,6 +15,8 @@ interface BrowserResponse {
 }
 /** Public Connection boundary; no dependency on its private credentials or token. */
 export interface LocalBrowserConnection {
+    admit?: HostConnectionHandle['admit'];
+    createPeer?: HostConnectionHandle['createPeer'];
     requestRejection(request: BrowserRequest): 401 | 403 | undefined;
     authorizeIndex(request: BrowserRequest, response: BrowserResponse): boolean;
     authenticatedUrl(baseUrl: string): string;

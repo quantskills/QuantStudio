@@ -18,10 +18,6 @@
       "types": "./lib/types/index.d.ts",
       "default": "./lib/index.js"
     },
-    "./invariant": {
-      "types": "./lib/types/invariant.d.ts",
-      "default": "./lib/invariant.js"
-    },
     "./types": {
       "types": "./lib/types/types.d.ts",
       "default": "./lib/types/types.js"
@@ -39,7 +35,6 @@
   },
   "files": [
     "lib/index.js",
-    "lib/invariant.js",
     "worker/panda_worker.py",
     "worker/panda_runner.py",
     "worker/panda_execution_probe.py",
@@ -59,26 +54,27 @@
     "zod": "^4.4.3"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-home-paths": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-invariants": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-sandbox": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-session": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-subprocess": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-timeout": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-typert-protocol": "0.1.2-alpha.2"
+    "@deepseek-ai/cordis": "4.0.5",
+    "@deepseek-ai/dsh-home-paths": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-sandbox": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-session": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-subprocess": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-timeout": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.2.1-rc.2"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-home-paths": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-invariants": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-sandbox": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-session": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-subprocess": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-timeout": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-typert-protocol": "0.1.2-alpha.2"
+    "@deepseek-ai/cordis": "4.0.5",
+    "@deepseek-ai/dsh-home-paths": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-sandbox": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-session": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-subprocess": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-timeout": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-typert-protocol": "0.2.1-rc.2"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "engines": {
+    "dsh": "0.2.1-rc.2"
   }
 }

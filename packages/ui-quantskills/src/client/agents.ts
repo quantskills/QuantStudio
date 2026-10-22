@@ -138,7 +138,8 @@ export class QuantSkillsAgentsController {
    */
   async start(request: QuantSkillsAgentSessionCreateRequest): Promise<QuantSkillsAgentSessionCreateResult> {
     const created = await this.host.start(request)
-    await this.refresh()
+    // Archive reads must not block adoption of an already-created session.
+    void this.refresh()
     return created
   }
 
@@ -182,7 +183,8 @@ export class QuantSkillsAgentsController {
     request: QuantSkillsAgentTeamSessionCreateRequest,
   ): Promise<QuantSkillsAgentTeamSessionCreateResult> {
     const created = await this.host.teamStart(request)
-    await this.refresh()
+    // Archive reads must not block adoption of an already-created session.
+    void this.refresh()
     return created
   }
 

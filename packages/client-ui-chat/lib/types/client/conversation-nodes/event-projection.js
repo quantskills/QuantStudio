@@ -46,7 +46,7 @@ export function contextForm(source) {
  * @param source - Logged `user/message` source.
  * @returns Role and label rendered by Chat.
  */
-export function contextProvenance(source) {
+export function contextProducer(source) {
     const record = asRecord(source);
     const kind = record === null ? null : readString(record, 'kind');
     if (record === null || kind === null)
@@ -56,8 +56,6 @@ export function contextProvenance(source) {
             return { role: 'recall', label: joined(collect(record, 'references', 'label')) ?? kind };
         case 'agent-instructions':
             return { role: 'inject', label: joined(collect(record, 'changes', 'path')) ?? kind };
-        case 'plugin':
-            return { role: 'inject', label: readString(record, 'plugin') ?? kind };
         case 'skill-invocation':
             return { role: 'inject', label: readString(record, 'name') ?? kind };
         default:
@@ -76,6 +74,17 @@ export function sessionRecallLabels(source) {
     if (record === null || readString(record, 'kind') !== 'session-reference')
         return [];
     return collect(record, 'references', 'label');
+}
+/**
+ * Read the skill name a durable skill-invocation injection loaded.
+ * @param source - Logged `user/message` source.
+ * @returns The skill name, or null for every other source.
+ */
+export function skillInvocationName(source) {
+    const record = asRecord(source);
+    if (record === null || readString(record, 'kind') !== 'skill-invocation')
+        return null;
+    return readString(record, 'name');
 }
 /**
  * Classify finalized Assistant content for Chat rendering.

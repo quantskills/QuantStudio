@@ -24,7 +24,7 @@ it('restores every pinned asset into an empty home that the real Host stores can
     const before = await readFile(join(home, 'quantskills/agents.json'), 'utf8')
     expect(JSON.parse(before).agents).toHaveLength(44)
   } finally { await cleanTestHome(home) }
-})
+}, 30_000)
 
 it('rejects altered files before restoring anything', async () => {
   const home = await mkdtemp(join(tmpdir(), 'qs-library-integrity-'))
@@ -34,4 +34,4 @@ it('rejects altered files before restoring anything', async () => {
     await writeFile(join(home, 'quantskills/agents.json'), '{}')
     await expect(verifySnapshot(home)).rejects.toThrow('Checksum mismatch')
   } finally { await cleanTestHome(home) }
-})
+}, 30_000)

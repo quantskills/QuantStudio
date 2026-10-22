@@ -3,7 +3,7 @@ import { memo, useCallback, useMemo } from 'react';
 import { AssistantMarkdown } from "./AssistantMarkdown.js";
 import { projectFinalDeliverables } from "./final-deliverables.js";
 /** Streaming, settled, and interrupted Assistant states share one keyed renderer instance. */
-export const AssistantNodeView = memo(function AssistantNodeView({ node, useTurnData, useSession, turnProcess, openFile, renderMessageImages, fileMentions, renderSlot, t, }) {
+export const AssistantNodeView = memo(function AssistantNodeView({ node, groupPart, useDisclosure, useGroupAction, useTurnData, turnProcess, openFile, loadImage, fileMentions, usePresentation, useSession, renderSlot, t, }) {
     const data = node.data;
     const sessionId = useSession(snapshot => snapshot.sessionId);
     const turn = node.location.kind === 'turn' || node.location.kind === 'step'
@@ -29,7 +29,7 @@ export const AssistantNodeView = memo(function AssistantNodeView({ node, useTurn
         && turnProcess.spec.inlineReasoning
         && !turnProcess.open;
     const revealProcess = useCallback(() => { turnProcess?.setOpen(true); }, [turnProcess]);
-    return (_jsxs(_Fragment, { children: [_jsx(AssistantMarkdown, { blocks: delivery.blocks, streaming: data.status === 'running', interrupted: data.status === 'interrupted', renderMessageImages: renderMessageImages, reasoningHidden: reasoningHidden, revealProcess: revealProcess, mentions: mentions, t: t }), owner !== undefined && delivery.items.length > 0 && renderSlot('conversation.chat.deliverables', {
+    return (_jsxs(_Fragment, { children: [_jsx(AssistantMarkdown, { blocks: delivery.blocks, groupPart: groupPart, useDisclosure: useDisclosure, streaming: data.status === 'running', interrupted: data.status === 'interrupted', loadImage: loadImage, reasoningHidden: reasoningHidden, useGroupAction: useGroupAction, usePresentation: usePresentation, renderSlot: renderSlot, revealProcess: revealProcess, mentions: mentions, t: t }), owner !== undefined && delivery.items.length > 0 && renderSlot('conversation.chat.deliverables', {
                 items: delivery.items, openFile,
             }, { fallback: _jsx("ul", { children: delivery.items.map(item => _jsx("li", { children: _jsx("button", { type: "button", onClick: () => openFile(item.path), children: item.title }) }, item.path)) }) })] }));
 });

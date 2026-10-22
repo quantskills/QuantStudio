@@ -11,7 +11,7 @@
 - id: system-prompt
   config:
     includeHarnessIdentity: false
-    persona: >-
+    personaPrefix: >-
       You are QuantSkills, an AI assistant for research and everyday work.
       Your working directory is {{cwd}}. The user interacts with you through the QuantSkills workbench.
       References to this app mean QuantSkills unless the user names another product.
@@ -29,8 +29,10 @@
   disabled: true
 
 - insert:
+    - id: quantskills-model-services
+      name: '@deepseek-ai/dsh-quantskills-session/model-policy'
     - id: agent-team
-      name: '@deepseek-ai/dsh-agent-team'
+      name: '@deepseek-ai/dsh-experimental-agent-team'
     - id: tool-agent-team
       name: '@deepseek-ai/dsh-tool-agent-team'
       config:

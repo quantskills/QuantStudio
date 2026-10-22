@@ -160,7 +160,7 @@ export declare class PandaWorkerClient {
      * @param signal - execution lifetime.
      * @returns bounded stdout, stderr, and exit status.
      */
-    executeAt(runtimeRoot: string, sdkVersion: string, request: PandaScriptExecutionRequest, argvWrapper: (argv: readonly string[]) => PandaExecutionArgv, signal?: AbortSignal): Promise<PandaScriptExecutionResult>;
+    executeAt(runtimeRoot: string, sdkVersion: string, request: PandaScriptExecutionRequest, argvWrapper: (argv: readonly string[]) => PandaExecutionArgv | Promise<PandaExecutionArgv>, signal?: AbortSignal): Promise<PandaScriptExecutionResult>;
     private operationSignal;
     private resolveConfiguredPython;
     private findConfiguredPython;

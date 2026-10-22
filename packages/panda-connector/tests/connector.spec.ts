@@ -1,6 +1,6 @@
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { dirname, join } from 'node:path'
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { Context } from '@deepseek-ai/cordis'
 import { SubprocessRuntime } from '@deepseek-ai/dsh-subprocess'
@@ -264,7 +264,8 @@ afterEach(async () => {
   vaultState.failDelete = false
   await Promise.all(contexts.splice(0).map(ctx => ctx.fiber.dispose()))
   await Promise.all(testHomes.splice(0).map(async (path) => {
-    if (!path.startsWith(tmpdir())) throw new Error('refusing to remove a non-temporary PandaData test home')
+    const within = relative(resolve(tmpdir()), resolve(path))
+    if (!within || isAbsolute(within) || within === '..' || within.startsWith(`..${sep}`)) throw new Error('refusing to remove a non-temporary PandaData test home')
     await rm(path, { recursive: true, force: true })
   }))
 })

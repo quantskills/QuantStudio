@@ -16,5 +16,13 @@ export interface ConversationSettings {
     busyEnter: BusyEnterBehavior;
 }
 /** Durable conversation schema; also the wire envelope the browser scope validates against. */
-export declare const ConversationSettingsSchema: z<ConversationSettings>;
+export declare const ConversationSettingsFields: {
+    busyEnter: z<"queue" | "steer", "queue" | "steer", "defined">;
+};
+/** Schema for shared configuration values. */
+export declare const ConversationSettingsSchema: z<Schemastery.ObjectS<NoInfer<{
+    busyEnter: z<"queue" | "steer", "queue" | "steer", "defined">;
+}>>, Schemastery.ObjectT<NoInfer<{
+    busyEnter: z<"queue" | "steer", "queue" | "steer", "defined">;
+}>>, "plain">;
 //# sourceMappingURL=submission-settings.d.ts.map

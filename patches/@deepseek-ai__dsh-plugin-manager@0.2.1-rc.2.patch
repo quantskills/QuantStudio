@@ -1,0 +1,462 @@
+diff --git a/lib/index.js b/lib/index.js
+index f010583bb639cdbaaeedce029b9df1d95ebe6331..c54c2e9deb7e67ff5e8b0262d984705b7fabfa9f 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -1,3 +1,4 @@
++import { prepareQsPackageOperation } from './types/qs-source-policy.js';
+ import { randomUUID } from "node:crypto";
+ import { existsSync, globSync, readFileSync, realpathSync, statSync } from "node:fs";
+ import { mkdir, mkdtemp, open, readFile, rm } from "node:fs/promises";
+@@ -523,6 +524,7 @@ function bundleComponentManifests(manifest, dir, anchor) {
+ * The diagnostic file is closed on return or rejection, including preparation and spawn failures.
+ */
+ async function runProfilePnpm(context, args, options) {
++	let qsOperation;
+ 	const env_1 = {
+ 		stack: [],
+ 		error: void 0,
+@@ -587,7 +589,7 @@ async function runProfilePnpm(context, args, options) {
+ 				output: output.toString("utf8"),
+ 				truncated,
+ 				logPath,
+-				incompatible
++				...(incompatible.length ? { incompatible } : {})
+ 			};
+ 		};
+ 		const preflight = [];
+@@ -605,6 +607,10 @@ async function runProfilePnpm(context, args, options) {
+ 			continue;
+ 		}
+ 		if (preflight.length > 0) return await rejected(preflight, "nothing was installed");
++		try {
++			qsOperation = await prepareQsPackageOperation({ ...context, dir }, args, options, environment);
++			args = qsOperation.args;
++		} catch (error) { return await rejected([error.message], "nothing was installed"); }
+ 		const cancellation = new AbortController();
+ 		const grouped = leadsOwnGroup(options.execution);
+ 		const child = execa(options.command ?? "pnpm", [...options.args ?? [], ...args.map((arg) => anchorPathSpec(arg, context.cwd))], {
+@@ -767,6 +773,9 @@ async function runProfilePnpm(context, args, options) {
+ 			await rm(runRecordPath(dir), { force: true });
+ 			await log.close();
+ 		}
++		const completedQsOperation = qsOperation;
++		qsOperation = undefined;
++		await completedQsOperation.finish(exitCode === 0 && !control.stalled);
+ 		return {
+ 			exitCode,
+ 			output: output.toString("utf8"),
+@@ -779,8 +788,10 @@ async function runProfilePnpm(context, args, options) {
+ 		env_1.error = e_1;
+ 		env_1.hasError = true;
+ 	} finally {
++		try { await qsOperation?.finish(false); } finally {
+ 		const result_1 = __disposeResources(env_1);
+ 		if (result_1) await result_1;
++		}
+ 	}
+ }
+ /**
+@@ -1270,7 +1281,24 @@ var __esDecorate = function(ctor, descriptorIn, decorators, contextIn, initializ
+ };
+ /** An http(s) URL, as pnpm's `--registry` takes it. */
+ const REGISTRY_URL = /^https?:\/\/\S+$/;
++// QS application packages are upgraded together by the application launcher.
++const applicationCorePackages = new Set([
++	"@quantskills/dsh-plugin",
++	"@deepseek-ai/dsh-agent-team",
++	"@deepseek-ai/dsh-client-remotes-quantskills",
++	"@deepseek-ai/dsh-client-ui-chat",
++	"@deepseek-ai/dsh-client-ui-conversation",
++	"@deepseek-ai/dsh-client-ui-input-trigger",
++	"@deepseek-ai/dsh-client-ui-layout",
++	"@deepseek-ai/dsh-panda-connector",
++	"@deepseek-ai/dsh-panda-mcp",
++	"@deepseek-ai/dsh-quantskills-host",
++	"@deepseek-ai/dsh-quantskills-session",
++	"@deepseek-ai/dsh-tool-agent-team",
++	"@deepseek-ai/dsh-client-ui-quantskills"
++]);
+ const protectedModules = new Set([
++	...applicationCorePackages,
+ 	"@deepseek-ai/dsh-plugin-manager",
+ 	"@deepseek-ai/cordis-plugin-loader",
+ 	"@deepseek-ai/cordis-plugin-include",
+@@ -1582,6 +1610,7 @@ let PluginManager = (() => {
+ 		});
+ 		/** Management bundles remain protected if their files become unreadable. */
+ 		managementBundles = (__runInitializers(this, _instanceExtraInitializers), /* @__PURE__ */ new Set());
++		applicationModules = new Set(applicationCorePackages);
+ 		/**
+ 		* The registry each package was last installed from by this manager in this process. pnpm verifies lockfile tarball
+ 		* URLs against its default registry unless they belong to a named registry, so a later removal names it again.
+@@ -1606,6 +1635,9 @@ let PluginManager = (() => {
+ 			this.ownerEntryId = ctx.fiber.entry?.id;
+ 			this.ownerContext = ctx;
+ 			this.profile = ctx.profileContext;
++			for (const name of this.profile.startedBundles) {
++				if (applicationCorePackages.has(name)) for (const row of this.bundleRows(name)) this.applicationModules.add(row.name);
++			}
+ 			for (const name of this.profile.startedBundles) this.protectsManager(name);
+ 			this.outputBytes = config.outputBytes;
+ 			this.lockWaitMs = config.lockWaitMs;
+@@ -1659,7 +1691,7 @@ let PluginManager = (() => {
+ 				const actual = [...this.ctx.loader.entries()].find((row) => row.id === entry.entryId);
+ 				const candidates = rows.filter((row) => row.id === actual?.options.id);
+ 				const candidate = candidates[0];
+-				if (protectedModules.has(entry.moduleName) || entry.entryId === this.ownerEntryId) return {
++				if (protectedModules.has(entry.moduleName) || this.applicationModules.has(entry.moduleName) || [...applicationCorePackages].some(name => entry.moduleName.startsWith(`${name}/`)) || entry.entryId === this.ownerEntryId) return {
+ 					...entry,
+ 					readOnlyReason: "management-required"
+ 				};
+@@ -1931,6 +1963,7 @@ let PluginManager = (() => {
+ 			return this.change((result) => this.configure(async () => {
+ 				const row = (await this.listPlugins()).find((item) => item.entryId === id);
+ 				if (row === void 0) throw new ManagementFailure("unknown-plugin");
++				if (enabled && row.moduleName === "dshmarket") throw new Error("Use the official plugin manager Discover page; the legacy manager is retained only for rollback.");
+ 				if (row.readOnlyReason !== void 0) throw new ManagementFailure(row.readOnlyReason);
+ 				await writePluginEnabled(this.profile, row.patchId, row.moduleName, enabled);
+ 				Object.assign(result, await this.reload(enabled ? [row.patchId] : []));
+@@ -1988,6 +2021,7 @@ let PluginManager = (() => {
+ 				if (stopped()) throw new InstallCancelledError();
+ 				const before = readProfileManifest("dsh", this.profile.dir).dependencies ?? {};
+ 				const known = specPackageName(spec, before, this.profile.dir);
++				if (known !== void 0 && applicationCorePackages.has(known)) throw new ManagementFailure("management-required");
+ 				if (this.ownerContext.get("hmr") !== void 0 && known !== void 0 && Object.hasOwn(before, known)) throw new ManagementFailure("already-installed");
+ 				if (options?.approvedBuilds !== void 0) {
+ 					await approveBuilds(this.profile.dir, options.approvedBuilds);
+@@ -2278,6 +2312,7 @@ let PluginManager = (() => {
+ 			else await writeFileAtomic(path, content, { mode: 384 });
+ 		}
+ 		async selectBundle(name, enabled) {
++			if (enabled && name === "dshmarket") throw new Error("QS 社区市场已迁移到官方插件管理的发现页；旧安装与配置保留供回退，不能重新启用旧管理器。");
+ 			const manifest = readProfileManifest("dsh", this.profile.dir);
+ 			const previous = bundleSelection(manifest);
+ 			if (enabled || !previous.includes(name)) {
+@@ -2310,6 +2345,7 @@ let PluginManager = (() => {
+ 			return flatten(composeEntries([bundlePatchPaths(resolveBundleDir("dsh", name, this.profile.installAnchor, this.profile.dir), info.dsh.bundle).flatMap((file) => loadOverlayPatches("dsh", file))]));
+ 		}
+ 		protectsManager(name) {
++			if (applicationCorePackages.has(name)) return true;
+ 			if (this.managementBundles.has(name)) return true;
+ 			let rows;
+ 			try {
+diff --git a/lib/types/operations.d.ts b/lib/types/operations.d.ts
+index e4e37967c00c16c70893df433a0d4087310ee16a..0216a662a18a8e7d1a48ec657de5a8c93619459e 100644
+--- a/lib/types/operations.d.ts
++++ b/lib/types/operations.d.ts
+@@ -130,3 +130,5 @@ export declare function registryArguments(registry: Registry): string[];
+  */
+ export declare function viewProfilePackage(dir: string, spec: string, options: PackageViewOptions): Promise<PackageViewResult>;
+ //# sourceMappingURL=operations.d.ts.map
++/** QS stopped-profile recovery using the same official mutation lock. */
++export declare function recoverPluginTransaction(context: Parameters<typeof runPluginCommand>[0], options: Parameters<typeof runPluginCommand>[2]): Promise<{ recovered: boolean; preserved?: boolean }>;
+diff --git a/lib/types/operations.js b/lib/types/operations.js
+index 8ce0ed23cb5c59433c4c92384a7ee4009b6a3048..32dc889ffce46fc7ae1671fd91e79e68ee23e047 100644
+--- a/lib/types/operations.js
++++ b/lib/types/operations.js
+@@ -1,3 +1,4 @@
++import { prepareQsPackageOperation, recoverQsPluginTransaction } from './qs-source-policy.js';
+ var __addDisposableResource = (this && this.__addDisposableResource) || function (env, value, async) {
+     if (value !== null && value !== void 0) {
+         if (typeof value !== "object" && typeof value !== "function") throw new TypeError("Object expected.");
+@@ -297,6 +298,7 @@ function bundleComponentManifests(manifest, dir, anchor) {
+  * The diagnostic file is closed on return or rejection, including preparation and spawn failures.
+  */
+ export async function runProfilePnpm(context, args, options) {
++    let qsOperation;
+     const env_1 = { stack: [], error: void 0, hasError: false };
+     try {
+         const dir = context.dir ?? resolveProfileDir(context.profile, context.home);
+@@ -344,7 +346,7 @@ export async function runProfilePnpm(context, args, options) {
+             options.onOutput?.(diagnostic, 'stderr');
+             append(Buffer.from(diagnostic));
+             await log.close();
+-            return { exitCode: 1, output: output.toString('utf8'), truncated, logPath, incompatible };
++            return { exitCode: 1, output: output.toString('utf8'), truncated, logPath, ...(incompatible.length ? { incompatible } : {}) };
+         };
+         // An install command names the packages it adds, so their manifests are read and checked before
+         // pnpm runs: an incompatible version is never installed, and the one already in use keeps working.
+@@ -372,6 +374,10 @@ export async function runProfilePnpm(context, args, options) {
+         }
+         if (preflight.length > 0)
+             return await rejected(preflight, 'nothing was installed');
++        try {
++            qsOperation = await prepareQsPackageOperation({ ...context, dir }, args, options, environment);
++            args = qsOperation.args;
++        } catch (error) { return await rejected([error.message], "nothing was installed"); }
+         const cancellation = new AbortController();
+         // A service run captures output, so execa terminates the tree it leads when the
+         // run is killed: a lifecycle script outlives the pnpm process that started it.
+@@ -567,6 +573,9 @@ export async function runProfilePnpm(context, args, options) {
+             await rm(runRecordPath(dir), { force: true });
+             await log.close();
+         }
++        const completedQsOperation = qsOperation;
++        qsOperation = undefined;
++        await completedQsOperation.finish(exitCode === 0 && !control.stalled);
+         return {
+             exitCode, output: output.toString('utf8'), truncated, logPath,
+             ...control.stalled ? { timedOut: true } : {}, ...incompatible.length > 0 ? { incompatible } : {},
+@@ -577,9 +586,11 @@ export async function runProfilePnpm(context, args, options) {
+         env_1.hasError = true;
+     }
+     finally {
++        try { await qsOperation?.finish(false); } finally {
+         const result_1 = __disposeResources(env_1);
+         if (result_1)
+             await result_1;
++        }
+     }
+ }
+ /** Initialize and run the dsh plugin command with the same write lock as the service.
+@@ -651,3 +662,11 @@ export async function viewProfilePackage(dir, spec, options) {
+     };
+ }
+ //# sourceMappingURL=operations.js.map
++/** Explicit stopped-profile recovery; shares the official manager's process lock. */
++export async function recoverPluginTransaction(context, options) {
++    const dir = context.dir ?? resolveProfileDir(context.profile, context.home);
++    return withFileLock(join(dir, 'package.json'), async () => {
++        if (await activeRecordedRun(dir)) throw new Error('A package process is still running; recovery stopped.');
++        return recoverQsPluginTransaction({ ...context, dir }, options, { ...scrubbedParentEnv(), ...options.env });
++    }, options.lockWaitMs === undefined ? undefined : { waitMs: options.lockWaitMs });
++}
+diff --git a/lib/types/qs-source-policy.js b/lib/types/qs-source-policy.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..03010b4cba58098b734a27d73368f7782fc23dfe
+--- /dev/null
++++ b/lib/types/qs-source-policy.js
+@@ -0,0 +1,233 @@
++/** QS source policy runs inside the official manager's existing Profile lock. */
++import { createHash } from 'node:crypto';
++import { existsSync } from 'node:fs';
++import { mkdir, mkdtemp, open, readFile, realpath, rm, writeFile } from 'node:fs/promises';
++import { dirname, join, resolve } from 'node:path';
++import { execa } from 'execa';
++import { parseDocument, stringify } from 'yaml';
++import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write';
++import { bundlePatchPaths, evaluatePluginCompatibility, loadOverlayPatches, readProfileVersionExemptions } from '@deepseek-ai/dsh-app-boot';
++
++export const qsCorePackages = new Set([
++  '@quantskills/dsh-plugin', '@deepseek-ai/dsh-agent-team',
++  '@deepseek-ai/dsh-client-remotes-quantskills', '@deepseek-ai/dsh-client-ui-chat',
++  '@deepseek-ai/dsh-client-ui-conversation', '@deepseek-ai/dsh-client-ui-input-trigger',
++  '@deepseek-ai/dsh-client-ui-layout', '@deepseek-ai/dsh-panda-connector',
++  '@deepseek-ai/dsh-panda-mcp', '@deepseek-ai/dsh-quantskills-host',
++  '@deepseek-ai/dsh-quantskills-session', '@deepseek-ai/dsh-tool-agent-team',
++  '@deepseek-ai/dsh-client-ui-quantskills',
++]);
++const sections = ['dependencies', 'devDependencies', 'optionalDependencies'];
++const transactionFile = 'quantskills-plugin-transaction.json';
++const digest = value => createHash('sha256').update(value).digest('hex');
++const dependencies = value => Object.assign({}, ...sections.map(section => value[section] ?? {}));
++async function optional(file) {
++  try { return await readFile(file, 'utf8'); } catch (error) { if (error.code === 'ENOENT') return undefined; throw error; }
++}
++function lock(text) {
++  if (text === undefined) return {};
++  const document = parseDocument(text, { uniqueKeys: true });
++  if (document.errors.length || document.warnings.length) throw new Error('QS plugin lockfile is unreadable; no packages were changed.');
++  return document.toJS() ?? {};
++}
++function declaration(value, name) {
++  return sections.map(section => value.importers?.['.']?.[section]?.[name]).find(Boolean);
++}
++function resolvedContent(value, name, manifest) {
++  const version = declaration(value, name)?.version?.split('(')[0];
++  return value.packages?.[`${manifest?.name ?? name}@${version}`]?.resolution
++    ?? value.packages?.[version]?.resolution ?? null;
++}
++/** Identity is derived from installation evidence, never the market recommendation. */
++function source(spec, resolved, manifest, directory) {
++  if (typeof spec !== 'string') return undefined;
++  if (/^(?:link:|file:)/.test(spec) || /^[A-Za-z]:[\\/]|^\//.test(spec)) {
++    return { kind: 'local', identity: resolve(directory, spec.replace(/^(link:|file:)/, '')), actual: manifest?.name };
++  }
++  if (/^(?:git(?:\+[^:]+)?:|github:|gitlab:|bitbucket:|ssh:)|\.git(?:#|$)/.test(spec)
++    || /^[\w.-]+\/[\w.-]+(?:#.*)?$/.test(spec)) {
++    const commit = /(?:#|\/|:)([a-f0-9]{40})(?:$|[(&?])/.exec(resolved?.version ?? '')?.[1];
++    if (!commit) return undefined;
++    return { kind: 'git', identity: `${spec.split('#')[0]}#${/(?:#|&)(?:path:|path=)([^&]+)/.exec(spec)?.[1] ?? ''}`, actual: manifest?.name };
++  }
++  if (/^https?:\/\//.test(spec)) {
++    const url = new URL(spec);
++    const repository = /^\/([^/]+\/[^/]+)\/releases\/download\//.exec(url.pathname)?.[1];
++    if (!repository || typeof resolved?.integrity !== 'string') return undefined;
++    return { kind: 'archive', identity: `${url.origin}/${repository}`, actual: manifest?.name };
++  }
++  if (/^(?:npm:)?(?:@[^/\s]+\/)?[\w.-]+@/.test(spec) || /^[~^]?\d+\.\d+\.\d+(?:[-+].*)?$/.test(spec)) {
++    if (!manifest?.name || typeof resolved?.integrity !== 'string') return undefined;
++    return { kind: 'npm', identity: manifest?.name, actual: manifest?.name };
++  }
++  return undefined;
++}
++async function packageInfo(directory, name) {
++  try { return JSON.parse(await readFile(join(directory, 'node_modules', name, 'package.json'), 'utf8')); }
++  catch { return undefined; }
++}
++
++/**
++ * Resolve/download in a sibling scratch profile with scripts disabled. Only a
++ * checked lockfile is allowed into the real profile, then pnpm installs frozen.
++ * A durable pending marker blocks the QS launcher if publication is interrupted.
++ */
++export async function prepareQsPackageOperation(context, args, options, environment) {
++  const dir = context.dir;
++  const pending = join(dir, transactionFile);
++  if (existsSync(pending)) throw new Error('QS plugin transaction is unfinished. Stop the profile and restore its recorded manifest/lockfile before continuing.');
++  const command = args[0];
++  if (['list', 'ls', 'why', 'view', '--version'].includes(command)) return { args, finish: async () => {} };
++  if (!['add', 'remove', 'rm', 'uninstall', 'install', 'i', 'update', 'up'].includes(command)) {
++    throw new Error('This package command is not a supported QS plugin mutation.');
++  }
++  const original = {};
++  for (const name of ['package.json', 'pnpm-lock.yaml']) original[name] = await optional(join(dir, name));
++  const before = JSON.parse(original['package.json'] ?? '{}');
++  const beforeLock = lock(original['pnpm-lock.yaml']);
++  const beforeDeps = dependencies(before);
++  const beforeInfo = new Map(await Promise.all(Object.keys(beforeDeps).map(async name => [name, await packageInfo(dir, name)])));
++  const stage = await realpath(await mkdtemp(join(await realpath(dirname(dir)), '.qs-plugin-resolve-')));
++  let published = false;
++  const run = async (argv, cwd) => {
++    const result = await execa(options.command ?? 'pnpm', [...options.args ?? [], ...argv], {
++      cwd, env: environment, extendEnv: false, windowsHide: true, reject: false,
++      stdin: 'ignore', timeout: Math.max(options.idleTimeoutMs ?? 120000, 30000),
++      ...(options.signal === undefined ? {} : { cancelSignal: options.signal }),
++    });
++    if (result.exitCode !== 0) {
++      await mkdir(join(dir, '.plugin-manager'), { recursive: true });
++      await writeFile(join(dir, '.plugin-manager', 'qs-resolution-failure.log'), result.stdout + '\n' + result.stderr, { mode: 0o600 });
++      throw new Error(`QS isolated plugin resolution failed (${result.exitCode}); original installation preserved.`);
++    }
++  };
++  const restore = async () => {
++    for (const [name, text] of Object.entries(original)) {
++      if (text === undefined) await rm(join(dir, name), { force: true });
++      else await writeFileAtomic(join(dir, name), text, { mode: 0o600 });
++    }
++  };
++  try {
++    const staged = structuredClone(before);
++    for (const section of sections) for (const [name, spec] of Object.entries(staged[section] ?? {})) {
++      if (/^(link:|file:)\./.test(spec)) staged[section][name] = spec.slice(0, spec.indexOf(':') + 1) + resolve(dir, spec.slice(spec.indexOf(':') + 1)).replaceAll('\\', '/');
++    }
++    await writeFile(join(stage, 'package.json'), JSON.stringify(staged), { mode: 0o600 });
++    for (const name of ['pnpm-lock.yaml', 'pnpm-workspace.yaml', '.npmrc']) {
++      const text = await optional(join(dir, name));
++      if (text !== undefined) await writeFile(join(stage, name), text, { mode: 0o600 });
++    }
++    const anchored = args.map(arg => /^(link:|file:)\./.test(arg)
++      ? arg.slice(0, arg.indexOf(':') + 1) + resolve(context.cwd, arg.slice(arg.indexOf(':') + 1)).replaceAll('\\', '/')
++      : arg.startsWith('.') ? resolve(context.cwd, arg) : arg);
++    await run([...anchored, '--config.ignore-scripts=true', '--config.ignore-pnpmfile=true', '--ignore-workspace', ...['install', 'i'].includes(command) ? ['--no-frozen-lockfile'] : []], stage);
++    if (['remove', 'rm', 'uninstall'].includes(command)) {
++      await run(['install', '--frozen-lockfile', '--ignore-scripts', '--ignore-pnpmfile', '--ignore-workspace'], stage);
++    }
++    const after = JSON.parse(await readFile(join(stage, 'package.json'), 'utf8'));
++    const afterLock = lock(await readFile(join(stage, 'pnpm-lock.yaml'), 'utf8'));
++    const afterDeps = dependencies(after);
++    const changes = [];
++    for (const name of new Set([...Object.keys(beforeDeps), ...Object.keys(afterDeps)])) {
++      const prior = beforeInfo.get(name), installed = await packageInfo(stage, name);
++      const oldSource = source(beforeDeps[name], { ...declaration(beforeLock, name), ...resolvedContent(beforeLock, name, prior) }, prior, dir);
++      const newSource = source(afterDeps[name], { ...declaration(afterLock, name), ...resolvedContent(afterLock, name, installed) }, installed, stage);
++      const sameLocal = oldSource?.kind === 'local' && newSource?.kind === 'local' && oldSource.identity === newSource.identity;
++      const changed = (!sameLocal && beforeDeps[name] !== afterDeps[name])
++        || JSON.stringify(prior) !== JSON.stringify(installed)
++        || (!sameLocal && (JSON.stringify(declaration(beforeLock, name)) !== JSON.stringify(declaration(afterLock, name))
++          || JSON.stringify(resolvedContent(beforeLock, name, prior)) !== JSON.stringify(resolvedContent(afterLock, name, installed))));
++      if (!changed) continue;
++      if (qsCorePackages.has(name) || qsCorePackages.has(prior?.name) || qsCorePackages.has(installed?.name)) {
++        throw new Error('QS application packages can only be changed by the application launcher.');
++      }
++      if (beforeDeps[name] !== undefined && afterDeps[name] !== undefined
++        && (!oldSource || !newSource || oldSource.kind !== newSource.kind || oldSource.identity !== newSource.identity || prior?.name !== installed?.name)) {
++        throw new Error(`Plugin source is unknown or would change: ${name}. Preserve the installed source; do not replace it from a catalog recommendation.`);
++      }
++      if (afterDeps[name] !== undefined) {
++        if (installed?.name === 'dshmarket') throw new Error('Use the official Discover market; legacy market installation is retained only for rollback.');
++        if (!installed?.name || !installed.dsh?.bundle) throw new Error('The resolved package does not declare a DSH bundle.');
++        const issue = evaluatePluginCompatibility(installed, readProfileVersionExemptions(dir));
++        if (issue && !issue.exempted) throw new Error('The resolved plugin is incompatible with this DSH runtime.');
++        for (const patch of bundlePatchPaths(join(stage, 'node_modules', name), installed.dsh.bundle)) loadOverlayPatches('dsh', patch);
++      }
++      changes.push(name);
++    }
++    // Restore original relative link spelling; the lock keeps a canonical target.
++    for (const section of sections) for (const [name, spec] of Object.entries(before[section] ?? {})) {
++      if (/^(link:|file:)\./.test(spec) && resolve(dir, spec.slice(spec.indexOf(':') + 1)) === source(after[section]?.[name], declaration(afterLock, name), undefined, stage)?.identity) {
++        after[section][name] = spec;
++        if (afterLock.importers?.['.']?.[section]?.[name]) afterLock.importers['.'][section][name].specifier = spec;
++      }
++    }
++    const next = { 'package.json': JSON.stringify(after, null, 2) + '\n', 'pnpm-lock.yaml': stringify(afterLock) };
++    // Save exact prior bytes before publishing either file. The launcher refuses
++    // this marker even when its phase looks recoverable; it never guesses.
++    await writeFileAtomic(pending, JSON.stringify({ schemaVersion: 1, phase: 'publishing', original, nextHashes: Object.fromEntries(Object.entries(next).map(([name, text]) => [name, digest(text)])), changes }), { mode: 0o600 });
++    published = true;
++    for (const [name, text] of Object.entries(next)) await writeFileAtomic(join(dir, name), text, { mode: 0o600 });
++    return {
++      args: ['install', '--frozen-lockfile', '--ignore-pnpmfile', '--ignore-workspace', ...args.filter(arg => /^--(?:config\.registry|registry)=/.test(arg))],
++      async finish(success) {
++        if (!success) {
++          await restore();
++          await run(['install', original['pnpm-lock.yaml'] === undefined ? '--config.lockfile=false' : '--frozen-lockfile', '--ignore-scripts', '--ignore-pnpmfile', '--ignore-workspace'], dir);
++        }
++        await rm(pending);
++      },
++    };
++  } catch (error) {
++    if (published) await restore(); // Keep the marker: the interrupted install still needs a stopped-profile repair.
++    throw error;
++  } finally {
++    // Created by mkdtemp above; never a user-supplied cleanup target.
++    await rm(stage, { recursive: true, force: true });
++  }
++}
++
++/** Called exclusively through the official operations module, under its Profile lock. */
++export async function recoverQsPluginTransaction(context, options, environment) {
++  const dir = context.dir, pending = join(dir, transactionFile);
++  const journalText = await optional(pending);
++  if (journalText === undefined) return { recovered: false };
++  const journal = JSON.parse(journalText);
++  const names = ['package.json', 'pnpm-lock.yaml'];
++  if (journal.schemaVersion !== 1 || journal.phase !== 'publishing' || !journal.original || !journal.nextHashes
++    || Object.keys(journal.original).some(name => !names.includes(name))
++    || typeof journal.original['package.json'] !== 'string'
++    || names.some(name => !/^[a-f0-9]{64}$/.test(journal.nextHashes[name] ?? '')
++      || (journal.original[name] !== undefined && typeof journal.original[name] !== 'string'))) {
++    throw new Error('Unknown plugin recovery journal; no files were changed.');
++  }
++  JSON.parse(journal.original['package.json']); lock(journal.original['pnpm-lock.yaml']);
++  const launchPath = join(context.home, 'quantskills/application/launch.lock');
++  await mkdir(dirname(launchPath), { recursive: true });
++  const launch = await open(launchPath, 'wx', 0o600);
++  try {
++    await launch.writeFile(JSON.stringify({ pid: process.pid, purpose: 'plugin-recovery' })); await launch.sync();
++    const current = {};
++    for (const name of names) {
++      current[name] = await optional(join(dir, name));
++      if (current[name] !== journal.original[name] && (current[name] === undefined || digest(current[name]) !== journal.nextHashes[name])) {
++        throw new Error('Profile changed after the interrupted operation; preserve these edits before recovery.');
++      }
++    }
++    const retained = await mkdtemp(join(dir, '.qs-plugin-recovery-'));
++    await writeFile(join(retained, 'journal.json'), journalText, { flag: 'wx', mode: 0o600 });
++    for (const name of names) {
++      if (current[name] !== undefined) await writeFile(join(retained, name), current[name], { flag: 'wx', mode: 0o600 });
++      if (journal.original[name] === undefined) await rm(join(dir, name), { force: true });
++      else await writeFileAtomic(join(dir, name), journal.original[name], { mode: 0o600 });
++    }
++    const result = await execa(options.command ?? 'pnpm', [...options.args ?? [], 'install',
++      journal.original['pnpm-lock.yaml'] === undefined ? '--config.lockfile=false' : '--frozen-lockfile',
++      '--ignore-scripts', '--ignore-pnpmfile', '--ignore-workspace'], {
++      cwd: dir, env: environment, extendEnv: false, windowsHide: true, reject: false,
++      stdin: 'ignore', timeout: options.idleTimeoutMs ?? 120000,
++    });
++    if (result.exitCode !== 0) throw new Error('Plugin recovery could not restore installed modules; the startup block remains.');
++    await rm(pending);
++    return { recovered: true, preserved: true };
++  } finally { await launch.close(); await rm(launchPath); }
++}

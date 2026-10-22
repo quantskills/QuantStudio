@@ -17,7 +17,15 @@ export class ContestCliError extends Error {
   constructor(readonly code: string, message: string, readonly retryAfterSeconds?: number) { super(message) }
 }
 
-export const transientContestCodes = new Set(['rate_limit_exceeded', 'timeout', 'network_error', 'http_429', 'http_502', 'http_503', 'http_504'])
+export const transientContestCodes = new Set(['rate_limit_exceeded', 'timeout', 'network_error', 'http_429', 'http_500', 'http_502', 'http_503', 'http_504'])
+
+/** Older CLIs wrap gateway HTML errors as bad_response. Keep only the HTTP status. */
+export function contestFailureCode(rawCode: unknown, message: unknown): string {
+  const code = String(rawCode ?? 'cli_failed').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 60)
+  if (code !== 'bad_response' || typeof message !== 'string') return code
+  const status = /^(?:bad_response:\s*)?服务返回了非 JSON 内容[（(]HTTP (500|502|503|504)[）)]/.exec(message)?.[1]
+  return status ? `http_${status}` : code
+}
 
 export function record(value: unknown): Record<string, JsonValue> {
   return typeof value === 'object' && value !== null && !Array.isArray(value) ? value as Record<string, JsonValue> : {}
@@ -36,7 +44,8 @@ export function parseCliOutput(text: string): ContestData {
   let body: Record<string, unknown>
   try { body = record(JSON.parse(text)) } catch { throw new Error('比赛 CLI 返回了无法解析的结果，请重新检查连接。') }
   if (body.ok !== true) {
-    const code = String(record(body.error).code ?? 'cli_failed').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 60)
+    const code = contestFailureCode(record(body.error).code, record(body.error).message)
+    const unavailable = /^http_(500|502|503|504)$/.exec(code)?.[1]
     const messages: Record<string, string> = {
       market_closed: '当前合约休市，请在交易时段重新预演。',
       unauthorized: '比赛登录已失效，请重新连接。',
@@ -45,10 +54,13 @@ export function parseCliOutput(text: string): ContestData {
       plan_expired: '交易计划已过期，请重新预演。',
       variety_ambiguous: '品种简称不明确，请填写完整品种名或实际合约。',
       no_browser: '比赛登录需要在 Windows 或 macOS 本机打开浏览器。',
+      bad_response: '比赛接口返回了无法识别的响应，请稍后重试。',
     }
     const error = record(body.error), details = record(error.detail ?? error.details), meta = record(body.meta)
     const retry = Number(error.retryAfterSeconds ?? error.retryAfter ?? error.retry_after ?? details.retryAfterSeconds ?? details.retryAfter ?? details.retry_after ?? meta.retryAfterSeconds ?? meta.retryAfter ?? meta.retry_after)
-    throw new ContestCliError(code, messages[code] ?? `比赛 CLI 操作未完成（${code}）。请检查连接和账户状态。`,
+    throw new ContestCliError(code, unavailable
+      ? `比赛服务暂时不可用（HTTP ${unavailable}），当前无法读取账户和行情。请等待服务恢复后重试。`
+      : messages[code] ?? `比赛 CLI 操作未完成（${code}）。请检查连接和账户状态。`,
       Number.isFinite(retry) && retry > 0 ? Math.min(86400, retry) : undefined)
   }
   return { data: safeData(body.data), ...(body.meta === undefined ? {} : { meta: record(safeData(body.meta)) }), fetchedAt: Date.now() }

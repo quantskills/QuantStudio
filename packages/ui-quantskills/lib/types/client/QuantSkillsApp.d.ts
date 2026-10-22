@@ -20,6 +20,8 @@ export interface QuantSkillsAppInjected {
     manualSkillSave?: ManualSkillSave;
     readSkillDeclaration: (versionId: string, signal: AbortSignal) => Promise<string>;
     renderPluginMarket?: () => ReactNode;
+    /** Open the upstream-owned workbench or durable-task panel without replacing its state. */
+    openAdvancedWorkbench?: (panel: 'conversation' | 'schedules') => void;
     databaseAccess?: DatabaseAccess;
     contestAccess?: ContestAccess;
     flyAccess?: FlyAccess;
@@ -155,6 +157,9 @@ export interface QuantSkillsPluginFrameInjected {
     claimDetails: (options: DetailsColumnClaimOptions) => DetailsColumnClaim;
     claimConversationTextScale: (scale: number) => ConversationTextScaleClaim;
     openResults: () => void;
+    /** The official DSH dock owns file navigation in the native composition. */
+    nativeResults?: boolean;
+    toggleNativeResults?: () => void;
     closeResults: () => void;
     close: () => void;
 }
@@ -178,7 +183,6 @@ export interface QuantSkillsResultInjected {
     openFile: (path: string) => Promise<void>;
     previewFile: (path: string) => Promise<QuantSkillsResultPreview>;
     openOutputDirectory: (path?: string) => Promise<void>;
-    continueWithResults: (paths: readonly string[]) => Promise<void>;
     acknowledgePreviewFocus: (sequence: number) => void;
     triggerRef: RefObject<HTMLElement | null>;
     docked: boolean;
@@ -220,7 +224,7 @@ export interface QuantSkillsFrameInjected {
     startAuthoringSession: (kind: QuantSkillsAuthoringKind, initialRequest?: string) => Promise<void>;
     openAgentTeamBuilder: (seed?: QuantSkillsAgentTeamBuilderSeed) => void;
 }
-export type QuantSkillsFrameProps = PropsRuntime<'root'> & PropsRenderSlots<'sidebar' | 'quantskills.page' | 'quantskills.results' | 'conversation' | 'details' | 'shell.overlay'> & PropsStore<LayoutStore> & InjectFace<QuantSkillsFrameInjected>;
+export type QuantSkillsFrameProps = PropsRuntime<'root'> & PropsRenderSlots<'sidebar' | 'quantskills.page' | 'quantskills.results' | 'main' | 'rightbar' | 'shell.overlay'> & PropsStore<LayoutStore> & InjectFace<QuantSkillsFrameInjected>;
 export type QuantSkillsAppProps = PropsRuntime<'quantskills.page'> & InjectFace<QuantSkillsAppInjected>;
 export type QuantSkillsRailProps = PropsRuntime<'sidebar'> & PropsRenderSlots<'sidebar.footer.action'> & InjectFace<QuantSkillsRailInjected>;
 export type QuantSkillsPluginFrameProps = PropsRuntime<'shell.overlay'> & PropsRenderSlots<'quantskills.page' | 'quantskills.results'> & InjectFace<QuantSkillsPluginFrameInjected>;
@@ -229,9 +233,9 @@ export type QuantSkillsResultProps = PropsRuntime<'quantskills.results'> & Injec
 export type QuantSkillsResultActionProps = PropsRuntime<'conversation.session.header.actions'> & QuantSkillsResultActionInjected;
 export type QuantSkillsAuthoringActionProps = QuantSkillsAuthoringActionInjected;
 /** DSH-compatible root frame that keeps the stock conversation services while replacing the stock visual shell. */
-export declare function QuantSkillsFrame({ useStore, actions, useSessions, useView, useCatalog, useBoundSessions, useAgents, useNotifications, renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, }: QuantSkillsFrameProps): import("react").JSX.Element;
+export declare function QuantSkillsFrame({ useStore, actions, useSessions, usePanelInfo, useView, useCatalog, useBoundSessions, useAgents, useNotifications, renderSlot, openSession, syncNotifications, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, }: QuantSkillsFrameProps): import("react").JSX.Element;
 /** Full-screen QuantSkills application hosted by the stock DSH shell. */
-export declare function QuantSkillsPluginFrame({ useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications, renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails, claimConversationTextScale, openResults, closeResults, close, modelAccess, }: QuantSkillsPluginFrameProps): import("react").JSX.Element | null;
+export declare function QuantSkillsPluginFrame({ useView, useLayout, useCatalog, useBoundSessions, useAgents, useSessions, useNotifications, renderSlot, actions, openSession, acknowledgeNotification, renameSession, removeSessions, archiveSessions, sessionFiles, startSession, startAuthoringSession, openAgentTeamBuilder, claimSidebar, claimDetails, claimConversationTextScale, openResults, closeResults, close, modelAccess, nativeResults, toggleNativeResults, rightbar, }: QuantSkillsPluginFrameProps): import("react").JSX.Element | null;
 /** QuantSkills application launcher contributed to the stock Host sidebar. */
 export declare function QuantSkillsPluginLauncher({ wide, useNotifications, open }: QuantSkillsPluginLauncherProps): import("react").JSX.Element;
 /** Compact DSH-consistent application rail used by every QuantSkills screen. */
@@ -252,6 +256,6 @@ export declare function QuantSkillsAuthoringAction({ start }: QuantSkillsAuthori
 /** Header action shown only when the Host projection binds this Session to QuantSkills. */
 export declare function QuantSkillsResultAction({ useProjection, useSession, useChat, open, complete, }: QuantSkillsResultActionProps): import("react").JSX.Element | null;
 /** Current QuantSkills Session's real, read-only result workbench. */
-export declare function QuantSkillsResultPanel({ close, listFiles, prepareFiles, openFile, previewFile, revealFile, saveFileAs, continueWithResults, acknowledgePreviewFocus, triggerRef, docked, mode: panelMode, maximized, expand, toggleMaximized, useProjection, useSession, useChat, useSessions, useResultRequest, sessionId, }: QuantSkillsResultProps): import("react").JSX.Element | null;
+export declare function QuantSkillsResultPanel({ close, listFiles, prepareFiles, openFile, previewFile, revealFile, saveFileAs, acknowledgePreviewFocus, triggerRef, docked, mode: panelMode, maximized, expand, toggleMaximized, useProjection, useSession, useChat, useSessions, useResultRequest, sessionId, }: QuantSkillsResultProps): import("react").JSX.Element | null;
 export {};
 //# sourceMappingURL=QuantSkillsApp.d.ts.map

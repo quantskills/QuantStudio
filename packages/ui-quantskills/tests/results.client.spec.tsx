@@ -235,7 +235,6 @@ function resultProps(
     openFile,
     previewFile,
     openOutputDirectory: async () => {},
-    continueWithResults: async () => {},
     acknowledgePreviewFocus: () => {},
     triggerRef: { current: null },
     docked: false,
@@ -599,14 +598,12 @@ describe('QuantSkills real result projection', () => {
       bytes: 12,
       text: '# 已归档报告',
     }))
-    const continueWithResults = vi.fn(async () => {})
     const props = {
       ...resultProps(binding, openFile, previewFile, prepareFiles),
       useChat: bindSnapshotSelector(createSnapshotStore(conversation([
         'legacy/output/report.md',
         'legacy/output/missing.md',
       ], false))),
-      continueWithResults,
     }
     render(<QuantSkillsResultPanel {...props}/>)
 
@@ -629,10 +626,6 @@ describe('QuantSkills real result projection', () => {
       name: '使用系统应用完整打开 output/quantskills/skill-fin-news/report.md',
     }))
     expect(openFile).toHaveBeenCalledWith('output/quantskills/skill-fin-news/report.md')
-    fireEvent.click(screen.getByRole('button', { name: '携带产物到新会话' }))
-    await waitFor(() => {
-      expect(continueWithResults).toHaveBeenCalledWith(['output/quantskills/skill-fin-news/report.md'])
-    })
   })
 
   it('deduplicates prepared paths without collapsing valid same-named artifacts', async () => {

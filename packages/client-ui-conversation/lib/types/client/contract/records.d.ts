@@ -4,7 +4,8 @@ import type { ContentBlock } from '@deepseek-ai/dsh-llm/types';
 import type { ImageAttachmentRef } from '@deepseek-ai/dsh-attachment';
 import type { LlmRetryEventData } from '@deepseek-ai/dsh-llm-retry/types';
 import type { TodoItem } from '@deepseek-ai/dsh-tool-todo/client';
-import type { ContextProvenanceView, KnownContextForm } from './context-provenance.ts';
+import type { ContextProducerView, KnownContextForm } from './context-producer.ts';
+import type { PartialArguments } from '@deepseek-ai/dsh-util-values';
 export type { TodoItem };
 /** Request configuration recorded for one provider call. */
 export interface AssistantRequestConfig {
@@ -18,7 +19,7 @@ export interface AssistantRequestConfig {
     stop?: readonly string[];
 }
 /** Stable provider/model identity reported for one completed request. */
-export interface AssistantProvenanceView {
+export interface AssistantProviderMetadataView {
     provider: string;
     model: string;
 }
@@ -75,7 +76,7 @@ export interface AssistantMessageNode {
     step: number;
     blocks: readonly AssistantBlock[];
     usage?: unknown;
-    provenance?: AssistantProvenanceView;
+    providerMetadata?: AssistantProviderMetadataView;
     requestConfig?: AssistantRequestConfig;
     /** Timing derived from the recorded step/chunk/message event sequence. */
     timing?: AssistantTiming;
@@ -104,7 +105,7 @@ export interface ContextMessageNode {
     content: readonly ContentBlock[];
     source: unknown;
     /** Role and producer name projected from `source` by the target. */
-    provenance: ContextProvenanceView;
+    producer: ContextProducerView;
     /** Producer-declared information form supported by the target; null presents as opaque. */
     form: KnownContextForm | null;
 }
@@ -121,8 +122,9 @@ export type ModelRetryNode = LlmRetryEventData & {
     retryState: 'scheduled' | 'started' | 'cancelled';
 };
 /**
- * Durable terminal failure for a turn that ended with an error reason; the
- * turn's settled retry chain renders separately and never replaces this node.
+ * Durable terminal notice for a turn that ended with an error, a sign-out
+ * cancellation, or an interruption by a DSH stop; the turn's settled retry
+ * chain renders separately and never replaces this node.
  */
 export interface TurnErrorNode {
     kind: 'turn-error';
@@ -134,7 +136,11 @@ export interface TurnErrorNode {
     step: number;
     /** Sanitized provider message; empty when a known code owns localized copy. */
     message: string;
-    /** Stable provider failure code, when recorded. */
+    /**
+     * Stable provider failure code when recorded, or a Client display code:
+     * `ACCOUNT_SIGNED_OUT` for a sign-out cancellation, `INTERRUPTED` for a
+     * turn closed after DSH stopped.
+     */
     code?: string;
 }
 /** Durable notice for a turn ended by the per-request output-token cap. */
@@ -154,8 +160,12 @@ export interface ToolResultNode {
     /** Unix epoch ms from the tool/result session event. */
     time: number;
     callId: string;
-    /** Parent Tool call for a Code Dispatch result; absent on a root Session result. */
+    /** Parent Tool call for a PTC dispatch result; absent on a root Session result. */
     parentCallId?: string;
+    /** Wire tool name from the paired tool/call; empty when that call left the loaded window. */
+    name: string;
+    /** The argument view of the paired call; see {@link ToolArgs}. */
+    args: ToolArgs;
     /** Call head backfilled from the in-window tool/call; null when window truncation left the call outside (card head shows callId). */
     call: {
         name: string;
@@ -168,6 +178,7 @@ export interface ToolResultNode {
     error?: {
         name: string;
         code: string;
+        reason?: string;
     };
     meta?: unknown;
     /** Child calls owned by this call, in dispatch order. */
@@ -197,12 +208,9 @@ export interface CompactionSummaryNode {
     shadowedTokenCount: number | null;
 }
 /**
- * Fallback for surface events this UI version does not know: the documented
- * default arm of `SessionEventMap`, which is merge-extensible, so the
- * projection's switch cannot end in `assertNever`. No event produces this node
- * because `isAppendSurfaceEvent` admits only the three types in core's
- * `SurfaceEventType`, and each has its own arm — and it exists so widening that
- * set core-side degrades to a raw row instead of dropping the event silently.
+ * Fallback for unclaimed append-surface events. The merge-extensible
+ * SessionEventMap permits unfamiliar events to retain a raw presentation.
+ * Known unsupported developer events throw before fallback selection.
  */
 export interface UnknownSurfaceNode {
     kind: 'unknown';
@@ -246,21 +254,44 @@ export interface CommandNode {
 }
 /** Finalized conversation node union (kind discriminates; seq is the React key). */
 export type ConversationNode = UserMessageNode | AssistantMessageNode | SteeringMessageNode | ContextMessageNode | ModelRetryNode | TurnErrorNode | TurnMaxTokensNode | ToolResultNode | CommandNode | CompactionSummaryNode | UnknownSurfaceNode;
-/** In-flight tool card material: tool/call seen, tool/result not yet. */
-export interface RunningToolCall {
+/** Identity and placement shared by tool preparation and dispatch. */
+interface ToolCallHead {
     callId: string;
-    /** Parent Tool call for a Code Dispatch start; absent on a root Session call. */
+    /** Parent Tool call for a PTC dispatch start; absent on a root Session call. */
     parentCallId?: string;
     name: string;
-    argsRaw: string;
     turn: number;
     step: number;
-    /** Unix epoch ms when the tool/call event was logged. */
+    /** Unix epoch ms when this stage began. */
     time: number;
     /** Child calls owned by this call, in dispatch order. */
     subCalls: readonly ToolCallBlock[];
+    /** The argument view; see {@link ToolArgs}. */
+    args: ToolArgs;
 }
-/** One running or settled call, recursively owning its child calls. */
+/**
+ * Lazy top-level argument readers shared by preparing, start, and result;
+ * {@link PartialArguments} defines field, prefix, length, and completion reads.
+ * A preparing view grows in place. Read it during render or view construction,
+ * not into independent state keyed only by the args or block object identity.
+ * The Definition publishes the initial named block, then republishes when an
+ * observed answer changes. Unread fields alone do not request republication.
+ * Dispatched views are sealed over finished text or parsed values. The view is
+ * empty for a result whose `tool/call` left the loaded window.
+ */
+export type ToolArgs = PartialArguments;
+/** A named model call whose complete arguments are not yet available to tool views. */
+export interface PreparingToolCall extends ToolCallHead {
+    readonly phase: 'preparing';
+}
+/** A dispatched tool call with complete arguments and no result yet. */
+export interface StartedToolCall extends ToolCallHead {
+    readonly phase: 'start';
+    readonly argsRaw: string;
+}
+/** A tool still preparing or awaiting its result. */
+export type RunningToolCall = PreparingToolCall | StartedToolCall;
+/** One preparing, dispatched, or settled call, recursively owning its child calls. */
 export type ToolCallBlock = RunningToolCall | ToolResultNode;
 /** In-progress assistant output (chunk accumulator product). */
 export interface PartialAssistant {

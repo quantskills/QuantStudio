@@ -8,15 +8,24 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
  * rows only while it has none; pointer picks route back through
  * the service (combobox pattern — focus never leaves the textarea, so rows
  * are mousedown-handled and the highlight is exposed via
- * aria-activedescendant on the listbox). A source publishing crumbs gets a
- * breadcrumb header pinned above the scrolling list.
+ * aria-activedescendant on the listbox). A row reads title, then the
+ * command-name alias when the title is not the name in another letter case
+ * (a localized title), then the description right-aligned. A source publishing crumbs gets a breadcrumb
+ * header pinned above the scrolling list.
  */
-import { Fragment, useEffect, useRef, useSyncExternalStore } from 'react';
+import { MenuSurface } from '@deepseek-ai/dsh-client-ui-primitives';
+import { Fragment, useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import clsx from 'clsx';
-import { IconChevronRightOutline14, ReferenceIcon, useAnchoredMaxHeight } from '@deepseek-ai/dsh-client-ui-primitives';
+import { IconChevronRightOutlineRegular, ReferenceIconRegular, useAnchoredMaxHeight } from '@deepseek-ai/dsh-client-ui-primitives';
 import css from './MenuView.module.css';
-/** Design cap on the list height (figma SLASH 39:26572 MenuDropdown). */
-const MAX_HEIGHT = 320;
+/** Height cap that fits the two headings and eight built-in command rows. */
+const MAX_HEIGHT = 400;
+/**
+ * Viewport top margin: the conversation header's 76px block (title row plus
+ * view tabs, ui-conversation) plus 8px of air, so a tall list stops below the
+ * header instead of sliding under it.
+ */
+const TOP_MARGIN = 84;
 /** DOM id of one option row (the aria-activedescendant target). */
 function optionId(source, index) {
     return `dsh-slash-option-${source}-${index}`;
@@ -30,10 +39,20 @@ export function MenuView({ menu, headers, onPick, onCrumb, onHover, onDismiss, t
     const state = useSyncExternalStore(fn => menu.subscribe(fn), () => menu.getSnapshot());
     const crumbs = useSyncExternalStore(fn => headers.subscribe(fn), () => headers.getSnapshot());
     const listRef = useRef(null);
+    const viewportRef = useRef(null);
+    const [hasOverflowBelow, setHasOverflowBelow] = useState(false);
     // The list is bottom-anchored above the composer; clamp the design cap to
     // the space above it, re-measured on every store update (the anchor moves
     // when the composer grows).
-    const maxHeight = useAnchoredMaxHeight(listRef, MAX_HEIGHT, state);
+    const maxHeight = useAnchoredMaxHeight(listRef, MAX_HEIGHT, state, TOP_MARGIN);
+    const updateOverflowHint = useCallback(() => {
+        const viewport = viewportRef.current;
+        setHasOverflowBelow(viewport !== null
+            && viewport.scrollTop + viewport.clientHeight < viewport.scrollHeight - 1);
+    }, []);
+    useLayoutEffect(() => {
+        updateOverflowHint();
+    }, [state, maxHeight, updateOverflowHint]);
     const highlight = state.open ? state.highlight : null;
     // Focus stays in the textarea (combobox pattern), so the browser never
     // scrolls the active option into view on keyboard moves — do it here.
@@ -66,15 +85,15 @@ export function MenuView({ menu, headers, onPick, onCrumb, onHover, onDismiss, t
     return (
     // The listbox role sits on the scrolling viewport, not this shell: a
     // breadcrumb header is not an option, and a listbox may not carry one.
-    _jsxs("div", { ref: listRef, className: css.menu, style: { maxHeight }, "data-trigger-menu": "", children: [state.groups.map((group) => {
+    _jsxs(MenuSurface, { ref: listRef, className: css.menu, style: { maxHeight }, "data-trigger-menu": "", "data-overflow-below": hasOverflowBelow || undefined, children: [state.groups.map((group) => {
                 const trail = crumbs.get(group.source);
-                return trail === undefined ? null : (_jsx("nav", { className: css.crumbs, "aria-label": t('crumbs.aria'), children: trail.map((crumb, index) => (_jsxs(Fragment, { children: [index > 0 && _jsx("span", { className: css.crumbSeparator, "aria-hidden": true, children: _jsx(IconChevronRightOutline14, {}) }), _jsx("button", { type: "button", className: clsx(css.crumb, crumb.current === true && css.crumbCurrent), "aria-current": crumb.current === true ? 'location' : undefined, disabled: crumb.current === true,
+                return trail === undefined ? null : (_jsx("nav", { className: css.crumbs, "aria-label": t('crumbs.aria'), children: trail.map((crumb, index) => (_jsxs(Fragment, { children: [index > 0 && _jsx("span", { className: css.crumbSeparator, "aria-hidden": true, children: _jsx(IconChevronRightOutlineRegular, {}) }), _jsx("button", { type: "button", className: clsx(css.crumb, crumb.current === true && css.crumbCurrent), "aria-current": crumb.current === true ? 'location' : undefined, disabled: crumb.current === true,
                                 // mousedown, not click: the composer keeps focus, same as a row.
                                 onMouseDown: (ev) => {
                                     ev.preventDefault();
                                     onCrumb(group.source, index);
                                 }, children: crumb.label })] }, `${String(index)}-${crumb.value}`))) }, group.source));
-            }), _jsx("div", { className: css.viewport, role: "listbox", "aria-label": t('suggestions.aria'), "aria-activedescendant": highlight !== null ? optionId(highlight.source, highlight.index) : undefined, children: state.groups.map(group => (group.status === 'ready' && group.items.length === 0)
+            }), _jsx("div", { ref: viewportRef, className: css.viewport, role: "listbox", "aria-label": t('suggestions.aria'), "aria-activedescendant": highlight !== null ? optionId(highlight.source, highlight.index) : undefined, onScroll: updateOverflowHint, children: state.groups.map(group => (group.status === 'ready' && group.items.length === 0)
                     ? null
                     : (_jsxs(Fragment, { children: [group.showGroupTitle === false || group.items.some(item => item.section !== undefined)
                                 ? null
@@ -95,14 +114,16 @@ export function MenuView({ menu, headers, onPick, onCrumb, onHover, onDismiss, t
                                                 // mousemove, not mouseenter: real pointer motion moves the
                                                 // shared highlight; keyboard scrolling rows under a resting
                                                 // pointer must not steal it back.
-                                                onMouseMove: active ? undefined : () => { onHover(group.source, index); }, children: [item.icon !== undefined && (_jsx("span", { className: css.itemIcon, "aria-hidden": true, children: _jsx(ReferenceIcon, { kind: item.icon, size: 16 }) })), _jsx("span", { className: css.itemName, children: item.name }), item.description !== undefined && _jsx("span", { className: css.itemDescription, children: item.description }), item.drill === true && (_jsxs("span", { className: css.trailing, children: [_jsx("span", { className: css.drillHintText, "aria-hidden": true, children: t('drill.hint') }), _jsx("kbd", { className: css.drillHint, "aria-hidden": true, children: t('drill.key') }), _jsx("span", { role: "button", "aria-label": t('drill.aria'), className: css.drill,
+                                                onMouseMove: active ? undefined : () => { onHover(group.source, index); }, children: [item.icon !== undefined && (_jsx("span", { className: css.itemIcon, "aria-hidden": true, children: typeof item.icon === 'string'
+                                                            ? _jsx(ReferenceIconRegular, { kind: item.icon, size: 14 })
+                                                            : _jsx(item.icon, { size: 14 }) })), _jsx("span", { className: css.itemName, children: item.label ?? item.name }), item.label !== undefined && item.label.toLowerCase() !== item.name.toLowerCase() && (_jsx("span", { className: css.itemAlias, children: item.name })), item.description !== undefined && _jsx("span", { className: css.itemDescription, children: item.description }), item.drill === true && (_jsxs("span", { className: css.trailing, children: [_jsx("span", { className: css.drillHintText, "aria-hidden": true, children: t('drill.hint') }), _jsx("kbd", { className: css.drillHint, "aria-hidden": true, children: t('drill.key') }), _jsx("span", { role: "button", "aria-label": t('drill.aria'), className: css.drill,
                                                                 // mousedown so the composer keeps focus, same as the row;
                                                                 // stopPropagation keeps the row's settling pick out of it.
                                                                 onMouseDown: (ev) => {
                                                                     ev.preventDefault();
                                                                     ev.stopPropagation();
                                                                     onPick(group.source, index, 'drill');
-                                                                }, children: _jsx(IconChevronRightOutline14, {}) })] }))] })] }, optionId(group.source, index)));
+                                                                }, children: _jsx(IconChevronRightOutlineRegular, { size: 12 }) })] }))] })] }, optionId(group.source, index)));
                                 })] }, group.source))) })] }));
 }
 //# sourceMappingURL=MenuView.js.map

@@ -7,8 +7,704 @@ window.__ModuleLoader__.load({
 		let _deepseek_ai_cordis = require("@deepseek-ai/cordis");
 		let _deepseek_ai_dsh_client_store = require("@deepseek-ai/dsh-client-store");
 		let react_jsx_runtime = require("react/jsx-runtime");
-		let react = require("react");
 		let _deepseek_ai_dsh_client_ui_primitives = require("@deepseek-ai/dsh-client-ui-primitives");
+		let react = require("react");
+		//#region ../../node_modules/@deepseek-ai/dsh-util-values/lib/index.js
+		/**
+		* Lazily scanned view of one JSON object's top-level fields, built from text
+		* that may still be streaming or from an already parsed object. Nothing is
+		* scanned until a reader asks; the view remembers every question it answered
+		* and reports changed answers when the owner refreshes for publication.
+		* Used for model tool-call arguments: a row reads the fields it
+		* cares about at whatever granularity it displays, at every stage of the call.
+		* @module @deepseek-ai/dsh-util-values/src/partial-json
+		*/
+		const SIMPLE_ESCAPES = {
+			"\"": "\"",
+			"\\": "\\",
+			"/": "/",
+			b: "\b",
+			f: "\f",
+			n: "\n",
+			r: "\r",
+			t: "	"
+		};
+		const CONTENT_ESCAPE = /[\\\u0000-\u001f]/u;
+		function isWhitespace(c) {
+			return c === " " || c === "\n" || c === "\r" || c === "	";
+		}
+		function isHex(c) {
+			return c >= "0" && c <= "9" || c >= "a" && c <= "f" || c >= "A" && c <= "F";
+		}
+		(class PartialArguments {
+			/** The view of a call with no arguments available. */
+			static EMPTY = PartialArguments.fromObject({});
+			/**
+			* View finished argument text without scanning it until a reader asks.
+			* @param text - the complete argument JSON text.
+			* @returns a sealed view.
+			*/
+			static fromText(text) {
+				const view = new PartialArguments();
+				view.append(text);
+				view.sealed = true;
+				return view;
+			}
+			/**
+			* View an already parsed argument payload, such as a PTC dispatch object.
+			* @param value - the parsed argument value.
+			* @returns a sealed view; a non-object payload has no fields.
+			*/
+			static fromObject(value) {
+				const view = new PartialArguments();
+				view.object = typeof value === "object" && value !== null && !Array.isArray(value) ? value : {};
+				view.sealed = true;
+				return view;
+			}
+			/**
+			* The source: text so far or a parsed object, plus whether it can still grow.
+			* These are the only enumerable fields, so two views over the same source
+			* compare equal structurally however far each has been read.
+			*/
+			chunks = [];
+			object;
+			sealed = false;
+			#ends = [];
+			#size = 0;
+			#consumed = 0;
+			#mode = "root";
+			#escape = false;
+			#keyStart = 0;
+			#keyEscaped = false;
+			#key = "";
+			#current = null;
+			#nestedEnds = [];
+			#nestedInString = false;
+			#invalidAt;
+			#invalidValue = false;
+			#entries = /* @__PURE__ */ new Map();
+			#order = [];
+			#reads = /* @__PURE__ */ new Map();
+			/** Whether this view rejects further appends; does not scan text or register reads. */
+			get isSealed() {
+				return this.sealed;
+			}
+			/** Whether indexing or a content read found invalid JSON; unread value contents are not validated. */
+			get invalid() {
+				this.scan();
+				return this.#mode === "invalid" || this.#invalidValue;
+			}
+			/**
+			* Retain streamed argument text without scanning or comparing observed answers.
+			* @param fragment - the text following every fragment appended before.
+			*/
+			append(fragment) {
+				if (this.sealed) throw new Error("PartialArguments: cannot append to a sealed view");
+				if (fragment.length === 0) return;
+				this.chunks.push(fragment);
+				this.#size += fragment.length;
+				this.#ends.push(this.#size);
+			}
+			/**
+			* Reconcile a streamed prefix with authoritative complete text without joining the fragments.
+			* @param text - the final argument text, which replaces missing or conflicting deltas.
+			* @returns this view sealed with its caches retained when every character matches; otherwise a new sealed view.
+			*/
+			settle(text) {
+				if (this.object !== void 0 || text.length !== this.#size) return PartialArguments.fromText(text);
+				let offset = 0;
+				for (const chunk of this.chunks) {
+					if (!text.startsWith(chunk, offset)) return PartialArguments.fromText(text);
+					offset += chunk.length;
+				}
+				this.chunks = text.length === 0 ? [] : [text];
+				this.#ends = text.length === 0 ? [] : [text.length];
+				this.sealed = true;
+				return this;
+			}
+			/**
+			* Compare observed answers and advance their publication baseline. Unread views remain unscanned.
+			* @returns whether any observed answer changed since its first read or the preceding refresh.
+			*/
+			refresh() {
+				if (this.#reads.size === 0) return false;
+				this.scan();
+				let changed = false;
+				let completions = false;
+				for (const read of this.#reads.values()) {
+					if (read.completion) {
+						completions = true;
+						continue;
+					}
+					changed = this.refreshRead(read) || changed;
+				}
+				if (completions) {
+					for (const read of this.#reads.values()) if (read.completion) changed = this.refreshRead(read) || changed;
+				}
+				if (this.sealed) this.#reads.clear();
+				return changed;
+			}
+			refreshRead(read) {
+				const now = read.answer();
+				if (Object.is(now, read.last)) return false;
+				read.last = now;
+				return true;
+			}
+			/**
+			* Check whether no further fields can arrive.
+			* @returns whether the outer object closed, indexing failed, or the view is sealed; unread values are not validated.
+			*/
+			closed() {
+				return this.remember("closed", "", () => this.closedNow());
+			}
+			/**
+			* List discovered fields in first-appearance order.
+			* @returns top-level keys seen so far, in first-appearance order.
+			*/
+			keys() {
+				return this.remember("keys", "", () => this.keysNow(), (keys) => keys.length);
+			}
+			/**
+			* Check whether a top-level field has appeared.
+			* @param key - argument name.
+			* @returns whether the field has appeared (a string opened or another value began).
+			*/
+			has(key) {
+				return this.remember("has", key, () => this.hasNow(key));
+			}
+			/**
+			* Check whether a field's closing delimiter has arrived, without validating its contents.
+			* @param key - argument name.
+			* @returns whether its delimiter arrived and no content reader has reported an error for this value.
+			*/
+			complete(key) {
+				return this.remember("complete", key, () => this.completeNow(key));
+			}
+			/**
+			* Read string length without materializing its text.
+			* @param key - argument name.
+			* @param options - change granularity for a streaming string.
+			* @returns decoded UTF-16 length of the string field so far; undefined when absent or not a string.
+			*/
+			stringLength(key, options) {
+				const step = Math.max(1, Math.floor(options?.step ?? 1));
+				const offset = options?.offset ?? 0;
+				return this.remember(`length:${step}:${offset}`, key, () => this.lengthNow(key), (length) => length === void 0 ? void 0 : Math.ceil((length + offset) / step));
+			}
+			/**
+			* Check a string against a decoded UTF-16 length limit without materializing it.
+			* @param key - argument name.
+			* @param maxLength - decoded UTF-16 limit, floored to at least zero.
+			* @returns whether the string is longer than the limit; false when absent or not a string.
+			*/
+			stringExceeds(key, maxLength) {
+				const limit = Math.max(0, Math.floor(maxLength));
+				return this.remember(`exceeds:${limit}`, key, () => (this.lengthNow(key, limit + 1) ?? 0) > limit);
+			}
+			/**
+			* Read a decoded string, including a streaming prefix.
+			* @param key - argument name.
+			* @returns the string field's decoded text so far; undefined when absent or not a string.
+			*/
+			text(key) {
+				return this.remember("text", key, () => this.textNow(key));
+			}
+			/**
+			* Read at most the first decoded UTF-16 units of a string.
+			* @param key - argument name.
+			* @param maxLength - maximum decoded UTF-16 length, floored to at least one.
+			* @returns the bounded string prefix; undefined when absent or not a string.
+			*/
+			textPrefix(key, maxLength) {
+				const limit = Math.max(1, Math.floor(maxLength));
+				return this.remember(`prefix:${limit}`, key, () => this.textPrefixNow(key, limit));
+			}
+			/**
+			* Read a completed non-string argument.
+			* @param key - argument name.
+			* @returns the parsed non-string value once it closed; undefined while open, absent, or a string.
+			*/
+			value(key) {
+				return this.remember("value", key, () => this.valueNow(key));
+			}
+			/** Answer a question and, on a streaming view, remember it for change detection. */
+			remember(kind, key, read, comparison) {
+				this.scan();
+				const result = read();
+				if (!this.sealed) {
+					const id = `${kind}/${key}`;
+					if (!this.#reads.has(id)) this.#reads.set(id, {
+						completion: kind === "complete",
+						answer: comparison === void 0 ? read : () => comparison(read()),
+						last: comparison === void 0 ? result : comparison(result)
+					});
+				}
+				return result;
+			}
+			closedNow() {
+				return this.sealed || this.#mode === "closed" || this.#mode === "invalid";
+			}
+			keysNow() {
+				return this.object === void 0 ? this.#order : Object.keys(this.object);
+			}
+			hasNow(key) {
+				return this.object === void 0 ? this.#entries.has(key) : Object.hasOwn(this.object, key);
+			}
+			completeNow(key) {
+				if (this.object !== void 0) return Object.hasOwn(this.object, key);
+				const entry = this.#entries.get(key);
+				return entry !== void 0 && entry.end >= 0 && (entry.kind === "string" ? entry.invalidAt === void 0 : !entry.invalid);
+			}
+			lengthNow(key, limit = Number.POSITIVE_INFINITY) {
+				if (this.object !== void 0) {
+					const field = Object.hasOwn(this.object, key) ? this.object[key] : void 0;
+					return typeof field === "string" ? field.length : void 0;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "string") return void 0;
+				if (entry.text !== void 0 && entry.text.at === entry.end) return entry.text.length;
+				const read = entry.length ??= {
+					at: entry.start,
+					length: 0,
+					text: ""
+				};
+				this.readString(entry, read, limit, false);
+				return read.length;
+			}
+			textNow(key) {
+				if (this.object !== void 0) {
+					const field = Object.hasOwn(this.object, key) ? this.object[key] : void 0;
+					return typeof field === "string" ? field : void 0;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "string") return void 0;
+				if (entry.text === void 0 && entry.end >= 0 && entry.needsDecoding && entry.invalidAt === void 0) {
+					let text;
+					try {
+						text = JSON.parse(`"${this.slice(entry.start, entry.end)}"`);
+					} catch (_error) {}
+					if (text !== void 0) entry.text = {
+						at: entry.end,
+						length: text.length,
+						text
+					};
+				}
+				const read = entry.text ??= {
+					at: entry.start,
+					length: 0,
+					text: ""
+				};
+				this.readString(entry, read, Number.POSITIVE_INFINITY, true);
+				return read.text;
+			}
+			textPrefixNow(key, maxLength) {
+				if (this.object !== void 0) {
+					const field = Object.hasOwn(this.object, key) ? this.object[key] : void 0;
+					return typeof field === "string" ? field.slice(0, maxLength) : void 0;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "string") return void 0;
+				const prefixes = entry.prefixes ??= /* @__PURE__ */ new Map();
+				let read = prefixes.get(maxLength);
+				if (read === void 0) {
+					read = {
+						at: entry.start,
+						length: 0,
+						text: ""
+					};
+					prefixes.set(maxLength, read);
+				}
+				this.readString(entry, read, maxLength, true);
+				return read.text;
+			}
+			valueNow(key) {
+				if (this.object !== void 0) {
+					if (!Object.hasOwn(this.object, key)) return void 0;
+					const field = this.object[key];
+					return typeof field === "string" ? void 0 : field;
+				}
+				const entry = this.#entries.get(key);
+				if (entry?.kind !== "value" || entry.end < 0 || entry.invalid) return void 0;
+				if (entry.parsed === void 0) try {
+					entry.parsed = JSON.parse(this.slice(entry.start, entry.end));
+				} catch (_error) {
+					entry.invalid = true;
+					this.#invalidValue = true;
+				}
+				return entry.parsed;
+			}
+			chunkAt(at) {
+				let low = 0;
+				let high = this.#ends.length;
+				while (low < high) {
+					const mid = low + high >>> 1;
+					if (this.#ends[mid] <= at) low = mid + 1;
+					else high = mid;
+				}
+				return low;
+			}
+			/** Materialize only a requested range, never the cumulative source. */
+			slice(start, end) {
+				if (start >= end) return "";
+				const first = this.chunkAt(start);
+				const last = this.chunkAt(end - 1);
+				const base = first === 0 ? 0 : this.#ends[first - 1];
+				if (first === last) return this.chunks[first].slice(start - base, end - base);
+				const parts = [this.chunks[first].slice(start - base)];
+				for (let i = first + 1; i < last; i++) parts.push(this.chunks[i]);
+				parts.push(this.chunks[last].slice(0, end - this.#ends[last - 1]));
+				return parts.join("");
+			}
+			readString(entry, read, limit, materialize) {
+				const end = Math.min(entry.end < 0 ? this.#consumed : entry.end, entry.invalidAt ?? Number.POSITIVE_INFINITY, this.#invalidAt ?? Number.POSITIVE_INFINITY);
+				if (!entry.needsDecoding) {
+					const length = Math.min(end - read.at, limit - read.length);
+					if (length <= 0) return;
+					if (materialize) read.text += this.slice(read.at, read.at + length);
+					read.at += length;
+					read.length += length;
+					return;
+				}
+				let chunkIndex = this.chunkAt(read.at);
+				while (read.at < end && read.length < limit) {
+					const base = chunkIndex === 0 ? 0 : this.#ends[chunkIndex - 1];
+					const chunk = this.chunks[chunkIndex];
+					const remaining = chunk.slice(read.at - base, Math.min(chunk.length, end - base));
+					const boundary = remaining.search(CONTENT_ESCAPE);
+					const length = Math.min(boundary < 0 ? remaining.length : boundary, limit - read.length);
+					if (length > 0) {
+						if (materialize) read.text += remaining.slice(0, length);
+						read.at += length;
+						read.length += length;
+						if (read.at === base + chunk.length) chunkIndex++;
+						continue;
+					}
+					const type = remaining.length > 1 ? remaining[1] : read.at + 1 < end ? this.chunks[chunkIndex + 1][0] : void 0;
+					let decoded;
+					let width = 2;
+					if (remaining[0] === "\\" && type === void 0 && entry.end < 0) return;
+					if (remaining[0] === "\\" && type === "u") {
+						const hex = this.slice(read.at + 2, Math.min(end, read.at + 6));
+						let valid = true;
+						for (let i = 0; i < hex.length; i++) if (!isHex(hex[i])) valid = false;
+						if (valid) {
+							if (hex.length < 4 && entry.end < 0) return;
+							if (hex.length === 4) decoded = String.fromCharCode(Number.parseInt(hex, 16));
+						}
+						width = 6;
+					} else if (remaining[0] === "\\" && type !== void 0) decoded = SIMPLE_ESCAPES[type];
+					if (decoded === void 0) {
+						entry.invalidAt = read.at;
+						this.#invalidValue = true;
+						return;
+					}
+					if (materialize) read.text += decoded;
+					read.length++;
+					read.at += width;
+					while (chunkIndex < this.chunks.length && read.at >= this.#ends[chunkIndex]) chunkIndex++;
+				}
+			}
+			/** Locate new field ranges without decoding or parsing their contents. */
+			scan() {
+				if (this.object !== void 0 || this.#consumed === this.#size) return;
+				for (let i = this.chunkAt(this.#consumed); i < this.chunks.length && this.#invalidAt === void 0; i++) {
+					const pending = this.chunks[i];
+					const base = i === 0 ? 0 : this.#ends[i - 1];
+					for (let index = this.#consumed - base; index < pending.length && this.#mode !== "invalid"; index++) {
+						if (this.#mode === "string" || this.#mode === "nested" && this.#nestedInString) {
+							const end = this.stringBoundary(pending, index);
+							this.#consumed += end - index;
+							index = end;
+							if (index === pending.length) break;
+						}
+						this.step(pending[index], this.#consumed);
+						this.#consumed++;
+					}
+				}
+			}
+			/** Only raw quotes and their preceding backslash runs can terminate a string. */
+			stringBoundary(fragment, start) {
+				let at = start;
+				while (true) {
+					const quote = fragment.indexOf("\"", at);
+					const end = quote < 0 ? fragment.length : quote;
+					if (this.#mode === "string") {
+						const entry = this.#current;
+						if (!entry.needsDecoding && CONTENT_ESCAPE.test(fragment.slice(at, end))) entry.needsDecoding = true;
+					}
+					let slashStart = end;
+					while (slashStart > at && fragment[slashStart - 1] === "\\") slashStart--;
+					const escaped = (end - slashStart) % 2 === 1 !== (slashStart === at && this.#escape);
+					this.#escape = quote < 0 && escaped;
+					if (quote < 0 || !escaped) return end;
+					at = quote + 1;
+				}
+			}
+			step(c, at) {
+				switch (this.#mode) {
+					case "root":
+						if (isWhitespace(c)) return;
+						if (c === "{") {
+							this.#mode = "key-or-end";
+							return;
+						}
+						this.fail();
+						return;
+					case "key-or-end":
+						if (isWhitespace(c)) return;
+						if (c === "}") {
+							this.#mode = "closed";
+							return;
+						}
+						if (c === "\"") {
+							this.beginKey(at);
+							return;
+						}
+						this.fail();
+						return;
+					case "key-only":
+						if (isWhitespace(c)) return;
+						if (c === "\"") {
+							this.beginKey(at);
+							return;
+						}
+						this.fail();
+						return;
+					case "key":
+						this.stepKey(c, at);
+						return;
+					case "colon":
+						if (isWhitespace(c)) return;
+						if (c === ":") {
+							this.#mode = "value";
+							return;
+						}
+						this.fail();
+						return;
+					case "value":
+						this.beginValue(c, at);
+						return;
+					case "string": {
+						const entry = this.#current;
+						entry.end = at;
+						this.#current = null;
+						this.#mode = "comma-or-end";
+						return;
+					}
+					case "scalar":
+						this.stepScalar(c, at);
+						return;
+					case "nested":
+						this.stepNested(c, at);
+						return;
+					case "comma-or-end":
+						if (isWhitespace(c)) return;
+						if (c === ",") {
+							this.#mode = "key-only";
+							return;
+						}
+						if (c === "}") {
+							this.#mode = "closed";
+							return;
+						}
+						this.fail();
+						return;
+					case "closed":
+						if (isWhitespace(c)) return;
+						this.fail();
+						return;
+					/* v8 ignore next 2 -- scan() stops stepping once the view is invalid. */
+					case "invalid": return;
+					/* v8 ignore next 2 -- Every scanner mode has a handler above. */
+					default: assertNever(this.#mode);
+				}
+			}
+			fail() {
+				this.#invalidAt = this.#consumed;
+				this.#mode = "invalid";
+				this.#current = null;
+			}
+			beginKey(at) {
+				this.#mode = "key";
+				this.#keyStart = at + 1;
+				this.#keyEscaped = false;
+				this.#escape = false;
+			}
+			stepKey(c, at) {
+				if (c < " ") {
+					this.fail();
+					return;
+				}
+				if (this.#escape) {
+					this.#escape = false;
+					return;
+				}
+				if (c === "\\") {
+					this.#escape = true;
+					this.#keyEscaped = true;
+					return;
+				}
+				if (c !== "\"") return;
+				const raw = this.slice(this.#keyStart, at);
+				if (this.#keyEscaped) try {
+					this.#key = JSON.parse(`"${raw}"`);
+				} catch (_error) {
+					this.fail();
+					return;
+				}
+				else this.#key = raw;
+				this.#mode = "colon";
+			}
+			open(entry) {
+				if (!this.#entries.has(this.#key)) this.#order.push(this.#key);
+				this.#entries.set(this.#key, entry);
+				this.#current = entry;
+			}
+			beginValue(c, at) {
+				if (isWhitespace(c)) return;
+				if (c === "\"") {
+					this.open({
+						kind: "string",
+						start: at + 1,
+						end: -1,
+						needsDecoding: false,
+						invalidAt: void 0,
+						length: void 0,
+						text: void 0,
+						prefixes: void 0
+					});
+					this.#escape = false;
+					this.#mode = "string";
+					return;
+				}
+				if (c === "}" || c === "," || c === ":" || c === "]") {
+					this.fail();
+					return;
+				}
+				this.open({
+					kind: "value",
+					start: at,
+					end: -1,
+					parsed: void 0,
+					invalid: false
+				});
+				if (c === "{" || c === "[") {
+					this.#mode = "nested";
+					this.#nestedEnds = [c === "{" ? "}" : "]"];
+					this.#nestedInString = false;
+					this.#escape = false;
+					return;
+				}
+				this.#mode = "scalar";
+			}
+			stepScalar(c, at) {
+				if (c !== "," && c !== "}" && !isWhitespace(c)) return;
+				this.closeValue(at);
+				this.#mode = c === "," ? "key-only" : c === "}" ? "closed" : "comma-or-end";
+			}
+			stepNested(c, at) {
+				if (this.#nestedInString) {
+					this.#nestedInString = false;
+					return;
+				}
+				if (c === "\"") {
+					this.#nestedInString = true;
+					return;
+				}
+				if (c === "{" || c === "[") {
+					this.#nestedEnds.push(c === "{" ? "}" : "]");
+					return;
+				}
+				if (c === "}" || c === "]") {
+					if (this.#nestedEnds.pop() !== c) {
+						this.fail();
+						return;
+					}
+					if (this.#nestedEnds.length === 0) {
+						this.closeValue(at + 1);
+						this.#mode = "comma-or-end";
+					}
+				}
+			}
+			closeValue(end) {
+				const entry = this.#current;
+				entry.end = end;
+				this.#current = null;
+			}
+		});
+		/** Duplicate-install-safe JSON and immutable-value helpers. @module @deepseek-ai/dsh-util-values */
+		/**
+		* Mark an unreachable closed-union branch.
+		* @param value - impossible value; an unhandled typed variant fails at the call site.
+		* @param context - optional switch-site label included in the failure message.
+		* @returns never; a runtime value that escaped its type always throws.
+		*/
+		function assertNever(value, context) {
+			const rendered = JSON.stringify(value) ?? String(value);
+			throw new Error(`unreachable variant${context ? ` in ${context}` : ""}: ${rendered}`);
+		}
+		/**
+		* Weak-key lookup with a strongly retained iterable set of associated values.
+		*
+		* Each value must belong to only one key. The container performs no automatic
+		* cleanup; owners delete associations or clear the container at lifecycle end.
+		*/
+		var WeakMapWithValues = class {
+			keys = /* @__PURE__ */ new WeakMap();
+			valueSet = /* @__PURE__ */ new Set();
+			/** Live strongly retained values in insertion order. */
+			values = this.valueSet;
+			/**
+			* Read the value associated with a key.
+			* @param key - weakly held lookup key.
+			* @returns the associated value, or absence.
+			*/
+			get(key) {
+				return this.keys.get(key);
+			}
+			/**
+			* Test whether a key has an association.
+			* @param key - weakly held lookup key.
+			* @returns whether the key is present.
+			*/
+			has(key) {
+				return this.keys.has(key);
+			}
+			/**
+			* Associate one key with one caller-unique value.
+			* @param key - weakly held lookup key.
+			* @param value - strongly retained value that belongs to no other key.
+			* @returns this container.
+			*/
+			set(key, value) {
+				if (this.keys.has(key)) {
+					const previous = this.keys.get(key);
+					if (previous === value) return this;
+					this.valueSet.delete(previous);
+				}
+				this.keys.set(key, value);
+				this.valueSet.add(value);
+				return this;
+			}
+			/**
+			* Remove one association and its strongly retained value.
+			* @param key - weakly held lookup key.
+			* @returns whether an association was removed.
+			*/
+			delete(key) {
+				if (!this.keys.has(key)) return false;
+				const value = this.keys.get(key);
+				const deleted = this.keys.delete(key);
+				this.valueSet.delete(value);
+				return deleted;
+			}
+			/** Remove every association and strongly retained value. */
+			clear() {
+				this.keys = /* @__PURE__ */ new WeakMap();
+				this.valueSet.clear();
+			}
+		};
+		//#endregion
 		//#region ../../node_modules/@deepseek-ai/dsh-file-reference/lib/types/grammar.js
 		/**
 		* Browser-safe `@file` token grammar shared by terminal and web clients.
@@ -274,6 +970,10 @@ window.__ModuleLoader__.load({
 		};
 		//#endregion
 		//#region lib/types/client/controller.js
+		/** Whether a tracked hit is the one the user just dismissed (same token, same query). */
+		function dismissedHit(dismissed, hit) {
+			return dismissed.trigger === hit.trigger && dismissed.query === hit.query && dismissed.quoted === hit.quoted && dismissed.start === hit.span.start && dismissed.end === hit.span.end;
+		}
 		/**
 		* Per-session trigger pipeline state and orchestration. All mutation stays
 		* inside; MenuView renders from {@link InputTriggerController.menu} and routes
@@ -298,7 +998,7 @@ window.__ModuleLoader__.load({
 			headers = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(/* @__PURE__ */ new Map());
 			/**
 			* Aggregated hot reference lexicon, grouped by trigger (plain-text-reference decision;
-			* see .agents/notes/implemented/architecture/2026-07-25-web-input-machine-and-slash-pipeline.md):
+			* see .agents/notes/archived/architecture/2026-07-25-web-input-machine-and-slash-pipeline.md):
 			* sources implementing the lexicon hook are polled with the session
 			* projection; undefined answers (roll not hot yet) are skipped; multiple
 			* sources on one trigger concatenate in registration order. A snapshot
@@ -309,6 +1009,13 @@ window.__ModuleLoader__.load({
 			lexicon = (0, _deepseek_ai_dsh_client_store.createSnapshotStore)(/* @__PURE__ */ new Map());
 			/** The authoritative hit: single truth for span CAS material (menu snapshot never carries it alone). */
 			hit = null;
+			/**
+			* Identity of the hit whose menu the user dismissed. A dismissal means "not
+			* this one, not now": the same token with the same query keeps its menu
+			* closed, so restoring the caret after a dismissal cannot reopen it. Typing
+			* (a new query) or moving to another token clears it.
+			*/
+			dismissed = null;
 			/** Whether the open menu was reached by a drill pick; cleared with the menu. */
 			drilled = false;
 			fetch = null;
@@ -338,7 +1045,9 @@ window.__ModuleLoader__.load({
 				this.clearLauncher();
 				const raw = detectTrigger(draft, caret, guard);
 				if (raw === null) {
+					if (launched) return;
 					this.hit = null;
+					if (guard.tier !== "frozen") this.dismissed = null;
 					this.stopFetch();
 					this.reduce({ type: "close" });
 					return;
@@ -350,6 +1059,12 @@ window.__ModuleLoader__.load({
 						draftRev
 					}
 				};
+				if (launched) this.dismissed = null;
+				if (this.dismissed !== null) if (!dismissedHit(this.dismissed, hit)) this.dismissed = null;
+				else {
+					this.hit = hit;
+					return;
+				}
 				const prev = this.menu.getSnapshot();
 				const same = !launched && prev.open && prev.hit !== null && prev.hit.trigger === hit.trigger && prev.hit.query === hit.query && prev.hit.quoted === hit.quoted && prev.hit.span.start === hit.span.start && prev.hit.span.end === hit.span.end;
 				this.hit = hit;
@@ -481,7 +1196,11 @@ window.__ModuleLoader__.load({
 			* Keyboard arbitration while the menu is open.
 			* @param key - intercepted key.
 			* @param composing - inside IME composition: everything passes.
-			* @returns consumed / pick-highlighted / pass.
+			* @returns `pass` when the browser keeps the key (closed menu, no
+			* highlight, or a vanished candidate), `consumed` when the menu handled
+			* the key without a settling pick (move, close, drill descent, or a
+			* pending-refinement no-op), or `pick-highlighted` when the highlighted
+			* candidate settled and the menu closed.
 			*/
 			arbitrate(key, composing) {
 				if (composing || this.disposed) return "pass";
@@ -501,6 +1220,8 @@ window.__ModuleLoader__.load({
 						});
 						return "consumed";
 					case "escape":
+					case "tabBack":
+						this.rememberDismissed();
 						this.stopFetch();
 						this.reduce({ type: "close" });
 						return "consumed";
@@ -514,9 +1235,15 @@ window.__ModuleLoader__.load({
 					case "tab": {
 						if (state.highlight === null) return "pass";
 						const group = state.groups.find((g) => g.source === state.highlight?.source);
-						if ((group !== void 0 && group.status === "ready" ? group.items[state.highlight.index] : void 0)?.drill !== true) return "pass";
-						this.pick(state.highlight.source, state.highlight.index, "drill");
-						return "consumed";
+						if (group === void 0 || group.status !== "ready") return "consumed";
+						const item = group.items[state.highlight.index];
+						if (item === void 0) return "pass";
+						if (item.drill === true) {
+							this.pick(state.highlight.source, state.highlight.index, "drill");
+							return "consumed";
+						}
+						this.pick(state.highlight.source, state.highlight.index);
+						return "pick-highlighted";
 					}
 				}
 			}
@@ -556,6 +1283,21 @@ window.__ModuleLoader__.load({
 				return owner.codec.serialize(ref, signal);
 			}
 			/**
+			* Route a chip to its owner or an editable token to its current lexicon owner.
+			* @param source - chip source name; undefined for editable text.
+			* @param reference - source-owned id and optional chip glyph.
+			* @returns whether an owner accepted the preview, possibly awaiting its catalog.
+			*/
+			openReference(source, reference) {
+				if (this.disposed) return false;
+				const session = this.project();
+				for (const owner of this.deps.roster.all()) if ((source === void 0 ? reference.ref.startsWith(owner.trigger) && owner.lexicon?.(session)?.includes(reference.ref.slice(1)) : owner.name === source) && owner.openReference?.(session, reference)) {
+					this.dismiss();
+					return true;
+				}
+				return false;
+			}
+			/**
 			* Enter last adjudication: polls sources' matchEnter in registration
 			* order, first non-undefined wins. The outcome returns to the caller (the
 			* input machine applies it inside the same submit attempt — no event).
@@ -573,6 +1315,24 @@ window.__ModuleLoader__.load({
 					if (src.matchEnter === void 0 || !line.startsWith(src.trigger)) continue;
 					const outcome = await src.matchEnter(projection, line, signal, envelope);
 					if (outcome !== void 0) return outcome;
+				}
+			}
+			/**
+			* Resolve the claim a persisted command chip names, polling sources'
+			* matchClaim in registration order; the first claim wins. Never acts on the
+			* token (see {@link InputTriggerSource.matchClaim}).
+			* @param token - command spelling without its argument separator, e.g. '/goal'.
+			* @param signal - abort for the caller's restore attempt.
+			* @returns the claim, or undefined when no source claims the token. Rejects
+			* when a polled source's warmup fails or `signal` aborts.
+			*/
+			async resolveClaim(token, signal) {
+				const projection = this.project();
+				for (const src of this.deps.roster.all()) {
+					if (signal.aborted) throw signal.reason instanceof Error ? signal.reason : /* @__PURE__ */ new Error("command restore aborted");
+					if (src.matchClaim === void 0 || !token.startsWith(src.trigger)) continue;
+					const claim = await src.matchClaim(projection, token, signal);
+					if (claim !== void 0) return claim;
 				}
 			}
 			/**
@@ -606,8 +1366,17 @@ window.__ModuleLoader__.load({
 			/** External dismiss (e.g. pointer outside the composer area). */
 			dismiss() {
 				if (this.disposed) return;
+				this.rememberDismissed();
 				this.stopFetch();
 				this.reduce({ type: "close" });
+			}
+			/** Re-fetch the currently open menu without changing its hit or visible rows. */
+			refreshOpenMenu() {
+				if (this.disposed || !this.menu.getSnapshot().open || this.hit === null) return;
+				const launched = this.launcher.getSnapshot();
+				const roster = this.deps.roster.sources(this.hit.trigger).filter((source) => launched === null || source.name === launched);
+				if (roster.length === 0) return;
+				this.fetchCandidates(this.hit, roster);
 			}
 			/** Scope teardown: close and abort (the service deletes the map entry). */
 			dispose() {
@@ -728,6 +1497,7 @@ window.__ModuleLoader__.load({
 					span: hit.span
 				});
 				this.stopFetch();
+				if (action === "pick") this.rememberDismissed();
 				this.reduce({ type: "close" });
 				this.drilled = action === "drill";
 				if (!this.execute(outcome, hit.span)) this.drilled = false;
@@ -758,6 +1528,17 @@ window.__ModuleLoader__.load({
 				if (this.headers.getSnapshot().size === 0 && next.size === 0) return;
 				this.headers.set(next);
 			}
+			/** Record the open menu's identity as dismissed, so a bare re-track cannot revive it. */
+			rememberDismissed() {
+				const hit = this.hit;
+				this.dismissed = hit === null ? null : {
+					trigger: hit.trigger,
+					query: hit.query,
+					quoted: hit.quoted,
+					start: hit.span.start,
+					end: hit.span.end
+				};
+			}
 			clearLauncher() {
 				if (this.launcher.getSnapshot() !== null) this.launcher.set(null);
 			}
@@ -785,13 +1566,16 @@ window.__ModuleLoader__.load({
 			static inject = ["sessions"];
 			live = {
 				sources: [],
-				controllers: /* @__PURE__ */ new Map()
+				controllers: new WeakMapWithValues()
 			};
 			/**
 			* @param ctx - owning root context (the service registers itself as `slash`).
 			*/
 			constructor(ctx) {
 				super(ctx, "inputTriggers");
+				ctx.on("locale/change", () => {
+					for (const controller of this.live.controllers.values) controller.refreshOpenMenu();
+				});
 			}
 			/**
 			* Register one trigger source. Live session controllers are notified so a
@@ -804,7 +1588,7 @@ window.__ModuleLoader__.load({
 				const { live } = this;
 				if (live.sources.some((s) => s.trigger === src.trigger && s.name === src.name)) throw new Error(`slash source "${src.trigger}${src.name}" is already registered`);
 				live.sources.push(src);
-				for (const controller of live.controllers.values()) try {
+				for (const controller of live.controllers.values) try {
 					controller.sourceAdded(src);
 				} catch (error) {
 					console.error(`[ui-input-trigger] source "${src.trigger}${src.name}" late-registration setup failed:`, error);
@@ -813,7 +1597,7 @@ window.__ModuleLoader__.load({
 					const at = live.sources.indexOf(src);
 					if (at < 0) return;
 					live.sources.splice(at, 1);
-					for (const controller of live.controllers.values()) controller.sourceRemoved(src);
+					for (const controller of live.controllers.values) controller.sourceRemoved(src);
 				};
 			}
 			/**
@@ -823,25 +1607,29 @@ window.__ModuleLoader__.load({
 			* single prewarm moment.
 			* @param actx - session-scope ctx.
 			* @returns the resident controller.
+			* @throws when the Context no longer belongs to a retained Session generation.
 			*/
 			sessionOf(actx) {
-				const id = this.sessions().scopeOf(actx);
-				if (id === void 0) throw new Error("slash.sessionOf requires a session scope");
+				const sessions = this.sessions();
+				const session = sessions.sessionOf(actx);
+				const binding = session === void 0 ? void 0 : sessions.binding(session.sessionId);
+				if (binding === void 0 || binding.session !== session) throw new Error("slash.sessionOf requires a retained Session scope");
+				const id = binding.sessionId;
 				const { live } = this;
-				const existing = live.controllers.get(id);
+				const existing = live.controllers.get(binding);
 				if (existing !== void 0) return existing;
 				const controller = new InputTriggerController({
-					actx,
+					actx: binding.ctx,
 					sessionId: id,
 					roster: {
 						sources: (trigger) => live.sources.filter((s) => s.trigger === trigger).sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
 						all: () => live.sources
 					}
 				});
-				live.controllers.set(id, controller);
-				actx.effect(() => () => {
+				live.controllers.set(binding, controller);
+				binding.ctx.effect(() => () => {
 					controller.dispose();
-					live.controllers.delete(id);
+					live.controllers.delete(binding);
 				}, "slash: session controller");
 				return controller;
 			}
@@ -868,7 +1656,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:packages/client-ui-input-trigger/src/client/MenuView.module.css.mjs
-		const css = ".-\\37 lJPG_menu{z-index:100;--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2);--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2);border:1px solid var(--dsw-alias-border-inverted);background:var(--dsw-specific-menu);max-height:320px;box-shadow:var(--dsw-shadow-lv3);border-radius:12px;flex-direction:column;padding:4px;display:flex;position:absolute;bottom:calc(100% + 4px);left:0;right:0;overflow:hidden}.-\\37 lJPG_viewport{flex-direction:column;min-height:0;display:flex;overflow-y:auto}.-\\37 lJPG_item{cursor:pointer;width:100%;min-height:40px;color:var(--dsw-alias-label-primary);text-align:left;background:0 0;border:none;border-radius:10px;align-items:center;gap:8px;padding:8px 10px;font-size:14px;line-height:22px;display:flex}.-\\37 lJPG_item.-\\37 lJPG_active{background:var(--dsw-alias-interactive-bg-hover)}.-\\37 lJPG_sectionTitle{min-height:26px;color:var(--dsw-alias-label-tertiary);flex:none;padding:6px 10px 2px;font-size:12px;font-weight:500;line-height:18px}.-\\37 lJPG_sectionTitle:not(:first-child){margin-top:4px}.-\\37 lJPG_itemIcon{width:16px;height:16px;color:var(--dsw-alias-label-tertiary);flex:none;justify-content:center;align-items:center;display:inline-flex}.-\\37 lJPG_itemName{text-overflow:ellipsis;white-space:nowrap;flex:none;max-width:40%;overflow:hidden}.-\\37 lJPG_itemDescription{text-overflow:ellipsis;white-space:nowrap;min-width:0;color:var(--dsw-alias-label-tertiary);flex:1;overflow:hidden}.-\\37 lJPG_trailing{flex:none;align-items:center;gap:4px;margin-left:auto;display:inline-flex}.-\\37 lJPG_drillHintText{color:var(--dsw-alias-label-caption);white-space:nowrap;font-size:11px;line-height:18px;display:none}.-\\37 lJPG_drillHint{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-caption);border-radius:4px;padding:0 5px;font-family:inherit;font-size:11px;line-height:18px;display:none}.-\\37 lJPG_item.-\\37 lJPG_active .-\\37 lJPG_drillHintText,.-\\37 lJPG_item.-\\37 lJPG_active .-\\37 lJPG_drillHint{display:inline-flex}.-\\37 lJPG_drill{width:20px;height:20px;color:var(--dsw-alias-label-caption);border-radius:4px;flex:none;place-items:center;display:inline-grid}.-\\37 lJPG_drill:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}.-\\37 lJPG_groupTitle{color:var(--dsw-alias-label-tertiary);padding:8px 10px;font-size:12px;line-height:16px}.-\\37 lJPG_skeletonRow{box-sizing:border-box;align-items:center;min-height:40px;padding:8px 10px;display:flex}.-\\37 lJPG_skeletonBar{background:var(--dsw-alias-bg-skeleton);border-radius:4px;height:20px;animation:2s cubic-bezier(.36,0,.64,1) infinite -\\37 lJPG_dsh-menu-skeleton}@keyframes -\\37 lJPG_dsh-menu-skeleton{0%{opacity:1}40%{opacity:.6}80%,to{opacity:1}}.-\\37 lJPG_crumbs{border-bottom:1px solid var(--dsw-alias-border-l1);flex-wrap:wrap;flex:none;align-items:center;gap:2px;margin-bottom:2px;padding:4px 4px 6px;display:flex}.-\\37 lJPG_crumb{max-width:40%;color:var(--dsw-alias-label-tertiary);cursor:pointer;text-overflow:ellipsis;white-space:nowrap;background:0 0;border:none;border-radius:6px;flex:0 auto;padding:2px 6px;font-family:inherit;font-size:12px;line-height:18px;overflow:hidden}.-\\37 lJPG_crumb:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}.-\\37 lJPG_crumbCurrent,.-\\37 lJPG_crumbCurrent:hover{color:var(--dsw-alias-label-primary);cursor:default;background:0 0}.-\\37 lJPG_crumbSeparator{color:var(--dsw-alias-label-caption);flex:none;display:inline-flex}";
+		const css = ".nkG3iW_menu{z-index:100;box-sizing:border-box;--dsh-scrollbar-thumb:var(--dsw-alias-scrollbar-bg-l2);--dsh-scrollbar-thumb-hover:var(--dsw-alias-scrollbar-hover-l2);--dsh-scrollbar-width:6px;--dsh-scrollbar-thumb-border:2px;--dsh-scrollbar-track-margin:12px;--dsw-elevation-stroke-color:var(--dsw-alias-border-l1);max-height:400px;box-shadow:var(--dsw-elevation-prominent);border:0;flex-direction:column;padding:4px;display:flex;position:absolute;bottom:calc(100% + 4px);left:0;right:0;overflow:hidden}.nkG3iW_menu[data-overflow-below]:after{content:\"\";background:linear-gradient(to bottom, transparent, var(--dsw-specific-menu));pointer-events:none;height:16px;position:absolute;bottom:4px;left:4px;right:14px}.nkG3iW_viewport{flex-direction:column;min-height:0;display:flex;overflow-y:auto}.nkG3iW_item{border-radius:var(--dsw-radius-md);cursor:pointer;width:100%;min-height:34px;color:var(--dsw-alias-label-primary);text-align:left;background:0 0;border:none;align-items:center;gap:6px;padding:6px 8px;font-size:13px;line-height:20px;display:flex}.nkG3iW_item.nkG3iW_active{background:var(--dsw-alias-interactive-bg-hover)}.nkG3iW_sectionTitle{min-height:23px;color:var(--dsw-alias-label-tertiary);flex:none;padding:5px 8px 2px;font-size:11px;font-weight:500;line-height:16px}.nkG3iW_sectionTitle:not(:first-child){margin-top:3px}.nkG3iW_itemIcon{width:14px;height:14px;color:var(--dsw-alias-menu-icon);flex:none;justify-content:center;align-items:center;display:inline-flex}.nkG3iW_itemIcon svg{width:14px;height:14px}.nkG3iW_itemName{text-overflow:ellipsis;white-space:nowrap;flex:none;max-width:40%;overflow:hidden}.nkG3iW_itemAlias{text-overflow:ellipsis;white-space:nowrap;max-width:20%;color:var(--dsw-alias-label-tertiary);flex:none;font-size:12px;line-height:18px;overflow:hidden}.nkG3iW_itemDescription{text-overflow:ellipsis;white-space:nowrap;text-align:right;min-width:0;color:var(--dsw-alias-label-tertiary);flex:1;font-size:12px;line-height:18px;overflow:hidden}.nkG3iW_trailing{flex:none;align-items:center;gap:3px;margin-left:auto;display:inline-flex}.nkG3iW_drillHintText{color:var(--dsw-alias-label-caption);white-space:nowrap;font-size:10px;line-height:16px;display:none}.nkG3iW_drillHint{border-radius:var(--dsw-radius-xs);background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-caption);padding:0 4px;font-family:inherit;font-size:10px;line-height:16px;display:none}.nkG3iW_item.nkG3iW_active .nkG3iW_drillHintText,.nkG3iW_item.nkG3iW_active .nkG3iW_drillHint{display:inline-flex}.nkG3iW_drill{border-radius:var(--dsw-radius-xs);width:18px;height:18px;color:var(--dsw-alias-menu-icon);flex:none;place-items:center;display:inline-grid}.nkG3iW_drill:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}.nkG3iW_groupTitle{color:var(--dsw-alias-label-tertiary);padding:6px 8px;font-size:11px;line-height:15px}.nkG3iW_skeletonRow{box-sizing:border-box;align-items:center;min-height:34px;padding:6px 8px;display:flex}.nkG3iW_skeletonBar{border-radius:var(--dsw-radius-xs);background:var(--dsw-alias-bg-skeleton);height:18px;animation:2s cubic-bezier(.36,0,.64,1) infinite nkG3iW_dsh-menu-skeleton}@keyframes nkG3iW_dsh-menu-skeleton{0%{opacity:1}40%{opacity:.6}80%,to{opacity:1}}.nkG3iW_crumbs{border-bottom:.5px solid var(--dsw-alias-border-l1);flex-wrap:wrap;flex:none;align-items:center;gap:2px;margin-bottom:2px;padding:3px 3px 5px;display:flex}.nkG3iW_crumb{border-radius:var(--dsw-radius-sm);max-width:40%;color:var(--dsw-alias-label-tertiary);cursor:pointer;text-overflow:ellipsis;white-space:nowrap;background:0 0;border:none;flex:0 auto;padding:2px 5px;font-family:inherit;font-size:11px;line-height:16px;overflow:hidden}.nkG3iW_crumb:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}.nkG3iW_crumbCurrent,.nkG3iW_crumbCurrent:hover{color:var(--dsw-alias-label-primary);cursor:default;background:0 0}.nkG3iW_crumbSeparator{color:var(--dsw-alias-menu-icon);flex:none;display:inline-flex}";
 		const tagId = "@deepseek-ai/dsh-client-ui-input-trigger/MenuView.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -878,26 +1666,27 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var MenuView_module_css_default = {
-			"active": "-7lJPG_active",
-			"crumb": "-7lJPG_crumb",
-			"crumbCurrent": "-7lJPG_crumbCurrent",
-			"crumbs": "-7lJPG_crumbs",
-			"crumbSeparator": "-7lJPG_crumbSeparator",
-			"drill": "-7lJPG_drill",
-			"drillHint": "-7lJPG_drillHint",
-			"drillHintText": "-7lJPG_drillHintText",
-			"dsh-menu-skeleton": "-7lJPG_dsh-menu-skeleton",
-			"groupTitle": "-7lJPG_groupTitle",
-			"item": "-7lJPG_item",
-			"itemDescription": "-7lJPG_itemDescription",
-			"itemIcon": "-7lJPG_itemIcon",
-			"itemName": "-7lJPG_itemName",
-			"menu": "-7lJPG_menu",
-			"sectionTitle": "-7lJPG_sectionTitle",
-			"skeletonBar": "-7lJPG_skeletonBar",
-			"skeletonRow": "-7lJPG_skeletonRow",
-			"trailing": "-7lJPG_trailing",
-			"viewport": "-7lJPG_viewport"
+			"active": "nkG3iW_active",
+			"crumb": "nkG3iW_crumb",
+			"crumbCurrent": "nkG3iW_crumbCurrent",
+			"crumbs": "nkG3iW_crumbs",
+			"crumbSeparator": "nkG3iW_crumbSeparator",
+			"drill": "nkG3iW_drill",
+			"drillHint": "nkG3iW_drillHint",
+			"drillHintText": "nkG3iW_drillHintText",
+			"dsh-menu-skeleton": "nkG3iW_dsh-menu-skeleton",
+			"groupTitle": "nkG3iW_groupTitle",
+			"item": "nkG3iW_item",
+			"itemAlias": "nkG3iW_itemAlias",
+			"itemDescription": "nkG3iW_itemDescription",
+			"itemIcon": "nkG3iW_itemIcon",
+			"itemName": "nkG3iW_itemName",
+			"menu": "nkG3iW_menu",
+			"sectionTitle": "nkG3iW_sectionTitle",
+			"skeletonBar": "nkG3iW_skeletonBar",
+			"skeletonRow": "nkG3iW_skeletonRow",
+			"trailing": "nkG3iW_trailing",
+			"viewport": "nkG3iW_viewport"
 		};
 		//#endregion
 		//#region lib/types/client/MenuView.js
@@ -910,11 +1699,19 @@ window.__ModuleLoader__.load({
 		* rows only while it has none; pointer picks route back through
 		* the service (combobox pattern — focus never leaves the textarea, so rows
 		* are mousedown-handled and the highlight is exposed via
-		* aria-activedescendant on the listbox). A source publishing crumbs gets a
-		* breadcrumb header pinned above the scrolling list.
+		* aria-activedescendant on the listbox). A row reads title, then the
+		* command-name alias when the title is not the name in another letter case
+		* (a localized title), then the description right-aligned. A source publishing crumbs gets a breadcrumb
+		* header pinned above the scrolling list.
 		*/
-		/** Design cap on the list height (figma SLASH 39:26572 MenuDropdown). */
-		const MAX_HEIGHT = 320;
+		/** Height cap that fits the two headings and eight built-in command rows. */
+		const MAX_HEIGHT = 400;
+		/**
+		* Viewport top margin: the conversation header's 76px block (title row plus
+		* view tabs, ui-conversation) plus 8px of air, so a tall list stops below the
+		* header instead of sliding under it.
+		*/
+		const TOP_MARGIN = 84;
 		/** DOM id of one option row (the aria-activedescendant target). */
 		function optionId(source, index) {
 			return `dsh-slash-option-${source}-${index}`;
@@ -928,7 +1725,20 @@ window.__ModuleLoader__.load({
 			const state = (0, react.useSyncExternalStore)((fn) => menu.subscribe(fn), () => menu.getSnapshot());
 			const crumbs = (0, react.useSyncExternalStore)((fn) => headers.subscribe(fn), () => headers.getSnapshot());
 			const listRef = (0, react.useRef)(null);
-			const maxHeight = (0, _deepseek_ai_dsh_client_ui_primitives.useAnchoredMaxHeight)(listRef, MAX_HEIGHT, state);
+			const viewportRef = (0, react.useRef)(null);
+			const [hasOverflowBelow, setHasOverflowBelow] = (0, react.useState)(false);
+			const maxHeight = (0, _deepseek_ai_dsh_client_ui_primitives.useAnchoredMaxHeight)(listRef, MAX_HEIGHT, state, TOP_MARGIN);
+			const updateOverflowHint = (0, react.useCallback)(() => {
+				const viewport = viewportRef.current;
+				setHasOverflowBelow(viewport !== null && viewport.scrollTop + viewport.clientHeight < viewport.scrollHeight - 1);
+			}, []);
+			(0, react.useLayoutEffect)(() => {
+				updateOverflowHint();
+			}, [
+				state,
+				maxHeight,
+				updateOverflowHint
+			]);
 			const highlight = state.open ? state.highlight : null;
 			(0, react.useEffect)(() => {
 				if (highlight === null) return;
@@ -948,11 +1758,12 @@ window.__ModuleLoader__.load({
 				};
 			}, [state.open, onDismiss]);
 			if (!state.open) return null;
-			return (0, react_jsx_runtime.jsxs)("div", {
+			return (0, react_jsx_runtime.jsxs)(_deepseek_ai_dsh_client_ui_primitives.MenuSurface, {
 				ref: listRef,
 				className: MenuView_module_css_default.menu,
 				style: { maxHeight },
 				"data-trigger-menu": "",
+				"data-overflow-below": hasOverflowBelow || void 0,
 				children: [state.groups.map((group) => {
 					const trail = crumbs.get(group.source);
 					return trail === void 0 ? null : (0, react_jsx_runtime.jsx)("nav", {
@@ -961,7 +1772,7 @@ window.__ModuleLoader__.load({
 						children: trail.map((crumb, index) => (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [index > 0 && (0, react_jsx_runtime.jsx)("span", {
 							className: MenuView_module_css_default.crumbSeparator,
 							"aria-hidden": true,
-							children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronRightOutline14, {})
+							children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronRightOutlineRegular, {})
 						}), (0, react_jsx_runtime.jsx)("button", {
 							type: "button",
 							className: clsx(MenuView_module_css_default.crumb, crumb.current === true && MenuView_module_css_default.crumbCurrent),
@@ -975,10 +1786,12 @@ window.__ModuleLoader__.load({
 						})] }, `${String(index)}-${crumb.value}`))
 					}, group.source);
 				}), (0, react_jsx_runtime.jsx)("div", {
+					ref: viewportRef,
 					className: MenuView_module_css_default.viewport,
 					role: "listbox",
 					"aria-label": t("suggestions.aria"),
 					"aria-activedescendant": highlight !== null ? optionId(highlight.source, highlight.index) : void 0,
+					onScroll: updateOverflowHint,
 					children: state.groups.map((group) => group.status === "ready" && group.items.length === 0 ? null : (0, react_jsx_runtime.jsxs)(react.Fragment, { children: [group.showGroupTitle === false || group.items.some((item) => item.section !== void 0) ? null : (0, react_jsx_runtime.jsx)("div", {
 						className: MenuView_module_css_default.groupTitle,
 						role: "presentation",
@@ -1024,13 +1837,17 @@ window.__ModuleLoader__.load({
 								item.icon !== void 0 && (0, react_jsx_runtime.jsx)("span", {
 									className: MenuView_module_css_default.itemIcon,
 									"aria-hidden": true,
-									children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.ReferenceIcon, {
+									children: typeof item.icon === "string" ? (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.ReferenceIconRegular, {
 										kind: item.icon,
-										size: 16
-									})
+										size: 14
+									}) : (0, react_jsx_runtime.jsx)(item.icon, { size: 14 })
 								}),
 								(0, react_jsx_runtime.jsx)("span", {
 									className: MenuView_module_css_default.itemName,
+									children: item.label ?? item.name
+								}),
+								item.label !== void 0 && item.label.toLowerCase() !== item.name.toLowerCase() && (0, react_jsx_runtime.jsx)("span", {
+									className: MenuView_module_css_default.itemAlias,
 									children: item.name
 								}),
 								item.description !== void 0 && (0, react_jsx_runtime.jsx)("span", {
@@ -1059,7 +1876,7 @@ window.__ModuleLoader__.load({
 												ev.stopPropagation();
 												onPick(group.source, index, "drill");
 											},
-											children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronRightOutline14, {})
+											children: (0, react_jsx_runtime.jsx)(_deepseek_ai_dsh_client_ui_primitives.IconChevronRightOutlineRegular, { size: 12 })
 										})
 									]
 								})

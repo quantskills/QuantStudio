@@ -1,7 +1,12 @@
+import { notifySubscribers } from '@deepseek-ai/dsh-client-store';
 import { isRunningTool } from "../contract/chat-nodes.js";
-import { TURN_PROCESS_INDEPENDENT_KINDS } from "../contract/turn-process.js";
-import { sessionRecallLabels } from "./event-projection.js";
+import { isVisibleChatNode } from "../contract/chat-visibility.js";
+import { isAtOrOutside } from "../contract/group-tree.js";
+import { locationCoordinates } from "./common.js";
+import { sessionRecallLabels, skillInvocationName } from "./event-projection.js";
+import { GroupTreeSegments } from "./group-tree-segments.js";
 import { sameTurnNavigationItem, turnNavigationItem } from "./turn-navigation.js";
+import { ChatTurnProcessProjector } from "./turn-process-presentation.js";
 const EMPTY_KEYS = [];
 const EMPTY_TURNS = [];
 const EMPTY_ITEMS = [];
@@ -9,12 +14,136 @@ const EMPTY_LIST = [];
 function sameReferences(left, right) {
     return left.length === right.length && left.every((value, index) => value === right[index]);
 }
+function cachedSource(sources, key, create) {
+    let source = sources.get(key);
+    if (source === undefined) {
+        source = create();
+        sources.set(key, source);
+    }
+    return source;
+}
+/* jscpd:ignore-start -- Chat Node sources keep publication state inside the keyed Chat store. */
+class MutableChatSource {
+    read;
+    label;
+    listeners = new Set();
+    published;
+    constructor(read, label) {
+        this.read = read;
+        this.label = label;
+        this.published = read();
+    }
+    getSnapshot = () => this.read();
+    subscribe = (listener) => {
+        this.listeners.add(listener);
+        return () => { this.listeners.delete(listener); };
+    };
+    publish() {
+        const next = this.getSnapshot();
+        if (this.published === next)
+            return;
+        this.published = next;
+        notifySubscribers(this.listeners, this.label);
+    }
+}
+/* jscpd:ignore-end */
+/** Membership is indexed on write; ordered arrays are materialized only for observed collections. */
+class TurnKindNodes {
+    nodes = new Map();
+    current = EMPTY_LIST;
+    dirty = false;
+    observable;
+    source() {
+        return this.observable ??= new MutableChatSource(() => this.read(), '[ui-chat] turn kind nodes');
+    }
+    set(node) {
+        const previous = this.nodes.get(node.key);
+        this.nodes.set(node.key, node);
+        if (previous !== undefined && previous.data === node.data && previous.anchorSeq === node.anchorSeq)
+            return;
+        this.dirty = true;
+    }
+    delete(key) {
+        this.nodes.delete(key);
+        this.dirty = true;
+    }
+    publish() {
+        this.observable?.publish();
+    }
+    read() {
+        if (this.dirty) {
+            this.current = [...this.nodes.values()].sort((a, b) => a.anchorSeq - b.anchorSeq).map(node => node.data);
+            this.dirty = false;
+        }
+        return this.current;
+    }
+}
 class MutableChatNodeStore {
     byKey = new Map();
+    turnProcesses = new ChatTurnProcessProjector();
+    sources = new Map();
+    processSources = new Map();
+    bottomSources = new Map();
+    /** Bottom membership: the latest loaded exchange. */
+    exchanges = new GroupTreeSegments('exchange');
+    dirtyKeys = new Set();
+    dirtyBottomKeys = new Set();
+    dirtyProcessKeys = new Set();
+    turnKinds = new Map();
+    dirtyTurnKinds = new Set();
     valuesCache = EMPTY_LIST;
     valuesDirty = false;
     get(key) {
         return this.byKey.get(key);
+    }
+    source(key) {
+        return cachedSource(this.sources, key, () => new MutableChatSource(() => this.get(key), `[ui-chat] node source ${key}`));
+    }
+    bottomSource(key) {
+        return cachedSource(this.bottomSources, key, () => new MutableChatSource(() => {
+            const node = this.get(key);
+            return node !== undefined && isVisibleChatNode(node)
+                && this.exchanges.inLatest(locationCoordinates(node.location).turn);
+        }, `[ui-chat] node bottom source ${key}`));
+    }
+    /**
+     * Settle the latest exchange for the loaded Turns and mark the Nodes of
+     * Turns that entered or left it.
+     * @param turnOrder - loaded Turns in ascending timeline order.
+     * @param locations - current Chat Location index.
+     */
+    settleBottom(turnOrder, locations) {
+        for (const turn of this.exchanges.settle(turnOrder)) {
+            for (const key of locations.getTurn(turn))
+                this.dirtyBottomKeys.add(key);
+        }
+    }
+    turnDataSource(turn, kind) {
+        return this.turnKind(turn, kind).source();
+    }
+    turnKind(turn, kind) {
+        const kinds = cachedSource(this.turnKinds, turn, () => new Map());
+        return cachedSource(kinds, kind, () => new TurnKindNodes());
+    }
+    updateTurnKind(previous, next) {
+        const before = previous === undefined ? undefined : locationCoordinates(previous.location).turn;
+        const after = next === undefined ? undefined : locationCoordinates(next.location).turn;
+        if (previous !== undefined && before !== undefined && (before !== after || previous.kind !== next?.kind)) {
+            const collection = this.turnKind(before, previous.kind);
+            collection.delete(previous.key);
+            this.dirtyTurnKinds.add(collection);
+        }
+        if (next !== undefined && after !== undefined) {
+            const collection = this.turnKind(after, next.kind);
+            collection.set(next);
+            this.dirtyTurnKinds.add(collection);
+        }
+    }
+    processSource(key) {
+        return cachedSource(this.processSources, key, () => new MutableChatSource(() => this.process(key), `[ui-chat] node process source ${key}`));
+    }
+    process(key) {
+        return this.turnProcesses.get(this.get(key));
     }
     values() {
         if (this.valuesDirty) {
@@ -24,9 +153,24 @@ class MutableChatNodeStore {
         return this.valuesCache;
     }
     replace(nodes) {
+        const previous = new Map(this.byKey);
         this.byKey.clear();
-        for (const node of nodes)
+        for (const node of nodes) {
             this.byKey.set(node.key, node);
+            if (previous.get(node.key) !== node) {
+                this.updateTurnKind(previous.get(node.key), node);
+                this.exchanges.track(previous.get(node.key), node);
+                this.dirtyKeys.add(node.key);
+                this.dirtyProcessKeys.add(node.key);
+            }
+            previous.delete(node.key);
+        }
+        for (const key of previous.keys()) {
+            this.updateTurnKind(previous.get(key), undefined);
+            this.exchanges.track(previous.get(key), undefined);
+            this.dirtyKeys.add(key);
+            this.dirtyProcessKeys.add(key);
+        }
         this.valuesCache = [...this.byKey.values()];
         this.valuesDirty = false;
     }
@@ -35,30 +179,85 @@ class MutableChatNodeStore {
         for (const node of nodes) {
             if (this.byKey.get(node.key) === node)
                 continue;
+            this.updateTurnKind(this.byKey.get(node.key), node);
+            this.exchanges.track(this.byKey.get(node.key), node);
             this.byKey.set(node.key, node);
+            this.dirtyKeys.add(node.key);
+            this.dirtyProcessKeys.add(node.key);
             changed = true;
         }
         if (changed)
             this.valuesDirty = true;
     }
+    touchProcesses(turns, locations) {
+        for (const turn of turns) {
+            for (const key of locations.getTurn(turn))
+                this.dirtyProcessKeys.add(key);
+        }
+    }
+    replaceProcesses(order, locations) {
+        this.touchProcesses(this.turnProcesses.replace(order, locations, this), locations);
+    }
+    updateProcesses(turns, locations) {
+        this.touchProcesses(this.turnProcesses.update(turns, locations, this), locations);
+    }
+    publish() {
+        const dirty = [...this.dirtyKeys];
+        const dirtyBottom = new Set([...this.dirtyBottomKeys, ...dirty]);
+        const dirtyProcesses = [...this.dirtyProcessKeys];
+        const dirtyTurnKinds = [...this.dirtyTurnKinds];
+        this.dirtyKeys.clear();
+        this.dirtyBottomKeys.clear();
+        this.dirtyProcessKeys.clear();
+        this.dirtyTurnKinds.clear();
+        for (const key of dirty)
+            this.sources.get(key)?.publish();
+        for (const key of dirtyBottom)
+            this.bottomSources.get(key)?.publish();
+        for (const key of dirtyProcesses)
+            this.processSources.get(key)?.publish();
+        for (const collection of dirtyTurnKinds)
+            collection.publish();
+    }
 }
 class MutableChatLocationIndex {
     turns = new Map();
     steps = new Map();
+    positions = new Map();
     getTurn(turn) {
         return this.turns.get(turn) ?? EMPTY_KEYS;
     }
     getStep(turn, step) {
         return this.steps.get(stepKey(turn, step)) ?? EMPTY_KEYS;
     }
+    getPosition(key) {
+        return this.positions.get(key);
+    }
     rebuild(order, store) {
         const turns = new Map();
         const steps = new Map();
-        for (const key of order) {
+        const positions = new Map();
+        const changedTurns = new Set();
+        for (const [index, key] of order.entries()) {
             const location = store.get(key)?.location;
             if (location === undefined)
                 continue;
             const coordinates = locationCoordinates(location);
+            const previous = this.positions.get(key);
+            const position = {
+                turn: coordinates.turn,
+                previous: order[index - 1],
+                next: order[index + 1],
+            };
+            const unchanged = previous !== undefined && previous.turn === position.turn
+                && previous.previous === position.previous && previous.next === position.next;
+            positions.set(key, unchanged ? previous : position);
+            if (!unchanged) {
+                if (previous?.turn !== undefined)
+                    changedTurns.add(previous.turn);
+                if (position.turn !== undefined)
+                    changedTurns.add(position.turn);
+            }
             if (coordinates.turn === undefined)
                 continue;
             const turnKeys = turns.get(coordinates.turn) ?? [];
@@ -71,8 +270,14 @@ class MutableChatLocationIndex {
             stepKeys.push(key);
             steps.set(step, stepKeys);
         }
+        for (const [key, position] of this.positions) {
+            if (!positions.has(key) && position.turn !== undefined)
+                changedTurns.add(position.turn);
+        }
+        this.positions = positions;
         this.turns = updateIndex(this.turns, turns);
         this.steps = updateIndex(this.steps, steps);
+        return [...changedTurns];
     }
     /** Invalidate aggregate readers when member data changes without moving. */
     touch(nodes) {
@@ -164,12 +369,20 @@ class MutableTurnNavigationIndex {
 function stepKey(turn, step) {
     return `${turn}:${step}`;
 }
-function locationCoordinates(location) {
-    if (location.kind === 'step')
-        return { turn: location.turn.turn, step: location.step.step };
-    if (location.kind === 'turn')
-        return { turn: location.turn.turn };
-    return {};
+function locationTurnStatus(location) {
+    return location.kind === 'turn' || location.kind === 'step' ? location.turn.status : undefined;
+}
+function processPresentationInputChanged(previous, next, structural) {
+    if (structural || previous === undefined)
+        return true;
+    if (locationTurnStatus(previous.location) !== locationTurnStatus(next.location))
+        return true;
+    if (previous.kind === 'turn-process' && next.kind === 'turn-process') {
+        return previous.data !== next.data;
+    }
+    return previous.kind === 'assistant-step'
+        && next.kind === 'assistant-step'
+        && previous.data.step !== next.data.step;
 }
 function turnProcessPresentations(nodes) {
     const presentations = new Map();
@@ -185,15 +398,17 @@ function turnProcessPresentations(nodes) {
         if (location.kind !== 'turn' && location.kind !== 'step')
             continue;
         const current = presentations.get(location.turn.turn) ?? {};
-        if ((node.kind === 'user' || node.kind === 'steering')
-            && node.anchorSeq < (current.control?.data.controlAnchorSeq ?? Number.POSITIVE_INFINITY)) {
+        const controlAnchor = current.control?.data.controlAnchorSeq;
+        if (isAtOrOutside(node, 'input')
+            && controlAnchor !== undefined
+            && (controlAnchor === location.turn.start?.seq || node.anchorSeq < controlAnchor)) {
             presentations.set(location.turn.turn, {
                 ...current,
-                openingHumanAnchor: Math.min(current.openingHumanAnchor ?? node.anchorSeq, node.anchorSeq),
+                openingInputAnchor: Math.max(current.openingInputAnchor ?? node.anchorSeq, node.anchorSeq),
             });
             continue;
         }
-        if (TURN_PROCESS_INDEPENDENT_KINDS.has(node.kind))
+        if (isAtOrOutside(node, 'turn'))
             continue;
         presentations.set(location.turn.turn, {
             ...current,
@@ -212,32 +427,32 @@ function presentationPosition(raw, presentations) {
     if (presentation === undefined) {
         return { anchor: node.anchorSeq, rank: 0, originalAnchor: node.anchorSeq };
     }
-    const openingHumanAnchor = presentation.openingHumanAnchor;
-    if (openingHumanAnchor !== undefined
-        && node.anchorSeq < openingHumanAnchor
-        && !TURN_PROCESS_INDEPENDENT_KINDS.has(node.kind)) {
-        return { anchor: openingHumanAnchor, rank: 2, originalAnchor: node.anchorSeq };
+    const openingInputAnchor = presentation.openingInputAnchor;
+    if (openingInputAnchor !== undefined
+        && node.anchorSeq < openingInputAnchor
+        && !isAtOrOutside(node, 'turn')) {
+        return { anchor: openingInputAnchor, rank: 2, originalAnchor: node.anchorSeq };
     }
     if (presentation.control !== undefined && node.key === presentation.control.key) {
-        return openingHumanAnchor === undefined
+        return openingInputAnchor === undefined
             ? {
                 anchor: presentation.earliestProcessAnchor ?? node.anchorSeq,
                 rank: -1,
                 originalAnchor: node.anchorSeq,
             }
-            : { anchor: openingHumanAnchor, rank: 1, originalAnchor: node.anchorSeq };
+            : { anchor: openingInputAnchor, rank: 1, originalAnchor: node.anchorSeq };
     }
     return { anchor: node.anchorSeq, rank: 0, originalAnchor: node.anchorSeq };
 }
 /**
  * Order visible Chat Nodes without changing existing relative order as process
- * eligibility changes. Opening human input precedes process candidates, while
+ * eligibility changes. Opening input precedes process candidates, while
  * each synthetic process control sits between them.
  * @param nodes - currently materialized Chat Nodes.
  * @returns visible Nodes in presentation order.
  */
 export function orderedVisibleChatNodes(nodes) {
-    const visible = nodes.filter(node => node.visibility === 'visible');
+    const visible = nodes.filter(node => isVisibleChatNode(node));
     const presentations = turnProcessPresentations(visible);
     return visible.sort((left, right) => {
         const leftPosition = presentationPosition(left, presentations);
@@ -333,6 +548,202 @@ class ReferenceLabelProjector {
         return [...byKey.values()];
     }
 }
+function withSkillNames(node, names) {
+    const candidate = node;
+    if (candidate.kind !== 'user' && candidate.kind !== 'steering')
+        return node;
+    const current = candidate.data.skillNames ?? EMPTY_KEYS;
+    const hasNames = Object.hasOwn(candidate.data, 'skillNames');
+    if (sameReferences(current, names) && hasNames === (names.length > 0))
+        return node;
+    const data = { ...candidate.data };
+    if (names.length === 0)
+        delete data.skillNames;
+    else
+        data.skillNames = names;
+    return { ...candidate, data };
+}
+/**
+ * Classify one Node for batching: a direct message, a `skill-invocation`
+ * context, or a boundary of any other kind. A context that injects no skill
+ * (workspace rules, the catalog, a recall) is transparent and yields null.
+ */
+function slashEntryOf(node) {
+    const candidate = node;
+    if (candidate.kind === 'user' || candidate.kind === 'steering') {
+        return { key: node.key, seq: node.anchorSeq, kind: 'message', name: null };
+    }
+    if (candidate.kind === 'context') {
+        const name = skillInvocationName(candidate.data.source);
+        return name === null ? null : { key: node.key, seq: node.anchorSeq, kind: 'skill', name };
+    }
+    return { key: node.key, seq: node.anchorSeq, kind: 'boundary', name: null };
+}
+function sameSlashEntry(left, right) {
+    return left.seq === right.seq && left.kind === right.kind && left.name === right.name;
+}
+/**
+ * Attaches each direct message's step-loaded skill names to its Node.
+ *
+ * A step's `skill-invocation` injections follow the direct messages the host
+ * scanned for `/name` gestures and precede the step's first Node of any other
+ * kind, so every non-message, non-context Node closes a batch. Every ended
+ * Turn publishes its `turn-tail` Node on `turn/end` whatever the reason, so a
+ * batch never spans Turns, and `step/start` precedes the direct message in
+ * the log, so no boundary separates a message from its injections. Names
+ * attach to every direct message of the batch: the bubble decorates only the
+ * tokens its own text carries.
+ *
+ * The index holds only messages, skill injections, and boundaries, ordered by
+ * `anchorSeq`. An apply re-reads just the batches around the Nodes whose
+ * classification changed and never scans the store, so an assistant
+ * streaming frame costs nothing here (the append hot path never scans the
+ * Chat Nodes).
+ */
+export class SkillNameProjector {
+    entries = new Map();
+    /** Every indexed entry in `anchorSeq` order. */
+    sorted = [];
+    /**
+     * Rebuild the index from a whole Node set and attach names to its messages.
+     * @param nodes - every materialized Chat Node, in any order.
+     * @returns the same Nodes, direct messages carrying their batch's names.
+     */
+    replace(nodes) {
+        this.entries.clear();
+        this.sorted = [];
+        for (const node of nodes) {
+            const entry = slashEntryOf(node);
+            if (entry === null)
+                continue;
+            this.entries.set(entry.key, entry);
+            this.sorted.push(entry);
+        }
+        this.sorted.sort((left, right) => left.seq - right.seq);
+        const names = new Map();
+        for (let index = 0; index < this.sorted.length; index++) {
+            if (this.sorted[index]?.kind === 'boundary')
+                continue;
+            const end = this.runEnd(index);
+            this.assignRun(index, end, names);
+            index = end;
+        }
+        return nodes.map(node => withSkillNames(node, names.get(node.key) ?? EMPTY_KEYS));
+    }
+    /**
+     * Fold one incremental upsert set: re-read only the batches around the
+     * Nodes whose classification changed.
+     * @param upserts - the changed Nodes.
+     * @param store - the resident Nodes, read by key for the messages of an affected batch.
+     * @returns the upserts plus any resident message whose names changed.
+     */
+    apply(upserts, store) {
+        const dirty = [];
+        for (const node of upserts) {
+            const next = slashEntryOf(node);
+            const previous = this.entries.get(node.key);
+            if (previous !== undefined) {
+                if (next !== null && sameSlashEntry(previous, next)) {
+                    // A rebuilt message Node carries Definition state only, never the
+                    // names a previous apply attached: re-read its batch.
+                    if (next.kind === 'message')
+                        dirty.push(next.seq);
+                    continue;
+                }
+                this.remove(previous);
+                dirty.push(previous.seq);
+            }
+            if (next === null)
+                continue;
+            this.insert(next);
+            dirty.push(next.seq);
+        }
+        if (dirty.length === 0)
+            return upserts;
+        const names = new Map();
+        for (const seq of dirty)
+            this.collectAround(seq, names);
+        const byKey = new Map(upserts.map(node => [node.key, node]));
+        for (const [key, list] of names) {
+            const node = byKey.get(key) ?? store.get(key);
+            if (node === undefined)
+                continue;
+            const next = withSkillNames(node, list);
+            if (next !== node || byKey.has(key))
+                byKey.set(key, next);
+        }
+        return [...byKey.values()];
+    }
+    insert(entry) {
+        this.sorted.splice(this.lowerBound(entry.seq), 0, entry);
+        this.entries.set(entry.key, entry);
+    }
+    remove(entry) {
+        this.sorted.splice(this.sorted.indexOf(entry), 1);
+        this.entries.delete(entry.key);
+    }
+    /** First index whose seq is at least `seq`. */
+    lowerBound(seq) {
+        let low = 0;
+        let high = this.sorted.length;
+        while (low < high) {
+            const middle = (low + high) >>> 1;
+            if ((this.sorted[middle]?.seq ?? Number.POSITIVE_INFINITY) < seq)
+                low = middle + 1;
+            else
+                high = middle;
+        }
+        return low;
+    }
+    /** Last index of the boundary-free run containing `index`. */
+    runEnd(index) {
+        let end = index;
+        while (end + 1 < this.sorted.length && this.sorted[end + 1]?.kind !== 'boundary')
+            end++;
+        return end;
+    }
+    /** First index of the boundary-free run containing `index`. */
+    runStart(index) {
+        let start = index;
+        while (start - 1 >= 0 && this.sorted[start - 1]?.kind !== 'boundary')
+            start--;
+        return start;
+    }
+    /** Record the names every message of the run `[start, end]` carries. */
+    assignRun(start, end, names) {
+        const list = [];
+        for (let index = start; index <= end; index++) {
+            const entry = this.sorted[index];
+            if (entry?.kind === 'skill' && entry.name !== null && !list.includes(entry.name))
+                list.push(entry.name);
+        }
+        for (let index = start; index <= end; index++) {
+            const entry = this.sorted[index];
+            if (entry?.kind === 'message')
+                names.set(entry.key, list);
+        }
+    }
+    /**
+     * Re-read the run(s) around one changed seq: the run holding a message or
+     * skill entry, or — for a boundary, or a seq that left the index — the runs
+     * on both sides of that position.
+     */
+    collectAround(seq, names) {
+        const at = this.lowerBound(seq);
+        const here = this.sorted[at];
+        if (here !== undefined && here.seq === seq && here.kind !== 'boundary') {
+            this.assignRun(this.runStart(at), this.runEnd(at), names);
+            return;
+        }
+        if (at - 1 >= 0 && this.sorted[at - 1]?.kind !== 'boundary') {
+            this.assignRun(this.runStart(at - 1), at - 1, names);
+        }
+        const right = here !== undefined && here.seq === seq ? at + 1 : at;
+        if (right < this.sorted.length && this.sorted[right]?.kind !== 'boundary') {
+            this.assignRun(right, this.runEnd(right), names);
+        }
+    }
+}
 const EMPTY_CONTRIBUTION = {
     anchorSeq: 0,
     nodes: EMPTY_LIST,
@@ -342,8 +753,8 @@ const EMPTY_CONTRIBUTION = {
 function legacyContribution(raw) {
     const node = raw;
     // Content-free settled Assistants remain in the finalized compatibility
-    // stream so StatsLine preserves its pre-assembly step counts; hidden running
-    // attempts have no final Node to contribute.
+    // stream so the composer stats pills keep their pre-assembly step counts;
+    // hidden running attempts have no final Node to contribute.
     if (raw.visibility !== 'visible' && node.kind !== 'assistant-step')
         return EMPTY_CONTRIBUTION;
     switch (node.kind) {
@@ -414,7 +825,7 @@ function sameContribution(left, right) {
         && left.running === right.running
         && sameReferences(left.nodes, right.nodes);
 }
-/** Incremental compatibility projection for StatsLine and legacy top-level snapshot fields. */
+/** Incremental compatibility projection for the composer stats pills and legacy top-level snapshot fields. */
 class LegacySliceBuilder {
     contributions = new Map();
     finalizedContributions = new Map();
@@ -553,44 +964,84 @@ export class ChatSnapshotBuilder {
     navigation = new MutableTurnNavigationIndex();
     legacy = new LegacySliceBuilder();
     referenceLabels = new ReferenceLabelProjector();
+    skillNames = new SkillNameProjector();
     order = EMPTY_KEYS;
+    latestGroupInput;
+    readGroupNode = (key) => this.store.get(key);
+    readGroupTurn = (turn) => this.locations.getTurn(turn);
+    readGroupPosition = (key) => this.locations.getPosition(key);
     /** Last published timeline: a Turn boundary can land without a new node. */
     timeline = null;
     empty;
     constructor() {
         this.empty = this.snapshot({ turnOrder: EMPTY_TURNS, turns: new Map() });
+        this.latestGroupInput = {
+            kind: 'replace',
+            order: this.order,
+            readNode: this.readGroupNode,
+            readTurn: this.readGroupTurn,
+            readPosition: this.readGroupPosition,
+            timeline: this.empty.timeline,
+        };
     }
     replace(input) {
-        const nodes = this.referenceLabels.replace(input.nodes);
+        const nodes = this.skillNames.replace(this.referenceLabels.replace(input.nodes));
         this.store.replace(nodes);
         this.order = orderedVisibleChatNodes(nodes).map(node => node.key);
         this.locations.rebuild(this.order, this.store);
+        this.store.replaceProcesses(this.order, this.locations);
+        this.store.settleBottom(input.timeline.turnOrder, this.locations);
         this.navigation.rebuild(input.timeline, this.locations, this.store);
         this.timeline = input.timeline;
-        return this.snapshot(input.timeline, this.legacy.replace(nodes, input.timeline));
+        this.latestGroupInput = {
+            kind: 'replace',
+            order: this.order,
+            readNode: this.readGroupNode,
+            readTurn: this.readGroupTurn,
+            readPosition: this.readGroupPosition,
+            timeline: input.timeline,
+        };
+        const snapshot = this.snapshot(input.timeline, this.legacy.replace(nodes, input.timeline));
+        return snapshot;
     }
     apply(input) {
-        const upserts = this.referenceLabels.apply(input.upserts, this.store);
+        const upserts = this.skillNames.apply(this.referenceLabels.apply(input.upserts, this.store), this.store);
+        const processTurns = new Set();
         let structural = false;
         const contentOnly = [];
+        const changes = [];
         for (const node of upserts) {
             const previous = this.store.get(node.key);
+            if (previous !== node)
+                changes.push({ previous, current: node });
             const nodeStructural = previous === undefined
                 || previous.kind !== node.kind
                 || previous.anchorSeq !== node.anchorSeq
                 || previous.visibility !== node.visibility
+                || previous.groupTree !== node.groupTree
                 || locationIdentity(previous.location) !== locationIdentity(node.location);
             structural ||= nodeStructural;
             if (!nodeStructural)
                 contentOnly.push(node);
+            if (processPresentationInputChanged(previous, node, nodeStructural)) {
+                const previousTurn = previous === undefined ? undefined : locationCoordinates(previous.location).turn;
+                const nextTurn = locationCoordinates(node.location).turn;
+                if (previousTurn !== undefined)
+                    processTurns.add(previousTurn);
+                if (nextTurn !== undefined)
+                    processTurns.add(nextTurn);
+            }
         }
         this.store.upsert(upserts);
+        let changedTurnOrders = EMPTY_TURNS;
         if (structural) {
             const next = orderedVisibleChatNodes(this.store.values()).map(node => node.key);
             this.order = sameReferences(this.order, next) ? this.order : next;
-            this.locations.rebuild(this.order, this.store);
+            changedTurnOrders = this.locations.rebuild(this.order, this.store);
         }
         this.locations.touch(contentOnly);
+        this.store.updateProcesses(processTurns, this.locations);
+        this.store.settleBottom(input.timeline.turnOrder, this.locations);
         if (structural || input.timeline !== this.timeline) {
             this.navigation.rebuild(input.timeline, this.locations, this.store);
         }
@@ -598,7 +1049,25 @@ export class ChatSnapshotBuilder {
             this.navigation.touch(turnsOf(contentOnly), this.locations, this.store);
         }
         this.timeline = input.timeline;
-        return this.snapshot(input.timeline, this.legacy.apply(upserts, input.timeline));
+        this.latestGroupInput = {
+            kind: 'apply',
+            changes,
+            order: this.order,
+            readNode: this.readGroupNode,
+            readTurn: this.readGroupTurn,
+            readPosition: this.readGroupPosition,
+            timeline: input.timeline,
+            changedTurns: input.changedTurns ?? EMPTY_TURNS,
+            changedTurnOrders,
+        };
+        const snapshot = this.snapshot(input.timeline, this.legacy.apply(upserts, input.timeline));
+        return snapshot;
+    }
+    groupInput() {
+        return this.latestGroupInput;
+    }
+    publish() {
+        this.store.publish();
     }
     snapshot(timeline, legacy = this.legacy.replace(EMPTY_LIST, timeline)) {
         return {

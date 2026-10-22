@@ -1,11 +1,12 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { selectedSession } from "./selected-session.js";
 import { useEffect, useState } from 'react';
 import { ActionDialog } from "./ActionDialog.js";
 import { CapabilityIcon } from "./CapabilityIcon.js";
 import css from './QuantSkillsApp.module.css';
 /** Always mounted in the session header, independent of collapsed tool history. */
 export function AuthoringReview({ useSessions, commit, start, focusComposer, openLibrary }) {
-    const session = useSessions(state => state.current === undefined ? undefined : state.byId[state.current]);
+    const session = useSessions(state => { const id = selectedSession(state); return id === undefined ? undefined : state.byId[id]; });
     const projected = session?.projectionValues?.quantSkillsAuthoringPending;
     const [dismissed, setDismissed] = useState();
     const [reopened, setReopened] = useState();

@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { writeFileAtomic } from '@deepseek-ai/dsh-atomic-write';
 import { resolveDshHome } from '@deepseek-ai/dsh-home-paths';
 import { z } from 'zod';
-import { ContestCliError, record, transientContestCodes, versionAtLeast } from "./contest-cli.js";
+import { ContestCliError, contestFailureCode, record, transientContestCodes, versionAtLeast } from "./contest-cli.js";
 import { contestFillSchema, mergePlanFills, planOrderId } from "./contest-fills.js";
 import { contestContractParts, futuresContractPattern, sameContestContract } from "./contest-contract.js";
 import { contestRequestCost, reserveContestRequests } from "./contest-rate-budget.js";
@@ -296,7 +296,8 @@ export class ContestService {
         if (doctor.allOk !== true) {
             delete this.lastInspection;
             const failed = Array.isArray(doctor.checks) ? doctor.checks.map(record).filter(check => check.ok !== true) : [];
-            const codes = failed.map(check => typeof check.detail === 'string' ? /^([a-z_0-9]+):/.exec(check.detail)?.[1] ?? '' : '');
+            const codes = failed.map(check => typeof check.detail === 'string'
+                ? contestFailureCode(/^([a-z_0-9]+):/.exec(check.detail)?.[1] ?? '', check.detail) : '');
             if (codes.length && codes.every(code => transientContestCodes.has(code))) {
                 const code = codes.find(value => value === 'rate_limit_exceeded' || value === 'http_429') ?? codes[0];
                 const error = new ContestCliError(code, `比赛自检暂不可用（${code}）；稍后重试，不代表账户失效。`);

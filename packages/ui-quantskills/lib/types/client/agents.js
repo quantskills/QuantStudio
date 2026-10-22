@@ -109,7 +109,8 @@ export class QuantSkillsAgentsController {
      */
     async start(request) {
         const created = await this.host.start(request);
-        await this.refresh();
+        // Archive reads must not block adoption of an already-created session.
+        void this.refresh();
         return created;
     }
     /**
@@ -147,7 +148,8 @@ export class QuantSkillsAgentsController {
      */
     async startTeam(request) {
         const created = await this.host.teamStart(request);
-        await this.refresh();
+        // Archive reads must not block adoption of an already-created session.
+        void this.refresh();
         return created;
     }
     publish(snapshot) {

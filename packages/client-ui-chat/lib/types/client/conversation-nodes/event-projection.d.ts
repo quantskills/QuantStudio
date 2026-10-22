@@ -1,6 +1,6 @@
 /** Chat-owned conversion from durable Session events to Chat view data. */
 import type { ContentBlock, StreamChunk } from '@deepseek-ai/dsh-llm/types';
-import type { AssistantBlock, ContextProvenanceView, KnownContextForm } from '@deepseek-ai/dsh-client-ui-conversation/client';
+import type { AssistantBlock, ContextProducerView, KnownContextForm } from '@deepseek-ai/dsh-client-ui-conversation/client';
 /**
  * Read the target-supported presentation form from a durable message source.
  * @param source - Logged `user/message` source.
@@ -12,13 +12,19 @@ export declare function contextForm(source: unknown): KnownContextForm | null;
  * @param source - Logged `user/message` source.
  * @returns Role and label rendered by Chat.
  */
-export declare function contextProvenance(source: unknown): ContextProvenanceView;
+export declare function contextProducer(source: unknown): ContextProducerView;
 /**
  * Read distinct labels cited by a durable cross-session recall source.
  * @param source - Logged `user/message` source.
  * @returns Labels in first-seen order.
  */
 export declare function sessionRecallLabels(source: unknown): string[];
+/**
+ * Read the skill name a durable skill-invocation injection loaded.
+ * @param source - Logged `user/message` source.
+ * @returns The skill name, or null for every other source.
+ */
+export declare function skillInvocationName(source: unknown): string | null;
 /**
  * Classify finalized Assistant content for Chat rendering.
  * @param content - Core content blocks.

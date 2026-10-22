@@ -360,7 +360,7 @@ export class PandaConnector extends TypertRemoteService {
             account: credential.account,
             password: credential.password,
           },
-          argv => this.confineExecution(argv, request.workspaceRoot, request.sessionId).wrapped,
+          async argv => (await this.confineExecution(argv, request.workspaceRoot, request.sessionId)).wrapped,
           this.operationSignal(signal),
         )
       } catch (error: unknown) {
@@ -625,8 +625,8 @@ export class PandaConnector extends TypertRemoteService {
     }
   }
 
-  private confineExecution(argv: readonly string[], workspaceRoot: string, sessionId?: SessionId): PandaExecutionConfinement {
-    const confined = this.ctx.sandbox.confine(argv, {
+  private async confineExecution(argv: readonly string[], workspaceRoot: string, sessionId?: SessionId): Promise<PandaExecutionConfinement> {
+    const confined = await this.ctx.sandbox.confine(argv, {
       mode: 'workspace-write',
       workspaceRoot,
       ...(sessionId === undefined ? {} : { sessionId }),
@@ -654,7 +654,7 @@ export class PandaConnector extends TypertRemoteService {
       probeRoot = createdProbeRoot
       const scriptPath = join(createdProbeRoot, 'panda_execution_probe.py')
       await copyFile(EXECUTION_PROBE_SOURCE, scriptPath)
-      const preparedConfinement = this.confineExecution(this.worker.executionArgv(environment.root), createdProbeRoot, undefined)
+      const preparedConfinement = await this.confineExecution(this.worker.executionArgv(environment.root), createdProbeRoot, undefined)
       confinement = preparedConfinement
       const cached = this.findExecutionEvidence(environment, preparedConfinement.backend)
       if (cached !== undefined) {

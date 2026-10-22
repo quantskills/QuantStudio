@@ -1,6 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis';
-import type { ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
-import type { ModelRetryNode } from '../contract/snapshot.ts';
+import type { ConversationNodeDefinition, ModelRetryNode } from '@deepseek-ai/dsh-client-ui-conversation/client';
 declare module '../contract/chat-nodes.ts' {
     interface ChatNodeDataMap {
         /** Producer-correlated model retry chain. */

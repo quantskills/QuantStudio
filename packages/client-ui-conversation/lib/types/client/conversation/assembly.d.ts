@@ -6,14 +6,29 @@ import type { SessionEvent, SessionId } from '@deepseek-ai/dsh-session/types';
 import { type ObservableSnapshot } from '@deepseek-ai/dsh-client-store';
 import type { ConversationViewSnapshotMap } from '../contract/conversation.ts';
 import type { ConversationSnapshot } from '../contract/snapshot.ts';
-import type { ConversationPromptSnapshot, RequestPromptInspection } from '../contract/request-inspection.ts';
+import type { ConversationPromptSnapshot, RequestPromptInspection, SystemPromptNode } from '../contract/request-inspection.ts';
+import { type SystemPromptState } from '../contract/system-prompt.ts';
 import { ConversationEventRegistry } from './event-registry.ts';
 import { ConversationViewRegistry } from './view-registry.ts';
+import { ConversationGroupRegistry } from './group-registry.ts';
+import { UserTextRegistry } from './user-text-registry.ts';
 /** Observable faces published for one Session's Conversation assembly. */
 export interface ConversationBinding {
     readonly snapshot: ObservableSnapshot<ConversationSnapshot>;
     /**
+     * Identity-stable source of the latest turn number, undefined unless its start is loaded and it remains open.
+     * Turn changes publish synchronously, including without an active View.
+     */
+    readonly openTurn: ObservableSnapshot<number | undefined>;
+    /**
+     * Add one selected target to the Session's monotonic active set.
+     * @param target - registered or subsequently registered Conversation target.
+     */
+    activate(target: string): void;
+    /**
      * Resolve one target-owned snapshot source.
+     * The first subscriber activates the target unless shell selection already
+     * activated it; activation lasts for the remaining Session lifetime.
      * @param target - registered Conversation target.
      * @returns identity-stable source following the target.
      */
@@ -26,6 +41,10 @@ export declare class UiConversation extends Service {
     readonly events: ConversationEventRegistry;
     /** Registry of target View definitions. */
     readonly views: ConversationViewRegistry;
+    /** Business grouping rules over already materialized target Nodes. */
+    readonly groups: ConversationGroupRegistry;
+    /** Pure text rules and parser snapshots, independent of durable Session assembly. */
+    readonly userText: UserTextRegistry;
     private readonly bindings;
     private readonly images;
     /**
@@ -37,6 +56,7 @@ export declare class UiConversation extends Service {
      * Resolve the Conversation binding for one Controller binding or Session id.
      * @param source - Session binding or identity.
      * @returns stable Conversation binding.
+     * @throws if the Session is unknown or its binding is no longer current.
      */
     binding(source: SessionBinding | SessionId): ConversationBinding;
     /**
@@ -65,16 +85,25 @@ export declare class UiConversation extends Service {
      */
     seedImageUrl(sessionId: SessionId, attachment: ImageAttachmentRef, url: string): boolean;
     /**
-     * Canonicalize one `request/header` event against the previous prompt state.
+     * Interpret a system message or surface replacement for target-owned prompt Definitions.
+     * @param previous - System facts at the preceding relevant loaded event.
+     * @param event - Durable system message or positional replacement.
+     * @returns Immutable prompt interpretation at this event.
+     */
+    inspectSystemPrompt(previous: SystemPromptState | undefined, event: SessionEvent): SystemPromptState;
+    /**
+     * Canonicalize one `request/header` event against the previous prompt state
+     * and the `system/message` node in force.
      *
      * A pure interpretation shared by the Chat and Trajectory Definitions, exposed
      * as a service method because cross-plugin value imports are forbidden in
      * client bundles.
      * @param previous - prompt recorded by the preceding loaded header, if any.
      * @param event - the `request/header` session event to interpret.
+     * @param system - effective prompt after loaded surface replacements, if any.
      * @returns the canonical prompt snapshot and any model-visible change.
      */
-    inspectRequestPrompt(previous: ConversationPromptSnapshot | undefined, event: SessionEvent<'request/header'>): RequestPromptInspection;
+    inspectRequestPrompt(previous: ConversationPromptSnapshot | undefined, event: SessionEvent<'request/header'>, system: SystemPromptNode | undefined): RequestPromptInspection;
     private drop;
 }
 //# sourceMappingURL=assembly.d.ts.map

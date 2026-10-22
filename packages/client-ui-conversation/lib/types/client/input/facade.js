@@ -1,14 +1,7 @@
 import { createSnapshotStore, } from '@deepseek-ai/dsh-client-store';
-import { $addUpdateTag, $createParagraphNode, $createTextNode, $getRoot, $getSelection, $isRangeSelection, CLEAR_HISTORY_COMMAND, createEditor, HISTORY_MERGE_TAG, PASTE_TAG, } from 'lexical';
-import { registerPlainText } from '@lexical/plain-text';
-import { createEmptyHistoryState, registerHistory } from '@lexical/history';
-import { mergeRegister } from '@lexical/utils';
 import { SubmitMachine } from "./machine.js";
-import { ReferenceChipNode, $createReferenceChipNode } from "./editor/chip-node.js";
-import { refreshClaimDecoration, registerClaimDecoration } from "./editor/claim-decor.js";
-import { registerTextRefDecoration, rescanTextRefs, TextRefNode } from "./editor/text-ref.js";
-import { $composerLayout, $projectComposer, detectOffsetOfClipboardOffset } from "./editor/projection.js";
-import { $replaceDetectSpanWithNodes, $replaceDetectSpanWithText } from "./editor/span-map.js";
+import { resolveDraftInput, snapshotDraft } from "../draft.js";
+import { DraftEditorRuntime } from "./editor/runtime.js";
 /** Guard tier from the machine phase. */
 function guardOf(phase) {
     switch (phase) {
@@ -21,6 +14,8 @@ function guardOf(phase) {
 function projectionContentChanged(prev, next) {
     if (prev.clipboardText !== next.clipboardText || prev.detectText !== next.detectText)
         return true;
+    if (prev.command !== next.command)
+        return true;
     if (prev.occurrences.length !== next.occurrences.length)
         return true;
     return next.occurrences.some((occ, i) => {
@@ -29,17 +24,8 @@ function projectionContentChanged(prev, next) {
     });
 }
 const EMPTY_QUEUE = [];
-/** No-pipeline lexicon: zero text-ref decorations. */
+/** Unavailable catalogs contain no named text references. */
 const EMPTY_LEXICON = new Map();
-/**
- * Detect-projection and legacy reference placeholders stripped from every
- * external text entering the document (paste, persisted-draft seed): a chip
- * is the only legitimate source of U+FFFC in the detect projection, so a
- * literal one in text would forge chip positions.
- */
-const REFERENCE_PLACEHOLDER_RE = /[\uE100-\uE11D\uFFFC]/gu;
-/** Undo merge window for contiguous typing, in ms (the old machine's mergeWindowMs). */
-const HISTORY_MERGE_DELAY_MS = 1000;
 /**
  * The per-session input facade: scoped-event application verbs +
  * setDraft/submit + the published InputState store, over a shell-owned
@@ -52,91 +38,73 @@ export class SessionInputShell {
     /** Latest surfaced notice (null after clear); the bar renders errors as banners and information inline. */
     notices = createSnapshotStore(null);
     /** The shell-owned editor (text + chip truth); the composer binds its contenteditable to it. */
-    editor;
+    get editor() {
+        return this.draftEditor.editor;
+    }
     /** The public provide-channel action face (one stable identity per session). */
     actions = {
+        captureInsertion: () => ({ ...this.caretSpan(), draftRev: this.rev }),
+        insertText: (text, span) => {
+            if (this.snapshot.phase === 'adjudicating' || this.snapshot.phase === 'submitting' || this.disposed)
+                return false;
+            if (span.draftRev !== this.rev)
+                return false;
+            return this.draftEditor.insertAsyncText(span, text);
+        },
         setDraft: (text) => { this.setDraft(text); },
-        addImages: ids => this.addImages(ids),
-        removeImage: (id) => { this.removeImage(id); },
-        pruneImages: (ids) => { this.pruneImages(ids); },
+        persistDraft: () => { this.persistCurrentDraft(); },
+        addAttachments: ids => this.addAttachments(ids),
+        removeAttachment: (id) => { this.removeAttachment(id); },
+        pruneAttachments: (ids) => { this.pruneAttachments(ids); },
         submit: () => { this.submit('queue'); },
     };
     core = new SubmitMachine();
-    projection = { detectText: '', clipboardText: '', occurrences: [], selection: null, caret: null };
+    draftEditor;
+    get projection() {
+        return this.draftEditor.projection;
+    }
     rev = 0;
-    /** Stable occurrence ids per chip NodeKey (undo restores keys, so ids survive it too). */
-    occurrenceIds = new Map();
-    occurrenceSeq = 0;
     unregister;
     noticeSeq = 0;
-    lastMirroredDraft = '';
-    imageIds = [];
+    lastPublishedDraft;
+    draftSnapshotCache;
+    attachmentIds = [];
     disposed = false;
-    /** Draft persistence mirror (Conversation store write; receives the clipboard projection). */
-    mirrorFn;
-    /** Live lexicon subscription disposer; undefined until the controller resolves. */
-    lexiconOff;
-    /** Default sends retained until admission settles or scope disposal releases their images. */
+    /** Conversation store writer for the current semantic document. */
+    persistDraft;
+    /** A restored draft's command token waiting for the trigger pipeline, with the revision its restore produced. */
+    pendingCommand;
+    /** The in-flight claim resolution for a restored command chip. */
+    commandRestore;
+    /** The mounted composer's file-picker opener (scoped pick-files event target). */
+    filePicker;
+    /** Default sends retained until admission settles or scope disposal releases their attachments. */
     detachedDrafts = new Map();
     /** Failed default sends waiting to be restored together in submission order. */
     failedDetached = new Map();
     /** Revision of the last automatic failure restoration. */
     failedRestoreRev;
     restoringFailures = false;
-    imageFlightSeq = 0;
-    /** Image-only sends retained until admission settles or scope disposal releases their images. */
-    imageFlights = new Map();
+    attachmentFlightSeq = 0;
+    /** Attachment-only sends retained until admission settles or scope disposal releases their attachments. */
+    attachmentFlights = new Map();
+    unsubscribeInbox;
     constructor(deps) {
         this.deps = deps;
-        this.editor = createEditor({
-            namespace: 'dsh-composer',
-            nodes: [ReferenceChipNode, TextRefNode],
-            onError: (error) => { throw error; },
+        this.draftEditor = new DraftEditorRuntime({
+            onUpdate: () => { this.onEditorUpdate(); },
+            openReference: (source, reference) => this.deps.inputTriggers?.()?.openReference(source, reference) ?? false,
+            lexicon: () => this.lexicon.getSnapshot(),
+            resolveLexicon: () => this.deps.inputTriggers?.()?.lexicon,
         });
-        this.unregister = mergeRegister(registerPlainText(this.editor), registerHistory(this.editor, createEmptyHistoryState(), HISTORY_MERGE_DELAY_MS), this.editor.registerUpdateListener(() => { this.onEditorUpdate(); }), registerClaimDecoration(this.editor, () => this.activeClaimToken()), registerTextRefDecoration(this.editor, () => this.lexicon.getSnapshot(), () => this.activeClaimToken()), () => { this.lexiconOff?.(); });
+        this.unregister = this.draftEditor.register();
         this.state = createSnapshotStore(this.compose());
-        deps.queue?.subscribe(() => { this.publish(); });
+        this.unsubscribeInbox = deps.inbox?.subscribe(() => { this.publish(); });
     }
     // ---- editor plumbing ----
-    /**
-     * Run one editor edit whose result is observable on return. At the top
-     * level this is a discrete update. Inside this editor's own update —
-     * command handlers land here synchronously (space/enter picks, paste) —
-     * $-functions are already legal, and wrapping them in update() would DEFER
-     * them past the synchronous bail answer (and a nested discrete throws);
-     * the body runs directly and the outer update commits it.
-     * @param fn - the $-edit body.
-     */
-    applyEdit(fn, tag) {
-        if (this.editor._updating) {
-            // Nested application joins the enclosing update (the PASTE_COMMAND
-            // dispatch path always lands here), so the tag attaches to that update.
-            if (tag !== undefined)
-                $addUpdateTag(tag);
-            fn();
-            return;
-        }
-        this.editor.update(fn, { discrete: true, ...(tag === undefined ? {} : { tag }) });
-    }
-    /**
-     * Subscribe the text-ref re-scan to the controller's lexicon once the
-     * controller resolves. The deps thunk cannot resolve at construction (the
-     * shell is created inside the sessions provide materialization), so the
-     * first interactive updates retry until it can.
-     */
-    ensureLexiconSubscription() {
-        if (this.lexiconOff !== undefined)
-            return;
-        const controller = this.deps.inputTriggers?.();
-        if (controller === undefined)
-            return;
-        this.lexiconOff = controller.lexicon.subscribe(() => { rescanTextRefs(this.editor); });
-    }
-    /** Re-project, run the claim watch, publish, and feed trigger tracking after every editor commit. */
+    /** Re-project, sync the claim with the leading command chip, publish, and feed trigger tracking after every editor commit. */
     onEditorUpdate() {
-        this.ensureLexiconSubscription();
-        const prev = this.projection;
-        this.projection = this.editor.getEditorState().read(() => $projectComposer(key => this.occurrenceIdOf(key)));
+        const prev = this.draftEditor.refreshProjection();
         // Selection-only commits advance neither the revision nor the published
         // state: menus still track the caret below, while draftRev moves only
         // with content so a snapshot-built span (apply.ts) stays CAS-valid across
@@ -147,89 +115,170 @@ export class SessionInputShell {
                 this.failedDetached.clear();
                 this.failedRestoreRev = undefined;
             }
-            this.dispatchRun(({ type: 'draft-changed', draft: this.projection.clipboardText }));
+            this.dispatchRun(({ type: 'draft-changed', command: this.projection.command }));
         }
         const caret = this.projection.caret;
         if (caret !== null) {
             this.deps.inputTriggers?.()?.track(this.projection.detectText, caret, { tier: guardOf(this.core.state.phase) }, this.rev);
         }
     }
-    occurrenceIdOf(key) {
-        const existing = this.occurrenceIds.get(key);
-        if (existing !== undefined)
-            return existing;
-        this.occurrenceSeq += 1;
-        this.occurrenceIds.set(key, this.occurrenceSeq);
-        return this.occurrenceSeq;
-    }
     // ---- SessionInput face ----
     /**
      * Replace the whole draft (persisted-draft seed and programmatic writes).
      * Placeholder-sanitized; newlines split paragraphs; the caret lands at the
      * end. Merged into history so a seed is not an undoable step of its own.
-     * @param text - the full next draft.
+     * @param text - plain text or the complete semantic document.
      */
     setDraft(text) {
-        const clean = text.replace(REFERENCE_PLACEHOLDER_RE, '');
-        if (clean === this.projection.clipboardText)
+        const draft = resolveDraftInput(text);
+        this.cancelCommandRestore();
+        if (draft.references.length === 0)
+            this.draftEditor.setDraft(draft.text);
+        else
+            this.draftEditor.restoreDraft(draft.text, draft.references);
+        if (draft.command === undefined)
             return;
-        this.editor.update(() => {
-            const root = $getRoot();
-            root.clear();
-            for (const line of clean.split('\n')) {
-                const paragraph = $createParagraphNode();
-                if (line !== '')
-                    paragraph.append($createTextNode(line));
-                root.append(paragraph);
-            }
-            root.selectEnd();
-        }, { discrete: true, tag: HISTORY_MERGE_TAG });
+        this.pendingCommand = { token: draft.command.token, rev: this.rev };
+        this.restoreCommand();
     }
-    /** Append ordered image ids unless an admission transaction is locked. */
-    addImages(ids) {
+    /**
+     * Reconnect optional catalog notifications and resume a pending command
+     * chip restore without waiting for another edit.
+     */
+    refreshLexiconSubscription() {
+        if (this.disposed)
+            return;
+        this.draftEditor.refreshLexiconSubscription();
+        this.restoreCommand();
+    }
+    /**
+     * Rebuild the command chip a restored draft carried once the trigger
+     * pipeline can resolve its claim. The rebuild applies only at the revision
+     * the restore produced: an edit made while the claim resolves keeps the
+     * literal token, which Enter still adjudicates as the command.
+     */
+    restoreCommand() {
+        const pending = this.pendingCommand;
+        const inputTriggers = this.deps.inputTriggers?.();
+        if (pending === undefined || inputTriggers === undefined || this.disposed)
+            return;
+        this.pendingCommand = undefined;
+        const restore = new AbortController();
+        this.commandRestore = restore;
+        const spelling = pending.token.trimEnd();
+        inputTriggers.resolveClaim(spelling, restore.signal).then((claim) => {
+            if (restore.signal.aborted)
+                return;
+            this.commandRestore = undefined;
+            if (claim !== undefined)
+                this.applyClaim(claim, { start: 0, end: spelling.length, draftRev: pending.rev }, true);
+        }, (_error) => {
+            // A catalog warmup failure or an abort leaves the literal token, which Enter still adjudicates.
+            if (this.commandRestore === restore)
+                this.commandRestore = undefined;
+        });
+    }
+    /** Drop a pending or in-flight command chip restore. */
+    cancelCommandRestore() {
+        this.pendingCommand = undefined;
+        this.commandRestore?.abort();
+        this.commandRestore = undefined;
+    }
+    /** Current semantic document, stable until its content revision changes. */
+    get draftSnapshot() {
+        if (this.draftSnapshotCache?.revision === this.rev)
+            return this.draftSnapshotCache.value;
+        const value = snapshotDraft(this.projection.clipboardText, this.projection.occurrences, this.projection.command?.token);
+        this.draftSnapshotCache = { revision: this.rev, value };
+        return value;
+    }
+    /** Persist the latest document without changing the editor or binding a writer. */
+    persistCurrentDraft() {
+        this.persistDraft?.(this.draftSnapshot);
+    }
+    /**
+     * Apply one new-task request to this already-initialized input model.
+     * @param options - replacement content and explicit permission to clear existing text.
+     * @returns applied when the requested text is adopted, even if unchanged;
+     * preserved when the current draft is kept; blocked after disposal or during a pending submission.
+     */
+    requestDraftInitialization(options) {
+        if (this.draftInitializationBlocked())
+            return 'blocked';
+        if (options.prompt === undefined && options.clearPreviousDraft !== true)
+            return 'preserved';
+        if (options.clearPreviousDraft !== true && (this.snapshot.draft !== '' || this.attachmentIds.length > 0)) {
+            return 'preserved';
+        }
+        this.setDraft(options.prompt ?? '');
+        return 'applied';
+    }
+    draftInitializationBlocked() {
+        const { phase } = this.core.state;
+        return this.disposed || phase === 'adjudicating' || phase === 'submitting'
+            || this.detachedDrafts.size > 0 || this.attachmentFlights.size > 0;
+    }
+    /** Append ordered attachment ids unless an admission transaction is locked. */
+    addAttachments(ids) {
         if (this.snapshot.phase === 'adjudicating' || this.snapshot.phase === 'submitting')
             return false;
         if (ids.length === 0)
             return true;
-        this.imageIds = [...this.imageIds, ...ids];
+        this.attachmentIds = [...this.attachmentIds, ...ids];
         this.publish();
         return true;
     }
     /**
-     * Remove one image id from this draft. Busy admission phases refuse, like
-     * {@link addImages}: a removal landing while a command submit serializes
-     * would otherwise vanish from the rail yet still ride the in-flight send.
+     * Add validated file references and attachment ids while admission is editable.
+     * @param references - reference chips in source order.
+     * @param ids - newly allocated attachment ids.
+     * @returns false when admission is locked or the editor refuses the insertion.
      */
-    removeImage(id) {
+    addFiles(references, ids) {
         if (this.snapshot.phase === 'adjudicating' || this.snapshot.phase === 'submitting')
-            return;
-        const next = this.imageIds.filter(candidate => candidate !== id);
-        if (next.length === this.imageIds.length)
-            return;
-        this.imageIds = next;
+            return false;
+        if (!this.draftEditor.insertFileReferences(references))
+            return false;
+        this.attachmentIds = [...this.attachmentIds, ...ids];
         this.publish();
+        return true;
     }
     /**
-     * Keep only image ids that still resolve in the browser attachment registry.
+     * Remove one attachment id from this draft. Busy admission phases refuse, like
+     * {@link addAttachments}: a removal landing while a command submit serializes
+     * would otherwise vanish from the rail yet still ride the in-flight send.
+     */
+    removeAttachment(id) {
+        if (this.snapshot.phase === 'adjudicating' || this.snapshot.phase === 'submitting')
+            return false;
+        const next = this.attachmentIds.filter(candidate => candidate !== id);
+        if (next.length === this.attachmentIds.length)
+            return false;
+        this.attachmentIds = next;
+        this.publish();
+        return true;
+    }
+    /**
+     * Keep only ids that still resolve in the browser attachment registry.
      * @param available - live registry ids.
      */
-    pruneImages(available) {
+    pruneAttachments(available) {
         const keep = new Set(available);
-        const next = this.imageIds.filter(id => keep.has(id));
-        if (next.length === this.imageIds.length)
+        const next = this.attachmentIds.filter(id => keep.has(id));
+        if (next.length === this.attachmentIds.length)
             return;
-        this.imageIds = next;
+        this.attachmentIds = next;
         this.publish();
     }
     /**
      * Clear the draft as a successful-send commit: the editor empties (no undo
      * unit) and the undo history is cut, so Ctrl/Cmd-Z cannot resurrect sent
      * content (the command path gets the same discipline from submit-settled).
-     * @param imageIds - admitted image ids to remove from this draft.
+     * @param attachmentIds - admitted attachment ids to remove from this draft.
      */
-    commitSend(imageIds) {
-        const submitted = new Set(imageIds);
-        this.imageIds = this.imageIds.filter(id => !submitted.has(id));
+    commitSend(attachmentIds) {
+        const submitted = new Set(attachmentIds);
+        this.attachmentIds = this.attachmentIds.filter(id => !submitted.has(id));
         this.dispatchRun(({ type: 'send-committed' }));
     }
     /**
@@ -240,22 +289,7 @@ export class SessionInputShell {
      * @param text - pasted plain text.
      */
     paste(text) {
-        const clean = text.replace(REFERENCE_PLACEHOLDER_RE, '');
-        if (clean === '')
-            return;
-        this.applyEdit(() => {
-            const selection = $getSelection();
-            if ($isRangeSelection(selection)) {
-                selection.insertText(clean);
-                return;
-            }
-            // No selection yet (never-focused surface): land at the document end,
-            // growing the first paragraph when the tree is empty.
-            const root = $getRoot();
-            if (root.getChildrenSize() === 0)
-                root.append($createParagraphNode());
-            root.selectEnd().insertText(clean);
-        }, PASTE_TAG);
+        this.draftEditor.paste(text);
     }
     /**
      * Enter adjudication + submit transaction + default sink. Effects fan out
@@ -263,42 +297,56 @@ export class SessionInputShell {
      * (adjudicating/submitting) force-closes the transient layers: the popup
      * dismisses and the menu tracks frozen.
      */
-    submit(mode = 'queue') {
-        if (this.snapshot.draft.trim() === '' && this.imageIds.length > 0) {
+    submit(mode = 'queue', source) {
+        if (this.disposed)
+            return;
+        const timestamp = Date.now();
+        let state;
+        if (this.snapshot.phase === 'plain' && (this.snapshot.draft.trim() !== '' || this.attachmentIds.length > 0)) {
+            try {
+                state = this.deps.submissionState?.();
+            }
+            catch (_error) { /* Optional Session observations cannot interrupt submission. */ }
+        }
+        const submission = Object.freeze({
+            timestamp, mode, ...source === undefined ? {} : { source }, ...state === undefined ? {} : { state },
+        });
+        if (this.snapshot.draft.trim() === '' && this.attachmentIds.length > 0) {
             if (this.snapshot.phase === 'plain') {
-                const imageIds = [...this.imageIds];
+                const attachmentIds = [...this.attachmentIds];
                 const controller = new AbortController();
-                this.imageFlightSeq += 1;
-                const flight = this.imageFlightSeq;
-                this.imageFlights.set(flight, { controller, imageIds });
-                this.commitSend(imageIds);
-                void this.deps.defaultSink('', imageIds, mode, controller.signal).then((outcome) => {
-                    if (this.disposed || !this.imageFlights.delete(flight))
+                this.attachmentFlightSeq += 1;
+                const flight = this.attachmentFlightSeq;
+                this.attachmentFlights.set(flight, { controller, attachmentIds });
+                this.commitSend(attachmentIds);
+                this.notifySubmission(submission);
+                void this.deps.defaultSink('', attachmentIds, mode, controller.signal).then((outcome) => {
+                    if (this.disposed || !this.attachmentFlights.delete(flight))
                         return;
                     if (outcome.kind === 'success')
                         return;
-                    this.restoreImages(imageIds);
+                    this.restoreAttachments(attachmentIds);
                     if (outcome.text !== undefined)
                         this.notify('error', outcome.text);
                 }, (error) => {
-                    if (this.disposed || !this.imageFlights.delete(flight))
+                    if (this.disposed || !this.attachmentFlights.delete(flight))
                         return;
-                    this.restoreImages(imageIds);
+                    this.restoreAttachments(attachmentIds);
                     this.notify('error', error instanceof Error ? error.message : String(error));
                 });
             }
             return;
         }
-        // Claimed pre-gate: a claim that does not declare image acceptance never
-        // submits while images are attached — one notice, everything retained.
+        // Claimed pre-gate: a claim that does not declare attachment acceptance never
+        // submits while attachments are present — one notice, everything retained.
         // Enter-time adjudication applies the same policy for unclaimed lines
         // inside the command source itself.
         const before = this.snapshot;
-        if (before.phase === 'claimed' && this.imageIds.length > 0 && before.claim?.images !== true) {
-            this.notify('error', this.deps.commandImages.unsupportedNotice(before.claim?.token ?? before.draft));
+        if (before.phase === 'claimed' && this.attachmentIds.length > 0 && before.claim?.attachments !== true) {
+            this.notify('error', this.deps.commandAttachments.unsupportedNotice(before.claim?.token ?? before.draft));
             return;
         }
-        this.dispatchRun(({ type: 'enter', mode, draft: this.projection.clipboardText }));
+        this.dispatchRun({ type: 'enter', mode, draft: this.projection.clipboardText, submission });
         const phase = this.snapshot.phase;
         if (phase === 'adjudicating' || phase === 'submitting') {
             this.deps.popup?.()?.dismiss();
@@ -346,10 +394,7 @@ export class SessionInputShell {
      * @returns the ordered [start, end) span in detect coordinates.
      */
     caretSpan() {
-        if (this.projection.selection !== null)
-            return this.projection.selection;
-        const at = this.projection.detectText.length;
-        return { start: at, end: at };
+        return this.draftEditor.caretSpan();
     }
     /**
      * Hot plain-text reference lexicon source for the decoration scan:
@@ -364,26 +409,32 @@ export class SessionInputShell {
     // ---- scoped-event application verbs ----
     /**
      * Apply one command claim (scoped begin-command event listener body): the
-     * editor replaces [0, span.end) with the claim token, then the machine
-     * enters claimed.
+     * editor replaces [0, span.end) with the command chip and its separator,
+     * then the machine enters claimed.
      * @param claim - the command claim from the pick path.
      * @param span - pick-time span snapshot (detect coordinates).
      * @returns whether the edit applied (phase, span CAS, and leading guard passed).
      */
     beginCommand(claim, span) {
+        return this.applyClaim(claim, span, false);
+    }
+    /**
+     * Replace [0, span.end) with the command chip and enter claimed.
+     * @param mergeHistory - merge the edit into the previous history entry.
+     * @returns whether the edit applied.
+     */
+    applyClaim(claim, span, mergeHistory) {
         const phase = this.core.state.phase;
         if (phase !== 'plain' && phase !== 'claimed')
             return false;
         if (span.draftRev !== this.rev)
             return false;
         // Leading-trigger contract: only whitespace may precede the span; the
-        // whitespace prefix is dropped so the claimed watch (startsWith) holds.
+        // whitespace prefix is dropped so the chip takes the leading seat.
         if (this.projection.detectText.slice(0, span.start).trim() !== '')
             return false;
-        let applied = false;
-        this.applyEdit(() => {
-            applied = $replaceDetectSpanWithText({ start: 0, end: span.end }, claim.token);
-        });
+        const tail = this.projection.detectText.slice(span.end, span.end + 1);
+        const applied = this.draftEditor.insertCommand({ start: 0, end: span.end }, claim, tail, mergeHistory);
         if (!applied)
             return false;
         this.dispatchRun(({ type: 'claim', claim }));
@@ -404,14 +455,7 @@ export class SessionInputShell {
         if (span.draftRev !== this.rev)
             return false;
         const tail = this.projection.detectText.slice(span.end, span.end + 1);
-        let applied = false;
-        this.applyEdit(() => {
-            const nodes = tail === ' '
-                ? [$createReferenceChipNode(ref)]
-                : [$createReferenceChipNode(ref), $createTextNode(' ')];
-            applied = $replaceDetectSpanWithNodes(span, nodes);
-        });
-        return applied;
+        return this.draftEditor.insertReference(span, ref, tail);
     }
     /**
      * Consume one command token after business success (scoped consume-token
@@ -424,11 +468,7 @@ export class SessionInputShell {
         if (guard.kind === 'span') {
             if (guard.span.draftRev !== this.rev || guard.span.start === guard.span.end)
                 return false;
-            let applied = false;
-            this.applyEdit(() => {
-                applied = $replaceDetectSpanWithText(guard.span, '');
-            });
-            return applied;
+            return this.draftEditor.replaceText(guard.span, '');
         }
         if (guard.token === '' || this.projection.clipboardText.trim() !== guard.token)
             return false;
@@ -452,11 +492,7 @@ export class SessionInputShell {
         void keepCompleting;
         if (span.draftRev !== this.rev)
             return false;
-        let applied = false;
-        this.applyEdit(() => {
-            applied = $replaceDetectSpanWithText(span, text);
-        });
-        return applied;
+        return this.draftEditor.replaceText(span, text);
     }
     /**
      * Surface a notice from outside the machine (detached command results).
@@ -467,32 +503,42 @@ export class SessionInputShell {
         this.noticeSeq += 1;
         this.notices.set({ level, text, seq: this.noticeSeq });
     }
+    /**
+     * Return the keyboard to the composer with the caret it last held. Lexical's
+     * own focus restores its stored selection; a bare DOM focus on the
+     * contenteditable would land the caret at the start instead.
+     */
+    focus() {
+        this.editor.getRootElement()?.focus({ preventScroll: true });
+        this.editor.focus();
+    }
     // ---- wiring-layer extras (not on the frozen SessionInput face) ----
     /**
-     * Teardown the shell and return every browser-owned image still retained by
+     * Teardown the shell and return every browser-owned attachment still retained by
      * the draft or an unsettled default send.
-     * @returns image ids the scope disposer must release.
+     * @returns attachment ids the scope disposer must release.
      */
     dispose() {
         if (this.disposed)
             return [];
-        const retained = new Set(this.imageIds);
+        const retained = new Set(this.attachmentIds);
         for (const record of this.detachedDrafts.values()) {
-            for (const imageId of record.imageIds)
-                retained.add(imageId);
+            for (const attachmentId of record.attachmentIds)
+                retained.add(attachmentId);
         }
-        for (const flight of this.imageFlights.values()) {
-            for (const imageId of flight.imageIds)
-                retained.add(imageId);
+        for (const flight of this.attachmentFlights.values()) {
+            for (const attachmentId of flight.attachmentIds)
+                retained.add(attachmentId);
             flight.controller.abort();
         }
         this.disposed = true;
+        this.cancelCommandRestore();
         this.dispatchRun(({ type: 'release' }));
+        this.unsubscribeInbox?.();
         this.unregister();
-        this.editor.setRootElement(null);
         this.detachedDrafts.clear();
         this.failedDetached.clear();
-        this.imageFlights.clear();
+        this.attachmentFlights.clear();
         return [...retained];
     }
     /** Read the live input state (guard derivation reads here). */
@@ -500,34 +546,50 @@ export class SessionInputShell {
         return this.state.getSnapshot();
     }
     /**
-     * Bind the draft persistence mirror (Conversation store write). Adopt-on-bind: the
-     * store draft may hold a persisted value from a previous mount; the caller
-     * seeds it via setDraft BEFORE binding, and afterwards every editor-adopted
-     * draft mirrors out.
-     * @param write - store draft write.
+     * Bind the Conversation store writer without importing or saving content.
+     * @param write - semantic draft writer; persistCurrentDraft flushes the initial value.
      * @returns the unbind disposer.
      */
-    bindMirror(write) {
-        this.mirrorFn = write;
+    bindDraftPersistence(write) {
+        this.persistDraft = write;
         return () => {
-            if (this.mirrorFn === write)
-                this.mirrorFn = undefined;
+            if (this.persistDraft === write)
+                this.persistDraft = undefined;
         };
     }
-    // ---- effect executor ----
-    /** The claim token the decoration transform styles; null while unclaimed. */
-    activeClaimToken() {
-        const core = this.core.state;
-        return (core.phase === 'claimed' || core.phase === 'submitting') && core.claim !== undefined
-            ? core.claim.token
-            : null;
+    /**
+     * Bind the mounted composer's file action and live intake availability.
+     * @param picker - availability query and native file-dialog opener.
+     * @returns the unbind disposer.
+     */
+    bindFilePicker(picker) {
+        this.filePicker = picker;
+        return () => {
+            if (this.filePicker === picker)
+                this.filePicker = undefined;
+        };
     }
-    /** Dispatch + execute, refreshing the claim decoration when the styled token flips. */
+    /**
+     * Read the mounted composer's live file-intake availability.
+     * @returns false when no accepting composer is mounted.
+     */
+    canPickFiles() {
+        return this.filePicker?.available() === true;
+    }
+    /**
+     * Open the native file dialog when the mounted composer accepts files.
+     * @returns whether the opener was called.
+     */
+    pickFiles() {
+        if (this.filePicker === undefined || !this.filePicker.available())
+            return false;
+        this.filePicker.open();
+        return true;
+    }
+    // ---- effect executor ----
+    /** Dispatch one machine event and execute its effects. */
     dispatchRun(ev) {
-        const beforeToken = this.activeClaimToken();
         this.run(this.core.dispatch(ev));
-        if (this.activeClaimToken() !== beforeToken)
-            refreshClaimDecoration(this.editor);
     }
     run(effects) {
         for (const fx of effects)
@@ -565,18 +627,13 @@ export class SessionInputShell {
      * undo history so sent content cannot resurrect.
      */
     commitDraft(retainSuffixOf) {
-        this.editor.update(() => {
-            const layout = $composerLayout();
-            const clip = layout.clipboardText;
+        this.draftEditor.clearCommittedDraft((clip) => {
             if (retainSuffixOf !== null && clip !== retainSuffixOf && clip.startsWith(retainSuffixOf)) {
-                $replaceDetectSpanWithText({ start: 0, end: detectOffsetOfClipboardOffset(layout, retainSuffixOf.length) }, '');
-                return;
+                return retainSuffixOf.length;
             }
-            const root = $getRoot();
-            root.clear();
-            root.selectEnd();
-        }, { discrete: true, tag: HISTORY_MERGE_TAG });
-        this.editor.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
+            return null;
+        });
+        this.draftEditor.clearHistory();
     }
     /**
      * Prompt serialization before the sink: expand each chip occurrence to its
@@ -585,17 +642,18 @@ export class SessionInputShell {
      * its editor snapshot. Chip-free drafts skip the async detour.
      */
     sinkSerialized(attempt, draft, mode) {
-        const imageIds = [...this.imageIds];
-        this.imageIds = [];
+        this.notifySubmission(attempt.submission);
+        const attachmentIds = [...this.attachmentIds];
+        this.attachmentIds = [];
         const occurrences = this.projection.occurrences;
-        const record = { draft, occurrences, imageIds };
+        const record = { draft, occurrences, attachmentIds };
         this.detachedDrafts.set(attempt.seq, record);
         if (this.failedRestoreRev === this.rev) {
             this.failedDetached.clear();
             this.failedRestoreRev = undefined;
         }
         if (occurrences.length === 0) {
-            this.settleSink(attempt, this.deps.defaultSink(draft.trim(), imageIds, mode, attempt.signal));
+            this.settleSink(attempt, this.deps.defaultSink(draft.trim(), attachmentIds, mode, attempt.signal));
             return;
         }
         const inputTriggers = this.deps.inputTriggers?.();
@@ -620,13 +678,21 @@ export class SessionInputShell {
                 cursor = part.offset + part.length;
             }
             out += draft.slice(cursor);
-            this.settleSink(attempt, this.deps.defaultSink(out.trim(), imageIds, mode, attempt.signal));
+            this.settleSink(attempt, this.deps.defaultSink(out.trim(), attachmentIds, mode, attempt.signal));
         }, (error) => {
             if (this.dead(attempt))
                 return;
             const message = error instanceof Error ? error.message : String(error);
             this.settleDetachedFailure(attempt, message);
         });
+    }
+    notifySubmission(submission) {
+        if (submission === undefined)
+            return;
+        try {
+            this.deps.messageSubmitted?.(submission);
+        }
+        catch (_error) { /* Notification consumers cannot interrupt submission. */ }
     }
     /** Settle one detached default send independently of other sends. */
     settleSink(attempt, pending) {
@@ -651,7 +717,7 @@ export class SessionInputShell {
         if (record === undefined)
             return;
         this.detachedDrafts.delete(attempt.seq);
-        this.restoreImages(record.imageIds);
+        this.restoreAttachments(record.attachmentIds);
         this.failedDetached.set(attempt.seq, record);
         if (this.projection.clipboardText === '' || this.failedRestoreRev === this.rev) {
             this.restoreFailedDrafts();
@@ -677,54 +743,23 @@ export class SessionInputShell {
         }
         this.restoringFailures = true;
         try {
-            this.editor.update(() => {
-                const root = $getRoot();
-                root.clear();
-                let paragraph = $createParagraphNode();
-                root.append(paragraph);
-                const appendText = (text) => {
-                    const lines = text.split('\n');
-                    for (let i = 0; i < lines.length; i += 1) {
-                        const line = lines[i];
-                        if (line !== '')
-                            paragraph.append($createTextNode(line));
-                        if (i < lines.length - 1) {
-                            paragraph = $createParagraphNode();
-                            root.append(paragraph);
-                        }
-                    }
-                };
-                let cursor = 0;
-                for (const occurrence of occurrences) {
-                    appendText(draft.slice(cursor, occurrence.offset));
-                    paragraph.append(new ReferenceChipNode({
-                        source: occurrence.source,
-                        ref: occurrence.ref,
-                        label: occurrence.label,
-                        ...(occurrence.appearance === undefined ? {} : { appearance: occurrence.appearance }),
-                        clipboardText: occurrence.clipboardText,
-                    }, occurrence.invalid === true));
-                    cursor = occurrence.offset + occurrence.length;
-                }
-                appendText(draft.slice(cursor));
-                root.selectEnd();
-            }, { discrete: true, tag: HISTORY_MERGE_TAG });
-            this.editor.dispatchCommand(CLEAR_HISTORY_COMMAND, undefined);
+            this.draftEditor.restoreDraft(draft, occurrences);
+            this.draftEditor.clearHistory();
             this.failedRestoreRev = this.rev;
         }
         finally {
             this.restoringFailures = false;
         }
     }
-    /** Return failed-send images to the head of the rail (ids still resolve — release happens only after success). */
-    restoreImages(imageIds) {
-        if (imageIds.length === 0)
+    /** Return failed-send attachments to the head of the rail; release happens only after success. */
+    restoreAttachments(attachmentIds) {
+        if (attachmentIds.length === 0)
             return;
-        const current = new Set(this.imageIds);
-        const restored = imageIds.filter(id => !current.has(id));
+        const current = new Set(this.attachmentIds);
+        const restored = attachmentIds.filter(id => !current.has(id));
         if (restored.length === 0)
             return;
-        this.imageIds = [...restored, ...this.imageIds];
+        this.attachmentIds = [...restored, ...this.attachmentIds];
         this.publish();
     }
     /** Enter adjudication: poll the session controller; failure = notice + draft retained (never a silent downgrade). */
@@ -735,7 +770,7 @@ export class SessionInputShell {
             this.dispatchRun(({ type: 'adjudicated', attempt, outcome: undefined }));
             return;
         }
-        inputTriggers.adjudicate(draft.trim(), attempt.signal, { images: this.imageIds.length }).then((outcome) => {
+        inputTriggers.adjudicate(draft.trim(), attempt.signal, { attachments: this.attachmentIds.length }).then((outcome) => {
             if (this.dead(attempt))
                 return;
             this.dispatchRun(({ type: 'adjudicated', attempt, outcome }));
@@ -749,32 +784,32 @@ export class SessionInputShell {
     /**
      * The submit transaction: claim.submit against the session scope; ok maps
      * from the outcome kind. An accepting claim receives the serialized draft
-     * images, which are cleared and released only on a success outcome; a
-     * failure (serialize, transport, or handler error) keeps draft and images
+     * attachments, which are cleared and released only on a success outcome; a
+     * failure (serialize, transport, or handler error) keeps draft and attachments
      * for correction.
      */
     beginSubmit(attempt, claim, args) {
-        const imageIds = claim.images === true ? [...this.imageIds] : [];
+        const attachmentIds = claim.attachments === true ? [...this.attachmentIds] : [];
         Promise.resolve()
             .then(async () => {
-            const images = imageIds.length > 0 ? await this.deps.commandImages.serialize(imageIds) : [];
+            const attachments = attachmentIds.length > 0 ? await this.deps.commandAttachments.serialize(attachmentIds) : [];
             // Serialization may outlive the attempt (large files, session
             // teardown); a dead attempt must not reach the Host executor.
             if (this.dead(attempt))
                 return undefined;
-            return claim.submit(args, this.deps.actx, images);
+            return claim.submit(args, this.deps.actx, attachments);
         })
             .then((outcome) => {
             if (outcome === undefined || this.dead(attempt))
                 return;
-            if (outcome.kind === 'success' && imageIds.length > 0) {
-                const submitted = new Set(imageIds);
-                this.imageIds = this.imageIds.filter(id => !submitted.has(id));
-                this.deps.commandImages.release(imageIds);
+            if (outcome.kind === 'success' && attachmentIds.length > 0) {
+                const submitted = new Set(attachmentIds);
+                this.attachmentIds = this.attachmentIds.filter(id => !submitted.has(id));
+                this.deps.commandAttachments.release(attachmentIds);
             }
             this.dispatchRun(({
                 type: 'submit-settled', attempt, ok: outcome.kind === 'success',
-                draft: this.projection.clipboardText, outcome,
+                command: this.projection.command, outcome,
                 ...(outcome.kind === 'error' && outcome.text === undefined ? { message: 'command failed' } : {}),
             }));
         }, (error) => {
@@ -783,7 +818,7 @@ export class SessionInputShell {
             const message = error instanceof Error ? error.message : String(error);
             this.dispatchRun(({
                 type: 'submit-settled', attempt, ok: false,
-                draft: this.projection.clipboardText, message,
+                command: this.projection.command, message,
             }));
         });
     }
@@ -795,20 +830,21 @@ export class SessionInputShell {
         const core = this.core.state;
         return {
             draft: this.projection.clipboardText,
-            imageIds: this.imageIds,
+            attachmentIds: this.attachmentIds,
             draftRev: this.rev,
             phase: core.phase,
             ...(core.claim !== undefined ? { claim: core.claim } : {}),
             occurrences: this.projection.occurrences,
-            queue: this.deps.queue?.getSnapshot() ?? EMPTY_QUEUE,
+            queue: this.deps.inbox?.getSnapshot()?.['next-turn'] ?? EMPTY_QUEUE,
         };
     }
     publish() {
         const next = this.compose();
         this.state.set(next);
-        if (next.draft !== this.lastMirroredDraft) {
-            this.lastMirroredDraft = next.draft;
-            this.mirrorFn?.(next.draft);
+        const draft = this.draftSnapshot;
+        if (draft !== this.lastPublishedDraft) {
+            this.lastPublishedDraft = draft;
+            this.persistDraft?.(draft);
         }
     }
 }

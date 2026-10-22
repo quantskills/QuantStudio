@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { InjectFace, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import type { HeroAccessoryOwnerProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type { PandaMcpStatus } from './plugin-types.ts'
 import type { QuantSkillsConversationBrandInjected } from './QuantSkillsBrand.tsx'
 import { pandaMcpPhaseLabel, pandaMcpSignal } from './panda-mcp-presentation.ts'
@@ -22,8 +21,7 @@ export type QuantSkillsPandaMcpControlProps = PropsRuntime<'conversation.input.l
   & InjectFace<QuantSkillsPandaMcpControlInjected>
 
 /** Complete props for the blank-session Hero PandaData integration control. */
-export type QuantSkillsPandaMcpHeroControlProps = HeroAccessoryOwnerProps
-  & InjectFace<QuantSkillsPandaMcpControlInjected>
+export type QuantSkillsPandaMcpHeroControlProps = InjectFace<QuantSkillsPandaMcpControlInjected>
 
 interface QuantSkillsPandaMcpSurfaceProps {
   visible: boolean
@@ -158,8 +156,9 @@ export function QuantSkillsPandaMcpHeroControl({
 
 /** Render PandaData in the composer after conversation activity begins. */
 export function QuantSkillsPandaMcpControl({
-  mode, useView, useConversation, session, status, authenticate, refresh, logout,
+  mode, useView, useConversation, useSession, status, authenticate, refresh, logout,
 }: QuantSkillsPandaMcpControlProps) {
+  const session = useSession(state => state)
   const conversation = useConversation(state => state)
   const pluginConversationOpen = useView(state => state.pluginOpen && state.pluginConversationOpen)
   const started = conversation.activeTargets.size > 0

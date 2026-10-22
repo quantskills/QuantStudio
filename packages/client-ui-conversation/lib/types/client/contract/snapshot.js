@@ -1,6 +1,6 @@
 /** Empty Conversation value used before a Session binding is available. */
 export const EMPTY_CONVERSATION_SNAPSHOT = {
-    views: { get: () => undefined },
+    views: { get: () => undefined, grouped: () => undefined },
     activeTargets: new Set(),
 };
 /**

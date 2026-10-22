@@ -1,10 +1,10 @@
 import { bytesToBase64 } from '@deepseek-ai/dsh-util-crypto';
+import { WeakMapWithValues } from '@deepseek-ai/dsh-util-values';
 /** Resolve durable Conversation images and release their browser URLs with Session scope. */
 export class HistoricalImageCache {
     sessions;
-    entries = new Map();
-    generations = new Map();
-    scopeDisposers = new Map();
+    entries = new WeakMapWithValues();
+    scopeDisposers = new WeakMapWithValues();
     urls = new Set();
     disposed = false;
     /**
@@ -24,21 +24,20 @@ export class HistoricalImageCache {
     resolve(sessionId, attachment) {
         if (this.disposed)
             return Promise.reject(new Error('ui-conversation image cache is disposed'));
-        const key = this.key(sessionId, attachment);
-        const cached = this.entries.get(key);
-        if (cached !== undefined)
-            return cached.pending;
         const binding = this.sessions.binding(sessionId);
         if (binding === undefined) {
             return Promise.reject(new Error(`ui-conversation: unknown session "${sessionId}"`));
         }
-        this.bindScope(sessionId, binding.ctx);
+        const entries = this.bindScope(binding);
+        const key = attachment.attachmentId;
+        const cached = entries.get(key);
+        if (cached !== undefined)
+            return cached.pending;
         const entry = {
-            sessionId,
-            generation: this.generations.get(sessionId) ?? 0,
+            binding,
             pending: Promise.resolve(''),
         };
-        this.entries.set(key, entry);
+        entries.set(key, entry);
         entry.pending = this.loadCanonical(key, entry, attachment);
         return entry.pending;
     }
@@ -49,7 +48,8 @@ export class HistoricalImageCache {
      * @returns current preview or canonical URL when cached.
      */
     peek(sessionId, attachment) {
-        return this.entries.get(this.key(sessionId, attachment))?.current;
+        const binding = this.sessions.binding(sessionId);
+        return binding === undefined ? undefined : this.entries.get(binding)?.get(attachment.attachmentId)?.current;
     }
     /**
      * Adopt a submission preview while fetching the durable admitted bytes.
@@ -63,24 +63,23 @@ export class HistoricalImageCache {
     seed(sessionId, attachment, url) {
         if (this.disposed)
             return false;
-        const key = this.key(sessionId, attachment);
-        if (this.entries.has(key))
-            return false;
         const binding = this.sessions.binding(sessionId);
         if (binding === undefined)
             return false;
-        this.bindScope(sessionId, binding.ctx);
+        const entries = this.bindScope(binding);
+        const key = attachment.attachmentId;
+        if (entries.has(key))
+            return false;
         const entry = {
-            sessionId,
-            generation: this.generations.get(sessionId) ?? 0,
+            binding,
             current: url,
             pending: Promise.resolve(url),
         };
         this.urls.add(url);
-        this.entries.set(key, entry);
+        entries.set(key, entry);
         entry.pending = this.loadCanonical(key, entry, attachment).catch((error) => {
-            if (this.entries.get(key) === entry && entry.current === url) {
-                this.entries.delete(key);
+            if (entries.get(key) === entry && entry.current === url) {
+                entries.delete(key);
                 this.releaseUrl(url);
             }
             throw error;
@@ -91,14 +90,8 @@ export class HistoricalImageCache {
         void entry.pending.catch(() => { });
         return true;
     }
-    key(sessionId, attachment) {
-        return `${sessionId}:${attachment.attachmentId}`;
-    }
     loadCanonical(key, entry, attachment) {
-        const binding = this.sessions.binding(entry.sessionId);
-        if (binding === undefined)
-            return Promise.reject(new Error(`ui-conversation: unknown session "${entry.sessionId}"`));
-        return binding.session.readAttachment(attachment.attachmentId)
+        return entry.binding.session.readAttachment(attachment.attachmentId)
             .then((result) => {
             if (!result.ok)
                 throw new Error(`${result.error.code}: ${result.error.message}`);
@@ -120,37 +113,41 @@ export class HistoricalImageCache {
             return url;
         })
             .catch((error) => {
-            if (this.entries.get(key) === entry && entry.current === undefined)
-                this.entries.delete(key);
+            const entries = this.entries.get(entry.binding);
+            if (entries?.get(key) === entry && entry.current === undefined)
+                entries.delete(key);
             throw error;
         });
     }
     assertLive(key, entry) {
         if (this.disposed)
             throw new Error('ui-conversation image cache was disposed before loading completed');
-        if (this.entries.get(key) !== entry
-            || (this.generations.get(entry.sessionId) ?? 0) !== entry.generation) {
+        if (this.entries.get(entry.binding)?.get(key) !== entry) {
             throw new Error('ui-conversation image scope was released before loading completed');
         }
     }
-    bindScope(sessionId, scope) {
-        if (this.scopeDisposers.has(sessionId))
-            return;
-        const dispose = scope.effect(() => () => {
-            this.scopeDisposers.delete(sessionId);
-            this.release(sessionId);
+    bindScope(binding) {
+        const existing = this.entries.get(binding);
+        if (existing !== undefined)
+            return existing;
+        const entries = new Map();
+        this.entries.set(binding, entries);
+        const dispose = binding.ctx.effect(() => () => {
+            this.scopeDisposers.delete(binding);
+            this.release(binding, entries);
         }, 'ui-conversation historical image scope');
-        this.scopeDisposers.set(sessionId, () => { void dispose(); });
+        const release = () => { void dispose(); };
+        this.scopeDisposers.set(binding, release);
+        return entries;
     }
-    release(sessionId) {
-        this.generations.set(sessionId, (this.generations.get(sessionId) ?? 0) + 1);
-        for (const [key, entry] of this.entries) {
-            if (entry.sessionId !== sessionId)
-                continue;
-            this.entries.delete(key);
+    release(binding, entries) {
+        if (this.entries.get(binding) === entries)
+            this.entries.delete(binding);
+        for (const entry of entries.values()) {
             if (entry.current !== undefined)
                 this.releaseUrl(entry.current);
         }
+        entries.clear();
     }
     releaseUrl(url) {
         if (!this.urls.delete(url))
@@ -161,12 +158,14 @@ export class HistoricalImageCache {
         if (this.disposed)
             return;
         this.disposed = true;
-        for (const dispose of [...this.scopeDisposers.values()])
+        for (const dispose of [...this.scopeDisposers.values])
             dispose();
         this.scopeDisposers.clear();
         for (const url of this.urls)
             revokeUrl(url);
         this.urls.clear();
+        for (const entries of this.entries.values)
+            entries.clear();
         this.entries.clear();
     }
 }

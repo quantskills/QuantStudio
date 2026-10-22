@@ -1,0 +1,166 @@
+{
+  "schemaVersion": 1,
+  "sourceGeneration": "72604e42aa535a2433b40075d160d18d49966e5a49fe2bccd015afb6e34595eb",
+  "targetGeneration": "8c9ec5f08227685b502543e5120d101abb89f94ae4c1d7ddf50fc1feec18ae8a",
+  "backupId": "20261018-verified-archive-CRC17184",
+  "originalFiles": 17184,
+  "retainedExactly": true,
+  "automaticTasksRun": 0,
+  "messagesSent": 0,
+  "tradesPlaced": 0,
+  "backupDate": "2026-10-18",
+  "validationDate": "2026-10-20",
+  "runnable": false,
+  "hostStarted": false,
+  "proofSha256": "600e522bf750f5511e79c8dadf24a097c2d2f4d03b73ab71e09b782e386fdada",
+  "sessions": 84,
+  "targetEvents": 11491,
+  "allowedChanges": {
+    "addedV4SessionFiles": 84,
+    "originalFileMutations": 0
+  },
+  "databaseChecks": [
+    {
+      "index": 1,
+      "integrity": "ok",
+      "tables": [
+        {
+          "nameHash": "0eb3e36bfb24dcd9bb1d1bece1531216b59539a8fde17ee80224af0653c92aa3",
+          "schemaHash": "24fe9d40ab836980882d77574c8f6dad1f046fce86c3bb95d6f388915b84cd34",
+          "rows": 41908,
+          "rowsHash": "44b672f5f596dd022dff7d56dfca2bae95ba96e71b55d7db6fd6f6bfe5f2a6a1"
+        },
+        {
+          "nameHash": "4e467d01ab66a5e0de7ee08bde6d0993480a36311b18cf294f4d3d3963206768",
+          "schemaHash": "a007c7b510d6016ae392a819cf1f7b716df496da0bce0ad1578044577368bfd0",
+          "rows": 19420,
+          "rowsHash": "eba95d7c6d590957f22ba82a83ddfc8b1c3e255092093c1376e04b56ee052184"
+        },
+        {
+          "nameHash": "862417b9e7c3720bcb3263cd873b09892d787823b6f9a0f453e42824c5a4d4b6",
+          "schemaHash": "cf36fe4485ff860ee0b890b3f95b8723fa72f739c3ed6dc45cc5d28a1d92f7e5",
+          "rows": 37734,
+          "rowsHash": "6370848c8c2b0085765ce1da352375452bab764c8df639dadcec607ee0a9cdbd"
+        },
+        {
+          "nameHash": "2a299ed82e49ad91638e568d5746345ecad7448f398c95a57b7624021954321c",
+          "schemaHash": "9a71422d058afcbf45ff87cf1a7729f8f390b0ab85c6efaefbb4c81656672e9f",
+          "rows": 37734,
+          "rowsHash": "7342fce7fc96de7e565b2fb9f64c7e2384d67abf183e3dab5796407d74291e3b"
+        },
+        {
+          "nameHash": "6bed537aa8efffdee536820f0c16dc05c098aa2f4f1badd15363bcc5a16dbff8",
+          "schemaHash": "f5c7ee2da4c678a499c05dad69512bb8b6e8619fec882d1a6fea368e8e579f5a",
+          "rows": 1,
+          "rowsHash": "05c134c783404581bbc6d8228549420e9f1449421667c3dc8789f44188b1cee1"
+        },
+        {
+          "nameHash": "4d0161e088542039f8058b33ad759ee25554d4a215a0a6f8eb5722611df9f0dc",
+          "schemaHash": "3e44842406a1c6e0033955974f89d6c1e735c0813b042d083a167daad4416afa",
+          "rows": 0,
+          "rowsHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "nameHash": "a6a2db0069352826bf1ef86dcea35296e312ed00ed396a5845fa8718e5b2c9e1",
+          "schemaHash": "4cb1eaf14467f226196148cb5688569660cb290d414bae4c1c450b149b62befd",
+          "rows": 3,
+          "rowsHash": "1593425b7711357f70cd2adcf214251b83ce07b329b0c6a079d907328190f676"
+        },
+        {
+          "nameHash": "4ba69735ca53765ed6a709edb56c6ea236b7193a3b29a6b390c346f0f4340e4e",
+          "schemaHash": "f2c32d7b8dc3b89dcbbfbb98d989c959624baad1d1d496b2ccfb9dd62ae3c65b",
+          "rows": 830,
+          "rowsHash": "984605361e847a5c5b0db708cf822c40d2c9761d4a14028d51258bff20c13995"
+        },
+        {
+          "nameHash": "741a0576240acbc52d6a7a100acae626083ce7bcf51c5e309f03c51d97f6d825",
+          "schemaHash": "211504417f68cb9f93d9fc5a14f8514f33c4437183b9f665cca2e701e0edaec3",
+          "rows": 1714734,
+          "rowsHash": "c762e19e96b46f76a7ba08f7b496578d6af28736a04e8ce277db2d11de567cbe"
+        },
+        {
+          "nameHash": "0a4e4c29432ecb01b95f87d87ffaff9cb4f36ce4b89ff1a1a136ad1c7392ae07",
+          "schemaHash": "88db43d1ba847be7a121efb15f98af8af44772a0e35a5f05953146bdce7a766f",
+          "rows": 6,
+          "rowsHash": "8dadfe35cd594e977bebb77bbc003421535bec7dd281764adcc11e5a7105ac75"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "integrity": "ok",
+      "tables": [
+        {
+          "nameHash": "0eb3e36bfb24dcd9bb1d1bece1531216b59539a8fde17ee80224af0653c92aa3",
+          "schemaHash": "24fe9d40ab836980882d77574c8f6dad1f046fce86c3bb95d6f388915b84cd34",
+          "rows": 41908,
+          "rowsHash": "44b672f5f596dd022dff7d56dfca2bae95ba96e71b55d7db6fd6f6bfe5f2a6a1"
+        },
+        {
+          "nameHash": "4e467d01ab66a5e0de7ee08bde6d0993480a36311b18cf294f4d3d3963206768",
+          "schemaHash": "a007c7b510d6016ae392a819cf1f7b716df496da0bce0ad1578044577368bfd0",
+          "rows": 19424,
+          "rowsHash": "654d4c87b93148ae3c952e8e366d405e5a59d1315dfff34648f90282f83efaf0"
+        },
+        {
+          "nameHash": "862417b9e7c3720bcb3263cd873b09892d787823b6f9a0f453e42824c5a4d4b6",
+          "schemaHash": "cf36fe4485ff860ee0b890b3f95b8723fa72f739c3ed6dc45cc5d28a1d92f7e5",
+          "rows": 37734,
+          "rowsHash": "6370848c8c2b0085765ce1da352375452bab764c8df639dadcec607ee0a9cdbd"
+        },
+        {
+          "nameHash": "2a299ed82e49ad91638e568d5746345ecad7448f398c95a57b7624021954321c",
+          "schemaHash": "9a71422d058afcbf45ff87cf1a7729f8f390b0ab85c6efaefbb4c81656672e9f",
+          "rows": 37734,
+          "rowsHash": "7342fce7fc96de7e565b2fb9f64c7e2384d67abf183e3dab5796407d74291e3b"
+        },
+        {
+          "nameHash": "6bed537aa8efffdee536820f0c16dc05c098aa2f4f1badd15363bcc5a16dbff8",
+          "schemaHash": "f5c7ee2da4c678a499c05dad69512bb8b6e8619fec882d1a6fea368e8e579f5a",
+          "rows": 1,
+          "rowsHash": "05c134c783404581bbc6d8228549420e9f1449421667c3dc8789f44188b1cee1"
+        },
+        {
+          "nameHash": "4d0161e088542039f8058b33ad759ee25554d4a215a0a6f8eb5722611df9f0dc",
+          "schemaHash": "3e44842406a1c6e0033955974f89d6c1e735c0813b042d083a167daad4416afa",
+          "rows": 0,
+          "rowsHash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "nameHash": "a6a2db0069352826bf1ef86dcea35296e312ed00ed396a5845fa8718e5b2c9e1",
+          "schemaHash": "4cb1eaf14467f226196148cb5688569660cb290d414bae4c1c450b149b62befd",
+          "rows": 3,
+          "rowsHash": "6ad6e1026612a81bef508874cfb62418493ddda1626563a33b81456914985a36"
+        },
+        {
+          "nameHash": "4ba69735ca53765ed6a709edb56c6ea236b7193a3b29a6b390c346f0f4340e4e",
+          "schemaHash": "f2c32d7b8dc3b89dcbbfbb98d989c959624baad1d1d496b2ccfb9dd62ae3c65b",
+          "rows": 830,
+          "rowsHash": "21366ea80503a1cb2caf0df1972142281bb854021b6ac5f84cada1246c8a3075"
+        },
+        {
+          "nameHash": "741a0576240acbc52d6a7a100acae626083ce7bcf51c5e309f03c51d97f6d825",
+          "schemaHash": "211504417f68cb9f93d9fc5a14f8514f33c4437183b9f665cca2e701e0edaec3",
+          "rows": 1715630,
+          "rowsHash": "616ee682461a2ec44ff984c6222c3e391527591398fb5f62db006a2b0f711952"
+        },
+        {
+          "nameHash": "0a4e4c29432ecb01b95f87d87ffaff9cb4f36ce4b89ff1a1a136ad1c7392ae07",
+          "schemaHash": "88db43d1ba847be7a121efb15f98af8af44772a0e35a5f05953146bdce7a766f",
+          "rows": 6,
+          "rowsHash": "8dadfe35cd594e977bebb77bbc003421535bec7dd281764adcc11e5a7105ac75"
+        }
+      ]
+    }
+  ],
+  "restoredBaselineReadByActualOldRuntime": {
+    "runtime": "0.1.2-alpha.2",
+    "sessions": 84,
+    "events": 1223233,
+    "semanticDigest": "aa3c99cccb0c3e13a5760e597673d8500f49692c67dafc9c26ae56371e857f71",
+    "snapshotGeneration": "72604e42aa535a2433b40075d160d18d49966e5a49fe2bccd015afb6e34595eb",
+    "snapshotUnchanged": true,
+    "hostStarted": false
+  },
+  "scope": "Entire offline backup; exact original bytes plus session semantics and SQLite schema/content hashes. No private paths, session IDs or original contents in this report. Old expanded event counts and new folded event counts use different definitions."
+}

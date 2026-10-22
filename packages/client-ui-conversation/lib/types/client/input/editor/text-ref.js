@@ -1,7 +1,9 @@
+/** Editable reference tokens share chip hover styling while retaining ordinary text semantics. */
+import clsx from 'clsx';
 import { TextNode } from 'lexical';
 import { registerLexicalTextEntity } from '@lexical/text';
 import { mergeRegister } from '@lexical/utils';
-import { $getRoot } from 'lexical';
+import { $getRoot, HISTORY_MERGE_TAG } from 'lexical';
 import { scanTextRefs } from "../decorations.js";
 import css from './composer-editor.module.css';
 /** One matched plain-text reference as a styled, fully editable text node. */
@@ -41,7 +43,8 @@ export class TextRefNode extends TextNode {
     /** Style the span the base TextNode mounts. */
     createDOM(config) {
         const el = super.createDOM(config);
-        el.classList.add(css.textRef ?? 'textRef');
+        el.className = clsx(el.className, css.reference, css.textRef, this.getTextContent().startsWith('/') && css.openable);
+        el.setAttribute('spellcheck', 'false');
         el.setAttribute('data-composer-text-ref', '');
         return el;
     }
@@ -55,25 +58,15 @@ export class TextRefNode extends TextNode {
     }
 }
 /**
- * Register the plain-text reference entity transform. The claim decoration
- * has precedence on the leading-token seat: while a command claim holds, the
- * claimed token must stay a plain TextNode (transforms register per concrete
- * node class, so a TextRefNode would never receive the TextNode claim
- * transform and the warn color would be lost).
+ * Register the plain-text reference entity transform.
  * @param editor - the shell-owned editor.
  * @param lexiconOf - live per-trigger name-roll accessor (the controller's aggregated store).
- * @param activeToken - live claim token accessor; null while unclaimed.
  * @returns the unregister disposer.
  */
-export function registerTextRefDecoration(editor, lexiconOf, activeToken) {
+export function registerTextRefDecoration(editor, lexiconOf) {
     const getMatch = (text) => {
-        const claim = activeToken();
-        for (const range of scanTextRefs(text, lexiconOf())) {
-            if (claim !== null && range.start === 0 && text.slice(range.start, range.end) === claim)
-                continue;
-            return { start: range.start, end: range.end };
-        }
-        return null;
+        const range = scanTextRefs(text, lexiconOf())[0];
+        return range === undefined ? null : { start: range.start, end: range.end };
     };
     return mergeRegister(...registerLexicalTextEntity(editor, getMatch, TextRefNode, node => new TextRefNode(node.getTextContent())));
 }
@@ -87,6 +80,6 @@ export function rescanTextRefs(editor) {
     editor.update(() => {
         for (const node of $getRoot().getAllTextNodes())
             node.markDirty();
-    });
+    }, { tag: HISTORY_MERGE_TAG });
 }
 //# sourceMappingURL=text-ref.js.map

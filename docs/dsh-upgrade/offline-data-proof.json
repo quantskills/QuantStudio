@@ -1,0 +1,12 @@
+{
+  "sessions": 84,
+  "events": 11491,
+  "teamChanges": 106,
+  "qsChanges": 106,
+  "unknown": 0,
+  "runnable": false,
+  "generation": "916f707cf661ba122085e075f1f7c65c2ca2fe666595cf2a11d59219962bc16f",
+  "idempotent": true,
+  "snapshotDate": "2026-10-18",
+  "scope": "offline sessions only; no Host; no full-home activation certificate"
+}

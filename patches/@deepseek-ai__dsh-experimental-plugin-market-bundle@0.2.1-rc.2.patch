@@ -1,0 +1,14 @@
+diff --git a/cordis.patch.yml b/cordis.patch.yml
+index bcfbaf201a790b613db1dc4b49f0cfac13e53ef6..f4d7540315753fff02d7f3f64efefe5a355c1e0c 100644
+--- a/cordis.patch.yml
++++ b/cordis.patch.yml
+@@ -5,6 +5,9 @@
+ - insert:
+     - id: plugin-market
+       name: '@deepseek-ai/dsh-plugin-market'
++      config:
++        indexes:
++          - https://cdn.jsdelivr.net/npm/dsh-plugin-catalog@2026.1020.8394/index.json
+       disabled: !!js "!ctx.get('profileContext')"
+     - id: ui-plugin-market
+       name: '@deepseek-ai/dsh-client-ui-plugin-market'

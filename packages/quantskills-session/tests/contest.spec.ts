@@ -180,6 +180,18 @@ describe('contest is opt-in and independent of ordinary sessions', () => {
     await expect(f.service.query({ kind: 'account' })).rejects.toThrow('连接并验证')
   })
 
+  it('keeps HTML gateway failures in doctor retryable without requesting a new login', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.run.getMockImplementation()!
+    f.run.mockImplementation((runtime, args, signal) => args[0] === 'doctor'
+      ? Promise.resolve(data({ allOk: false, checks: [{ name: '交易通道', ok: false,
+        detail: 'bad_response: 服务返回了非 JSON 内容（HTTP 503）：<html>private response</html>' }] })) : base(runtime, args, signal))
+    await expect(f.service.inspect(identity)).rejects.toMatchObject({ code: 'http_503' })
+    f.run.mockImplementation(base)
+    await expect(f.service.inspect(identity)).resolves.toMatchObject({ identity })
+    expect(f.run.mock.calls.some(([, args]) => args[0] === 'login')).toBe(false)
+  })
+
   it('shares and persists the server retry window across callers without retrying the CLI', async () => {
     vi.useFakeTimers({ toFake: ['Date'] })
     const f = await fixture(); await f.connect()
@@ -445,6 +457,35 @@ describe('CLI contract', () => {
     expect(JSON.stringify(result)).not.toContain('secret')
     expect(() => parseCliOutput('{"ok":false,"error":{"code":"market_closed","message":"token secret"}}')).toThrow('休市')
     expect(() => parseCliOutput('private credentials')).toThrow('无法解析')
+  })
+
+  it.each([500, 502, 503, 504])('recognizes HTML HTTP %s responses without exposing the body', status => {
+    const output = JSON.stringify({ ok: false, error: { code: 'bad_response',
+      message: `服务返回了非 JSON 内容（HTTP ${status}）：<html>private credentials</html>` } })
+    let error: unknown
+    try { parseCliOutput(output) } catch (caught) { error = caught }
+    expect(error).toMatchObject({ code: `http_${status}`, message: expect.stringContaining(`HTTP ${status}`) })
+    expect(String(error)).not.toMatch(/private|credentials|<html>|登录|账户状态/)
+  })
+
+  it('does not infer a gateway failure from arbitrary response body contents', () => {
+    const output = JSON.stringify({ ok: false, error: { code: 'bad_response',
+      message: '服务返回了非 JSON 内容（HTTP 200）：<html>HTTP 503 private credentials</html>' } })
+    expect(() => parseCliOutput(output)).toThrow('无法识别的响应')
+    try { parseCliOutput(output) } catch (error) { expect(error).toMatchObject({ code: 'bad_response' }) }
+  })
+
+  it('preserves the saved binding when connecting during a gateway outage, then reconnects without login', async () => {
+    const f = await fixture(); await f.connect()
+    const base = f.run.getMockImplementation()!
+    f.run.mockImplementationOnce(async () => parseCliOutput(JSON.stringify({ ok: false, error: {
+      code: 'bad_response', message: '服务返回了非 JSON 内容（HTTP 503）：<html>nginx</html>',
+    } })))
+    await expect(f.service.connect()).rejects.toMatchObject({ code: 'http_503' })
+    expect(await f.service.status()).toMatchObject({ phase: 'error', identity, message: expect.stringContaining('HTTP 503') })
+    expect(f.run.mock.calls.some(([, args]) => args[0] === 'login')).toBe(false)
+    f.run.mockImplementation(base)
+    await expect(f.service.connect()).resolves.toMatchObject({ phase: 'connected', identity })
   })
 })
 

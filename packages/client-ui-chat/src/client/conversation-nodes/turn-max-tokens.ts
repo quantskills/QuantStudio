@@ -1,8 +1,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type {
-  ConversationMatch, ConversationNodeContext, ConversationNodeDefinition,
+  ConversationMatch, ConversationNodeContext, ConversationNodeDefinition, TurnMaxTokensNode,
 } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type { TurnMaxTokensNode } from '../contract/snapshot.ts'
 import { CHAT_SYNTHETIC_SEQ_OFFSETS, chatNode } from './common.ts'
 
 declare module '../contract/chat-nodes.ts' {
@@ -70,7 +69,7 @@ export const turnMaxTokensDefinition: ConversationNodeDefinition<TurnMaxTokensSt
       turn: state.turn,
       step: lastStep(context),
     }
-    return chatNode(context, 'turn-max-tokens', noticeAnchor(context, state.seq), node)
+    return chatNode(context, 'turn-max-tokens', noticeAnchor(context, state.seq), node, { groupTree: 'turn' })
   },
 }
 

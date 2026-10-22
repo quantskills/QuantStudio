@@ -1,0 +1,11 @@
+{
+  "schema": 2,
+  "workspace": "./isolated-benchmark",
+  "arms": [
+    {"id":"qs-old","path":"./baselines/qs-old","commit":"8312624953d62a9aec5cde2c0c2f1175342482fe","dsh":"0.1.2-alpha.2"},
+    {"id":"qs-public","path":"./QuantStudio","dsh":"0.2.1-rc.2","skillContextMode":"full"},
+    {"id":"dsh-official","path":"./official-runtime","dsh":"0.2.1-rc.2"},
+    {"id":"qs-candidate","path":"./QuantStudio","dsh":"0.2.1-rc.2","skillContextMode":"progressive"}
+  ],
+  "budget":{"limitCny":100,"priorCny":0,"stageLimitCny":25}
+}

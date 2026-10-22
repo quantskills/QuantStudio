@@ -16,9 +16,9 @@ concurrency:
 
 jobs:
   validate:
-    name: ${{ matrix.os }} / Node 22.19
+    name: ${{ matrix.os }} / Node ${{ matrix.node }}
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -26,6 +26,10 @@ jobs:
           - windows-latest
           - ubuntu-latest
           - macos-latest
+        node: [22.19.0]
+        include:
+          - os: ubuntu-latest
+            node: 24.0.0
 
     steps:
       - name: Check out source
@@ -34,7 +38,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: 22.19.0
+          node-version: ${{ matrix.node }}
 
       - name: Activate pinned pnpm
         run: |
@@ -47,20 +51,79 @@ jobs:
       - name: Test installation entry point
         run: pnpm exec vitest run tests/application-bootstrap.spec.ts
 
+      - name: Verify native subprocess containment
+        run: pnpm exec vitest run tests/background-subprocess.spec.ts
+
+      - name: Verify actual plugin sources and serialized operations in an isolated profile
+        run: pnpm run ci:plugins
+
       - name: Check source and types
         run: pnpm run check
-
-      - name: Run plugin tests
-        run: pnpm run test
-
-      - name: Test managed updates and rollback
-        run: pnpm run test:update
-
-      - name: Test workspace platform compatibility
-        run: pnpm exec vitest run packages/quantskills-session/tests/managed-workspace.spec.ts
 
       - name: Build publishable output
         run: pnpm run build
 
+      - name: Verify public deliverables export from packed plugin and application archives
+        run: pnpm run verify:packed-deliverables
+
+      - name: Test the complete candidate including migration, Team recovery and Trade
+        run: pnpm exec vitest run
+
+      - name: Verify offline benchmark fixtures, accounting and historical evidence
+        run: |
+          node --test benchmark/tests/*.test.mjs
+          node benchmark/run-suite.mjs
+          node benchmark/verify-history.mjs
+          node benchmark/verify-results.mjs
+
+      - name: Verify Team instructions and exact arithmetic in a native Host without model requests
+        run: node scripts/ci-team-verification.mjs
+
+      - name: Check out fixed upstream UI test support
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: deepseek-ai/deepseek-harness
+          ref: 687f282e8625c6b8d11ff58211a90524be2e4317
+          path: .ci-dsh-upstream
+          persist-credentials: false
+
+      - name: Test the customized UI against the target upstream behavior
+        run: pnpm exec vitest run --config vitest.upstream-ui.config.ts
+        env:
+          QS_UPSTREAM_SOURCE: .ci-dsh-upstream
+
+      - name: Test fixed upstream Web settings, models, plugins, schedules and collaboration
+        run: pnpm exec vitest run --config vitest.upstream-features.config.ts
+        env:
+          QS_UPSTREAM_SOURCE: .ci-dsh-upstream
+
       - name: Smoke-test clean DSH installation
         run: pnpm run ci:smoke
+
+      - name: Activate a migrated whole home without credentials or external execution paths
+        run: pnpm run ci:smoke -- --whole-home --legacy-market
+
+      - name: Verify optional bundle settings through the official manager and service restart
+        run: node scripts/ci-optional-bundles.mjs
+
+      - name: Install the pinned Chromium test runtime
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Exercise the candidate in a real browser with isolated model and attachment fixtures
+        run: pnpm run ci:smoke -- --whole-home --legacy-market --all-optional --browser-e2e
+
+      - name: Check out the fixed pre-upgrade baseline
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: 8312624953d62a9aec5cde2c0c2f1175342482fe
+          path: .ci-legacy-core
+          persist-credentials: false
+
+      - name: Install the old core without changing its versions
+        run: pnpm --dir .ci-legacy-core install --frozen-lockfile
+
+      - name: Verify the new launcher can still run the old core
+        run: pnpm run ci:legacy -- .ci-legacy-core
+
+      - name: Read and start a recovered old generation after preserving candidate increments
+        run: pnpm run ci:legacy -- .ci-legacy-core --restore

@@ -1,7 +1,9 @@
+import { inspectSession, listSessionHeaders } from './session-storage.ts'
 /** Exact-version QuantSkills session composition and log-backed archive remotes. */
 
 import { QuantSkillsLibraryStore } from './library-store.ts'
 import { SessionLifecycle } from './session-lifecycle.ts'
+import { recoverLegacyTeam, type LegacyTeamRecoveryRequest, type LegacyTeamRecoveryResult } from './legacy-team-recovery.ts'
 import type { SessionLifecycleRequest, SessionDeletionPreview, ArchivedConversation } from './types.ts'
 import { ContestService, sameContest } from './contest-service.ts'
 import { FlyService } from './fly-service.ts'
@@ -53,11 +55,13 @@ import type {} from '@deepseek-ai/dsh-session-persistence'
 import type { ProjectionSnapshot } from '@deepseek-ai/dsh-session-projection'
 import type {} from '@deepseek-ai/dsh-session-projection-cache'
 import {
-  renderSkillContent, type SkillCandidate, type SkillDefinition, type SkillLookupOptions, type SkillProvider,
+  type SkillCandidate, type SkillDefinition, type SkillLookupOptions, type SkillProvider,
 } from '@deepseek-ai/dsh-skill'
 import type { SystemPrompt } from '@deepseek-ai/dsh-system-prompt'
 import { installQuantSkillsIdentity } from './product-identity.ts'
 import { renderArtifactTheme } from './artifact-theme.ts'
+import { ATTACHED_SKILL_READER, EFFICIENT_TEAM_GUIDANCE, attachedSkillReader, renderResidentSkillContext, renderSkillLoadingGuidance, selectSkillContextMode, type SkillContextMode } from './skill-context.ts'
+import { TEAM_LEAD_VERIFICATION, TEAM_MEMBER_VERIFICATION, teamCalculationTool, teamMemberInstructionReader } from './team-verification.ts'
 import type {} from '@deepseek-ai/dsh-subagent'
 import { defineTool, type ToolCallView } from '@deepseek-ai/dsh-tools'
 import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
@@ -512,8 +516,12 @@ declare module '@deepseek-ai/dsh-session/types' {
 
 /** Loader configuration for durable user Agent definitions. */
 export interface Config {
+  /** Experimental lossless on-demand Skill context. Full remains the compatibility default. */
+  readonly skillContextMode?: SkillContextMode
   /** Harness home override. */
   readonly dshHome?: string
+  /** Optional deployment override for the managed Documents workspace root. */
+  readonly documentsDirectory?: string
   /** Maximum UTF-8 bytes exposed by the built-in attachment reader. */
   readonly maxTextAttachmentBytes?: number
   /** Maximum PDF or Office source bytes admitted to the built-in parser. */
@@ -858,6 +866,10 @@ interface ResidentSkillRuntimeEntry {
 
 interface ResidentSkillRuntime {
   readonly entries: Map<QuantSkillsAssetId, ResidentSkillRuntimeEntry>
+  readonly disposers: Array<() => void>
+  reader?: ReturnType<typeof attachedSkillReader>
+  disposeReader?: () => void
+  readonly fixedWorkflow: boolean
 }
 
 interface ResultSource {
@@ -874,15 +886,7 @@ interface ResultCandidate {
 /** Host service for product-owned QuantSkills Sessions, exact asset composition, and durable archives. */
 const QUANTSKILLS_RESULT_FILE_PATH = '/api/quantskills.result.file'
 
-interface ResultPreviewConnection {
-  readonly fetch: {
-    register(route: {
-      readonly path: string
-      readonly methods: readonly ('GET' | 'HEAD')[]
-      readonly fetch: (request: Request) => Promise<Response>
-    }): () => Promise<void>
-  }
-}
+type ResultPreviewConnection = Pick<import('@deepseek-ai/dsh-client-connection').HostConnectionHandle, 'fetch'>
 
 function connectionOf(ctx: Context): ResultPreviewConnection {
   return Reflect.get(ctx, 'connection') as ResultPreviewConnection
@@ -908,7 +912,9 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   ]
 
   static Config: s<Config> = s.object({
+    skillContextMode: s.union(['full', 'progressive']).default('full'),
     dshHome: s.string(),
+    documentsDirectory: s.string(),
     maxTextAttachmentBytes: s.number().step(1).min(1).default(DEFAULT_MAX_TEXT_ATTACHMENT_BYTES),
     maxDocumentAttachmentBytes: s.number().step(1).min(1).default(DEFAULT_MAX_DOCUMENT_ATTACHMENT_BYTES),
     maxFileAttachmentBytes: s.number().step(1).min(1).default(DEFAULT_MAX_FILE_ATTACHMENT_BYTES),
@@ -921,6 +927,9 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   })
 
   private readonly libraryStore: QuantSkillsLibraryStore
+  /** Local startup barrier; not exposed through the client remote API. */
+  whenLifecycleReady(): Promise<void> { return this.sessionLifecycle.ready }
+
   private readonly sessionLifecycle: SessionLifecycle
   private readonly modelAccess: QuantSkillsModelAccess
 
@@ -953,7 +962,9 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   private readonly liveTradingToolNames: ReadonlySet<string>
   private readonly teamFreshProvider: string
   private readonly teamForkProvider: string
+  private readonly skillContextMode: SkillContextMode
   private readonly workspaceResolver: QuantSkillsWorkspaceResolver
+  private readonly legacyTeamRecoveryDirectory: string
   private readonly contest: ContestService
   private readonly fly: FlyService
   private readonly contestWatcher: ContestWatcher
@@ -966,6 +977,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
    */
   constructor(ctx: Context, config: Config) {
     super(ctx, 'quantSkillsSessions', { namespace: 'quantSkillsSessions' })
+    this.skillContextMode = config.skillContextMode ?? 'full'
     this.sessionLifecycle = new SessionLifecycle(ctx, resolveDshHome(config.dshHome))
     this.contest = new ContestService(new OfficialContestCli(() => {
       const processes = ctx.get('subprocess')
@@ -988,6 +1000,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       connectionOf(connectionCtx).fetch.register({
         path: QUANTSKILLS_RESULT_FILE_PATH,
         methods: ['GET', 'HEAD'],
+        requestBody: 'buffered',
         fetch: request => this.resultFileResponse(request),
       })
     })
@@ -1007,12 +1020,16 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     this.liveTradingToolNames = validateLiveTradingToolNames(config.liveTradingToolNames ?? [])
     this.teamFreshProvider = requiredProvider(config.teamFreshProvider ?? 'spawn', 'teamFreshProvider')
     this.teamForkProvider = requiredProvider(config.teamForkProvider ?? 'fork', 'teamForkProvider')
+    this.legacyTeamRecoveryDirectory = join(resolveDshHome(config.dshHome), 'quantskills', 'migration', 'team-mailboxes')
     this.workspaceResolver = new QuantSkillsWorkspaceResolver(
       ctx.workspaceRegistry,
-      () => resolveQuantSkillsManagedPath({ signal: this.lifetime.signal }),
+      () => resolveQuantSkillsManagedPath({ signal: this.lifetime.signal,
+        ...config.documentsDirectory === undefined ? {} : { documentsDirectory: config.documentsDirectory } }),
     )
 
-    ctx.subagents.registerContinuableSetup(childCtx => this.setupTeamMember(childCtx))
+    ctx.on('agent/created', async ({ agent }) => {
+      if (agent.session.header.origin === 'subagent') this.setupTeamMember(agent.ctx, agent)
+    })
 
     ctx.sessionProjections.register<'quantSkillsPlainSession', QuantSkillsPlainSessionBinding | null>({
       key: 'quantSkillsPlainSession',
@@ -1177,6 +1194,15 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   @Remote('workspaceStatus')
   workspaceStatus(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceStatusResult> {
     return this.workspaceResolver.status(request.preferredWorkspaceId)
+  }
+
+  /** Audit or explicitly continue historical messages; opening a Session never replays them. */
+  @Remote('legacyTeamRecovery')
+  async legacyTeamRecovery(request: LegacyTeamRecoveryRequest, signal: AbortSignal): Promise<LegacyTeamRecoveryResult> {
+    await this.sessionLifecycle.ready
+    const lead = this.requireLiveQuantSkillsAgent(request.sessionId)
+    if (foldQuantSkillsAgentTeamSession(lead.session.snapshotEvents()) === null) throw new Error('请选择原专家团主会话。')
+    return recoverLegacyTeam(this.ctx, this.legacyTeamRecoveryDirectory, request, this.operationSignal(signal))
   }
 
   /**
@@ -1497,7 +1523,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       const agent = this.ctx.agents.get(request.sessionId)
       if (agent === undefined) throw new Error(`session "${request.sessionId}" did not become live`)
       await this.ensureAgentSetup(agent)
-      const published = foldQuantSkillsPlainSessionBinding(agent.session.events)
+      const published = foldQuantSkillsPlainSessionBinding(agent.session.snapshotEvents())
       if (published === null || !samePlainBinding(published, binding)) {
         throw new Error(`session "${request.sessionId}" was published without its complete QuantSkills setup`)
       }
@@ -1576,7 +1602,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       const agent = this.ctx.agents.get(request.sessionId)
       if (agent === undefined) throw new Error(`session "${request.sessionId}" did not become live`)
       await this.ensureAgentSetup(agent)
-      const published = foldQuantSkillsSessionBinding(agent.session.events)
+      const published = foldQuantSkillsSessionBinding(agent.session.snapshotEvents())
       if (published === null || !sameBinding(published, binding)
         || !(await this.agentMatchesResidentLog(agent, active))) {
         throw new Error(`session "${request.sessionId}" was published without its exact QuantSkills setup`)
@@ -1726,7 +1752,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       await this.ensureSkillSession(agent, active)
       const runtime = this.requireResidentRuntime(request.sessionId)
       const binding = bindingFrom(resolved.version)
-      const current = foldQuantSkillsResidentSkills(agent.session.events)
+      const current = foldQuantSkillsResidentSkills(agent.session.snapshotEvents())
       const occupied = current.find(item => item.assetId === binding.assetId)
       if (occupied !== undefined) {
         if (!sameBinding(occupied, binding)) {
@@ -1734,9 +1760,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         }
         return Object.freeze({ skills: current })
       }
-      const registered = this.registerResidentSkill(agent.ctx, resolved)
+      const registered = this.registerResidentSkill(agent.ctx, agent, resolved)
       runtime.entries.set(binding.assetId, registered)
       try {
+        this.refreshResidentReader(agent.ctx, agent, runtime)
         agent.session.append(RESIDENT_SKILL_EVENT, Object.freeze({
           operation: 'attach',
           binding,
@@ -1745,9 +1772,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       } catch (error) {
         runtime.entries.delete(binding.assetId)
         registered.dispose()
+        this.refreshResidentReader(agent.ctx, agent, runtime)
         throw error
       }
-      return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.events) })
+      return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.snapshotEvents()) })
     })
   }
 
@@ -1762,7 +1790,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       const agent = this.requireLiveQuantSkillsAgent(request.sessionId)
       await this.ensureAgentSetup(agent)
       const runtime = this.requireResidentRuntime(request.sessionId)
-      const current = foldQuantSkillsResidentSkills(agent.session.events)
+      const current = foldQuantSkillsResidentSkills(agent.session.snapshotEvents())
       const binding = current.find(item => item.assetId === request.assetId)
       if (binding === undefined) return Object.freeze({ skills: current })
       agent.session.append(RESIDENT_SKILL_EVENT, Object.freeze({
@@ -1773,7 +1801,8 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       const registered = runtime.entries.get(request.assetId)
       runtime.entries.delete(request.assetId)
       registered?.dispose()
-      return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.events) })
+      this.refreshResidentReader(agent.ctx, agent, runtime)
+      return Object.freeze({ skills: foldQuantSkillsResidentSkills(agent.session.snapshotEvents()) })
     })
   }
 
@@ -1792,7 +1821,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     const agent = this.ctx.agents.get(request.sessionId)
     if (agent === undefined) throw new Error(`QuantSkills Session "${request.sessionId}" is not live.`)
     // Opening the capability menu is read-only; an ordinary conversation has no forms yet.
-    if (!isQuantSkillsSession(agent.session.events)) return Object.freeze({ forms: Object.freeze([]) })
+    if (!isQuantSkillsSession(agent.session.snapshotEvents())) return Object.freeze({ forms: Object.freeze([]) })
     return Object.freeze({ forms: await this.listPromptForms(agent, active) })
   }
 
@@ -1817,7 +1846,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     if (capability.promptForm.status === 'invalid') {
       throw new Error(`QuantSkills parameter form is unavailable: ${capability.promptForm.reason}`)
     }
-    const attachments = foldQuantSkillsSessionFileAttachments(agent.session.events)
+    const attachments = foldQuantSkillsSessionFileAttachments(agent.session.snapshotEvents())
     return Object.freeze({
       text: renderPromptForm(capability, request, attachments),
     })
@@ -2029,12 +2058,12 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     return this.withSessionLock(this.authoringCommitTails, request.sessionId, async () => {
       active.throwIfAborted()
       const agent = this.requireLiveQuantSkillsAgent(request.sessionId)
-      const authoringKind = foldQuantSkillsAuthoringStarted(agent.session.events)
+      const authoringKind = foldQuantSkillsAuthoringStarted(agent.session.snapshotEvents())
       if (authoringKind === null) throw new Error('QuantSkills Session is not an authoring Session.')
-      const prior = foldQuantSkillsAuthoringCommitted(agent.session.events)
+      const prior = foldQuantSkillsAuthoringCommitted(agent.session.snapshotEvents())
         .find(commit => commit.toolCallId === request.toolCallId && commit.treeDigest === request.expectedTreeDigest)
       if (prior !== undefined) return prior.result
-      const logged = successfulAuthoringToolResult(agent.session.events, request.toolCallId, authoringKind)
+      const logged = successfulAuthoringToolResult(agent.session.snapshotEvents(), request.toolCallId, authoringKind)
       if (logged.treeDigest !== request.expectedTreeDigest) {
         throw new Error('QuantSkills draft changed after the confirmation card was rendered.')
       }
@@ -2061,7 +2090,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
             model: member.model,
           })),
         }
-        const previous = [...foldQuantSkillsAuthoringCommitted(agent.session.events)].reverse()
+        const previous = [...foldQuantSkillsAuthoringCommitted(agent.session.snapshotEvents())].reverse()
           .find(commit => commit.result.kind === 'agent-team')
         const team = previous?.result.kind === 'agent-team'
           ? await this.agentTeamUpdate({
@@ -2104,7 +2133,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
             if (selected === undefined) throw new Error(`QuantSkills authored Agent requires missing Skill "${assetId}".`)
             return selected.versionId
           })
-          const previous = [...foldQuantSkillsAuthoringCommitted(agent.session.events)].reverse()
+          const previous = [...foldQuantSkillsAuthoringCommitted(agent.session.snapshotEvents())].reverse()
             .find(commit => commit.result.kind === 'agent')
           const fields: QuantSkillsAgentCreateRequest = {
             name: template.name,
@@ -2215,7 +2244,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       const agent = this.ctx.agents.get(request.sessionId)
       if (agent === undefined) throw new Error(`session "${request.sessionId}" did not become live`)
       await this.ensureAgentSetup(agent)
-      const published = foldQuantSkillsAgentSession(agent.session.events)
+      const published = foldQuantSkillsAgentSession(agent.session.snapshotEvents())
       if (published === null || !sameAgent(published, definition)
         || !(await this.agentMatchesResidentLog(agent, active))) {
         throw new Error(`session "${request.sessionId}" was published without its exact QuantSkills Agent setup`)
@@ -2388,7 +2417,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       const agent = this.ctx.agents.get(request.sessionId)
       if (agent === undefined) throw new Error(`session "${request.sessionId}" did not become live`)
       await this.ensureAgentSetup(agent)
-      const published = foldQuantSkillsAgentTeamSession(agent.session.events)
+      const published = foldQuantSkillsAgentTeamSession(agent.session.snapshotEvents())
       if (published === null || !sameTeamSession(published, reservation.binding)
         || !(await this.agentMatchesResidentLog(agent, active))) {
         throw new Error(`session "${request.sessionId}" was published without its exact QuantSkills Agent Team setup`)
@@ -2437,7 +2466,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       active.throwIfAborted()
       const agent = this.requireLiveQuantSkillsAgent(request.sessionId)
       const input = decodeQuantSkillsFileAttachment(request, this.fileStore.limits.maxFileBytes)
-      const current = foldQuantSkillsSessionFileAttachments(agent.session.events)
+      const current = foldQuantSkillsSessionFileAttachments(agent.session.snapshotEvents())
       const aggregateBytes = current.reduce((total, item) => total + item.file.bytes, 0)
       if (aggregateBytes + input.data.byteLength > this.fileStore.limits.maxSessionFileBytes) {
         throw new Error('QuantSkills Session attachment bytes exceed the configured aggregate limit.')
@@ -2504,33 +2533,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     if (request.paths.length > MAX_RESULT_PREPARE_PATHS) {
       throw new TypeError(`QuantSkills result preparation accepts at most ${String(MAX_RESULT_PREPARE_PATHS)} paths.`)
     }
-    const active = this.operationSignal(signal)
-    return this.withSessionLock(this.resultPrepareTails, request.sessionId, async () => {
-      active.throwIfAborted()
-      const existing = await this.requireQuantSkillsSession(request.sessionId, active)
-      const cwd = existing.header.cwd
-      if (cwd === undefined) throw new Error('QuantSkills Session has no workspace path.')
-      const workspaceRoot = await this.ctx.fs.resolve('.', { cwd, signal: active })
-      const sources = await this.resolveResultSources(existing.events, active)
-      const mutationPaths = new Set(
-        this.resultCandidates(request.sessionId, existing.events)
-          .filter(candidate => candidate.source === 'mutation')
-          .map(candidate => candidate.path),
-      )
-      const results: QuantSkillsPreparedResult[] = []
-      for (const inputPath of request.paths) {
-        active.throwIfAborted()
-        results.push(await this.prepareResultPath(
-          inputPath,
-          cwd,
-          workspaceRoot,
-          sources,
-          mutationPaths.has(inputPath),
-          active,
-        ))
-      }
-      return Object.freeze({ results: Object.freeze(results) })
-    })
+    return this.prepareSessionResults(request.sessionId, this.operationSignal(signal), request.paths)
   }
 
   /**
@@ -2546,10 +2549,38 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     request: { readonly sessionId: SessionId },
     signal?: AbortSignal,
   ): Promise<QuantSkillsResultPrepareResult> {
-    const active = this.operationSignal(signal)
-    const existing = await this.requireQuantSkillsSession(request.sessionId, active)
-    const paths = this.resultCandidates(request.sessionId, existing.events).map(candidate => candidate.path)
-    return this.resultPrepare({ sessionId: request.sessionId, paths }, active)
+    return this.prepareSessionResults(request.sessionId, this.operationSignal(signal))
+  }
+
+  /** A missing path list restores the full log, without the per-RPC candidate limit. */
+  private prepareSessionResults(
+    sessionId: SessionId,
+    active: AbortSignal,
+    paths?: readonly string[],
+  ): Promise<QuantSkillsResultPrepareResult> {
+    return this.withSessionLock(this.resultPrepareTails, sessionId, async () => {
+      active.throwIfAborted()
+      const existing = await this.requireQuantSkillsSession(sessionId, active)
+      const cwd = existing.header.cwd
+      if (cwd === undefined) throw new Error('QuantSkills Session has no workspace path.')
+      const workspaceRoot = await this.ctx.fs.resolve('.', { cwd, signal: active })
+      const sources = await this.resolveResultSources(existing.events, active)
+      const candidates = this.resultCandidates(sessionId, existing.events)
+      const mutationPaths = new Set(candidates.filter(candidate => candidate.source === 'mutation').map(candidate => candidate.path))
+      const results: QuantSkillsPreparedResult[] = []
+      for (const inputPath of paths ?? candidates.map(candidate => candidate.path)) {
+        active.throwIfAborted()
+        results.push(await this.prepareResultPath(
+          inputPath,
+          cwd,
+          workspaceRoot,
+          sources,
+          mutationPaths.has(inputPath),
+          active,
+        ))
+      }
+      return Object.freeze({ results: Object.freeze(results) })
+    })
   }
 
   /**
@@ -2992,7 +3023,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   private ensureAgentSetup(agent: Agent): Promise<void> {
     const current = this.agentSetups.get(agent)
     if (current !== undefined) return current
-    const operation = this.setupAgent(agent.ctx)
+    const operation = this.setupAgent(agent.ctx, agent)
     const guarded = operation.catch((error: unknown) => {
       if (this.agentSetups.get(agent) === guarded) this.agentSetups.delete(agent)
       throw error
@@ -3001,18 +3032,17 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     return guarded
   }
 
-  private async setupAgent(agentCtx: Context): Promise<void> {
-    const agent = agentCtx.agent
+  private async setupAgent(agentCtx: Context, agent: Agent): Promise<void> {
     if (agent === undefined) throw new Error('quantskills-session: setup has no scoped agent')
     const plainReservation = this.plainReservations.get(agent.session.id)
-    const loggedPlain = foldQuantSkillsPlainSessionBinding(agent.session.events)
+    const loggedPlain = foldQuantSkillsPlainSessionBinding(agent.session.snapshotEvents())
     const teamReservation = this.teamReservations.get(agent.session.id)
-    const loggedTeam = foldQuantSkillsAgentTeamSession(agent.session.events)
+    const loggedTeam = foldQuantSkillsAgentTeamSession(agent.session.snapshotEvents())
     const agentReservation = this.agentReservations.get(agent.session.id)
-    const loggedAgent = foldQuantSkillsAgentSession(agent.session.events)
-    const loggedAuthoring = foldQuantSkillsAuthoringStarted(agent.session.events)
+    const loggedAgent = foldQuantSkillsAgentSession(agent.session.snapshotEvents())
+    const loggedAuthoring = foldQuantSkillsAuthoringStarted(agent.session.snapshotEvents())
     const reservation = this.reservations.get(agent.session.id)
-    const logged = foldQuantSkillsSessionBinding(agent.session.events)
+    const logged = foldQuantSkillsSessionBinding(agent.session.snapshotEvents())
     const kinds = [
       loggedPlain !== null || plainReservation !== undefined,
       loggedTeam !== null || teamReservation !== undefined,
@@ -3034,7 +3064,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       }
       const binding = loggedPlain ?? plainReservation?.binding
       if (binding === undefined) return
-      const resident = await this.resolveBindings(foldQuantSkillsResidentSkills(agent.session.events), this.lifetime.signal)
+      const resident = await this.resolveBindings(foldQuantSkillsResidentSkills(agent.session.snapshotEvents()), this.lifetime.signal)
       this.installResidentRuntime(agentCtx, agent, resident)
       this.registerAttachmentTool(agentCtx, agent)
       this.registerLiveTradingApproval(agentCtx, agent)
@@ -3059,7 +3089,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       if (resolved === undefined) return
       const residentBindings = loggedTeam === null
         ? resolved.binding.lead.skills
-        : foldQuantSkillsResidentSkills(agent.session.events)
+        : foldQuantSkillsResidentSkills(agent.session.snapshotEvents())
       const leadResolved = sameBindingList(residentBindings, resolved.binding.lead.skills)
         ? resolved.leadResolved
         : await this.resolveBindings(residentBindings, this.lifetime.signal)
@@ -3069,7 +3099,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       registerLiteralPromptSection(systemPrompt, {
         name: 'quantskills:agent-team-lead',
         order: 10,
-        text: renderTeamLeadPrompt(resolved.binding),
+        text: renderTeamLeadPrompt(resolved.binding, this.skillContextMode),
       })
       this.installResidentRuntime(agentCtx, agent, leadResolved)
       const runtime = teamRuntime(resolved)
@@ -3081,6 +3111,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         if (this.teamRuntimes.get(agent.session.id) === runtime) this.teamRuntimes.delete(agent.session.id)
       }, 'quantskills-session.agent-team-runtime')
       this.registerTeamActivationTool(agentCtx, agent, runtime)
+      this.registerTeamVerificationTools(agentCtx, agent, runtime)
       this.registerAttachmentTool(agentCtx, agent)
       this.registerLiveTradingApproval(agentCtx, agent)
       if (loggedTeam === null) agent.session.append(AGENT_TEAM_SESSION_EVENT, resolved.binding)
@@ -3106,7 +3137,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         ?? await this.resolveBindings(definition.skills, this.lifetime.signal)
       const residentBindings = loggedAgent === null
         ? definition.skills
-        : foldQuantSkillsResidentSkills(agent.session.events)
+        : foldQuantSkillsResidentSkills(agent.session.snapshotEvents())
       const resolved = sameBindingList(residentBindings, definition.skills)
         ? baseResolved
         : await this.resolveBindings(residentBindings, this.lifetime.signal)
@@ -3117,7 +3148,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       registerLiteralPromptSection(systemPrompt, {
         name: 'quantskills:user-agent',
         order: 10,
-        text: renderAgentPrompt(definition),
+        text: renderAgentPrompt(definition, this.skillContextMode),
       })
       this.installResidentRuntime(agentCtx, agent, resolved)
       this.registerAttachmentTool(agentCtx, agent)
@@ -3146,7 +3177,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     }
     const residentBindings = logged === null
       ? Object.freeze([binding])
-      : foldQuantSkillsResidentSkills(agent.session.events)
+      : foldQuantSkillsResidentSkills(agent.session.snapshotEvents())
     const onlyResident = residentBindings[0]
     const resolved = residentBindings.length === 1 && onlyResident !== undefined && sameBinding(onlyResident, binding)
       ? Object.freeze([baseResolved])
@@ -3157,11 +3188,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     if (logged === null) agent.session.append(BINDING_EVENT, binding)
   }
 
-  private setupTeamMember(agentCtx: Context): () => void {
-    const agent = agentCtx.agent
+  private setupTeamMember(agentCtx: Context, agent: Agent): () => void {
     if (agent === undefined) throw new Error('quantskills-session: continuable setup has no scoped agent')
     const reservation = this.teamMemberReservations.get(agent.session.id)
-    const logged = foldQuantSkillsAgentTeamMemberSession(agent.session.events)
+    const logged = foldQuantSkillsAgentTeamMemberSession(agent.session.snapshotEvents())
     if (logged === null && reservation === undefined) return () => {}
     const binding = logged ?? reservation?.binding
     if (binding === undefined) return () => {}
@@ -3186,10 +3216,12 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     const disposePrompt = registerLiteralPromptSection(systemPrompt, {
       name: 'quantskills:agent-team-member',
       order: 10,
-      text: renderTeamMemberPrompt(runtime.binding, declared.member),
+      text: renderTeamMemberPrompt(runtime.binding, declared.member, this.skillContextMode),
     })
     let disposeSkills: (() => void) | undefined
+    let disposeVerification: (() => void) | undefined
     try {
+      disposeVerification = this.registerTeamVerificationTools(agentCtx, agent)
       disposeSkills = this.installResidentRuntime(
         agentCtx,
         agent,
@@ -3198,6 +3230,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       if (logged === null) agent.session.append(AGENT_TEAM_MEMBER_EVENT, binding)
     } catch (error) {
       disposeSkills?.()
+      disposeVerification?.()
       disposePrompt()
       disposeModel()
       throw error
@@ -3205,9 +3238,33 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     return () => {
       disposeSkills?.()
       disposeSkills = undefined
+      disposeVerification?.()
+      disposeVerification = undefined
       disposePrompt()
       disposeModel()
     }
+  }
+
+  private registerTeamVerificationTools(agentCtx: Context, agent: Agent, runtime?: TeamRuntime): () => void {
+    const tools = agentCtx.get('tools')
+    if (tools === undefined) throw new Error('quantskills-session: scoped Tool registry is unavailable')
+    const definitions = [teamCalculationTool, ...(runtime === undefined ? [] : [
+      teamMemberInstructionReader(agent, name => runtime.membersByName.get(name)),
+    ])]
+    const disposers: Array<() => void> = []
+    try {
+      for (const definition of definitions) {
+        const existing = tools.get(definition.name, agent)
+        if (existing !== undefined && existing !== definition) {
+          throw new Error(`QuantSkills Team verification tool "${definition.name}" conflicts with an existing tool.`)
+        }
+        if (existing === undefined) disposers.push(tools.register(definition))
+      }
+    } catch (error) {
+      for (const dispose of disposers.reverse()) dispose()
+      throw error
+    }
+    return () => { for (const dispose of disposers.splice(0).reverse()) dispose() }
   }
 
   private registerTeamActivationTool(agentCtx: Context, agent: Agent, runtime: TeamRuntime): void {
@@ -3215,10 +3272,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     if (tools === undefined) throw new Error('quantskills-session: scoped Tool registry is unavailable')
     tools.register(defineTool({
       name: TEAM_ACTIVATION_TOOL,
-      description: 'Start one declared Agent Team member with its frozen Agent role and exact resident Skills. Use followup_task for a member that was already started.',
+      description: 'Start one declared Agent Team member with its frozen Agent role and exact resident Skills. Use send_message for a member that was already started.',
       parameters: {
         member: { type: 'string', required: true, description: 'Declared lower-kebab-case Team member name.' },
-        task: { type: 'string', required: true, description: 'Complete initial task for this Team member.' },
+        task: { type: 'string', required: true, description: 'Complete task and original relevant inputs, preserving the saved member responsibilities, validation rules and output fields. Do not invent user-requested changes.' },
       },
       output: {
         schema: {
@@ -3241,7 +3298,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
           throw new Error(`Agent Team has no declared member "${args.member}".`)
         }
         if (this.ctx.agentTeams.listMembers(agent).some(candidate => candidate.name === args.member)) {
-          throw new Error(`Agent Team member "${args.member}" was already started; use followup_task to continue it.`)
+          throw new Error(`Agent Team member "${args.member}" was already started; use send_message to continue it.`)
         }
         const childId = SessionId(randomUUID())
         const binding = freezeTeamMemberSessionBinding({
@@ -3710,14 +3767,44 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     agent: Agent,
     resolved: readonly QuantSkillsResolvedInstalledSkill[],
   ): () => void {
-    const runtime: ResidentSkillRuntime = { entries: new Map() }
-    for (const item of resolved) {
-      const binding = bindingFrom(item.version)
-      if (runtime.entries.has(binding.assetId)) {
-        disposeResidentRuntime(runtime)
-        throw new Error(`QuantSkills Session contains duplicate resident Skill "${binding.assetId}".`)
+    const events = agent.session.snapshotEvents()
+    const composition = foldQuantSkillsAgentSession(events) ?? this.agentReservations.get(agent.id)?.agent
+      ?? (foldQuantSkillsAgentTeamSession(events) ?? this.teamReservations.get(agent.id)?.binding)?.lead
+      ?? (foldQuantSkillsAgentTeamMemberSession(events) ?? this.teamMemberReservations.get(agent.id)?.binding)?.agent
+    const runtime: ResidentSkillRuntime = { entries: new Map(), disposers: [], fixedWorkflow: composition?.mode === 'fixed' }
+    try {
+      if (this.skillContextMode === 'progressive') {
+        const tools = agentCtx.get('tools')
+        const prompt = agentCtx.get('systemPrompt')
+        if (tools === undefined || prompt === undefined) throw new Error('QuantSkills progressive Skills require scoped tools and system prompt services.')
+        const inherited = tools.get(ATTACHED_SKILL_READER, agent)
+        if (inherited !== undefined && [...this.residentSkillRuntimes.values()].some(parent => parent.reader === inherited)) {
+          runtime.disposers.push(tools.restrict({ deny: [ATTACHED_SKILL_READER] }))
+        }
+        runtime.disposers.push(registerLiteralPromptSection(prompt, {
+          name: 'quantskills:skill-loading', order: 29,
+          text: () => {
+            const mode = runtime.reader !== undefined && tools.get(ATTACHED_SKILL_READER, agent) === runtime.reader ? 'progressive' : 'full'
+            return renderSkillLoadingGuidance([...runtime.entries.values()].map(entry => entry.resolved), mode, runtime.fixedWorkflow)
+          },
+        }))
+        if (this.skillContextMode === 'progressive' && (foldQuantSkillsAgentTeamSession(agent.session.snapshotEvents()) !== null
+          || foldQuantSkillsAgentTeamMemberSession(agent.session.snapshotEvents()) !== null
+          || this.teamReservations.has(agent.id) || this.teamMemberReservations.has(agent.id))) {
+          runtime.disposers.push(registerLiteralPromptSection(prompt, {
+            name: 'quantskills:team-efficiency', order: 61, text: EFFICIENT_TEAM_GUIDANCE,
+          }))
+        }
       }
-      runtime.entries.set(binding.assetId, this.registerResidentSkill(agentCtx, item))
+      for (const item of resolved) {
+        const binding = bindingFrom(item.version)
+        if (runtime.entries.has(binding.assetId)) throw new Error(`QuantSkills Session contains duplicate resident Skill "${binding.assetId}".`)
+        runtime.entries.set(binding.assetId, this.registerResidentSkill(agentCtx, agent, item))
+      }
+      this.refreshResidentReader(agentCtx, agent, runtime)
+    } catch (error) {
+      disposeResidentRuntime(runtime)
+      throw error
     }
     const previous = this.residentSkillRuntimes.get(agent.session.id)
     if (previous !== undefined) {
@@ -3734,11 +3821,11 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       disposeOutputPolicy = registerLiteralPromptSection(systemPrompt, {
         name: 'quantskills:artifact-output',
         order: 114,
-        text: () => ['contest', 'factor-contest'].includes((foldQuantSkillsPlainSessionBinding(agent.session.events) ?? this.plainReservations.get(agent.session.id)?.binding)?.purpose ?? '')
+        text: () => ['contest', 'factor-contest'].includes((foldQuantSkillsPlainSessionBinding(agent.session.snapshotEvents()) ?? this.plainReservations.get(agent.session.id)?.binding)?.purpose ?? '')
           ? '比赛研究在本对话中交付。仅使用本会话已开放的工具和已附文件，不使用 Shell 或任意代码，不声称创建了未生成的文件。'
           : [
           'Write every generated artifact under `output/` in the current Session workspace.',
-          renderArtifactTheme(this.ctx.get('settings')?.get('ui-quantskills')),
+          renderArtifactTheme(this.ctx.get('settings')?.describe().find(entry => entry.ns === 'ui-quantskills')?.value),
           'After creating and checking real files, add one final fenced quantskills-deliverables JSON block: {"version":1,"items":[{"path":"output/report.html","title":"报告","presentation":"interactive"}]}. Use interactive for self-contained HTML, card for other files. Never declare files that do not exist. Include images, audio, video and PDF when delivered. Self-contained HTML must inline scripts and styles; external network resources are unavailable in previews.',
           'Treat every installed QuantSkills Skill resource directory as read-only source material; never write generated files into a Skill resource directory.',
           'When a Skill instruction names a relative `output/` path, resolve it against the current Session workspace, not the installed Skill resource directory.',
@@ -3766,8 +3853,27 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     return dispose
   }
 
+  private refreshResidentReader(agentCtx: Context, agent: Agent, runtime: ResidentSkillRuntime): void {
+    const mode = selectSkillContextMode(this.skillContextMode,
+      [...runtime.entries.values()].map(entry => entry.resolved), runtime.fixedWorkflow)
+    if (mode === 'full') {
+      runtime.disposeReader?.()
+      delete runtime.disposeReader
+      delete runtime.reader
+      return
+    }
+    if (runtime.reader !== undefined) return
+    const tools = agentCtx.get('tools')
+    // Never replace another plugin's tool. Inline instructions remain usable.
+    if (tools === undefined || tools.get(ATTACHED_SKILL_READER, agent) !== undefined) return
+    const reader = attachedSkillReader(id => runtime.entries.get(id as QuantSkillsAssetId)?.resolved, agent.id)
+    runtime.disposeReader = tools.register(reader)
+    runtime.reader = reader
+  }
+
   private registerResidentSkill(
     agentCtx: Context,
+    agent: Agent,
     resolved: QuantSkillsResolvedInstalledSkill,
   ): ResidentSkillRuntimeEntry {
     const skills = agentCtx.get('skills')
@@ -3780,10 +3886,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       disposePrompt = registerLiteralPromptSection(systemPrompt, {
         name: `quantskills:resident:${resolved.version.versionId}`,
         order: 30,
-        text: [
-          'The following QuantSkills Skill is resident in this Session. Apply it whenever relevant without asking the user to load or restate it.',
-          renderSkillContent(resolved.definition),
-        ].join('\n\n'),
+        text: () => {
+          const reader = this.residentSkillRuntimes.get(agent.id)?.reader
+          return renderResidentSkillContext(resolved, reader !== undefined && agentCtx.get('tools')?.get(ATTACHED_SKILL_READER, agent) === reader ? this.skillContextMode : 'full')
+        },
       })
     } catch (error) {
       disposeProvider()
@@ -3829,7 +3935,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       },
       isConcurrencySafe: () => true,
       execute: async (args, exec) => {
-        const result = await this.readTextAttachment(agent.session.events, args.attachment_id, exec.signal)
+        const result = await this.readTextAttachment(agent.session.snapshotEvents(), args.attachment_id, exec.signal)
         return result.text
       },
       presentCall: args => ({
@@ -3938,7 +4044,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     return Object.freeze({ file: stored.ref, ...bounded })
   }
 
-  /** Complete-log result candidates, newest reference first and bounded for one prepare request. */
+  /** Complete-log result candidates, newest reference first, without total-count truncation. */
   private resultCandidates(
     sessionId: SessionId,
     events: readonly SessionEvent[],
@@ -3963,7 +4069,6 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         }
         return
       }
-      if (candidates.length >= MAX_RESULT_PREPARE_PATHS) return
       candidateIndexes.set(candidate, candidates.length)
       candidates.push(Object.freeze({ path: candidate, source }))
     }
@@ -3977,7 +4082,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         continue
       }
       if (event.type !== 'tool/result') continue
-      const result = event.data.message.content[0]
+      const result = event.data.message
       const callId = String(result.toolCallId)
       if (settledCalls.has(callId)) continue
       settledCalls.add(callId)
@@ -4011,9 +4116,9 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   private async ensureSkillSession(agent: Agent, signal: AbortSignal): Promise<void> {
     await this.ensureAgentSetup(agent)
     signal.throwIfAborted()
-    if (isQuantSkillsSession(agent.session.events)) return
+    if (isQuantSkillsSession(agent.session.snapshotEvents())) return
     const sessionId = agent.session.id
-    if (agent.session.header.parentSession !== undefined && agent.session.header.seedLength === undefined) {
+    if (agent.session.header.parentSession !== undefined && !agent.session.header.isSeeded) {
       throw new Error('子代理会话的能力由所属任务管理，请在主会话中加载技能。')
     }
     if (!agent.session.header.cwd) throw new Error('当前会话没有工作区，请先选择工作区再加载技能。')
@@ -4035,7 +4140,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   private requireLiveQuantSkillsAgent(sessionId: SessionId): Agent {
     const agent = this.ctx.agents.get(sessionId)
     if (agent === undefined) throw new Error(`QuantSkills Session "${sessionId}" is not live.`)
-    if (!isQuantSkillsSession(agent.session.events)) {
+    if (!isQuantSkillsSession(agent.session.snapshotEvents())) {
       throw new Error(`Session "${sessionId}" is not owned by QuantSkills.`)
     }
     return agent
@@ -4047,7 +4152,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   ): Promise<readonly QuantSkillsPromptFormCapability[]> {
     const forms: QuantSkillsPromptFormCapability[] = []
     const seen = new Set<QuantSkillsInstalledVersionId>()
-    for (const binding of foldQuantSkillsResidentSkills(agent.session.events)) {
+    for (const binding of foldQuantSkillsResidentSkills(agent.session.snapshotEvents())) {
       signal.throwIfAborted()
       if (seen.has(binding.versionId)) continue
       seen.add(binding.versionId)
@@ -4061,7 +4166,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
         }))
       }
     }
-    for (const versionId of promptFormAgentSources(agent.session.events)) {
+    for (const versionId of promptFormAgentSources(agent.session.snapshotEvents())) {
       signal.throwIfAborted()
       if (seen.has(versionId)) continue
       seen.add(versionId)
@@ -4120,7 +4225,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   }
 
   private async agentMatchesResidentLog(agent: Agent, signal: AbortSignal): Promise<boolean> {
-    const resolved = await this.resolveBindings(foldQuantSkillsResidentSkills(agent.session.events), signal)
+    const resolved = await this.resolveBindings(foldQuantSkillsResidentSkills(agent.session.snapshotEvents()), signal)
     return this.agentHasResolvedSkills(agent, resolved, signal)
   }
 
@@ -4263,10 +4368,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
     signal: AbortSignal,
   ): Promise<{ header: SessionHeader; events: readonly SessionEvent[] } | undefined> {
     const live = this.ctx.sessions.get(sessionId)
-    if (live !== undefined) return { header: live.header, events: live.events }
-    const stored = (await this.ctx.sessionPersistence.list(signal)).find(header => header.id === sessionId)
+    if (live !== undefined) return { header: live.header, events: live.snapshotEvents() }
+    const stored = (await listSessionHeaders(this.ctx.sessionPersistence, signal)).find(header => header.id === sessionId)
     if (stored === undefined) return undefined
-    const inspected = await this.ctx.sessionPersistence.inspect(sessionId, signal)
+    const inspected = await inspectSession(this.ctx.sessionPersistence, sessionId, signal)
     return { header: inspected.meta, events: inspected.events }
   }
 
@@ -4276,7 +4381,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   ): Promise<readonly QuantSkillsSessionArchiveItem[]> {
     await this.sessionLifecycle.ready
     const headers = new Map<SessionId, SessionHeader>()
-    for (const header of await this.ctx.sessionPersistence.list(signal)) headers.set(header.id, header)
+    for (const header of await listSessionHeaders(this.ctx.sessionPersistence, signal)) headers.set(header.id, header)
     for (const session of this.ctx.sessions.list()) headers.set(session.id, session.header)
     const archived = new Set(this.ctx.workspaceRegistry.archivedSessionIds)
     const items: QuantSkillsSessionArchiveItem[] = []
@@ -4284,11 +4389,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       signal.throwIfAborted()
       if (header.origin === 'subagent' || (request.includeArchived !== true && archived.has(header.id))) continue
       const live = this.ctx.sessions.get(header.id)
-      const events = live === undefined
-        ? (await this.ctx.sessionPersistence.inspect(header.id, signal)).events
-        : live.events
+      const inspected = live === undefined ? await inspectSession(this.ctx.sessionPersistence, header.id, signal) : undefined
+      const events = live?.snapshotEvents() ?? inspected!.events
       const snapshot = live === undefined
-        ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
+        ? this.ctx.sessionProjectionCache.coldSnapshot(header, inspected!.inheritedEventCount, events)
         : this.ctx.sessionProjections.snapshot(live)
       const binding = projectionBinding(snapshot)
       if (binding === null) continue
@@ -4317,7 +4421,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   ): Promise<readonly QuantSkillsPlainSessionArchiveItem[]> {
     await this.sessionLifecycle.ready
     const headers = new Map<SessionId, SessionHeader>()
-    for (const header of await this.ctx.sessionPersistence.list(signal)) headers.set(header.id, header)
+    for (const header of await listSessionHeaders(this.ctx.sessionPersistence, signal)) headers.set(header.id, header)
     for (const session of this.ctx.sessions.list()) headers.set(session.id, session.header)
     const archived = new Set(this.ctx.workspaceRegistry.archivedSessionIds)
     const items: QuantSkillsPlainSessionArchiveItem[] = []
@@ -4325,11 +4429,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       signal.throwIfAborted()
       if (header.origin === 'subagent' || (request.includeArchived !== true && archived.has(header.id))) continue
       const live = this.ctx.sessions.get(header.id)
-      const events = live === undefined
-        ? (await this.ctx.sessionPersistence.inspect(header.id, signal)).events
-        : live.events
+      const inspected = live === undefined ? await inspectSession(this.ctx.sessionPersistence, header.id, signal) : undefined
+      const events = live?.snapshotEvents() ?? inspected!.events
       const snapshot = live === undefined
-        ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
+        ? this.ctx.sessionProjectionCache.coldSnapshot(header, inspected!.inheritedEventCount, events)
         : this.ctx.sessionProjections.snapshot(live)
       const binding = projectionPlainBinding(snapshot)
       if (binding?.purpose !== 'ordinary' && binding?.purpose !== 'contest' && binding?.purpose !== 'factor-contest') continue
@@ -4358,7 +4461,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   ): Promise<readonly QuantSkillsAgentSessionArchiveItem[]> {
     await this.sessionLifecycle.ready
     const headers = new Map<SessionId, SessionHeader>()
-    for (const header of await this.ctx.sessionPersistence.list(signal)) headers.set(header.id, header)
+    for (const header of await listSessionHeaders(this.ctx.sessionPersistence, signal)) headers.set(header.id, header)
     for (const session of this.ctx.sessions.list()) headers.set(session.id, session.header)
     const archived = new Set(this.ctx.workspaceRegistry.archivedSessionIds)
     const items: QuantSkillsAgentSessionArchiveItem[] = []
@@ -4366,11 +4469,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       signal.throwIfAborted()
       if (header.origin === 'subagent' || (request.includeArchived !== true && archived.has(header.id))) continue
       const live = this.ctx.sessions.get(header.id)
-      const events = live === undefined
-        ? (await this.ctx.sessionPersistence.inspect(header.id, signal)).events
-        : live.events
+      const inspected = live === undefined ? await inspectSession(this.ctx.sessionPersistence, header.id, signal) : undefined
+      const events = live?.snapshotEvents() ?? inspected!.events
       const snapshot = live === undefined
-        ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
+        ? this.ctx.sessionProjectionCache.coldSnapshot(header, inspected!.inheritedEventCount, events)
         : this.ctx.sessionProjections.snapshot(live)
       const agent = projectionAgent(snapshot)
       if (agent === null) continue
@@ -4399,7 +4501,7 @@ export class QuantSkillsSessionService extends TypertRemoteService {
   ): Promise<readonly QuantSkillsAgentTeamSessionArchiveItem[]> {
     await this.sessionLifecycle.ready
     const headers = new Map<SessionId, SessionHeader>()
-    for (const header of await this.ctx.sessionPersistence.list(signal)) headers.set(header.id, header)
+    for (const header of await listSessionHeaders(this.ctx.sessionPersistence, signal)) headers.set(header.id, header)
     for (const session of this.ctx.sessions.list()) headers.set(session.id, session.header)
     const archived = new Set(this.ctx.workspaceRegistry.archivedSessionIds)
     const items: QuantSkillsAgentTeamSessionArchiveItem[] = []
@@ -4407,11 +4509,10 @@ export class QuantSkillsSessionService extends TypertRemoteService {
       signal.throwIfAborted()
       if (header.origin === 'subagent' || (request.includeArchived !== true && archived.has(header.id))) continue
       const live = this.ctx.sessions.get(header.id)
-      const events = live === undefined
-        ? (await this.ctx.sessionPersistence.inspect(header.id, signal)).events
-        : live.events
+      const inspected = live === undefined ? await inspectSession(this.ctx.sessionPersistence, header.id, signal) : undefined
+      const events = live?.snapshotEvents() ?? inspected!.events
       const snapshot = live === undefined
-        ? this.ctx.sessionProjectionCache.coldSnapshot(header, events)
+        ? this.ctx.sessionProjectionCache.coldSnapshot(header, inspected!.inheritedEventCount, events)
         : this.ctx.sessionProjections.snapshot(live)
       const team = projectionTeam(snapshot)
       if (team === null) continue
@@ -4483,8 +4584,12 @@ function sameBindingList(
 }
 
 function disposeResidentRuntime(runtime: ResidentSkillRuntime): void {
+  runtime.disposeReader?.()
+  delete runtime.disposeReader
+  delete runtime.reader
   for (const entry of runtime.entries.values()) entry.dispose()
   runtime.entries.clear()
+  for (const dispose of runtime.disposers.splice(0).reverse()) dispose()
 }
 
 function sameAgent(left: QuantSkillsAgentSessionBinding, right: QuantSkillsAgentSessionBinding): boolean {
@@ -4804,7 +4909,7 @@ function successfulSkillToolResourceBases(events: readonly SessionEvent[]): read
       continue
     }
     if (event.type !== 'tool/result') continue
-    const result = event.data.message.content[0]
+    const result = event.data.message
     if (result.isError || !skillCalls.has(result.toolCallId)) continue
     for (const block of result.content) {
       if (block.type !== 'text') continue
@@ -4843,7 +4948,7 @@ export function applyAuthoringReview(
     return { ...state, calls: [...state.calls, event.data.callId], pending: null }
   }
   if (event.type !== 'tool/result') return state
-  const result = event.data.message.content[0]
+  const result = event.data.message
   if (result.isError || !state.calls.includes(result.toolCallId)) return state
   try {
     const value: unknown = JSON.parse(result.content.filter(block => block.type === 'text').map(block => block.text).join(''))
@@ -4876,7 +4981,7 @@ function successfulAuthoringToolResult(
   }
   const matches = events.filter((event) => {
     if (event.type !== 'tool/result') return false
-    const block = event.data.message.content[0]
+    const block = event.data.message
     return block.toolCallId === toolCallId && !block.isError
   })
   if (matches.length !== 1) {
@@ -4886,7 +4991,7 @@ function successfulAuthoringToolResult(
   if (event === undefined || event.type !== 'tool/result') {
     throw new Error('QuantSkills authoring draft Tool result disappeared during validation.')
   }
-  const result = event.data.message.content[0]
+  const result = event.data.message
   const text = result.content.filter(block => block.type === 'text').map(block => block.text).join('')
   let value: unknown
   try {
@@ -5006,7 +5111,7 @@ function startsWithBytes(data: Uint8Array, prefix: readonly number[]): boolean {
   return data.byteLength >= prefix.length && prefix.every((byte, index) => data[index] === byte)
 }
 
-function renderAgentPrompt(agent: QuantSkillsAgentSessionBinding): string {
+function renderAgentPromptFull(agent: QuantSkillsAgentSessionBinding): string {
   const orchestration = agent.mode === 'fixed'
     ? 'Use the currently resident QuantSkills Skill sections in their displayed order when the task requires the complete workflow.'
     : 'Choose and combine the currently resident QuantSkills Skill sections dynamically according to the user request.'
@@ -5019,7 +5124,21 @@ function renderAgentPrompt(agent: QuantSkillsAgentSessionBinding): string {
   ].join('\n\n')
 }
 
-function renderTeamLeadPrompt(team: QuantSkillsAgentTeamSessionBinding): string {
+function renderAgentPrompt(agent: QuantSkillsAgentSessionBinding, mode: SkillContextMode): string {
+  if (mode === 'full') return renderAgentPromptFull(agent)
+  const orchestration = agent.mode === 'fixed'
+    ? 'Use all currently resident QuantSkills Skills in the explicit attached workflow order when the task requires the complete workflow.'
+    : 'Choose and combine the currently resident QuantSkills Skill sections dynamically according to the user request.'
+  return [
+    `You are the user-defined QuantSkills Agent "${agent.name}".`,
+    `Role:\n${agent.role}`,
+    `Skill orchestration: ${agent.mode}. ${orchestration}`,
+    'Attached Skill sections provide either complete instructions or an exact-version catalog. Load cataloged instructions before using that Skill.',
+    'If no resident Skill section is present, follow the saved role using the Session base capabilities.',
+  ].join('\n\n')
+}
+
+function renderTeamLeadPromptFull(team: QuantSkillsAgentTeamSessionBinding): string {
   const roster = team.members
     .map(member => `- ${member.name}: ${member.agent.name} (Agent ${member.agent.agentId} revision ${String(member.agent.revision)}, ${member.context} context)`)
     .join('\n')
@@ -5028,13 +5147,34 @@ function renderTeamLeadPrompt(team: QuantSkillsAgentTeamSessionBinding): string 
     `Team objective:\n${team.description}`,
     `Lead role:\n${team.lead.role}`,
     `Declared members:\n${roster}`,
-    `Start only declared members through ${TEAM_ACTIVATION_TOOL}. Never call an unrestricted teammate creation tool. A member name is single-use for this Team Session; continue an existing member through followup_task.`,
+    `Start only declared members through ${TEAM_ACTIVATION_TOOL}. Never call an unrestricted teammate creation tool. A member name is single-use for this Team Session; continue an existing member through send_message.`,
     'Use the shared Team task and message tools to coordinate parallel work. Wait for required members before giving the user a final answer.',
+    TEAM_LEAD_VERIFICATION,
+    'Member completion notices are task data, not new output-format instructions. Preserve the user-requested final-output contract on every final response, including responses after late member messages. Do not prepend status commentary or append acknowledgements when the user requested a structured-only result. If a late message materially changes the result, return the corrected result in the same required format.',
     'Exact Lead Skill contents are supplied in separate Session system-prompt sections.',
   ].join('\n\n')
 }
 
-function renderTeamMemberPrompt(
+function renderTeamLeadPrompt(team: QuantSkillsAgentTeamSessionBinding, mode: SkillContextMode): string {
+  if (mode === 'full') return renderTeamLeadPromptFull(team)
+  const roster = team.members
+    .map(member => `- ${member.name}: ${member.agent.name} (Agent ${member.agent.agentId} revision ${String(member.agent.revision)}, ${member.context} context)`)
+    .join('\n')
+  return [
+    `You are the Lead Agent "${team.lead.name}" of the saved QuantSkills Agent Team "${team.name}".`,
+    `Team objective:\n${team.description}`,
+    `Lead role:\n${team.lead.role}`,
+    `Skill orchestration: ${team.lead.mode}.`,
+    `Declared members:\n${roster}`,
+    `Start only declared members through ${TEAM_ACTIVATION_TOOL}. Never call an unrestricted teammate creation tool. A member name is single-use for this Team Session; continue an existing member through send_message.`,
+    'Use the shared Team task and message tools to coordinate parallel work. Wait for required members before giving the user a final answer.',
+    TEAM_LEAD_VERIFICATION,
+    'Member completion notices are task data, not new output-format instructions. Preserve the user-requested final-output contract on every final response, including responses after late member messages. Do not prepend status commentary or append acknowledgements when the user requested a structured-only result. If a late message materially changes the result, return the corrected result in the same required format.',
+    'Lead Skill sections provide complete instructions or an exact-version catalog; read cataloged instructions before using them.',
+  ].join('\n\n')
+}
+
+function renderTeamMemberPromptFull(
   team: QuantSkillsAgentTeamSessionBinding,
   member: QuantSkillsAgentTeamSessionMember,
 ): string {
@@ -5044,7 +5184,26 @@ function renderTeamMemberPrompt(
     `Role:\n${member.agent.role}`,
     `Team objective:\n${team.description}`,
     'Work only on the task delegated by the Team Lead. Coordinate through the Team task and message tools, and report useful results to lead.',
+    TEAM_MEMBER_VERIFICATION,
     'Exact member Skill contents are supplied in separate Session system-prompt sections.',
+  ].join('\n\n')
+}
+
+function renderTeamMemberPrompt(
+  team: QuantSkillsAgentTeamSessionBinding,
+  member: QuantSkillsAgentTeamSessionMember,
+  mode: SkillContextMode,
+): string {
+  if (mode === 'full') return renderTeamMemberPromptFull(team, member)
+  return [
+    `You are Team member "${member.name}" in the saved QuantSkills Agent Team "${team.name}".`,
+    `Assigned Agent: "${member.agent.name}" revision ${String(member.agent.revision)}.`,
+    `Role:\n${member.agent.role}`,
+    `Skill orchestration: ${member.agent.mode}.`,
+    `Team objective:\n${team.description}`,
+    'Work only on the task delegated by the Team Lead. Coordinate through the Team task and message tools, and report useful results to lead.',
+    TEAM_MEMBER_VERIFICATION,
+    'Member Skill sections provide complete instructions or an exact-version catalog; read cataloged instructions before using them.',
   ].join('\n\n')
 }
 

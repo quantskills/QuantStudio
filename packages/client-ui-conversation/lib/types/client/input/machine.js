@@ -30,9 +30,10 @@ export class SubmitMachine {
             ...(c
                 ? {
                     claim: {
+                        name: c.name,
                         token: c.token,
                         ...(c.hint !== undefined ? { hint: c.hint } : {}),
-                        ...(c.images === true ? { images: true } : {}),
+                        ...(c.attachments === true ? { attachments: true } : {}),
                     },
                 }
                 : {}),
@@ -45,9 +46,9 @@ export class SubmitMachine {
      */
     dispatch(ev) {
         switch (ev.type) {
-            case 'draft-changed': return this.onDraftChanged(ev.draft);
-            case 'claim': return this.onClaim(ev.claim);
-            case 'enter': return this.onEnter(ev.mode, ev.draft);
+            case 'draft-changed': return this.followCommand(ev.command);
+            case 'claim': return this.followCommand(ev.claim);
+            case 'enter': return this.onEnter(ev.mode, ev.draft, ev.submission);
             case 'adjudicated': return this.onAdjudicated(ev.attempt, ev.outcome);
             case 'adjudication-failed': return this.onAdjudicationFailed(ev.attempt, ev.message);
             case 'submit-settled': return this.onSubmitSettled(ev);
@@ -57,40 +58,38 @@ export class SubmitMachine {
             default: return unreachable(ev);
         }
     }
-    /** Claimed integrity watch: a draft that breaks the token prefix releases the claim. */
-    onDraftChanged(draft) {
-        if (this.phase === 'claimed' && this.claim !== undefined && !draft.startsWith(this.claim.token)) {
-            this.phase = 'plain';
-            this.claim = undefined;
-        }
-        return [];
-    }
-    /** The editor applied a claim-token replacement; busy phases refuse another claim. */
-    onClaim(claim) {
+    /**
+     * Outside a transaction the claim follows the document's leading command
+     * chip: deleting or displacing the chip releases it, and a history restore
+     * of the chip re-enters claimed. The claim event applies the same rule to a
+     * chip the editor just inserted, before its update commits; busy phases
+     * refuse both.
+     */
+    followCommand(command) {
         if (this.phase !== 'plain' && this.phase !== 'claimed')
             return [];
-        this.claim = claim;
-        this.phase = 'claimed';
+        this.claim = command;
+        this.phase = command === undefined ? 'plain' : 'claimed';
         return [];
     }
     /** Mint an attempt and controller without assigning its lifecycle owner. */
-    mintAttempt(mode, draft) {
+    mintAttempt(mode, draft, submission) {
         const controller = new AbortController();
         this.seq += 1;
         return {
-            attempt: { seq: this.seq, signal: controller.signal, draftSnapshot: draft, mode },
+            attempt: { seq: this.seq, signal: controller.signal, draftSnapshot: draft, mode, ...submission === undefined ? {} : { submission } },
             controller,
         };
     }
     /** Mint the frozen command/adjudication attempt. */
-    beginAttempt(mode, draft) {
-        const flight = this.mintAttempt(mode, draft);
+    beginAttempt(mode, draft, submission) {
+        const flight = this.mintAttempt(mode, draft, submission);
         this.inflight = flight;
         return flight.attempt;
     }
     /** Mint an ordinary send that leaves the phase plain. */
-    beginDetached(mode, draft) {
-        const flight = this.mintAttempt(mode, draft);
+    beginDetached(mode, draft, submission) {
+        const flight = this.mintAttempt(mode, draft, submission);
         this.detached.set(flight.attempt.seq, flight.controller);
         this.claim = undefined;
         this.phase = 'plain';
@@ -103,11 +102,11 @@ export class SubmitMachine {
             { type: 'commit-draft', retainSuffixOf: attempt.draftSnapshot },
         ];
     }
-    onEnter(mode, draft) {
+    onEnter(mode, draft, submission) {
         if (this.phase === 'adjudicating' || this.phase === 'submitting')
             return [];
         if (this.phase === 'claimed' && this.claim !== undefined) {
-            const attempt = this.beginAttempt(mode, draft);
+            const attempt = this.beginAttempt(mode, draft, submission);
             this.phase = 'submitting';
             return [{ type: 'begin-submit', attempt, claim: this.claim, args: argsAfter(draft, this.claim.token) }];
         }
@@ -115,11 +114,11 @@ export class SubmitMachine {
         if (trimmed === '')
             return [];
         if (trimmed.startsWith('/')) {
-            const attempt = this.beginAttempt(mode, draft);
+            const attempt = this.beginAttempt(mode, draft, submission);
             this.phase = 'adjudicating';
             return [{ type: 'adjudicate', attempt, draft }];
         }
-        return this.detachedEffects(this.beginDetached(mode, draft));
+        return this.detachedEffects(this.beginDetached(mode, draft, submission));
     }
     onAdjudicated(attempt, outcome) {
         const flight = this.inflight;
@@ -149,7 +148,7 @@ export class SubmitMachine {
         this.phase = 'plain';
         return [{ type: 'notice', level: 'error', text: message }];
     }
-    /** Claimed command settlement retains the frozen transaction semantics. */
+    /** Claimed command settlement; after a failure the claim follows the leading command chip again. */
     onSubmitSettled(ev) {
         const flight = this.inflight;
         if (this.phase !== 'submitting' || flight === undefined || flight.attempt.seq !== ev.attempt.seq)
@@ -165,13 +164,8 @@ export class SubmitMachine {
             return effects;
         }
         const text = ev.message ?? ev.outcome?.text;
-        if (ev.draft === flight.attempt.draftSnapshot
-            && this.claim !== undefined && ev.draft.startsWith(this.claim.token)) {
-            this.phase = 'claimed';
-            return text === undefined ? [] : [{ type: 'notice', level: 'error', text }];
-        }
-        this.phase = 'plain';
-        this.claim = undefined;
+        this.claim = ev.command;
+        this.phase = ev.command === undefined ? 'plain' : 'claimed';
         return text === undefined ? [] : [{ type: 'notice', level: 'error', text }];
     }
     /** Settle one ordinary send independently of current phase and other detached sends. */
@@ -183,7 +177,7 @@ export class SubmitMachine {
             return [];
         return [{ type: 'notice', level: ev.ok && ev.outcome?.kind !== 'error' ? 'info' : 'error', text }];
     }
-    /** Clear after an accepted image-only send; it has no text suffix to retain. */
+    /** Clear after an accepted attachment-only send; it has no text suffix to retain. */
     onSendCommitted() {
         if (this.phase !== 'plain')
             return [];

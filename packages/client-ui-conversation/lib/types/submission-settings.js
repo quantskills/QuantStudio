@@ -9,7 +9,9 @@ export const BUSY_ENTER_BEHAVIORS = ['queue', 'steer'];
 /** Default preserves Enter-as-Queue for running conversations. */
 export const DEFAULT_BUSY_ENTER_BEHAVIOR = 'queue';
 /** Durable conversation schema; also the wire envelope the browser scope validates against. */
-export const ConversationSettingsSchema = z.object({
+export const ConversationSettingsFields = {
     [BUSY_ENTER_FIELD]: z.union([...BUSY_ENTER_BEHAVIORS]).default(DEFAULT_BUSY_ENTER_BEHAVIOR),
-});
+};
+/** Schema for shared configuration values. */
+export const ConversationSettingsSchema = z.object(ConversationSettingsFields);
 //# sourceMappingURL=submission-settings.js.map

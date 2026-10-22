@@ -1,0 +1,33 @@
+diff --git a/lib/index.js b/lib/index.js
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -523,6 +523,18 @@
+ 	* @param options - Whether running work is stopped instead of refusing.
+ 	* @returns resolution after durability and, with `stopActivity`, after every stop request was issued.
+ 	*/
++	forgetSession(sessionId) {
++		return this.enqueueOperation(async () => {
++			for (const workspace of this.list()) await workspace.detachSession(sessionId);
++			const state = this.requireState();
++			await this.setState({...state,
++				archivedSessionIds: state.archivedSessionIds.filter(id => id !== sessionId),
++				pinnedSessionIds: state.pinnedSessionIds.filter(id => id !== sessionId)});
++			this.headers.delete(sessionId);
++			this.sessionPaths.delete(sessionId);
++			this.missingSessionPaths.delete(sessionId);
++		});
++	}
+ 	archiveSession(sessionId, options = {}) {
+ 		return this.enqueueOperation(async () => {
+ 			if (this.requireState().archivedSessionIds.includes(sessionId)) return;
+diff --git a/lib/types/index.d.ts b/lib/types/index.d.ts
+--- a/lib/types/index.d.ts
++++ b/lib/types/index.d.ts
+@@ -211,6 +211,7 @@
+      * @param options - Whether running work is stopped instead of refusing.
+      * @returns resolution after durability and, with `stopActivity`, after every stop request was issued.
+      */
++    forgetSession(sessionId: SessionId): Promise<void>;
+     archiveSession(sessionId: SessionId, options?: ArchiveSessionOptions): Promise<void>;
+     /**
+      * Unarchive one session durably by dropping it from the registry-global

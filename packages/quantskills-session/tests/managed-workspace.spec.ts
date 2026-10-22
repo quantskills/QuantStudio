@@ -15,6 +15,13 @@ afterEach(async () => {
 })
 
 describe('QuantSkills managed Workspace path', () => {
+  it.each(['win32', 'darwin', 'linux'] as const)('honors an isolated deployment root on %s without consulting the OS', async platform => {
+    const documentsDirectory = platform === 'win32' ? 'C:\\fixture\\documents' : '/fixture/documents'
+    const result = await resolveQuantSkillsManagedPath({ platform, documentsDirectory,
+      runCommand: async () => { throw new Error('Must not consult the original account') } })
+    expect(result.replaceAll('\\', '/')).toBe(`${documentsDirectory.replaceAll('\\', '/')}/QuantSkills`)
+    await expect(resolveQuantSkillsManagedPath({ platform, documentsDirectory: '../outside' })).rejects.toThrow(/fully qualified/)
+  })
   it('uses the Windows Documents known folder', async () => {
     const calls: Array<[string, readonly string[]]> = []
     const path = await resolveQuantSkillsManagedPath({

@@ -11,7 +11,7 @@ import { spawn } from "node:child_process";
 import { createServer } from "node:http";
 import { ListToolsResultSchema } from "@modelcontextprotocol/sdk/types.js";
 import { z as z$1 } from "zod";
-//#region lib/types/data-category.js
+//#region packages/panda-mcp/lib/types/data-category.js
 const DATA_CATEGORIES = [
 	"market",
 	"news",
@@ -56,7 +56,7 @@ function inferDataCategory(input) {
 	return "other";
 }
 //#endregion
-//#region lib/types/database.js
+//#region packages/panda-mcp/lib/types/database.js
 const MAX_BYTES = 10 * 1024 * 1024;
 const MAX_ROWS = 1e5;
 const canonical = (value) => Array.isArray(value) ? `[${value.map(canonical).join(",")}]` : value && typeof value === "object" ? `{${Object.keys(value).sort().map((k) => `${JSON.stringify(k)}:${canonical(value[k])}`).join(",")}}` : JSON.stringify(value) ?? "null";
@@ -462,7 +462,7 @@ var LocalDatabase = class {
 	}
 };
 //#endregion
-//#region lib/types/browser.js
+//#region packages/panda-mcp/lib/types/browser.js
 /** 用系统浏览器打开远端 OAuth 授权页。 */
 /**
 * Resolve a shell-free browser launch so OAuth query parameters stay intact.
@@ -499,7 +499,7 @@ function openSystemBrowser(href) {
 	});
 }
 //#endregion
-//#region lib/types/callback-server.js
+//#region packages/panda-mcp/lib/types/callback-server.js
 /** 本机回环回调，只接收 OAuth code，登录页仍在公网 MCP。 */
 const SUCCESS_HTML = `<!doctype html><meta charset="utf-8"><title>PandaData</title>
 <body style="font-family:sans-serif;padding:48px;line-height:1.5">
@@ -598,7 +598,7 @@ function handleCallback(request, response, state, returnOrigin, done) {
 	done({ code });
 }
 //#endregion
-//#region lib/types/oauth-provider.js
+//#region packages/panda-mcp/lib/types/oauth-provider.js
 /** MCP SDK 所需的 OAuthClientProvider：token 只进 OAuthStore。 */
 /**
 * 文件持久化的 MCP OAuth 客户端。
@@ -658,7 +658,7 @@ var PandaMcpOAuthProvider = class {
 	}
 };
 //#endregion
-//#region lib/types/oauth-store.js
+//#region packages/panda-mcp/lib/types/oauth-store.js
 /** 把 MCP OAuth 客户端信息和 token 写到 DSH home，不进日志或 Remote。 */
 /**
 * 读写 `$DSH_HOME/quantskills/panda-mcp/oauth.json`。
@@ -744,7 +744,7 @@ function pandaMcpOAuthPath(dshHome) {
 	return join(dshHome, "quantskills", "panda-mcp", "oauth.json");
 }
 //#endregion
-//#region lib/types/public-name.js
+//#region packages/panda-mcp/lib/types/public-name.js
 /** 与 @deepseek-ai/dsh-mcp-client 相同的公开工具名规则。 */
 const MAX_PUBLIC_NAME_LENGTH = 64;
 const INVALID_NAME_CHARS = /[^A-Za-z0-9_-]/g;
@@ -762,7 +762,7 @@ function publicToolName(serverName, rawName) {
 	return `${normalized.slice(0, MAX_PUBLIC_NAME_LENGTH - HASH_LENGTH - 1)}_${hash}`;
 }
 //#endregion
-//#region lib/types/types.js
+//#region packages/panda-mcp/lib/types/types.js
 /** 给 UI 和 Remote 用的 PandaData MCP 连接状态；永不包含 token。 @module @deepseek-ai/dsh-panda-mcp/types */
 /** 公网 PandaData MCP 默认地址。 */
 const DEFAULT_PANDA_MCP_URL = "https://pandadatamcp.pandaaiquant.com/mcp";
@@ -776,7 +776,7 @@ const PANDA_MCP_TOOL_NAMES = [
 	"call_pandadata"
 ];
 //#endregion
-//#region lib/types/tools.js
+//#region packages/panda-mcp/lib/types/tools.js
 /** 把远端 MCP 工具注册到 ctx.tools；未登录时挂本地桩。 */
 const RawCallToolResultSchema = z$1.record(z$1.string(), z$1.unknown());
 const STUB_DESCRIPTIONS = {
@@ -1001,7 +1001,7 @@ async function callConnectedTool(session, rawName, args, signal, onUnauthorized)
 	return callLiveTool(session, rawName, args, signal, onUnauthorized);
 }
 //#endregion
-//#region lib/types/index.js
+//#region packages/panda-mcp/lib/types/index.js
 /** QuantSkills Host：直连公网 PandaData MCP，OAuth 登录后把工具挂到 ctx.tools。 */
 var __runInitializers = function(thisArg, initializers, value) {
 	var useValue = arguments.length > 2;

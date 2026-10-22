@@ -2,6 +2,8 @@
 
 # QuantStudio
 
+> **Upgrade candidate:** this branch pins DSH to `0.2.1-rc.2` and is not approved for an existing daily data directory. See the [upgrade status and merge blockers](docs/dsh-upgrade/README.md), [migration/rollback guide](docs/dsh-upgrade/migration-rollback.md), and [isolated macOS/Windows Agent prompts](docs/dsh-upgrade/agent-install.md). Keep the PR in Draft until the listed gates pass.
+
 ### QUANT × Work × Trade
 
 **Quantitative research, everyday work and trade execution in one open-source workspace.**
@@ -11,6 +13,8 @@ From QuantSkills, an open-source community under PandaAI
 [Agent setup](#agent-install) · [Manual setup](#get-started) · [QUANT](#quant-research) · [Work](#work-everyday-tasks) · [Trade](#trade-research-monitoring-and-execution) · [简体中文](README.md) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
 
 </div>
+
+Skill, Agent and Team experiments and benchmark tools are included in this repository. `skillContextMode` defaults to `full`; `progressive` requires explicit opt-in. Existing evidence does **not** establish lower total Token use or broad superiority. See [reproduction and configuration](benchmark/README.md) and the [current validation report](docs/dsh-upgrade/unification-20261022.md).
 
 <a id="agent-install"></a>
 

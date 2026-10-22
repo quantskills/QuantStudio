@@ -1,5 +1,5 @@
 /**
- * DSH 0.1.2-alpha.2 compatible builder for a dynamically loaded client plugin.
+ * DSH 0.2.1-rc.2 compatible builder for a dynamically loaded client plugin.
  * The resulting closure registers with the Host module loader and carries its
  * own CSS and image assets, so the npm package has no public-asset side channel.
  */
@@ -24,6 +24,9 @@ const PLATFORM_MODULES = [
   'react/jsx-runtime',
   'react-dom',
   'react-dom/client',
+  'zod',
+  '@tanstack/react-virtual',
+  '@deepseek-ai/dsh-client-ui-dockkit',
   '@deepseek-ai/cordis',
   '@deepseek-ai/dsh-client-store',
   '@deepseek-ai/dsh-client-ui-slots',
@@ -31,7 +34,7 @@ const PLATFORM_MODULES = [
 ] as const
 
 const PRELOADED_CLIENT_EXTERNALS = [] as const
-const INLINE_SAFE = /^(?:@deepseek-ai\/dsh-(?:file-reference|session|llm|tools|brand|deque|typert-protocol|util-crypto|util-values|util-workspace-path)(?:\/|$)|@deepseek-ai\/dsh-token-meter\/client$|@deepseek-ai\/dsh-agent-presets\/display$)/
+const INLINE_SAFE = /^(?:@deepseek-ai\/dsh-(?:file-reference|session|llm|tools|brand|deque|output-retention|typert-protocol|util-crypto|util-values|util-workspace-path)(?:\/|$)|@deepseek-ai\/dsh-token-meter\/client$|@deepseek-ai\/dsh-native-command\/types$|@deepseek-ai\/dsh-host-open-in-app\/shared$|@deepseek-ai\/dsh-plugin-manager\/registry$|@deepseek-ai\/dsh-agent-preset-registry\/display$|@deepseek-ai\/dsh-api-workspace-controller\/default-workspace$|@deepseek-ai\/dsh-spill-policy\/notice$)/
 const VENDORED_LIBRARY = /^@deepseek-ai\/(cosmokit|schemastery)(\/|$)/
 const GENERATED_REMOTE = /^@deepseek-ai\/dsh-[a-z0-9]+(?:-[a-z0-9]+)*\/remote$/
 const REPOSITORY_ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -131,6 +134,8 @@ function clientConfig(id: string, entry: string): UserConfig {
         if (!source.startsWith('@deepseek-ai/')) return null
         if (isRequested(source) || VENDORED_LIBRARY.test(source)) return null
         if (INLINE_SAFE.test(source) || GENERATED_REMOTE.test(source) || source === '@deepseek-ai/dsh-quantskills-session/display'
+          // Shared delivery parser is pure: no plugin service, browser state or Host access.
+          || source === '@deepseek-ai/dsh-client-ui-chat/deliverables'
           || source === '@deepseek-ai/dsh-quantskills-session/contracts') return null
         throw new Error(`client bundle purity: unsupported cross-plugin value import ${JSON.stringify(source)}`)
       },

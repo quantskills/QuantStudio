@@ -1,5 +1,6 @@
 import { $getRoot, $getSelection, $isElementNode, $isLineBreakNode, $isRangeSelection, $isTextNode, } from 'lexical';
 import { $isReferenceChipNode } from "./chip-node.js";
+import { $isCommandChipNode } from "./command-chip-node.js";
 /** The detect-projection stand-in for one chip (object replacement character). */
 export const ATOMIC_CHAR = '￼';
 /**
@@ -34,7 +35,7 @@ export function $composerLayout() {
         const kids = element.getChildren();
         children.set(element.getKey(), kids.map(kid => kid.getKey()));
         for (const kid of kids) {
-            if ($isReferenceChipNode(kid)) {
+            if ($isReferenceChipNode(kid) || $isCommandChipNode(kid)) {
                 pushLeaf('chip', kid, ATOMIC_CHAR, kid.getTextContent());
             }
             else if ($isTextNode(kid)) {
@@ -159,6 +160,7 @@ export function $projectComposer(idOf) {
             ...(chip.isInvalid() ? { invalid: true } : {}),
         });
     }
+    const lead = layout.segments[0]?.node;
     const selection = $getSelection();
     let range = null;
     if ($isRangeSelection(selection)) {
@@ -174,6 +176,7 @@ export function $projectComposer(idOf) {
         occurrences,
         selection: range,
         caret: range !== null && range.start === range.end ? range.start : null,
+        command: $isCommandChipNode(lead) ? lead.getClaim() : undefined,
     };
 }
 //# sourceMappingURL=projection.js.map

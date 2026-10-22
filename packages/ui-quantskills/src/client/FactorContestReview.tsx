@@ -1,3 +1,4 @@
+import { selectedSession } from './selected-session.ts'
 import { useEffect, useRef, useState } from 'react'
 import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
 import type { SessionListState } from '@deepseek-ai/dsh-api-session-controller/client'
@@ -12,7 +13,7 @@ import { waitForCompetition } from './competition-async.ts'
 
 export interface FactorReviewInjected { hooks: { sessions: ObservableSnapshot<SessionListState> }; access: FactorContestAccess; openContest(): void }
 export function FactorContestReview({ useSessions, access, openContest }: InjectFace<FactorReviewInjected>) {
-  const session = useSessions(s => s.current ? s.byId[s.current] : undefined), binding = session?.projectionValues?.quantSkillsPlainSession
+  const session = useSessions(s => { const id = selectedSession(s); return id ? s.byId[id] : undefined }), binding = session?.projectionValues?.quantSkillsPlainSession
   if (!session || binding?.purpose !== 'factor-contest') return null
   return <SessionFactorReview key={session.id} sessionId={session.id} binding={binding} running={session.running} access={access} openContest={openContest}/>
 }

@@ -1,6 +1,5 @@
 import type { Context } from '@deepseek-ai/cordis';
-import type { ConversationNodeDefinition } from '@deepseek-ai/dsh-client-ui-conversation/client';
-import type { TurnMaxTokensNode } from '../contract/snapshot.ts';
+import type { ConversationNodeDefinition, TurnMaxTokensNode } from '@deepseek-ai/dsh-client-ui-conversation/client';
 declare module '../contract/chat-nodes.ts' {
     interface ChatNodeDataMap {
         /** Turn ended by the per-request output-token cap. */

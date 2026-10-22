@@ -1,208 +1,157 @@
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { JsonBlock } from '@deepseek-ai/dsh-client-ui-primitives'
-import type { ChatNodeOwnerProps, ChatViewSlotProps } from '../contract/slots.ts'
+import { createSnapshotStore } from '@deepseek-ai/dsh-client-store'
+import type { ConversationLocationDataStore, ConversationTurnDataMap } from '@deepseek-ai/dsh-client-ui-conversation/client'
+import type { ChatNodeHookContext, ChatNodeOwnerProps, ChatFlowSlotProps, UsePresentation } from '../contract/slots.ts'
 import type { ChatNode } from '../contract/chat-nodes.ts'
 import type { ChatNodeStore } from '../contract/snapshot.ts'
-import {
-  decodeTurnProcess, TURN_PROCESS_INDEPENDENT_KINDS, turnProcessGeneration,
-  type TurnProcessSpec,
-} from '../contract/turn-process.ts'
-import { storedTurnProcessEntry } from '../stores.ts'
-import { useSearchableHidden } from './searchable-hidden.ts'
+import { isAtOrOutside } from '../contract/group-tree.ts'
+import { turnProcessAlwaysOpen } from '../contract/turn-process.ts'
+import { turnProcessOpen } from '../stores.ts'
+import { hiddenOrCollapsing } from './flow-motion.ts'
 import css from './ChatView.module.css'
 
 interface ChatNodeSeatProps extends ChatNodeOwnerProps {
   readonly nodeKey: string
-  readonly historyIncomplete: boolean
-  readonly compactTranscript: boolean
-  readonly useChat: ChatViewSlotProps['useChat']
-  readonly useStore: ChatViewSlotProps['useStore']
-  readonly actions: ChatViewSlotProps['actions']
-  readonly renderSlot: ChatViewSlotProps['renderSlot']
-  readonly t: ChatViewSlotProps['t']
+  /** A replaced Builder must rebind keyed hooks even when references and keys survive. */
+  readonly nodeStore: ChatNodeStore
+  readonly useChatNode: ChatFlowSlotProps['useChatNode']
+  readonly useChatNodeProcess: ChatFlowSlotProps['useChatNodeProcess']
+  readonly usePresentation: UsePresentation
+  readonly useStore: ChatFlowSlotProps['useStore']
+  readonly actions: ChatFlowSlotProps['actions']
+  readonly renderSlot: ChatFlowSlotProps['renderSlot']
+  readonly t: ChatFlowSlotProps['t']
+  readonly useChatNodeBottom: ChatFlowSlotProps['useChatNodeBottom']
+  readonly deferCollapse: boolean
+  readonly useGroupAction: ChatFlowSlotProps['useGroupAction']
 }
 
 type RoutedChatNodeOwner = {
   [Kind in ChatNode['kind']]: ChatNodeOwnerProps & { readonly node: ChatNode<Kind> }
 }[ChatNode['kind']]
 
-const EMPTY_PROCESS_KEYS: readonly string[] = []
-
-interface TurnProcessLayout {
-  readonly hasExternalProcess: boolean
-  readonly compactAnswer: boolean
+function turnDataOf(node: ChatNode | undefined): ConversationLocationDataStore<ConversationTurnDataMap> | undefined {
+  const location = node?.location
+  return location?.kind === 'turn' || location?.kind === 'step' ? location.turn.data : undefined
 }
 
-function turnProcessOpeningHumanAnchor(
-  keys: readonly string[],
-  nodes: ChatNodeStore,
-  spec: TurnProcessSpec,
-): number | undefined {
-  let anchor: number | undefined
-  for (const key of keys) {
-    const node = nodes.get(key) as ChatNode | undefined
-    if ((node?.kind === 'user' || node?.kind === 'steering')
-      && node.anchorSeq < spec.controlAnchorSeq) {
-      anchor = Math.min(anchor ?? node.anchorSeq, node.anchorSeq)
-    }
-  }
-  return anchor
+function turnOf(node: ChatNode | undefined): number | undefined {
+  const location = node?.location
+  return location?.kind === 'turn' || location?.kind === 'step' ? location.turn.turn : undefined
 }
 
-/** Derive disclosure facts from one content-revisioned Turn index. */
-function turnProcessLayout(
-  keys: readonly string[],
-  nodes: ChatNodeStore,
-  spec: TurnProcessSpec,
-): TurnProcessLayout {
-  let hasExternalProcess = false
-  let compactAnswer = true
-  const openingHumanAnchor = turnProcessOpeningHumanAnchor(keys, nodes, spec)
-  for (const key of keys) {
-    const node = nodes.get(key) as ChatNode | undefined
-    if (node === undefined || node.kind === 'turn-process') continue
-    if ((node.kind === 'user' || node.kind === 'steering')
-      && (openingHumanAnchor === undefined || node.anchorSeq > openingHumanAnchor)
-      && (spec.answerAnchorSeq === null || node.anchorSeq < spec.answerAnchorSeq)) {
-      compactAnswer = false
-    }
-    if (TURN_PROCESS_INDEPENDENT_KINDS.has(node.kind)
-      || node.anchorSeq < spec.processStartSeq
-      || (spec.answerAnchorSeq !== null && node.anchorSeq >= spec.answerAnchorSeq)) continue
-    if (node.kind !== 'assistant-step' || spec.answerStep === null || node.data.step !== spec.answerStep) {
-      hasExternalProcess = true
-    }
-  }
-  return { hasExternalProcess, compactAnswer }
-}
-
-/** Subscribe, apply Turn-process visibility, and dispatch one stable Context key. */
+/**
+ * Subscribe, apply Turn-process visibility, and dispatch one stable Context key.
+ * Policy reads select this seat's own conclusion, so a mode change re-renders
+ * only seats whose visibility actually changes.
+ */
 export const ChatNodeSeat = memo(function ChatNodeSeat({
-  nodeKey, historyIncomplete, compactTranscript,
-  selectedCallId, cwd, openFile, inspectCall, forkAt,
-  renderMessageImages, fileMentions, useChat, useStore, actions, renderSlot, t,
+  nodeKey, groupPart, useChatNode, useChatNodeProcess, usePresentation,
+  cwd, openFile, inspectCall, forkAt,
+  loadImage, fileMentions, useStore, actions, renderSlot, t, useChatNodeBottom, deferCollapse, useGroupAction,
 }: ChatNodeSeatProps) {
-  const node = useChat(snapshot => snapshot.nodes.get(nodeKey))
-  const processSignature = useChat((snapshot) => {
-    const current = snapshot.nodes.get(nodeKey)
-    const location = current?.location
-    return location?.kind === 'turn' || location?.kind === 'step'
-      ? location.turn.data.get('turn-process')
-      : undefined
-  })
-  const processSpec = useMemo(
-    () => processSignature === undefined ? undefined : decodeTurnProcess(processSignature),
-    [processSignature],
-  )
-  const nodeStore = useChat(snapshot => snapshot.nodes)
-  const processLayoutKeys = useChat((snapshot) => {
-    if (!compactTranscript || historyIncomplete || processSpec === undefined) return EMPTY_PROCESS_KEYS
-    const current = snapshot.nodes.get(nodeKey) as ChatNode | undefined
-    const location = current?.location
-    if (current === undefined
-      || (location?.kind !== 'turn' && location?.kind !== 'step')
-      || location.turn.status !== 'closed'
-      || location.turn.turn !== processSpec.turn) return EMPTY_PROCESS_KEYS
-    const ownsLayout = current.kind === 'turn-process'
-      || (current.kind === 'assistant-step' && current.data.step === processSpec.answerStep)
-    return ownsLayout ? snapshot.locations.getTurn(processSpec.turn) : EMPTY_PROCESS_KEYS
-  })
-  const processLayout = useMemo(
-    () => processSpec === undefined || processLayoutKeys.length === 0
-      ? undefined
-      : turnProcessLayout(processLayoutKeys, nodeStore, processSpec),
-    [nodeStore, processLayoutKeys, processSpec],
-  )
-  const processGeneration = useMemo(
-    () => processSpec === undefined ? undefined : turnProcessGeneration(processSpec),
-    [processSpec],
-  )
-  const storedEntry = useStore(state => processSpec === undefined
-    ? undefined
-    : storedTurnProcessEntry(state, processSpec.turn))
-  const processEntry = storedEntry?.generation === processGeneration ? storedEntry : undefined
-  const processOpen = processEntry !== undefined
-  const setOpen = useCallback((open: boolean) => {
-    if (processGeneration !== undefined && processSpec !== undefined) {
-      actions.setTurnProcessOpen(processSpec.turn, processGeneration, open)
-    }
-  }, [actions, processGeneration, processSpec])
+  const bottom = useChatNodeBottom(nodeKey)
+  const node = useChatNode(nodeKey)
   const routedNode = node as ChatNode | undefined
-  const sameTurn = routedNode !== undefined
-    && processSpec !== undefined
-    && (routedNode.location.kind === 'turn' || routedNode.location.kind === 'step')
-    && routedNode.location.turn.turn === processSpec.turn
-  const turnClosed = sameTurn
-    && routedNode.location.turn.status === 'closed'
+  const turn = turnOf(routedNode)
+  const processPresentation = useChatNodeProcess(nodeKey)
+  const processSpec = processPresentation?.spec
+  const storedOpen = useStore(state => processSpec !== undefined
+    && turnProcessOpen(state, processSpec, bottom === true && deferCollapse))
+  const liveProcess = processPresentation !== undefined && !processPresentation.turnClosed
+  const interleavedInput = processPresentation?.hasInterleavedInput === true
+  const alwaysOpen = liveProcess || interleavedInput || turnProcessAlwaysOpen(routedNode)
+  const processOpen = alwaysOpen || storedOpen
+  const setOpen = useCallback((open: boolean) => {
+    if (processSpec !== undefined && !alwaysOpen) {
+      actions.setTurnProcessOpen(processSpec.turn, processSpec.answerStep ?? 0, open)
+    }
+  }, [actions, processSpec, alwaysOpen])
+  const foldCompleted = usePresentation(policy => policy.foldCompletedTurns)
+  // A loaded end makes a partial historical Turn eligible without its start.
   const processWindowReady = processSpec !== undefined
-    && compactTranscript
-    && processSpec.answerAnchorSeq !== null
-    && turnClosed
-    && !historyIncomplete
-  const processMember = sameTurn
+    && processPresentation !== undefined
+    && foldCompleted
+    && processPresentation.turn === processSpec.turn
+    && (processPresentation.turnStarted || processPresentation.turnClosed)
+  const processMember = routedNode !== undefined
     && processWindowReady
-    && !TURN_PROCESS_INDEPENDENT_KINDS.has(routedNode.kind)
+    && !isAtOrOutside(routedNode, 'turn')
     && routedNode.anchorSeq >= processSpec.processStartSeq
-    && routedNode.anchorSeq < processSpec.answerAnchorSeq
-  const processAnswer = sameTurn
+    && (liveProcess || processSpec.answerAnchorSeq === null || routedNode.anchorSeq < processSpec.answerAnchorSeq
+      || (groupPart === 'reasoning' && routedNode.kind === 'assistant-step' && routedNode.data.step === processSpec.answerStep))
+  const processAnswer = routedNode !== undefined
     && processWindowReady
+    && !liveProcess
+    && groupPart !== 'reasoning'
     && routedNode.kind === 'assistant-step'
     && routedNode.data.step === processSpec.answerStep
   const ownsDisclosure = routedNode?.kind === 'turn-process' || processAnswer
   const foldable = processWindowReady
-    && (processMember || (ownsDisclosure
-      && ((processLayout?.hasExternalProcess ?? false) || processSpec.inlineReasoning)))
-  const turnProcess = useMemo(() => processGeneration === undefined || processSpec === undefined
+    && (liveProcess || processMember || ownsDisclosure)
+  const turnProcess = useMemo(() => processSpec === undefined
     ? undefined
     : {
       spec: processSpec,
       foldable,
+      hasContent: !interleavedInput && (processPresentation?.hasExternalProcess === true || processSpec.inlineReasoning),
       open: processOpen,
       setOpen,
     }, [
-    foldable, processGeneration, processOpen, processSpec, setOpen,
+    foldable, interleavedInput, processOpen, processSpec, processPresentation?.hasExternalProcess, setOpen,
   ])
   const controllerInactive = routedNode?.kind === 'turn-process'
-    && !foldable
+    && foldCompleted && !foldable
   const compactAnswer = processAnswer
     && foldable
-    && processLayout?.compactAnswer === true
+    && processPresentation.compactAnswer
     && !processOpen
   const processHidden = controllerInactive || (foldable && processMember && !processOpen)
   const revealProcess = useCallback(() => {
     if (processMember) setOpen(true)
   }, [processMember, setOpen])
-  const wrapperRef = useSearchableHidden(processHidden, revealProcess)
+  const wrapperRef = useGroupAction(processHidden, revealProcess)
+  const [disclosureReset] = useState(() => createSnapshotStore(0))
+  const turnData = turnDataOf(routedNode)
+  const hookContext = useMemo<ChatNodeHookContext>(
+    () => ({ turnData, disclosureReset, useGroupAction }), [turnData, disclosureReset, useGroupAction],
+  )
+  useEffect(() => {
+    if (processMember && processHidden && wrapperRef.current !== null && hiddenOrCollapsing(wrapperRef.current)) {
+      disclosureReset.set(disclosureReset.getSnapshot() + 1)
+    }
+  }, [processMember, processHidden, wrapperRef, disclosureReset])
   const owner = useMemo<ChatNodeOwnerProps | null>(() => node === undefined
     ? null
     : {
-      selectedCallId,
+      ...groupPart === undefined ? {} : { groupPart },
       cwd,
       openFile,
       inspectCall,
       forkAt,
-      renderMessageImages,
+      loadImage,
       fileMentions,
       turnProcess,
     }, [
-    node, selectedCallId, cwd, openFile, inspectCall, forkAt,
-    renderMessageImages, fileMentions, turnProcess,
+    node, groupPart, cwd, openFile, inspectCall, forkAt,
+    loadImage, fileMentions, turnProcess,
   ])
   if (routedNode === undefined || owner === null) return null
-  const location = routedNode.location
-  const turn = location.kind === 'turn' || location.kind === 'step'
-    ? location.turn.turn
-    : undefined
   // Runtime dispatch owns the correlation: every Node's discriminant is the
   // keyed-slot entry passed alongside that same Node. TypeScript does not
   // distribute an object containing a union into a union of objects itself.
   const routedOwner = { ...owner, node: routedNode } as RoutedChatNodeOwner
+  const flowKey = groupPart === undefined || groupPart === 'response' ? routedNode.key : JSON.stringify([routedNode.key, groupPart])
   return (
     <div
       ref={wrapperRef}
       className={css.flowItem}
-      data-chat-anchor-key={routedNode.key}
-      data-chat-flow-key={routedNode.key}
+      data-chat-anchor-key={flowKey}
+      data-chat-flow-key={flowKey}
+      data-chat-paging-anchor={routedNode.kind !== 'turn-process' || undefined}
+      data-chat-node-key={routedNode.key}
+      data-chat-group-part={groupPart}
       data-chat-flow-kind={routedNode.kind}
       data-chat-turn={turn}
       data-turn-process-member={processMember || undefined}
@@ -211,7 +160,7 @@ export const ChatNodeSeat = memo(function ChatNodeSeat({
     >
       {renderSlot('conversation.chat.node', routedOwner, {
         entryKey: routedNode.kind,
-        hookContext: nodeKey,
+        hookContext,
         fallback: (
           <JsonBlock
             label={t('message.unknownSurface', { type: routedNode.kind })}

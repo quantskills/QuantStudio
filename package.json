@@ -6,7 +6,8 @@
   "type": "module",
   "packageManager": "pnpm@11.7.0",
   "engines": {
-    "node": "^22.19.0 || >=24.0.0"
+    "node": "^22.19.0 || >=24.0.0",
+    "dsh": "0.2.1-rc.2"
   },
   "workspaces": [
     "packages/*"
@@ -18,16 +19,11 @@
       "types": "./lib/types/index.d.ts",
       "default": "./lib/index.js"
     },
-    "./invariant": {
-      "types": "./lib/types/invariant.d.ts",
-      "default": "./lib/invariant.js"
-    },
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
   },
   "files": [
     "lib/index.js",
-    "lib/invariant.js",
     "cordis.patch.yml",
     "lib/types/**/*.d.ts",
     "LICENSE",
@@ -46,6 +42,9 @@
     "test:update": "vitest run packages/quantskills-host/tests/application-update.spec.ts packages/quantskills-host/tests/host.spec.ts tests/application-bootstrap.spec.ts tests/application-release-mirrors.spec.ts",
     "verify:update-mirrors": "node ./scripts/verify-application-release-mirrors.mjs",
     "ci:smoke": "node ./scripts/ci-plugin-smoke.mjs",
+    "ci:legacy": "node ./scripts/ci-legacy-launcher-smoke.mjs",
+    "ci:plugins": "node ./scripts/ci-plugin-sources.mjs",
+    "verify:packed-deliverables": "node ./scripts/verify-packed-deliverables.mjs",
     "build:types:host": "tsc -p tsconfig.json && pnpm --dir packages/agent-team exec tsc -p tsconfig.json && pnpm --dir packages/client-remotes-quantskills exec tsc -p tsconfig.json && pnpm --dir packages/panda-connector exec tsc -p tsconfig.json && pnpm --dir packages/panda-mcp exec tsc -p tsconfig.json && pnpm --dir packages/quantskills-host exec tsc -p tsconfig.json && pnpm --dir packages/quantskills-session exec tsc -p tsconfig.json && pnpm --dir packages/tool-agent-team exec tsc -p tsconfig.json",
     "build:host": "pnpm run build:types:host && node scripts/generate-session-remotes.mjs && pnpm exec tsdown --config tsdown.config.ts",
     "build:client": "pnpm --dir packages/client-ui-layout exec tsc -p tsconfig.json && pnpm --dir packages/client-ui-layout exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && pnpm --dir packages/client-ui-conversation exec tsc -p tsconfig.json && pnpm --dir packages/client-ui-conversation exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && pnpm --dir packages/client-ui-input-trigger exec tsc -p tsconfig.json && pnpm --dir packages/client-ui-input-trigger exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && pnpm --dir packages/client-ui-chat exec tsc -p tsconfig.json && pnpm --dir packages/client-ui-chat exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && pnpm --dir packages/client-remotes-quantskills exec tsc -p tsconfig.json && pnpm --dir packages/client-remotes-quantskills exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && pnpm --dir packages/ui-quantskills exec tsc -p tsconfig.json && pnpm --dir packages/ui-quantskills exec tsdown --config tsdown.config.ts --env.DSH_BUILD_FACE client && node ./scripts/normalize-client-bundle.mjs",
@@ -100,20 +99,31 @@
     "dshmarket"
   ],
   "peerDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh-invariants": "0.1.2-alpha.2"
+    "@deepseek-ai/cordis": "4.0.5"
   },
   "devDependencies": {
-    "@deepseek-ai/cordis": "^4.0.1",
-    "@deepseek-ai/dsh": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-invariants": "0.1.2-alpha.2",
-    "@deepseek-ai/dsh-typert-generator": "0.1.2-alpha.2",
+    "@deepseek-ai/cordis": "4.0.5",
+    "@deepseek-ai/dsh": "0.2.1-rc.2",
+    "@deepseek-ai/dsh-typert-generator": "0.2.1-rc.2",
+    "@fortune-sheet/core": "1.0.4",
+    "@fortune-sheet/react": "1.0.4",
     "@testing-library/react": "16.3.2",
     "@types/node": "^24.0.0",
+    "big.js": "7.0.1",
+    "dompurify": "3.4.16",
+    "exceljs": "4.4.0",
+    "fast-xml-parser": "5.11.1",
+    "fflate": "0.8.3",
     "jsdom": "29.1.1",
     "lightningcss": "1.32.0",
+    "papaparse": "5.7.0",
+    "pdfjs-dist": "6.3.289",
+    "playwright": "1.64.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
     "tsdown": "0.22.2",
     "typescript": "^5.9.2",
-    "vitest": "4.1.11"
+    "vitest": "4.1.11",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   }
 }

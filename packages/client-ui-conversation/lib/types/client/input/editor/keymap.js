@@ -18,17 +18,25 @@ export function registerComposerKeymap(editor, handlers) {
     // root element and re-arms on root swaps.
     let composing = false;
     let composingUntil = 0;
+    let rootElement = null;
+    const syncComposition = () => {
+        rootElement?.toggleAttribute('data-composer-composing', composing || editor.isComposing());
+    };
     const onCompositionStart = () => {
         composing = true;
+        syncComposition();
     };
     const onCompositionEnd = () => {
         composing = false;
         composingUntil = Date.now() + 10;
+        // The native event can precede the committed draft, including an empty
+        // cancellation. The callback also runs when no document text changed.
+        editor.update(() => { }, { onUpdate: syncComposition });
     };
     const recentlyComposing = () => composing || Date.now() < composingUntil;
     const arrow = (key) => (event) => {
         const inComposition = event !== null && isComposingEvent(event, recentlyComposing);
-        if (handlers.arbitrate(key, inComposition) === 'consumed') {
+        if (handlers.arbitrate(key, inComposition) !== 'pass') {
             event?.preventDefault();
             return true;
         }
@@ -37,14 +45,21 @@ export function registerComposerKeymap(editor, handlers) {
     return mergeRegister(editor.registerRootListener((root, prevRoot) => {
         prevRoot?.removeEventListener('compositionstart', onCompositionStart);
         prevRoot?.removeEventListener('compositionend', onCompositionEnd);
+        prevRoot?.removeAttribute('data-composer-composing');
+        composing = false;
+        composingUntil = 0;
+        rootElement = root;
         root?.addEventListener('compositionstart', onCompositionStart);
         root?.addEventListener('compositionend', onCompositionEnd);
-    }), editor.registerCommand(KEY_ARROW_UP_COMMAND, arrow('up'), COMMAND_PRIORITY_CRITICAL), editor.registerCommand(KEY_ARROW_DOWN_COMMAND, arrow('down'), COMMAND_PRIORITY_CRITICAL), 
-    // Tab drills into a drillable highlighted row; otherwise it passes so the
-    // browser keeps its native focus traversal.
-    editor.registerCommand(KEY_TAB_COMMAND, arrow('tab'), COMMAND_PRIORITY_CRITICAL), editor.registerCommand(KEY_ESCAPE_COMMAND, (event) => {
+        syncComposition();
+    }), editor.registerUpdateListener(syncComposition), editor.registerCommand(KEY_ARROW_UP_COMMAND, arrow('up'), COMMAND_PRIORITY_CRITICAL), editor.registerCommand(KEY_ARROW_DOWN_COMMAND, arrow('down'), COMMAND_PRIORITY_CRITICAL), 
+    // Tab settles the highlighted completion and passes without one, keeping
+    // native focus traversal; Shift+Tab leaves the menu like Escape whenever it
+    // is open, highlight or not, so the two Tab gestures never disagree about
+    // consuming the draft.
+    editor.registerCommand(KEY_TAB_COMMAND, event => arrow(event.shiftKey ? 'tabBack' : 'tab')(event), COMMAND_PRIORITY_CRITICAL), editor.registerCommand(KEY_ESCAPE_COMMAND, (event) => {
         // Escape layering: an open overlay closes; claimed without an overlay
-        // does NOT release (backspacing the token is the only exit gesture).
+        // does NOT release (deleting the command chip is the only exit gesture).
         handlers.dismissPopup();
         if (handlers.arbitrate('escape', isComposingEvent(event, recentlyComposing)) === 'consumed') {
             event.preventDefault();
@@ -56,13 +71,17 @@ export function registerComposerKeymap(editor, handlers) {
             return false;
         const consumed = handlers.space();
         if (consumed) {
-            event.preventDefault(); // claim token already carries the trailing separator
+            event.preventDefault(); // the command chip insertion already carries its separator
             return true;
         }
         return false;
     }, COMMAND_PRIORITY_CRITICAL), editor.registerCommand(KEY_ENTER_COMMAND, (event) => {
-        // Shift+Enter is the native line break UNCONDITIONALLY — decided before
-        // the IME guard so a composition-closing Shift+Enter still breaks the line.
+        // Returning true stops Lexical's fallback line break without consuming
+        // the DOM event that application shortcuts need.
+        if (event !== null && (event.altKey || event.getModifierState('AltGraph')
+            || (event.ctrlKey && event.metaKey) || (event.shiftKey && (event.ctrlKey || event.metaKey))))
+            return true;
+        // Plain Shift+Enter keeps its native line break, including during composition.
         if (event?.shiftKey === true)
             return false;
         if (event !== null && isComposingEvent(event, recentlyComposing)) {
@@ -89,12 +108,21 @@ export function registerComposerKeymap(editor, handlers) {
         const clipboardData = event.clipboardData ?? null;
         if (clipboardData === null)
             return false;
-        const files = Array.from(clipboardData.items)
-            .filter(item => item.kind === 'file')
-            .map(item => item.getAsFile())
-            .filter((file) => file !== null);
+        const files = [];
+        const directories = new Set();
+        for (const item of clipboardData.items) {
+            if (item.kind !== 'file')
+                continue;
+            const file = item.getAsFile();
+            if (file === null)
+                continue;
+            files.push(file);
+            if (typeof item.webkitGetAsEntry === 'function' && item.webkitGetAsEntry()?.isDirectory === true) {
+                directories.add(file);
+            }
+        }
         if (files.length > 0)
-            handlers.intakeFiles(files);
+            handlers.intakeFiles(files, directories.size === 0 ? undefined : directories);
         const text = clipboardData.getData('text/plain');
         if (text === '') {
             if (files.length === 0)
