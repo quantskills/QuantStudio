@@ -7179,7 +7179,7 @@ export const TYPERT = {
             "name": "workspaceStatus",
             "signature": "@Remote('workspaceStatus') workspaceStatus(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceStatusResult>",
             "summary": "Inspect the optional preferred and managed QuantSkills Workspace without creating it.",
-            "jsDoc": "/**\n * Inspect the optional preferred and managed QuantSkills Workspace without creating it.\n * @param request - optional user-selected Workspace.\n * @returns current Workspace targets and preference health.\n */"
+            "jsDoc": "/**\r\n * Inspect the optional preferred and managed QuantSkills Workspace without creating it.\r\n * @param request - optional user-selected Workspace.\r\n * @returns current Workspace targets and preference health.\r\n */"
           },
           {
             "kind": "method",
@@ -7193,7 +7193,7 @@ export const TYPERT = {
             "name": "workspaceResolve",
             "signature": "@Remote('workspaceResolve') workspaceResolve(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceResolveResult>",
             "summary": "Select the preferred Workspace or create and register the managed fallback.",
-            "jsDoc": "/**\n * Select the preferred Workspace or create and register the managed fallback.\n * @param request - optional user-selected Workspace.\n * @returns the explicit Workspace target for a new Session.\n */"
+            "jsDoc": "/**\r\n * Select the preferred Workspace or create and register the managed fallback.\r\n * @param request - optional user-selected Workspace.\r\n * @returns the explicit Workspace target for a new Session.\r\n */"
           },
           {
             "kind": "method",
@@ -7414,35 +7414,35 @@ export const TYPERT = {
             "name": "sessionEnsure",
             "signature": "@Remote('sessionEnsure') async sessionEnsure( request: QuantSkillsSessionEnsureRequest, signal?: AbortSignal, ): Promise<QuantSkillsSessionEnsureResult>",
             "summary": "Resume one persisted QuantSkills Session and restore its plugin-owned composition.",
-            "jsDoc": "/**\n * Resume one persisted QuantSkills Session and restore its plugin-owned composition.\n * @param request - existing QuantSkills Session identity.\n * @param signal - optional caller cancellation.\n * @returns the live Session identity after setup completes.\n */"
+            "jsDoc": "/**\r\n * Resume one persisted QuantSkills Session and restore its plugin-owned composition.\r\n * @param request - existing QuantSkills Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns the live Session identity after setup completes.\r\n */"
           },
           {
             "kind": "method",
             "name": "plainSessionCreate",
             "signature": "@Remote('plainSessionCreate') async plainSessionCreate( request: QuantSkillsPlainSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsPlainSessionCreateResult>",
             "summary": "Create or idempotently adopt one product-owned QuantSkills Session without an asset composition.",
-            "jsDoc": "/**\n * Create or idempotently adopt one product-owned QuantSkills Session without an asset composition.\n * @param request - preallocated SessionId, explicit purpose, and ordinary create options.\n * @param signal - optional caller cancellation.\n * @returns the published Session identity and durable QuantSkills ownership marker.\n */"
+            "jsDoc": "/**\r\n * Create or idempotently adopt one product-owned QuantSkills Session without an asset composition.\r\n * @param request - preallocated SessionId, explicit purpose, and ordinary create options.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Session identity and durable QuantSkills ownership marker.\r\n */"
           },
           {
             "kind": "method",
             "name": "create",
             "signature": "@Remote('create') async create( request: QuantSkillsSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsSessionCreateResult>",
             "summary": "Create or idempotently adopt one session under an exact installed Skill version.",
-            "jsDoc": "/**\n * Create or idempotently adopt one session under an exact installed Skill version.\n * @param request - preallocated SessionId, exact installed version, and ordinary create options.\n * @param signal - optional caller cancellation.\n * @returns the published session identity and durable binding.\n */"
+            "jsDoc": "/**\r\n * Create or idempotently adopt one session under an exact installed Skill version.\r\n * @param request - preallocated SessionId, exact installed version, and ordinary create options.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published session identity and durable binding.\r\n */"
           },
           {
             "kind": "method",
             "name": "list",
             "signature": "@Remote('list') async list( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsSessionArchiveItem[]>",
             "summary": "List real QuantSkills conversation archives from live and persisted session truth.",
-            "jsDoc": "/**\n * List real QuantSkills conversation archives from live and persisted session truth.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns Skill-bound ordinary sessions ordered by most recent activity.\n */"
+            "jsDoc": "/**\r\n * List real QuantSkills conversation archives from live and persisted session truth.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns Skill-bound ordinary sessions ordered by most recent activity.\r\n */"
           },
           {
             "kind": "method",
             "name": "plainSessionList",
             "signature": "@Remote('plainSessionList') async plainSessionList( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsPlainSessionArchiveItem[]>",
             "summary": "List ordinary QuantSkills conversations that do not yet load a Skill, Agent, or Team.",
-            "jsDoc": "/**\n * List ordinary QuantSkills conversations that do not yet load a Skill, Agent, or Team.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns ordinary product-owned Sessions ordered by most recent activity.\n */"
+            "jsDoc": "/**\r\n * List ordinary QuantSkills conversations that do not yet load a Skill, Agent, or Team.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns ordinary product-owned Sessions ordered by most recent activity.\r\n */"
           },
           {
             "kind": "method",
@@ -7468,42 +7468,42 @@ export const TYPERT = {
             "name": "frequent",
             "signature": "@Remote('frequent') async frequent( request: QuantSkillsFrequentRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsFrequentSkill[]>",
             "summary": "Aggregate frequently used Skills from real bound conversation archives.",
-            "jsDoc": "/**\n * Aggregate frequently used Skills from real bound conversation archives.\n * @param request - archive visibility and bounded result count.\n * @param signal - optional caller cancellation.\n * @returns usage rows ordered by session count and recency.\n */"
+            "jsDoc": "/**\r\n * Aggregate frequently used Skills from real bound conversation archives.\r\n * @param request - archive visibility and bounded result count.\r\n * @param signal - optional caller cancellation.\r\n * @returns usage rows ordered by session count and recency.\r\n */"
           },
           {
             "kind": "method",
             "name": "residentSkillAttach",
             "signature": "@Remote('residentSkillAttach') async residentSkillAttach( request: QuantSkillsResidentSkillAttachRequest, signal?: AbortSignal, ): Promise<QuantSkillsResidentSkillResult>",
             "summary": "Attach one exact installed Skill as resident Session context without creating a user message.",
-            "jsDoc": "/**\n * Attach one exact installed Skill as resident Session context without creating a user message.\n * @param request - live conversation and exact installed version; an ordinary workspace conversation is adopted on explicit attachment.\n * @param signal - optional caller cancellation.\n * @returns the authoritative resident Skill set after the append.\n */"
+            "jsDoc": "/**\r\n * Attach one exact installed Skill as resident Session context without creating a user message.\r\n * @param request - live conversation and exact installed version; an ordinary workspace conversation is adopted on explicit attachment.\r\n * @param signal - optional caller cancellation.\r\n * @returns the authoritative resident Skill set after the append.\r\n */"
           },
           {
             "kind": "method",
             "name": "residentSkillDetach",
             "signature": "@Remote('residentSkillDetach') residentSkillDetach(request: QuantSkillsResidentSkillDetachRequest): Promise<QuantSkillsResidentSkillResult>",
             "summary": "Detach one resident Skill by stable asset identity without rewriting conversation history.",
-            "jsDoc": "/**\n * Detach one resident Skill by stable asset identity without rewriting conversation history.\n * @param request - live QuantSkills Session and resident asset identity.\n * @returns the authoritative resident Skill set after the append.\n */"
+            "jsDoc": "/**\r\n * Detach one resident Skill by stable asset identity without rewriting conversation history.\r\n * @param request - live QuantSkills Session and resident asset identity.\r\n * @returns the authoritative resident Skill set after the append.\r\n */"
           },
           {
             "kind": "method",
             "name": "promptFormList",
             "signature": "@Remote('promptFormList') async promptFormList( request: QuantSkillsPromptFormListRequest, signal?: AbortSignal, ): Promise<QuantSkillsPromptFormListResult>",
             "summary": "List optional parameter forms reachable from the live Session composition.",
-            "jsDoc": "/**\n * List optional parameter forms reachable from the live Session composition.\n * @param request - live QuantSkills Session identity.\n * @param signal - optional caller cancellation.\n * @returns exact-version forms for resident Skills and declared Agent sources.\n */"
+            "jsDoc": "/**\r\n * List optional parameter forms reachable from the live Session composition.\r\n * @param request - live QuantSkills Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns exact-version forms for resident Skills and declared Agent sources.\r\n */"
           },
           {
             "kind": "method",
             "name": "promptFormRender",
             "signature": "@Remote('promptFormRender') async promptFormRender( request: QuantSkillsPromptFormRenderRequest, signal?: AbortSignal, ): Promise<QuantSkillsPromptFormRenderResult>",
             "summary": "Render a parameter form only when its exact version belongs to the live Session.",
-            "jsDoc": "/**\n * Render a parameter form only when its exact version belongs to the live Session.\n * @param request - Session, exact version, task, and declared field values.\n * @param signal - optional caller cancellation.\n * @returns plain text suitable for an ordinary logged user message.\n */"
+            "jsDoc": "/**\r\n * Render a parameter form only when its exact version belongs to the live Session.\r\n * @param request - Session, exact version, task, and declared field values.\r\n * @param signal - optional caller cancellation.\r\n * @returns plain text suitable for an ordinary logged user message.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentList",
             "signature": "@Remote('agentList') agentList(): Promise<readonly QuantSkillsAgentDefinition[]>",
             "summary": "Read durable user Agent definitions ordered by most recent update.",
-            "jsDoc": "/**\n * Read durable user Agent definitions ordered by most recent update.\n * @returns immutable validated definitions.\n */"
+            "jsDoc": "/**\r\n * Read durable user Agent definitions ordered by most recent update.\r\n * @returns immutable validated definitions.\r\n */"
           },
           {
             "kind": "method",
@@ -7522,14 +7522,14 @@ export const TYPERT = {
             "name": "agentUpdate",
             "signature": "@Remote('agentUpdate') async agentUpdate( request: QuantSkillsAgentUpdateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentDefinition>",
             "summary": "Replace one durable user Agent through optimistic revision matching.",
-            "jsDoc": "/**\n * Replace one durable user Agent through optimistic revision matching.\n * @param request - identity, expected revision, and complete editable fields.\n * @param signal - optional caller cancellation.\n * @returns the committed next revision.\n */"
+            "jsDoc": "/**\r\n * Replace one durable user Agent through optimistic revision matching.\r\n * @param request - identity, expected revision, and complete editable fields.\r\n * @param signal - optional caller cancellation.\r\n * @returns the committed next revision.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentDelete",
             "signature": "@Remote('agentDelete') async agentDelete(request: QuantSkillsAgentDeleteRequest): Promise<void>",
             "summary": "Delete one durable user Agent through optimistic revision matching.",
-            "jsDoc": "/**\n * Delete one durable user Agent through optimistic revision matching.\n * Existing Agent Sessions remain reconstructable from their logs.\n * @param request - identity and expected revision.\n */"
+            "jsDoc": "/**\r\n * Delete one durable user Agent through optimistic revision matching.\r\n * Existing Agent Sessions remain reconstructable from their logs.\r\n * @param request - identity and expected revision.\r\n */"
           },
           {
             "kind": "method",
@@ -7543,112 +7543,112 @@ export const TYPERT = {
             "name": "agentSessionCreate",
             "signature": "@Remote('agentSessionCreate') async agentSessionCreate( request: QuantSkillsAgentSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentSessionCreateResult>",
             "summary": "Atomically create or adopt one Session under an immutable user Agent composition.",
-            "jsDoc": "/**\n * Atomically create or adopt one Session under an immutable user Agent composition.\n * @param request - fresh Session id, exact Agent revision, and ordinary create options.\n * @param signal - optional caller cancellation.\n * @returns the published Session and logged Agent composition.\n */"
+            "jsDoc": "/**\r\n * Atomically create or adopt one Session under an immutable user Agent composition.\r\n * @param request - fresh Session id, exact Agent revision, and ordinary create options.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Session and logged Agent composition.\r\n */"
           },
           {
             "kind": "method",
             "name": "authoringSessionCreate",
             "signature": "@Remote('authoringSessionCreate') async authoringSessionCreate( request: QuantSkillsAuthoringSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentSessionCreateResult>",
             "summary": "Atomically create one Agent Session whose authoring purpose is durable before its tools are exposed.",
-            "jsDoc": "/**\n * Atomically create one Agent Session whose authoring purpose is durable before its tools are exposed.\n * @param request - fresh Session identity, exact Agent revision, Workspace, and authoring kind.\n * @param signal - optional caller cancellation.\n * @returns the published Agent Session and exact composition.\n */"
+            "jsDoc": "/**\r\n * Atomically create one Agent Session whose authoring purpose is durable before its tools are exposed.\r\n * @param request - fresh Session identity, exact Agent revision, Workspace, and authoring kind.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Agent Session and exact composition.\r\n */"
           },
           {
             "kind": "method",
             "name": "authoringCommit",
             "signature": "@Remote('authoringCommit') authoringCommit( request: QuantSkillsAuthoringCommitRequest, signal?: AbortSignal, ): Promise<QuantSkillsAuthoringCommitResult>",
             "summary": "Commit one successful logged draft after an explicit Client confirmation.",
-            "jsDoc": "/**\n * Commit one successful logged draft after an explicit Client confirmation.\n * @param request - Session-owned Tool call identity and observed content digest.\n * @param signal - optional caller cancellation.\n * @returns the immutable local asset, Agent, or Team publication.\n */"
+            "jsDoc": "/**\r\n * Commit one successful logged draft after an explicit Client confirmation.\r\n * @param request - Session-owned Tool call identity and observed content digest.\r\n * @param signal - optional caller cancellation.\r\n * @returns the immutable local asset, Agent, or Team publication.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentSessionList",
             "signature": "@Remote('agentSessionList') async agentSessionList( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsAgentSessionArchiveItem[]>",
             "summary": "List real user Agent conversation archives from live and persisted Session truth.",
-            "jsDoc": "/**\n * List real user Agent conversation archives from live and persisted Session truth.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns Agent-bound Sessions ordered by most recent activity.\n */"
+            "jsDoc": "/**\r\n * List real user Agent conversation archives from live and persisted Session truth.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns Agent-bound Sessions ordered by most recent activity.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamList",
             "signature": "@Remote('agentTeamList') agentTeamList(): Promise<readonly QuantSkillsAgentTeamDefinition[]>",
             "summary": "Read saved Agent Team definitions ordered by most recent update.",
-            "jsDoc": "/**\n * Read saved Agent Team definitions ordered by most recent update.\n * @returns immutable Agent Team definitions.\n */"
+            "jsDoc": "/**\r\n * Read saved Agent Team definitions ordered by most recent update.\r\n * @returns immutable Agent Team definitions.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamCreate",
             "signature": "@Remote('agentTeamCreate') async agentTeamCreate(request: QuantSkillsAgentTeamCreateRequest): Promise<QuantSkillsAgentTeamDefinition>",
             "summary": "Resolve Agent references and create one immutable saved Agent Team.",
-            "jsDoc": "/**\n * Resolve Agent references and create one immutable saved Agent Team.\n * @param request - Team name, goal, Lead revision, and member revisions.\n * @returns the saved exact Team definition.\n */"
+            "jsDoc": "/**\r\n * Resolve Agent references and create one immutable saved Agent Team.\r\n * @param request - Team name, goal, Lead revision, and member revisions.\r\n * @returns the saved exact Team definition.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamUpdate",
             "signature": "@Remote('agentTeamUpdate') async agentTeamUpdate(request: QuantSkillsAgentTeamUpdateRequest): Promise<QuantSkillsAgentTeamDefinition>",
             "summary": "Replace one saved Agent Team through optimistic revision matching.",
-            "jsDoc": "/**\n * Replace one saved Agent Team through optimistic revision matching.\n * @param request - replacement composition and observed Team revision.\n * @returns the updated exact Team definition.\n */"
+            "jsDoc": "/**\r\n * Replace one saved Agent Team through optimistic revision matching.\r\n * @param request - replacement composition and observed Team revision.\r\n * @returns the updated exact Team definition.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamDelete",
             "signature": "@Remote('agentTeamDelete') async agentTeamDelete(request: QuantSkillsAgentTeamDeleteRequest): Promise<void>",
             "summary": "Delete one saved Agent Team while preserving every existing Team Session log.",
-            "jsDoc": "/**\n * Delete one saved Agent Team while preserving every existing Team Session log.\n * @param request - Team identity and observed revision.\n */"
+            "jsDoc": "/**\r\n * Delete one saved Agent Team while preserving every existing Team Session log.\r\n * @param request - Team identity and observed revision.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamSessionCreate",
             "signature": "@Remote('agentTeamSessionCreate') async agentTeamSessionCreate( request: QuantSkillsAgentTeamSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentTeamSessionCreateResult>",
             "summary": "Atomically create or adopt one Team Lead Session under an exact Team revision.",
-            "jsDoc": "/**\n * Atomically create or adopt one Team Lead Session under an exact Team revision.\n * @param request - Session identity, exact Team revision, and optional Workspace selection.\n * @param signal - optional caller cancellation.\n * @returns the published Lead Session and its immutable Team binding.\n */"
+            "jsDoc": "/**\r\n * Atomically create or adopt one Team Lead Session under an exact Team revision.\r\n * @param request - Session identity, exact Team revision, and optional Workspace selection.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Lead Session and its immutable Team binding.\r\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamSessionList",
             "signature": "@Remote('agentTeamSessionList') async agentTeamSessionList( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsAgentTeamSessionArchiveItem[]>",
             "summary": "List real Agent Team Lead conversation archives from live and persisted Session truth.",
-            "jsDoc": "/**\n * List real Agent Team Lead conversation archives from live and persisted Session truth.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns Team Lead Sessions ordered by most recent activity.\n */"
+            "jsDoc": "/**\r\n * List real Agent Team Lead conversation archives from live and persisted Session truth.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns Team Lead Sessions ordered by most recent activity.\r\n */"
           },
           {
             "kind": "method",
             "name": "fileAttach",
             "signature": "@Remote('fileAttach') async fileAttach( request: QuantSkillsFileAttachRequest, signal?: AbortSignal, ): Promise<QuantSkillsSessionFileAttachment>",
             "summary": "Attach one immutable generic file to a live QuantSkills Session.",
-            "jsDoc": "/**\n * Attach one immutable generic file to a live QuantSkills Session.\n * Per-Session serialization makes the aggregate byte check authoritative\n * even when browser uploads overlap.\n * @param request - Session identity, canonical base64 bytes, and display metadata.\n * @param signal - optional caller cancellation.\n * @returns the durable ownership record appended to the Session log.\n */"
+            "jsDoc": "/**\r\n * Attach one immutable generic file to a live QuantSkills Session.\r\n * Per-Session serialization makes the aggregate byte check authoritative\r\n * even when browser uploads overlap.\r\n * @param request - Session identity, canonical base64 bytes, and display metadata.\r\n * @param signal - optional caller cancellation.\r\n * @returns the durable ownership record appended to the Session log.\r\n */"
           },
           {
             "kind": "method",
             "name": "fileList",
             "signature": "@Remote('fileList') async fileList( request: QuantSkillsFileListRequest, signal?: AbortSignal, ): Promise<QuantSkillsFileListResult>",
             "summary": "List immutable generic files already owned by one QuantSkills Session.",
-            "jsDoc": "/**\n * List immutable generic files already owned by one QuantSkills Session.\n * @param request - Session identity.\n * @param signal - optional caller cancellation.\n * @returns durable file records plus Host-enforced limits.\n */"
+            "jsDoc": "/**\r\n * List immutable generic files already owned by one QuantSkills Session.\r\n * @param request - Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns durable file records plus Host-enforced limits.\r\n */"
           },
           {
             "kind": "method",
             "name": "fileRead",
             "signature": "@Remote('fileRead') async fileRead( request: QuantSkillsFileReadRequest, signal?: AbortSignal, ): Promise<QuantSkillsFileReadResult>",
             "summary": "Read bounded text extracted from a supported attachment owned by a QuantSkills Session.",
-            "jsDoc": "/**\n * Read bounded text extracted from a supported attachment owned by a QuantSkills Session.\n * @param request - Session identity and opaque attachment id.\n * @param signal - optional caller cancellation.\n * @returns verified metadata and decoded text.\n */"
+            "jsDoc": "/**\r\n * Read bounded text extracted from a supported attachment owned by a QuantSkills Session.\r\n * @param request - Session identity and opaque attachment id.\r\n * @param signal - optional caller cancellation.\r\n * @returns verified metadata and decoded text.\r\n */"
           },
           {
             "kind": "method",
             "name": "resultPrepare",
             "signature": "@Remote('resultPrepare') resultPrepare( request: QuantSkillsResultPrepareRequest, signal?: AbortSignal, ): Promise<QuantSkillsResultPrepareResult>",
             "summary": "Normalize discovered result paths to one Session workspace.",
-            "jsDoc": "/**\n * Normalize discovered result paths to one Session workspace. Authorized legacy Skill output\n * and successful external mutation results are copied into the Session workspace first.\n * @param request - Session identity and bounded candidate path list.\n * @param signal - optional caller cancellation.\n * @returns one ordered readiness or diagnostic result per candidate.\n */"
+            "jsDoc": "/**\r\n * Normalize discovered result paths to one Session workspace. Authorized legacy Skill output\r\n * and successful external mutation results are copied into the Session workspace first.\r\n * @param request - Session identity and bounded candidate path list.\r\n * @param signal - optional caller cancellation.\r\n * @returns one ordered readiness or diagnostic result per candidate.\r\n */"
           },
           {
             "kind": "method",
             "name": "resultList",
             "signature": "@Remote('resultList') async resultList( request: { readonly sessionId: SessionId }, signal?: AbortSignal, ): Promise<QuantSkillsResultPrepareResult>",
             "summary": "Restore every previewable result referenced by the complete durable Session log.",
-            "jsDoc": "/**\n * Restore every previewable result referenced by the complete durable Session log.\n * The returned paths pass through the same workspace and installed-version checks as\n * candidates discovered in the currently loaded browser window.\n * @param request - QuantSkills Session identity.\n * @param signal - optional caller cancellation.\n * @returns newest-reference-first verified results from the full Session history.\n */"
+            "jsDoc": "/**\r\n * Restore every previewable result referenced by the complete durable Session log.\r\n * The returned paths pass through the same workspace and installed-version checks as\r\n * candidates discovered in the currently loaded browser window.\r\n * @param request - QuantSkills Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns newest-reference-first verified results from the full Session history.\r\n */"
           },
           {
             "kind": "method",
             "name": "resultPreview",
             "signature": "@Remote('resultPreview') async resultPreview( request: QuantSkillsResultPreviewRequest, signal?: AbortSignal, ): Promise<QuantSkillsResultPreview>",
             "summary": "Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.",
-            "jsDoc": "/**\n * Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.\n * Supported text is returned as UTF-8, Office documents as bounded extracted text,\n * and verified image/PDF bytes as canonical base64.\n * @param request - Session identity and workspace-relative produced path.\n * @param signal - optional caller cancellation.\n * @returns evidence-backed preview or an explicit unsupported result.\n */"
+            "jsDoc": "/**\r\n * Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.\r\n * Supported text is returned as UTF-8, Office documents as bounded extracted text,\r\n * and verified image/PDF bytes as canonical base64.\r\n * @param request - Session identity and workspace-relative produced path.\r\n * @param signal - optional caller cancellation.\r\n * @returns evidence-backed preview or an explicit unsupported result.\r\n */"
           }
         ],
         "types": [

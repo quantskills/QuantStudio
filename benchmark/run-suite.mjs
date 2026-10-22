@@ -44,7 +44,7 @@ try {
   for(const arm of ordered.filter(a=>!arg('--arms')||arg('--arms').split(',').includes(a))) {
    const tag=out+'/'+spec.id+'/'+arm,result={id:spec.id,family:spec.family,repetition:spec.repetition,arm,tag,phases:[],skillDefinitions:[]}
    report.results.push(result)
-   const before=budget?.value.calls.length??0,token=live?proxy.register(tag):'offline-probe',started=Date.now()
+   const before=budget?.value.calls.length??0,started=Date.now(),deadline=started+600000,token=live?proxy.register(tag,{deadline}):'offline-probe'
    let host,run,stage=0,memberIds
    try {
     host=await launchHost(arm,spec.fixture,proxy.url,token);run=host.run;result.evidence=run;result.runtime=host.info.version;result.runtimeIdentity=host.arm
@@ -60,7 +60,7 @@ try {
      if(phase.restartBefore) {await host.stop();host=await launchHost(arm,spec.fixture,proxy.url,token,run);result.resume=await host.request('resume',{sessionId:'benchmark-task'})}
      let prompt=phase.prompt
      if(arm==='dsh-official' && stage===0 && spec.fixture.explicitSkills)prompt=spec.fixture.explicitSkills.map(id=>'/'+id).join(' ')+'\n'+prompt
-     const observation=await host.request('run',{sessionId:'benchmark-task',prompt,quietMs:spec.quietMs??1000})
+     const observation=await host.request('run',{sessionId:'benchmark-task',prompt,quietMs:spec.quietMs??1000,deadline})
      const root=observation.sessions.find(s=>s.id==='benchmark-task')
      const text=root?.events.filter(e=>e.type==='assistant/message').flatMap(e=>e.data.content).map(c=>c.text).at(-1)??''
      let actual;try{actual=JSON.parse(text.trim().replace(/^```(?:json)?\s*|\s*```$/g,''))}catch{}

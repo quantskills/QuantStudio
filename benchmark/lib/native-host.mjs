@@ -3,7 +3,7 @@ import { createRequire } from 'node:module'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { fork, execFileSync } from 'node:child_process'
-import { randomUUID } from 'node:crypto'
+import { randomUUID, createHash } from 'node:crypto'
 import { createServer } from 'node:net'
 import YAML from 'yaml'
 import { project, readConfig, within } from './config.mjs'
@@ -18,6 +18,11 @@ export async function launchHost(armId, fixture, gatewayURL = 'http://127.0.0.1:
   const dshRequire = createRequire(dshManifest)
   const version = JSON.parse(await readFile(dshManifest, 'utf8')).version
   if (version !== arm.dsh) throw new Error('Runtime version mismatch')
+  if (armId === 'dsh-official') {
+    const pinned = JSON.parse(await readFile(join(project, 'benchmark/history/2026-10-21/runtime-provenance.json'), 'utf8')).arms.find(a => a.arm === 'dsh-official')
+    const actual = createHash('sha256').update(await readFile(join(dirname(dshManifest), 'lib/bin.js'))).digest('hex')
+    if (actual !== pinned.files['installed-dsh/lib/bin.js']) throw new Error('Official DSH binary differs from the frozen unpatched baseline')
+  }
   if (arm.commit && execFileSync('git', ['rev-parse', 'HEAD'], { cwd: runtime, encoding: 'utf8', windowsHide: true }).trim() !== arm.commit) throw new Error('Baseline commit mismatch')
   const runs = join(config.workspace, 'runs'); await mkdir(runs, { recursive: true })
   if (existingRun && !within(await realpath(runs), await realpath(existingRun))) throw new Error('Resume outside benchmark runs')

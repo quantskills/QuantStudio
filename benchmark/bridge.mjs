@@ -8,8 +8,10 @@ export const inject = ['agents', 'sessionController', 'loader', 'skills', 'tools
 export function apply(ctx) {
   if (!process.send || !process.env.QS_BENCH_FIXTURE) throw new Error('Benchmark requires isolated IPC launch')
   const errors = [], eventCounts = new Map(), records = new Map()
+  let activity = 0
   ctx.on('agent/error', ({ agent, error }) => errors.push({ session: String(agent.id), message: String(error).slice(0,500) }))
   ctx.on('session/event', (session, event) => {
+    activity++
     const counts = eventCounts.get(session.id) ?? {}
     counts[event.type] = (counts[event.type] ?? 0) + 1; eventCounts.set(session.id, counts)
     const record = records.get(session.id) ?? { id: String(session.id), parent: session.header.parentSession, events: [] }
@@ -83,20 +85,25 @@ export function apply(ctx) {
       const before = eventCounts.get(sessionId)?.['turn/end'] ?? 0
       const since = Date.now()
       await ctx.sessionController.prompt({ sessionId, requestId: randomUUID(), mode: 'queue', content: [{ type: 'text', text: prompt }] }, new AbortController().signal)
-      let stable = 0
+      let quietSince = null, quietMs = 0, lastActivity = activity
+      const deadline = Math.min(since + 600000, params.deadline ?? Infinity)
       const requiredQuietMs = params.quietMs ?? 1000
-      while (Date.now() - since < 600000) {
+      while (Date.now() < deadline) {
         if (errors.length) throw new Error(JSON.stringify(errors))
         const ended = (eventCounts.get(sessionId)?.['turn/end'] ?? 0) > before
         const idle = ctx.agents.list().every(a => a.status === 'idle' && (!a.inbox || a.inbox.nextTurn.length + a.inbox.nextStep.length === 0))
-        if (ended && idle) stable++; else stable = 0
-        if (stable * 100 >= requiredQuietMs) break
+        if (ended && idle) {
+          if (quietSince === null || lastActivity !== activity) quietSince = Date.now()
+        } else quietSince = null
+        lastActivity = activity
+        quietMs = quietSince === null ? 0 : Date.now() - quietSince
+        if (quietMs >= requiredQuietMs) break
         await new Promise(resolve => setTimeout(resolve, 100))
       }
-      if (stable * 100 < requiredQuietMs) throw new Error('Task time limit')
+      if (quietMs < requiredQuietMs) throw new Error('Task time limit')
       const sessions = [...records.values()].map(r => ({ ...r, counts: eventCounts.get(r.id) }))
       return { elapsedMs: Math.max(...sessions.map(s => s.lastOutputAt ?? since)) - since,
-        observedStableMs: Date.now() - since, quietMs: stable * 100, sessions, errors,
+        observedStableMs: Date.now() - since, quietMs, sessions, errors,
         roster: ctx.get('agentTeams')?.listMembers(agent) ?? [],
         tasks: ctx.get('agentTeams')?.listTasks(agent) ?? [],
         agents: ctx.agents.list().map(a => ({id: a.id, status: a.status, pending: a.inbox ? a.inbox.nextTurn.length+a.inbox.nextStep.length : null})) }

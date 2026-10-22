@@ -29,13 +29,14 @@ export async function publicPrice() {
     meaning:'Conservative published-rate estimate; all input charged at worst input/cache rate. Not account billing.',modelRatio:p.model_ratio,group,quota,exchange }
 }
 export async function gateway({ key, budget, pricing, maxCalls = 32 }) {
-  const tokens = new Map(), telemetry = [], active = new Set(), admitted = new Map()
+  const tokens = new Map(), telemetry = [], active = new Set(), admitted = new Map(), deadlines = new Map()
   const handler = async (req,res) => {
     let id
     const started=performance.now()
     try {
       const tag=tokens.get(req.headers.authorization?.replace(/^Bearer /,''))
       if(!tag || req.method!=='POST' || req.url!=='/v1/chat/completions') { res.writeHead(403); res.end('benchmark route denied'); return }
+      if (Date.now() >= deadlines.get(tag)) throw new Error('Per-task time cap reached')
       if ((admitted.get(tag) ?? 0) >= maxCalls) throw new Error('Per-task call cap reached')
       admitted.set(tag, (admitted.get(tag) ?? 0) + 1)
       let raw=''; for await(const chunk of req) { raw+=chunk; if(Buffer.byteLength(raw)>4*1024*1024) throw new Error('Request exceeds fixture envelope') }
@@ -52,7 +53,7 @@ export async function gateway({ key, budget, pricing, maxCalls = 32 }) {
         toolSchemaBytes:Buffer.byteLength(JSON.stringify(payload.tools??[])),toolNames:payload.tools?.map(t=>t.function?.name),startedAt:new Date().toISOString() }
       telemetry.push(call)
       const response=await fetch('https://llmx.pandaaiquant.com/v1/chat/completions',{method:'POST',redirect:'error',
-        headers:{Authorization:'Bearer '+key,'Content-Type':'application/json'},body,signal:AbortSignal.timeout(180000)})
+        headers:{Authorization:'Bearer '+key,'Content-Type':'application/json'},body,signal:AbortSignal.timeout(Math.max(1,Math.min(180000,deadlines.get(tag)-Date.now())))})
       call.status=response.status
       if(!response.ok) throw new Error('Upstream HTTP '+response.status)
       let usage, firstVisible, carry=''
@@ -96,6 +97,6 @@ export async function gateway({ key, budget, pricing, maxCalls = 32 }) {
   const server=createServer((req,res)=>{ const p=handler(req,res);active.add(p);void p.finally(()=>active.delete(p)) })
   await new Promise(ok=>server.listen(0,'127.0.0.1',ok))
   return {url:`http://127.0.0.1:${server.address().port}/v1`,telemetry,
-    register(tag){const token=randomUUID();tokens.set(token,tag);return token},
+    register(tag,{deadline=Date.now()+600000}={}){const token=randomUUID();tokens.set(token,tag);deadlines.set(tag,deadline);return token},
     async close(){await new Promise(ok=>server.close(ok));await Promise.allSettled([...active])} }
 }
