@@ -5031,7 +5031,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentCreate_result$schema,
         jsonSchema: {"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1870,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1883,"column":9},
     },
     'quantSkillsSessions/agentDelete': {
       service: 'quantSkillsSessions',
@@ -5062,7 +5062,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentDelete_result$schema,
         jsonSchemaError: 'typert tool schema: unsupported void value',
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1972,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1985,"column":9},
     },
     'quantSkillsSessions/agentLibrarySources': {
       service: 'quantSkillsSessions',
@@ -5076,7 +5076,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentLibrarySources_result$schema,
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"kind":{"type":"string","enum":["agent","agent-team"]},"source":{"type":"string","enum":["personal","installed","internal"]},"method":{"type":"string","enum":["manual","internal","ai","installation","recovered"]}},"required":["id","kind","source","method"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1858,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1871,"column":9},
     },
     'quantSkillsSessions/agentList': {
       service: 'quantSkillsSessions',
@@ -5091,7 +5091,7 @@ const $remote = createTypertRemoteInfo({
         description: 'immutable validated definitions.',
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1846,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1859,"column":3},
     },
     'quantSkillsSessions/agentSessionCreate': {
       service: 'quantSkillsSessions',
@@ -5124,7 +5124,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the published Session and logged Agent composition.',
         jsonSchema: {"type":"object","properties":{"sessionId":{"type":"string"},"agent":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"agentPreset":{"type":"string"}},"required":["sessionId","agent"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2011,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2024,"column":9},
     },
     'quantSkillsSessions/agentSessionList': {
       service: 'quantSkillsSessions',
@@ -5157,7 +5157,7 @@ const $remote = createTypertRemoteInfo({
         description: 'Agent-bound Sessions ordered by most recent activity.',
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"sessionId":{"type":"string"},"agent":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"createdAt":{"type":"number"},"updatedAt":{"type":"number"},"title":{"type":"string"},"cwd":{"type":"string"},"parentSessionId":{"type":"string"},"archived":{"type":"boolean"},"running":{"type":"boolean"},"runState":{"type":"string","enum":["idle","failed","completed","cancelled","running"]}},"required":["sessionId","agent","createdAt","updatedAt","archived","running","runState"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2259,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2272,"column":9},
     },
     'quantSkillsSessions/agentTeamCreate': {
       service: 'quantSkillsSessions',
@@ -5189,7 +5189,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the saved exact Team definition.',
         jsonSchema: {"type":"object","properties":{"teamId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"description":{"type":"string"},"lead":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"leadModel":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]},"members":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"context":{"type":"string","enum":["fresh","fork"]},"agent":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"model":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]}},"required":["name","context","agent","model"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["teamId","revision","name","description","lead","leadModel","members","createdAt","updatedAt"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2281,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2294,"column":9},
     },
     'quantSkillsSessions/agentTeamDelete': {
       service: 'quantSkillsSessions',
@@ -5220,7 +5220,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentTeamDelete_result$schema,
         jsonSchemaError: 'typert tool schema: unsupported void value',
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2333,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2346,"column":9},
     },
     'quantSkillsSessions/agentTeamList': {
       service: 'quantSkillsSessions',
@@ -5235,7 +5235,7 @@ const $remote = createTypertRemoteInfo({
         description: 'immutable Agent Team definitions.',
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"teamId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"description":{"type":"string"},"lead":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"leadModel":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]},"members":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"context":{"type":"string","enum":["fresh","fork"]},"agent":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"model":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]}},"required":["name","context","agent","model"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["teamId","revision","name","description","lead","leadModel","members","createdAt","updatedAt"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2271,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2284,"column":3},
     },
     'quantSkillsSessions/agentTeamSessionCreate': {
       service: 'quantSkillsSessions',
@@ -5268,7 +5268,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the published Lead Session and its immutable Team binding.',
         jsonSchema: {"type":"object","properties":{"sessionId":{"type":"string"},"team":{"type":"object","properties":{"teamId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"description":{"type":"string"},"lead":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"leadModel":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]},"members":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"context":{"type":"string","enum":["fresh","fork"]},"agent":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"model":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]}},"required":["name","context","agent","model"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["teamId","revision","name","description","lead","leadModel","members","createdAt","updatedAt"],"additionalProperties":true},"agentPreset":{"type":"string"}},"required":["sessionId","team"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2351,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2364,"column":9},
     },
     'quantSkillsSessions/agentTeamSessionList': {
       service: 'quantSkillsSessions',
@@ -5301,7 +5301,7 @@ const $remote = createTypertRemoteInfo({
         description: 'Team Lead Sessions ordered by most recent activity.',
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"sessionId":{"type":"string"},"team":{"type":"object","properties":{"teamId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"description":{"type":"string"},"lead":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"leadModel":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]},"members":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"context":{"type":"string","enum":["fresh","fork"]},"agent":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"model":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]}},"required":["name","context","agent","model"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["teamId","revision","name","description","lead","leadModel","members","createdAt","updatedAt"],"additionalProperties":true},"createdAt":{"type":"number"},"updatedAt":{"type":"number"},"title":{"type":"string"},"cwd":{"type":"string"},"parentSessionId":{"type":"string"},"archived":{"type":"boolean"},"running":{"type":"boolean"},"runState":{"type":"string","enum":["idle","failed","completed","cancelled","running"]}},"required":["sessionId","team","createdAt","updatedAt","archived","running","runState"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2430,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2443,"column":9},
     },
     'quantSkillsSessions/agentTeamUpdate': {
       service: 'quantSkillsSessions',
@@ -5333,7 +5333,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the updated exact Team definition.',
         jsonSchema: {"type":"object","properties":{"teamId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"description":{"type":"string"},"lead":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"leadModel":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]},"members":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"context":{"type":"string","enum":["fresh","fork"]},"agent":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"model":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]}},"required":["name","context","agent","model"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["teamId","revision","name","description","lead","leadModel","members","createdAt","updatedAt"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2303,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2316,"column":9},
     },
     'quantSkillsSessions/agentUninstall': {
       service: 'quantSkillsSessions',
@@ -5363,7 +5363,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_agentUninstall_result$schema,
         jsonSchemaError: 'typert tool schema: unsupported void value',
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1988,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2001,"column":9},
     },
     'quantSkillsSessions/agentUpdate': {
       service: 'quantSkillsSessions',
@@ -5396,7 +5396,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the committed next revision.',
         jsonSchema: {"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1928,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1941,"column":9},
     },
     'quantSkillsSessions/archivedConversations': {
       service: 'quantSkillsSessions',
@@ -5410,7 +5410,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_archivedConversations_result$schema,
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"sessionId":{"type":"string"},"title":{"type":"string"},"kind":{"type":"string","enum":["skill","agent","plain","team"]},"updatedAt":{"type":"number"},"running":{"type":"boolean"}},"required":["sessionId","title","kind","updatedAt","running"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1674,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1684,"column":9},
     },
     'quantSkillsSessions/authoringCommit': {
       service: 'quantSkillsSessions',
@@ -5443,7 +5443,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the immutable local asset, Agent, or Team publication.',
         jsonSchema: {"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"skill"},"version":{"type":"object","properties":{"versionId":{"type":"string"},"assetId":{"type":"string"},"kind":{"type":"string","enum":["skill","agent"]},"repository":{"type":"string"},"commit":{"type":"string"},"declaration":{"type":"string","enum":["SKILL.md","AGENTS.md"]},"treeDigest":{"type":"string"},"fileCount":{"type":"number"},"totalBytes":{"type":"number"},"installedAt":{"type":"number"},"exposure":{"type":"string","enum":["skill-registry","agent-template"]},"origin":{"type":"string","enum":["catalog","local-authoring"]},"declarationTitleZh":{"type":"string"}},"required":["versionId","assetId","kind","repository","commit","declaration","treeDigest","fileCount","totalBytes","installedAt","exposure","origin"],"additionalProperties":true}},"required":["kind","version"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"agent"},"version":{"type":"object","properties":{"versionId":{"type":"string"},"assetId":{"type":"string"},"kind":{"type":"string","enum":["skill","agent"]},"repository":{"type":"string"},"commit":{"type":"string"},"declaration":{"type":"string","enum":["SKILL.md","AGENTS.md"]},"treeDigest":{"type":"string"},"fileCount":{"type":"number"},"totalBytes":{"type":"number"},"installedAt":{"type":"number"},"exposure":{"type":"string","enum":["skill-registry","agent-template"]},"origin":{"type":"string","enum":["catalog","local-authoring"]},"declarationTitleZh":{"type":"string"}},"required":["versionId","assetId","kind","repository","commit","declaration","treeDigest","fileCount","totalBytes","installedAt","exposure","origin"],"additionalProperties":true},"agent":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true}},"required":["kind","version","agent"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"agent-team"},"team":{"type":"object","properties":{"teamId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"description":{"type":"string"},"lead":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"leadModel":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]},"members":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"context":{"type":"string","enum":["fresh","fork"]},"agent":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"model":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"default"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"fixed"},"selection":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}},"required":["kind","selection"],"additionalProperties":true}]}},"required":["name","context","agent","model"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["teamId","revision","name","description","lead","leadModel","members","createdAt","updatedAt"],"additionalProperties":true}},"required":["kind","team"],"additionalProperties":true}]},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2039,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2052,"column":3},
     },
     'quantSkillsSessions/authoringSessionCreate': {
       service: 'quantSkillsSessions',
@@ -5476,7 +5476,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the published Agent Session and exact composition.',
         jsonSchema: {"type":"object","properties":{"sessionId":{"type":"string"},"agent":{"type":"object","properties":{"agentId":{"type":"string"},"revision":{"type":"number"},"name":{"type":"string"},"role":{"type":"string"},"mode":{"type":"string","enum":["dynamic","fixed"]},"model":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"},"reasoningEffort":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"permission":{"type":"string","enum":["read-only","workspace-write","danger-full-access"]},"sourceVersionId":{"type":"string"},"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}},"createdAt":{"type":"number"},"updatedAt":{"type":"number"}},"required":["agentId","revision","name","role","mode","permission","skills","createdAt","updatedAt"],"additionalProperties":true},"agentPreset":{"type":"string"}},"required":["sessionId","agent"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2025,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2038,"column":9},
     },
     'quantSkillsSessions/contestCheckUpdate': {
       service: 'quantSkillsSessions',
@@ -5489,7 +5489,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestCheckUpdate_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","authenticating","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"retryAt":{"type":"number"},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"operation":{"type":"string","enum":["place_order","cancel_order"]},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"summary":{"type":"string"},"details":{"type":"object","properties":{},"required":[],"additionalProperties":true},"clientRequestId":{"type":"string"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired","queued","submitted","partial"]},"operationId":{"type":"string"},"result":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fills":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"tradeId":{"type":"string"},"orderId":{"type":"string"},"price":{"type":"number"},"volume":{"type":"number"},"time":{"type":"string"}},"required":["id","tradeId","orderId","price","volume","time"],"additionalProperties":true}}},"required":["id","sessionId","identity","operation","createdAt","expiresAt","summary","details","clientRequestId","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1312,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1322,"column":3},
     },
     'quantSkillsSessions/contestConnect': {
       service: 'quantSkillsSessions',
@@ -5502,7 +5502,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestConnect_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","authenticating","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"retryAt":{"type":"number"},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"operation":{"type":"string","enum":["place_order","cancel_order"]},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"summary":{"type":"string"},"details":{"type":"object","properties":{},"required":[],"additionalProperties":true},"clientRequestId":{"type":"string"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired","queued","submitted","partial"]},"operationId":{"type":"string"},"result":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fills":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"tradeId":{"type":"string"},"orderId":{"type":"string"},"price":{"type":"number"},"volume":{"type":"number"},"time":{"type":"string"}},"required":["id","tradeId","orderId","price","volume","time"],"additionalProperties":true}}},"required":["id","sessionId","identity","operation","createdAt","expiresAt","summary","details","clientRequestId","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1303,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1313,"column":3},
     },
     'quantSkillsSessions/contestDisconnect': {
       service: 'quantSkillsSessions',
@@ -5515,7 +5515,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDisconnect_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","authenticating","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"retryAt":{"type":"number"},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"operation":{"type":"string","enum":["place_order","cancel_order"]},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"summary":{"type":"string"},"details":{"type":"object","properties":{},"required":[],"additionalProperties":true},"clientRequestId":{"type":"string"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired","queued","submitted","partial"]},"operationId":{"type":"string"},"result":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fills":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"tradeId":{"type":"string"},"orderId":{"type":"string"},"price":{"type":"number"},"volume":{"type":"number"},"time":{"type":"string"}},"required":["id","tradeId","orderId","price","volume","time"],"additionalProperties":true}}},"required":["id","sessionId","identity","operation","createdAt","expiresAt","summary","details","clientRequestId","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1306,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1316,"column":9},
     },
     'quantSkillsSessions/contestDismiss': {
       service: 'quantSkillsSessions',
@@ -5544,7 +5544,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestDismiss_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","authenticating","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"retryAt":{"type":"number"},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"operation":{"type":"string","enum":["place_order","cancel_order"]},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"summary":{"type":"string"},"details":{"type":"object","properties":{},"required":[],"additionalProperties":true},"clientRequestId":{"type":"string"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired","queued","submitted","partial"]},"operationId":{"type":"string"},"result":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fills":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"tradeId":{"type":"string"},"orderId":{"type":"string"},"price":{"type":"number"},"volume":{"type":"number"},"time":{"type":"string"}},"required":["id","tradeId","orderId","price","volume","time"],"additionalProperties":true}}},"required":["id","sessionId","identity","operation","createdAt","expiresAt","summary","details","clientRequestId","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1403,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1413,"column":3},
     },
     'quantSkillsSessions/contestExecute': {
       service: 'quantSkillsSessions',
@@ -5574,7 +5574,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestExecute_result$schema,
         jsonSchema: {"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"operation":{"type":"string","enum":["place_order","cancel_order"]},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"summary":{"type":"string"},"details":{"type":"object","properties":{},"required":[],"additionalProperties":true},"clientRequestId":{"type":"string"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired","queued","submitted","partial"]},"operationId":{"type":"string"},"result":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fills":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"tradeId":{"type":"string"},"orderId":{"type":"string"},"price":{"type":"number"},"volume":{"type":"number"},"time":{"type":"string"}},"required":["id","tradeId","orderId","price","volume","time"],"additionalProperties":true}}},"required":["id","sessionId","identity","operation","createdAt","expiresAt","summary","details","clientRequestId","status"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1398,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1408,"column":3},
     },
     'quantSkillsSessions/contestInspect': {
       service: 'quantSkillsSessions',
@@ -5605,7 +5605,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestInspect_result$schema,
         jsonSchema: {"type":"object","properties":{"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"fetchedAt":{"type":"number"},"account":{"type":"object","properties":{"data":{},"meta":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fetchedAt":{"type":"number"}},"required":["data","fetchedAt"],"additionalProperties":true},"positions":{"type":"object","properties":{"data":{},"meta":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fetchedAt":{"type":"number"}},"required":["data","fetchedAt"],"additionalProperties":true},"openOrders":{"type":"object","properties":{"data":{},"meta":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fetchedAt":{"type":"number"}},"required":["data","fetchedAt"],"additionalProperties":true},"pendingPlans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"operation":{"type":"string","enum":["place_order","cancel_order"]},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"summary":{"type":"string"},"details":{"type":"object","properties":{},"required":[],"additionalProperties":true},"clientRequestId":{"type":"string"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired","queued","submitted","partial"]},"operationId":{"type":"string"},"result":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fills":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"tradeId":{"type":"string"},"orderId":{"type":"string"},"price":{"type":"number"},"volume":{"type":"number"},"time":{"type":"string"}},"required":["id","tradeId","orderId","price","volume","time"],"additionalProperties":true}}},"required":["id","sessionId","identity","operation","createdAt","expiresAt","summary","details","clientRequestId","status"],"additionalProperties":true}},"summary":{"type":"array","items":{"type":"string"}}},"required":["identity","fetchedAt","account","positions","openOrders","pendingPlans","summary"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1358,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1368,"column":9},
     },
     'quantSkillsSessions/contestJevConfigure': {
       service: 'quantSkillsSessions',
@@ -5634,7 +5634,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevConfigure_result$schema,
         jsonSchema: {"type":"object","properties":{"configured":{"type":"boolean"},"writable":{"type":"boolean"},"model":{"type":"string"},"testedAt":{"type":"number"},"latencyMs":{"type":"number"},"message":{"type":"string"},"translator":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"translationModels":{"type":"array","items":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}}},"required":["configured","writable","model"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1342,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1352,"column":3},
     },
     'quantSkillsSessions/contestJevSettings': {
       service: 'quantSkillsSessions',
@@ -5647,7 +5647,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevSettings_result$schema,
         jsonSchema: {"type":"object","properties":{"configured":{"type":"boolean"},"writable":{"type":"boolean"},"model":{"type":"string"},"testedAt":{"type":"number"},"latencyMs":{"type":"number"},"message":{"type":"string"},"translator":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"}},"required":["provider","model"],"additionalProperties":true},"translationModels":{"type":"array","items":{"type":"object","properties":{"provider":{"type":"string"},"model":{"type":"string"}},"required":["provider","model"],"additionalProperties":true}}},"required":["configured","writable","model"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1324,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1334,"column":3},
     },
     'quantSkillsSessions/contestJevUsage': {
       service: 'quantSkillsSessions',
@@ -5660,7 +5660,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestJevUsage_result$schema,
         jsonSchema: {"type":"object","properties":{"since":{"type":"number"},"requests":{"type":"number"},"responsesOk":{"type":"number"},"unknownUsage":{"type":"number"},"inputTokens":{"type":"number"},"outputTokens":{"type":"number"},"records":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"purpose":{"type":"string","enum":["watch","connection-test","research","validation"]},"startedAt":{"type":"number"},"finishedAt":{"type":"number"},"keyFingerprint":{"type":"string"},"httpStatus":{"type":"number"},"model":{"type":"string"},"usage":{"type":"object","properties":{"input_tokens":{"type":"number"},"output_tokens":{"type":"number"}},"required":["input_tokens","output_tokens"],"additionalProperties":true}},"required":["id","purpose","startedAt","finishedAt","keyFingerprint"],"additionalProperties":true}}},"required":["since","requests","responsesOk","unknownUsage","inputTokens","outputTokens","records"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1327,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1337,"column":3},
     },
     'quantSkillsSessions/contestMode': {
       service: 'quantSkillsSessions',
@@ -5690,7 +5690,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestMode_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","authenticating","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"retryAt":{"type":"number"},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"operation":{"type":"string","enum":["place_order","cancel_order"]},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"summary":{"type":"string"},"details":{"type":"object","properties":{},"required":[],"additionalProperties":true},"clientRequestId":{"type":"string"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired","queued","submitted","partial"]},"operationId":{"type":"string"},"result":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fills":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"tradeId":{"type":"string"},"orderId":{"type":"string"},"price":{"type":"number"},"volume":{"type":"number"},"time":{"type":"string"}},"required":["id","tradeId","orderId","price","volume","time"],"additionalProperties":true}}},"required":["id","sessionId","identity","operation","createdAt","expiresAt","summary","details","clientRequestId","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1297,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1307,"column":9},
     },
     'quantSkillsSessions/contestQuery': {
       service: 'quantSkillsSessions',
@@ -5720,7 +5720,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestQuery_result$schema,
         jsonSchema: {"type":"object","properties":{"data":{},"meta":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fetchedAt":{"type":"number"}},"required":["data","fetchedAt"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1354,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1364,"column":3},
     },
     'quantSkillsSessions/contestReconcile': {
       service: 'quantSkillsSessions',
@@ -5749,7 +5749,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestReconcile_result$schema,
         jsonSchema: {"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"operation":{"type":"string","enum":["place_order","cancel_order"]},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"summary":{"type":"string"},"details":{"type":"object","properties":{},"required":[],"additionalProperties":true},"clientRequestId":{"type":"string"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired","queued","submitted","partial"]},"operationId":{"type":"string"},"result":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fills":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"tradeId":{"type":"string"},"orderId":{"type":"string"},"price":{"type":"number"},"volume":{"type":"number"},"time":{"type":"string"}},"required":["id","tradeId","orderId","price","volume","time"],"additionalProperties":true}}},"required":["id","sessionId","identity","operation","createdAt","expiresAt","summary","details","clientRequestId","status"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1408,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1418,"column":3},
     },
     'quantSkillsSessions/contestSessionOpen': {
       service: 'quantSkillsSessions',
@@ -5780,7 +5780,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestSessionOpen_result$schema,
         jsonSchema: {"type":"object","properties":{"sessionId":{"type":"string"},"binding":{"type":"object","properties":{"purpose":{"type":"string","enum":["ordinary","role-helper","contest","factor-contest"]},"contest":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"factorContest":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"contestConversation":{"type":"string","enum":["main","topic"]}},"required":["purpose"],"additionalProperties":true},"created":{"type":"boolean"}},"required":["sessionId","binding","created"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1367,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1377,"column":3},
     },
     'quantSkillsSessions/contestStatus': {
       service: 'quantSkillsSessions',
@@ -5809,7 +5809,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestStatus_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","authenticating","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"retryAt":{"type":"number"},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"operation":{"type":"string","enum":["place_order","cancel_order"]},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"summary":{"type":"string"},"details":{"type":"object","properties":{},"required":[],"additionalProperties":true},"clientRequestId":{"type":"string"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired","queued","submitted","partial"]},"operationId":{"type":"string"},"result":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fills":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"tradeId":{"type":"string"},"orderId":{"type":"string"},"price":{"type":"number"},"volume":{"type":"number"},"time":{"type":"string"}},"required":["id","tradeId","orderId","price","volume","time"],"additionalProperties":true}}},"required":["id","sessionId","identity","operation","createdAt","expiresAt","summary","details","clientRequestId","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1293,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1303,"column":3},
     },
     'quantSkillsSessions/contestUpdate': {
       service: 'quantSkillsSessions',
@@ -5822,7 +5822,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestUpdate_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","authenticating","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"retryAt":{"type":"number"},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"operation":{"type":"string","enum":["place_order","cancel_order"]},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"summary":{"type":"string"},"details":{"type":"object","properties":{},"required":[],"additionalProperties":true},"clientRequestId":{"type":"string"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired","queued","submitted","partial"]},"operationId":{"type":"string"},"result":{"type":"object","properties":{},"required":[],"additionalProperties":true},"fills":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"tradeId":{"type":"string"},"orderId":{"type":"string"},"price":{"type":"number"},"volume":{"type":"number"},"time":{"type":"string"}},"required":["id","tradeId","orderId","price","volume","time"],"additionalProperties":true}}},"required":["id","sessionId","identity","operation","createdAt","expiresAt","summary","details","clientRequestId","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1315,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1325,"column":9},
     },
     'quantSkillsSessions/contestWatchDatasets': {
       service: 'quantSkillsSessions',
@@ -5835,7 +5835,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchDatasets_result$schema,
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"columns":{"type":"array","items":{"type":"string"}},"rows":{"type":"number"},"source":{"type":"string"}},"required":["id","name","columns","rows","source"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1336,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1346,"column":3},
     },
     'quantSkillsSessions/contestWatchPrepareHistory': {
       service: 'quantSkillsSessions',
@@ -5864,7 +5864,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchPrepareHistory_result$schema,
         jsonSchema: {"type":"object","properties":{"datasetId":{"type":"string"},"barSeconds":{"type":"number","enum":[60,300]},"timeMeaning":{"type":"string","enum":["open","close"]},"refresh":{"type":"boolean"},"columns":{"type":"object","properties":{"time":{"type":"string"},"symbol":{"type":"string"},"open":{"type":"string"},"high":{"type":"string"},"low":{"type":"string"},"close":{"type":"string"}},"required":["time","symbol","open","high","low","close"],"additionalProperties":true}},"required":["datasetId","barSeconds","timeMeaning","refresh","columns"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1339,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1349,"column":3},
     },
     'quantSkillsSessions/contestWatchSaveTemplate': {
       service: 'quantSkillsSessions',
@@ -5893,7 +5893,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchSaveTemplate_result$schema,
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"config":{"type":"object","properties":{"executionMode":{"type":"string","enum":["manual","automatic"]},"symbol":{"type":"string"},"contracts":{"type":"array","items":{"type":"object","properties":{"symbol":{"type":"string"},"instrument":{"type":"object","properties":{"product":{"type":"string"},"exchange":{"type":"string","enum":["SHF","DCE","CZC","CFE","INE","GFE"]},"tickSize":{"type":"number"}},"required":["product","exchange","tickSize"],"additionalProperties":true}},"required":["symbol","instrument"],"additionalProperties":true},"description":"Selected actual contracts; omitted for older single-contract configurations."},"volume":{"type":"number"},"intervalSeconds":{"type":"number"},"decisionIntervalSeconds":{"type":"number"},"openingCooldownSeconds":{"type":"number"},"decisionMode":{"type":"string","enum":["jev","strict"]},"durationMinutes":{"type":"number"},"minConfidence":{"type":"number"},"maxEquityDrop":{"type":"number"},"maxPlans":{"type":"number"},"instructions":{"type":"string"},"strategyName":{"type":"string"},"actionCriteria":{"type":"object","properties":{"hold":{"type":"string"},"open_long":{"type":"string"},"open_short":{"type":"string"},"close_long":{"type":"string"},"close_short":{"type":"string"}},"required":[],"additionalProperties":true},"referenceMaterial":{"type":"string"},"allowedSide":{"type":"string","enum":["both","long_only","short_only"]},"minSamples":{"type":"number"},"maxSpread":{"type":"number"},"builtInTemplate":{"type":"string","enum":["rb-range","range","trend","breakout"]},"customStrategy":{"type":"boolean","enum":[false,true]},"instrument":{"type":"object","properties":{"product":{"type":"string"},"exchange":{"type":"string","enum":["SHF","DCE","CZC","CFE","INE","GFE"]},"tickSize":{"type":"number"}},"required":["product","exchange","tickSize"],"additionalProperties":true},"signalRules":{"type":"object","properties":{"kind":{"type":"string","enum":["trend","breakout"]},"lookbackBars":{"type":"number"},"tickSize":{"type":"number"},"roundTripCostTicks":{"type":"number"},"minRewardCostRatio":{"type":"number"},"stopLossTicks":{"type":"number"},"takeProfitTicks":{"type":"number"},"fastBars":{"type":"number"},"slowBars":{"type":"number"},"pullbackTicks":{"type":"number"},"reboundTicks":{"type":"number"},"bufferTicks":{"type":"number"},"maxChaseTicks":{"type":"number"}},"required":["kind","lookbackBars","tickSize","roundTripCostTicks","minRewardCostRatio","stopLossTicks","takeProfitTicks","fastBars","slowBars","pullbackTicks","reboundTicks","bufferTicks","maxChaseTicks"],"additionalProperties":true},"autoHistory":{"type":"object","properties":{"exchange":{"type":"string","enum":["SHF","DCE","CZC","CFE","INE","GFE"]},"barSeconds":{"type":"number","enum":[60,300]}},"required":["exchange","barSeconds"],"additionalProperties":true},"history":{"type":"object","properties":{"datasetId":{"type":"string"},"barSeconds":{"type":"number","enum":[60,300]},"timeMeaning":{"type":"string","enum":["open","close"]},"refresh":{"type":"boolean"},"columns":{"type":"object","properties":{"time":{"type":"string"},"symbol":{"type":"string"},"open":{"type":"string"},"high":{"type":"string"},"low":{"type":"string"},"close":{"type":"string"}},"required":["time","symbol","open","high","low","close"],"additionalProperties":true}},"required":["datasetId","barSeconds","timeMeaning","refresh","columns"],"additionalProperties":true},"rangeRules":{"type":"object","properties":{"lookbackBars":{"type":"number"},"tickSize":{"type":"number"},"minWidthTicks":{"type":"number"},"minTouches":{"type":"number"},"edgeFraction":{"type":"number"},"reboundTicks":{"type":"number"},"roundTripCostTicks":{"type":"number"},"minRewardCostRatio":{"type":"number"},"stopLossTicks":{"type":"number"},"takeProfitTicks":{"type":"number"}},"required":["lookbackBars","tickSize","minWidthTicks","minTouches","edgeFraction","reboundTicks","roundTripCostTicks","minRewardCostRatio","stopLossTicks","takeProfitTicks"],"additionalProperties":true}},"required":["symbol","volume","intervalSeconds","durationMinutes","minConfidence","maxEquityDrop","maxPlans","instructions"],"additionalProperties":true}},"required":["name","config"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1333,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1343,"column":3},
     },
     'quantSkillsSessions/contestWatchStart': {
       service: 'quantSkillsSessions',
@@ -5922,7 +5922,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStart_result$schema,
         jsonSchemaError: 'typert tool schema: selected dictionaries require string keys and unconstrained JSON values',
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1345,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1355,"column":3},
     },
     'quantSkillsSessions/contestWatchStatus': {
       service: 'quantSkillsSessions',
@@ -5935,7 +5935,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStatus_result$schema,
         jsonSchemaError: 'typert tool schema: selected dictionaries require string keys and unconstrained JSON values',
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1321,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1331,"column":3},
     },
     'quantSkillsSessions/contestWatchStop': {
       service: 'quantSkillsSessions',
@@ -5948,7 +5948,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchStop_result$schema,
         jsonSchemaError: 'typert tool schema: selected dictionaries require string keys and unconstrained JSON values',
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1351,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1361,"column":3},
     },
     'quantSkillsSessions/contestWatchTemplates': {
       service: 'quantSkillsSessions',
@@ -5961,7 +5961,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_contestWatchTemplates_result$schema,
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"config":{"type":"object","properties":{"executionMode":{"type":"string","enum":["manual","automatic"]},"symbol":{"type":"string"},"contracts":{"type":"array","items":{"type":"object","properties":{"symbol":{"type":"string"},"instrument":{"type":"object","properties":{"product":{"type":"string"},"exchange":{"type":"string","enum":["SHF","DCE","CZC","CFE","INE","GFE"]},"tickSize":{"type":"number"}},"required":["product","exchange","tickSize"],"additionalProperties":true}},"required":["symbol","instrument"],"additionalProperties":true},"description":"Selected actual contracts; omitted for older single-contract configurations."},"volume":{"type":"number"},"intervalSeconds":{"type":"number"},"decisionIntervalSeconds":{"type":"number"},"openingCooldownSeconds":{"type":"number"},"decisionMode":{"type":"string","enum":["jev","strict"]},"durationMinutes":{"type":"number"},"minConfidence":{"type":"number"},"maxEquityDrop":{"type":"number"},"maxPlans":{"type":"number"},"instructions":{"type":"string"},"strategyName":{"type":"string"},"actionCriteria":{"type":"object","properties":{"hold":{"type":"string"},"open_long":{"type":"string"},"open_short":{"type":"string"},"close_long":{"type":"string"},"close_short":{"type":"string"}},"required":[],"additionalProperties":true},"referenceMaterial":{"type":"string"},"allowedSide":{"type":"string","enum":["both","long_only","short_only"]},"minSamples":{"type":"number"},"maxSpread":{"type":"number"},"builtInTemplate":{"type":"string","enum":["rb-range","range","trend","breakout"]},"customStrategy":{"type":"boolean","enum":[false,true]},"instrument":{"type":"object","properties":{"product":{"type":"string"},"exchange":{"type":"string","enum":["SHF","DCE","CZC","CFE","INE","GFE"]},"tickSize":{"type":"number"}},"required":["product","exchange","tickSize"],"additionalProperties":true},"signalRules":{"type":"object","properties":{"kind":{"type":"string","enum":["trend","breakout"]},"lookbackBars":{"type":"number"},"tickSize":{"type":"number"},"roundTripCostTicks":{"type":"number"},"minRewardCostRatio":{"type":"number"},"stopLossTicks":{"type":"number"},"takeProfitTicks":{"type":"number"},"fastBars":{"type":"number"},"slowBars":{"type":"number"},"pullbackTicks":{"type":"number"},"reboundTicks":{"type":"number"},"bufferTicks":{"type":"number"},"maxChaseTicks":{"type":"number"}},"required":["kind","lookbackBars","tickSize","roundTripCostTicks","minRewardCostRatio","stopLossTicks","takeProfitTicks","fastBars","slowBars","pullbackTicks","reboundTicks","bufferTicks","maxChaseTicks"],"additionalProperties":true},"autoHistory":{"type":"object","properties":{"exchange":{"type":"string","enum":["SHF","DCE","CZC","CFE","INE","GFE"]},"barSeconds":{"type":"number","enum":[60,300]}},"required":["exchange","barSeconds"],"additionalProperties":true},"history":{"type":"object","properties":{"datasetId":{"type":"string"},"barSeconds":{"type":"number","enum":[60,300]},"timeMeaning":{"type":"string","enum":["open","close"]},"refresh":{"type":"boolean"},"columns":{"type":"object","properties":{"time":{"type":"string"},"symbol":{"type":"string"},"open":{"type":"string"},"high":{"type":"string"},"low":{"type":"string"},"close":{"type":"string"}},"required":["time","symbol","open","high","low","close"],"additionalProperties":true}},"required":["datasetId","barSeconds","timeMeaning","refresh","columns"],"additionalProperties":true},"rangeRules":{"type":"object","properties":{"lookbackBars":{"type":"number"},"tickSize":{"type":"number"},"minWidthTicks":{"type":"number"},"minTouches":{"type":"number"},"edgeFraction":{"type":"number"},"reboundTicks":{"type":"number"},"roundTripCostTicks":{"type":"number"},"minRewardCostRatio":{"type":"number"},"stopLossTicks":{"type":"number"},"takeProfitTicks":{"type":"number"}},"required":["lookbackBars","tickSize","minWidthTicks","minTouches","edgeFraction","reboundTicks","roundTripCostTicks","minRewardCostRatio","stopLossTicks","takeProfitTicks"],"additionalProperties":true}},"required":["symbol","volume","intervalSeconds","durationMinutes","minConfidence","maxEquityDrop","maxPlans","instructions"],"additionalProperties":true}},"required":["name","config"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1330,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1340,"column":3},
     },
     'quantSkillsSessions/create': {
       service: 'quantSkillsSessions',
@@ -5994,7 +5994,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the published session identity and durable binding.',
         jsonSchema: {"type":"object","properties":{"sessionId":{"type":"string"},"binding":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true},"agentPreset":{"type":"string"}},"required":["sessionId","binding"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1540,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1550,"column":9},
     },
     'quantSkillsSessions/deletionPreview': {
       service: 'quantSkillsSessions',
@@ -6025,7 +6025,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_deletionPreview_result$schema,
         jsonSchema: {"type":"object","properties":{"sessionId":{"type":"string"},"token":{"type":"string"},"files":{"type":"array","items":{"type":"object","properties":{"path":{"type":"string"},"bytes":{"type":"number"}},"required":["path","bytes"],"additionalProperties":true}},"retained":{"type":"array","items":{"type":"object","properties":{"path":{"type":"string"},"reason":{"type":"string"}},"required":["path","reason"],"additionalProperties":true}}},"required":["sessionId","token","files","retained"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1642,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1652,"column":9},
     },
     'quantSkillsSessions/factorCheckUpdate': {
       service: 'quantSkillsSessions',
@@ -6038,7 +6038,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorCheckUpdate_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"inspection":{"type":"object","properties":{"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"fetchedAt":{"type":"number"},"balance":{"type":"number"},"registration":{},"pool":{}},"required":["identity","fetchedAt","balance","registration","pool"],"additionalProperties":true},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"action":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"create-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style","cycle"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"update-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"add-factor"},"workflowId":{"type":"string"}},"required":["kind","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"replace-factor"},"factorId":{"type":"string"},"workflowId":{"type":"string"}},"required":["kind","factorId","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"remove-factor"},"factorId":{"type":"string"}},"required":["kind","factorId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"submit-pool"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"budget"},"batch":{"type":"object","properties":{"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"required":["kind","batch"],"additionalProperties":true}]},"summary":{"type":"string"},"snapshot":{},"snapshotHash":{"type":"string"},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired"]},"result":{}},"required":["id","sessionId","identity","action","summary","snapshot","snapshotHash","createdAt","expiresAt","status"],"additionalProperties":true}},"budgets":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"runsUsed":{"type":"number"},"creditsUsed":{"type":"number"},"baseline":{"type":"number"},"status":{"type":"string","enum":["unknown","active","stopped","exhausted"]},"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["id","sessionId","identity","runsUsed","creditsUsed","baseline","status","hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"runs":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"budgetId":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"candidate":{"type":"object","properties":{"requestId":{"type":"string"},"name":{"type":"string"},"formula":{"type":"string"},"code":{"type":"string"},"direction":{"type":"number","enum":[0,1]}},"required":["requestId","name","direction"],"additionalProperties":true},"workflowId":{"type":"string"},"runId":{"type":"string"},"createdAt":{"type":"number"},"status":{"type":"string","enum":["failed","completed","unknown","creating","running"]},"result":{}},"required":["id","budgetId","sessionId","identity","candidate","createdAt","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans","budgets","runs"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1232,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1242,"column":3},
     },
     'quantSkillsSessions/factorConfirm': {
       service: 'quantSkillsSessions',
@@ -6067,7 +6067,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConfirm_result$schema,
         jsonSchema: {"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"action":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"create-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style","cycle"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"update-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"add-factor"},"workflowId":{"type":"string"}},"required":["kind","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"replace-factor"},"factorId":{"type":"string"},"workflowId":{"type":"string"}},"required":["kind","factorId","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"remove-factor"},"factorId":{"type":"string"}},"required":["kind","factorId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"submit-pool"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"budget"},"batch":{"type":"object","properties":{"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"required":["kind","batch"],"additionalProperties":true}]},"summary":{"type":"string"},"snapshot":{},"snapshotHash":{"type":"string"},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired"]},"result":{}},"required":["id","sessionId","identity","action","summary","snapshot","snapshotHash","createdAt","expiresAt","status"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1260,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1270,"column":3},
     },
     'quantSkillsSessions/factorConnect': {
       service: 'quantSkillsSessions',
@@ -6096,7 +6096,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorConnect_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"inspection":{"type":"object","properties":{"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"fetchedAt":{"type":"number"},"balance":{"type":"number"},"registration":{},"pool":{}},"required":["identity","fetchedAt","balance","registration","pool"],"additionalProperties":true},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"action":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"create-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style","cycle"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"update-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"add-factor"},"workflowId":{"type":"string"}},"required":["kind","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"replace-factor"},"factorId":{"type":"string"},"workflowId":{"type":"string"}},"required":["kind","factorId","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"remove-factor"},"factorId":{"type":"string"}},"required":["kind","factorId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"submit-pool"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"budget"},"batch":{"type":"object","properties":{"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"required":["kind","batch"],"additionalProperties":true}]},"summary":{"type":"string"},"snapshot":{},"snapshotHash":{"type":"string"},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired"]},"result":{}},"required":["id","sessionId","identity","action","summary","snapshot","snapshotHash","createdAt","expiresAt","status"],"additionalProperties":true}},"budgets":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"runsUsed":{"type":"number"},"creditsUsed":{"type":"number"},"baseline":{"type":"number"},"status":{"type":"string","enum":["unknown","active","stopped","exhausted"]},"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["id","sessionId","identity","runsUsed","creditsUsed","baseline","status","hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"runs":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"budgetId":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"candidate":{"type":"object","properties":{"requestId":{"type":"string"},"name":{"type":"string"},"formula":{"type":"string"},"code":{"type":"string"},"direction":{"type":"number","enum":[0,1]}},"required":["requestId","name","direction"],"additionalProperties":true},"workflowId":{"type":"string"},"runId":{"type":"string"},"createdAt":{"type":"number"},"status":{"type":"string","enum":["failed","completed","unknown","creating","running"]},"result":{}},"required":["id","budgetId","sessionId","identity","candidate","createdAt","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans","budgets","runs"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1226,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1236,"column":3},
     },
     'quantSkillsSessions/factorDisconnect': {
       service: 'quantSkillsSessions',
@@ -6109,7 +6109,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDisconnect_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"inspection":{"type":"object","properties":{"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"fetchedAt":{"type":"number"},"balance":{"type":"number"},"registration":{},"pool":{}},"required":["identity","fetchedAt","balance","registration","pool"],"additionalProperties":true},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"action":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"create-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style","cycle"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"update-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"add-factor"},"workflowId":{"type":"string"}},"required":["kind","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"replace-factor"},"factorId":{"type":"string"},"workflowId":{"type":"string"}},"required":["kind","factorId","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"remove-factor"},"factorId":{"type":"string"}},"required":["kind","factorId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"submit-pool"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"budget"},"batch":{"type":"object","properties":{"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"required":["kind","batch"],"additionalProperties":true}]},"summary":{"type":"string"},"snapshot":{},"snapshotHash":{"type":"string"},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired"]},"result":{}},"required":["id","sessionId","identity","action","summary","snapshot","snapshotHash","createdAt","expiresAt","status"],"additionalProperties":true}},"budgets":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"runsUsed":{"type":"number"},"creditsUsed":{"type":"number"},"baseline":{"type":"number"},"status":{"type":"string","enum":["unknown","active","stopped","exhausted"]},"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["id","sessionId","identity","runsUsed","creditsUsed","baseline","status","hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"runs":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"budgetId":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"candidate":{"type":"object","properties":{"requestId":{"type":"string"},"name":{"type":"string"},"formula":{"type":"string"},"code":{"type":"string"},"direction":{"type":"number","enum":[0,1]}},"required":["requestId","name","direction"],"additionalProperties":true},"workflowId":{"type":"string"},"runId":{"type":"string"},"createdAt":{"type":"number"},"status":{"type":"string","enum":["failed","completed","unknown","creating","running"]},"result":{}},"required":["id","budgetId","sessionId","identity","candidate","createdAt","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans","budgets","runs"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1229,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1239,"column":3},
     },
     'quantSkillsSessions/factorDismiss': {
       service: 'quantSkillsSessions',
@@ -6138,7 +6138,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorDismiss_result$schema,
         jsonSchemaError: 'typert tool schema: unsupported void value',
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1263,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1273,"column":3},
     },
     'quantSkillsSessions/factorInspect': {
       service: 'quantSkillsSessions',
@@ -6168,7 +6168,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorInspect_result$schema,
         jsonSchema: {"type":"object","properties":{"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"fetchedAt":{"type":"number"},"balance":{"type":"number"},"registration":{},"pool":{}},"required":["identity","fetchedAt","balance","registration","pool"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1238,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1248,"column":9},
     },
     'quantSkillsSessions/factorMode': {
       service: 'quantSkillsSessions',
@@ -6197,7 +6197,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorMode_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"inspection":{"type":"object","properties":{"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"fetchedAt":{"type":"number"},"balance":{"type":"number"},"registration":{},"pool":{}},"required":["identity","fetchedAt","balance","registration","pool"],"additionalProperties":true},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"action":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"create-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style","cycle"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"update-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"add-factor"},"workflowId":{"type":"string"}},"required":["kind","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"replace-factor"},"factorId":{"type":"string"},"workflowId":{"type":"string"}},"required":["kind","factorId","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"remove-factor"},"factorId":{"type":"string"}},"required":["kind","factorId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"submit-pool"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"budget"},"batch":{"type":"object","properties":{"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"required":["kind","batch"],"additionalProperties":true}]},"summary":{"type":"string"},"snapshot":{},"snapshotHash":{"type":"string"},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired"]},"result":{}},"required":["id","sessionId","identity","action","summary","snapshot","snapshotHash","createdAt","expiresAt","status"],"additionalProperties":true}},"budgets":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"runsUsed":{"type":"number"},"creditsUsed":{"type":"number"},"baseline":{"type":"number"},"status":{"type":"string","enum":["unknown","active","stopped","exhausted"]},"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["id","sessionId","identity","runsUsed","creditsUsed","baseline","status","hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"runs":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"budgetId":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"candidate":{"type":"object","properties":{"requestId":{"type":"string"},"name":{"type":"string"},"formula":{"type":"string"},"code":{"type":"string"},"direction":{"type":"number","enum":[0,1]}},"required":["requestId","name","direction"],"additionalProperties":true},"workflowId":{"type":"string"},"runId":{"type":"string"},"createdAt":{"type":"number"},"status":{"type":"string","enum":["failed","completed","unknown","creating","running"]},"result":{}},"required":["id","budgetId","sessionId","identity","candidate","createdAt","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans","budgets","runs"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1223,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1233,"column":3},
     },
     'quantSkillsSessions/factorPrepare': {
       service: 'quantSkillsSessions',
@@ -6226,7 +6226,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorPrepare_result$schema,
         jsonSchema: {"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"action":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"create-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style","cycle"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"update-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"add-factor"},"workflowId":{"type":"string"}},"required":["kind","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"replace-factor"},"factorId":{"type":"string"},"workflowId":{"type":"string"}},"required":["kind","factorId","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"remove-factor"},"factorId":{"type":"string"}},"required":["kind","factorId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"submit-pool"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"budget"},"batch":{"type":"object","properties":{"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"required":["kind","batch"],"additionalProperties":true}]},"summary":{"type":"string"},"snapshot":{},"snapshotHash":{"type":"string"},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired"]},"result":{}},"required":["id","sessionId","identity","action","summary","snapshot","snapshotHash","createdAt","expiresAt","status"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1254,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1264,"column":9},
     },
     'quantSkillsSessions/factorQuery': {
       service: 'quantSkillsSessions',
@@ -6256,7 +6256,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorQuery_result$schema,
         jsonSchema: {},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1251,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1261,"column":9},
     },
     'quantSkillsSessions/factorReconcilePlan': {
       service: 'quantSkillsSessions',
@@ -6285,7 +6285,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcilePlan_result$schema,
         jsonSchema: {"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"action":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"create-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style","cycle"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"update-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"add-factor"},"workflowId":{"type":"string"}},"required":["kind","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"replace-factor"},"factorId":{"type":"string"},"workflowId":{"type":"string"}},"required":["kind","factorId","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"remove-factor"},"factorId":{"type":"string"}},"required":["kind","factorId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"submit-pool"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"budget"},"batch":{"type":"object","properties":{"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"required":["kind","batch"],"additionalProperties":true}]},"summary":{"type":"string"},"snapshot":{},"snapshotHash":{"type":"string"},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired"]},"result":{}},"required":["id","sessionId","identity","action","summary","snapshot","snapshotHash","createdAt","expiresAt","status"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1272,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1282,"column":3},
     },
     'quantSkillsSessions/factorReconcileRun': {
       service: 'quantSkillsSessions',
@@ -6314,7 +6314,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorReconcileRun_result$schema,
         jsonSchema: {"type":"object","properties":{"id":{"type":"string"},"budgetId":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"candidate":{"type":"object","properties":{"requestId":{"type":"string"},"name":{"type":"string"},"formula":{"type":"string"},"code":{"type":"string"},"direction":{"type":"number","enum":[0,1]}},"required":["requestId","name","direction"],"additionalProperties":true},"workflowId":{"type":"string"},"runId":{"type":"string"},"createdAt":{"type":"number"},"status":{"type":"string","enum":["failed","completed","unknown","creating","running"]},"result":{}},"required":["id","budgetId","sessionId","identity","candidate","createdAt","status"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1269,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1279,"column":3},
     },
     'quantSkillsSessions/factorSessionOpen': {
       service: 'quantSkillsSessions',
@@ -6344,7 +6344,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorSessionOpen_result$schema,
         jsonSchema: {"type":"object","properties":{"sessionId":{"type":"string"},"binding":{"type":"object","properties":{"purpose":{"type":"string","enum":["ordinary","role-helper","contest","factor-contest"]},"contest":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"factorContest":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"contestConversation":{"type":"string","enum":["main","topic"]}},"required":["purpose"],"additionalProperties":true},"created":{"type":"boolean"}},"required":["sessionId","binding","created"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1275,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1285,"column":3},
     },
     'quantSkillsSessions/factorStatus': {
       service: 'quantSkillsSessions',
@@ -6374,7 +6374,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStatus_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"inspection":{"type":"object","properties":{"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"fetchedAt":{"type":"number"},"balance":{"type":"number"},"registration":{},"pool":{}},"required":["identity","fetchedAt","balance","registration","pool"],"additionalProperties":true},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"action":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"create-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style","cycle"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"update-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"add-factor"},"workflowId":{"type":"string"}},"required":["kind","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"replace-factor"},"factorId":{"type":"string"},"workflowId":{"type":"string"}},"required":["kind","factorId","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"remove-factor"},"factorId":{"type":"string"}},"required":["kind","factorId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"submit-pool"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"budget"},"batch":{"type":"object","properties":{"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"required":["kind","batch"],"additionalProperties":true}]},"summary":{"type":"string"},"snapshot":{},"snapshotHash":{"type":"string"},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired"]},"result":{}},"required":["id","sessionId","identity","action","summary","snapshot","snapshotHash","createdAt","expiresAt","status"],"additionalProperties":true}},"budgets":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"runsUsed":{"type":"number"},"creditsUsed":{"type":"number"},"baseline":{"type":"number"},"status":{"type":"string","enum":["unknown","active","stopped","exhausted"]},"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["id","sessionId","identity","runsUsed","creditsUsed","baseline","status","hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"runs":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"budgetId":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"candidate":{"type":"object","properties":{"requestId":{"type":"string"},"name":{"type":"string"},"formula":{"type":"string"},"code":{"type":"string"},"direction":{"type":"number","enum":[0,1]}},"required":["requestId","name","direction"],"additionalProperties":true},"workflowId":{"type":"string"},"runId":{"type":"string"},"createdAt":{"type":"number"},"status":{"type":"string","enum":["failed","completed","unknown","creating","running"]},"result":{}},"required":["id","budgetId","sessionId","identity","candidate","createdAt","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans","budgets","runs"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1220,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1230,"column":3},
     },
     'quantSkillsSessions/factorStopBudget': {
       service: 'quantSkillsSessions',
@@ -6403,7 +6403,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorStopBudget_result$schema,
         jsonSchemaError: 'typert tool schema: unsupported void value',
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1266,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1276,"column":3},
     },
     'quantSkillsSessions/factorUpdate': {
       service: 'quantSkillsSessions',
@@ -6416,7 +6416,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_factorUpdate_result$schema,
         jsonSchema: {"type":"object","properties":{"enabled":{"type":"boolean"},"phase":{"type":"string","enum":["disconnected","connected","error","installing","off"]},"cliVersion":{"type":"string"},"latestVersion":{"type":"string"},"updateAvailable":{"type":"boolean"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"message":{"type":"string"},"inspection":{"type":"object","properties":{"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"fetchedAt":{"type":"number"},"balance":{"type":"number"},"registration":{},"pool":{}},"required":["identity","fetchedAt","balance","registration","pool"],"additionalProperties":true},"plans":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"action":{"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"create-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style","cycle"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"update-pool"},"name":{"type":"string"},"style":{"type":"string"},"cycle":{"type":"number"}},"required":["kind","name","style"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"add-factor"},"workflowId":{"type":"string"}},"required":["kind","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"replace-factor"},"factorId":{"type":"string"},"workflowId":{"type":"string"}},"required":["kind","factorId","workflowId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"remove-factor"},"factorId":{"type":"string"}},"required":["kind","factorId"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"submit-pool"}},"required":["kind"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"budget"},"batch":{"type":"object","properties":{"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"required":["kind","batch"],"additionalProperties":true}]},"summary":{"type":"string"},"snapshot":{},"snapshotHash":{"type":"string"},"createdAt":{"type":"number"},"expiresAt":{"type":"number"},"status":{"type":"string","enum":["failed","prepared","executing","completed","unknown","cancelled","expired"]},"result":{}},"required":["id","sessionId","identity","action","summary","snapshot","snapshotHash","createdAt","expiresAt","status"],"additionalProperties":true}},"budgets":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"runsUsed":{"type":"number"},"creditsUsed":{"type":"number"},"baseline":{"type":"number"},"status":{"type":"string","enum":["unknown","active","stopped","exhausted"]},"hypothesis":{"type":"string"},"maxRuns":{"type":"number"},"creditThreshold":{"type":"number"},"startDate":{"type":"string"},"endDate":{"type":"string"},"cycle":{"type":"number"}},"required":["id","sessionId","identity","runsUsed","creditsUsed","baseline","status","hypothesis","maxRuns","creditThreshold","startDate","endDate","cycle"],"additionalProperties":true}},"runs":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"budgetId":{"type":"string"},"sessionId":{"type":"string"},"identity":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"candidate":{"type":"object","properties":{"requestId":{"type":"string"},"name":{"type":"string"},"formula":{"type":"string"},"code":{"type":"string"},"direction":{"type":"number","enum":[0,1]}},"required":["requestId","name","direction"],"additionalProperties":true},"workflowId":{"type":"string"},"runId":{"type":"string"},"createdAt":{"type":"number"},"status":{"type":"string","enum":["failed","completed","unknown","creating","running"]},"result":{}},"required":["id","budgetId","sessionId","identity","candidate","createdAt","status"],"additionalProperties":true}}},"required":["enabled","phase","updateAvailable","message","plans","budgets","runs"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1235,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1245,"column":3},
     },
     'quantSkillsSessions/fileAttach': {
       service: 'quantSkillsSessions',
@@ -6449,7 +6449,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the durable ownership record appended to the Session log.',
         jsonSchema: {"type":"object","properties":{"file":{"type":"object","properties":{"attachmentId":{"type":"string"},"mediaType":{"type":"string"},"bytes":{"type":"number"},"name":{"type":"string"}},"required":["attachmentId","mediaType","bytes","name"],"additionalProperties":true},"parsing":{"oneOf":[{"type":"object","properties":{"status":{"type":"string","const":"ready"},"kind":{"type":"string","const":"utf8-text"}},"required":["status","kind"],"additionalProperties":true},{"type":"object","properties":{"status":{"type":"string","const":"ready"},"kind":{"type":"string","enum":["pdf","office-document","spreadsheet"]}},"required":["status","kind"],"additionalProperties":true},{"type":"object","properties":{"status":{"type":"string","const":"unsupported"},"reason":{"type":"string"}},"required":["status","reason"],"additionalProperties":true},{"type":"object","properties":{"status":{"type":"string","const":"failed"},"reason":{"type":"string"}},"required":["status","reason"],"additionalProperties":true}]},"attachedAt":{"type":"number"}},"required":["file","parsing","attachedAt"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2446,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2459,"column":9},
     },
     'quantSkillsSessions/fileList': {
       service: 'quantSkillsSessions',
@@ -6482,7 +6482,7 @@ const $remote = createTypertRemoteInfo({
         description: 'durable file records plus Host-enforced limits.',
         jsonSchema: {"type":"object","properties":{"files":{"type":"array","items":{"type":"object","properties":{"file":{"type":"object","properties":{"attachmentId":{"type":"string"},"mediaType":{"type":"string"},"bytes":{"type":"number"},"name":{"type":"string"}},"required":["attachmentId","mediaType","bytes","name"],"additionalProperties":true},"parsing":{"oneOf":[{"type":"object","properties":{"status":{"type":"string","const":"ready"},"kind":{"type":"string","const":"utf8-text"}},"required":["status","kind"],"additionalProperties":true},{"type":"object","properties":{"status":{"type":"string","const":"ready"},"kind":{"type":"string","enum":["pdf","office-document","spreadsheet"]}},"required":["status","kind"],"additionalProperties":true},{"type":"object","properties":{"status":{"type":"string","const":"unsupported"},"reason":{"type":"string"}},"required":["status","reason"],"additionalProperties":true},{"type":"object","properties":{"status":{"type":"string","const":"failed"},"reason":{"type":"string"}},"required":["status","reason"],"additionalProperties":true}]},"attachedAt":{"type":"number"}},"required":["file","parsing","attachedAt"],"additionalProperties":true}},"limits":{"type":"object","properties":{"maxFileBytes":{"type":"number"},"maxSessionFileBytes":{"type":"number"}},"required":["maxFileBytes","maxSessionFileBytes"],"additionalProperties":true}},"required":["files","limits"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2480,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2493,"column":9},
     },
     'quantSkillsSessions/fileRead': {
       service: 'quantSkillsSessions',
@@ -6515,7 +6515,7 @@ const $remote = createTypertRemoteInfo({
         description: 'verified metadata and decoded text.',
         jsonSchema: {"type":"object","properties":{"file":{"type":"object","properties":{"attachmentId":{"type":"string"},"mediaType":{"type":"string"},"bytes":{"type":"number"},"name":{"type":"string"}},"required":["attachmentId","mediaType","bytes","name"],"additionalProperties":true},"text":{"type":"string"},"truncated":{"type":"boolean"}},"required":["file","text","truncated"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2498,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2511,"column":9},
     },
     'quantSkillsSessions/flyInstall': {
       service: 'quantSkillsSessions',
@@ -6545,7 +6545,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyInstall_result$schema,
         jsonSchema: {"type":"object","properties":{"supported":{"type":"boolean"},"installed":{"type":"boolean"},"running":{"type":"boolean"},"installing":{"type":"boolean"},"message":{"type":"string"}},"required":["supported","installed","running","installing","message"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1212,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1222,"column":3},
     },
     'quantSkillsSessions/flyRequest': {
       service: 'quantSkillsSessions',
@@ -6575,7 +6575,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyRequest_result$schema,
         jsonSchema: {},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1216,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1226,"column":3},
     },
     'quantSkillsSessions/flyStatus': {
       service: 'quantSkillsSessions',
@@ -6589,7 +6589,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_flyStatus_result$schema,
         jsonSchema: {"type":"object","properties":{"supported":{"type":"boolean"},"installed":{"type":"boolean"},"running":{"type":"boolean"},"installing":{"type":"boolean"},"message":{"type":"string"}},"required":["supported","installed","running","installing","message"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1209,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1219,"column":3},
     },
     'quantSkillsSessions/frequent': {
       service: 'quantSkillsSessions',
@@ -6622,7 +6622,7 @@ const $remote = createTypertRemoteInfo({
         description: 'usage rows ordered by session count and recency.',
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"sessionCount":{"type":"number"},"lastUsedAt":{"type":"number"},"recentSessionId":{"type":"string"}},"required":["assetId","sessionCount","lastUsedAt","recentSessionId"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1695,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1705,"column":9},
     },
     'quantSkillsSessions/legacyTeamRecovery': {
       service: 'quantSkillsSessions',
@@ -6653,7 +6653,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_legacyTeamRecovery_result$schema,
         jsonSchema: {"type":"object","properties":{"delivered":{"type":"number"},"pending":{"type":"number"},"uncertain":{"type":"number"},"unknownEvents":{"type":"number"}},"required":["delivered","pending","uncertain","unknownEvents"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1190,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1200,"column":9},
     },
     'quantSkillsSessions/list': {
       service: 'quantSkillsSessions',
@@ -6686,7 +6686,7 @@ const $remote = createTypertRemoteInfo({
         description: 'Skill-bound ordinary sessions ordered by most recent activity.',
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"sessionId":{"type":"string"},"binding":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true},"createdAt":{"type":"number"},"updatedAt":{"type":"number"},"title":{"type":"string"},"cwd":{"type":"string"},"parentSessionId":{"type":"string"},"archived":{"type":"boolean"},"running":{"type":"boolean"},"runState":{"type":"string","enum":["idle","failed","completed","cancelled","running"]}},"required":["sessionId","binding","createdAt","updatedAt","archived","running","runState"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1618,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1628,"column":9},
     },
     'quantSkillsSessions/modelsAccess': {
       service: 'quantSkillsSessions',
@@ -6716,7 +6716,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_modelsAccess_result$schema,
         jsonSchema: {"type":"object","properties":{"catalog":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"api":{"type":"string"},"variants":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"name":{"type":"string"},"baseURL":{"type":"string"},"catalogProvider":{"type":"string"}},"required":["id","name","baseURL"],"additionalProperties":true}},"docs":{"type":"string"},"discovery":{"type":"boolean"},"recommendations":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"exactId":{"type":"boolean","description":"True only when `name` is an API-callable model id, rather than a vendor family name."},"roles":{"type":"array","items":{"type":"string","enum":["economy","balanced","frontier","coding","vision","long-context","low-latency"]}},"summary":{"type":"string"},"lifecycle":{"type":"string","enum":["stable","preview","experimental"]},"source":{"type":"string"},"checkedAt":{"type":"string"}},"required":["name","exactId","roles","summary","source","checkedAt"],"additionalProperties":true},"description":"Discoverable before connection, but never copied into a live route automatically."}},"required":["id","name","api","variants","docs","discovery"],"additionalProperties":true}},"connections":{"type":"array","items":{"type":"object","properties":{"route":{"type":"string"},"service":{"type":"string"},"name":{"type":"string"},"baseURL":{"type":"string"},"api":{"type":"string"},"configured":{"type":"boolean"},"auto":{"type":"boolean"},"modelIds":{"type":"array","items":{"type":"string"}},"modelsJson":{"type":"string"},"reasoning":{"type":"string"},"state":{"type":"string"},"message":{"type":"string"}},"required":["route","service","name","baseURL","api","configured","auto","modelIds","modelsJson","state","message"],"additionalProperties":true}},"verification":{"type":"object","properties":{"state":{"type":"string","enum":["failed","verified","discovery-unavailable"]},"code":{"type":"string"},"message":{"type":"string"},"modelIds":{"type":"array","items":{"type":"string"}},"modelProfiles":{"type":"array","items":{"type":"object","properties":{},"required":[],"additionalProperties":true},"description":"Host-suggested safe model declarations derived from a trusted service preset."}},"required":["state","code","message","modelIds"],"additionalProperties":true}},"required":["catalog","connections"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":929,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":937,"column":9},
     },
     'quantSkillsSessions/plainSessionCreate': {
       service: 'quantSkillsSessions',
@@ -6749,7 +6749,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the published Session identity and durable QuantSkills ownership marker.',
         jsonSchema: {"type":"object","properties":{"sessionId":{"type":"string"},"binding":{"type":"object","properties":{"purpose":{"type":"string","enum":["ordinary","role-helper","contest","factor-contest"]},"contest":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"factorContest":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"contestConversation":{"type":"string","enum":["main","topic"]}},"required":["purpose"],"additionalProperties":true},"agentPreset":{"type":"string"}},"required":["sessionId","binding"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1461,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1471,"column":9},
     },
     'quantSkillsSessions/plainSessionList': {
       service: 'quantSkillsSessions',
@@ -6782,7 +6782,7 @@ const $remote = createTypertRemoteInfo({
         description: 'ordinary product-owned Sessions ordered by most recent activity.',
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"sessionId":{"type":"string"},"binding":{"type":"object","properties":{"purpose":{"type":"string","enum":["ordinary","role-helper","contest","factor-contest"]},"contest":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"factorContest":{"type":"object","properties":{"accountId":{"type":"string"},"contestId":{"type":"string"}},"required":["accountId","contestId"],"additionalProperties":true},"contestConversation":{"type":"string","enum":["main","topic"]}},"required":["purpose"],"additionalProperties":true},"createdAt":{"type":"number"},"updatedAt":{"type":"number"},"title":{"type":"string"},"cwd":{"type":"string"},"parentSessionId":{"type":"string"},"archived":{"type":"boolean"},"running":{"type":"boolean"},"runState":{"type":"string","enum":["idle","failed","completed","cancelled","running"]}},"required":["sessionId","binding","createdAt","updatedAt","archived","running","runState"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1633,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1643,"column":9},
     },
     'quantSkillsSessions/promptFormList': {
       service: 'quantSkillsSessions',
@@ -6815,7 +6815,7 @@ const $remote = createTypertRemoteInfo({
         description: 'exact-version forms for resident Skills and declared Agent sources.',
         jsonSchema: {"type":"object","properties":{"forms":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"source":{"type":"string","enum":["skill","agent"]},"promptForm":{"oneOf":[{"type":"object","properties":{"status":{"type":"string","const":"ready"},"form":{"type":"object","properties":{"version":{"type":"number","const":1},"task":{"type":"object","properties":{"placeholder":{"type":"string"},"required":{"type":"boolean"}},"required":[],"additionalProperties":true},"fields":{"type":"array","items":{"type":"object","properties":{"key":{"type":"string"},"label":{"type":"string"},"type":{"type":"string","enum":["number","text","textarea","select","date"]},"required":{"type":"boolean"},"placeholder":{"type":"string"},"help":{"type":"string"},"default":{"oneOf":[{"type":"string"},{"type":"number"}]},"options":{"type":"array","items":{"type":"object","properties":{"label":{"type":"string"},"value":{"type":"string"}},"required":["label","value"],"additionalProperties":true}}},"required":["key","label","type"],"additionalProperties":true}},"promptTemplate":{"type":"string"}},"required":["version","fields","promptTemplate"],"additionalProperties":true},"adaptations":{"type":"array","items":{"type":"object","properties":{"code":{"type":"string","const":"number-default-string"},"fieldKey":{"type":"string"}},"required":["code","fieldKey"],"additionalProperties":true}}},"required":["status","form"],"additionalProperties":true},{"type":"object","properties":{"status":{"type":"string","const":"invalid"},"reason":{"type":"string"}},"required":["status","reason"],"additionalProperties":true}]}},"required":["assetId","versionId","source","promptForm"],"additionalProperties":true}}},"required":["forms"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1802,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1815,"column":9},
     },
     'quantSkillsSessions/promptFormRender': {
       service: 'quantSkillsSessions',
@@ -6848,7 +6848,7 @@ const $remote = createTypertRemoteInfo({
         description: 'plain text suitable for an ordinary logged user message.',
         jsonSchema: {"type":"object","properties":{"text":{"type":"string"}},"required":["text"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1821,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1834,"column":9},
     },
     'quantSkillsSessions/residentSkillAttach': {
       service: 'quantSkillsSessions',
@@ -6881,7 +6881,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the authoritative resident Skill set after the append.',
         jsonSchema: {"type":"object","properties":{"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}}},"required":["skills"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1730,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1740,"column":9},
     },
     'quantSkillsSessions/residentSkillDetach': {
       service: 'quantSkillsSessions',
@@ -6913,7 +6913,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the authoritative resident Skill set after the append.',
         jsonSchema: {"type":"object","properties":{"skills":{"type":"array","items":{"type":"object","properties":{"assetId":{"type":"string"},"versionId":{"type":"string"},"commit":{"type":"string"},"treeDigest":{"type":"string"}},"required":["assetId","versionId","commit","treeDigest"],"additionalProperties":true}}},"required":["skills"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1775,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1787,"column":3},
     },
     'quantSkillsSessions/resultList': {
       service: 'quantSkillsSessions',
@@ -6946,7 +6946,7 @@ const $remote = createTypertRemoteInfo({
         description: 'newest-reference-first verified results from the full Session history.',
         jsonSchema: {"type":"object","properties":{"results":{"type":"array","items":{"oneOf":[{"type":"object","properties":{"status":{"type":"string","const":"ready"},"inputPath":{"type":"string"},"path":{"type":"string","description":"Canonical path relative to the addressed Session workspace."},"archived":{"type":"boolean","description":"Whether the Host copied an authorized external result into the Session workspace."}},"required":["status","inputPath","path","archived"],"additionalProperties":true},{"type":"object","properties":{"status":{"type":"string","const":"unavailable"},"inputPath":{"type":"string"},"reason":{"type":"string"}},"required":["status","inputPath","reason"],"additionalProperties":true}]}}},"required":["results"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2534,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2547,"column":9},
     },
     'quantSkillsSessions/resultPrepare': {
       service: 'quantSkillsSessions',
@@ -6979,7 +6979,7 @@ const $remote = createTypertRemoteInfo({
         description: 'one ordered readiness or diagnostic result per candidate.',
         jsonSchema: {"type":"object","properties":{"results":{"type":"array","items":{"oneOf":[{"type":"object","properties":{"status":{"type":"string","const":"ready"},"inputPath":{"type":"string"},"path":{"type":"string","description":"Canonical path relative to the addressed Session workspace."},"archived":{"type":"boolean","description":"Whether the Host copied an authorized external result into the Session workspace."}},"required":["status","inputPath","path","archived"],"additionalProperties":true},{"type":"object","properties":{"status":{"type":"string","const":"unavailable"},"inputPath":{"type":"string"},"reason":{"type":"string"}},"required":["status","inputPath","reason"],"additionalProperties":true}]}}},"required":["results"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2515,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2528,"column":3},
     },
     'quantSkillsSessions/resultPreview': {
       service: 'quantSkillsSessions',
@@ -7012,7 +7012,7 @@ const $remote = createTypertRemoteInfo({
         description: 'evidence-backed preview or an explicit unsupported result.',
         jsonSchema: {"oneOf":[{"type":"object","properties":{"kind":{"type":"string","const":"directory"},"path":{"type":"string"},"bytes":{"type":"number","const":0},"entries":{"type":"array","items":{"type":"object","properties":{"name":{"type":"string"},"path":{"type":"string"},"type":{"type":"string","enum":["file","directory"]},"bytes":{"type":"number"}},"required":["name","path","type"],"additionalProperties":true}}},"required":["kind","path","bytes","entries"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"text"},"path":{"type":"string"},"mediaType":{"type":"string"},"bytes":{"type":"number"},"text":{"type":"string"}},"required":["kind","path","mediaType","bytes","text"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"document"},"path":{"type":"string"},"mediaType":{"type":"string"},"bytes":{"type":"number"},"text":{"type":"string"},"truncated":{"type":"boolean"}},"required":["kind","path","mediaType","bytes","text","truncated"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"binary"},"path":{"type":"string"},"mediaType":{"type":"string","enum":["application/pdf","image/png","image/jpeg","image/gif","image/webp"]},"bytes":{"type":"number"},"data":{"type":"string"},"url":{"type":"string","description":"Authenticated same-Host stream used for PDFs that must not be buffered into RPC."}},"required":["kind","path","mediaType","bytes","data"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"resource"},"path":{"type":"string"},"mediaType":{"type":"string"},"bytes":{"type":"number"},"url":{"type":"string","description":"Authenticated, workspace-contained URL that streams the complete local file."},"presentation":{"type":"string","enum":["text","pdf","image","audio","video","external"]}},"required":["kind","path","mediaType","bytes","url","presentation"],"additionalProperties":true},{"type":"object","properties":{"kind":{"type":"string","const":"unsupported"},"path":{"type":"string"},"bytes":{"type":"number"},"reason":{"type":"string"}},"required":["kind","path","bytes","reason"],"additionalProperties":true}]},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2581,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":2594,"column":9},
     },
     'quantSkillsSessions/sessionEnsure': {
       service: 'quantSkillsSessions',
@@ -7045,7 +7045,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the live Session identity after setup completes.',
         jsonSchema: {"type":"object","properties":{"sessionId":{"type":"string"}},"required":["sessionId"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1419,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1429,"column":9},
     },
     'quantSkillsSessions/sessionLifecycle': {
       service: 'quantSkillsSessions',
@@ -7075,7 +7075,7 @@ const $remote = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_quantskills_session_quantSkillsSessions_sessionLifecycle_result$schema,
         jsonSchemaError: 'typert tool schema: unsupported void value',
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1653,"column":9},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1663,"column":9},
     },
     'quantSkillsSessions/workspaceResolve': {
       service: 'quantSkillsSessions',
@@ -7107,7 +7107,7 @@ const $remote = createTypertRemoteInfo({
         description: 'the explicit Workspace target for a new Session.',
         jsonSchema: {"type":"object","properties":{"workspace":{"type":"object","properties":{"workspaceId":{"type":"string"},"path":{"type":"string"},"title":{"type":"string"}},"required":["workspaceId","path","title"],"additionalProperties":true},"source":{"type":"string","enum":["preferred","managed"]},"recoveredPreferredWorkspaceId":{"type":"string"}},"required":["workspace","source"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1203,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1213,"column":3},
     },
     'quantSkillsSessions/workspaceStatus': {
       service: 'quantSkillsSessions',
@@ -7139,7 +7139,7 @@ const $remote = createTypertRemoteInfo({
         description: 'current Workspace targets and preference health.',
         jsonSchema: {"type":"object","properties":{"managedPath":{"type":"string"},"managedWorkspace":{"type":"object","properties":{"workspaceId":{"type":"string"},"path":{"type":"string"},"title":{"type":"string"}},"required":["workspaceId","path","title"],"additionalProperties":true},"preferredWorkspace":{"type":"object","properties":{"workspaceId":{"type":"string"},"path":{"type":"string"},"title":{"type":"string"}},"required":["workspaceId","path","title"],"additionalProperties":true},"preferredMissing":{"type":"boolean"}},"required":["managedPath","preferredMissing"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1184,"column":3},
+      sourceLocation: {"file":"packages/quantskills-session/src/index.ts","line":1194,"column":3},
     },
   },
 }, z)
@@ -7179,7 +7179,7 @@ export const TYPERT = {
             "name": "workspaceStatus",
             "signature": "@Remote('workspaceStatus') workspaceStatus(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceStatusResult>",
             "summary": "Inspect the optional preferred and managed QuantSkills Workspace without creating it.",
-            "jsDoc": "/**\r\n * Inspect the optional preferred and managed QuantSkills Workspace without creating it.\r\n * @param request - optional user-selected Workspace.\r\n * @returns current Workspace targets and preference health.\r\n */"
+            "jsDoc": "/**\n * Inspect the optional preferred and managed QuantSkills Workspace without creating it.\n * @param request - optional user-selected Workspace.\n * @returns current Workspace targets and preference health.\n */"
           },
           {
             "kind": "method",
@@ -7193,7 +7193,7 @@ export const TYPERT = {
             "name": "workspaceResolve",
             "signature": "@Remote('workspaceResolve') workspaceResolve(request: QuantSkillsWorkspaceRequest): Promise<QuantSkillsWorkspaceResolveResult>",
             "summary": "Select the preferred Workspace or create and register the managed fallback.",
-            "jsDoc": "/**\r\n * Select the preferred Workspace or create and register the managed fallback.\r\n * @param request - optional user-selected Workspace.\r\n * @returns the explicit Workspace target for a new Session.\r\n */"
+            "jsDoc": "/**\n * Select the preferred Workspace or create and register the managed fallback.\n * @param request - optional user-selected Workspace.\n * @returns the explicit Workspace target for a new Session.\n */"
           },
           {
             "kind": "method",
@@ -7414,35 +7414,35 @@ export const TYPERT = {
             "name": "sessionEnsure",
             "signature": "@Remote('sessionEnsure') async sessionEnsure( request: QuantSkillsSessionEnsureRequest, signal?: AbortSignal, ): Promise<QuantSkillsSessionEnsureResult>",
             "summary": "Resume one persisted QuantSkills Session and restore its plugin-owned composition.",
-            "jsDoc": "/**\r\n * Resume one persisted QuantSkills Session and restore its plugin-owned composition.\r\n * @param request - existing QuantSkills Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns the live Session identity after setup completes.\r\n */"
+            "jsDoc": "/**\n * Resume one persisted QuantSkills Session and restore its plugin-owned composition.\n * @param request - existing QuantSkills Session identity.\n * @param signal - optional caller cancellation.\n * @returns the live Session identity after setup completes.\n */"
           },
           {
             "kind": "method",
             "name": "plainSessionCreate",
             "signature": "@Remote('plainSessionCreate') async plainSessionCreate( request: QuantSkillsPlainSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsPlainSessionCreateResult>",
             "summary": "Create or idempotently adopt one product-owned QuantSkills Session without an asset composition.",
-            "jsDoc": "/**\r\n * Create or idempotently adopt one product-owned QuantSkills Session without an asset composition.\r\n * @param request - preallocated SessionId, explicit purpose, and ordinary create options.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Session identity and durable QuantSkills ownership marker.\r\n */"
+            "jsDoc": "/**\n * Create or idempotently adopt one product-owned QuantSkills Session without an asset composition.\n * @param request - preallocated SessionId, explicit purpose, and ordinary create options.\n * @param signal - optional caller cancellation.\n * @returns the published Session identity and durable QuantSkills ownership marker.\n */"
           },
           {
             "kind": "method",
             "name": "create",
             "signature": "@Remote('create') async create( request: QuantSkillsSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsSessionCreateResult>",
             "summary": "Create or idempotently adopt one session under an exact installed Skill version.",
-            "jsDoc": "/**\r\n * Create or idempotently adopt one session under an exact installed Skill version.\r\n * @param request - preallocated SessionId, exact installed version, and ordinary create options.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published session identity and durable binding.\r\n */"
+            "jsDoc": "/**\n * Create or idempotently adopt one session under an exact installed Skill version.\n * @param request - preallocated SessionId, exact installed version, and ordinary create options.\n * @param signal - optional caller cancellation.\n * @returns the published session identity and durable binding.\n */"
           },
           {
             "kind": "method",
             "name": "list",
             "signature": "@Remote('list') async list( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsSessionArchiveItem[]>",
             "summary": "List real QuantSkills conversation archives from live and persisted session truth.",
-            "jsDoc": "/**\r\n * List real QuantSkills conversation archives from live and persisted session truth.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns Skill-bound ordinary sessions ordered by most recent activity.\r\n */"
+            "jsDoc": "/**\n * List real QuantSkills conversation archives from live and persisted session truth.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns Skill-bound ordinary sessions ordered by most recent activity.\n */"
           },
           {
             "kind": "method",
             "name": "plainSessionList",
             "signature": "@Remote('plainSessionList') async plainSessionList( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsPlainSessionArchiveItem[]>",
             "summary": "List ordinary QuantSkills conversations that do not yet load a Skill, Agent, or Team.",
-            "jsDoc": "/**\r\n * List ordinary QuantSkills conversations that do not yet load a Skill, Agent, or Team.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns ordinary product-owned Sessions ordered by most recent activity.\r\n */"
+            "jsDoc": "/**\n * List ordinary QuantSkills conversations that do not yet load a Skill, Agent, or Team.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns ordinary product-owned Sessions ordered by most recent activity.\n */"
           },
           {
             "kind": "method",
@@ -7468,42 +7468,42 @@ export const TYPERT = {
             "name": "frequent",
             "signature": "@Remote('frequent') async frequent( request: QuantSkillsFrequentRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsFrequentSkill[]>",
             "summary": "Aggregate frequently used Skills from real bound conversation archives.",
-            "jsDoc": "/**\r\n * Aggregate frequently used Skills from real bound conversation archives.\r\n * @param request - archive visibility and bounded result count.\r\n * @param signal - optional caller cancellation.\r\n * @returns usage rows ordered by session count and recency.\r\n */"
+            "jsDoc": "/**\n * Aggregate frequently used Skills from real bound conversation archives.\n * @param request - archive visibility and bounded result count.\n * @param signal - optional caller cancellation.\n * @returns usage rows ordered by session count and recency.\n */"
           },
           {
             "kind": "method",
             "name": "residentSkillAttach",
             "signature": "@Remote('residentSkillAttach') async residentSkillAttach( request: QuantSkillsResidentSkillAttachRequest, signal?: AbortSignal, ): Promise<QuantSkillsResidentSkillResult>",
             "summary": "Attach one exact installed Skill as resident Session context without creating a user message.",
-            "jsDoc": "/**\r\n * Attach one exact installed Skill as resident Session context without creating a user message.\r\n * @param request - live conversation and exact installed version; an ordinary workspace conversation is adopted on explicit attachment.\r\n * @param signal - optional caller cancellation.\r\n * @returns the authoritative resident Skill set after the append.\r\n */"
+            "jsDoc": "/**\n * Attach one exact installed Skill as resident Session context without creating a user message.\n * @param request - live conversation and exact installed version; an ordinary workspace conversation is adopted on explicit attachment.\n * @param signal - optional caller cancellation.\n * @returns the authoritative resident Skill set after the append.\n */"
           },
           {
             "kind": "method",
             "name": "residentSkillDetach",
             "signature": "@Remote('residentSkillDetach') residentSkillDetach(request: QuantSkillsResidentSkillDetachRequest): Promise<QuantSkillsResidentSkillResult>",
             "summary": "Detach one resident Skill by stable asset identity without rewriting conversation history.",
-            "jsDoc": "/**\r\n * Detach one resident Skill by stable asset identity without rewriting conversation history.\r\n * @param request - live QuantSkills Session and resident asset identity.\r\n * @returns the authoritative resident Skill set after the append.\r\n */"
+            "jsDoc": "/**\n * Detach one resident Skill by stable asset identity without rewriting conversation history.\n * @param request - live QuantSkills Session and resident asset identity.\n * @returns the authoritative resident Skill set after the append.\n */"
           },
           {
             "kind": "method",
             "name": "promptFormList",
             "signature": "@Remote('promptFormList') async promptFormList( request: QuantSkillsPromptFormListRequest, signal?: AbortSignal, ): Promise<QuantSkillsPromptFormListResult>",
             "summary": "List optional parameter forms reachable from the live Session composition.",
-            "jsDoc": "/**\r\n * List optional parameter forms reachable from the live Session composition.\r\n * @param request - live QuantSkills Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns exact-version forms for resident Skills and declared Agent sources.\r\n */"
+            "jsDoc": "/**\n * List optional parameter forms reachable from the live Session composition.\n * @param request - live QuantSkills Session identity.\n * @param signal - optional caller cancellation.\n * @returns exact-version forms for resident Skills and declared Agent sources.\n */"
           },
           {
             "kind": "method",
             "name": "promptFormRender",
             "signature": "@Remote('promptFormRender') async promptFormRender( request: QuantSkillsPromptFormRenderRequest, signal?: AbortSignal, ): Promise<QuantSkillsPromptFormRenderResult>",
             "summary": "Render a parameter form only when its exact version belongs to the live Session.",
-            "jsDoc": "/**\r\n * Render a parameter form only when its exact version belongs to the live Session.\r\n * @param request - Session, exact version, task, and declared field values.\r\n * @param signal - optional caller cancellation.\r\n * @returns plain text suitable for an ordinary logged user message.\r\n */"
+            "jsDoc": "/**\n * Render a parameter form only when its exact version belongs to the live Session.\n * @param request - Session, exact version, task, and declared field values.\n * @param signal - optional caller cancellation.\n * @returns plain text suitable for an ordinary logged user message.\n */"
           },
           {
             "kind": "method",
             "name": "agentList",
             "signature": "@Remote('agentList') agentList(): Promise<readonly QuantSkillsAgentDefinition[]>",
             "summary": "Read durable user Agent definitions ordered by most recent update.",
-            "jsDoc": "/**\r\n * Read durable user Agent definitions ordered by most recent update.\r\n * @returns immutable validated definitions.\r\n */"
+            "jsDoc": "/**\n * Read durable user Agent definitions ordered by most recent update.\n * @returns immutable validated definitions.\n */"
           },
           {
             "kind": "method",
@@ -7522,14 +7522,14 @@ export const TYPERT = {
             "name": "agentUpdate",
             "signature": "@Remote('agentUpdate') async agentUpdate( request: QuantSkillsAgentUpdateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentDefinition>",
             "summary": "Replace one durable user Agent through optimistic revision matching.",
-            "jsDoc": "/**\r\n * Replace one durable user Agent through optimistic revision matching.\r\n * @param request - identity, expected revision, and complete editable fields.\r\n * @param signal - optional caller cancellation.\r\n * @returns the committed next revision.\r\n */"
+            "jsDoc": "/**\n * Replace one durable user Agent through optimistic revision matching.\n * @param request - identity, expected revision, and complete editable fields.\n * @param signal - optional caller cancellation.\n * @returns the committed next revision.\n */"
           },
           {
             "kind": "method",
             "name": "agentDelete",
             "signature": "@Remote('agentDelete') async agentDelete(request: QuantSkillsAgentDeleteRequest): Promise<void>",
             "summary": "Delete one durable user Agent through optimistic revision matching.",
-            "jsDoc": "/**\r\n * Delete one durable user Agent through optimistic revision matching.\r\n * Existing Agent Sessions remain reconstructable from their logs.\r\n * @param request - identity and expected revision.\r\n */"
+            "jsDoc": "/**\n * Delete one durable user Agent through optimistic revision matching.\n * Existing Agent Sessions remain reconstructable from their logs.\n * @param request - identity and expected revision.\n */"
           },
           {
             "kind": "method",
@@ -7543,112 +7543,112 @@ export const TYPERT = {
             "name": "agentSessionCreate",
             "signature": "@Remote('agentSessionCreate') async agentSessionCreate( request: QuantSkillsAgentSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentSessionCreateResult>",
             "summary": "Atomically create or adopt one Session under an immutable user Agent composition.",
-            "jsDoc": "/**\r\n * Atomically create or adopt one Session under an immutable user Agent composition.\r\n * @param request - fresh Session id, exact Agent revision, and ordinary create options.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Session and logged Agent composition.\r\n */"
+            "jsDoc": "/**\n * Atomically create or adopt one Session under an immutable user Agent composition.\n * @param request - fresh Session id, exact Agent revision, and ordinary create options.\n * @param signal - optional caller cancellation.\n * @returns the published Session and logged Agent composition.\n */"
           },
           {
             "kind": "method",
             "name": "authoringSessionCreate",
             "signature": "@Remote('authoringSessionCreate') async authoringSessionCreate( request: QuantSkillsAuthoringSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentSessionCreateResult>",
             "summary": "Atomically create one Agent Session whose authoring purpose is durable before its tools are exposed.",
-            "jsDoc": "/**\r\n * Atomically create one Agent Session whose authoring purpose is durable before its tools are exposed.\r\n * @param request - fresh Session identity, exact Agent revision, Workspace, and authoring kind.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Agent Session and exact composition.\r\n */"
+            "jsDoc": "/**\n * Atomically create one Agent Session whose authoring purpose is durable before its tools are exposed.\n * @param request - fresh Session identity, exact Agent revision, Workspace, and authoring kind.\n * @param signal - optional caller cancellation.\n * @returns the published Agent Session and exact composition.\n */"
           },
           {
             "kind": "method",
             "name": "authoringCommit",
             "signature": "@Remote('authoringCommit') authoringCommit( request: QuantSkillsAuthoringCommitRequest, signal?: AbortSignal, ): Promise<QuantSkillsAuthoringCommitResult>",
             "summary": "Commit one successful logged draft after an explicit Client confirmation.",
-            "jsDoc": "/**\r\n * Commit one successful logged draft after an explicit Client confirmation.\r\n * @param request - Session-owned Tool call identity and observed content digest.\r\n * @param signal - optional caller cancellation.\r\n * @returns the immutable local asset, Agent, or Team publication.\r\n */"
+            "jsDoc": "/**\n * Commit one successful logged draft after an explicit Client confirmation.\n * @param request - Session-owned Tool call identity and observed content digest.\n * @param signal - optional caller cancellation.\n * @returns the immutable local asset, Agent, or Team publication.\n */"
           },
           {
             "kind": "method",
             "name": "agentSessionList",
             "signature": "@Remote('agentSessionList') async agentSessionList( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsAgentSessionArchiveItem[]>",
             "summary": "List real user Agent conversation archives from live and persisted Session truth.",
-            "jsDoc": "/**\r\n * List real user Agent conversation archives from live and persisted Session truth.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns Agent-bound Sessions ordered by most recent activity.\r\n */"
+            "jsDoc": "/**\n * List real user Agent conversation archives from live and persisted Session truth.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns Agent-bound Sessions ordered by most recent activity.\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamList",
             "signature": "@Remote('agentTeamList') agentTeamList(): Promise<readonly QuantSkillsAgentTeamDefinition[]>",
             "summary": "Read saved Agent Team definitions ordered by most recent update.",
-            "jsDoc": "/**\r\n * Read saved Agent Team definitions ordered by most recent update.\r\n * @returns immutable Agent Team definitions.\r\n */"
+            "jsDoc": "/**\n * Read saved Agent Team definitions ordered by most recent update.\n * @returns immutable Agent Team definitions.\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamCreate",
             "signature": "@Remote('agentTeamCreate') async agentTeamCreate(request: QuantSkillsAgentTeamCreateRequest): Promise<QuantSkillsAgentTeamDefinition>",
             "summary": "Resolve Agent references and create one immutable saved Agent Team.",
-            "jsDoc": "/**\r\n * Resolve Agent references and create one immutable saved Agent Team.\r\n * @param request - Team name, goal, Lead revision, and member revisions.\r\n * @returns the saved exact Team definition.\r\n */"
+            "jsDoc": "/**\n * Resolve Agent references and create one immutable saved Agent Team.\n * @param request - Team name, goal, Lead revision, and member revisions.\n * @returns the saved exact Team definition.\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamUpdate",
             "signature": "@Remote('agentTeamUpdate') async agentTeamUpdate(request: QuantSkillsAgentTeamUpdateRequest): Promise<QuantSkillsAgentTeamDefinition>",
             "summary": "Replace one saved Agent Team through optimistic revision matching.",
-            "jsDoc": "/**\r\n * Replace one saved Agent Team through optimistic revision matching.\r\n * @param request - replacement composition and observed Team revision.\r\n * @returns the updated exact Team definition.\r\n */"
+            "jsDoc": "/**\n * Replace one saved Agent Team through optimistic revision matching.\n * @param request - replacement composition and observed Team revision.\n * @returns the updated exact Team definition.\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamDelete",
             "signature": "@Remote('agentTeamDelete') async agentTeamDelete(request: QuantSkillsAgentTeamDeleteRequest): Promise<void>",
             "summary": "Delete one saved Agent Team while preserving every existing Team Session log.",
-            "jsDoc": "/**\r\n * Delete one saved Agent Team while preserving every existing Team Session log.\r\n * @param request - Team identity and observed revision.\r\n */"
+            "jsDoc": "/**\n * Delete one saved Agent Team while preserving every existing Team Session log.\n * @param request - Team identity and observed revision.\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamSessionCreate",
             "signature": "@Remote('agentTeamSessionCreate') async agentTeamSessionCreate( request: QuantSkillsAgentTeamSessionCreateRequest, signal?: AbortSignal, ): Promise<QuantSkillsAgentTeamSessionCreateResult>",
             "summary": "Atomically create or adopt one Team Lead Session under an exact Team revision.",
-            "jsDoc": "/**\r\n * Atomically create or adopt one Team Lead Session under an exact Team revision.\r\n * @param request - Session identity, exact Team revision, and optional Workspace selection.\r\n * @param signal - optional caller cancellation.\r\n * @returns the published Lead Session and its immutable Team binding.\r\n */"
+            "jsDoc": "/**\n * Atomically create or adopt one Team Lead Session under an exact Team revision.\n * @param request - Session identity, exact Team revision, and optional Workspace selection.\n * @param signal - optional caller cancellation.\n * @returns the published Lead Session and its immutable Team binding.\n */"
           },
           {
             "kind": "method",
             "name": "agentTeamSessionList",
             "signature": "@Remote('agentTeamSessionList') async agentTeamSessionList( request: QuantSkillsSessionListRequest, signal?: AbortSignal, ): Promise<readonly QuantSkillsAgentTeamSessionArchiveItem[]>",
             "summary": "List real Agent Team Lead conversation archives from live and persisted Session truth.",
-            "jsDoc": "/**\r\n * List real Agent Team Lead conversation archives from live and persisted Session truth.\r\n * @param request - archive visibility filter.\r\n * @param signal - optional caller cancellation.\r\n * @returns Team Lead Sessions ordered by most recent activity.\r\n */"
+            "jsDoc": "/**\n * List real Agent Team Lead conversation archives from live and persisted Session truth.\n * @param request - archive visibility filter.\n * @param signal - optional caller cancellation.\n * @returns Team Lead Sessions ordered by most recent activity.\n */"
           },
           {
             "kind": "method",
             "name": "fileAttach",
             "signature": "@Remote('fileAttach') async fileAttach( request: QuantSkillsFileAttachRequest, signal?: AbortSignal, ): Promise<QuantSkillsSessionFileAttachment>",
             "summary": "Attach one immutable generic file to a live QuantSkills Session.",
-            "jsDoc": "/**\r\n * Attach one immutable generic file to a live QuantSkills Session.\r\n * Per-Session serialization makes the aggregate byte check authoritative\r\n * even when browser uploads overlap.\r\n * @param request - Session identity, canonical base64 bytes, and display metadata.\r\n * @param signal - optional caller cancellation.\r\n * @returns the durable ownership record appended to the Session log.\r\n */"
+            "jsDoc": "/**\n * Attach one immutable generic file to a live QuantSkills Session.\n * Per-Session serialization makes the aggregate byte check authoritative\n * even when browser uploads overlap.\n * @param request - Session identity, canonical base64 bytes, and display metadata.\n * @param signal - optional caller cancellation.\n * @returns the durable ownership record appended to the Session log.\n */"
           },
           {
             "kind": "method",
             "name": "fileList",
             "signature": "@Remote('fileList') async fileList( request: QuantSkillsFileListRequest, signal?: AbortSignal, ): Promise<QuantSkillsFileListResult>",
             "summary": "List immutable generic files already owned by one QuantSkills Session.",
-            "jsDoc": "/**\r\n * List immutable generic files already owned by one QuantSkills Session.\r\n * @param request - Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns durable file records plus Host-enforced limits.\r\n */"
+            "jsDoc": "/**\n * List immutable generic files already owned by one QuantSkills Session.\n * @param request - Session identity.\n * @param signal - optional caller cancellation.\n * @returns durable file records plus Host-enforced limits.\n */"
           },
           {
             "kind": "method",
             "name": "fileRead",
             "signature": "@Remote('fileRead') async fileRead( request: QuantSkillsFileReadRequest, signal?: AbortSignal, ): Promise<QuantSkillsFileReadResult>",
             "summary": "Read bounded text extracted from a supported attachment owned by a QuantSkills Session.",
-            "jsDoc": "/**\r\n * Read bounded text extracted from a supported attachment owned by a QuantSkills Session.\r\n * @param request - Session identity and opaque attachment id.\r\n * @param signal - optional caller cancellation.\r\n * @returns verified metadata and decoded text.\r\n */"
+            "jsDoc": "/**\n * Read bounded text extracted from a supported attachment owned by a QuantSkills Session.\n * @param request - Session identity and opaque attachment id.\n * @param signal - optional caller cancellation.\n * @returns verified metadata and decoded text.\n */"
           },
           {
             "kind": "method",
             "name": "resultPrepare",
             "signature": "@Remote('resultPrepare') resultPrepare( request: QuantSkillsResultPrepareRequest, signal?: AbortSignal, ): Promise<QuantSkillsResultPrepareResult>",
             "summary": "Normalize discovered result paths to one Session workspace.",
-            "jsDoc": "/**\r\n * Normalize discovered result paths to one Session workspace. Authorized legacy Skill output\r\n * and successful external mutation results are copied into the Session workspace first.\r\n * @param request - Session identity and bounded candidate path list.\r\n * @param signal - optional caller cancellation.\r\n * @returns one ordered readiness or diagnostic result per candidate.\r\n */"
+            "jsDoc": "/**\n * Normalize discovered result paths to one Session workspace. Authorized legacy Skill output\n * and successful external mutation results are copied into the Session workspace first.\n * @param request - Session identity and bounded candidate path list.\n * @param signal - optional caller cancellation.\n * @returns one ordered readiness or diagnostic result per candidate.\n */"
           },
           {
             "kind": "method",
             "name": "resultList",
             "signature": "@Remote('resultList') async resultList( request: { readonly sessionId: SessionId }, signal?: AbortSignal, ): Promise<QuantSkillsResultPrepareResult>",
             "summary": "Restore every previewable result referenced by the complete durable Session log.",
-            "jsDoc": "/**\r\n * Restore every previewable result referenced by the complete durable Session log.\r\n * The returned paths pass through the same workspace and installed-version checks as\r\n * candidates discovered in the currently loaded browser window.\r\n * @param request - QuantSkills Session identity.\r\n * @param signal - optional caller cancellation.\r\n * @returns newest-reference-first verified results from the full Session history.\r\n */"
+            "jsDoc": "/**\n * Restore every previewable result referenced by the complete durable Session log.\n * The returned paths pass through the same workspace and installed-version checks as\n * candidates discovered in the currently loaded browser window.\n * @param request - QuantSkills Session identity.\n * @param signal - optional caller cancellation.\n * @returns newest-reference-first verified results from the full Session history.\n */"
           },
           {
             "kind": "method",
             "name": "resultPreview",
             "signature": "@Remote('resultPreview') async resultPreview( request: QuantSkillsResultPreviewRequest, signal?: AbortSignal, ): Promise<QuantSkillsResultPreview>",
             "summary": "Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.",
-            "jsDoc": "/**\r\n * Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.\r\n * Supported text is returned as UTF-8, Office documents as bounded extracted text,\r\n * and verified image/PDF bytes as canonical base64.\r\n * @param request - Session identity and workspace-relative produced path.\r\n * @param signal - optional caller cancellation.\r\n * @returns evidence-backed preview or an explicit unsupported result.\r\n */"
+            "jsDoc": "/**\n * Read a bounded preview from a path contained by the addressed QuantSkills Session workspace.\n * Supported text is returned as UTF-8, Office documents as bounded extracted text,\n * and verified image/PDF bytes as canonical base64.\n * @param request - Session identity and workspace-relative produced path.\n * @param signal - optional caller cancellation.\n * @returns evidence-backed preview or an explicit unsupported result.\n */"
           }
         ],
         "types": [
