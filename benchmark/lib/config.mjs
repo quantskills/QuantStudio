@@ -1,6 +1,7 @@
 import { readFile, realpath, mkdir, readdir, writeFile } from 'node:fs/promises'
 import { resolve, dirname, relative, isAbsolute, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { validateBudgetLimits } from './budget.mjs'
 
 export const project = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 export function within(parent, child) {
@@ -25,7 +26,7 @@ export async function readConfig() {
     await writeFile(marker, JSON.stringify({ schema: 1, purpose: 'isolated-qs-benchmark' }), { flag: 'wx' })
   }
   config.arms = await Promise.all(config.arms.map(async arm => ({ ...arm, path: await realpath(resolve(dirname(resolve(file)), arm.path)) })))
-  if (!Number.isFinite(config.budget.priorCny) || config.budget.priorCny < 0 || config.budget.limitCny !== 100
-    || !Number.isFinite(config.budget.stageLimitCny) || config.budget.stageLimitCny <= 0 || config.budget.stageLimitCny > 25) throw new Error('Invalid budget limits')
+  validateBudgetLimits(config.budget)
+  if (config.budget.stageLimitCny === undefined) throw new Error('Explicit additional-stage budget required')
   return config
 }

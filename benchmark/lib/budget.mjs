@@ -1,10 +1,19 @@
 import { open, readFile, rename } from 'node:fs/promises'
-import { randomUUID } from 'node:crypto'
+import { randomUUID, createHash } from 'node:crypto'
+
+export function validateBudgetLimits(value) {
+  if (!Number.isFinite(value.priorCny) || value.priorCny < 0
+    || !Number.isFinite(value.limitCny) || value.limitCny <= 0
+    || (value.stageLimitCny !== undefined && (!Number.isFinite(value.stageLimitCny) || value.stageLimitCny <= 0))) {
+    throw new Error('Invalid budget limits')
+  }
+}
 
 // A single writer owns the ledger for its entire run. A stale lock is never
 // silently removed: an interrupted request may have reached the paid service.
 export class Budget {
   static async open(file, initial) {
+    validateBudgetLimits(initial)
     const lock = await open(file + '.lock', 'wx', 0o600)
     try {
       await lock.writeFile(JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString() }))
@@ -21,6 +30,46 @@ export class Budget {
       await budget.save()
       return budget
     } catch (e) { await lock.close(); /* keep lock on uncertain state */ throw e }
+  }
+  // Explicit human-authorized extension only. Editing a config or reopening a
+  // stopped ledger never invokes this path. The expected digest binds approval
+  // to settled spend; no unresolved/in-flight usage may be carried through it.
+  static async amend(file, initial, { id, expectedSha256, additionalCny, limitCny, authorization }) {
+    validateBudgetLimits(initial)
+    if (!/^[a-z0-9-]{1,80}$/.test(id ?? '') || !/^[a-f0-9]{64}$/.test(expectedSha256 ?? '')
+      || !Number.isFinite(additionalCny) || additionalCny <= 0
+      || !Number.isFinite(limitCny) || limitCny < initial.limitCny
+      || typeof authorization !== 'string' || !authorization.trim() || authorization.length > 1000) {
+      throw new Error('Invalid explicit budget authorization')
+    }
+    const lock = await open(file + '.lock', 'wx', 0o600)
+    const budget = new Budget(file, null, lock)
+    try {
+      const bytes = await readFile(file)
+      if (createHash('sha256').update(bytes).digest('hex') !== expectedSha256) throw new Error('Budget changed since authorization snapshot')
+      const value = JSON.parse(bytes)
+      if (value.schema !== 1 || !Array.isArray(value.calls) || value.priorCny !== initial.priorCny
+        || value.limitCny !== initial.limitCny || value.stageLimitCny !== initial.stageLimitCny) throw new Error('Budget ledger identity mismatch')
+      if (value.halted || value.calls.some(c => c.state !== 'settled' || !Number.isFinite(c.costCny) || c.costCny < 0)) {
+        throw new Error('Cannot extend a ledger with unresolved usage')
+      }
+      if (value.amendments !== undefined && !Array.isArray(value.amendments)) throw new Error('Unknown amendment history')
+      if (value.amendments?.some(entry => entry.id === id)) throw new Error('Authorization already applied')
+      const spent = value.calls.reduce((sum, c) => sum + c.costCny, 0)
+      const next = { limitCny, priorCny: value.priorCny, stageLimitCny: spent + additionalCny }
+      validateBudgetLimits(next)
+      if (Math.min(limitCny * 0.9, next.priorCny + next.stageLimitCny) <= value.priorCny + spent) throw new Error('No authorized budget remaining')
+      const backupName = file + '.before-' + id + '.json'
+      const backup = await open(backupName, 'wx', 0o600)
+      try { await backup.writeFile(bytes); await backup.sync() } finally { await backup.close() }
+      value.amendments = [...(value.amendments ?? []), { id, authorizedAt: new Date().toISOString(),
+        authorization: authorization.trim(), beforeSha256: expectedSha256, before: { ...initial }, after: next,
+        cumulativeBeforeCny: value.priorCny + spent, settledCallsBefore: value.calls.length, additionalCny }]
+      Object.assign(value, next, { exhausted: false })
+      budget.value = value
+      await budget.save()
+      return next
+    } finally { await budget.close() }
   }
   constructor(file, value, lock) { this.file = file; this.value = value; this.lock = lock; this.tail = Promise.resolve() }
   serial(fn) { const result = this.tail.then(fn); this.tail = result.catch(() => {}); return result }

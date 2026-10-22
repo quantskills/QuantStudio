@@ -33,6 +33,11 @@ async function publish(name, transform) {
 }
 const ledger = await publish('budget.json', value => ({
   ...pick(value, ['schema','limitCny','priorCny','stageLimitCny','halted','exhausted']), calls: value.calls.map(call => pick(call, callKeys)),
+  ...(value.amendments ? { amendments: value.amendments.map(entry => ({
+    ...pick(entry, ['id','authorizedAt','beforeSha256','cumulativeBeforeCny','settledCallsBefore','additionalCny']),
+    before: pick(entry.before, ['limitCny','priorCny','stageLimitCny']),
+    after: pick(entry.after, ['limitCny','priorCny','stageLimitCny']),
+  })) } : {}),
 }))
 const summary = []
 for (const name of reports) {

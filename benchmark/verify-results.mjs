@@ -15,6 +15,22 @@ for(const root of roots){
   assert.equal(createHash('sha256').update(await readFile(join(root,file.name))).digest('hex'),file.publishedSha256)
  }
  assert.ok(Math.abs(manifest.cumulativeCostUpperCny-ledger.priorCny-ledger.calls.reduce((n,c)=>n+(c.costCny??c.reserveCny),0))<1e-9)
+ const amendments=ledger.amendments??[]
+ assert.equal(new Set(amendments.map(a=>a.id)).size,amendments.length)
+ for(const [i,a] of amendments.entries()){
+  assert.match(a.beforeSha256,/^[a-f0-9]{64}$/)
+  assert.ok(Number.isSafeInteger(a.settledCallsBefore)&&a.settledCallsBefore>=0&&a.settledCallsBefore<=ledger.calls.length)
+  const prefix=ledger.calls.slice(0,a.settledCallsBefore)
+  assert.ok(prefix.every(c=>c.state==='settled'&&Number.isFinite(c.costCny)&&c.costCny>=0))
+  const spent=prefix.reduce((n,c)=>n+c.costCny,0)
+  assert.equal(a.before.priorCny,ledger.priorCny);assert.equal(a.after.priorCny,ledger.priorCny)
+  assert.ok(Math.abs(a.cumulativeBeforeCny-ledger.priorCny-spent)<1e-9)
+  assert.ok(Number.isFinite(a.additionalCny)&&a.additionalCny>0)
+  assert.ok(Math.abs(a.after.stageLimitCny-spent-a.additionalCny)<1e-9)
+  assert.ok(a.after.limitCny>=a.before.limitCny)
+  if(i>0)assert.deepEqual(a.before,amendments[i-1].after)
+ }
+ if(amendments.length)assert.deepEqual(amendments.at(-1).after,{limitCny:ledger.limitCny,priorCny:ledger.priorCny,stageLimitCny:ledger.stageLimitCny})
  for(const entry of manifest.summary){
   const report=await json(entry.name)
   assert.equal(entry.attempted,report.results.length)
