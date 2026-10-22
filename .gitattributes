@@ -1,2 +1,2 @@
-# Asset snapshots are byte-exact: changing line endings breaks pinned tree hashes.
-assets/library-v2/quantskills/** -text -whitespace eol=lf
+# Frozen measurement bytes must survive Windows checkout without CRLF rewriting.
+benchmark/history/** -text whitespace=-blank-at-eol,-space-before-tab
