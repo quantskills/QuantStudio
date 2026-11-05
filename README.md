@@ -321,3 +321,6 @@ QuantStudio 采用 [GPL-3.0-or-later](LICENSE) / [PandaAI 商业授权](COMMERCI
 [QuantSkills 官网](https://www.quantskills.ai/) · [PandaAI 官网](https://www.pandaaiquant.com/) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
 
 </div>
+
+
+Pandadata 兼容维护：[abgyjaguo](https://github.com/abgyjaguo)，保留原项目作者署名。

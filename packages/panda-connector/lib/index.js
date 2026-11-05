@@ -189,23 +189,35 @@ const MARKET_DATA_VALIDATION = Object.freeze({
 	})
 });
 /** Fixed compatibility matrix; PyPI discovery can only select one of these exact wheels. */
-const PANDA_SDK_COMPATIBILITY = Object.freeze([Object.freeze({
-	version: "0.0.12",
-	wheelURL: "https://files.pythonhosted.org/packages/91/b9/1660487a9f559925231091f4c88aac6d572e7c3e84b0ad9a372d8261f298/panda_data-0.0.12-py3-none-any.whl",
-	wheelSha256: "b657a17daed0a11794e85e37e0d917ce42c77516fea7af0fc8977d54674b75b8",
-	pythonMin: [3, 10],
-	pythonMaxExclusive: [3, 13],
-	requiredCallables: REQUIRED_CALLABLES,
-	validationCall: MARKET_DATA_VALIDATION
-}), Object.freeze({
-	version: "0.0.14",
-	wheelURL: "https://files.pythonhosted.org/packages/9e/c3/f074910e8e7809a2abc6d60124a4a4e4dd196e0bd2159416a41e30fd0c60/panda_data-0.0.14-py3-none-any.whl",
-	wheelSha256: "514a50da95992aeb52ba53332ba825dd0dfd66c0793f59b6025f4e97ba6c2b59",
-	pythonMin: [3, 10],
-	pythonMaxExclusive: [3, 13],
-	requiredCallables: REQUIRED_CALLABLES,
-	validationCall: MARKET_DATA_VALIDATION
-})]);
+const PANDA_SDK_COMPATIBILITY = Object.freeze([
+	Object.freeze({
+		version: "0.0.12",
+		wheelURL: "https://files.pythonhosted.org/packages/91/b9/1660487a9f559925231091f4c88aac6d572e7c3e84b0ad9a372d8261f298/panda_data-0.0.12-py3-none-any.whl",
+		wheelSha256: "b657a17daed0a11794e85e37e0d917ce42c77516fea7af0fc8977d54674b75b8",
+		pythonMin: [3, 10],
+		pythonMaxExclusive: [3, 13],
+		requiredCallables: REQUIRED_CALLABLES,
+		validationCall: MARKET_DATA_VALIDATION
+	}),
+	Object.freeze({
+		version: "0.0.14",
+		wheelURL: "https://files.pythonhosted.org/packages/9e/c3/f074910e8e7809a2abc6d60124a4a4e4dd196e0bd2159416a41e30fd0c60/panda_data-0.0.14-py3-none-any.whl",
+		wheelSha256: "514a50da95992aeb52ba53332ba825dd0dfd66c0793f59b6025f4e97ba6c2b59",
+		pythonMin: [3, 10],
+		pythonMaxExclusive: [3, 13],
+		requiredCallables: REQUIRED_CALLABLES,
+		validationCall: MARKET_DATA_VALIDATION
+	}),
+	Object.freeze({
+		version: "1.0.6",
+		wheelURL: "https://files.pythonhosted.org/packages/c1/b6/878bb5035087c6ef79623bec68978f72b96dde420567cd518fbb33157fb2/panda_data-1.0.6-py3-none-any.whl",
+		wheelSha256: "5437a54546946ca5dd3a24ec074d05342518f22310f04403e01adb4d034ce15f",
+		pythonMin: [3, 10],
+		pythonMaxExclusive: [3, 13],
+		requiredCallables: REQUIRED_CALLABLES,
+		validationCall: MARKET_DATA_VALIDATION
+	})
+]);
 /**
 * Resolve one exact supported SDK release.
 * @param version - release selected from the compatibility matrix.
