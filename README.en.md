@@ -317,3 +317,6 @@ QuantStudio is dual-licensed under [GPL-3.0-or-later](LICENSE) and the [PandaAI 
 [QuantSkills](https://www.quantskills.ai/) · [PandaAI](https://www.pandaaiquant.com/) · [GitHub](https://github.com/quantskills/QuantStudio) · [Gitee](https://gitee.com/quantskills/QuantStudio)
 
 </div>
+
+
+Pandadata compatibility maintenance: [abgyjaguo](https://github.com/abgyjaguo). Existing authorship is retained.

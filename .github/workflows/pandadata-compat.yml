@@ -1,0 +1,23 @@
+name: Pandadata compatibility
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  contract:
+    uses: quantskills/skill-pandadata-api/.github/workflows/pandadata-compat.yml@3f573a4140e4d1d02c556d981fac347168c943bb
+    with:
+      contract-ref: 3f573a4140e4d1d02c556d981fac347168c943bb
+  connector:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm exec vitest run packages/panda-connector/tests/sdk-1.0.6.spec.ts packages/panda-connector/tests/runtime.spec.ts packages/panda-connector/tests/connector.spec.ts
+      - run: pnpm --dir packages/panda-connector run typecheck

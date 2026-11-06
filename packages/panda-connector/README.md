@@ -50,3 +50,12 @@ Authentication and runtime state never enter model input. Client UI invokes only
 - **Read and execution validation require service access** — the first explicit login is stored only after the compatibility-matrix read and bounded script probe complete. Network, account-entitlement, sandbox, or Python failures keep the current runtime unchanged and leave no saved credential.
 - **Windows isolation is partial** — the standard Windows ACL backend cannot fully isolate paths writable by Everyone or NTFS hard links. The connector discloses that level and still fails closed when the backend itself is unavailable.
 - **No server-side token revocation** — the SDK logout operation clears local authentication state only. PandaData exposes no documented revocation endpoint, so the connector does not claim to revoke a server token.
+
+
+## PandaData 1.0.6 compatibility
+
+The managed runtime now admits the checksum-pinned 1.0.6 wheel. Earlier releases remain admitted for adoption and rollback. Offline contract checks do not replace the existing authenticated data and execution probes; a failed candidate never replaces the active environment. Live account verification was not performed for this migration.
+
+新增 1.0.6 精确 wheel 与摘要记录；旧版接管和回滚记录保持不变。新环境仍须通过既有登录、数据及执行探针后才能激活。本次未执行真实账号取数。
+
+Compatibility maintenance: abgyjaguo.

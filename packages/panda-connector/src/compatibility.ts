@@ -62,6 +62,16 @@ export const PANDA_SDK_COMPATIBILITY: readonly PandaSdkCompatibility[] = Object.
     requiredCallables: REQUIRED_CALLABLES,
     validationCall: MARKET_DATA_VALIDATION,
   }),
+  // Offline SDK contract verified; activation still requires bounded live probes.
+  Object.freeze({
+    version: '1.0.6',
+    wheelURL: 'https://files.pythonhosted.org/packages/c1/b6/878bb5035087c6ef79623bec68978f72b96dde420567cd518fbb33157fb2/panda_data-1.0.6-py3-none-any.whl',
+    wheelSha256: '5437a54546946ca5dd3a24ec074d05342518f22310f04403e01adb4d034ce15f',
+    pythonMin: [3, 10] as const,
+    pythonMaxExclusive: [3, 13] as const,
+    requiredCallables: REQUIRED_CALLABLES,
+    validationCall: MARKET_DATA_VALIDATION,
+  }),
 ])
 
 /**

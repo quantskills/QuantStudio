@@ -50,3 +50,12 @@ Cordis 插件接受 `pythonCommand`、`pythonArgs`、`managedPythonVersion`、`d
 - **读取与执行验证需要服务权限** — 首次明确登录只有在兼容矩阵读取和有界脚本探针都完成后才会保存。网络、账号权限、sandbox 或 Python 失败会保持当前运行时不变，并且不留下已保存凭据。
 - **Windows 隔离级别为 partial** — 标准 Windows ACL 后端无法完全隔离 Everyone 可写路径或 NTFS 硬链接。连接器会如实显示该级别；后端本身不可用时仍会失败关闭。
 - **没有服务端 token 撤销** — SDK 的登出操作只会清除本地鉴权状态。PandaData 没有公开有文档说明的撤销端点，因此连接器不会声称撤销服务端 token。
+
+
+## PandaData 1.0.6 compatibility
+
+The managed runtime now admits the checksum-pinned 1.0.6 wheel. Earlier releases remain admitted for adoption and rollback. Offline contract checks do not replace the existing authenticated data and execution probes; a failed candidate never replaces the active environment. Live account verification was not performed for this migration.
+
+新增 1.0.6 精确 wheel 与摘要记录；旧版接管和回滚记录保持不变。新环境仍须通过既有登录、数据及执行探针后才能激活。本次未执行真实账号取数。
+
+Compatibility maintenance: abgyjaguo.
