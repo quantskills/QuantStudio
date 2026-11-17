@@ -208,6 +208,20 @@ describe('QuantSkillsCatalogController', () => {
     expect(JSON.stringify(snapshot)).not.toContain('untrusted Host detail')
   })
 
+  it('blames the catalog endpoint, not the Host connection, when the gateway flattens the code', async () => {
+    const controller = new QuantSkillsCatalogController(host({
+      catalog: vi.fn(async () => {
+        throw Object.assign(new Error('Unable to fetch the QuantSkills catalog.'), { code: 'gateway/internal' })
+      }),
+    }))
+
+    await controller.refresh()
+
+    const snapshot = controller.source.getSnapshot()
+    expect(snapshot.phase).toBe('error')
+    expect(snapshot.catalogError).toBe('宿主暂时无法读取 QuantSkills 官方目录。')
+  })
+
   it('retains the last Host catalog as stale without reading browser cache', async () => {
     const catalog = vi.fn<QuantSkillsHostPort['catalog']>()
       .mockResolvedValueOnce(hostCatalog)
