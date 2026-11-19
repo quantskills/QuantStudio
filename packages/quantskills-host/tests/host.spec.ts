@@ -279,7 +279,7 @@ function abortError(signal: AbortSignal): Error {
   return signal.reason instanceof Error ? signal.reason : new Error('operation aborted')
 }
 
-async function harness(home?: string, overrides: Partial<Config> = {}): Promise<{
+async function harness(home?: string, overrides: Partial<Config> = {}, built = false): Promise<{
   ctx: Context
   gateway: QuantSkillsHostGateway
   subprocess: FakeGitSubprocess
@@ -291,7 +291,8 @@ async function harness(home?: string, overrides: Partial<Config> = {}): Promise<
   contexts.push(ctx)
   await ctx.plugin(SkillRegistry)
   await ctx.plugin(FakeGitSubprocess)
-  await ctx.plugin(QuantSkillsHostGateway, {
+  const Gateway = built ? (await import('@deepseek-ai/dsh-quantskills-host')).default : QuantSkillsHostGateway
+  await ctx.plugin(Gateway, {
     dshHome,
     catalogUrl,
     maxCatalogBytes: 64 * 1024,
@@ -487,7 +488,7 @@ describe('QuantSkills Host gateway', () => {
     expect(fetch).toHaveBeenCalledTimes(2)
   })
 
-  it('loads the official catalog over the GitHub Contents API without reusing its ETag on the raw CDN', async () => {
+  it.each([false, true])('loads the official catalog through GitHub Contents without sharing ETags (prebuilt: %s)', async (built) => {
     const apiUrl = 'https://api.github.com/repos/quantskills/quantskills/contents/site/catalog.json?ref=main'
     const fallback = catalogResponse()
     Object.defineProperty(fallback, 'url', { value: apiUrl, configurable: true })
@@ -500,7 +501,7 @@ describe('QuantSkills Host gateway', () => {
       .mockRejectedValueOnce(new TypeError('CDN unreachable'))
       .mockResolvedValueOnce(apiNotModified)
     vi.stubGlobal('fetch', request)
-    const { gateway } = await harness()
+    const { gateway } = await harness(undefined, {}, built)
 
     await expect(gateway.catalog()).resolves.toMatchObject({ snapshotId: snapshot })
     await gateway.catalog()
