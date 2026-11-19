@@ -56,6 +56,7 @@ import { quantSkillsReadmeUrl, readQuantSkillsReadmeResponse } from "./readme.js
 import { QuantSkillsApplicationUpdater } from "./application-update.js";
 import { installLocalBrowserAccess } from "./local-browser-access.js";
 export { QuantSkillsHostError } from "./error.js";
+const DEFAULT_CATALOG_API_URL = 'https://api.github.com/repos/quantskills/quantskills/contents/site/catalog.json?ref=main';
 const DEFAULT_CATALOG_URL = 'https://raw.githubusercontent.com/quantskills/quantskills/main/site/catalog.json';
 const QUANTSKILLS_GITEE_ORGANIZATION = 'https://gitee.com/quantskills';
 const SHA_PATTERN = /^[a-f0-9]{40}$/;
@@ -836,34 +837,57 @@ let QuantSkillsHostGateway = (() => {
         async fetchCatalog(signal) {
             const requestRevision = ++this.catalogRequestRevision;
             const cached = this.catalogCache;
-            const timeout = AbortSignal.timeout(this.resolved.catalogTimeoutMs);
-            const combined = AbortSignal.any([signal, timeout]);
+            const urls = this.resolved.catalogUrl === DEFAULT_CATALOG_URL
+                ? [DEFAULT_CATALOG_URL, DEFAULT_CATALOG_API_URL]
+                : [this.resolved.catalogUrl];
             let response;
-            try {
-                response = await fetch(this.resolved.catalogUrl, {
-                    method: 'GET', redirect: 'error', cache: 'no-store', signal: combined,
-                    headers: {
-                        accept: 'application/json, text/plain;q=0.9',
-                        ...(cached?.etag === undefined ? {} : { 'if-none-match': cached.etag }),
-                    },
-                });
-            }
-            catch (error) {
+            let responseUrl = this.resolved.catalogUrl;
+            for (const [index, url] of urls.entries()) {
                 signal.throwIfAborted();
-                throw new QuantSkillsHostError(timeout.aborted ? 'QuantSkills catalog request timed out.' : 'Unable to fetch the QuantSkills catalog.', 'CATALOG_FETCH_FAILED', { cause: error });
-            }
-            signal.throwIfAborted();
-            if (response.url !== this.resolved.catalogUrl) {
-                throw new QuantSkillsHostError('QuantSkills catalog response was not the trusted publication.', 'CATALOG_FETCH_FAILED');
-            }
-            if (response.status === 304) {
-                if (cached === undefined || cached.etag === undefined) {
-                    throw new QuantSkillsHostError('QuantSkills catalog returned an unusable not-modified response.', 'CATALOG_FETCH_FAILED');
+                const etag = cached?.url === url ? cached.etag : undefined;
+                const timeout = AbortSignal.timeout(this.resolved.catalogTimeoutMs);
+                const combined = AbortSignal.any([signal, timeout]);
+                const canFallback = index + 1 < urls.length;
+                try {
+                    response = await fetch(url, {
+                        method: 'GET', redirect: 'manual', cache: 'no-store', signal: combined,
+                        headers: {
+                            accept: url === DEFAULT_CATALOG_API_URL
+                                ? 'application/vnd.github.raw+json'
+                                : 'application/json, text/plain;q=0.9',
+                            ...(etag === undefined ? {} : { 'if-none-match': etag }),
+                        },
+                    });
                 }
-                return this.withSyncStatus(cached.snapshot);
+                catch (error) {
+                    signal.throwIfAborted();
+                    if (canFallback)
+                        continue;
+                    throw new QuantSkillsHostError(timeout.aborted ? 'QuantSkills catalog request timed out.' : 'Unable to fetch the QuantSkills catalog.', 'CATALOG_FETCH_FAILED', { cause: error });
+                }
+                signal.throwIfAborted();
+                if (response.url !== url) {
+                    throw new QuantSkillsHostError('QuantSkills catalog response was not the trusted publication.', 'CATALOG_FETCH_FAILED');
+                }
+                if (response.status === 304) {
+                    if (cached?.url !== url || etag === undefined) {
+                        throw new QuantSkillsHostError('QuantSkills catalog returned an unusable not-modified response.', 'CATALOG_FETCH_FAILED');
+                    }
+                    return this.withSyncStatus(cached.snapshot);
+                }
+                if (response.status >= 500 && canFallback) {
+                    void response.body?.cancel().catch(() => { });
+                    continue;
+                }
+                if (!response.ok) {
+                    void response.body?.cancel().catch(() => { });
+                    throw new QuantSkillsHostError('QuantSkills catalog response was not the trusted publication.', 'CATALOG_FETCH_FAILED');
+                }
+                responseUrl = url;
+                break;
             }
-            if (!response.ok) {
-                throw new QuantSkillsHostError('QuantSkills catalog response was not the trusted publication.', 'CATALOG_FETCH_FAILED');
+            if (response === undefined) {
+                throw new QuantSkillsHostError('Unable to fetch the QuantSkills catalog.', 'CATALOG_FETCH_FAILED');
             }
             const limits = {
                 maxBytes: this.resolved.maxCatalogBytes,
@@ -874,6 +898,7 @@ let QuantSkillsHostGateway = (() => {
             const etag = catalogEtag(response);
             if (requestRevision === this.catalogRequestRevision) {
                 this.catalogCache = Object.freeze({
+                    url: responseUrl,
                     snapshot,
                     ...(etag === undefined ? {} : { etag }),
                 });
