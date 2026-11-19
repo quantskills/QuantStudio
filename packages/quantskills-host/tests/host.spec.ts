@@ -76,7 +76,7 @@ function catalogAssetsResponse(assets: readonly CatalogTestAsset[]): Response {
       requires: asset.requires ?? [],
     })),
   }), { status: 200, headers: { 'content-type': 'application/json' } })
-  Object.defineProperty(response, 'url', { value: catalogUrl })
+  Object.defineProperty(response, 'url', { value: catalogUrl, configurable: true })
   return response
 }
 
@@ -485,6 +485,81 @@ describe('QuantSkills Host gateway', () => {
       sync: { mode: 'event-stream', state: 'connected' },
     })
     expect(fetch).toHaveBeenCalledTimes(2)
+  })
+
+  it('loads the official catalog over the GitHub Contents API without reusing its ETag on the raw CDN', async () => {
+    const apiUrl = 'https://api.github.com/repos/quantskills/quantskills/contents/site/catalog.json?ref=main'
+    const fallback = catalogResponse()
+    Object.defineProperty(fallback, 'url', { value: apiUrl, configurable: true })
+    fallback.headers.set('etag', '"api-catalog"')
+    const apiNotModified = new Response(null, { status: 304 })
+    Object.defineProperty(apiNotModified, 'url', { value: apiUrl })
+    const request = vi.fn()
+      .mockRejectedValueOnce(new TypeError('CDN unreachable'))
+      .mockResolvedValueOnce(fallback)
+      .mockRejectedValueOnce(new TypeError('CDN unreachable'))
+      .mockResolvedValueOnce(apiNotModified)
+    vi.stubGlobal('fetch', request)
+    const { gateway } = await harness()
+
+    await expect(gateway.catalog()).resolves.toMatchObject({ snapshotId: snapshot })
+    await gateway.catalog()
+    await vi.waitFor(() => expect(request).toHaveBeenCalledTimes(4))
+    expect(request.mock.calls.map(([url]) => url)).toEqual([catalogUrl, apiUrl, catalogUrl, apiUrl])
+    expect(new Headers(request.mock.calls[1]?.[1].headers).get('accept')).toBe('application/vnd.github.raw+json')
+    expect(new Headers(request.mock.calls[2]?.[1].headers).get('if-none-match')).toBeNull()
+    expect(new Headers(request.mock.calls[3]?.[1].headers).get('if-none-match')).toBe('"api-catalog"')
+  })
+
+  it.each(['timeout', 'temporary server error'])('falls back on %s from the official CDN', async (failure) => {
+    const apiUrl = 'https://api.github.com/repos/quantskills/quantskills/contents/site/catalog.json?ref=main'
+    const unavailable = new Response(null, { status: 503 })
+    Object.defineProperty(unavailable, 'url', { value: catalogUrl })
+    const fallback = catalogResponse()
+    Object.defineProperty(fallback, 'url', { value: apiUrl })
+    const request = vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      if (input === apiUrl) return Promise.resolve(fallback)
+      if (failure !== 'timeout') return Promise.resolve(unavailable)
+      return new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => reject(init.signal?.reason), { once: true })
+      })
+    })
+    vi.stubGlobal('fetch', request)
+    const { gateway } = await harness(undefined, { catalogTimeoutMs: 20 })
+
+    await expect(gateway.catalog()).resolves.toMatchObject({ snapshotId: snapshot })
+    expect(request.mock.calls.map(([url]) => url)).toEqual([catalogUrl, apiUrl])
+  })
+
+  it('does not fall back when the official CDN returns invalid JSON', async () => {
+    const invalid = new Response('{', { status: 200 })
+    Object.defineProperty(invalid, 'url', { value: catalogUrl })
+    const request = vi.fn().mockResolvedValue(invalid)
+    vi.stubGlobal('fetch', request)
+    const { gateway } = await harness()
+
+    await expect(gateway.catalog()).rejects.toMatchObject({ code: 'CATALOG_INVALID' })
+    expect(request).toHaveBeenCalledTimes(1)
+  })
+
+  it.each([302, 404])('does not fall back on HTTP %i from the official CDN', async (status) => {
+    const response = new Response(null, { status })
+    Object.defineProperty(response, 'url', { value: catalogUrl })
+    const request = vi.fn().mockResolvedValue(response)
+    vi.stubGlobal('fetch', request)
+    const { gateway } = await harness()
+
+    await expect(gateway.catalog()).rejects.toMatchObject({ code: 'CATALOG_FETCH_FAILED' })
+    expect(request).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not fall back from an explicitly configured catalog', async () => {
+    const request = vi.fn().mockRejectedValue(new TypeError('unreachable'))
+    vi.stubGlobal('fetch', request)
+    const { gateway } = await harness(undefined, { catalogUrl: 'https://raw.githubusercontent.com/quantskills/quantskills/1111111111111111111111111111111111111111/site/catalog.json' })
+
+    await expect(gateway.catalog()).rejects.toMatchObject({ code: 'CATALOG_FETCH_FAILED' })
+    expect(request).toHaveBeenCalledTimes(1)
   })
 
   it('does not admit a 304 response without a validated ETag cache', async () => {
