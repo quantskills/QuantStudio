@@ -147,7 +147,10 @@ export class QuantSkillsCatalogController {
       this.publish({
         ...this.snapshot,
         phase: hadCatalog ? 'stale' : 'error',
-        catalogError: catalogFailureLabel(remoteErrorCode(error)),
+        catalogError: catalogFailureLabel(
+          remoteErrorCode(error),
+          error instanceof Error ? error.message : undefined,
+        ),
       })
     } finally {
       if (this.catalogOperation === operation) this.catalogOperation = undefined
@@ -713,9 +716,17 @@ function remoteErrorCode(error: unknown): string | undefined {
   return typeof code === 'string' ? code : undefined
 }
 
-function catalogFailureLabel(code: string | undefined): string {
+const CATALOG_FETCH_FAILURE_MESSAGE = /Unable to fetch the QuantSkills catalog|QuantSkills catalog request timed out/i
+
+function catalogFailureLabel(code: string | undefined, message?: string): string {
   if (code === 'CATALOG_INVALID') return '宿主拒绝了无效的 QuantSkills 发布目录。'
   if (code === 'CATALOG_FETCH_FAILED') return '宿主暂时无法读取 QuantSkills 官方目录。'
+  // The remote gateway collapses every unexpected Host failure into `gateway/internal`,
+  // so a catalog fetch failure arrives without its stable code. Recognize the Host's own
+  // wording instead of blaming the Host connection for an unreachable catalog endpoint.
+  if (message !== undefined && CATALOG_FETCH_FAILURE_MESSAGE.test(message)) {
+    return '宿主暂时无法读取 QuantSkills 官方目录。'
+  }
   return '无法连接 QuantSkills 宿主服务。'
 }
 
