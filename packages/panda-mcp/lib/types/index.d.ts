@@ -1,5 +1,6 @@
 /** QuantSkills Host：直连公网 PandaData MCP，OAuth 登录后把工具挂到 ctx.tools。 */
 import { type DataImport, type DataFetch, type DataQuery, type DataSummary, type DataResult, type DataCategory } from './database.ts';
+import type { FuturesCatalog, FuturesReferenceQuery, FuturesReferenceResult } from './futures-reference-types.ts';
 export type { DataImport, DataFetch, DataQuery, DataSummary, DataResult, DataSource, DataCategory } from './database.ts';
 import type { Context } from '@deepseek-ai/cordis';
 import z from '@deepseek-ai/schemastery';
@@ -70,6 +71,7 @@ export declare class PandaMcpGateway extends TypertRemoteService {
     private readonly authTimeoutMs;
     private readonly toolCallTimeoutMs;
     private readonly database;
+    private readonly futuresReference;
     private readonly store;
     private readonly promptDisposers;
     private tools;
@@ -104,6 +106,8 @@ export declare class PandaMcpGateway extends TypertRemoteService {
         id: string;
         category: DataCategory;
     }, signal?: AbortSignal): Promise<DataSummary>;
+    futuresReferenceCatalog(signal?: AbortSignal): Promise<FuturesCatalog>;
+    futuresReferenceQuery(input: FuturesReferenceQuery, signal?: AbortSignal): Promise<FuturesReferenceResult>;
     private installDatabaseTools;
     /** 测试替换会话工厂。 */
     useConnector(connector: PandaMcpSessionConnector): void;

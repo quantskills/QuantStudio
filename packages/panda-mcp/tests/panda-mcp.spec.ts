@@ -96,6 +96,17 @@ async function execute(registered: Map<string, FakeTool>, name: string, args: un
 }
 
 describe('panda-mcp', () => {
+  it('exposes the same futures lookup to the database remote and chat without OAuth', async () => {
+    const { ctx, registered } = await setup()
+    expect((await ctx.pandaMcp.futuresReferenceCatalog()).products).toHaveLength(92)
+    const args = { exchange: 'SHFE', symbol: 'CU' } as const
+    const result = await ctx.pandaMcp.futuresReferenceQuery(args)
+    expect(result.product).toMatchObject({ name: '铜', tickSize: 10, multiplier: 5 })
+    await expect(execute(registered, 'quantskills_futures_reference', args)).resolves.toEqual(result)
+    const missing = await ctx.pandaMcp.futuresReferenceQuery({ exchange: 'GFEX', symbol: 'LC2505', date: '2025-04-14' })
+    expect(missing).toMatchObject({ quoteSource: { status: 'login_required' }, feeSource: { status: 'unsupported' } })
+    expect((await ctx.pandaMcp.status()).phase).toBe('disconnected')
+  })
   it('preserves OAuth query parameters when Windows opens the browser', () => {
     const href = 'https://pandadatamcp.pandaaiquant.com/authorize?response_type=code&client_id=quantskills&code_challenge=pkce&code_challenge_method=S256'
     expect(systemBrowserLaunch(href, 'win32')).toEqual({

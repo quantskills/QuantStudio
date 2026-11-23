@@ -1,5 +1,7 @@
 import type { DataCategory, DataSummary, DataImport, DataFetch, DataQuery, DataResult } from '@deepseek-ai/dsh-panda-mcp';
+import { type FuturesReferenceAccess } from './FuturesReferenceDialog.tsx';
 export interface DatabaseAccess {
+    futuresReference?: FuturesReferenceAccess;
     list(): Promise<DataSummary[]>;
     import(input: DataImport): Promise<DataSummary>;
     fetch(input: DataFetch): Promise<DataSummary>;

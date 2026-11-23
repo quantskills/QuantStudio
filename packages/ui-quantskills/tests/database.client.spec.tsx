@@ -3,12 +3,29 @@ import { act, fireEvent, render, screen, waitFor, within, cleanup } from '@testi
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { DatabasePage, type DatabaseAccess } from '../src/client/DatabasePage.tsx'
 import type { DataSummary, DataResult } from '@deepseek-ai/dsh-panda-mcp'
+import { FuturesReference, futuresCatalog } from '../../panda-mcp/src/futures-reference.ts'
 afterEach(cleanup)
 const item: DataSummary = { id: 'fixture', name: '研究行情', kind: 'timeseries', category: 'market', source: { kind: 'file' }, columns: ['date', 'close'], dateColumn: 'date', rowCount: 1, ttlSeconds: 3600, fetchedAt: '2026-09-12T00:00:00Z', expiresAt: '2099-09-12T01:00:00Z', from: '2026-09-10T00:00:00Z', to: '2026-09-10T00:00:00Z', bytes: 100 }
 function access(): DatabaseAccess {
   return { list: vi.fn(async () => []), import: vi.fn(async () => item), fetch: vi.fn(async () => item), preview: vi.fn(async () => ({ dataset: item, status: 'hit' as const, reasons: [], rows: [{ date: '2026-09-10', close: 12 }], total: 1 })), query: vi.fn(async () => ({ dataset: item, status: 'insufficient' as const, reasons: ['可用行数不足 2'], rows: [], total: 1 })), refresh: vi.fn(async () => item), remove: vi.fn(async () => {}), categorize: vi.fn(async (_id, category) => ({ ...item, category })) }
 }
 describe('research database UI', () => {
+  it('looks up historical futures from the database and labels missing fees and rule versions', async () => {
+    const service = new FuturesReference({ fetch: async () => new Response(null, { status: 404 }) })
+    const query = vi.fn((input: Parameters<typeof service.query>[0]) => service.query(input))
+    render(<DatabasePage access={{ ...access(), futuresReference: { catalog: async () => futuresCatalog, query } }}/>)
+    fireEvent.click(screen.getByRole('button', { name: '期货参考' }))
+    const dialog = within(await screen.findByRole('dialog', { name: '期货参考' }))
+    fireEvent.change(await dialog.findByLabelText('交易所'), { target: { value: 'INE' } })
+    fireEvent.change(dialog.getByLabelText('品种'), { target: { value: 'EC' } })
+    expect(dialog.getByText('0.5点')).toBeTruthy()
+    fireEvent.change(dialog.getByLabelText('合约代码（可选）'), { target: { value: 'EC2506' } })
+    fireEvent.change(dialog.getByLabelText('交易日'), { target: { value: '2025-04-14' } })
+    fireEvent.click(dialog.getByRole('button', { name: '查询历史' }))
+    expect(await dialog.findByText('0.1')).toBeTruthy()
+    expect(dialog.getByText(/当日结算参数.*归档缺失/)).toBeTruthy()
+    expect(query).toHaveBeenCalledWith({ exchange: 'INE', symbol: 'EC2506', date: '2025-04-14' })
+  })
   it('imports a CSV file with the selected metadata and opens its real preview', async () => {
     const api = access(); render(<DatabasePage access={api}/>)
     fireEvent.click(await screen.findByRole('button', { name: '添加数据', exact: true }))

@@ -2123,6 +2123,10 @@ export function mountQuantSkillsApplication(ctx: ClientContext, options: QuantSk
           })
         },
         databaseAccess: {
+          futuresReference: {
+            catalog: () => unwrapRemote(ctx.remote.pandaMcp.futuresReferenceCatalog()),
+            query: input => unwrapRemote(ctx.remote.pandaMcp.futuresReferenceQuery(input)),
+          },
           list: () => unwrapRemote(ctx.remote.pandaMcp.databaseList()),
           import: input => unwrapRemote(ctx.remote.pandaMcp.databaseImport(input)),
           fetch: input => unwrapRemote(ctx.remote.pandaMcp.databaseFetch(input)),

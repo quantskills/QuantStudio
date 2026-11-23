@@ -21579,11 +21579,11 @@ window.__ModuleLoader__.load({
 		const _deepseek_ai_dsh_panda_mcp_pandaMcp_authenticate_result$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_authenticate_result$schema$value ??= zod.z.object({
 			"ok": zod.z.literal(true).readonly(),
 			"phase": zod.z.union([
+				zod.z.literal("error"),
 				zod.z.literal("disconnected"),
 				zod.z.literal("authenticating"),
 				zod.z.literal("connected"),
-				zod.z.literal("needs_auth"),
-				zod.z.literal("error")
+				zod.z.literal("needs_auth")
 			]).readonly(),
 			"url": zod.z.string().readonly(),
 			"toolCount": zod.z.number().readonly(),
@@ -21920,15 +21920,210 @@ window.__ModuleLoader__.load({
 		const _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_parameter_0$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_parameter_0$schema$value ??= zod.z.object({ "id": zod.z.string() });
 		let _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_result$schema$value;
 		const _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_result$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_result$schema$value ??= zod.z.void();
+		let _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceCatalog_result$schema$value;
+		const _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceCatalog_result$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceCatalog_result$schema$value ??= zod.z.object({
+			"snapshotDate": zod.z.string(),
+			"exchanges": zod.z.array(zod.z.object({
+				"id": zod.z.union([
+					zod.z.literal("SHFE"),
+					zod.z.literal("INE"),
+					zod.z.literal("DCE"),
+					zod.z.literal("CZCE"),
+					zod.z.literal("CFFEX"),
+					zod.z.literal("GFEX")
+				]),
+				"name": zod.z.string()
+			})),
+			"products": zod.z.array(zod.z.object({
+				"exchange": zod.z.union([
+					zod.z.literal("SHFE"),
+					zod.z.literal("INE"),
+					zod.z.literal("DCE"),
+					zod.z.literal("CZCE"),
+					zod.z.literal("CFFEX"),
+					zod.z.literal("GFEX")
+				]),
+				"product": zod.z.string(),
+				"name": zod.z.string(),
+				"currentCategory": zod.z.string(),
+				"tickSize": zod.z.number(),
+				"tickText": zod.z.string(),
+				"multiplier": zod.z.number(),
+				"tradingUnit": zod.z.string(),
+				"sourceUrl": zod.z.string(),
+				"sourceSha256": zod.z.string(),
+				"coverage": zod.z.object({
+					"quoteDays": zod.z.number(),
+					"quoteFrom": zod.z.union([zod.z.literal(null), zod.z.string()]),
+					"quoteThrough": zod.z.union([zod.z.literal(null), zod.z.string()]),
+					"feeDays": zod.z.number(),
+					"feeFrom": zod.z.union([zod.z.literal(null), zod.z.string()]),
+					"feeThrough": zod.z.union([zod.z.literal(null), zod.z.string()])
+				})
+			}))
+		});
+		let _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0$schema$value;
+		const _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0$schema$value ??= zod.z.object({
+			"exchange": zod.z.union([
+				zod.z.literal("SHFE"),
+				zod.z.literal("INE"),
+				zod.z.literal("DCE"),
+				zod.z.literal("CZCE"),
+				zod.z.literal("CFFEX"),
+				zod.z.literal("GFEX")
+			]),
+			"symbol": zod.z.string(),
+			"date": zod.z.string().optional(),
+			"cutoff": zod.z.string().optional()
+		});
+		let _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_result$schema$value;
+		const _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_result$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_result$schema$value ??= zod.z.object({
+			"product": zod.z.object({
+				"exchange": zod.z.union([
+					zod.z.literal("SHFE"),
+					zod.z.literal("INE"),
+					zod.z.literal("DCE"),
+					zod.z.literal("CZCE"),
+					zod.z.literal("CFFEX"),
+					zod.z.literal("GFEX")
+				]),
+				"product": zod.z.string(),
+				"name": zod.z.string(),
+				"currentCategory": zod.z.string(),
+				"tickSize": zod.z.number(),
+				"tickText": zod.z.string(),
+				"multiplier": zod.z.number(),
+				"tradingUnit": zod.z.string(),
+				"sourceUrl": zod.z.string(),
+				"sourceSha256": zod.z.string(),
+				"coverage": zod.z.object({
+					"quoteDays": zod.z.number(),
+					"quoteFrom": zod.z.union([zod.z.literal(null), zod.z.string()]),
+					"quoteThrough": zod.z.union([zod.z.literal(null), zod.z.string()]),
+					"feeDays": zod.z.number(),
+					"feeFrom": zod.z.union([zod.z.literal(null), zod.z.string()]),
+					"feeThrough": zod.z.union([zod.z.literal(null), zod.z.string()])
+				})
+			}),
+			"catalogDate": zod.z.string(),
+			"date": zod.z.union([zod.z.literal(null), zod.z.string()]),
+			"contract": zod.z.union([zod.z.literal(null), zod.z.string()]),
+			"main": zod.z.union([zod.z.literal(null), zod.z.object({
+				"contract": zod.z.string(),
+				"method": zod.z.union([zod.z.literal("pandadata"), zod.z.literal("after_close")])
+			})]),
+			"quote": zod.z.union([zod.z.literal(null), zod.z.object({
+				"openInterest": zod.z.union([zod.z.literal(null), zod.z.number()]),
+				"volume": zod.z.union([zod.z.literal(null), zod.z.number()]),
+				"settlement": zod.z.union([zod.z.literal(null), zod.z.number()])
+			})]),
+			"quoteSource": zod.z.union([zod.z.literal(null), zod.z.object({
+				"status": zod.z.union([
+					zod.z.literal("available"),
+					zod.z.literal("missing"),
+					zod.z.literal("unsupported"),
+					zod.z.literal("no_contract"),
+					zod.z.literal("login_required"),
+					zod.z.literal("error")
+				]),
+				"url": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"provider": zod.z.union([zod.z.literal("pandadata"), zod.z.literal("exchange")]),
+				"reportDate": zod.z.string(),
+				"sha256": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"sourceUpdatedAt": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"firstPublishedAt": zod.z.literal(null),
+				"cutoff": zod.z.union([
+					zod.z.literal(null),
+					zod.z.literal("visible"),
+					zod.z.literal("after_cutoff"),
+					zod.z.literal("unknown")
+				])
+			})]),
+			"fees": zod.z.union([zod.z.literal(null), zod.z.object({
+				"open": zod.z.object({
+					"yuanPerLot": zod.z.number(),
+					"rate": zod.z.number()
+				}),
+				"closePrevious": zod.z.object({
+					"yuanPerLot": zod.z.number(),
+					"rate": zod.z.number()
+				}),
+				"closeToday": zod.z.object({
+					"yuanPerLot": zod.z.number(),
+					"rate": zod.z.number()
+				}),
+				"marginLong": zod.z.union([zod.z.literal(null), zod.z.number()]),
+				"marginShort": zod.z.union([zod.z.literal(null), zod.z.number()])
+			})]),
+			"feeSource": zod.z.union([zod.z.literal(null), zod.z.object({
+				"status": zod.z.union([
+					zod.z.literal("available"),
+					zod.z.literal("missing"),
+					zod.z.literal("unsupported"),
+					zod.z.literal("no_contract"),
+					zod.z.literal("login_required"),
+					zod.z.literal("error")
+				]),
+				"url": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"provider": zod.z.union([zod.z.literal("pandadata"), zod.z.literal("exchange")]),
+				"reportDate": zod.z.string(),
+				"sha256": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"sourceUpdatedAt": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"firstPublishedAt": zod.z.literal(null),
+				"cutoff": zod.z.union([
+					zod.z.literal(null),
+					zod.z.literal("visible"),
+					zod.z.literal("after_cutoff"),
+					zod.z.literal("unknown")
+				])
+			})]),
+			"historicalRule": zod.z.union([zod.z.literal(null), zod.z.object({
+				"validFrom": zod.z.string(),
+				"validThrough": zod.z.string(),
+				"tickSize": zod.z.number(),
+				"multiplier": zod.z.number(),
+				"sourceUrl": zod.z.string(),
+				"historicalSector": zod.z.string().optional(),
+				"sectorSourceUrl": zod.z.string().optional()
+			})]),
+			"contractTerms": zod.z.union([zod.z.literal(null), zod.z.object({
+				"listedDate": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"lastTradingDate": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"deliveryStart": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"deliveryEnd": zod.z.union([zod.z.literal(null), zod.z.string()])
+			})]),
+			"contractSource": zod.z.union([zod.z.literal(null), zod.z.object({
+				"status": zod.z.union([
+					zod.z.literal("available"),
+					zod.z.literal("missing"),
+					zod.z.literal("unsupported"),
+					zod.z.literal("no_contract"),
+					zod.z.literal("login_required"),
+					zod.z.literal("error")
+				]),
+				"url": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"provider": zod.z.union([zod.z.literal("pandadata"), zod.z.literal("exchange")]),
+				"reportDate": zod.z.string(),
+				"sha256": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"sourceUpdatedAt": zod.z.union([zod.z.literal(null), zod.z.string()]),
+				"firstPublishedAt": zod.z.literal(null),
+				"cutoff": zod.z.union([
+					zod.z.literal(null),
+					zod.z.literal("visible"),
+					zod.z.literal("after_cutoff"),
+					zod.z.literal("unknown")
+				])
+			})])
+		});
 		let _deepseek_ai_dsh_panda_mcp_pandaMcp_logout_result$schema$value;
 		const _deepseek_ai_dsh_panda_mcp_pandaMcp_logout_result$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_logout_result$schema$value ??= zod.z.object({
 			"ok": zod.z.literal(true).readonly(),
 			"phase": zod.z.union([
+				zod.z.literal("error"),
 				zod.z.literal("disconnected"),
 				zod.z.literal("authenticating"),
 				zod.z.literal("connected"),
-				zod.z.literal("needs_auth"),
-				zod.z.literal("error")
+				zod.z.literal("needs_auth")
 			]).readonly(),
 			"url": zod.z.string().readonly(),
 			"toolCount": zod.z.number().readonly(),
@@ -21940,11 +22135,11 @@ window.__ModuleLoader__.load({
 		const _deepseek_ai_dsh_panda_mcp_pandaMcp_refresh_result$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_refresh_result$schema$value ??= zod.z.object({
 			"ok": zod.z.literal(true).readonly(),
 			"phase": zod.z.union([
+				zod.z.literal("error"),
 				zod.z.literal("disconnected"),
 				zod.z.literal("authenticating"),
 				zod.z.literal("connected"),
-				zod.z.literal("needs_auth"),
-				zod.z.literal("error")
+				zod.z.literal("needs_auth")
 			]).readonly(),
 			"url": zod.z.string().readonly(),
 			"toolCount": zod.z.number().readonly(),
@@ -21956,11 +22151,11 @@ window.__ModuleLoader__.load({
 		const _deepseek_ai_dsh_panda_mcp_pandaMcp_status_result$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_status_result$schema$value ??= zod.z.object({
 			"ok": zod.z.literal(true).readonly(),
 			"phase": zod.z.union([
+				zod.z.literal("error"),
 				zod.z.literal("disconnected"),
 				zod.z.literal("authenticating"),
 				zod.z.literal("connected"),
-				zod.z.literal("needs_auth"),
-				zod.z.literal("error")
+				zod.z.literal("needs_auth")
 			]).readonly(),
 			"url": zod.z.string().readonly(),
 			"toolCount": zod.z.number().readonly(),
@@ -22042,6 +22237,20 @@ window.__ModuleLoader__.load({
 		const _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRefresh_parameter_0_strict$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRefresh_parameter_0_strict$schema$value ??= zod.z.strictObject({ "id": zod.z.string() });
 		let _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_parameter_0_strict$schema$value;
 		const _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_parameter_0_strict$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_parameter_0_strict$schema$value ??= zod.z.strictObject({ "id": zod.z.string() });
+		let _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0_strict$schema$value;
+		const _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0_strict$schema = () => _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0_strict$schema$value ??= zod.z.strictObject({
+			"exchange": zod.z.union([
+				zod.z.literal("SHFE"),
+				zod.z.literal("INE"),
+				zod.z.literal("DCE"),
+				zod.z.literal("CZCE"),
+				zod.z.literal("CFFEX"),
+				zod.z.literal("GFEX")
+			]),
+			"symbol": zod.z.string(),
+			"date": zod.z.string().optional(),
+			"cutoff": zod.z.string().optional()
+		});
 		const TYPERT_REMOTE = createTypertRemoteInfo({
 			package: "@deepseek-ai/dsh-panda-mcp",
 			methods: {
@@ -22064,11 +22273,11 @@ window.__ModuleLoader__.load({
 								"phase": {
 									"type": "string",
 									"enum": [
+										"error",
 										"disconnected",
 										"authenticating",
 										"connected",
-										"needs_auth",
-										"error"
+										"needs_auth"
 									]
 								},
 								"url": { "type": "string" },
@@ -22096,7 +22305,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 275,
+						"line": 303,
 						"column": 3
 					}
 				},
@@ -22230,7 +22439,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 248,
+						"line": 264,
 						"column": 3
 					}
 				},
@@ -22444,7 +22653,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 238,
+						"line": 254,
 						"column": 3
 					}
 				},
@@ -22620,7 +22829,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 236,
+						"line": 252,
 						"column": 3
 					}
 				},
@@ -22710,7 +22919,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 234,
+						"line": 250,
 						"column": 3
 					}
 				},
@@ -22858,7 +23067,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 242,
+						"line": 258,
 						"column": 3
 					}
 				},
@@ -23022,7 +23231,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 240,
+						"line": 256,
 						"column": 3
 					}
 				},
@@ -23134,7 +23343,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 244,
+						"line": 260,
 						"column": 3
 					}
 				},
@@ -23176,7 +23385,634 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 246,
+						"line": 262,
+						"column": 3
+					}
+				},
+				"pandaMcp/futuresReferenceCatalog": {
+					service: "pandaMcp",
+					invocation: { kind: "direct" },
+					parameters: [],
+					cancellation: { parameter: "signal" },
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-panda-mcp/types#FuturesCatalog",
+						create: _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceCatalog_result$schema,
+						jsonSchema: {
+							"type": "object",
+							"properties": {
+								"snapshotDate": { "type": "string" },
+								"exchanges": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"id": {
+												"type": "string",
+												"enum": [
+													"SHFE",
+													"INE",
+													"DCE",
+													"CZCE",
+													"CFFEX",
+													"GFEX"
+												]
+											},
+											"name": { "type": "string" }
+										},
+										"required": ["id", "name"],
+										"additionalProperties": true
+									}
+								},
+								"products": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"exchange": {
+												"type": "string",
+												"enum": [
+													"SHFE",
+													"INE",
+													"DCE",
+													"CZCE",
+													"CFFEX",
+													"GFEX"
+												]
+											},
+											"product": { "type": "string" },
+											"name": { "type": "string" },
+											"currentCategory": { "type": "string" },
+											"tickSize": { "type": "number" },
+											"tickText": { "type": "string" },
+											"multiplier": { "type": "number" },
+											"tradingUnit": { "type": "string" },
+											"sourceUrl": { "type": "string" },
+											"sourceSha256": { "type": "string" },
+											"coverage": {
+												"type": "object",
+												"properties": {
+													"quoteDays": { "type": "number" },
+													"quoteFrom": { "oneOf": [{
+														"type": "null",
+														"const": null
+													}, { "type": "string" }] },
+													"quoteThrough": { "oneOf": [{
+														"type": "null",
+														"const": null
+													}, { "type": "string" }] },
+													"feeDays": { "type": "number" },
+													"feeFrom": { "oneOf": [{
+														"type": "null",
+														"const": null
+													}, { "type": "string" }] },
+													"feeThrough": { "oneOf": [{
+														"type": "null",
+														"const": null
+													}, { "type": "string" }] }
+												},
+												"required": [
+													"quoteDays",
+													"quoteFrom",
+													"quoteThrough",
+													"feeDays",
+													"feeFrom",
+													"feeThrough"
+												],
+												"additionalProperties": true
+											}
+										},
+										"required": [
+											"exchange",
+											"product",
+											"name",
+											"currentCategory",
+											"tickSize",
+											"tickText",
+											"multiplier",
+											"tradingUnit",
+											"sourceUrl",
+											"sourceSha256",
+											"coverage"
+										],
+										"additionalProperties": true
+									}
+								}
+							},
+							"required": [
+								"snapshotDate",
+								"exchanges",
+								"products"
+							],
+							"additionalProperties": true
+						}
+					},
+					sourceLocation: {
+						"file": "packages/panda-mcp/src/index.ts",
+						"line": 266,
+						"column": 3
+					}
+				},
+				"pandaMcp/futuresReferenceQuery": {
+					service: "pandaMcp",
+					invocation: { kind: "direct" },
+					parameters: [{
+						name: "input",
+						source: "json",
+						codec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-panda-mcp/types#FuturesReferenceQuery",
+							create: _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0$schema,
+							jsonSchema: {
+								"type": "object",
+								"properties": {
+									"exchange": {
+										"type": "string",
+										"enum": [
+											"SHFE",
+											"INE",
+											"DCE",
+											"CZCE",
+											"CFFEX",
+											"GFEX"
+										]
+									},
+									"symbol": { "type": "string" },
+									"date": { "type": "string" },
+									"cutoff": { "type": "string" }
+								},
+								"required": ["exchange", "symbol"],
+								"additionalProperties": true
+							}
+						},
+						strictCodec: {
+							mode: "strict",
+							typeSymbol: "@deepseek-ai/dsh-panda-mcp/types#FuturesReferenceQuery",
+							create: _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0_strict$schema,
+							jsonSchema: {
+								"type": "object",
+								"properties": {
+									"exchange": {
+										"type": "string",
+										"enum": [
+											"SHFE",
+											"INE",
+											"DCE",
+											"CZCE",
+											"CFFEX",
+											"GFEX"
+										]
+									},
+									"symbol": { "type": "string" },
+									"date": { "type": "string" },
+									"cutoff": { "type": "string" }
+								},
+								"required": ["exchange", "symbol"],
+								"additionalProperties": false
+							}
+						}
+					}],
+					cancellation: { parameter: "signal" },
+					result: {
+						mode: "strict",
+						typeSymbol: "@deepseek-ai/dsh-panda-mcp/types#FuturesReferenceResult",
+						create: _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_result$schema,
+						jsonSchema: {
+							"type": "object",
+							"properties": {
+								"product": {
+									"type": "object",
+									"properties": {
+										"exchange": {
+											"type": "string",
+											"enum": [
+												"SHFE",
+												"INE",
+												"DCE",
+												"CZCE",
+												"CFFEX",
+												"GFEX"
+											]
+										},
+										"product": { "type": "string" },
+										"name": { "type": "string" },
+										"currentCategory": { "type": "string" },
+										"tickSize": { "type": "number" },
+										"tickText": { "type": "string" },
+										"multiplier": { "type": "number" },
+										"tradingUnit": { "type": "string" },
+										"sourceUrl": { "type": "string" },
+										"sourceSha256": { "type": "string" },
+										"coverage": {
+											"type": "object",
+											"properties": {
+												"quoteDays": { "type": "number" },
+												"quoteFrom": { "oneOf": [{
+													"type": "null",
+													"const": null
+												}, { "type": "string" }] },
+												"quoteThrough": { "oneOf": [{
+													"type": "null",
+													"const": null
+												}, { "type": "string" }] },
+												"feeDays": { "type": "number" },
+												"feeFrom": { "oneOf": [{
+													"type": "null",
+													"const": null
+												}, { "type": "string" }] },
+												"feeThrough": { "oneOf": [{
+													"type": "null",
+													"const": null
+												}, { "type": "string" }] }
+											},
+											"required": [
+												"quoteDays",
+												"quoteFrom",
+												"quoteThrough",
+												"feeDays",
+												"feeFrom",
+												"feeThrough"
+											],
+											"additionalProperties": true
+										}
+									},
+									"required": [
+										"exchange",
+										"product",
+										"name",
+										"currentCategory",
+										"tickSize",
+										"tickText",
+										"multiplier",
+										"tradingUnit",
+										"sourceUrl",
+										"sourceSha256",
+										"coverage"
+									],
+									"additionalProperties": true
+								},
+								"catalogDate": { "type": "string" },
+								"date": { "oneOf": [{
+									"type": "null",
+									"const": null
+								}, { "type": "string" }] },
+								"contract": { "oneOf": [{
+									"type": "null",
+									"const": null
+								}, { "type": "string" }] },
+								"main": { "oneOf": [{
+									"type": "null",
+									"const": null
+								}, {
+									"type": "object",
+									"properties": {
+										"contract": { "type": "string" },
+										"method": {
+											"type": "string",
+											"enum": ["pandadata", "after_close"]
+										}
+									},
+									"required": ["contract", "method"],
+									"additionalProperties": true
+								}] },
+								"quote": { "oneOf": [{
+									"type": "null",
+									"const": null
+								}, {
+									"type": "object",
+									"properties": {
+										"openInterest": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "number" }] },
+										"volume": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "number" }] },
+										"settlement": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "number" }] }
+									},
+									"required": [
+										"openInterest",
+										"volume",
+										"settlement"
+									],
+									"additionalProperties": true
+								}] },
+								"quoteSource": { "oneOf": [{
+									"type": "null",
+									"const": null
+								}, {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"enum": [
+												"available",
+												"missing",
+												"unsupported",
+												"no_contract",
+												"login_required",
+												"error"
+											]
+										},
+										"url": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"provider": {
+											"type": "string",
+											"enum": ["pandadata", "exchange"]
+										},
+										"reportDate": { "type": "string" },
+										"sha256": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"sourceUpdatedAt": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"firstPublishedAt": {
+											"type": "null",
+											"const": null
+										},
+										"cutoff": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, {
+											"type": "string",
+											"enum": [
+												"visible",
+												"after_cutoff",
+												"unknown"
+											]
+										}] }
+									},
+									"required": [
+										"status",
+										"url",
+										"provider",
+										"reportDate",
+										"sha256",
+										"sourceUpdatedAt",
+										"firstPublishedAt",
+										"cutoff"
+									],
+									"additionalProperties": true
+								}] },
+								"fees": { "oneOf": [{
+									"type": "null",
+									"const": null
+								}, {
+									"type": "object",
+									"properties": {
+										"open": {
+											"type": "object",
+											"properties": {
+												"yuanPerLot": { "type": "number" },
+												"rate": { "type": "number" }
+											},
+											"required": ["yuanPerLot", "rate"],
+											"additionalProperties": true
+										},
+										"closePrevious": {
+											"type": "object",
+											"properties": {
+												"yuanPerLot": { "type": "number" },
+												"rate": { "type": "number" }
+											},
+											"required": ["yuanPerLot", "rate"],
+											"additionalProperties": true
+										},
+										"closeToday": {
+											"type": "object",
+											"properties": {
+												"yuanPerLot": { "type": "number" },
+												"rate": { "type": "number" }
+											},
+											"required": ["yuanPerLot", "rate"],
+											"additionalProperties": true
+										},
+										"marginLong": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "number" }] },
+										"marginShort": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "number" }] }
+									},
+									"required": [
+										"open",
+										"closePrevious",
+										"closeToday",
+										"marginLong",
+										"marginShort"
+									],
+									"additionalProperties": true
+								}] },
+								"feeSource": { "oneOf": [{
+									"type": "null",
+									"const": null
+								}, {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"enum": [
+												"available",
+												"missing",
+												"unsupported",
+												"no_contract",
+												"login_required",
+												"error"
+											]
+										},
+										"url": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"provider": {
+											"type": "string",
+											"enum": ["pandadata", "exchange"]
+										},
+										"reportDate": { "type": "string" },
+										"sha256": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"sourceUpdatedAt": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"firstPublishedAt": {
+											"type": "null",
+											"const": null
+										},
+										"cutoff": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, {
+											"type": "string",
+											"enum": [
+												"visible",
+												"after_cutoff",
+												"unknown"
+											]
+										}] }
+									},
+									"required": [
+										"status",
+										"url",
+										"provider",
+										"reportDate",
+										"sha256",
+										"sourceUpdatedAt",
+										"firstPublishedAt",
+										"cutoff"
+									],
+									"additionalProperties": true
+								}] },
+								"historicalRule": { "oneOf": [{
+									"type": "null",
+									"const": null
+								}, {
+									"type": "object",
+									"properties": {
+										"validFrom": { "type": "string" },
+										"validThrough": { "type": "string" },
+										"tickSize": { "type": "number" },
+										"multiplier": { "type": "number" },
+										"sourceUrl": { "type": "string" },
+										"historicalSector": { "type": "string" },
+										"sectorSourceUrl": { "type": "string" }
+									},
+									"required": [
+										"validFrom",
+										"validThrough",
+										"tickSize",
+										"multiplier",
+										"sourceUrl"
+									],
+									"additionalProperties": true
+								}] },
+								"contractTerms": { "oneOf": [{
+									"type": "null",
+									"const": null
+								}, {
+									"type": "object",
+									"properties": {
+										"listedDate": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"lastTradingDate": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"deliveryStart": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"deliveryEnd": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] }
+									},
+									"required": [
+										"listedDate",
+										"lastTradingDate",
+										"deliveryStart",
+										"deliveryEnd"
+									],
+									"additionalProperties": true
+								}] },
+								"contractSource": { "oneOf": [{
+									"type": "null",
+									"const": null
+								}, {
+									"type": "object",
+									"properties": {
+										"status": {
+											"type": "string",
+											"enum": [
+												"available",
+												"missing",
+												"unsupported",
+												"no_contract",
+												"login_required",
+												"error"
+											]
+										},
+										"url": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"provider": {
+											"type": "string",
+											"enum": ["pandadata", "exchange"]
+										},
+										"reportDate": { "type": "string" },
+										"sha256": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"sourceUpdatedAt": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, { "type": "string" }] },
+										"firstPublishedAt": {
+											"type": "null",
+											"const": null
+										},
+										"cutoff": { "oneOf": [{
+											"type": "null",
+											"const": null
+										}, {
+											"type": "string",
+											"enum": [
+												"visible",
+												"after_cutoff",
+												"unknown"
+											]
+										}] }
+									},
+									"required": [
+										"status",
+										"url",
+										"provider",
+										"reportDate",
+										"sha256",
+										"sourceUpdatedAt",
+										"firstPublishedAt",
+										"cutoff"
+									],
+									"additionalProperties": true
+								}] }
+							},
+							"required": [
+								"product",
+								"catalogDate",
+								"date",
+								"contract",
+								"main",
+								"quote",
+								"quoteSource",
+								"fees",
+								"feeSource",
+								"historicalRule",
+								"contractTerms",
+								"contractSource"
+							],
+							"additionalProperties": true
+						}
+					},
+					sourceLocation: {
+						"file": "packages/panda-mcp/src/index.ts",
+						"line": 268,
 						"column": 3
 					}
 				},
@@ -23199,11 +24035,11 @@ window.__ModuleLoader__.load({
 								"phase": {
 									"type": "string",
 									"enum": [
+										"error",
 										"disconnected",
 										"authenticating",
 										"connected",
-										"needs_auth",
-										"error"
+										"needs_auth"
 									]
 								},
 								"url": { "type": "string" },
@@ -23231,7 +24067,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 302,
+						"line": 330,
 						"column": 9
 					}
 				},
@@ -23255,11 +24091,11 @@ window.__ModuleLoader__.load({
 								"phase": {
 									"type": "string",
 									"enum": [
+										"error",
 										"disconnected",
 										"authenticating",
 										"connected",
-										"needs_auth",
-										"error"
+										"needs_auth"
 									]
 								},
 								"url": { "type": "string" },
@@ -23287,7 +24123,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 284,
+						"line": 312,
 						"column": 9
 					}
 				},
@@ -23310,11 +24146,11 @@ window.__ModuleLoader__.load({
 								"phase": {
 									"type": "string",
 									"enum": [
+										"error",
 										"disconnected",
 										"authenticating",
 										"connected",
-										"needs_auth",
-										"error"
+										"needs_auth"
 									]
 								},
 								"url": { "type": "string" },
@@ -23342,7 +24178,7 @@ window.__ModuleLoader__.load({
 					},
 					sourceLocation: {
 						"file": "packages/panda-mcp/src/index.ts",
-						"line": 269,
+						"line": 297,
 						"column": 3
 					}
 				}

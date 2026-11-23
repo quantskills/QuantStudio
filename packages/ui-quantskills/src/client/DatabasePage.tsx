@@ -3,9 +3,11 @@ import { DatabaseIcon, PlusIcon, ArrowClockwiseIcon, TrashIcon, MagnifyingGlassI
 import type { JsonValue } from '@deepseek-ai/dsh-util-values'
 import type { DataCategory, DataSummary, DataImport, DataFetch, DataQuery, DataResult } from '@deepseek-ai/dsh-panda-mcp'
 import { ActionDialog } from './ActionDialog.tsx'
+import { FuturesReferenceDialog, type FuturesReferenceAccess } from './FuturesReferenceDialog.tsx'
 import css from './DatabasePage.module.css'
 
 export interface DatabaseAccess {
+  futuresReference?: FuturesReferenceAccess
   list(): Promise<DataSummary[]>
   import(input: DataImport): Promise<DataSummary>
   fetch(input: DataFetch): Promise<DataSummary>
@@ -44,6 +46,7 @@ export function DatabasePage({ access }: { access?: DatabaseAccess | undefined }
   const [selectedId, setSelectedId] = useState<string>(), [opening, setOpening] = useState(false)
   const [search, setSearch] = useState(''), [filter, setFilter] = useState<'all' | DataCategory>('all')
   const [adding, setAdding] = useState(false)
+  const [futuresReferenceOpen, setFuturesReferenceOpen] = useState(false)
   const [removing, setRemoving] = useState<{ mode: 'single' | 'selected' | 'all'; items: DataSummary[] }>()
   const [managing, setManaging] = useState(false), [checked, setChecked] = useState<string[]>([])
   const [removedCount, setRemovedCount] = useState(0)
@@ -96,6 +99,7 @@ export function DatabasePage({ access }: { access?: DatabaseAccess | undefined }
     <header className={css.header}>
       <div><h1>数据库</h1><p>把行情、新闻和基本面留在本地，研究随时开始。</p></div>
       <div className={css.headerActions}>
+        {access?.futuresReference && <button onClick={() => setFuturesReferenceOpen(true)}><ChartLineIcon size={17}/>期货参考</button>}
         <button disabled={!access || busy || loading || !items.length} onClick={() => askRemove('all', [...items])}><TrashIcon size={17}/>清空全部缓存</button>
         <button className={css.primary} disabled={!access || busy} onClick={() => setAdding(true)}><PlusIcon size={18}/>添加数据</button>
       </div>
@@ -163,6 +167,7 @@ export function DatabasePage({ access }: { access?: DatabaseAccess | undefined }
       </section>
     </div>
     {adding && access && <AddData access={access} close={() => setAdding(false)} done={async item => { setAdding(false); setFilter('all'); setSearch(''); await load(); await open(item.id) }}/>}
+    {futuresReferenceOpen && access?.futuresReference && <FuturesReferenceDialog access={access.futuresReference} close={() => setFuturesReferenceOpen(false)}/>}
     {removing && <ActionDialog title={removing.mode === 'all' ? '清空全部缓存' : removing.mode === 'selected' ? '删除所选缓存' : '删除本地缓存'} busy={busy} error={error} onClose={() => setRemoving(undefined)}>
       <p>{removing.mode === 'all' ? '将清空所有分类中的' : '将删除'} {removing.items.length} 份本地缓存。仅移除缓存副本，不删除原始文件、会话或研究产物；需要时可重新拉取或导入。</p>
       <ul>{removing.items.map(item => <li key={item.id}>{titleOf(item)}{parameterSummary(item, true) ? ` · ${parameterSummary(item, true)}` : ''}</li>)}</ul>
