@@ -38,3 +38,7 @@ export const PANDA_MCP_TOOL_NAMES = [
 export type PandaMcpToolName = (typeof PANDA_MCP_TOOL_NAMES)[number]
 
 export type { DataSummary, DataImport, DataFetch, DataQuery, DataResult, DataSource, DataCategory } from './database.ts'
+export type {
+  FuturesCatalog, FuturesContractTerms, FuturesExchange, FuturesFees, FuturesProduct,
+  FuturesQuote, FuturesReferenceQuery, FuturesReferenceResult, FuturesSource, HistoricalFuturesRule,
+} from './futures-reference-types.ts'

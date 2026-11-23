@@ -6,7 +6,7 @@ import { createTypertRemoteInfo } from '@deepseek-ai/dsh-typert-protocol/remote-
 let _deepseek_ai_dsh_panda_mcp_pandaMcp_authenticate_result$schema$value
 const _deepseek_ai_dsh_panda_mcp_pandaMcp_authenticate_result$schema = () => (_deepseek_ai_dsh_panda_mcp_pandaMcp_authenticate_result$schema$value ??= z.object({
   'ok': z.literal(true).readonly(),
-  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("needs_auth"), z.literal("error")]).readonly(),
+  'phase': z.union([z.literal("error"), z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("needs_auth")]).readonly(),
   'url': z.string().readonly(),
   'toolCount': z.number().readonly(),
   'toolNames': z.array(z.string()).readonly(),
@@ -250,10 +250,141 @@ const _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_parameter_0$schema = ()
 }))
 let _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_result$schema$value
 const _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_result$schema = () => (_deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_result$schema$value ??= z.void())
+let _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceCatalog_result$schema$value
+const _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceCatalog_result$schema = () => (_deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceCatalog_result$schema$value ??= z.object({
+  'snapshotDate': z.string(),
+  'exchanges': z.array(z.object({
+  'id': z.union([z.literal("SHFE"), z.literal("INE"), z.literal("DCE"), z.literal("CZCE"), z.literal("CFFEX"), z.literal("GFEX")]),
+  'name': z.string(),
+})),
+  'products': z.array(z.object({
+  'exchange': z.union([z.literal("SHFE"), z.literal("INE"), z.literal("DCE"), z.literal("CZCE"), z.literal("CFFEX"), z.literal("GFEX")]),
+  'product': z.string(),
+  'name': z.string(),
+  'currentCategory': z.string(),
+  'tickSize': z.number(),
+  'tickText': z.string(),
+  'multiplier': z.number(),
+  'tradingUnit': z.string(),
+  'sourceUrl': z.string(),
+  'sourceSha256': z.string(),
+  'coverage': z.object({
+  'quoteDays': z.number(),
+  'quoteFrom': z.union([z.literal(null), z.string()]),
+  'quoteThrough': z.union([z.literal(null), z.string()]),
+  'feeDays': z.number(),
+  'feeFrom': z.union([z.literal(null), z.string()]),
+  'feeThrough': z.union([z.literal(null), z.string()]),
+}),
+})),
+}))
+let _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0$schema$value
+const _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0$schema = () => (_deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0$schema$value ??= z.object({
+  'exchange': z.union([z.literal("SHFE"), z.literal("INE"), z.literal("DCE"), z.literal("CZCE"), z.literal("CFFEX"), z.literal("GFEX")]),
+  'symbol': z.string(),
+  'date': z.string().optional(),
+  'cutoff': z.string().optional(),
+}))
+let _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_result$schema$value
+const _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_result$schema = () => (_deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_result$schema$value ??= z.object({
+  'product': z.object({
+  'exchange': z.union([z.literal("SHFE"), z.literal("INE"), z.literal("DCE"), z.literal("CZCE"), z.literal("CFFEX"), z.literal("GFEX")]),
+  'product': z.string(),
+  'name': z.string(),
+  'currentCategory': z.string(),
+  'tickSize': z.number(),
+  'tickText': z.string(),
+  'multiplier': z.number(),
+  'tradingUnit': z.string(),
+  'sourceUrl': z.string(),
+  'sourceSha256': z.string(),
+  'coverage': z.object({
+  'quoteDays': z.number(),
+  'quoteFrom': z.union([z.literal(null), z.string()]),
+  'quoteThrough': z.union([z.literal(null), z.string()]),
+  'feeDays': z.number(),
+  'feeFrom': z.union([z.literal(null), z.string()]),
+  'feeThrough': z.union([z.literal(null), z.string()]),
+}),
+}),
+  'catalogDate': z.string(),
+  'date': z.union([z.literal(null), z.string()]),
+  'contract': z.union([z.literal(null), z.string()]),
+  'main': z.union([z.literal(null), z.object({
+  'contract': z.string(),
+  'method': z.union([z.literal("pandadata"), z.literal("after_close")]),
+})]),
+  'quote': z.union([z.literal(null), z.object({
+  'openInterest': z.union([z.literal(null), z.number()]),
+  'volume': z.union([z.literal(null), z.number()]),
+  'settlement': z.union([z.literal(null), z.number()]),
+})]),
+  'quoteSource': z.union([z.literal(null), z.object({
+  'status': z.union([z.literal("available"), z.literal("missing"), z.literal("unsupported"), z.literal("no_contract"), z.literal("login_required"), z.literal("error")]),
+  'url': z.union([z.literal(null), z.string()]),
+  'provider': z.union([z.literal("pandadata"), z.literal("exchange")]),
+  'reportDate': z.string(),
+  'sha256': z.union([z.literal(null), z.string()]),
+  'sourceUpdatedAt': z.union([z.literal(null), z.string()]),
+  'firstPublishedAt': z.literal(null),
+  'cutoff': z.union([z.literal(null), z.literal("visible"), z.literal("after_cutoff"), z.literal("unknown")]),
+})]),
+  'fees': z.union([z.literal(null), z.object({
+  'open': z.object({
+  'yuanPerLot': z.number(),
+  'rate': z.number(),
+}),
+  'closePrevious': z.object({
+  'yuanPerLot': z.number(),
+  'rate': z.number(),
+}),
+  'closeToday': z.object({
+  'yuanPerLot': z.number(),
+  'rate': z.number(),
+}),
+  'marginLong': z.union([z.literal(null), z.number()]),
+  'marginShort': z.union([z.literal(null), z.number()]),
+})]),
+  'feeSource': z.union([z.literal(null), z.object({
+  'status': z.union([z.literal("available"), z.literal("missing"), z.literal("unsupported"), z.literal("no_contract"), z.literal("login_required"), z.literal("error")]),
+  'url': z.union([z.literal(null), z.string()]),
+  'provider': z.union([z.literal("pandadata"), z.literal("exchange")]),
+  'reportDate': z.string(),
+  'sha256': z.union([z.literal(null), z.string()]),
+  'sourceUpdatedAt': z.union([z.literal(null), z.string()]),
+  'firstPublishedAt': z.literal(null),
+  'cutoff': z.union([z.literal(null), z.literal("visible"), z.literal("after_cutoff"), z.literal("unknown")]),
+})]),
+  'historicalRule': z.union([z.literal(null), z.object({
+  'validFrom': z.string(),
+  'validThrough': z.string(),
+  'tickSize': z.number(),
+  'multiplier': z.number(),
+  'sourceUrl': z.string(),
+  'historicalSector': z.string().optional(),
+  'sectorSourceUrl': z.string().optional(),
+})]),
+  'contractTerms': z.union([z.literal(null), z.object({
+  'listedDate': z.union([z.literal(null), z.string()]),
+  'lastTradingDate': z.union([z.literal(null), z.string()]),
+  'deliveryStart': z.union([z.literal(null), z.string()]),
+  'deliveryEnd': z.union([z.literal(null), z.string()]),
+})]),
+  'contractSource': z.union([z.literal(null), z.object({
+  'status': z.union([z.literal("available"), z.literal("missing"), z.literal("unsupported"), z.literal("no_contract"), z.literal("login_required"), z.literal("error")]),
+  'url': z.union([z.literal(null), z.string()]),
+  'provider': z.union([z.literal("pandadata"), z.literal("exchange")]),
+  'reportDate': z.string(),
+  'sha256': z.union([z.literal(null), z.string()]),
+  'sourceUpdatedAt': z.union([z.literal(null), z.string()]),
+  'firstPublishedAt': z.literal(null),
+  'cutoff': z.union([z.literal(null), z.literal("visible"), z.literal("after_cutoff"), z.literal("unknown")]),
+})]),
+}))
 let _deepseek_ai_dsh_panda_mcp_pandaMcp_logout_result$schema$value
 const _deepseek_ai_dsh_panda_mcp_pandaMcp_logout_result$schema = () => (_deepseek_ai_dsh_panda_mcp_pandaMcp_logout_result$schema$value ??= z.object({
   'ok': z.literal(true).readonly(),
-  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("needs_auth"), z.literal("error")]).readonly(),
+  'phase': z.union([z.literal("error"), z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("needs_auth")]).readonly(),
   'url': z.string().readonly(),
   'toolCount': z.number().readonly(),
   'toolNames': z.array(z.string()).readonly(),
@@ -263,7 +394,7 @@ const _deepseek_ai_dsh_panda_mcp_pandaMcp_logout_result$schema = () => (_deepsee
 let _deepseek_ai_dsh_panda_mcp_pandaMcp_refresh_result$schema$value
 const _deepseek_ai_dsh_panda_mcp_pandaMcp_refresh_result$schema = () => (_deepseek_ai_dsh_panda_mcp_pandaMcp_refresh_result$schema$value ??= z.object({
   'ok': z.literal(true).readonly(),
-  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("needs_auth"), z.literal("error")]).readonly(),
+  'phase': z.union([z.literal("error"), z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("needs_auth")]).readonly(),
   'url': z.string().readonly(),
   'toolCount': z.number().readonly(),
   'toolNames': z.array(z.string()).readonly(),
@@ -273,7 +404,7 @@ const _deepseek_ai_dsh_panda_mcp_pandaMcp_refresh_result$schema = () => (_deepse
 let _deepseek_ai_dsh_panda_mcp_pandaMcp_status_result$schema$value
 const _deepseek_ai_dsh_panda_mcp_pandaMcp_status_result$schema = () => (_deepseek_ai_dsh_panda_mcp_pandaMcp_status_result$schema$value ??= z.object({
   'ok': z.literal(true).readonly(),
-  'phase': z.union([z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("needs_auth"), z.literal("error")]).readonly(),
+  'phase': z.union([z.literal("error"), z.literal("disconnected"), z.literal("authenticating"), z.literal("connected"), z.literal("needs_auth")]).readonly(),
   'url': z.string().readonly(),
   'toolCount': z.number().readonly(),
   'toolNames': z.array(z.string()).readonly(),
@@ -333,6 +464,13 @@ let _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_parameter_0_strict$schema
 const _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_parameter_0_strict$schema = () => (_deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_parameter_0_strict$schema$value ??= z.strictObject({
   'id': z.string(),
 }))
+let _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0_strict$schema$value
+const _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0_strict$schema = () => (_deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0_strict$schema$value ??= z.strictObject({
+  'exchange': z.union([z.literal("SHFE"), z.literal("INE"), z.literal("DCE"), z.literal("CZCE"), z.literal("CFFEX"), z.literal("GFEX")]),
+  'symbol': z.string(),
+  'date': z.string().optional(),
+  'cutoff': z.string().optional(),
+}))
 
 export const TYPERT_REMOTE = createTypertRemoteInfo({
   package: '@deepseek-ai/dsh-panda-mcp',
@@ -347,9 +485,9 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         mode: 'strict',
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#PandaMcpStatus',
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_authenticate_result$schema,
-        jsonSchema: {"type":"object","properties":{"ok":{"type":"boolean","const":true},"phase":{"type":"string","enum":["disconnected","authenticating","connected","needs_auth","error"]},"url":{"type":"string"},"toolCount":{"type":"number"},"toolNames":{"type":"array","items":{"type":"string"}},"message":{"type":"string"},"authorizationUrl":{"type":"string","description":"Browser handoff during interactive authorization; never contains access tokens."}},"required":["ok","phase","url","toolCount","toolNames","message"],"additionalProperties":true},
+        jsonSchema: {"type":"object","properties":{"ok":{"type":"boolean","const":true},"phase":{"type":"string","enum":["error","disconnected","authenticating","connected","needs_auth"]},"url":{"type":"string"},"toolCount":{"type":"number"},"toolNames":{"type":"array","items":{"type":"string"}},"message":{"type":"string"},"authorizationUrl":{"type":"string","description":"Browser handoff during interactive authorization; never contains access tokens."}},"required":["ok","phase","url","toolCount","toolNames","message"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":275,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":303,"column":3},
     },
     'pandaMcp/databaseCategorize': {
       service: 'pandaMcp',
@@ -379,7 +517,7 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseCategorize_result$schema,
         jsonSchema: {"type":"object","properties":{"id":{"type":"string"},"kind":{"type":"string","enum":["timeseries","table"]},"category":{"type":"string","enum":["market","news","fundamental","other"]},"columns":{"type":"array","items":{"type":"string"}},"rowCount":{"type":"number"},"fetchedAt":{"type":"string"},"expiresAt":{"type":"string"},"from":{"type":"string"},"to":{"type":"string"},"bytes":{"type":"number"},"name":{"type":"string"},"source":{"type":"object","properties":{"kind":{"type":"string","enum":["file","http","pandadata"]},"url":{"type":"string"},"method":{"type":"string"},"params":{"type":"object","properties":{},"required":[],"additionalProperties":true},"filename":{"type":"string"},"rollingDay":{"type":"boolean"}},"required":["kind"],"additionalProperties":true},"dateColumn":{"type":"string"},"ttlSeconds":{"type":"number"}},"required":["id","kind","category","columns","rowCount","fetchedAt","expiresAt","bytes","name","source","ttlSeconds"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":248,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":264,"column":3},
     },
     'pandaMcp/databaseFetch': {
       service: 'pandaMcp',
@@ -409,7 +547,7 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseFetch_result$schema,
         jsonSchema: {"type":"object","properties":{"id":{"type":"string"},"kind":{"type":"string","enum":["timeseries","table"]},"category":{"type":"string","enum":["market","news","fundamental","other"]},"columns":{"type":"array","items":{"type":"string"}},"rowCount":{"type":"number"},"fetchedAt":{"type":"string"},"expiresAt":{"type":"string"},"from":{"type":"string"},"to":{"type":"string"},"bytes":{"type":"number"},"name":{"type":"string"},"source":{"type":"object","properties":{"kind":{"type":"string","enum":["file","http","pandadata"]},"url":{"type":"string"},"method":{"type":"string"},"params":{"type":"object","properties":{},"required":[],"additionalProperties":true},"filename":{"type":"string"},"rollingDay":{"type":"boolean"}},"required":["kind"],"additionalProperties":true},"dateColumn":{"type":"string"},"ttlSeconds":{"type":"number"}},"required":["id","kind","category","columns","rowCount","fetchedAt","expiresAt","bytes","name","source","ttlSeconds"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":238,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":254,"column":3},
     },
     'pandaMcp/databaseImport': {
       service: 'pandaMcp',
@@ -439,7 +577,7 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseImport_result$schema,
         jsonSchema: {"type":"object","properties":{"id":{"type":"string"},"kind":{"type":"string","enum":["timeseries","table"]},"category":{"type":"string","enum":["market","news","fundamental","other"]},"columns":{"type":"array","items":{"type":"string"}},"rowCount":{"type":"number"},"fetchedAt":{"type":"string"},"expiresAt":{"type":"string"},"from":{"type":"string"},"to":{"type":"string"},"bytes":{"type":"number"},"name":{"type":"string"},"source":{"type":"object","properties":{"kind":{"type":"string","enum":["file","http","pandadata"]},"url":{"type":"string"},"method":{"type":"string"},"params":{"type":"object","properties":{},"required":[],"additionalProperties":true},"filename":{"type":"string"},"rollingDay":{"type":"boolean"}},"required":["kind"],"additionalProperties":true},"dateColumn":{"type":"string"},"ttlSeconds":{"type":"number"}},"required":["id","kind","category","columns","rowCount","fetchedAt","expiresAt","bytes","name","source","ttlSeconds"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":236,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":252,"column":3},
     },
     'pandaMcp/databaseList': {
       service: 'pandaMcp',
@@ -453,7 +591,7 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseList_result$schema,
         jsonSchema: {"type":"array","items":{"type":"object","properties":{"id":{"type":"string"},"kind":{"type":"string","enum":["timeseries","table"]},"category":{"type":"string","enum":["market","news","fundamental","other"]},"columns":{"type":"array","items":{"type":"string"}},"rowCount":{"type":"number"},"fetchedAt":{"type":"string"},"expiresAt":{"type":"string"},"from":{"type":"string"},"to":{"type":"string"},"bytes":{"type":"number"},"name":{"type":"string"},"source":{"type":"object","properties":{"kind":{"type":"string","enum":["file","http","pandadata"]},"url":{"type":"string"},"method":{"type":"string"},"params":{"type":"object","properties":{},"required":[],"additionalProperties":true},"filename":{"type":"string"},"rollingDay":{"type":"boolean"}},"required":["kind"],"additionalProperties":true},"dateColumn":{"type":"string"},"ttlSeconds":{"type":"number"}},"required":["id","kind","category","columns","rowCount","fetchedAt","expiresAt","bytes","name","source","ttlSeconds"],"additionalProperties":true}},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":234,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":250,"column":3},
     },
     'pandaMcp/databasePreview': {
       service: 'pandaMcp',
@@ -483,7 +621,7 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_databasePreview_result$schema,
         jsonSchema: {"type":"object","properties":{"dataset":{"type":"object","properties":{"id":{"type":"string"},"kind":{"type":"string","enum":["timeseries","table"]},"category":{"type":"string","enum":["market","news","fundamental","other"]},"columns":{"type":"array","items":{"type":"string"}},"rowCount":{"type":"number"},"fetchedAt":{"type":"string"},"expiresAt":{"type":"string"},"from":{"type":"string"},"to":{"type":"string"},"bytes":{"type":"number"},"name":{"type":"string"},"source":{"type":"object","properties":{"kind":{"type":"string","enum":["file","http","pandadata"]},"url":{"type":"string"},"method":{"type":"string"},"params":{"type":"object","properties":{},"required":[],"additionalProperties":true},"filename":{"type":"string"},"rollingDay":{"type":"boolean"}},"required":["kind"],"additionalProperties":true},"dateColumn":{"type":"string"},"ttlSeconds":{"type":"number"}},"required":["id","kind","category","columns","rowCount","fetchedAt","expiresAt","bytes","name","source","ttlSeconds"],"additionalProperties":true},"status":{"type":"string","enum":["hit","refreshed","insufficient"]},"reasons":{"type":"array","items":{"type":"string"}},"rows":{"type":"array","items":{"type":"object","properties":{},"required":[],"additionalProperties":true}},"total":{"type":"number"},"nextOffset":{"type":"number"}},"required":["dataset","status","reasons","rows","total"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":242,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":258,"column":3},
     },
     'pandaMcp/databaseQuery': {
       service: 'pandaMcp',
@@ -513,7 +651,7 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseQuery_result$schema,
         jsonSchema: {"type":"object","properties":{"dataset":{"type":"object","properties":{"id":{"type":"string"},"kind":{"type":"string","enum":["timeseries","table"]},"category":{"type":"string","enum":["market","news","fundamental","other"]},"columns":{"type":"array","items":{"type":"string"}},"rowCount":{"type":"number"},"fetchedAt":{"type":"string"},"expiresAt":{"type":"string"},"from":{"type":"string"},"to":{"type":"string"},"bytes":{"type":"number"},"name":{"type":"string"},"source":{"type":"object","properties":{"kind":{"type":"string","enum":["file","http","pandadata"]},"url":{"type":"string"},"method":{"type":"string"},"params":{"type":"object","properties":{},"required":[],"additionalProperties":true},"filename":{"type":"string"},"rollingDay":{"type":"boolean"}},"required":["kind"],"additionalProperties":true},"dateColumn":{"type":"string"},"ttlSeconds":{"type":"number"}},"required":["id","kind","category","columns","rowCount","fetchedAt","expiresAt","bytes","name","source","ttlSeconds"],"additionalProperties":true},"status":{"type":"string","enum":["hit","refreshed","insufficient"]},"reasons":{"type":"array","items":{"type":"string"}},"rows":{"type":"array","items":{"type":"object","properties":{},"required":[],"additionalProperties":true}},"total":{"type":"number"},"nextOffset":{"type":"number"}},"required":["dataset","status","reasons","rows","total"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":240,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":256,"column":3},
     },
     'pandaMcp/databaseRefresh': {
       service: 'pandaMcp',
@@ -543,7 +681,7 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRefresh_result$schema,
         jsonSchema: {"type":"object","properties":{"id":{"type":"string"},"kind":{"type":"string","enum":["timeseries","table"]},"category":{"type":"string","enum":["market","news","fundamental","other"]},"columns":{"type":"array","items":{"type":"string"}},"rowCount":{"type":"number"},"fetchedAt":{"type":"string"},"expiresAt":{"type":"string"},"from":{"type":"string"},"to":{"type":"string"},"bytes":{"type":"number"},"name":{"type":"string"},"source":{"type":"object","properties":{"kind":{"type":"string","enum":["file","http","pandadata"]},"url":{"type":"string"},"method":{"type":"string"},"params":{"type":"object","properties":{},"required":[],"additionalProperties":true},"filename":{"type":"string"},"rollingDay":{"type":"boolean"}},"required":["kind"],"additionalProperties":true},"dateColumn":{"type":"string"},"ttlSeconds":{"type":"number"}},"required":["id","kind","category","columns","rowCount","fetchedAt","expiresAt","bytes","name","source","ttlSeconds"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":244,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":260,"column":3},
     },
     'pandaMcp/databaseRemove': {
       service: 'pandaMcp',
@@ -573,7 +711,51 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_databaseRemove_result$schema,
         jsonSchemaError: 'typert tool schema: unsupported void value',
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":246,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":262,"column":3},
+    },
+    'pandaMcp/futuresReferenceCatalog': {
+      service: 'pandaMcp',
+      invocation: { kind: 'direct' },
+      parameters: [
+      ],
+      cancellation: { parameter: 'signal' },
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#FuturesCatalog',
+        create: _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceCatalog_result$schema,
+        jsonSchema: {"type":"object","properties":{"snapshotDate":{"type":"string"},"exchanges":{"type":"array","items":{"type":"object","properties":{"id":{"type":"string","enum":["SHFE","INE","DCE","CZCE","CFFEX","GFEX"]},"name":{"type":"string"}},"required":["id","name"],"additionalProperties":true}},"products":{"type":"array","items":{"type":"object","properties":{"exchange":{"type":"string","enum":["SHFE","INE","DCE","CZCE","CFFEX","GFEX"]},"product":{"type":"string"},"name":{"type":"string"},"currentCategory":{"type":"string"},"tickSize":{"type":"number"},"tickText":{"type":"string"},"multiplier":{"type":"number"},"tradingUnit":{"type":"string"},"sourceUrl":{"type":"string"},"sourceSha256":{"type":"string"},"coverage":{"type":"object","properties":{"quoteDays":{"type":"number"},"quoteFrom":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"quoteThrough":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"feeDays":{"type":"number"},"feeFrom":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"feeThrough":{"oneOf":[{"type":"null","const":null},{"type":"string"}]}},"required":["quoteDays","quoteFrom","quoteThrough","feeDays","feeFrom","feeThrough"],"additionalProperties":true}},"required":["exchange","product","name","currentCategory","tickSize","tickText","multiplier","tradingUnit","sourceUrl","sourceSha256","coverage"],"additionalProperties":true}}},"required":["snapshotDate","exchanges","products"],"additionalProperties":true},
+      },
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":266,"column":3},
+    },
+    'pandaMcp/futuresReferenceQuery': {
+      service: 'pandaMcp',
+      invocation: { kind: 'direct' },
+      parameters: [
+        {
+          name: 'input',
+          source: 'json',
+          codec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#FuturesReferenceQuery',
+            create: _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0$schema,
+            jsonSchema: {"type":"object","properties":{"exchange":{"type":"string","enum":["SHFE","INE","DCE","CZCE","CFFEX","GFEX"]},"symbol":{"type":"string"},"date":{"type":"string"},"cutoff":{"type":"string"}},"required":["exchange","symbol"],"additionalProperties":true},
+          },
+          strictCodec: {
+            mode: 'strict',
+            typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#FuturesReferenceQuery',
+            create: _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_parameter_0_strict$schema,
+            jsonSchema: {"type":"object","properties":{"exchange":{"type":"string","enum":["SHFE","INE","DCE","CZCE","CFFEX","GFEX"]},"symbol":{"type":"string"},"date":{"type":"string"},"cutoff":{"type":"string"}},"required":["exchange","symbol"],"additionalProperties":false},
+          },
+        },
+      ],
+      cancellation: { parameter: 'signal' },
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#FuturesReferenceResult',
+        create: _deepseek_ai_dsh_panda_mcp_pandaMcp_futuresReferenceQuery_result$schema,
+        jsonSchema: {"type":"object","properties":{"product":{"type":"object","properties":{"exchange":{"type":"string","enum":["SHFE","INE","DCE","CZCE","CFFEX","GFEX"]},"product":{"type":"string"},"name":{"type":"string"},"currentCategory":{"type":"string"},"tickSize":{"type":"number"},"tickText":{"type":"string"},"multiplier":{"type":"number"},"tradingUnit":{"type":"string"},"sourceUrl":{"type":"string"},"sourceSha256":{"type":"string"},"coverage":{"type":"object","properties":{"quoteDays":{"type":"number"},"quoteFrom":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"quoteThrough":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"feeDays":{"type":"number"},"feeFrom":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"feeThrough":{"oneOf":[{"type":"null","const":null},{"type":"string"}]}},"required":["quoteDays","quoteFrom","quoteThrough","feeDays","feeFrom","feeThrough"],"additionalProperties":true}},"required":["exchange","product","name","currentCategory","tickSize","tickText","multiplier","tradingUnit","sourceUrl","sourceSha256","coverage"],"additionalProperties":true},"catalogDate":{"type":"string"},"date":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"contract":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"main":{"oneOf":[{"type":"null","const":null},{"type":"object","properties":{"contract":{"type":"string"},"method":{"type":"string","enum":["pandadata","after_close"]}},"required":["contract","method"],"additionalProperties":true}]},"quote":{"oneOf":[{"type":"null","const":null},{"type":"object","properties":{"openInterest":{"oneOf":[{"type":"null","const":null},{"type":"number"}]},"volume":{"oneOf":[{"type":"null","const":null},{"type":"number"}]},"settlement":{"oneOf":[{"type":"null","const":null},{"type":"number"}]}},"required":["openInterest","volume","settlement"],"additionalProperties":true}]},"quoteSource":{"oneOf":[{"type":"null","const":null},{"type":"object","properties":{"status":{"type":"string","enum":["available","missing","unsupported","no_contract","login_required","error"]},"url":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"provider":{"type":"string","enum":["pandadata","exchange"]},"reportDate":{"type":"string"},"sha256":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"sourceUpdatedAt":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"firstPublishedAt":{"type":"null","const":null},"cutoff":{"oneOf":[{"type":"null","const":null},{"type":"string","enum":["visible","after_cutoff","unknown"]}]}},"required":["status","url","provider","reportDate","sha256","sourceUpdatedAt","firstPublishedAt","cutoff"],"additionalProperties":true}]},"fees":{"oneOf":[{"type":"null","const":null},{"type":"object","properties":{"open":{"type":"object","properties":{"yuanPerLot":{"type":"number"},"rate":{"type":"number"}},"required":["yuanPerLot","rate"],"additionalProperties":true},"closePrevious":{"type":"object","properties":{"yuanPerLot":{"type":"number"},"rate":{"type":"number"}},"required":["yuanPerLot","rate"],"additionalProperties":true},"closeToday":{"type":"object","properties":{"yuanPerLot":{"type":"number"},"rate":{"type":"number"}},"required":["yuanPerLot","rate"],"additionalProperties":true},"marginLong":{"oneOf":[{"type":"null","const":null},{"type":"number"}]},"marginShort":{"oneOf":[{"type":"null","const":null},{"type":"number"}]}},"required":["open","closePrevious","closeToday","marginLong","marginShort"],"additionalProperties":true}]},"feeSource":{"oneOf":[{"type":"null","const":null},{"type":"object","properties":{"status":{"type":"string","enum":["available","missing","unsupported","no_contract","login_required","error"]},"url":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"provider":{"type":"string","enum":["pandadata","exchange"]},"reportDate":{"type":"string"},"sha256":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"sourceUpdatedAt":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"firstPublishedAt":{"type":"null","const":null},"cutoff":{"oneOf":[{"type":"null","const":null},{"type":"string","enum":["visible","after_cutoff","unknown"]}]}},"required":["status","url","provider","reportDate","sha256","sourceUpdatedAt","firstPublishedAt","cutoff"],"additionalProperties":true}]},"historicalRule":{"oneOf":[{"type":"null","const":null},{"type":"object","properties":{"validFrom":{"type":"string"},"validThrough":{"type":"string"},"tickSize":{"type":"number"},"multiplier":{"type":"number"},"sourceUrl":{"type":"string"},"historicalSector":{"type":"string"},"sectorSourceUrl":{"type":"string"}},"required":["validFrom","validThrough","tickSize","multiplier","sourceUrl"],"additionalProperties":true}]},"contractTerms":{"oneOf":[{"type":"null","const":null},{"type":"object","properties":{"listedDate":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"lastTradingDate":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"deliveryStart":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"deliveryEnd":{"oneOf":[{"type":"null","const":null},{"type":"string"}]}},"required":["listedDate","lastTradingDate","deliveryStart","deliveryEnd"],"additionalProperties":true}]},"contractSource":{"oneOf":[{"type":"null","const":null},{"type":"object","properties":{"status":{"type":"string","enum":["available","missing","unsupported","no_contract","login_required","error"]},"url":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"provider":{"type":"string","enum":["pandadata","exchange"]},"reportDate":{"type":"string"},"sha256":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"sourceUpdatedAt":{"oneOf":[{"type":"null","const":null},{"type":"string"}]},"firstPublishedAt":{"type":"null","const":null},"cutoff":{"oneOf":[{"type":"null","const":null},{"type":"string","enum":["visible","after_cutoff","unknown"]}]}},"required":["status","url","provider","reportDate","sha256","sourceUpdatedAt","firstPublishedAt","cutoff"],"additionalProperties":true}]}},"required":["product","catalogDate","date","contract","main","quote","quoteSource","fees","feeSource","historicalRule","contractTerms","contractSource"],"additionalProperties":true},
+      },
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":268,"column":3},
     },
     'pandaMcp/logout': {
       service: 'pandaMcp',
@@ -585,9 +767,9 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         mode: 'strict',
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#PandaMcpStatus',
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_logout_result$schema,
-        jsonSchema: {"type":"object","properties":{"ok":{"type":"boolean","const":true},"phase":{"type":"string","enum":["disconnected","authenticating","connected","needs_auth","error"]},"url":{"type":"string"},"toolCount":{"type":"number"},"toolNames":{"type":"array","items":{"type":"string"}},"message":{"type":"string"},"authorizationUrl":{"type":"string","description":"Browser handoff during interactive authorization; never contains access tokens."}},"required":["ok","phase","url","toolCount","toolNames","message"],"additionalProperties":true},
+        jsonSchema: {"type":"object","properties":{"ok":{"type":"boolean","const":true},"phase":{"type":"string","enum":["error","disconnected","authenticating","connected","needs_auth"]},"url":{"type":"string"},"toolCount":{"type":"number"},"toolNames":{"type":"array","items":{"type":"string"}},"message":{"type":"string"},"authorizationUrl":{"type":"string","description":"Browser handoff during interactive authorization; never contains access tokens."}},"required":["ok","phase","url","toolCount","toolNames","message"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":302,"column":9},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":330,"column":9},
     },
     'pandaMcp/refresh': {
       service: 'pandaMcp',
@@ -600,9 +782,9 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         mode: 'strict',
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#PandaMcpStatus',
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_refresh_result$schema,
-        jsonSchema: {"type":"object","properties":{"ok":{"type":"boolean","const":true},"phase":{"type":"string","enum":["disconnected","authenticating","connected","needs_auth","error"]},"url":{"type":"string"},"toolCount":{"type":"number"},"toolNames":{"type":"array","items":{"type":"string"}},"message":{"type":"string"},"authorizationUrl":{"type":"string","description":"Browser handoff during interactive authorization; never contains access tokens."}},"required":["ok","phase","url","toolCount","toolNames","message"],"additionalProperties":true},
+        jsonSchema: {"type":"object","properties":{"ok":{"type":"boolean","const":true},"phase":{"type":"string","enum":["error","disconnected","authenticating","connected","needs_auth"]},"url":{"type":"string"},"toolCount":{"type":"number"},"toolNames":{"type":"array","items":{"type":"string"}},"message":{"type":"string"},"authorizationUrl":{"type":"string","description":"Browser handoff during interactive authorization; never contains access tokens."}},"required":["ok","phase","url","toolCount","toolNames","message"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":284,"column":9},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":312,"column":9},
     },
     'pandaMcp/status': {
       service: 'pandaMcp',
@@ -614,9 +796,9 @@ export const TYPERT_REMOTE = createTypertRemoteInfo({
         mode: 'strict',
         typeSymbol: '@deepseek-ai/dsh-panda-mcp/types#PandaMcpStatus',
         create: _deepseek_ai_dsh_panda_mcp_pandaMcp_status_result$schema,
-        jsonSchema: {"type":"object","properties":{"ok":{"type":"boolean","const":true},"phase":{"type":"string","enum":["disconnected","authenticating","connected","needs_auth","error"]},"url":{"type":"string"},"toolCount":{"type":"number"},"toolNames":{"type":"array","items":{"type":"string"}},"message":{"type":"string"},"authorizationUrl":{"type":"string","description":"Browser handoff during interactive authorization; never contains access tokens."}},"required":["ok","phase","url","toolCount","toolNames","message"],"additionalProperties":true},
+        jsonSchema: {"type":"object","properties":{"ok":{"type":"boolean","const":true},"phase":{"type":"string","enum":["error","disconnected","authenticating","connected","needs_auth"]},"url":{"type":"string"},"toolCount":{"type":"number"},"toolNames":{"type":"array","items":{"type":"string"}},"message":{"type":"string"},"authorizationUrl":{"type":"string","description":"Browser handoff during interactive authorization; never contains access tokens."}},"required":["ok","phase","url","toolCount","toolNames","message"],"additionalProperties":true},
       },
-      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":269,"column":3},
+      sourceLocation: {"file":"packages/panda-mcp/src/index.ts","line":297,"column":3},
     },
   },
 }, z)

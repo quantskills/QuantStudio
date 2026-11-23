@@ -4,7 +4,7 @@ import type {
   TypertRemoteInfo,
   TypertRemoteMethod,
 } from '@deepseek-ai/dsh-typert-protocol'
-import type { DataCategory, DataFetch, DataImport, DataQuery, DataResult, DataSummary, PandaMcpStatus } from '@deepseek-ai/dsh-panda-mcp/types'
+import type { DataCategory, DataFetch, DataImport, DataQuery, DataResult, DataSummary, FuturesCatalog, FuturesReferenceQuery, FuturesReferenceResult, PandaMcpStatus } from '@deepseek-ai/dsh-panda-mcp/types'
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
   interface TypertRemoteNamespace$70616e64614d6370 {
@@ -17,6 +17,8 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     databaseQuery: (input: DataQuery, signal?: AbortSignal) => Promise<RemoteResult<DataResult>>
     databaseRefresh: (input: { id: string; }, signal?: AbortSignal) => Promise<RemoteResult<DataSummary>>
     databaseRemove: (input: { id: string; }, signal?: AbortSignal) => Promise<RemoteResult<void>>
+    futuresReferenceCatalog: (signal?: AbortSignal) => Promise<RemoteResult<FuturesCatalog>>
+    futuresReferenceQuery: (input: FuturesReferenceQuery, signal?: AbortSignal) => Promise<RemoteResult<FuturesReferenceResult>>
     logout: (signal?: AbortSignal) => Promise<RemoteResult<PandaMcpStatus>>
     refresh: (signal?: AbortSignal) => Promise<RemoteResult<PandaMcpStatus>>
     status: (signal?: AbortSignal) => Promise<RemoteResult<PandaMcpStatus>>
@@ -31,6 +33,8 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'pandaMcp/databaseQuery': (input: DataQuery, signal?: AbortSignal) => Promise<RemoteResult<DataResult>>
     'pandaMcp/databaseRefresh': (input: { id: string; }, signal?: AbortSignal) => Promise<RemoteResult<DataSummary>>
     'pandaMcp/databaseRemove': (input: { id: string; }, signal?: AbortSignal) => Promise<RemoteResult<void>>
+    'pandaMcp/futuresReferenceCatalog': (signal?: AbortSignal) => Promise<RemoteResult<FuturesCatalog>>
+    'pandaMcp/futuresReferenceQuery': (input: FuturesReferenceQuery, signal?: AbortSignal) => Promise<RemoteResult<FuturesReferenceResult>>
     'pandaMcp/logout': (signal?: AbortSignal) => Promise<RemoteResult<PandaMcpStatus>>
     'pandaMcp/refresh': (signal?: AbortSignal) => Promise<RemoteResult<PandaMcpStatus>>
     'pandaMcp/status': (signal?: AbortSignal) => Promise<RemoteResult<PandaMcpStatus>>
@@ -50,6 +54,8 @@ export declare const TYPERT_REMOTE: TypertRemoteInfo<{
   readonly 'pandaMcp/databaseQuery': TypertRemoteMethod<{ readonly 'input': DataQuery }, DataResult>
   readonly 'pandaMcp/databaseRefresh': TypertRemoteMethod<{ readonly 'input': { id: string; } }, DataSummary>
   readonly 'pandaMcp/databaseRemove': TypertRemoteMethod<{ readonly 'input': { id: string; } }, void>
+  readonly 'pandaMcp/futuresReferenceCatalog': TypertRemoteMethod<{  }, FuturesCatalog>
+  readonly 'pandaMcp/futuresReferenceQuery': TypertRemoteMethod<{ readonly 'input': FuturesReferenceQuery }, FuturesReferenceResult>
   readonly 'pandaMcp/logout': TypertRemoteMethod<{  }, PandaMcpStatus>
   readonly 'pandaMcp/refresh': TypertRemoteMethod<{  }, PandaMcpStatus>
   readonly 'pandaMcp/status': TypertRemoteMethod<{  }, PandaMcpStatus>

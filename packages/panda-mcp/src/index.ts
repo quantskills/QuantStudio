@@ -2,6 +2,8 @@
 
 import { join } from 'node:path'
 import { LocalDatabase, type DataImport, type DataFetch, type DataQuery, type DataSummary, type DataResult, type DataCategory } from './database.ts'
+import { FuturesReference, futuresCatalog } from './futures-reference.ts'
+import type { FuturesCatalog, FuturesReferenceQuery, FuturesReferenceResult } from './futures-reference-types.ts'
 export type { DataImport, DataFetch, DataQuery, DataSummary, DataResult, DataSource, DataCategory } from './database.ts'
 import type { Context } from '@deepseek-ai/cordis'
 import z from '@deepseek-ai/schemastery'
@@ -21,6 +23,7 @@ import { publicToolName } from './public-name.ts'
 import {
   callConnectedTool,
   disposeTools,
+  reauthRequired,
   registerStubTools,
   syncLiveTools,
   type ConnectedMcpSession,
@@ -48,6 +51,8 @@ export const inject = ['tools', 'agents', 'systemPrompt']
 const POLICY = `PandaData market data is available through remote MCP tools named mcp__pandadata__*.
 
 Before fetching data, use quantskills_data_catalog to find locally cached datasets, then quantskills_data_query with the required date range and minRows. It refreshes stale or insufficient remote data once. Only use rows when status is hit or refreshed; insufficient is NOT usable data. Imported local files need re-import when insufficient. The database contains only user-configured sources. Never substitute a different vendor silently. PandaData table results are automatically cached for five minutes.
+
+For domestic futures contract specifications, dated exchange settlement fees, and publication evidence, use quantskills_futures_reference. Keep catalog specifications separate from verified historical rules. Missing historical fees must not be treated as zero. Report version timestamps and after-close research main contracts do not establish when a vendor mapping was first published.
 
 Workflow: mcp__pandadata__auth_status → mcp__pandadata__search_methods → mcp__pandadata__get_method_doc → mcp__pandadata__call_pandadata.
 Read the method document before calling. Only documented get_* methods are allowed.
@@ -174,6 +179,7 @@ export class PandaMcpGateway extends TypertRemoteService {
   private readonly authTimeoutMs: number
   private readonly toolCallTimeoutMs: number
   private readonly database: LocalDatabase
+  private readonly futuresReference: FuturesReference
   private readonly store: PandaMcpOAuthStore
   private readonly promptDisposers = new Map<Agent, () => void>()
   private tools: ToolDisposers = new Map()
@@ -212,10 +218,20 @@ export class PandaMcpGateway extends TypertRemoteService {
     this.store = new PandaMcpOAuthStore(pandaMcpOAuthPath(resolveDshHome(
       specifiedHome === undefined || specifiedHome.length === 0 ? undefined : specifiedHome,
     )))
-    this.database = new LocalDatabase(join(resolveDshHome(specifiedHome || undefined), 'quantskills', 'database'), async (method, params, signal) => {
+    const dataHome = join(resolveDshHome(specifiedHome || undefined), 'quantskills')
+    const panda = async (method: string, params: Record<string, unknown>, signal?: AbortSignal) => {
       if (!this.live) await this.refresh(signal)
-      if (!this.live) throw new Error('请先在设置中连接 PandaData')
+      if (!this.live) return reauthRequired()
       return callConnectedTool(this.live, 'call_pandadata', { method, params }, signal, async () => { this.phase = 'needs_auth'; await this.store.clear('tokens'); this.replaceWithStubs() })
+    }
+    this.database = new LocalDatabase(join(dataHome, 'database'), async (method, params, signal) => {
+      const result = await panda(method, params, signal)
+      if (result && typeof result === 'object' && 'error' in result && result.error === 'reauth_required') throw new Error('请先在设置中连接 PandaData')
+      return result
+    })
+    this.futuresReference = new FuturesReference({
+      archive: process.env.QUANTSTUDIO_FUTURES_REFERENCE_ARCHIVE?.trim() || join(dataHome, 'futures-reference', 'archive'),
+      panda,
     })
     this.installDatabaseTools()
     this.installPrompts()
@@ -246,6 +262,10 @@ export class PandaMcpGateway extends TypertRemoteService {
   databaseRemove(input: { id: string }, signal?: AbortSignal): Promise<void> { void signal; return this.database.remove(input.id) }
   @Remote
   databaseCategorize(input: { id: string; category: DataCategory }, signal?: AbortSignal): Promise<DataSummary> { void signal; return this.database.categorize(input.id, input.category) }
+  @Remote
+  futuresReferenceCatalog(signal?: AbortSignal): Promise<FuturesCatalog> { void signal; return Promise.resolve(futuresCatalog) }
+  @Remote
+  futuresReferenceQuery(input: FuturesReferenceQuery, signal?: AbortSignal): Promise<FuturesReferenceResult> { return this.futuresReference.query(input, signal) }
 
   private installDatabaseTools(): void {
     const register = <Args,>(name: string, description: string, properties: Record<string, unknown>, required: string[], execute: (args: Args, signal?: AbortSignal) => Promise<unknown>) => {
@@ -253,6 +273,14 @@ export class PandaMcpGateway extends TypertRemoteService {
     }
     register('quantskills_data_catalog', 'List local cached datasets by research category (market: quotes/prices; news: news/announcements; fundamental: company financials/valuation; other), source, date coverage, row count and expiry. Category is independent of whether data has dates. Always check before fetching external data.', {}, [], () => this.database.list().then(datasets => ({ datasets })))
     register('quantskills_data_query', 'Read local data first. Refresh remote source once when stale or insufficient. Only consume rows if status is hit/refreshed. Do not use insufficient results; ask for source parameters or new import.', { id: { type: 'string' }, from: { type: 'string' }, to: { type: 'string' }, minRows: { type: 'integer', minimum: 1 }, limit: { type: 'integer', minimum: 1, maximum: 5000 }, offset: { type: 'integer', minimum: 0 }, refresh: { type: 'boolean' } }, ['id'], (args: DataQuery, signal) => this.database.query(args, signal))
+    register('quantskills_futures_reference',
+      'Look up a domestic futures product or exact contract. Omit date for the catalog snapshot. With a trading date, return verified historical rules, daily quotes, exchange open/close/close-today fees and evidence when available. Rates are fractions of notional plus yuan per lot. Optional Beijing cutoff checks report version availability only. Missing data and unknown first publication are explicit.',
+      {
+        exchange: { type: 'string', enum: futuresCatalog.exchanges.map(exchange => exchange.id) },
+        symbol: { type: 'string', description: 'Product or exchange contract, e.g. CU, CU2505, MA509, L2505F' },
+        date: { type: 'string', description: 'Trading date in YYYY-MM-DD' },
+        cutoff: { type: 'string', description: 'Beijing time in YYYY-MM-DDTHH:mm:ss' },
+      }, ['exchange', 'symbol'], (args: FuturesReferenceQuery, signal) => this.futuresReferenceQuery(args, signal))
   }
 
   /** 测试替换会话工厂。 */

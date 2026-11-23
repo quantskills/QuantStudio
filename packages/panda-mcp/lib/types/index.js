@@ -35,6 +35,7 @@ var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, 
 };
 import { join } from 'node:path';
 import { LocalDatabase } from "./database.js";
+import { FuturesReference, futuresCatalog } from "./futures-reference.js";
 import z from '@deepseek-ai/schemastery';
 import { resolveDshHome } from '@deepseek-ai/dsh-home-paths';
 import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
@@ -46,7 +47,7 @@ import { startOauthLoopback } from "./callback-server.js";
 import { PandaMcpOAuthProvider } from "./oauth-provider.js";
 import { PandaMcpOAuthStore, pandaMcpOAuthPath } from "./oauth-store.js";
 import { publicToolName } from "./public-name.js";
-import { callConnectedTool, disposeTools, registerStubTools, syncLiveTools, } from "./tools.js";
+import { callConnectedTool, disposeTools, reauthRequired, registerStubTools, syncLiveTools, } from "./tools.js";
 import { DEFAULT_PANDA_MCP_URL, PANDA_MCP_TOOL_NAMES, } from "./types.js";
 export { DEFAULT_PANDA_MCP_URL, PANDA_MCP_TOOL_NAMES } from "./types.js";
 export { publicToolName } from "./public-name.js";
@@ -60,6 +61,8 @@ export const inject = ['tools', 'agents', 'systemPrompt'];
 const POLICY = `PandaData market data is available through remote MCP tools named mcp__pandadata__*.
 
 Before fetching data, use quantskills_data_catalog to find locally cached datasets, then quantskills_data_query with the required date range and minRows. It refreshes stale or insufficient remote data once. Only use rows when status is hit or refreshed; insufficient is NOT usable data. Imported local files need re-import when insufficient. The database contains only user-configured sources. Never substitute a different vendor silently. PandaData table results are automatically cached for five minutes.
+
+For domestic futures contract specifications, dated exchange settlement fees, and publication evidence, use quantskills_futures_reference. Keep catalog specifications separate from verified historical rules. Missing historical fees must not be treated as zero. Report version timestamps and after-close research main contracts do not establish when a vendor mapping was first published.
 
 Workflow: mcp__pandadata__auth_status → mcp__pandadata__search_methods → mcp__pandadata__get_method_doc → mcp__pandadata__call_pandadata.
 Read the method document before calling. Only documented get_* methods are allowed.
@@ -149,6 +152,8 @@ let PandaMcpGateway = (() => {
     let _databaseRefresh_decorators;
     let _databaseRemove_decorators;
     let _databaseCategorize_decorators;
+    let _futuresReferenceCatalog_decorators;
+    let _futuresReferenceQuery_decorators;
     let _status_decorators;
     let _authenticate_decorators;
     let _refresh_decorators;
@@ -164,6 +169,8 @@ let PandaMcpGateway = (() => {
             _databaseRefresh_decorators = [Remote];
             _databaseRemove_decorators = [Remote];
             _databaseCategorize_decorators = [Remote];
+            _futuresReferenceCatalog_decorators = [Remote];
+            _futuresReferenceQuery_decorators = [Remote];
             _status_decorators = [Remote];
             _authenticate_decorators = [Remote];
             _refresh_decorators = [Remote];
@@ -176,6 +183,8 @@ let PandaMcpGateway = (() => {
             __esDecorate(this, null, _databaseRefresh_decorators, { kind: "method", name: "databaseRefresh", static: false, private: false, access: { has: obj => "databaseRefresh" in obj, get: obj => obj.databaseRefresh }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _databaseRemove_decorators, { kind: "method", name: "databaseRemove", static: false, private: false, access: { has: obj => "databaseRemove" in obj, get: obj => obj.databaseRemove }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _databaseCategorize_decorators, { kind: "method", name: "databaseCategorize", static: false, private: false, access: { has: obj => "databaseCategorize" in obj, get: obj => obj.databaseCategorize }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _futuresReferenceCatalog_decorators, { kind: "method", name: "futuresReferenceCatalog", static: false, private: false, access: { has: obj => "futuresReferenceCatalog" in obj, get: obj => obj.futuresReferenceCatalog }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _futuresReferenceQuery_decorators, { kind: "method", name: "futuresReferenceQuery", static: false, private: false, access: { has: obj => "futuresReferenceQuery" in obj, get: obj => obj.futuresReferenceQuery }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _status_decorators, { kind: "method", name: "status", static: false, private: false, access: { has: obj => "status" in obj, get: obj => obj.status }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _authenticate_decorators, { kind: "method", name: "authenticate", static: false, private: false, access: { has: obj => "authenticate" in obj, get: obj => obj.authenticate }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _refresh_decorators, { kind: "method", name: "refresh", static: false, private: false, access: { has: obj => "refresh" in obj, get: obj => obj.refresh }, metadata: _metadata }, null, _instanceExtraInitializers);
@@ -189,6 +198,7 @@ let PandaMcpGateway = (() => {
         authTimeoutMs;
         toolCallTimeoutMs;
         database;
+        futuresReference;
         store;
         promptDisposers = new Map();
         tools = new Map();
@@ -226,12 +236,23 @@ let PandaMcpGateway = (() => {
             this.toolCallTimeoutMs = config.toolCallTimeoutMs ?? 60_000;
             const specifiedHome = config.dshHome?.trim();
             this.store = new PandaMcpOAuthStore(pandaMcpOAuthPath(resolveDshHome(specifiedHome === undefined || specifiedHome.length === 0 ? undefined : specifiedHome)));
-            this.database = new LocalDatabase(join(resolveDshHome(specifiedHome || undefined), 'quantskills', 'database'), async (method, params, signal) => {
+            const dataHome = join(resolveDshHome(specifiedHome || undefined), 'quantskills');
+            const panda = async (method, params, signal) => {
                 if (!this.live)
                     await this.refresh(signal);
                 if (!this.live)
-                    throw new Error('请先在设置中连接 PandaData');
+                    return reauthRequired();
                 return callConnectedTool(this.live, 'call_pandadata', { method, params }, signal, async () => { this.phase = 'needs_auth'; await this.store.clear('tokens'); this.replaceWithStubs(); });
+            };
+            this.database = new LocalDatabase(join(dataHome, 'database'), async (method, params, signal) => {
+                const result = await panda(method, params, signal);
+                if (result && typeof result === 'object' && 'error' in result && result.error === 'reauth_required')
+                    throw new Error('请先在设置中连接 PandaData');
+                return result;
+            });
+            this.futuresReference = new FuturesReference({
+                archive: process.env.QUANTSTUDIO_FUTURES_REFERENCE_ARCHIVE?.trim() || join(dataHome, 'futures-reference', 'archive'),
+                panda,
             });
             this.installDatabaseTools();
             this.installPrompts();
@@ -253,12 +274,20 @@ let PandaMcpGateway = (() => {
         databaseRefresh(input, signal) { return this.database.preview(input.id).then(({ dataset }) => this.database.fetch(dataset, signal, dataset.id)); }
         databaseRemove(input, signal) { void signal; return this.database.remove(input.id); }
         databaseCategorize(input, signal) { void signal; return this.database.categorize(input.id, input.category); }
+        futuresReferenceCatalog(signal) { void signal; return Promise.resolve(futuresCatalog); }
+        futuresReferenceQuery(input, signal) { return this.futuresReference.query(input, signal); }
         installDatabaseTools() {
             const register = (name, description, properties, required, execute) => {
                 this.ctx.effect(() => this.ctx.tools.register({ name, description, parameters: { type: 'object', properties, required, additionalProperties: false }, output: { schema: { type: 'object', additionalProperties: true }, render: (_args, value) => [{ type: 'text', text: JSON.stringify(value) }] }, execute: (args, exec) => execute(args, exec.signal) }), name);
             };
             register('quantskills_data_catalog', 'List local cached datasets by research category (market: quotes/prices; news: news/announcements; fundamental: company financials/valuation; other), source, date coverage, row count and expiry. Category is independent of whether data has dates. Always check before fetching external data.', {}, [], () => this.database.list().then(datasets => ({ datasets })));
             register('quantskills_data_query', 'Read local data first. Refresh remote source once when stale or insufficient. Only consume rows if status is hit/refreshed. Do not use insufficient results; ask for source parameters or new import.', { id: { type: 'string' }, from: { type: 'string' }, to: { type: 'string' }, minRows: { type: 'integer', minimum: 1 }, limit: { type: 'integer', minimum: 1, maximum: 5000 }, offset: { type: 'integer', minimum: 0 }, refresh: { type: 'boolean' } }, ['id'], (args, signal) => this.database.query(args, signal));
+            register('quantskills_futures_reference', 'Look up a domestic futures product or exact contract. Omit date for the catalog snapshot. With a trading date, return verified historical rules, daily quotes, exchange open/close/close-today fees and evidence when available. Rates are fractions of notional plus yuan per lot. Optional Beijing cutoff checks report version availability only. Missing data and unknown first publication are explicit.', {
+                exchange: { type: 'string', enum: futuresCatalog.exchanges.map(exchange => exchange.id) },
+                symbol: { type: 'string', description: 'Product or exchange contract, e.g. CU, CU2505, MA509, L2505F' },
+                date: { type: 'string', description: 'Trading date in YYYY-MM-DD' },
+                cutoff: { type: 'string', description: 'Beijing time in YYYY-MM-DDTHH:mm:ss' },
+            }, ['exchange', 'symbol'], (args, signal) => this.futuresReferenceQuery(args, signal));
         }
         /** 测试替换会话工厂。 */
         useConnector(connector) {

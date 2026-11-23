@@ -1,0 +1,1 @@
+{"version":3,"file":"futures-reference-catalog.d.ts","sourceRoot":"","sources":["../../src/futures-reference-catalog.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,eAAe,EAAE,cAAc,EAAE,qBAAqB,EAAE,MAAM,8BAA8B,CAAA;AAG1G,eAAO,MAAM,QAAQ,EAAE,cAAc,EA6FpC,CAAA;AAED,eAAO,MAAM,eAAe,EAAE,CAAC,qBAAqB,GAAG;IAAE,QAAQ,EAAE,eAAe,CAAC;IAAC,OAAO,EAAE,MAAM,CAAA;CAAE,CAAC,EAMrG,CAAA"}
